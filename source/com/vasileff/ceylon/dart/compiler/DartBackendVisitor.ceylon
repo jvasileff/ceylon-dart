@@ -23,27 +23,27 @@ import com.redhat.ceylon.model.typechecker.model {
 class DartBackendVisitor() satisfies Visitor {
 
     shared
-    StringBuilder output = StringBuilder();
+    StringBuilder result = StringBuilder();
 
-    Anything(String) append = output.append;
+    CodeWriter dcw = CodeWriter(result.append);
 
     shared actual
     void visitBaseExpression(BaseExpression that) {
         "Supports MNWTA for BaseExpression's of Invocations"
         assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
 
-        append(nameAndArgs.name.name); // TODO translate to dart name
+        dcw.write(nameAndArgs.name.name); // TODO translate to dart name
         // ignoring type arguments
     }
 
     shared actual
     void visitIntegerLiteral(IntegerLiteral that) {
-        append(that.integer.string);
+        dcw.write(that.integer.string);
     }
 
     shared actual
     void visitStringLiteral(StringLiteral that) {
-        append("\"``that.text``\""); // FIXME escaping
+        dcw.write("\"``that.text``\""); // FIXME escaping
     }
 
     shared actual
@@ -60,7 +60,7 @@ class DartBackendVisitor() satisfies Visitor {
                 first = false;
             }
             else {
-                append(", ");
+                dcw.write(", ");
             }
             argument.visit(this);
         }
@@ -68,9 +68,9 @@ class DartBackendVisitor() satisfies Visitor {
 
     shared actual
     void visitPositionalArguments(PositionalArguments that) {
-        append("(");
+        dcw.write("(");
         that.visitChildren(this);
-        append(")");
+        dcw.write(")");
     }
 
     shared actual
@@ -87,17 +87,18 @@ class DartBackendVisitor() satisfies Visitor {
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         that.expression.visit(this); // the Invocation
-        append(";");
+        dcw.write(";");
     }
 
     shared actual
     void visitBlock(Block that) {
-        append("{\n");
+        dcw.startBlock();
         for (child in that.children) {
+            dcw.writeIndent();
             child.visit(this);
-            append("\n");
+            dcw.writeLine();
         }
-        append("}\n");
+        dcw.endBlock();
     }
 
     shared actual
@@ -135,21 +136,23 @@ class DartBackendVisitor() satisfies Visitor {
         assert (exists model = that.get(keys.declarationModel));
         ModelType type = (model of ModelTypedDeclaration).type;
 
-        append("// location=``location(that)``\n");
-        append("/*``type.asString()``*/ ");
+        dcw.writeLine("// location=``location(that)``");
+        dcw.write("/*``type.asString()``*/ ");
         if (model.declaredVoid) {
-            append("void ");
+            dcw.write("void ");
         }
-        append(name(that) + dartParameterList() + " ");
+        dcw.write(name(that) + dartParameterList() + " ");
         that.definition.visit(this);
-        append("\n");
+        dcw.writeLine();
+        dcw.writeLine();
     }
 
     shared actual
     void visitCompilationUnit(CompilationUnit that) {
         // TODO actual imports from the typechecker
         // TODO decide on file structure (one file per module?)
-        append("import 'package:ceylon/language/language.dart';\n\n");
+        dcw.writeLine("import 'package:ceylon/language/language.dart';");
+        dcw.writeLine();
         that.visitChildren(this);
     }
 }

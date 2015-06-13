@@ -74,9 +74,10 @@ void compile(String program) {
     for (phasedUnit in phasedUnits) {
         value unit = transformCompilationUnit(
                 phasedUnit.compilationUnit);
-        //printNode(unit);
+        printNode(unit);
+        print(phasedUnit.compilationUnit);
         value visitor = DartBackendVisitor();
         unit.visit(visitor);
-        print(visitor.output);
+        print(visitor.result);
     }
 }
