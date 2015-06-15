@@ -4,6 +4,8 @@ import 'dart:core' as core;
 import 'dart:math' as math;
 import 'dart:mirrors' as mirrors;
 
+part 'Array.dart';
+part 'ArraySequence.dart';
 part 'AssertionError.dart';
 part 'Character.dart';
 part 'Collection.dart';

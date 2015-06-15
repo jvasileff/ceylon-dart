@@ -1,16 +1,27 @@
 part of ceylon.language;
 
-class Tuple implements List, Sequential, Iterable {
-  final core.List _list = [];
+class Array implements List {
+  core.List _list;
 
-  Tuple(core.Object first, Iterable rest) {
-    _list.add(first);
-    rest.each((e) => _list.add(e));
+  Array(Iterable elements) {
+    _list = [];
+    elements.each((e) => _list.add(e));
+  }
+
+  Array.OfSize(core.int size, core.Object element) {
+    _list = new core.List.filled(size, element);
+  }
+
+  void set(core.int index, core.Object element) {
+    if (index < 0 || index > lastIndex) {
+      throw new AssertionError("Index out of bounds");
+    }
+    _list[index] = element;
   }
 
   @core.override
-  core.int get lastIndex =>
-      _list.length - 1;
+  core.int get lastIndex
+    =>  _list.length - 1;
 
   @core.override
   core.Object getFromFirst(core.int index)
