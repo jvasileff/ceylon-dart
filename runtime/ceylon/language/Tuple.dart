@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 class Tuple implements List, Sequential, Iterable {
   core.List _list;

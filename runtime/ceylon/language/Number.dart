@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 abstract class Number implements Numeric { // Comparable
   core.Object plusInteger(core.int integer);

@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 class Integer implements Integral, Exponentiable { // Binary
   final core.int _value;

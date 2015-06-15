@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
  class Throwable extends core.Error {
   core.String _description;

@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 abstract class Correspondence {
   core.bool defines(core.Object key);

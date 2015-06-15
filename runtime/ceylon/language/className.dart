@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 core.String className(core.Object obj) {
   // TODO use our own reified metadata when available?

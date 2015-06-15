@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 class Character {
   core.int _value;

@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 abstract class Integral implements Number { // Enumerable
   core.bool get unit;

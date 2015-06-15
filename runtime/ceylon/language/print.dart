@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 void print(core.Object val) {
   if (val == null) {

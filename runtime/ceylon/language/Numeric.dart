@@ -1,4 +1,4 @@
-part of ceylon_language;
+part of ceylon.language;
 
 abstract class Numeric implements Invertible {
   core.Object divided(core.Object other);

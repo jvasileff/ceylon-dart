@@ -1,4 +1,4 @@
-library ceylon_language;
+library ceylon.language;
 
 import 'dart:core' as core;
 import 'dart:math' as math;
