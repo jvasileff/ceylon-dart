@@ -1,14 +1,20 @@
 part of ceylon_language;
 
-class VariableBox<T> {
-  T ref;
-  VariableBox(T this.ref);
-}
+///////////////////////////////////////
+//
+// Capture boxes
+//
+///////////////////////////////////////
 
 // Separate classes for bool, int, etc, aren't
 // necessary on Dart, but using them anyway. And,
 // to keep everything consistent, we'll have a
 // box for core.String too.
+
+class VariableBox<T> {
+  T ref;
+  VariableBox(T this.ref);
+}
 
 class VariableBoxBool {
   core.bool ref;
@@ -29,3 +35,15 @@ class VariableBoxString {
   core.String ref;
   VariableBoxString(core.String this.ref);
 }
+
+///////////////////////////////////////
+//
+// Default Argument
+//
+///////////////////////////////////////
+
+class $Default {
+  const $Default();
+}
+
+const $default = const $Default();
