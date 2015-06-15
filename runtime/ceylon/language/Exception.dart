@@ -7,8 +7,8 @@ class Exception extends Throwable {
       : super(message, cause);
 
   Exception([
-      core.String message = $default,
-      Throwable cause = $default]) : this.$(
-          core.identical(message, $default) ? null : message,
-          core.identical(cause, $default) ? null : cause);
+      core.String message = dart$default,
+      Throwable cause = dart$default]) : this.$(
+          core.identical(message, dart$default) ? null : message,
+          core.identical(cause, dart$default) ? null : cause);
 }

@@ -11,29 +11,29 @@ part of ceylon.language;
 // to keep everything consistent, we'll have a
 // box for core.String too.
 
-class VariableBox<T> {
+class dart$VariableBox<T> {
   T ref;
-  VariableBox(T this.ref);
+  dart$VariableBox(T this.ref);
 }
 
-class VariableBoxBool {
+class dart$VariableBoxBool {
   core.bool ref;
-  VariableBoxBool(core.bool this.ref);
+  dart$VariableBoxBool(core.bool this.ref);
 }
 
-class VariableBoxInt {
+class dart$VariableBoxInt {
   core.int ref;
-  VariableBoxInt(core.int this.ref);
+  dart$VariableBoxInt(core.int this.ref);
 }
 
-class VariableBoxDouble {
+class dart$VariableBoxDouble {
   core.double ref;
-  VariableBoxDouble(core.double this.ref);
+  dart$VariableBoxDouble(core.double this.ref);
 }
 
-class VariableBoxString {
+class dart$VariableBoxString {
   core.String ref;
-  VariableBoxString(core.String this.ref);
+  dart$VariableBoxString(core.String this.ref);
 }
 
 ///////////////////////////////////////
@@ -42,8 +42,8 @@ class VariableBoxString {
 //
 ///////////////////////////////////////
 
-class $Default {
-  const $Default();
+class dart$Default {
+  const dart$Default();
 }
 
-const $default = const $Default();
+const dart$default = const dart$Default();

@@ -36,7 +36,7 @@ abstract class List implements Collection, Correspondence {
   Iterator get iterator;
   static Iterator $get$iterator(List $this) {
     // capture a variable (very unoptimized!)
-    VariableBoxInt index = new VariableBoxInt(0);
+    dart$VariableBoxInt index = new dart$VariableBoxInt(0);
     // simulate anonymous class
     return new _$ListIterator_anon($this, index);
   }
@@ -49,9 +49,9 @@ class _$ListIterator_anon implements Iterator {
 
   // this can only be captured when there is
   // no member name conflict, right?
-  VariableBoxInt index;
+  dart$VariableBoxInt index;
 
-  _$ListIterator_anon(List this.$outer, VariableBoxInt this.index);
+  _$ListIterator_anon(List this.$outer, dart$VariableBoxInt this.index);
 
   core.Object next() {
     if (index.ref <= $outer.lastIndex) {

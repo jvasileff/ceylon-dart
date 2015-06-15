@@ -27,4 +27,5 @@ part 'Throwable.dart';
 part 'Tuple.dart';
 part 'className.dart';
 part 'print.dart';
-part 'runtime.dart';
+
+part "dart/runtime.dart";
