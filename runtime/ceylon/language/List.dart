@@ -30,7 +30,11 @@ abstract class List implements Collection, Correspondence {
   core.int get size;
   static core.int $get$size
         (List $this)
-    =>  $this.lastIndex + 1;
+    =>  $this.lastIndex == null ? 0 : $this.lastIndex + 1;
+
+  core.bool get empty;
+  static core.bool $empty(List $this)
+    =>  $this.lastIndex == null;
 
   @core.override
   Iterator get iterator;

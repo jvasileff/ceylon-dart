@@ -26,9 +26,16 @@ class Empty implements Sequential {
 
   @core.override
   core.int get lastIndex => null;
+
+  @core.override
+  core.bool get empty => true;
+
+  @core.override
+  Sequential sequence() => $toplevel$empty;
 }
 
 final Empty empty = new Empty();
+final $toplevel$empty = empty; // FIXME?
 
 class $EmptyIterator implements Iterator {
   const $EmptyIterator();

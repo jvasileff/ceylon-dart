@@ -1,6 +1,6 @@
 part of ceylon.language;
 
-class Tuple implements List, Sequential, Iterable {
+class Tuple implements List, Sequence, Iterable {
   final core.List _list = [];
 
   Tuple(core.Object first, Iterable rest) {
@@ -24,6 +24,10 @@ class Tuple implements List, Sequential, Iterable {
     =>  List.$defines(this, index);
 
   @core.override
+  core.bool get empty
+    =>  List.$empty(this);
+
+  @core.override
   get(core.Object index)
     =>  List.$get(this, index);
 
@@ -42,4 +46,8 @@ class Tuple implements List, Sequential, Iterable {
   @core.override
   void each(void f(core.Object item))
     =>  Iterable.$each(this, f);
+
+  @core.override
+  Sequence sequence()
+    =>  Sequence.$sequence(this);
 }

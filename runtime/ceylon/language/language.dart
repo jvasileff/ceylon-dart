@@ -23,6 +23,7 @@ part 'List.dart';
 part 'Number.dart';
 part 'Numeric.dart';
 part 'Sequential.dart';
+part 'Sequence.dart';
 part 'String.dart';
 part 'Summable.dart';
 part 'Throwable.dart';

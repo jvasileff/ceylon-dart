@@ -24,6 +24,10 @@ class String implements List {
     => List.$defines(this, index);
 
   @core.override
+  core.bool get empty
+    =>  List.$empty(this);
+
+  @core.override
   get(core.Object index)
     => List.$get(this, index);
 
@@ -42,4 +46,8 @@ class String implements List {
   @core.override
   void each(void f(core.Object item))
     => Iterable.$each(this, f);
+
+  @core.override
+  Sequential sequence()
+    =>  Iterable.$sequence(this);
 }

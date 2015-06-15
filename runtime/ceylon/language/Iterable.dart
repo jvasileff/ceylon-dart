@@ -10,6 +10,10 @@ abstract class Iterable {
     return count;
   }
 
+  core.bool get empty;
+  static core.bool $empty(Iterable $this)
+    =>  core.identical($this.iterator.next(), finished);
+
   void each(void f(core.Object item));
   static void $each(
       Collection $this,
@@ -19,5 +23,14 @@ abstract class Iterable {
           item = it.next()) {
       f(item);
     }
+  }
+
+  Sequential sequence();
+  static Sequential $sequence(Iterable $this) {
+    Array array = new Array($this);
+    if (array.empty) {
+      return $toplevel$empty;
+    }
+    return new ArraySequence(array);
   }
 }
