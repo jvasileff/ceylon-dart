@@ -16,7 +16,6 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ModelType=Type,
     ModelTypedDeclaration=TypedDeclaration
 }
 
@@ -86,17 +85,16 @@ class DartBackendVisitor() satisfies Visitor {
 
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
+        dcw.writeIndent();
         that.expression.visit(this); // the Invocation
-        dcw.write(";");
+        dcw.writeLine(";");
     }
 
     shared actual
     void visitBlock(Block that) {
         dcw.startBlock();
         for (child in that.children) {
-            dcw.writeIndent();
             child.visit(this);
-            dcw.writeLine();
         }
         dcw.endBlock();
     }
@@ -133,17 +131,18 @@ class DartBackendVisitor() satisfies Visitor {
             return sb.string;
         }
 
-        assert (exists model = that.get(keys.declarationModel));
-        ModelType type = (model of ModelTypedDeclaration).type;
+        assert (exists model = that.get(keys.functionModel));
+        value returnType = (model of ModelTypedDeclaration).type;
 
-        dcw.writeLine("// location=``location(that)``");
-        dcw.write("/*``type.asString()``*/ ");
+        dcw.writeIndent().writeLine(
+                "// location=``location(that)``; \
+                 return=``returnType.asString()``");
+        dcw.writeIndent();
         if (model.declaredVoid) {
             dcw.write("void ");
         }
         dcw.write(name(that) + dartParameterList() + " ");
         that.definition.visit(this);
-        dcw.writeLine();
         dcw.writeLine();
     }
 

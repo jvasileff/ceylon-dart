@@ -23,6 +23,9 @@ import java.io {
 import java.util {
     List
 }
+import ceylon.ast.redhat {
+    compilationUnitToCeylon
+}
 
 shared
 void compile(String program) {
@@ -72,10 +75,11 @@ void compile(String program) {
             typeChecker.phasedUnits.phasedUnits);
 
     for (phasedUnit in phasedUnits) {
-        value unit = transformCompilationUnit(
-                phasedUnit.compilationUnit);
-        printNode(unit);
-        print(phasedUnit.compilationUnit);
+        value unit = compilationUnitToCeylon(
+                phasedUnit.compilationUnit,
+                augmentNode);
+        //printNode(unit);
+        //print(phasedUnit.compilationUnit);
         value visitor = DartBackendVisitor();
         unit.visit(visitor);
         print(visitor.result);

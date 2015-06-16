@@ -39,7 +39,7 @@ class CodeWriter(
 
     shared
     CodeWriter startBlock() {
-        writeIndent().write("{");
+        write("{");
         writeLine();
         indentPlus();
         return this;

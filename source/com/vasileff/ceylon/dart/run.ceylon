@@ -8,6 +8,7 @@ void run() {
          """
             void main() {
                 helloDart(1);
+                void sub(String s, Integer i, [String, Float] t) {}
             }
 
             void helloDart(Integer y) {
