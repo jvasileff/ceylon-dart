@@ -22,7 +22,8 @@ import ceylon.ast.core {
     LazySpecifier,
     FunctionExpression,
     Parameters,
-    Return
+    Return,
+    DefaultedParameter
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -194,7 +195,6 @@ class DartBackendVisitor() satisfies Visitor {
                 case (is DefaultedValueParameter) {
                     sb.append(parameter.parameter.name.name); // TODO name function
                     sb.append(" = $defaulted");
-                    // TODO default value assignment in the block
                 }
                 case (is ValueParameter) {
                     sb.append(parameter.name.name); // TODO name function
@@ -222,9 +222,49 @@ class DartBackendVisitor() satisfies Visitor {
         }
 
         dcw.write(dartParameterList() + " ");
-        definition.visit(this);
+
+        //Defaulted Parameters:
+        //If any exist, use a block (not lazy specifier)
+        //At start of block, assign values as necessary
+
+        value defaultedParameters = parameterLists.first
+                .parameters.narrow<DefaultedValueParameter>();
+
+        if (defaultedParameters.empty) {
+            // no defaulted parameters
+            definition.visit(this);
+        }
+        else {
+            // defaulted parameters exist
+            dcw.startBlock();
+            for (param in defaultedParameters) {
+                value paramName = param.parameter.name.name;
+                dcw.writeIndent()
+                    .write("if (identical(" + paramName + ", $defaulted)) ");
+                dcw.startBlock();
+                dcw.writeIndent().write(paramName + " = ");
+                param.specifier.expression.visit(this);
+                dcw.writeLine(";");
+                dcw.endBlock();
+                dcw.writeLine();
+            }
+            switch (definition)
+            case (is Block) {
+                definition.visitChildren(this);
+            }
+            case (is LazySpecifier) {
+                // FIXME need to support FunctionShortcutDefinition
+                dcw.writeIndent()
+                    .writeLine("return ");
+                definition.expression.visit(this);
+                dcw.writeLine(";");
+            }
+            dcw.endBlock();
+        }
 
         if (exists functionName) {
+            // anonymous functions will wind
+            // up with an ';' instead
             dcw.writeLine();
         }
     }

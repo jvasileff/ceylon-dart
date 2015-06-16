@@ -10,7 +10,8 @@ void run() {
                 value x = (Integer t) { print("printing"); return t; };
                 value y = (Integer t) => t;
                 helloDart(1);
-                void sub(String s, Integer i, [String, Float] t = ["asd", 1.0]) {}
+                //void sub(String s, Integer i, [String, Float] t = ["asd", 1.0]) { print("xyz"); }
+                void sub(Float f, String s = "sdef", Integer i = 99) { print("xyz"); }
             }
 
             void helloDart(Integer y) {
