@@ -78,7 +78,8 @@ void compile(String program) {
         value unit = compilationUnitToCeylon(
                 phasedUnit.compilationUnit,
                 augmentNode);
-        //printNode(unit);
+        printNodeAsCode(unit);
+        print(unit);
         //print(phasedUnit.compilationUnit);
         value visitor = DartBackendVisitor();
         unit.visit(visitor);

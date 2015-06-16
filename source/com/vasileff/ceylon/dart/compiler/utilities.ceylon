@@ -1,7 +1,7 @@
 import ceylon.ast.core {
-    TypedDeclaration
+    TypedDeclaration,
+    Node
 }
-
 
 String name(TypedDeclaration that) {
     if (exists name = that.get(keys.identifierName)) {
@@ -22,7 +22,7 @@ String name(TypedDeclaration that) {
     return name;
 }
 
-String location(TypedDeclaration that) {
+String location(Node that) {
     assert (exists location = that.get(keys.location));
     return location;
 }

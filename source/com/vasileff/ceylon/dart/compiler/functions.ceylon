@@ -21,7 +21,7 @@ TCNode tcNode(Node node)
             RedHatTransformer(
                 SimpleTokenFactory()));
 
-void printNode(Node node) {
+void printNodeAsCode(Node node) {
     value fo = FormattingOptions {
         maxLineLength = 80;
     };

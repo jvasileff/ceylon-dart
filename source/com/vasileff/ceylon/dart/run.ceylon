@@ -7,12 +7,15 @@ void run() {
     value program =
          """
             void main() {
+                value x = (Integer t) { print("printing"); return t; };
+                value y = (Integer t) => t;
                 helloDart(1);
-                void sub(String s, Integer i, [String, Float] t) {}
+                void sub(String s, Integer i, [String, Float] t = ["asd", 1.0]) {}
             }
 
             void helloDart(Integer y) {
                 print("Hello Dart!");
+                return;
             }
          """;
 

@@ -12,11 +12,21 @@ import ceylon.ast.core {
     ArgumentList,
     IntegerLiteral,
     StringLiteral,
-    CompilationUnit
+    CompilationUnit,
+    ParameterReference,
+    VariadicParameter,
+    DefaultedCallableParameter,
+    DefaultedParameterReference,
+    CallableParameter,
+    ValueDefinition,
+    LazySpecifier,
+    FunctionExpression,
+    Parameters,
+    Return
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ModelTypedDeclaration=TypedDeclaration
+    TypedDeclarationModel=TypedDeclaration
 }
 
 class DartBackendVisitor() satisfies Visitor {
@@ -24,7 +34,7 @@ class DartBackendVisitor() satisfies Visitor {
     shared
     StringBuilder result = StringBuilder();
 
-    CodeWriter dcw = CodeWriter(result.append);
+    value dcw = CodeWriter(result.append);
 
     shared actual
     void visitBaseExpression(BaseExpression that) {
@@ -91,6 +101,12 @@ class DartBackendVisitor() satisfies Visitor {
     }
 
     shared actual
+    void visitLazySpecifier(LazySpecifier that) {
+        dcw.write("=> ");
+        that.expression.visit(this);
+    }
+
+    shared actual
     void visitBlock(Block that) {
         dcw.startBlock();
         for (child in that.children) {
@@ -100,15 +116,76 @@ class DartBackendVisitor() satisfies Visitor {
     }
 
     shared actual
+    void visitValueDefinition(ValueDefinition that) {
+        assert (exists model = that.get(keys.valueModel));
+
+        value dartName = that.name.name; // TODO name
+        value lazy = that.definition is LazySpecifier;
+
+        if (lazy) {
+            throw AssertionError("lazySpecifier not yet supported");
+        }
+        dcw.writeIndent().write("var ``dartName`` = ");
+        that.definition.visitChildren(this);
+        dcw.writeLine(";");
+    }
+
+    shared actual
+    void visitReturn(Return that) {
+        if (exists result = that.result) {
+            dcw.writeIndent();
+            dcw.write("return ");
+            result.visit(this);
+            dcw.writeLine(";");
+        }
+        else {
+            dcw.writeIndent();
+            dcw.writeLine("return;");
+        }
+    }
+
+    shared actual
+    void visitFunctionExpression(FunctionExpression that) {
+        generateFunction(that);
+    }
+
+    shared actual
     void visitFunctionDefinition(FunctionDefinition that) {
-        if (that.parameterLists.size != 1) {
+        generateFunction(that);
+    }
+
+    void generateFunction(FunctionExpression | FunctionDefinition that) {
+        assert (exists model = that.get(keys.functionModel));
+
+        [Parameters+] parameterLists;
+        LazySpecifier|Block definition;
+        String? functionName;
+
+        switch (that)
+        case (is FunctionExpression) {
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionName = null;
+        }
+        case (is FunctionDefinition) {
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionName = name(that);
+        }
+
+        if (parameterLists.size != 1) {
             throw Exception("multiple parameter lists not supported");
         }
 
+        value returnType = (model of TypedDeclarationModel).type;
+
         function dartParameterList() {
-            value list = that.parameterLists.first;
+            value list = parameterLists.first;
+            if (list.parameters.empty) {
+                return "()";
+            }
             value sb = StringBuilder();
-            sb.append("(");
+            sb.append("([");
             sb.append(", ".join(list.parameters.map((parameter) {
                 value sb = StringBuilder();
                 assert (exists model = parameter.get(keys.parameterModel));
@@ -116,34 +193,40 @@ class DartBackendVisitor() satisfies Visitor {
                 switch(parameter)
                 case (is DefaultedValueParameter) {
                     sb.append(parameter.parameter.name.name); // TODO name function
-                    sb.append("=");
-                    sb.append(parameter.specifier.expression.string); // TODO expressions!
+                    sb.append(" = $defaulted");
+                    // TODO default value assignment in the block
                 }
                 case (is ValueParameter) {
                     sb.append(parameter.name.name); // TODO name function
                 }
-                else {
+                case (is VariadicParameter
+                        | CallableParameter
+                        | ParameterReference
+                        | DefaultedCallableParameter
+                        | DefaultedParameterReference) {
                     throw Exception("parameter type not supported!");
                 }
                 return sb.string;
             })));
-            sb.append(")");
+            sb.append("])");
             return sb.string;
         }
 
-        assert (exists model = that.get(keys.functionModel));
-        value returnType = (model of ModelTypedDeclaration).type;
-
-        dcw.writeIndent().writeLine(
-                "// location=``location(that)``; \
-                 return=``returnType.asString()``");
-        dcw.writeIndent();
-        if (model.declaredVoid) {
-            dcw.write("void ");
+        if (exists functionName) {
+            dcw.writeIndent()
+                .writeLine("// location=``location(that)``; \
+                            return=``returnType.asString()``")
+                .writeIndent()
+                .write(model.declaredVoid then "void " else "")
+                .write(functionName);
         }
-        dcw.write(name(that) + dartParameterList() + " ");
-        that.definition.visit(this);
-        dcw.writeLine();
+
+        dcw.write(dartParameterList() + " ");
+        definition.visit(this);
+
+        if (exists functionName) {
+            dcw.writeLine();
+        }
     }
 
     shared actual
