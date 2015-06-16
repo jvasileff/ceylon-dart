@@ -12,6 +12,8 @@ class Array implements List {
     _list = new core.List.filled(size, element);
   }
 
+  Array._withList(core.List this._list);
+
   void set(core.int index, core.Object element) {
     if (index < 0 || index > lastIndex) {
       throw new AssertionError("Index out of bounds");

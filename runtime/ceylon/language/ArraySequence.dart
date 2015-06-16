@@ -49,4 +49,12 @@ class ArraySequence implements Sequence {
   @core.override
   Sequence sequence()
     =>  Sequence.$sequence(this);
+
+  @core.override
+  Sequence withLeading(core.Object other)
+    =>  Sequence.$withLeading(this, other);
+
+  @core.override
+  Sequence withTrailing(core.Object other)
+    =>  Sequence.$withTrailing(this, other);
 }

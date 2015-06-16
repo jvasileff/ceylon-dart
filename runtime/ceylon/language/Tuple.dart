@@ -8,6 +8,11 @@ class Tuple implements List, Sequence, Iterable {
     rest.each((e) => _list.add(e));
   }
 
+  Tuple._trailing(Iterable initial, core.Object element) {
+    initial.each((e) => _list.add(e));
+    _list.add(element);
+  }
+
   @core.override
   core.int get lastIndex =>
       _list.length - 1;
@@ -17,6 +22,14 @@ class Tuple implements List, Sequence, Iterable {
     =>  (0 <= index && index < size)
             ? _list[index]
             : null;
+
+  @core.override
+  Sequence withTrailing(core.Object other)
+    =>  new Tuple._trailing(this, other);
+
+  @core.override
+  Sequence withLeading(core.Object other)
+    =>  new Tuple(other, this);
 
   // bridge methods
   @core.override

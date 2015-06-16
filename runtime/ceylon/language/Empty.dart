@@ -32,6 +32,14 @@ class Empty implements Sequential {
 
   @core.override
   Sequential sequence() => $toplevel$empty;
+
+  @core.override
+  Sequence withTrailing(core.Object other)
+    =>  new Tuple(other, $toplevel$empty);
+
+  @core.override
+  Sequence withLeading(core.Object other)
+    =>  new Tuple(other, $toplevel$empty);
 }
 
 final Empty empty = new Empty();

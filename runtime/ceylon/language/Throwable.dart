@@ -33,8 +33,7 @@ part of ceylon.language;
   }
 
   void addSuppressed(Throwable suppressed) {
-    // TODO don't use Tuple's internal API
-    _suppressed = new Tuple(suppressed, _suppressed);
+    _suppressed = _suppressed.withTrailing(suppressed);
   }
 
   Sequential get suppressed
