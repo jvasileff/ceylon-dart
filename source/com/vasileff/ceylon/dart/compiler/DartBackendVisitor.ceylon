@@ -23,7 +23,7 @@ import ceylon.ast.core {
     FunctionExpression,
     Parameters,
     Return,
-    DefaultedParameter
+    FunctionShortcutDefinition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -146,6 +146,11 @@ class DartBackendVisitor() satisfies Visitor {
     }
 
     shared actual
+    void visitFunctionShortcutDefinition(FunctionShortcutDefinition that) {
+        generateFunction(that);
+    }
+
+    shared actual
     void visitFunctionExpression(FunctionExpression that) {
         generateFunction(that);
     }
@@ -155,7 +160,10 @@ class DartBackendVisitor() satisfies Visitor {
         generateFunction(that);
     }
 
-    void generateFunction(FunctionExpression | FunctionDefinition that) {
+    void generateFunction(
+        FunctionExpression
+            | FunctionDefinition
+            | FunctionShortcutDefinition that) {
         assert (exists model = that.get(keys.functionModel));
 
         [Parameters+] parameterLists;
@@ -169,6 +177,11 @@ class DartBackendVisitor() satisfies Visitor {
             functionName = null;
         }
         case (is FunctionDefinition) {
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionName = name(that);
+        }
+        case (is FunctionShortcutDefinition) {
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionName = name(that);
@@ -253,9 +266,11 @@ class DartBackendVisitor() satisfies Visitor {
                 definition.visitChildren(this);
             }
             case (is LazySpecifier) {
-                // FIXME need to support FunctionShortcutDefinition
-                dcw.writeIndent()
-                    .writeLine("return ");
+                //for FunctionShortcutDefinition
+                dcw.writeIndent();
+                if (!model.declaredVoid) {
+                    dcw.write("return ");
+                }
                 definition.expression.visit(this);
                 dcw.writeLine(";");
             }
