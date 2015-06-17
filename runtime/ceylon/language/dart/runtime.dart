@@ -47,3 +47,21 @@ class dart$Default {
 }
 
 const dart$default = const dart$Default();
+
+///////////////////////////////////////
+//
+// Erasure Helpers
+//
+///////////////////////////////////////
+
+String dart$nativeToCeylonString(core.String value)
+  =>  value == null ? null : new String(value);
+
+core.String dart$ceylonStringToNative(String value)
+  =>  value == null ? null : value._value;
+
+Integer dart$nativeToCeylonInteger(core.int value)
+  =>  value == null ? null : new Integer(value);
+
+core.int dart$ceylonIntegerToNative(Integer value)
+  =>  value == null ? null : value._value;

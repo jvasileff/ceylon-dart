@@ -28,9 +28,10 @@ import ceylon.ast.redhat {
 }
 
 shared
-void compile(String program) {
+void compile(String *listings) {
 
-    object source satisfies VirtualFile {
+    value virtualFiles = listings.indexed.map((listing) => object
+            satisfies VirtualFile {
         shared actual
         List<out VirtualFile> children
             =>  javaList {};
@@ -50,19 +51,19 @@ void compile(String program) {
         InputStream inputStream
             =>  ByteArrayInputStream(
                     createJavaByteArray(
-                        utf8.encode(program)));
+                        utf8.encode(listing.item)));
 
         shared actual
         String name
-            =>  "virtual.ceylon";
+            =>  "virtual-``listing.key``.ceylon";
 
         shared actual
         String path
             =>  name;
-    }
+    });
 
     value builder = TypeCheckerBuilder();
-    builder.addSrcDirectory(source);
+    virtualFiles.each((vf) => builder.addSrcDirectory(vf));
 
     value typeChecker = builder.typeChecker;
     typeChecker.process();
@@ -79,9 +80,18 @@ void compile(String program) {
                 phasedUnit.compilationUnit,
                 augmentNode);
         printNodeAsCode(unit);
+        print("========================");
+        print("== AST");
+        print("========================");
         print(unit);
-        //print(phasedUnit.compilationUnit);
-        value visitor = DartBackendVisitor();
+        print("========================");
+        print("== TC-AST");
+        print("========================");
+        print(phasedUnit.compilationUnit);
+        print("========================");
+        print("== DART");
+        print("========================");
+        value visitor = DartBackendVisitor(phasedUnit.unit);
         unit.visit(visitor);
         print(visitor.result);
     }

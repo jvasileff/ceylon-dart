@@ -27,15 +27,19 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    TypedDeclarationModel=TypedDeclaration
+    TypedDeclarationModel=TypedDeclaration,
+    Unit,
+    Type
 }
 
-class DartBackendVisitor() satisfies Visitor {
+class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     shared
     StringBuilder result = StringBuilder();
 
     value dcw = CodeWriter(result.append);
+
+    value typeFactory = TypeFactory(unit);
 
     shared actual
     void visitBaseExpression(BaseExpression that) {
@@ -122,12 +126,17 @@ class DartBackendVisitor() satisfies Visitor {
 
         value dartName = that.name.name; // TODO name
         value lazy = that.definition is LazySpecifier;
-
         if (lazy) {
             throw AssertionError("lazySpecifier not yet supported");
         }
+
+        assert(exists rhsType = that
+                .definition.expression
+                .get(keys.typeModel)?.type);
+
         dcw.writeIndent().write("var ``dartName`` = ");
-        that.definition.visitChildren(this);
+        withBoxingConversion(model.type, rhsType, ()
+            =>  that.definition.visitChildren(this));
         dcw.writeLine(";");
     }
 
@@ -291,5 +300,18 @@ class DartBackendVisitor() satisfies Visitor {
         dcw.writeLine("import 'package:ceylon/language/language.dart';");
         dcw.writeLine();
         that.visitChildren(this);
+    }
+
+    void withBoxingConversion(Type lhsType, Type rhsType, void fun()) {
+        value conversion = typeFactory
+                .boxingConversionFor(lhsType, rhsType);
+        if (exists conversion) {
+            dcw.write(conversion.prefix);
+            fun();
+            dcw.write(conversion.suffix);
+        }
+        else {
+            fun();
+        }
     }
 }
