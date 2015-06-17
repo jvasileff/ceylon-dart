@@ -50,7 +50,7 @@ const dart$default = const dart$Default();
 
 ///////////////////////////////////////
 //
-// Erasure Helpers
+// Boxing Helpers
 //
 ///////////////////////////////////////
 
@@ -64,4 +64,16 @@ Integer dart$nativeToCeylonInteger(core.int value)
   =>  value == null ? null : new Integer(value);
 
 core.int dart$ceylonIntegerToNative(Integer value)
+  =>  value == null ? null : value._value;
+
+Float dart$nativeToCeylonFloat(core.double value)
+  =>  value == null ? null : new Float(value);
+
+core.double dart$ceylonFloatToNative(Float value)
+  =>  value == null ? null : value._value;
+
+Boolean dart$nativeToCeylonBoolean(core.bool value)
+  =>  value == null ? null : (value ? $true : $false);
+
+core.bool dart$ceylonBooleanToNative(Boolean value)
   =>  value == null ? null : value._value;

@@ -1,7 +1,8 @@
 import com.redhat.ceylon.model.typechecker.model {
     Type,
     Unit,
-    ModelUtil
+    ModelUtil,
+    Declaration
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -79,6 +80,39 @@ class TypeFactory(Unit unit) {
         =>  type.isExactly(stringType);
 
     /////////////////////////////////////////////
+    // common declarations
+    /////////////////////////////////////////////
+
+    // for now, not sharing; not sure about the safety
+    // implications due to duplicate instances re:
+    // https://github.com/ceylon/ceylon-compiler/issues/1815
+
+    Declaration booleanTrueDeclaration
+        =>  unit.getLanguageModuleDeclaration("true");
+
+    Declaration booleanFalseDeclaration
+        =>  unit.getLanguageModuleDeclaration("false");
+
+    Declaration nullDeclaration
+        =>  unit.getLanguageModuleDeclaration("null");
+
+    /////////////////////////////////////////////
+    // declaration tests
+    /////////////////////////////////////////////
+
+    shared
+    Boolean isBooleanTrueDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanTrueDeclaration);
+
+    shared
+    Boolean isBooleanFalseDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanFalseDeclaration);
+
+    shared
+    Boolean isNullDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, nullDeclaration);
+
+    /////////////////////////////////////////////
     // utilities
     /////////////////////////////////////////////
 
@@ -89,6 +123,10 @@ class TypeFactory(Unit unit) {
     shared
     Type union(Type *types)
         =>  ModelUtil.union(javaList(types), unit);
+
+    shared
+    Boolean equalDeclarations(Declaration first, Declaration second)
+        =>  ModelUtil.equal(first, second);
 
     /////////////////////////////////////////////
     // boxing
@@ -124,32 +162,32 @@ class TypeFactory(Unit unit) {
         // "lhs" and "rhs" are not exactly the same
 
         // to Ceylon conversions
-        if (isCeylonBoolean(intersectedLhs)) {
-            return !isCeylonBoolean(intersectedRhs)
+        if (isCeylonBoolean(intersectedRhs)) {
+            return !isCeylonBoolean(intersectedLhs)
                     then nativeToCeylonBoolean;
         }
-        else if (isCeylonFloat(intersectedLhs)) {
+        else if (isCeylonFloat(intersectedRhs)) {
             return nativeToCeylonFloat;
         }
-        else if (isCeylonInteger(intersectedLhs)) {
+        else if (isCeylonInteger(intersectedRhs)) {
             return nativeToCeylonInteger;
         }
-        else if (isCeylonString(intersectedLhs)) {
+        else if (isCeylonString(intersectedRhs)) {
             return nativeToCeylonString;
         }
 
         // to native conversions
-        if (isCeylonBoolean(intersectedRhs)) {
-            return !isCeylonBoolean(intersectedLhs)
+        if (isCeylonBoolean(intersectedLhs)) {
+            return !isCeylonBoolean(intersectedRhs)
                     then ceylonBooleanToNative;
         }
-        else if (isCeylonFloat(intersectedRhs)) {
+        else if (isCeylonFloat(intersectedLhs)) {
             return ceylonFloatToNative;
         }
-        else if (isCeylonInteger(intersectedRhs)) {
+        else if (isCeylonInteger(intersectedLhs)) {
             return ceylonIntegerToNative;
         }
-        else if (isCeylonString(intersectedRhs)) {
+        else if (isCeylonString(intersectedLhs)) {
             return ceylonStringToNative;
         }
         return null;

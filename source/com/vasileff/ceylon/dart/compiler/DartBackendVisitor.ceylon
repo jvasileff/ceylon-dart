@@ -23,7 +23,8 @@ import ceylon.ast.core {
     FunctionExpression,
     Parameters,
     Return,
-    FunctionShortcutDefinition
+    FunctionShortcutDefinition,
+    FloatLiteral
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -43,11 +44,43 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     shared actual
     void visitBaseExpression(BaseExpression that) {
-        "Supports MNWTA for BaseExpression's of Invocations"
+        "Supports MNWTA for BaseExpressions"
         assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
 
-        dcw.write(nameAndArgs.name.name); // TODO translate to dart name
-        // ignoring type arguments
+        value info = BaseExpressionInfo(that);
+        if (!info.errors.empty) {
+            return; // bail
+        }
+
+        // no errors, should be ok
+        assert (exists targetDeclaration = info.declaration);
+
+        if (typeFactory.isBooleanTrueDeclaration(targetDeclaration)) {
+            // This is the current mangled name of the boxed 'true' constant.
+            // A few things are wrong:
+            //      1. Need to namespace imports
+            //      2. Need to determine naming convention for
+            //         toplevel 'object's, which normally need
+            //         to be lazy singleton factories
+            //      3. The outer code will likely just unbox this
+            //         immediately; we should be smarter
+            dcw.write("$true");
+        }
+        else if (typeFactory.isBooleanFalseDeclaration(targetDeclaration)) {
+            dcw.write("$false");
+        }
+        else if (typeFactory.isNullDeclaration(targetDeclaration)) {
+            dcw.write("null");
+        }
+        else {
+            // TODO make this work
+            dcw.write(nameAndArgs.name.name);
+        }
+    }
+
+    shared actual
+    void visitFloatLiteral(FloatLiteral that) {
+        dcw.write(that.float.string);
     }
 
     shared actual

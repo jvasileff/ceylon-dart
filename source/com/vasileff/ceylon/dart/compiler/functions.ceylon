@@ -16,12 +16,12 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     TCNode=Node
 }
 
-TCNode tcNode(Node node)
+void printNodeAsCode(Node node) {
+    TCNode tcNode(Node node)
     =>  node.transform(
             RedHatTransformer(
                 SimpleTokenFactory()));
 
-void printNodeAsCode(Node node) {
     value fo = FormattingOptions {
         maxLineLength = 80;
     };

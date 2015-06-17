@@ -3,6 +3,9 @@ import ceylon.ast.core {
     ScopedKey
 }
 
+import com.redhat.ceylon.compiler.typechecker.tree {
+    TcNode=Node
+}
 import com.redhat.ceylon.model.typechecker.model {
     ModelType=Type,
     ModelTypeAlias=TypeAlias,
@@ -25,6 +28,11 @@ import com.redhat.ceylon.model.typechecker.model {
 
 object keys {
     shared
+    Key<TcNode> tcNode
+        =   ScopedKey<TcNode>(`value keys`,
+                "tcNode");
+
+    shared
     Key<ModelType> typeModel
         =   ScopedKey<ModelType>(`value keys`,
                 "typeModel");
@@ -37,7 +45,7 @@ object keys {
     shared
     Key<ModelClass> classModel
         =   ScopedKey<ModelClass>(`value keys`,
-                "typeModel");
+                "classModel");
 
     shared
     Key<ModelInterface> interfaceModel
@@ -52,12 +60,12 @@ object keys {
     shared
     Key<ModelType> firstTypeModel
         =   ScopedKey<ModelType>(`value keys`,
-                "typeModel");
+                "firstTypeModel");
 
     shared
     Key<List<ModelType>> typeModels
         =   ScopedKey<List<ModelType>>(`value keys`,
-                "typeArgumentsModel");
+                "typeModels");
 
     shared
     Key<ModelSetter> setterModel
@@ -87,7 +95,7 @@ object keys {
     shared
     Key<ModelTypedDeclaration> typedDeclarationModel
         =   ScopedKey<ModelTypedDeclaration>(`value keys`,
-                "declarationModel");
+                "typedDeclarationModel");
 
     shared
     Key<ModelParameterList> parameterListModel

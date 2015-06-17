@@ -4,4 +4,4 @@ class Finished {
   const Finished();
 }
 
-final finished = new Finished();
+const finished = const Finished();

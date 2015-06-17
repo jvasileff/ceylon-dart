@@ -10,10 +10,36 @@ void run() {
            """;
     value program =
            """
+              import ceylon.language { myTrue = true, myNull = null }
+              \Itrue localTrue = true;
               void main() {
-                Integer oi = 55;
-                Object x = oi;
-                Object y = 90;
+                Integer ii1 = 1;
+                Integer? ii2 = 1;
+                Integer? ii3 = myNull;
+                Object oi1 = 1;
+                Object oi2 = ii1;
+                Object? oi3 = null;
+
+                Float ff1 = 1.0;
+                Float? ff2 = 1.0;
+                Object fo1 = 1.0;
+                Float|Integer fo2 = 1.0;
+
+                Boolean t1 = myTrue;
+                Boolean? t2 = myTrue;
+                \Itrue t3 = myTrue;
+                \Itrue? t4 = myTrue;
+                Boolean|String to1 = myTrue;
+                \Itrue|String to2 = myTrue;
+
+                Boolean f1 = false;
+                Boolean? f2 = false;
+                Boolean? f2n = null;
+                \Ifalse f3 = false;
+                \Ifalse? f4 = false;
+                \Ifalse? f5n = null;
+                Boolean|String fob1 = false;
+                \Ifalse|String fob2 = false;
               }
            """;
 //         """

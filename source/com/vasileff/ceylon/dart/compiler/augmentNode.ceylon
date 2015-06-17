@@ -6,13 +6,16 @@ import ceylon.interop.java {
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
-    TCNode=Node,
+    TcNode=Node,
     Tree
 }
 
-void augmentNode(TCNode tcNode, Node node) {
+void augmentNode(TcNode tcNode, Node node) {
     // location
     node.put(keys.location, tcNode.location);
+
+    // the node itself
+    node.put(keys.tcNode, tcNode);
 
     // model (always use the most precise key type)
     switch(tcNode)
