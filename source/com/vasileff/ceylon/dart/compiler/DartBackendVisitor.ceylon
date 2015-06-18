@@ -24,11 +24,14 @@ import ceylon.ast.core {
     Parameters,
     Return,
     FunctionShortcutDefinition,
-    FloatLiteral
+    FloatLiteral,
+    Specifier,
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
+    FunctionModel=Function,
     Unit,
     Type
 }
@@ -42,17 +45,19 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     value typeFactory = TypeFactory(unit);
 
+    function hasError(Node that)
+        =>  that.transform(hasErrorTransformer);
+
     shared actual
     void visitBaseExpression(BaseExpression that) {
+        if (hasError(that)) {
+            return;
+        }
+
         "Supports MNWTA for BaseExpressions"
         assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
 
         value info = BaseExpressionInfo(that);
-        if (!info.errors.empty) {
-            return; // bail
-        }
-
-        // no errors, should be ok
         assert (exists targetDeclaration = info.declaration);
 
         if (typeFactory.isBooleanTrueDeclaration(targetDeclaration)) {
@@ -155,20 +160,23 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     shared actual
     void visitValueDefinition(ValueDefinition that) {
-        assert (exists model = that.get(keys.valueModel));
-
-        value dartName = that.name.name; // TODO name
-        value lazy = that.definition is LazySpecifier;
-        if (lazy) {
-            throw AssertionError("lazySpecifier not yet supported");
+        if (hasError(that)) {
+            return;
         }
 
-        assert(exists rhsType = that
-                .definition.expression
-                .get(keys.typeModel)?.type);
+        value info = ValueDefinitionInfo(that);
+        assert (exists type = info.declarationModel?.type);
+
+        value dartName = that.name.name; // TODO name
+
+        "lazySpecifier not yet supported"
+        assert (that.definition is Specifier);
+
+        value expressionInfo = ExpressionInfo(that.definition.expression);
+        assert(exists rhsType = expressionInfo.typeModel?.type);
 
         dcw.writeIndent().write("var ``dartName`` = ");
-        withBoxingConversion(model.type, rhsType, ()
+        withBoxingConversion(type, rhsType, ()
             =>  that.definition.visitChildren(this));
         dcw.writeLine(";");
     }
@@ -203,11 +211,15 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     }
 
     void generateFunction(
-        FunctionExpression
-            | FunctionDefinition
-            | FunctionShortcutDefinition that) {
-        assert (exists model = that.get(keys.functionModel));
+            FunctionExpression
+                | FunctionDefinition
+                | FunctionShortcutDefinition that) {
 
+        if (hasError(that)) {
+            return;
+        }
+
+        FunctionModel? functionModel;
         [Parameters+] parameterLists;
         LazySpecifier|Block definition;
         String? functionName;
@@ -217,23 +229,32 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionName = null;
+            value info = FunctionExpressionInfo(that);
+            functionModel = info.declarationModel;
         }
         case (is FunctionDefinition) {
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionName = name(that);
+            value info = FunctionDefinitionInfo(that);
+            functionModel = info.declarationModel;
         }
         case (is FunctionShortcutDefinition) {
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionName = name(that);
+            value info = FunctionShortcutDefinitionInfo(that);
+            functionModel = info.declarationModel;
         }
+
+        // no errors, and we just initialized it
+        assert (exists functionModel);
 
         if (parameterLists.size != 1) {
             throw Exception("multiple parameter lists not supported");
         }
 
-        value returnType = (model of TypedDeclarationModel).type;
+        value returnType = (functionModel of TypedDeclarationModel).type;
 
         function dartParameterList() {
             value list = parameterLists.first;
@@ -244,7 +265,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             sb.append("([");
             sb.append(", ".join(list.parameters.map((parameter) {
                 value sb = StringBuilder();
-                assert (exists model = parameter.get(keys.parameterModel));
+                value parameterInfo = ParameterInfo(parameter);
+                assert (exists model = parameterInfo.parameterModel);
                 sb.append("/*``model.type.asString()``*/ ");
                 switch(parameter)
                 case (is DefaultedValueParameter) {
@@ -272,7 +294,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
                 .writeLine("// location=``location(that)``; \
                             return=``returnType.asString()``")
                 .writeIndent()
-                .write(model.declaredVoid then "void " else "")
+                .write(functionModel.declaredVoid then "void " else "")
                 .write(functionName);
         }
 
@@ -310,7 +332,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             case (is LazySpecifier) {
                 //for FunctionShortcutDefinition
                 dcw.writeIndent();
-                if (!model.declaredVoid) {
+                if (!functionModel.declaredVoid) {
                     dcw.write("return ");
                 }
                 definition.expression.visit(this);
