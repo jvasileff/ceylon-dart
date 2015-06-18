@@ -60,6 +60,13 @@ class TypeFactory(Unit unit) {
         =>  !type.nothing && type.isSubtypeOf(booleanType);
 
     shared
+    Boolean isCeylonOptionalBoolean(Type type)
+        // Boolean, \Itrue, \Ifalse, \Inull, Null
+        =>  !type.nothing &&
+                intersection(type, objectType)
+                .isSubtypeOf(booleanType);
+
+    shared
     Boolean isCeylonByte(Type type)
         =>  type.isExactly(byteType);
 

@@ -28,6 +28,10 @@ import ceylon.ast.core {
     Specifier,
     Node
 }
+import ceylon.collection {
+    LinkedList,
+    Stack
+}
 
 import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
@@ -45,6 +49,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     value typeFactory = TypeFactory(unit);
 
+    Stack<Type> lhsTypeStack = LinkedList<Type>();
+
     function hasError(Node that)
         =>  that.transform(hasErrorTransformer);
 
@@ -59,43 +65,41 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
         value info = BaseExpressionInfo(that);
         assert (exists targetDeclaration = info.declaration);
+        assert (exists lhsType = lhsTypeStack.top);
+        assert (exists rhsType = info.typeModel?.type);
 
         if (typeFactory.isBooleanTrueDeclaration(targetDeclaration)) {
-            // This is the current mangled name of the boxed 'true' constant.
-            // A few things are wrong:
-            //      1. Need to namespace imports
-            //      2. Need to determine naming convention for
-            //         toplevel 'object's, which normally need
-            //         to be lazy singleton factories
-            //      3. The outer code will likely just unbox this
-            //         immediately; we should be smarter
-            dcw.write("$true");
+            generateBooleanLiteral(lhsType, true);
         }
         else if (typeFactory.isBooleanFalseDeclaration(targetDeclaration)) {
-            dcw.write("$false");
+            generateBooleanLiteral(lhsType, false);
         }
         else if (typeFactory.isNullDeclaration(targetDeclaration)) {
             dcw.write("null");
         }
         else {
-            // TODO make this work
-            dcw.write(nameAndArgs.name.name);
+            // TODO make this work // WIP
+            withBoxing(rhsType, ()
+                =>  dcw.write(nameAndArgs.name.name));
         }
     }
 
     shared actual
     void visitFloatLiteral(FloatLiteral that) {
-        dcw.write(that.float.string);
+        withBoxing(typeFactory.floatType, ()
+            => dcw.write(that.float.string));
     }
 
     shared actual
     void visitIntegerLiteral(IntegerLiteral that) {
-        dcw.write(that.integer.string);
+        withBoxing(typeFactory.integerType, ()
+            => dcw.write(that.integer.string));
     }
 
     shared actual
     void visitStringLiteral(StringLiteral that) {
-        dcw.write("\"``that.text``\""); // FIXME escaping
+        withBoxing(typeFactory.stringType, ()
+            =>  dcw.write("\"``that.text``\"")); // FIXME escaping
     }
 
     shared actual
@@ -127,8 +131,6 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     shared actual
     void visitInvocation(Invocation that) {
-        "Only BaseExpression supported"
-        assert (that.invoked is BaseExpression);
         that.invoked.visit(this);
 
         "Named arguments not yet supported"
@@ -172,12 +174,10 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         "lazySpecifier not yet supported"
         assert (that.definition is Specifier);
 
-        value expressionInfo = ExpressionInfo(that.definition.expression);
-        assert(exists rhsType = expressionInfo.typeModel?.type);
-
         dcw.writeIndent().write("var ``dartName`` = ");
-        withBoxingConversion(type, rhsType, ()
-            =>  that.definition.visitChildren(this));
+        lhsTypeStack.push(type);
+        that.definition.visitChildren(this);
+        lhsTypeStack.pop();
         dcw.writeLine(";");
     }
 
@@ -363,6 +363,11 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         that.visitChildren(this);
     }
 
+    void withBoxing(Type rhsType, void fun()) {
+        assert (exists lhsType = lhsTypeStack.top);
+        withBoxingConversion(lhsType, rhsType, fun);
+    }
+
     void withBoxingConversion(Type lhsType, Type rhsType, void fun()) {
         value conversion = typeFactory
                 .boxingConversionFor(lhsType, rhsType);
@@ -378,4 +383,14 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     void error(Node that, String message)
         =>  process.writeErrorLine(message);
+
+    void generateBooleanLiteral(Type type, Boolean boolean) {
+        value box = typeFactory.isCeylonOptionalBoolean(type);
+        if (box) {
+            dcw.write(if(boolean) then "true" else "false");
+        }
+        else {
+            dcw.write(if(boolean) then "$true" else "$false");
+        }
+    }
 }
