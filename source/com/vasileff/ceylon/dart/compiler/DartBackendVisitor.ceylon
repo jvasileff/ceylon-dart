@@ -28,10 +28,6 @@ import ceylon.ast.core {
     Specifier,
     Node
 }
-import ceylon.collection {
-    LinkedList,
-    Stack
-}
 
 import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
@@ -109,18 +105,24 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         "spread arguments not supported"
         assert(that.sequenceArgument is Null);
 
+        value info = ArgumentListInfo(that);
+
         variable Boolean first = true;
 
-        for (argument in that.listedArguments) {
-            "*very* limitted support for expressions"
-            assert(is IntegerLiteral | StringLiteral argument);
+        // ceylon.ast doesn't have a node for 'PositionalArgument'
+        // so we are getting model info from the argument list
+        for ([expression, argumentTypeModel, parameterModel] in
+                zip(that.listedArguments,
+                    info.listedArgumentModels)) {
+
             if (first) {
                 first = false;
             }
             else {
                 dcw.write(", ");
             }
-            argument.visit(this);
+            withLhsType(parameterModel.type, ()
+                => expression.visit(this));
         }
     }
 
@@ -135,6 +137,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     void visitInvocation(Invocation that) {
         value info = ExpressionInfo(that);
         assert (exists rhsType = info.typeModel);
+
         withBoxing(rhsType, void() {
             // we want a boxed type to invoke, so use 'Anything'
             withLhsType(typeFactory.anythingType, ()
@@ -149,7 +152,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         dcw.writeIndent();
-        that.expression.visit(this);
+        // FIXME using nothingType as a temporary hack to signal no lhs
+        withLhsType(typeFactory.nothingType, ()
+            =>  that.expression.visit(this));
         dcw.writeLine(";");
     }
 
@@ -399,6 +404,12 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     }
 
     void withBoxingConversion(Type lhsType, Type rhsType, void fun()) {
+        // FIXME temporary hack using Nothing as a "no-lhs" marker
+        if (typeFactory.isCeylonNothing(lhsType)) {
+            fun();
+            return;
+        }
+
         value conversion = typeFactory
                 .boxingConversionFor(lhsType, rhsType);
         if (exists conversion) {

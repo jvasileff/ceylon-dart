@@ -41,6 +41,9 @@ class TypeFactory(Unit unit) {
     shared
     Type stringType => unit.stringType;
 
+    shared
+    Type nothingType => unit.nothingType;
+
     /////////////////////////////////////////////
     // Boolean isCeylonX(type)
     /////////////////////////////////////////////
@@ -85,6 +88,10 @@ class TypeFactory(Unit unit) {
     shared
     Boolean isCeylonString(Type type)
         =>  type.isExactly(stringType);
+
+    shared
+    Boolean isCeylonNothing(Type type)
+        =>  type.isExactly(nothingType);
 
     /////////////////////////////////////////////
     // common declarations

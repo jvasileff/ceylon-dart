@@ -9,10 +9,12 @@ import ceylon.ast.core {
     AnyFunction,
     FunctionShortcutDefinition,
     FunctionDeclaration,
-    Parameter
+    Parameter,
+    ArgumentList
 }
 import ceylon.interop.java {
-    CeylonList
+    CeylonList,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
@@ -86,6 +88,20 @@ class TypedDeclarationInfo<out NodeType>(NodeType node)
 
     value tcNode = assertedTcNode<Tree.TypedDeclaration>(node);
     shared default TypedDeclarationModel? declarationModel => tcNode.declarationModel;
+}
+
+
+class ArgumentListInfo(ArgumentList node)
+        extends NodeInfo<ArgumentList>(node) {
+
+    value tcNode = assertedTcNode<Tree.SequencedArgument>(node);
+    shared ParameterModel? parameterModel => tcNode.parameter;
+
+    // FIXME last argument may be JSpreadArgument or JComprehension
+    // see ceylon.ast.redhat::argumentListToCeylon code
+    shared {[TypeModel, ParameterModel]*} listedArgumentModels
+        =>  CeylonIterable(tcNode.positionalArguments).map((arg)
+                => [arg.typeModel, arg.parameter]);
 }
 
 abstract
