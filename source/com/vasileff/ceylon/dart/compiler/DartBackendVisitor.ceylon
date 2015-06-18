@@ -349,6 +349,12 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     }
 
     shared actual
+    void visitNode(Node that)
+        =>  error(that,
+                "compiler bug: unhandled node \
+                 '``className(that)``'");
+
+    shared actual
     void visitCompilationUnit(CompilationUnit that) {
         // TODO actual imports from the typechecker
         // TODO decide on file structure (one file per module?)
@@ -369,4 +375,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             fun();
         }
     }
+
+    void error(Node that, String message)
+        =>  process.writeErrorLine(message);
 }

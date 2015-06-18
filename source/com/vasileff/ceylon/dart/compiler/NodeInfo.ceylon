@@ -39,6 +39,9 @@ class NodeInfo<out NodeType>(shared NodeType node)
     shared String location => tcNode.location;
     shared Scope scope => tcNode.scope;
     shared {Message*} errors => CeylonList(tcNode.errors);
+    shared void addError(String string) => tcNode.addError(string);
+    shared void addUnexpectedError(String string) => tcNode.addUnexpectedError(string);
+    shared void addUnsupportedError(String string) => tcNode.addUnsupportedError(string);
 }
 
 class ExpressionInfo<out NodeType>(NodeType node)

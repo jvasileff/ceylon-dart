@@ -47,6 +47,8 @@ void run() {
                 value x = (Integer t) { print("printing"); return t; };
                 value y = (Integer t) => t;
 
+                value three = 1 + 1 + 1;
+
                 // TODO:
                 // value lazyVal => 1;
 
