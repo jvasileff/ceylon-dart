@@ -59,6 +59,10 @@ void run() {
                 \Ifalse? f5n = null;
                 Boolean|String fob1 = false;
                 \Ifalse|String fob2 = false;
+
+                // shouldn't box:
+                returnsTrue();
+                returnsTrueObject();
             }
 
             void main2() {

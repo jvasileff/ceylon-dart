@@ -45,9 +45,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     value typeFactory = TypeFactory(unit);
 
-    variable Type? lhsTypeTop = null;
+    variable TypeOrNoType? lhsTypeTop = null;
 
-    variable Type? returnTypeTop = null;
+    variable TypeOrNoType? returnTypeTop = null;
 
     function hasError(Node that)
         =>  that.transform(hasErrorTransformer);
@@ -76,7 +76,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             dcw.write("null");
         }
         else {
-            // TODO make this work // WIP
+            // TODO make this work
             withBoxing(rhsType, ()
                 =>  dcw.write(nameAndArgs.name.name));
         }
@@ -114,7 +114,6 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         for ([expression, argumentTypeModel, parameterModel] in
                 zip(that.listedArguments,
                     info.listedArgumentModels)) {
-
             if (first) {
                 first = false;
             }
@@ -152,8 +151,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         dcw.writeIndent();
-        // FIXME using nothingType as a temporary hack to signal no lhs
-        withLhsType(typeFactory.nothingType, ()
+        withLhsType(noType, ()
             =>  that.expression.visit(this));
         dcw.writeLine(";");
     }
@@ -384,14 +382,14 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         that.visitChildren(this);
     }
 
-    void withLhsType(Type lhsType, void fun()) {
+    void withLhsType(TypeOrNoType lhsType, void fun()) {
         value save = lhsTypeTop;
         lhsTypeTop = lhsType;
         fun();
         lhsTypeTop = save;
     }
 
-    void withReturnType(Type returnType, void fun()) {
+    void withReturnType(TypeOrNoType returnType, void fun()) {
         value save = returnTypeTop;
         returnTypeTop = returnType;
         fun();
@@ -400,18 +398,12 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     void withBoxing(Type rhsType, void fun()) {
         assert (exists lhsType = lhsTypeTop);
-        withBoxingConversion(lhsType, rhsType, fun);
-    }
+        value conversion =
+            switch (lhsType)
+            case (is NoType) null
+            case (is Type) typeFactory
+                    .boxingConversionFor(lhsType, rhsType);
 
-    void withBoxingConversion(Type lhsType, Type rhsType, void fun()) {
-        // FIXME temporary hack using Nothing as a "no-lhs" marker
-        if (typeFactory.isCeylonNothing(lhsType)) {
-            fun();
-            return;
-        }
-
-        value conversion = typeFactory
-                .boxingConversionFor(lhsType, rhsType);
         if (exists conversion) {
             dcw.write(conversion.prefix);
             fun();
@@ -425,8 +417,12 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     void error(Node that, String message)
         =>  process.writeErrorLine(message);
 
-    void generateBooleanLiteral(Type type, Boolean boolean) {
-        value box = typeFactory.isCeylonOptionalBoolean(type);
+    void generateBooleanLiteral(TypeOrNoType type, Boolean boolean) {
+        value box =
+            switch(type)
+            case (is NoType) false
+            case (is Type) typeFactory
+                .isCeylonOptionalBoolean(type);
         if (box) {
             dcw.write(if(boolean) then "true" else "false");
         }
@@ -435,3 +431,13 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         }
     }
 }
+
+"Indicates the absence of a type (like void). One use is to
+ indicate the absence of a `lhsType` when determining if
+ the result of an expression should be boxed."
+interface NoType of noType {}
+
+"The instance of `NoType`"
+object noType satisfies NoType {}
+
+alias TypeOrNoType => Type | NoType;
