@@ -51,6 +51,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     Stack<Type> lhsTypeStack = LinkedList<Type>();
 
+    Stack<Type> returnTypeStack = LinkedList<Type>();
+
     function hasError(Node that)
         =>  that.transform(hasErrorTransformer);
 
@@ -131,24 +133,34 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     shared actual
     void visitInvocation(Invocation that) {
-        that.invoked.visit(this);
+        value info = ExpressionInfo(that);
+        assert (exists rhsType = info.typeModel);
+        withBoxing(rhsType, void() {
+            // we want a boxed type to invoke, so use 'Anything'
+            lhsTypeStack.push(typeFactory.anythingType);
+            that.invoked.visit(this);
+            lhsTypeStack.pop();
 
-        "Named arguments not yet supported"
-        assert (that.arguments is PositionalArguments);
-        that.arguments.visit(this);
+            "Named arguments not yet supported"
+            assert (that.arguments is PositionalArguments);
+            that.arguments.visit(this);
+        });
     }
 
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         dcw.writeIndent();
-        that.expression.visit(this); // the Invocation
+        that.expression.visit(this);
         dcw.writeLine(";");
     }
 
     shared actual
     void visitLazySpecifier(LazySpecifier that) {
         dcw.write("=> ");
+        assert (exists lhsType = returnTypeStack.top);
+        lhsTypeStack.push(lhsType);
         that.expression.visit(this);
+        lhsTypeStack.pop();
     }
 
     shared actual
@@ -184,10 +196,13 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     shared actual
     void visitReturn(Return that) {
         if (exists result = that.result) {
+            assert (exists lhsType = returnTypeStack.top);
+            lhsTypeStack.push(lhsType);
             dcw.writeIndent();
             dcw.write("return ");
             result.visit(this);
             dcw.writeLine(";");
+            lhsTypeStack.pop();
         }
         else {
             dcw.writeIndent();
@@ -291,8 +306,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
         if (exists functionName) {
             dcw.writeIndent()
-                .writeLine("// location=``location(that)``; \
-                            return=``returnType.asString()``")
+                //.writeLine("// location=``location(that)``; \
+                //            return=``returnType.asString()``")
                 .writeIndent()
                 .write(functionModel.declaredVoid then "void " else "")
                 .write(functionName);
@@ -309,7 +324,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
         if (defaultedParameters.empty) {
             // no defaulted parameters
+            returnTypeStack.push(returnType);
             definition.visit(this);
+            returnTypeStack.pop();
         }
         else {
             // defaulted parameters exist
@@ -327,7 +344,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             }
             switch (definition)
             case (is Block) {
+                returnTypeStack.push(returnType);
                 definition.visitChildren(this);
+                returnTypeStack.pop();
             }
             case (is LazySpecifier) {
                 //for FunctionShortcutDefinition
@@ -335,7 +354,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
                 if (!functionModel.declaredVoid) {
                     dcw.write("return ");
                 }
+                lhsTypeStack.push(returnType);
                 definition.expression.visit(this);
+                lhsTypeStack.pop();
                 dcw.writeLine(";");
             }
             dcw.endBlock();

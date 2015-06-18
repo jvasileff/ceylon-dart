@@ -12,6 +12,13 @@ void run() {
            """
               import ceylon.language { myTrue = true, myNull = null }
               \Itrue localTrue = true;
+
+              Boolean returnsTrue() => true;
+              Object returnsTrueObject() => true;
+
+              Boolean returnsFalse() { return false; }
+              Object returnsFalseObject() { return false; }
+
               void main() {
                 Integer ii1 = 1;
                 Integer? ii2 = 1;
@@ -31,6 +38,10 @@ void run() {
                 \Itrue? t4 = myTrue;
                 Boolean|String to1 = myTrue;
                 \Itrue|String to2 = myTrue;
+
+                Boolean fun_true_b_b = returnsTrue();
+                Object fun_true_o_b = returnsTrue();
+                Object fun_true_o_o = returnsTrueObject();
 
                 Boolean f1 = false;
                 Boolean? f2 = false;
