@@ -49,9 +49,9 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
     value typeFactory = TypeFactory(unit);
 
-    Stack<Type> lhsTypeStack = LinkedList<Type>();
+    variable Type? lhsTypeTop = null;
 
-    Stack<Type> returnTypeStack = LinkedList<Type>();
+    variable Type? returnTypeTop = null;
 
     function hasError(Node that)
         =>  that.transform(hasErrorTransformer);
@@ -67,7 +67,7 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
         value info = BaseExpressionInfo(that);
         assert (exists targetDeclaration = info.declaration);
-        assert (exists lhsType = lhsTypeStack.top);
+        assert (exists lhsType = lhsTypeTop);
         assert (exists rhsType = info.typeModel?.type);
 
         if (typeFactory.isBooleanTrueDeclaration(targetDeclaration)) {
@@ -137,9 +137,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         assert (exists rhsType = info.typeModel);
         withBoxing(rhsType, void() {
             // we want a boxed type to invoke, so use 'Anything'
-            lhsTypeStack.push(typeFactory.anythingType);
-            that.invoked.visit(this);
-            lhsTypeStack.pop();
+            withLhsType(typeFactory.anythingType, ()
+                =>  that.invoked.visit(this));
 
             "Named arguments not yet supported"
             assert (that.arguments is PositionalArguments);
@@ -154,13 +153,13 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         dcw.writeLine(";");
     }
 
+    "Parents must set [[returnTypeTop]]"
     shared actual
     void visitLazySpecifier(LazySpecifier that) {
         dcw.write("=> ");
-        assert (exists lhsType = returnTypeStack.top);
-        lhsTypeStack.push(lhsType);
-        that.expression.visit(this);
-        lhsTypeStack.pop();
+        assert (exists lhsType = returnTypeTop);
+        withLhsType(lhsType, ()
+            =>  that.expression.visit(this));
     }
 
     shared actual
@@ -187,22 +186,21 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         assert (that.definition is Specifier);
 
         dcw.writeIndent().write("var ``dartName`` = ");
-        lhsTypeStack.push(type);
-        that.definition.visitChildren(this);
-        lhsTypeStack.pop();
+        withLhsType(type, ()
+            =>  that.definition.visitChildren(this));
         dcw.writeLine(";");
     }
 
+    "Parents must set [[returnTypeTop]]"
     shared actual
     void visitReturn(Return that) {
         if (exists result = that.result) {
-            assert (exists lhsType = returnTypeStack.top);
-            lhsTypeStack.push(lhsType);
+            assert (exists lhsType = returnTypeTop);
             dcw.writeIndent();
             dcw.write("return ");
-            result.visit(this);
+            withLhsType(lhsType, ()
+                =>  result.visit(this));
             dcw.writeLine(";");
-            lhsTypeStack.pop();
         }
         else {
             dcw.writeIndent();
@@ -324,9 +322,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
 
         if (defaultedParameters.empty) {
             // no defaulted parameters
-            returnTypeStack.push(returnType);
-            definition.visit(this);
-            returnTypeStack.pop();
+            withReturnType(returnType, ()
+                =>  definition.visit(this));
         }
         else {
             // defaulted parameters exist
@@ -344,9 +341,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             }
             switch (definition)
             case (is Block) {
-                returnTypeStack.push(returnType);
-                definition.visitChildren(this);
-                returnTypeStack.pop();
+                withReturnType(returnType, ()
+                    =>  definition.visitChildren(this));
             }
             case (is LazySpecifier) {
                 //for FunctionShortcutDefinition
@@ -354,9 +350,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
                 if (!functionModel.declaredVoid) {
                     dcw.write("return ");
                 }
-                lhsTypeStack.push(returnType);
-                definition.expression.visit(this);
-                lhsTypeStack.pop();
+                withLhsType(returnType, ()
+                    =>  definition.expression.visit(this));
                 dcw.writeLine(";");
             }
             dcw.endBlock();
@@ -384,8 +379,22 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         that.visitChildren(this);
     }
 
+    void withLhsType(Type lhsType, void fun()) {
+        value save = lhsTypeTop;
+        lhsTypeTop = lhsType;
+        fun();
+        lhsTypeTop = save;
+    }
+
+    void withReturnType(Type returnType, void fun()) {
+        value save = returnTypeTop;
+        returnTypeTop = returnType;
+        fun();
+        returnTypeTop = save;
+    }
+
     void withBoxing(Type rhsType, void fun()) {
-        assert (exists lhsType = lhsTypeStack.top);
+        assert (exists lhsType = lhsTypeTop);
         withBoxingConversion(lhsType, rhsType, fun);
     }
 
