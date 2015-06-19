@@ -8,8 +8,7 @@ void run() {
            """
               void prog2() {}
            """;
-    value program =
-
+    value programBoxing =
          """
             import ceylon.language { myTrue = true, myNull = null }
 
@@ -64,7 +63,49 @@ void run() {
                 returnsTrue();
                 returnsTrueObject();
             }
+         """;
 
+value programAssertions =
+         """
+            Boolean returnsTrue() => true;
+            Object returnsTrueObject() => true;
+
+            Boolean returnsFalse() { return false; }
+            Object returnsFalseObject() { return false; }
+
+            void assertions() {
+                assert(is Boolean ab = returnsTrueObject());
+
+                Object objToTest = returnsFalse();
+                print(objToTest);
+                assert (!is Boolean objToTest);
+                print(objToTest);
+
+
+                Anything any = "";
+                print(any);
+                assert (is Object any);
+                print(any);
+                assert (is String any);
+                print(any);
+
+                String|Float sf = "";
+                assert (is String|Integer sf);
+
+                Object tobj = true;
+                Object t0 = tobj;
+                assert (is Boolean tobj);
+                Object t1 = tobj;
+                Boolean t2 = tobj;
+
+                Object? obj = "";
+                assert (is Object obj);
+                Object obj2 = obj;
+            }
+         """;
+
+value programFunctions =
+         """
             void main2() {
                 value x = (Integer t) { print("printing"); return t; };
                 value y = (Integer t) => t;
@@ -83,7 +124,7 @@ void run() {
                 print("Hello Dart!");
                 return;
             }
-     """;
+         """;
 
-    compile(program);
+    compile(programAssertions);
 }

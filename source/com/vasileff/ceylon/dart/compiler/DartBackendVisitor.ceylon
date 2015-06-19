@@ -26,17 +26,26 @@ import ceylon.ast.core {
     FunctionShortcutDefinition,
     FloatLiteral,
     Specifier,
-    Node
+    Node,
+    Assertion,
+    IsCondition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
-    Unit,
-    Type
+    ValueModel=Value,
+    UnitModel=Unit,
+    TypeModel=Type
 }
 
-class DartBackendVisitor(Unit unit) satisfies Visitor {
+import org.antlr.runtime {
+    Token
+}
+
+class DartBackendVisitor
+        (UnitModel unit, List<Token> tokens)
+        satisfies Visitor {
 
     shared
     StringBuilder result = StringBuilder();
@@ -44,6 +53,8 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     value dcw = CodeWriter(result.append);
 
     value typeFactory = TypeFactory(unit);
+
+    value naming = Naming();
 
     variable TypeOrNoType? lhsTypeTop = null;
 
@@ -76,9 +87,16 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
             dcw.write("null");
         }
         else {
-            // TODO make this work
+            // TODO correct names
+            String dartIdentifier;
+            if (is ValueModel declarationModel = info.declaration) {
+                dartIdentifier = naming.getName(declarationModel);
+            }
+            else {
+                dartIdentifier = nameAndArgs.name.name;
+            }
             withBoxing(rhsType, ()
-                =>  dcw.write(nameAndArgs.name.name));
+                =>  dcw.write(dartIdentifier));
         }
     }
 
@@ -181,15 +199,15 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         }
 
         value info = ValueDefinitionInfo(that);
-        assert (exists type = info.declarationModel?.type);
+        assert (exists declarationModel = info.declarationModel);
 
-        value dartName = that.name.name; // TODO name
+        value dartName = naming.getName(declarationModel);
 
         "lazySpecifier not yet supported"
         assert (that.definition is Specifier);
 
         dcw.writeIndent().write("var ``dartName`` = ");
-        withLhsType(type, ()
+        withLhsType(declarationModel.type, ()
             =>  that.definition.visitChildren(this));
         dcw.writeLine(";");
     }
@@ -368,6 +386,113 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
     }
 
     shared actual
+    void visitAssertion(Assertion that) {
+        // children are 'Annotations' and 'Conditions'
+        // 'Conditions' has 'Condition's.
+
+        // TODO Annotations
+        // TODO Don't visit conditions individually?
+        // annotations, especially 'doc', need to apply to
+        // each condition. Any other annotations matter?
+
+        that.conditions.visitChildren(this);
+    }
+
+    shared actual
+    void visitIsCondition(IsCondition that) {
+        // IsCondition holds a TypedVariable that may
+        // or may not include a specifier to define a new variable
+
+        // NOTE: There is no ast node for the typechecker's
+        // Tree.IsCondition.Variable (we just get the specifier
+        // and identifier from that node, but not the model info).
+        // Instead, use ConditionInfo.variableDeclarationModel.
+
+        // TODO don't hardcode AssertionError
+        // TODO string escaping
+        // TODO types! (including union and intersection, but not reified yet)
+        // TODO check not null for Objects
+        // TODO check null for Null
+        // TODO consider null issues for negated checks
+
+        value typeInfo = TypeInfo(that.variable.type);
+        value conditionInfo = IsConditionInfo(that);
+
+        "The type we are testing for"
+        assert (exists isType = typeInfo.typeModel);
+
+        "The declaration model for the new variable"
+        assert (exists variableDeclaration = conditionInfo.variableDeclarationModel);
+
+        "The type of the new variable (intersection of isType and expression/old type)"
+        value variableType = variableDeclaration.type;
+
+        "The expression node if defining a new variable"
+        value expression = that.variable.specifier?.expression;
+
+        "The original variable's type, if there is one"
+        value originalType = conditionInfo.variableDeclarationModel?.originalDeclaration?.type;
+
+        "If we are narrowing an existing variable, will there also be unboxing?"
+        value boxingConversion =
+                if (exists originalType)
+                then typeFactory.boxingConversionFor(
+                        originalType, variableType)
+                else null;
+
+        "The identifier for the new variable, if defining one"
+        value dartIdentifier =
+                if (exists boxingConversion)
+                    then naming.createReplacementName(variableDeclaration)
+                else if (exists expression)
+                    then naming.getName(variableDeclaration)
+                else null;
+
+        "The Ceylon source code for the condition"
+        value errorMessage =
+                tokens[conditionInfo.token.tokenIndex..
+                       conditionInfo.endToken.tokenIndex]
+                .map(Token.text)
+                .reduce(plus) else "";
+
+        // determine what to check
+        String dartIdentifierToCheck;
+        if (exists expression) {
+            // check type of an expression
+            assert (exists dartIdentifier);
+            dcw.writeIndent().write("var ``dartIdentifier`` = ");
+            withLhsType(noType, ()
+                =>  expression.visit(this)); // (not boxing)
+            dcw.writeLine(";");
+            dartIdentifierToCheck = dartIdentifier;
+        }
+        else {
+            // check type of the original variable
+            assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
+            dartIdentifierToCheck = naming.getName(originalDeclaration);
+        }
+
+        // check the type
+        dcw.writeIndent();
+        dcw.write("if (``!that.negated then "!" else ""``\
+                   ``dartIdentifierToCheck`` is core.Object) ");
+        dcw.startBlock();
+        dcw.writeIndent();
+        dcw.writeLine("throw new AssertionError(\"Violated: ``errorMessage``\");");
+        dcw.endBlock();
+        dcw.writeLine();
+
+        // define an unboxed replacement variable
+        if (exists boxingConversion) {
+            assert (exists dartIdentifier);
+            assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
+            dcw.writeIndent();
+            dcw.writeLine("var ``dartIdentifier`` = \
+                           ``naming.getName(originalDeclaration)``;");
+        }
+    }
+
+    shared actual
     void visitNode(Node that)
         =>  error(that,
                 "compiler bug: unhandled node \
@@ -396,12 +521,12 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         returnTypeTop = save;
     }
 
-    void withBoxing(Type rhsType, void fun()) {
+    void withBoxing(TypeModel rhsType, void fun()) {
         assert (exists lhsType = lhsTypeTop);
         value conversion =
             switch (lhsType)
             case (is NoType) null
-            case (is Type) typeFactory
+            case (is TypeModel) typeFactory
                     .boxingConversionFor(lhsType, rhsType);
 
         if (exists conversion) {
@@ -414,14 +539,15 @@ class DartBackendVisitor(Unit unit) satisfies Visitor {
         }
     }
 
-    void error(Node that, String message)
-        =>  process.writeErrorLine(message);
+    void error(Node that, Anything message)
+        =>  process.writeErrorLine(
+                message?.string else "<null>");
 
     void generateBooleanLiteral(TypeOrNoType type, Boolean boolean) {
         value box =
             switch(type)
             case (is NoType) false
-            case (is Type) typeFactory
+            case (is TypeModel) typeFactory
                 .isCeylonOptionalBoolean(type);
         if (box) {
             dcw.write(if(boolean) then "true" else "false");
@@ -440,4 +566,4 @@ interface NoType of noType {}
 "The instance of `NoType`"
 object noType satisfies NoType {}
 
-alias TypeOrNoType => Type | NoType;
+alias TypeOrNoType => TypeModel | NoType;

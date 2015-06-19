@@ -2,7 +2,7 @@ shared
 class CodeWriter(
         Anything(String) append,
         shared variable Integer indentLevel = 0,
-        shared variable Integer indentAmount = 2) {
+        shared variable Integer indentAmount = 4) {
 
     shared
     CodeWriter indentPlus() {

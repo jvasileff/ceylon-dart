@@ -1,6 +1,10 @@
+import ceylon.ast.redhat {
+    compilationUnitToCeylon
+}
 import ceylon.interop.java {
     createJavaByteArray,
-    CeylonIterable
+    CeylonIterable,
+    CeylonList
 }
 import ceylon.io.charset {
     utf8
@@ -22,9 +26,6 @@ import java.io {
 }
 import java.util {
     List
-}
-import ceylon.ast.redhat {
-    compilationUnitToCeylon
 }
 
 shared
@@ -81,17 +82,18 @@ void compile(String *listings) {
                 augmentNode);
         printNodeAsCode(unit);
         print("========================");
-        print("== AST");
-        print("========================");
-        print(unit);
-        print("========================");
         print("== TC-AST");
         print("========================");
         print(phasedUnit.compilationUnit);
         print("========================");
+        print("== AST");
+        print("========================");
+        print(unit);
+        print("========================");
         print("== DART");
         print("========================");
-        value visitor = DartBackendVisitor(phasedUnit.unit);
+        value visitor = DartBackendVisitor(
+                phasedUnit.unit, CeylonList(phasedUnit.tokens));
         unit.visit(visitor);
         print(visitor.result);
     }

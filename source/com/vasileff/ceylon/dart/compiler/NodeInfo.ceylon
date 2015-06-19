@@ -10,7 +10,9 @@ import ceylon.ast.core {
     FunctionShortcutDefinition,
     FunctionDeclaration,
     Parameter,
-    ArgumentList
+    ArgumentList,
+    Type,
+    IsCondition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -31,15 +33,25 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     ValueModel=Value,
     TypedReferenceModel=TypedReference,
-    Scope
+    ScopeModel=Scope
+}
+
+import org.antlr.runtime {
+    Token
 }
 
 class NodeInfo<out NodeType>(shared NodeType node)
         given NodeType satisfies Node {
 
     value tcNode = assertedTcNode<TcNode>(node);
+    shared String text => tcNode.text;
+
+    // TODO hide ANTLR dependency
+    shared Token token => tcNode.token;
+    shared Token endToken => tcNode.endToken;
+
     shared String location => tcNode.location;
-    shared Scope scope => tcNode.scope;
+    shared ScopeModel scope => tcNode.scope;
     shared {Message*} errors => CeylonList(tcNode.errors);
     shared void addError(String string) => tcNode.addError(string);
     shared void addUnexpectedError(String string) => tcNode.addUnexpectedError(string);
@@ -147,6 +159,23 @@ class ParameterInfo<out NodeType>(NodeType node)
     value tcNode = assertedTcNode<Tree.Parameter>(node);
 
     shared ParameterModel? parameterModel => tcNode.parameterModel;
+}
+
+class TypeInfo<out NodeType>(NodeType node)
+        extends NodeInfo<NodeType>(node)
+        given NodeType satisfies Type {
+
+    value tcNode = assertedTcNode<Tree.Type>(node);
+
+    shared TypeModel? typeModel => tcNode.typeModel;
+}
+
+class IsConditionInfo(IsCondition node)
+        extends NodeInfo<IsCondition>(node) {
+
+    value tcNode = assertedTcNode<Tree.IsCondition>(node);
+
+    shared ValueModel? variableDeclarationModel => tcNode.variable.declarationModel;
 }
 
 class ValueDefinitionInfo(ValueDefinition node)
