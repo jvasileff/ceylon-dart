@@ -92,9 +92,14 @@ void compile(String *listings) {
         print("========================");
         print("== DART");
         print("========================");
-        value visitor = DartBackendVisitor(
-                phasedUnit.unit, CeylonList(phasedUnit.tokens));
-        unit.visit(visitor);
-        print(visitor.result);
+        
+        try {
+            value visitor = DartBackendVisitor(
+                    phasedUnit.unit, CeylonList(phasedUnit.tokens));
+            unit.visit(visitor);
+            print(visitor.result);
+        } catch (CompilerBug b) {
+            process.writeError("Compiler bug:\n" + b.message);
+        }
     }
 }

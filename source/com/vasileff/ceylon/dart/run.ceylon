@@ -11,6 +11,7 @@ void run() {
     value programBoxing =
          """
             import ceylon.language { myTrue = true, myNull = null }
+            import ceylon.language.meta { modules }
 
             \Itrue localTrue = true;
 
@@ -62,6 +63,12 @@ void run() {
                 // shouldn't box:
                 returnsTrue();
                 returnsTrueObject();
+                
+                value testing = runtime;
+                value testing2 = process;
+                value testing3 = localTrue;
+                value testing4 = modules;
+
             }
          """;
 
@@ -80,7 +87,6 @@ value programAssertions =
                 print(objToTest);
                 assert (!is Boolean objToTest);
                 print(objToTest);
-
 
                 Anything any = "";
                 print(any);
@@ -101,6 +107,8 @@ value programAssertions =
                 Object? obj = "";
                 assert (is Object obj);
                 Object obj2 = obj;
+                
+                value sclone = Singleton<String>.clone;
             }
          """;
 
@@ -126,5 +134,29 @@ value programFunctions =
             }
          """;
 
-    compile(programAssertions);
+value programScopes =
+         """shared
+            class CrazyValue() {
+                String ov = "ov";
+                String complexValue {
+                    class ClassInAValue() {
+                        shared String theValue {
+                            if (true) {
+                                value myThis = this;
+                                value packageTest = package.CrazyValue;
+                                value _ = this.theValue;
+                                value o = outer.ov;
+                                return "true";
+                            }
+                            else {
+                                return "false";
+                            }
+                        }
+                    }
+                    return ClassInAValue().theValue;
+                }
+            }
+         """;
+
+    compile(programBoxing);
 }

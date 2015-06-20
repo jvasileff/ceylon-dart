@@ -32,15 +32,29 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
+    ControlBlockModel=ControlBlock,
+    FunctionOrValueModel=FunctionOrValue,
+    ConstructorModel=Constructor,
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
     UnitModel=Unit,
-    TypeModel=Type
+    TypeModel=Type,
+    PackageModel=Package,
+    DeclarationModel=Declaration,
+    ElementModel=Element,
+    ScopeModel=Scope,
+    ClassOrInterfaceModel=ClassOrInterface
 }
 
 import org.antlr.runtime {
     Token
+}
+import ceylon.language.meta.declaration {
+    Package
+}
+import com.redhat.ceylon.model.loader.model {
+    FunctionOrValueInterface
 }
 
 class DartBackendVisitor
@@ -87,16 +101,66 @@ class DartBackendVisitor
             dcw.write("null");
         }
         else {
-            // TODO correct names
-            String dartIdentifier;
-            if (is ValueModel declarationModel = info.declaration) {
-                dartIdentifier = naming.getName(declarationModel);
+            void fallbackStupidMethod() { // (remove asap!)
+                value name = naming.getName(targetDeclaration);
+                withBoxing(rhsType, () => dcw.write(name));
+            }
+            switch (targetDeclaration)
+            case (is ValueModel) {
+                switch (container = containerOfDeclaration(targetDeclaration))
+                case (is PackageModel) {
+                    if (sameModule(unit, targetDeclaration)) {
+                        // qualify toplevel in same module with '$package.'
+                        value name =
+                            "$package." +
+                            naming.identifierPackagePrefix(targetDeclaration) +
+                            naming.getName(targetDeclaration);
+                        withBoxing(rhsType, () => dcw.write(name));
+                    }
+                    else {
+                        // qualify toplevel with Dart import prefix
+                        value name = 
+                            naming.moduleImportPrefix(targetDeclaration) + "." +
+                            naming.identifierPackagePrefix(targetDeclaration) +
+                            naming.getName(targetDeclaration);
+                        withBoxing(rhsType, () => dcw.write(name));
+                    }
+                }
+                case (is ClassOrInterfaceModel) {
+                    // simple case, no extra qualifiers or invocations
+                    value name = naming.getName(targetDeclaration);
+                    withBoxing(rhsType, () => dcw.write(name));
+                }
+                case (is FunctionOrValueModel
+                            | ControlBlockModel
+                            | ConstructorModel) {
+                    // Dart: "Getters cannot be defined within methods or 
+                    // functions", so using functions instead for values
+                    // defined with `ValueDefinition/LazySpecifier` or
+                    // `ValueGetterDefinition`
+                    String name =
+                        if (!targetDeclaration.transient) then
+                            // regular variable; no lazy or block getter
+                            naming.getName(targetDeclaration)
+                        else
+                            // getter invocation
+                            naming.getName(targetDeclaration) + "$get()";    
+
+                    withBoxing(rhsType, () => dcw.write(name));
+                }
+                else {
+                    throw CompilerBug(that,
+                        "Unexpected container for base expression: \
+                         declaration type '``className(targetDeclaration)``' \
+                         container type '``className(container)``'");
+                }
             }
             else {
-                dartIdentifier = nameAndArgs.name.name;
+                fallbackStupidMethod();
+                //throw CompilerBug(that,
+                //        "Unexpected declaration type for base expression: \
+                //         ``className(targetDeclaration)``");
             }
-            withBoxing(rhsType, ()
-                =>  dcw.write(dartIdentifier));
         }
     }
 
@@ -285,7 +349,7 @@ class DartBackendVisitor
         assert (exists functionModel);
 
         if (parameterLists.size != 1) {
-            throw Exception("multiple parameter lists not supported");
+            throw CompilerBug(that, "Multiple parameter lists not supported");
         }
 
         value returnType = (functionModel of TypedDeclarationModel).type;
@@ -315,7 +379,7 @@ class DartBackendVisitor
                         | ParameterReference
                         | DefaultedCallableParameter
                         | DefaultedParameterReference) {
-                    throw Exception("parameter type not supported!");
+                    throw CompilerBug(that, "Parameter type not supported: ``className(parameter)``");
                 }
                 return sb.string;
             })));
@@ -478,7 +542,8 @@ class DartBackendVisitor
                    ``dartIdentifierToCheck`` is core.Object) ");
         dcw.startBlock();
         dcw.writeIndent();
-        dcw.writeLine("throw new AssertionError(\"Violated: ``errorMessage``\");");
+        value assertionError = naming.getName(typeFactory.assertionErrorDeclaration);
+        dcw.writeLine("throw new ``assertionError``(\"Violated: ``errorMessage``\");");
         dcw.endBlock();
         dcw.writeLine();
 

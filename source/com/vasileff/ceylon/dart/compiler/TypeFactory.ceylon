@@ -97,8 +97,8 @@ class TypeFactory(Unit unit) {
     // common declarations
     /////////////////////////////////////////////
 
-    // for now, not sharing; not sure about the safety
-    // implications due to duplicate instances re:
+    // not sure about the safety implications due
+    // to duplicate instances re:
     // https://github.com/ceylon/ceylon-compiler/issues/1815
 
     Declaration booleanTrueDeclaration
@@ -109,6 +109,10 @@ class TypeFactory(Unit unit) {
 
     Declaration nullDeclaration
         =>  unit.getLanguageModuleDeclaration("null");
+
+    shared
+    Declaration assertionErrorDeclaration
+        =>  unit.getLanguageModuleDeclaration("AssertionError");
 
     /////////////////////////////////////////////
     // declaration tests
