@@ -12,7 +12,18 @@ import ceylon.ast.core {
     Parameter,
     ArgumentList,
     Type,
-    IsCondition
+    IsCondition,
+    IfClause,
+    ElseClause,
+    CaseClause,
+    CatchClause,
+    ComprehensionClause,
+    DynamicBlock,
+    FinallyClause,
+    ForClause,
+    LetExpression,
+    TryClause,
+    While
 }
 import ceylon.interop.java {
     CeylonList,
@@ -33,6 +44,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     ValueModel=Value,
     TypedReferenceModel=TypedReference,
+    ControlBlockModel=ControlBlock,
     ScopeModel=Scope
 }
 
@@ -176,6 +188,28 @@ class IsConditionInfo(IsCondition node)
     value tcNode = assertedTcNode<Tree.IsCondition>(node);
 
     shared ValueModel? variableDeclarationModel => tcNode.variable.declarationModel;
+}
+
+class ControlClauseInfo<NodeType>(NodeType node)
+        extends NodeInfo<NodeType>(node)
+        given NodeType of CaseClause | CatchClause | ComprehensionClause
+                | DynamicBlock | ElseClause | FinallyClause | ForClause
+                | IfClause | LetExpression | TryClause | While
+         satisfies Node  {
+
+    value tcNode = assertedTcNode<Tree.ControlClause>(node);
+
+    shared ControlBlockModel controlBlock => tcNode.controlBlock;
+}
+
+class ComprehensionClauseInfo<NodeType>(NodeType node)
+        extends ControlClauseInfo<NodeType>(node)
+        given NodeType satisfies ComprehensionClause {
+
+    value tcNode = assertedTcNode<Tree.ComprehensionClause>(node);
+
+    shared TypeModel typeModel => tcNode.typeModel;
+    shared TypeModel firstTypeModel => tcNode.firstTypeModel;
 }
 
 class ValueDefinitionInfo(ValueDefinition node)
