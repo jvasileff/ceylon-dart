@@ -50,6 +50,9 @@ String location(Node that) {
     return location;
 }
 
+Boolean hasError(Node that)
+    =>  that.transform(hasErrorTransformer);
+
 UnitModel getUnit
         (ElementModel|UnitModel declaration)
     =>  if (is UnitModel declaration)

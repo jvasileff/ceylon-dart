@@ -2,7 +2,11 @@ see(`function TypeFactory.boxingConversionFor`)
 abstract
 class BoxingConversion(
         shared String prefix,
-        shared String suffix) {}
+        shared String suffix)
+        of ceylonBooleanToNative | ceylonFloatToNative |
+            ceylonIntegerToNative | ceylonStringToNative |
+            nativeToCeylonBoolean | nativeToCeylonFloat |
+            nativeToCeylonInteger | nativeToCeylonString {}
 
 object ceylonBooleanToNative extends BoxingConversion("dart$ceylonBooleanToNative(",")") {}
 object ceylonFloatToNative extends BoxingConversion("dart$ceylonFloatToNative(",")") {}

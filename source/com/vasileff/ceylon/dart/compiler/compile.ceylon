@@ -80,7 +80,7 @@ void compile(String *listings) {
         value unit = compilationUnitToCeylon(
                 phasedUnit.compilationUnit,
                 augmentNode);
-        //printNodeAsCode(unit);
+        printNodeAsCode(unit);
         print("========================");
         print("== TC-AST");
         print("========================");
@@ -92,13 +92,29 @@ void compile(String *listings) {
         print("========================");
         print("== DART");
         print("========================");
-        try {
-            value visitor = DartBackendVisitor(
-                    phasedUnit.unit, CeylonList(phasedUnit.tokens));
-            unit.visit(visitor);
-            print(visitor.result);
-        } catch (CompilerBug b) {
-            process.writeError("Compiler bug:\n" + b.message);
+        if (hasError(unit)) {
+            process.writeError("Typechecker errors exist; skipping Dart backend");
+        }
+        else {
+            try {
+                value ctx = CompilationContext(
+                        phasedUnit.unit, CeylonList(phasedUnit.tokens));
+                ctx.init();
+                value dartDeclarations = ctx.dartTransformer.transformCompilationUnit(unit);
+
+                // TODO imports from the typechecker, one file per module?
+                value codeWriter = CodeWriter(process.write);
+                codeWriter.writeLine(
+                        "import 'package:ceylon/language/language.dart' \
+                         as $ceylon$language;");
+                codeWriter.writeLine(
+                        "import 'dart:core' \
+                         as $dart$core;");
+                codeWriter.writeLine();
+                dartDeclarations.each((d) => d.write(codeWriter));
+            } catch (CompilerBug b) {
+                process.writeError("Compiler bug:\n" + b.message);
+            }
         }
     }
 }

@@ -91,21 +91,21 @@ void run() {
                 value testing3 = localTrue;
                 value testing4 = modules;
 
-                class MyClass() {
-                    shared void doSomething(String s) {}
-                }
-                value funcRef = takesBoolean;
-                value funcRef2 = MyClass().doSomething;
-                value staticFuncRef2 = MyClass.doSomething;
+                //class MyClass() {
+                //    shared void doSomething(String s) {}
+                //}
+                //value funcRef = takesBoolean;
+                //value funcRef2 = MyClass().doSomething;
+                //value staticFuncRef2 = MyClass.doSomething;
 
-                Boolean computedBool => true;
-                assign computedBool { }
+                //Boolean computedBool => true;
+                //assign computedBool { }
 
-                Object computedObject => true;
-                assign computedObject { }
+                //Object computedObject => true;
+                //assign computedObject { }
 
-                computedBool = false;
-                computedObject = false;
+                //computedBool = false;
+                //computedObject = false;
 
                 toplevelBoolean = false;
                 toplevelObject = false;
@@ -144,11 +144,9 @@ void run() {
                 Object t1 = tobj;
                 Boolean t2 = tobj;
 
-                Object? obj = "";
+                Object? obj = "someStringValue";
                 assert (is Object obj);
                 Object obj2 = obj;
-
-                value sclone = Singleton<String>.clone;
             }
          """;
 
@@ -157,7 +155,7 @@ void run() {
             void main2() {
                 value x = (Integer t) { print("printing"); return t; };
                 value y = (Integer t) => t;
-                value three = 1 + 1 + 1;
+                value three = 3;//1 + 1 + 1;
                 // TODO:
                 // value lazyVal => 1;
                 helloDart(1);
@@ -172,6 +170,10 @@ void run() {
                 print("Hello Dart!");
                 return;
             }
+
+            Integer helloShortcut1(Integer y) => y;
+
+            Integer helloShortcut2(Integer x) => x;
          """;
 
     value programScopes =
@@ -198,5 +200,5 @@ void run() {
             }
          """;
 
-    compile(programBoxing);
+    compile(programAssertions);
 }

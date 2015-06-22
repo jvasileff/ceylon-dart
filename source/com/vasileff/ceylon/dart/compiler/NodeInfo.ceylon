@@ -115,7 +115,6 @@ class TypedDeclarationInfo<out NodeType>(NodeType node)
     shared default TypedDeclarationModel? declarationModel => tcNode.declarationModel;
 }
 
-
 class ArgumentListInfo(ArgumentList node)
         extends NodeInfo<ArgumentList>(node) {
 
