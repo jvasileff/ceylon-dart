@@ -141,28 +141,28 @@ class FunctionExpressionInfo(FunctionExpression node)
         extends ExpressionInfo<FunctionExpression>(node) {
 
     value tcNode = assertedTcNode<Tree.FunctionArgument>(node);
-    shared FunctionModel? declarationModel => tcNode.declarationModel;
+    shared FunctionModel declarationModel => tcNode.declarationModel;
 }
 
 class FunctionDeclarationInfo(FunctionDeclaration node)
         extends AnyFunctionInfo<FunctionDeclaration>(node) {
 
     value tcNode = assertedTcNode<Tree.MethodDeclaration>(node);
-    shared actual FunctionModel? declarationModel => tcNode.declarationModel;
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
 }
 
 class FunctionDefinitionInfo(FunctionDefinition node)
         extends AnyFunctionInfo<FunctionDefinition>(node) {
 
     value tcNode = assertedTcNode<Tree.MethodDefinition>(node);
-    shared actual FunctionModel? declarationModel => tcNode.declarationModel;
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
 }
 
 class FunctionShortcutDefinitionInfo(FunctionShortcutDefinition node)
         extends AnyFunctionInfo<FunctionShortcutDefinition>(node) {
 
     value tcNode = assertedTcNode<Tree.MethodDeclaration>(node);
-    shared actual FunctionModel? declarationModel => tcNode.declarationModel;
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
 }
 
 class ParameterInfo<out NodeType>(NodeType node)

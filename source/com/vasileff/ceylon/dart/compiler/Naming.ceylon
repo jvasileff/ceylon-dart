@@ -119,7 +119,7 @@ Result memoize<Result, Argument>
         (Result compute(Argument argument),
          HashMap<Argument, Result> cache =
                 HashMap<Argument, Result>())
-        (Argument argument) 
+        (Argument argument)
         given Argument satisfies Object
         given Result satisfies Object {
     if (exists result = cache.get(argument)) {

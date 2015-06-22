@@ -121,7 +121,7 @@ class DartBackendVisitor
                     }
                     else {
                         // qualify toplevel with Dart import prefix
-                        value name = 
+                        value name =
                             naming.moduleImportPrefix(targetDeclaration) + "." +
                             naming.identifierPackagePrefix(targetDeclaration) +
                             naming.getName(targetDeclaration);
@@ -133,7 +133,7 @@ class DartBackendVisitor
                             | ControlBlockModel
                             | ConstructorModel) {
                     value name =
-                        if (useGetterSetterMethods(targetDeclaration)) then
+                        if (!useGetterSetterMethods(targetDeclaration)) then
                             // regular variable; no lazy or block getter
                             naming.getName(targetDeclaration)
                         else
@@ -227,9 +227,6 @@ class DartBackendVisitor
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         dcw.writeIndent();
-        // the lhs type could also be considered to be
-        // the base expression's type:
-        // ExpressionInfo(that.expression).typeModel;
         withLhsType(noType, ()
             =>  that.expression.visit(this));
         dcw.writeLine(";");
@@ -382,36 +379,33 @@ class DartBackendVisitor
             return;
         }
 
-        FunctionModel? functionModel;
+        FunctionModel functionModel;
         [Parameters+] parameterLists;
         LazySpecifier|Block definition;
         String? functionName;
 
         switch (that)
         case (is FunctionExpression) {
+            value info = FunctionExpressionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
-            functionName = null;
-            value info = FunctionExpressionInfo(that);
             functionModel = info.declarationModel;
+            functionName = null;
         }
         case (is FunctionDefinition) {
+            value info = FunctionDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
-            functionName = name(that);
-            value info = FunctionDefinitionInfo(that);
             functionModel = info.declarationModel;
+            functionName = naming.getName(functionModel);
         }
         case (is FunctionShortcutDefinition) {
+            value info = FunctionShortcutDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
-            functionName = name(that);
-            value info = FunctionShortcutDefinitionInfo(that);
             functionModel = info.declarationModel;
+            functionName = naming.getName(functionModel);
         }
-
-        // no errors, and we just initialized it
-        assert (exists functionModel);
 
         if (parameterLists.size != 1) {
             throw CompilerBug(that, "Multiple parameter lists not supported");

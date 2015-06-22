@@ -85,7 +85,7 @@ void run() {
                 // shouldn't box:
                 returnsTrue();
                 returnsTrueObject();
-                
+
                 value testing = runtime;
                 value testing2 = process;
                 value testing3 = localTrue;
@@ -147,7 +147,7 @@ void run() {
                 Object? obj = "";
                 assert (is Object obj);
                 Object obj2 = obj;
-                
+
                 value sclone = Singleton<String>.clone;
             }
          """;
