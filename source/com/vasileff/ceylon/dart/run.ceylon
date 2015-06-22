@@ -1,7 +1,26 @@
+import ceylon.ast.core {
+    ValueSpecification,
+    LIdentifier,
+    Specifier,
+    StringLiteral,
+    ValueDefinition,
+    ValueModifier,
+    BaseExpression,
+    MemberNameWithTypeArguments,
+    Annotations
+}
+import ceylon.ast.redhat {
+    RedHatTransformer,
+    SimpleTokenFactory,
+    compileCompilationUnit
+}
+import ceylon.formatter {
+    format
+}
+
 import com.vasileff.ceylon.dart.compiler {
     compile
 }
-
 shared
 void run() {
     value program2 =
@@ -23,6 +42,9 @@ void run() {
 
             void takesBoolean(Boolean b) {}
             void takesObject(Object o) {}
+
+            variable Boolean toplevelBoolean = true;
+            variable Object toplevelObject = true;
 
             void main() {
                 Integer ii1 = 1;
@@ -69,10 +91,28 @@ void run() {
                 value testing3 = localTrue;
                 value testing4 = modules;
 
+                class MyClass() {
+                    shared void doSomething(String s) {}
+                }
+                value funcRef = takesBoolean;
+                value funcRef2 = MyClass().doSomething;
+                value staticFuncRef2 = MyClass.doSomething;
+
+                Boolean computedBool => true;
+                assign computedBool { }
+
+                Object computedObject => true;
+                assign computedObject { }
+
+                computedBool = false;
+                computedObject = false;
+
+                toplevelBoolean = false;
+                toplevelObject = false;
             }
          """;
 
-value programAssertions =
+    value programAssertions =
          """
             Boolean returnsTrue() => true;
             Object returnsTrueObject() => true;
@@ -112,7 +152,7 @@ value programAssertions =
             }
          """;
 
-value programFunctions =
+    value programFunctions =
          """
             void main2() {
                 value x = (Integer t) { print("printing"); return t; };
@@ -134,7 +174,7 @@ value programFunctions =
             }
          """;
 
-value programScopes =
+    value programScopes =
          """shared
             class CrazyValue() {
                 String ov = "ov";

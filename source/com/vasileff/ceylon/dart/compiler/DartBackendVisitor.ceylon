@@ -28,7 +28,8 @@ import ceylon.ast.core {
     Specifier,
     Node,
     Assertion,
-    IsCondition
+    IsCondition,
+    ValueSpecification
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -38,6 +39,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
+    SetterModel=Setter,
     UnitModel=Unit,
     TypeModel=Type,
     PackageModel=Package,
@@ -126,25 +128,17 @@ class DartBackendVisitor
                         withBoxing(rhsType, () => dcw.write(name));
                     }
                 }
-                case (is ClassOrInterfaceModel) {
-                    // simple case, no extra qualifiers or invocations
-                    value name = naming.getName(targetDeclaration);
-                    withBoxing(rhsType, () => dcw.write(name));
-                }
-                case (is FunctionOrValueModel
+                case (is ClassOrInterfaceModel
+                            | FunctionOrValueModel
                             | ControlBlockModel
                             | ConstructorModel) {
-                    // Dart: "Getters cannot be defined within methods or 
-                    // functions", so using functions instead for values
-                    // defined with `ValueDefinition/LazySpecifier` or
-                    // `ValueGetterDefinition`
-                    String name =
-                        if (!targetDeclaration.transient) then
+                    value name =
+                        if (useGetterSetterMethods(targetDeclaration)) then
                             // regular variable; no lazy or block getter
                             naming.getName(targetDeclaration)
                         else
                             // getter invocation
-                            naming.getName(targetDeclaration) + "$get()";    
+                            naming.getName(targetDeclaration) + "$get()";
 
                     withBoxing(rhsType, () => dcw.write(name));
                 }
@@ -233,6 +227,9 @@ class DartBackendVisitor
     shared actual
     void visitInvocationStatement(InvocationStatement that) {
         dcw.writeIndent();
+        // the lhs type could also be considered to be
+        // the base expression's type:
+        // ExpressionInfo(that.expression).typeModel;
         withLhsType(noType, ()
             =>  that.expression.visit(this));
         dcw.writeLine(";");
@@ -267,12 +264,80 @@ class DartBackendVisitor
 
         value dartName = naming.getName(declarationModel);
 
-        "lazySpecifier not yet supported"
-        assert (that.definition is Specifier);
+        if (!that.definition is Specifier) {
+            unimplementedError(that, "lazySpecifier not yet supported");
+            return;
+        }
 
         dcw.writeIndent().write("var ``dartName`` = ");
         withLhsType(declarationModel.type, ()
             =>  that.definition.visitChildren(this));
+        dcw.writeLine(";");
+    }
+
+    shared actual
+    void visitValueSpecification(ValueSpecification that) {
+        if (hasError(that)) {
+            return;
+        }
+
+        value info = ValueSpecificationInfo(that);
+        value targetDeclaration = info.declaration;
+
+        String qualifiedName;
+        Boolean isMethod;
+        //value isMethod = useGetterSetterMethods(targetDeclaration);
+
+        switch (container = containerOfDeclaration(targetDeclaration))
+        case (is PackageModel) {
+            isMethod = false;
+            if (sameModule(unit, targetDeclaration)) {
+                // qualify toplevel in same module with '$package.'
+                qualifiedName =
+                    "$package." +
+                    naming.identifierPackagePrefix(targetDeclaration) +
+                    naming.getName(targetDeclaration);
+            }
+            else {
+                // qualify toplevel with Dart import prefix
+                qualifiedName =
+                    naming.moduleImportPrefix(targetDeclaration) + "." +
+                    naming.identifierPackagePrefix(targetDeclaration) +
+                    naming.getName(targetDeclaration);
+            }
+        }
+        case (is ClassOrInterfaceModel
+                    | FunctionOrValueModel
+                    | ControlBlockModel
+                    | ConstructorModel) {
+            isMethod = useGetterSetterMethods(targetDeclaration);
+            qualifiedName =
+                if (!isMethod) then
+                    // regular variable; no lazy or block getter
+                    naming.getName(targetDeclaration)
+                else
+                    // setter method
+                    naming.getName(targetDeclaration) + "$set";
+        }
+        else {
+            throw CompilerBug(that,
+                "Unexpected container for base expression: \
+                 declaration type '``className(targetDeclaration)``' \
+                 container type '``className(container)``'");
+        }
+
+        dcw.writeIndent();
+        dcw.write(qualifiedName);
+        if (isMethod) {
+            dcw.write("(");
+            withLhsType(targetDeclaration.type, ()
+                =>  that.specifier.expression.visit(this));
+            dcw.write(")");
+        } else {
+            dcw.write(" = ");
+            withLhsType(targetDeclaration.type, ()
+                =>  that.specifier.expression.visit(this));
+        }
         dcw.writeLine(";");
     }
 
@@ -379,7 +444,8 @@ class DartBackendVisitor
                         | ParameterReference
                         | DefaultedCallableParameter
                         | DefaultedParameterReference) {
-                    throw CompilerBug(that, "Parameter type not supported: ``className(parameter)``");
+                    throw CompilerBug(that, "Parameter type not supported: \
+                                             ``className(parameter)``");
                 }
                 return sb.string;
             })));
@@ -559,9 +625,15 @@ class DartBackendVisitor
 
     shared actual
     void visitNode(Node that)
+        =>  unimplementedError(that);
+
+    void unimplementedError(Node that, String? message=null)
         =>  error(that,
                 "compiler bug: unhandled node \
-                 '``className(that)``'");
+                 '``className(that)``'" +
+                (if (exists message)
+                then ": " + message
+                else ""));
 
     shared actual
     void visitCompilationUnit(CompilationUnit that) {

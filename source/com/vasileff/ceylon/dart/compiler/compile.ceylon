@@ -80,7 +80,7 @@ void compile(String *listings) {
         value unit = compilationUnitToCeylon(
                 phasedUnit.compilationUnit,
                 augmentNode);
-        printNodeAsCode(unit);
+        //printNodeAsCode(unit);
         print("========================");
         print("== TC-AST");
         print("========================");
@@ -92,7 +92,6 @@ void compile(String *listings) {
         print("========================");
         print("== DART");
         print("========================");
-        
         try {
             value visitor = DartBackendVisitor(
                     phasedUnit.unit, CeylonList(phasedUnit.tokens));

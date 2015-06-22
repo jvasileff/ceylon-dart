@@ -25,7 +25,12 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     InterfaceModel=Interface,
     ClassOrInterfaceModel=ClassOrInterface,
-    ScopeModel=Scope
+    ScopeModel=Scope,
+    SetterModel=Setter,
+    ValueModel=Value,
+    FunctionOrValueModel=FunctionOrValue,
+    ControlBlockModel=ControlBlock,
+    ConstructorModel=Constructor
 }
 
 String name(TypedDeclaration that) {
@@ -118,3 +123,19 @@ Boolean withinClass
 Boolean withinInterface
         (ElementModel declaration)
     =>  declaration.container is InterfaceModel;
+
+"""Use getter and setter methods instead of regular
+   Dart variables for non-toplevel or class attributes
+   that require programatic getter or setters, due to:
+   > "Getters cannot be defined within methods or functions"
+"""
+Boolean useGetterSetterMethods
+        (ValueModel | SetterModel declaration)
+    =>  if (!containerOfDeclaration(declaration) is
+                PackageModel | ClassOrInterfaceModel)
+        then (
+            switch(declaration)
+            case (is ValueModel) declaration.transient
+            case (is SetterModel) declaration.getter.transient)
+        else
+            false;

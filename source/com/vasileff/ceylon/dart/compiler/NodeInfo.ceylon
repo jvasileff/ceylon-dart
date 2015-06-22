@@ -23,7 +23,8 @@ import ceylon.ast.core {
     ForClause,
     LetExpression,
     TryClause,
-    While
+    While,
+    ValueSpecification
 }
 import ceylon.interop.java {
     CeylonList,
@@ -217,6 +218,17 @@ class ValueDefinitionInfo(ValueDefinition node)
 
     value tcNode = assertedTcNode<Tree.AttributeDeclaration>(node);
     shared ValueModel? declarationModel => tcNode.declarationModel;
+}
+
+class ValueSpecificationInfo(ValueSpecification node)
+        extends NodeInfo<ValueSpecification>(node) {
+
+    value tcNode = assertedTcNode<Tree.SpecifierStatement>(node);
+    shared ValueModel declaration {
+        assert (is ValueModel result = tcNode.declaration);
+        return result;
+    }
+    //shared TypedDeclarationModel? refined => tcNode.refined;
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node node)
