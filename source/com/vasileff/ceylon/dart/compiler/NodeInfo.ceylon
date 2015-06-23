@@ -78,7 +78,7 @@ class ExpressionInfo<out NodeType>(NodeType node)
     value tcNode = assertedTcNode<Tree.Term>(node);
 
     "The type of this expression"
-    shared TypeModel? typeModel => tcNode.typeModel;
+    shared TypeModel typeModel => tcNode.typeModel;
 }
 
 class BaseExpressionInfo(BaseExpression node)
@@ -90,10 +90,10 @@ class BaseExpressionInfo(BaseExpression node)
 
     "The declaration and type arguments of the target
      of the BaseExpression"
-    shared ReferenceModel? target => tcNode.target;
+    shared ReferenceModel target => tcNode.target;
 
     "The declaration of the target of the BaseExpression"
-    shared DeclarationModel? declaration => tcNode.declaration;
+    shared DeclarationModel declaration => tcNode.declaration;
 
     shared
     {TypeModel*}? signature
@@ -112,7 +112,7 @@ class TypedDeclarationInfo<out NodeType>(NodeType node)
         given NodeType satisfies TypedDeclaration {
 
     value tcNode = assertedTcNode<Tree.TypedDeclaration>(node);
-    shared default TypedDeclarationModel? declarationModel => tcNode.declarationModel;
+    shared default TypedDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
 class ArgumentListInfo(ArgumentList node)
@@ -133,7 +133,7 @@ class AnyFunctionInfo<out NodeType>(NodeType node)
         extends TypedDeclarationInfo<NodeType>(node)
         given NodeType satisfies AnyFunction {
 
-    shared actual formal FunctionModel? declarationModel;
+    shared actual formal FunctionModel declarationModel;
 }
 
 class FunctionExpressionInfo(FunctionExpression node)
@@ -170,7 +170,7 @@ class ParameterInfo<out NodeType>(NodeType node)
 
     value tcNode = assertedTcNode<Tree.Parameter>(node);
 
-    shared ParameterModel? parameterModel => tcNode.parameterModel;
+    shared ParameterModel parameterModel => tcNode.parameterModel;
 }
 
 class TypeInfo<out NodeType>(NodeType node)
@@ -179,7 +179,7 @@ class TypeInfo<out NodeType>(NodeType node)
 
     value tcNode = assertedTcNode<Tree.Type>(node);
 
-    shared TypeModel? typeModel => tcNode.typeModel;
+    shared TypeModel typeModel => tcNode.typeModel;
 }
 
 class IsConditionInfo(IsCondition node)
@@ -187,7 +187,7 @@ class IsConditionInfo(IsCondition node)
 
     value tcNode = assertedTcNode<Tree.IsCondition>(node);
 
-    shared ValueModel? variableDeclarationModel => tcNode.variable.declarationModel;
+    shared ValueModel variableDeclarationModel => tcNode.variable.declarationModel;
 }
 
 class ControlClauseInfo<NodeType>(NodeType node)
@@ -216,7 +216,7 @@ class ValueDefinitionInfo(ValueDefinition node)
         extends NodeInfo<ValueDefinition>(node) {
 
     value tcNode = assertedTcNode<Tree.AttributeDeclaration>(node);
-    shared ValueModel? declarationModel => tcNode.declarationModel;
+    shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
 class ValueSpecificationInfo(ValueSpecification node)

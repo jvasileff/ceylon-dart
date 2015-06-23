@@ -187,10 +187,10 @@ class StatementTransformer
         value conditionInfo = IsConditionInfo(that);
 
         "The type we are testing for"
-        assert (exists isType = typeInfo.typeModel);
+        value isType = typeInfo.typeModel;
 
         "The declaration model for the new variable"
-        assert (exists variableDeclaration = conditionInfo.variableDeclarationModel);
+        value variableDeclaration = conditionInfo.variableDeclarationModel;
 
         "The type of the new variable (intersection of isType and expression/old type)"
         value variableType = variableDeclaration.type;
@@ -200,7 +200,7 @@ class StatementTransformer
 
         "The original variable's type, if there is one"
         value originalType = conditionInfo.variableDeclarationModel
-                ?.originalDeclaration?.type;
+                .originalDeclaration?.type;
 
         "If we are narrowing an existing variable, will there also be unboxing?"
         value boxingConversion =

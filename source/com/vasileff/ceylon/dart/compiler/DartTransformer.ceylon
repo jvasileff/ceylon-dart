@@ -53,7 +53,7 @@ class DartTransformer(CompilationContext ctx)
         }
 
         value info = ValueDefinitionInfo(that);
-        assert (exists declarationModel = info.declarationModel);
+        value declarationModel = info.declarationModel;
 
         value name = DartSimpleIdentifier(ctx.naming.getName(declarationModel));
         value expression = ctx.withLhsType(declarationModel.type, ()

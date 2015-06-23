@@ -73,9 +73,10 @@ class ExpressionTransformer
         assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
 
         value info = BaseExpressionInfo(that);
-        assert (exists targetDeclaration = info.declaration);
+        value targetDeclaration = info.declaration;
+        value rhsType = info.typeModel.type;
+
         assert (exists lhsType = ctx.lhsTypeTop);
-        assert (exists rhsType = info.typeModel?.type);
 
         if (ctx.typeFactory.isBooleanTrueDeclaration(targetDeclaration)) {
             return generateBooleanLiteral(lhsType, true);
@@ -167,7 +168,7 @@ class ExpressionTransformer
     shared actual
     DartExpression transformInvocation(Invocation that) {
         value info = ExpressionInfo(that);
-        assert (exists rhsType = info.typeModel);
+        value rhsType = info.typeModel;
 
         return withBoxing(rhsType, DartFunctionExpressionInvocation {
             // we want a boxed type to invoke, so use 'Anything' (unoptimized!)
@@ -319,7 +320,7 @@ class ExpressionTransformer
             value parameters = list.parameters.collect((parameter) {
                 //value sb = StringBuilder();
                 value parameterInfo = ParameterInfo(parameter);
-                assert (exists model = parameterInfo.parameterModel);
+                value model = parameterInfo.parameterModel;
 
                 switch(parameter)
                 case (is DefaultedValueParameter) {
@@ -383,7 +384,7 @@ class ExpressionTransformer
 
             for (param in defaultedParameters) {
                 value parameterInfo = ParameterInfo(param);
-                assert (exists model = parameterInfo.parameterModel);
+                value model = parameterInfo.parameterModel;
                 value parameterType = model.type;
                 value paramName = DartSimpleIdentifier
                         (param.parameter.name.name); // TODO Name
