@@ -3,10 +3,6 @@ import ceylon.ast.core {
     WideningTransformer
 }
 
-import com.redhat.ceylon.model.typechecker.model {
-    TypeModel=Type
-}
-
 abstract
 class BaseTransformer<Result>
         (CompilationContext ctx)

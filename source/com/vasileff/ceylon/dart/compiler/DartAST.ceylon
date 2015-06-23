@@ -1,7 +1,3 @@
-import ceylon.ast.core {
-    ArgumentList
-}
-
 abstract
 class DartNode() {
     shared formal

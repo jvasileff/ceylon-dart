@@ -1,68 +1,20 @@
 import ceylon.ast.core {
-    ValueParameter,
-    DefaultedValueParameter,
-    Visitor,
     FunctionDefinition,
     Block,
     InvocationStatement,
-    Invocation,
-    BaseExpression,
-    MemberNameWithTypeArguments,
-    PositionalArguments,
-    ArgumentList,
-    IntegerLiteral,
-    StringLiteral,
-    CompilationUnit,
-    ParameterReference,
-    VariadicParameter,
-    DefaultedCallableParameter,
-    DefaultedParameterReference,
-    CallableParameter,
     ValueDefinition,
-    LazySpecifier,
-    FunctionExpression,
-    Parameters,
     Return,
     FunctionShortcutDefinition,
-    FloatLiteral,
-    Specifier,
-    Node,
     Assertion,
     IsCondition,
     ValueSpecification
 }
-
-import com.redhat.ceylon.model.typechecker.model {
-    ControlBlockModel=ControlBlock,
-    FunctionOrValueModel=FunctionOrValue,
-    ConstructorModel=Constructor,
-    TypedDeclarationModel=TypedDeclaration,
-    FunctionModel=Function,
-    ValueModel=Value,
-    SetterModel=Setter,
-    UnitModel=Unit,
-    TypeModel=Type,
-    PackageModel=Package,
-    DeclarationModel=Declaration,
-    ElementModel=Element,
-    ScopeModel=Scope,
-    ClassOrInterfaceModel=ClassOrInterface
+import ceylon.collection {
+    LinkedList
 }
 
 import org.antlr.runtime {
     Token
-}
-import ceylon.language.meta.declaration {
-    Package
-}
-import com.redhat.ceylon.model.loader.model {
-    FunctionOrValueInterface
-}
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    ExpressionVisitor
-}
-import ceylon.collection {
-    LinkedList
 }
 
 class StatementTransformer
@@ -183,11 +135,11 @@ class StatementTransformer
         // TODO check null for Null
         // TODO consider null issues for negated checks
 
-        value typeInfo = TypeInfo(that.variable.type);
+        //value typeInfo = TypeInfo(that.variable.type);
         value conditionInfo = IsConditionInfo(that);
 
-        "The type we are testing for"
-        value isType = typeInfo.typeModel;
+        //"The type we are testing for"
+        //value isType = typeInfo.typeModel;
 
         "The declaration model for the new variable"
         value variableDeclaration = conditionInfo.variableDeclarationModel;

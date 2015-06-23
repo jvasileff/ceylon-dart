@@ -1,62 +1,7 @@
 import ceylon.ast.core {
-    ValueParameter,
-    DefaultedValueParameter,
-    Visitor,
     FunctionDefinition,
-    Block,
-    InvocationStatement,
-    Invocation,
-    BaseExpression,
-    MemberNameWithTypeArguments,
-    PositionalArguments,
-    ArgumentList,
-    IntegerLiteral,
-    StringLiteral,
-    CompilationUnit,
-    ParameterReference,
-    VariadicParameter,
-    DefaultedCallableParameter,
-    DefaultedParameterReference,
-    CallableParameter,
     ValueDefinition,
-    LazySpecifier,
-    FunctionExpression,
-    Parameters,
-    Return,
-    FunctionShortcutDefinition,
-    FloatLiteral,
-    Specifier,
-    Node,
-    Assertion,
-    IsCondition,
-    ValueSpecification
-}
-
-import com.redhat.ceylon.model.typechecker.model {
-    ControlBlockModel=ControlBlock,
-    FunctionOrValueModel=FunctionOrValue,
-    ConstructorModel=Constructor,
-    TypedDeclarationModel=TypedDeclaration,
-    FunctionModel=Function,
-    ValueModel=Value,
-    SetterModel=Setter,
-    UnitModel=Unit,
-    TypeModel=Type,
-    PackageModel=Package,
-    DeclarationModel=Declaration,
-    ElementModel=Element,
-    ScopeModel=Scope,
-    ClassOrInterfaceModel=ClassOrInterface
-}
-
-import org.antlr.runtime {
-    Token
-}
-import ceylon.language.meta.declaration {
-    Package
-}
-import com.redhat.ceylon.model.loader.model {
-    FunctionOrValueInterface
+    FunctionShortcutDefinition
 }
 
 "For Dart TopLevel declarations, which are distinct from

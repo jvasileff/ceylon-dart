@@ -1,6 +1,9 @@
 import ceylon.collection {
     HashMap
 }
+import ceylon.interop.java {
+    CeylonIterable
+}
 
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
@@ -8,14 +11,10 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ClassModel=Class,
     ValueModel=Value,
-    ScopeModel=Scope,
     ElementModel=Element,
     UnitModel=Unit,
     ModuleModel=Module,
     SetterModel=Setter
-}
-import ceylon.interop.java {
-    CeylonIterable
 }
 
 class Naming() {

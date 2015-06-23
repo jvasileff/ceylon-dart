@@ -1,27 +1,8 @@
-import ceylon.ast.core {
-    ValueSpecification,
-    LIdentifier,
-    Specifier,
-    StringLiteral,
-    ValueDefinition,
-    ValueModifier,
-    BaseExpression,
-    MemberNameWithTypeArguments,
-    Annotations
-}
-import ceylon.ast.redhat {
-    RedHatTransformer,
-    SimpleTokenFactory,
-    compileCompilationUnit
-}
-import ceylon.formatter {
-    format
-}
-
 import com.vasileff.ceylon.dart.compiler {
     compile
 }
-shared
+
+shared suppressWarnings("unusedDeclaration")
 void run() {
     value program2 =
            """

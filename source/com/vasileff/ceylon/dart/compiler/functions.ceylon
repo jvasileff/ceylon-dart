@@ -1,5 +1,4 @@
 import ceylon.ast.core {
-    TypedDeclaration,
     Node
 }
 import ceylon.ast.redhat {
@@ -27,10 +26,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ScopeModel=Scope,
     SetterModel=Setter,
-    ValueModel=Value,
-    FunctionOrValueModel=FunctionOrValue,
-    ControlBlockModel=ControlBlock,
-    ConstructorModel=Constructor
+    ValueModel=Value
 }
 
 void printNodeAsCode(Node node) {

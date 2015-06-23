@@ -1,36 +1,28 @@
 import ceylon.ast.core {
     ValueParameter,
     DefaultedValueParameter,
-    Visitor,
     FunctionDefinition,
     Block,
-    InvocationStatement,
     Invocation,
     BaseExpression,
     MemberNameWithTypeArguments,
-    PositionalArguments,
-    ArgumentList,
     IntegerLiteral,
     StringLiteral,
-    CompilationUnit,
     ParameterReference,
     VariadicParameter,
     DefaultedCallableParameter,
     DefaultedParameterReference,
     CallableParameter,
-    ValueDefinition,
     LazySpecifier,
     FunctionExpression,
     Parameters,
-    Return,
     FunctionShortcutDefinition,
     FloatLiteral,
-    Specifier,
     Node,
-    Assertion,
-    IsCondition,
-    ValueSpecification,
     Expression
+}
+import ceylon.collection {
+    LinkedList
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -40,27 +32,9 @@ import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
-    SetterModel=Setter,
-    UnitModel=Unit,
     TypeModel=Type,
     PackageModel=Package,
-    DeclarationModel=Declaration,
-    ElementModel=Element,
-    ScopeModel=Scope,
     ClassOrInterfaceModel=ClassOrInterface
-}
-
-import org.antlr.runtime {
-    Token
-}
-import ceylon.language.meta.declaration {
-    Package
-}
-import com.redhat.ceylon.model.loader.model {
-    FunctionOrValueInterface
-}
-import ceylon.collection {
-    LinkedList
 }
 
 class ExpressionTransformer
@@ -318,9 +292,8 @@ class ExpressionTransformer
             }
 
             value parameters = list.parameters.collect((parameter) {
-                //value sb = StringBuilder();
-                value parameterInfo = ParameterInfo(parameter);
-                value model = parameterInfo.parameterModel;
+                //value parameterInfo = ParameterInfo(parameter);
+                //value model = parameterInfo.parameterModel;
 
                 switch(parameter)
                 case (is DefaultedValueParameter) {
