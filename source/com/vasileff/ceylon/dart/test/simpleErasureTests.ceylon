@@ -130,3 +130,112 @@ void stringFunctionReturnErasure() {
          """;
     };
 }
+
+shared test
+void booleanArgumentErasure() {
+    // TODO still need to generate $package$... alias for toplevels
+    compileAndCompare {
+         """void f1(Boolean x) {}
+            void f2(Boolean? x) {}
+            void f3(Object x) {}
+            void f4(Object? x) {}
+            void f5(\Itrue x) {}
+            void f6(\Itrue? x) {}
+            void f7(\Ifalse x) {}
+            void f8(\Ifalse? x) {}
+            void f9(\Itrue|\Ifalse x) {}
+            void f10(Boolean|\Itrue x) {}
+            void f11(Boolean|\Ifalse x) {}
+
+            Boolean booleanBoolean = true;
+            Object booleanObject = true;
+
+            void callFunctions() {
+                f1(booleanBoolean);
+                f2(booleanBoolean);
+                f2(null);
+                f3(booleanBoolean);
+                f3(booleanObject);
+                f4(booleanBoolean);
+                f4(booleanObject);
+                f4(null);
+
+                f5(true);
+                f6(true);
+                f6(null);
+                f7(false);
+                f8(false);
+                f8(null);
+                f9(true);
+
+                f10(booleanBoolean);
+                f10(booleanBoolean);
+                f11(booleanBoolean);
+                f11(booleanBoolean);
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            void f1([$dart$core.bool x]) {
+            }
+
+            void f2([$dart$core.bool x]) {
+            }
+
+            void f3([$dart$core.Object x]) {
+            }
+
+            void f4([$dart$core.Object x]) {
+            }
+
+            void f5([$dart$core.bool x]) {
+            }
+
+            void f6([$dart$core.bool x]) {
+            }
+
+            void f7([$dart$core.bool x]) {
+            }
+
+            void f8([$dart$core.bool x]) {
+            }
+
+            void f9([$dart$core.bool x]) {
+            }
+
+            void f10([$dart$core.bool x]) {
+            }
+
+            void f11([$dart$core.bool x]) {
+            }
+
+            $dart$core.bool booleanBoolean = true;
+
+            $dart$core.Object booleanObject = $ceylon$language.$true;
+
+            void callFunctions() {
+                f1($package$booleanBoolean);
+                f2($package$booleanBoolean);
+                f2(null);
+                f3($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                f3($package$booleanObject);
+                f4($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                f4($package$booleanObject);
+                f4(null);
+                f5(true);
+                f6(true);
+                f6(null);
+                f7(false);
+                f8(false);
+                f8(null);
+                f9(true);
+                f10($package$booleanBoolean);
+                f10($package$booleanBoolean);
+                f11($package$booleanBoolean);
+                f11($package$booleanBoolean);
+            }
+         """;
+    };
+}
