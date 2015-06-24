@@ -188,20 +188,25 @@ class Naming(TypeFactory typeFactory) {
         //      caller always just use the `formal`,
         //      non-refined type? Is it readily available?
 
-        // TODO erasing Object & Basic here, but need to
+        // TODO we erase Object & Basic here, but need to
         //      address boxing/erasure issues elsewhere, like
         //      method invocations
 
-        variable value definiteType = typeFactory.definiteType(type);
+        value definiteType = typeFactory.definiteType(type);
 
-        // special case the rare but possible boolean
-        // union \Itrue|\Ifalse
+        // handle well known types first, before giving up
+        // on unions and intersections
         if (typeFactory.isCeylonBoolean(definiteType)) {
-            definiteType = typeFactory.booleanType;
+            return dartBool;
         }
-
-        if (definiteType.union || definiteType.intersection) {
-            return dartObject;
+        else if (typeFactory.isCeylonInteger(definiteType)) {
+            return dartInt;
+        }
+        else if (typeFactory.isCeylonFloat(definiteType)) {
+            return dartDouble;
+        }
+        else if (typeFactory.isCeylonString(definiteType)) {
+            return dartString;
         }
         else if (typeFactory.isCeylonAnything(definiteType)) {
             return dartObject;
@@ -227,39 +232,34 @@ class Naming(TypeFactory typeFactory) {
             //       worry about optimizing function expressions.
             return dartFunction;
         }
-        else if (typeFactory.isCeylonBoolean(definiteType)) {
-            return dartBool;
-        }
-        else if (typeFactory.isCeylonInteger(definiteType)) {
-            return dartInt;
-        }
-        else if (typeFactory.isCeylonFloat(definiteType)) {
-            return dartDouble;
-        }
-        else if (typeFactory.isCeylonString(definiteType)) {
-            return dartString;
-        }
-        else if (sameModule(inRelationTo, definiteType.declaration)) {
-            return
-            DartTypeName {
-                DartSimpleIdentifier(
-                    identifierPackagePrefix(definiteType.declaration) +
-                    getName(definiteType.declaration));
-            };
+        else if (definiteType.union || definiteType.intersection) {
+            // settle for Object for other unions and intersections
+            return dartObject;
         }
         else {
-            return
-            DartTypeName {
-                DartPrefixedIdentifier {
-                    DartSimpleIdentifier {
-                        moduleImportPrefix(definiteType.declaration);
-                    };
-                    DartSimpleIdentifier {
+            // finally, just regular, unerased, unboxed types
+            if (sameModule(inRelationTo, definiteType.declaration)) {
+                return
+                DartTypeName {
+                    DartSimpleIdentifier(
                         identifierPackagePrefix(definiteType.declaration) +
-                            getName(definiteType.declaration);
+                        getName(definiteType.declaration));
+                };
+            }
+            else {
+                return
+                DartTypeName {
+                    DartPrefixedIdentifier {
+                        DartSimpleIdentifier {
+                            moduleImportPrefix(definiteType.declaration);
+                        };
+                        DartSimpleIdentifier {
+                            identifierPackagePrefix(definiteType.declaration) +
+                                getName(definiteType.declaration);
+                        };
                     };
                 };
-            };
+            }
         }
     }
 }
