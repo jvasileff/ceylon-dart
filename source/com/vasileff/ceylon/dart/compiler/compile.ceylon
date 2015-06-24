@@ -1,6 +1,9 @@
 import ceylon.ast.redhat {
     compilationUnitToCeylon
 }
+import ceylon.collection {
+    LinkedList
+}
 import ceylon.interop.java {
     createJavaByteArray,
     CeylonIterable,
@@ -29,7 +32,9 @@ import java.util {
 }
 
 shared
-void compile(String *listings) {
+[DartCompilationUnit*] compile(Boolean verbose=false, {String*} listings = {}) {
+
+    // TODO this function is becoming a mess
 
     value virtualFiles = listings.indexed.map((listing) => object
             satisfies VirtualFile {
@@ -70,51 +75,77 @@ void compile(String *listings) {
     typeChecker.process();
 
     // print typechecker messages
-    CeylonIterable(typeChecker.messages).each(
-            compose(process.writeErrorLine, Object.string));
+    if (verbose) {
+        CeylonIterable(typeChecker.messages).each(
+                compose(process.writeErrorLine, Object.string));
+    }
 
     value phasedUnits = CeylonIterable(
             typeChecker.phasedUnits.phasedUnits);
+
+    value dartCompilationUnits = LinkedList<DartCompilationUnit>();
 
     for (phasedUnit in phasedUnits) {
         value unit = compilationUnitToCeylon(
                 phasedUnit.compilationUnit,
                 augmentNode);
-        printNodeAsCode(unit);
-        print("========================");
-        print("== TC-AST");
-        print("========================");
-        print(phasedUnit.compilationUnit);
-        print("========================");
-        print("== AST");
-        print("========================");
-        print(unit);
-        print("========================");
-        print("== DART");
-        print("========================");
+
+        if (verbose) {
+            printNodeAsCode(unit);
+            print("========================");
+            print("== TC-AST");
+            print("========================");
+            print(phasedUnit.compilationUnit);
+            print("========================");
+            print("== AST");
+            print("========================");
+            print(unit);
+            print("========================");
+            print("== DART");
+            print("========================");
+        }
+
         if (hasError(unit)) {
-            process.writeError("Typechecker errors exist; skipping Dart backend");
+            if (verbose) {
+                process.writeError("Typechecker errors exist; skipping Dart backend");
+            }
         }
         else {
             try {
                 value ctx = CompilationContext(
                         phasedUnit.unit, CeylonList(phasedUnit.tokens));
                 ctx.init();
-                value dartDeclarations = ctx.dartTransformer.transformCompilationUnit(unit);
+                value dartDeclarations = ctx.dartTransformer
+                        .transformCompilationUnit(unit);
 
-                // TODO imports from the typechecker, one file per module?
-                value codeWriter = CodeWriter(process.write);
-                codeWriter.writeLine(
-                        "import 'package:ceylon/language/language.dart' \
-                         as $ceylon$language;");
-                codeWriter.writeLine(
-                        "import 'dart:core' \
-                         as $dart$core;");
-                codeWriter.writeLine();
-                dartDeclarations.each((d) => d.write(codeWriter));
+                value dartCompilationUnit =
+                    DartCompilationUnit {
+                        // TODO process all module.ceylon imports
+                        [DartImportDirective {
+                            DartSimpleStringLiteral(
+                                "package:ceylon/language/language.dart");
+                            DartSimpleIdentifier(
+                                "$ceylon$language");
+                        },
+                        DartImportDirective {
+                            DartSimpleStringLiteral(
+                                "dart:core");
+                            DartSimpleIdentifier(
+                                "$dart$core");
+                        }];
+                        dartDeclarations;
+                    };
+
+                dartCompilationUnits.add(dartCompilationUnit);
+
+                if (verbose) {
+                    value codeWriter = CodeWriter(process.write);
+                    dartCompilationUnit.write(codeWriter);
+                }
             } catch (CompilerBug b) {
                 process.writeError("Compiler bug:\n" + b.message);
             }
         }
     }
+    return dartCompilationUnits.sequence();
 }

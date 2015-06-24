@@ -1,18 +1,75 @@
-abstract
+shared abstract
 class DartNode() {
     shared formal
     void write(CodeWriter writer);
 }
 
 "A node that represents an expression."
-abstract
+shared abstract
 class DartExpression() extends DartNode() {}
 
 "A node that represents a statement."
-abstract
+shared abstract
 class DartStatement() extends DartNode() {}
 
+"A node that represents a directive."
+shared abstract
+class DartDirective() extends DartAnnotatedNode() {
+    // DartComment comment
+    // List<DartAnnotation> metadata
+}
+
+"A directive that references a URI."
+shared abstract
+class DartUriBasedDirective(uri)
+        extends DartDirective() {
+
+    // DartComment comment
+    // List<DartAnnotation> metadata
+    shared DartStringLiteral uri;
+}
+
+"A node that represents a directive that impacts
+ the namespace of a library."
+shared abstract
+class DartNamespaceDirective(keyword, uri)
+        extends DartUriBasedDirective(uri) {
+
+    // DartComment comment
+    // List<DartAnnotation> metadata
+    shared String keyword;
+    DartStringLiteral uri;
+    // List<Combinator> combinators
+}
+
+"An import directive."
+shared
+class DartImportDirective(uri, prefix)
+        extends DartNamespaceDirective("import", uri) {
+
+    // DartComment comment
+    // List<DartAnnotation> metadata
+    DartStringLiteral uri;
+    // Boolean deferred;
+    DartSimpleIdentifier? prefix;
+    // List<Combinator> combinators
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeIndent(); // noop
+        writer.write("import ");
+        uri.write(writer);
+        if (exists prefix) {
+            writer.write(" as ");
+            prefix.write(writer);
+        }
+        writer.write(";");
+        writer.writeLine();
+    }
+}
+
 "A return statement."
+shared
 class DartReturnStatement(expression = null)
         extends DartStatement() {
 
@@ -31,6 +88,7 @@ class DartReturnStatement(expression = null)
     }
 }
 
+shared
 class DartAssignmentOperator {
     shared actual String string;
 
@@ -43,6 +101,7 @@ class DartAssignmentOperator {
 }
 
 "An assignment expression."
+shared
 class DartAssignmentExpression
         (lhsExpression, operator, rhsExpression)
         extends DartExpression() {
@@ -68,6 +127,7 @@ class DartAssignmentExpression
 }
 
 "An expression used as a statement."
+shared
 class DartExpressionStatement(expression)
         extends DartStatement() {
 
@@ -83,15 +143,21 @@ class DartExpressionStatement(expression)
 }
 
 "A node that represents a literal expression."
-abstract
+shared abstract
 class DartLiteral() extends DartExpression() {}
 
-"A single string literal expression."
-abstract
-class DartSingleStringLiteral()
-        extends DartLiteral() {}
+"A string literal expression."
+shared abstract
+class DartStringLiteral() extends DartLiteral() {}
 
-"A string literal expression that does not contain any interpolations."
+"A single string literal expression."
+shared abstract
+class DartSingleStringLiteral()
+        extends DartStringLiteral() {}
+
+"A string literal expression that does not contain
+ any interpolations."
+shared
 class DartSimpleStringLiteral(text)
         extends DartSingleStringLiteral() {
 
@@ -107,6 +173,7 @@ class DartSimpleStringLiteral(text)
 }
 
 "A boolean literal expression."
+shared
 class DartBooleanLiteral(boolean)
         extends DartLiteral() {
 
@@ -119,6 +186,7 @@ class DartBooleanLiteral(boolean)
 }
 
 "A floating point literal expression."
+shared
 class DartDoubleLiteral(double)
         extends DartLiteral() {
 
@@ -131,6 +199,7 @@ class DartDoubleLiteral(double)
 }
 
 "An integer literal expression."
+shared
 class DartIntegerLiteral(integer)
         extends DartLiteral() {
 
@@ -143,6 +212,7 @@ class DartIntegerLiteral(integer)
 }
 
 "A null literal expression."
+shared
 class DartNullLiteral()
         extends DartLiteral() {
 
@@ -157,6 +227,7 @@ class DartNullLiteral()
  by [[DartMethodInvocation]] nodes. Invocations of getters and setters are
  represented by either [[DartPrefixedIdentifier]] or [[DartPropertyAccess]]
  nodes."
+shared
 class DartFunctionExpressionInvocation
         (func, argumentList)
         extends DartExpression() {
@@ -176,6 +247,7 @@ class DartFunctionExpressionInvocation
  by [[DartFunctionExpressionInvocation]] nodes. Invocations of
  getters and setters are represented by either
  [[DartPrefixedIdentifier]] or [[DartPropertyAccess]] nodes."
+shared
 class DartMethodInvocation
         (target, methodName, argumentList)
         extends DartExpression() {
@@ -196,12 +268,13 @@ class DartMethodInvocation
 }
 
 "A node that represents an identifier."
-abstract
+shared abstract
 class DartIdentifier()
         extends DartExpression() {}
 
 "A list of arguments in the invocation of an executable element
  (that is, a function, method, or constructor)."
+shared
 class DartArgumentList(arguments = [])
         extends DartNode() {
 
@@ -227,6 +300,7 @@ class DartArgumentList(arguments = [])
 
 "An identifier that is prefixed or an access to an object property
  where the target of the property access is a simple identifier."
+shared
 class DartPrefixedIdentifier(prefix, identifier)
         extends DartIdentifier() {
 
@@ -242,6 +316,7 @@ class DartPrefixedIdentifier(prefix, identifier)
 }
 
 "A simple identifier."
+shared
 class DartSimpleIdentifier(identifier)
         extends DartIdentifier() {
 
@@ -254,6 +329,7 @@ class DartSimpleIdentifier(identifier)
 }
 
 "The name of a type, which can optionally include type arguments."
+shared
 class DartTypeName(name)
         extends DartNode() {
 
@@ -267,6 +343,7 @@ class DartTypeName(name)
 }
 
 "An if statement."
+shared
 class DartIfStatement
         (condition, thenStatement, elseStatement=null)
         extends DartStatement() {
@@ -305,7 +382,7 @@ class DartIfStatement
 
 "An AST node that can be annotated with both a
  documentation comment and a list of annotations."
-abstract
+shared abstract
 class DartAnnotatedNode() extends DartNode() {
     // DartComment comment
     // List<DartAnnotation> metadata
@@ -313,7 +390,7 @@ class DartAnnotatedNode() extends DartNode() {
 
 "A node that represents the declaration of one or more names.
  Each declared name is visible within a name scope"
-abstract
+shared abstract
 class DartDeclaration() extends DartAnnotatedNode() {
     // DartComment comment
     // List<DartAnnotation> metadata
@@ -322,6 +399,7 @@ class DartDeclaration() extends DartAnnotatedNode() {
 "An identifier that has an initial value associated with it.
  Instances of this class are always children of the class
  [[DartVariableDeclarationList]]."
+shared
 class DartVariableDeclaration(name, initializer = null)
         extends DartDeclaration() {
     shared DartSimpleIdentifier name;
@@ -338,6 +416,7 @@ class DartVariableDeclaration(name, initializer = null)
 }
 
 "The declaration of one or more variables of the same type."
+shared
 class DartVariableDeclarationList
         (keyword, type, variables)
         extends DartAnnotatedNode() {
@@ -378,6 +457,7 @@ class DartVariableDeclarationList
 
 "A list of variables that are being declared in a
  context where a statement is required."
+shared
 class DartVariableDeclarationStatement(variableList)
         extends DartStatement() {
 
@@ -391,10 +471,25 @@ class DartVariableDeclarationStatement(variableList)
     }
 }
 
+"A compilation unit."
+shared
+class DartCompilationUnit(directives, declarations)
+        extends DartNode() {
+
+    shared [DartDirective*] directives;
+    shared [DartCompilationUnitMember*] declarations;
+
+    shared actual
+    void write(CodeWriter writer) {
+        directives.each((d) => d.write(writer));
+        writer.writeLine();
+        declarations.each((d) => d.write(writer));
+    }
+}
 
 "A node that declares one or more names within
  the scope of a compilation unit."
-abstract
+shared abstract
 class DartCompilationUnitMember()
         of DartTopLevelVariableDeclaration
             | DartNamedCompilationUnitMember
@@ -402,6 +497,7 @@ class DartCompilationUnitMember()
 
 "The declaration of one or more top-level variables
  of the same type."
+shared
 class DartTopLevelVariableDeclaration(variableList)
         extends DartCompilationUnitMember() {
 
@@ -420,7 +516,7 @@ class DartTopLevelVariableDeclaration(variableList)
 
 "A node that declares a single name within the scope
  of a compilation unit."
-abstract
+shared abstract
 class DartNamedCompilationUnitMember(name)
         extends DartCompilationUnitMember() {
 
@@ -430,6 +526,7 @@ class DartNamedCompilationUnitMember(name)
 }
 
 "A top-level declaration."
+shared
 class DartFunctionDeclaration(
         external, // false
         returnType, // null
@@ -468,6 +565,7 @@ class DartFunctionDeclaration(
 }
 
 "A [[DartFunctionDeclaration]] used as a statement."
+shared
 class DartFunctionDeclarationStatement
         (functionDeclaration)
         extends DartStatement() {
@@ -481,6 +579,7 @@ class DartFunctionDeclarationStatement
 }
 
 "A function expression"
+shared
 class DartFunctionExpression(parameters, body)
         extends DartExpression() {
 
@@ -496,10 +595,11 @@ class DartFunctionExpression(parameters, body)
 }
 
 "A node representing the body of a function or method."
-abstract
+shared abstract
 class DartFunctionBody() extends DartNode() {}
 
 "A function body that consists of a block of statements."
+shared
 class DartBlockFunctionBody
         (keyword, star, block)
         extends DartFunctionBody() {
@@ -529,6 +629,7 @@ class DartBlockFunctionBody
 
 "The formal parameter list of a method declaration,
  function declaration, or function type alias."
+shared
 class DartFormalParameterList(
         positional = false,
         named = false,
@@ -573,14 +674,14 @@ class DartFormalParameterList(
 }
 
 "A node representing a parameter to a function."
-abstract
+shared abstract
 class DartFormalParameter()
         of DartNormalFormalParameter
             | DartDefaultFormalParameter
         extends DartNode() {}
 
 "A formal parameter that is required (is not optional)."
-abstract
+shared abstract
 class DartNormalFormalParameter()
         of DartSimpleFormalParameter
             //| DartFieldFormalParameter
@@ -658,6 +759,7 @@ class DartExpressionFunctionBody(async, expression)
 }
 
 "A sequence of statements."
+shared
 class DartBlock(statements)
         extends DartStatement() {
 
@@ -674,6 +776,7 @@ class DartBlock(statements)
 }
 
 "A prefix unary expression."
+shared
 class DartPrefixExpression
         (operator, operand)
         extends DartExpression() {
@@ -692,6 +795,7 @@ class DartPrefixExpression
 }
 
 "An is expression."
+shared
 class DartIsExpression
         (expression, type, notOperator=false)
         extends DartExpression() {
@@ -712,6 +816,7 @@ class DartIsExpression
 }
 
 "The name of the constructor."
+shared
 class DartConstructorName(type, name=null)
         extends DartNode() {
 
@@ -729,6 +834,7 @@ class DartConstructorName(type, name=null)
 }
 
 "An instance creation expression."
+shared
 class DartInstanceCreationExpression
         (const, constructorName, argumentList)
         extends DartExpression() {
@@ -746,6 +852,7 @@ class DartInstanceCreationExpression
 }
 
 "A throw expression."
+shared
 class DartThrowExpression(expression)
         extends DartExpression() {
 
