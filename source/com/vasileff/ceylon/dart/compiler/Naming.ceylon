@@ -10,6 +10,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ClassModel=Class,
+    InterfaceModel=Interface,
     ValueModel=Value,
     ElementModel=Element,
     UnitModel=Unit,
@@ -54,6 +55,9 @@ class Naming(TypeFactory typeFactory) {
             return (declaration of DeclarationModel).name;
         }
         case (is ClassModel) {
+            return (declaration of DeclarationModel).name;
+        }
+        case (is InterfaceModel) {
             return (declaration of DeclarationModel).name;
         }
         case (is ParameterModel) {
@@ -155,6 +159,15 @@ class Naming(TypeFactory typeFactory) {
             };
 
     shared
+    DartTypeName dartFunction
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("Function");
+                };
+            };
+
+    shared
     DartTypeName dartString
         =   DartTypeName {
                 DartPrefixedIdentifier {
@@ -195,6 +208,16 @@ class Naming(TypeFactory typeFactory) {
         }
         else if (typeFactory.isCeylonBasic(definiteType)) {
             return dartObject;
+        }
+        else if (typeFactory.isCeylonCallable(definiteType)) {
+            // FIXME only erase to function when the types match exactly
+            //       The plan is to box as soon as we lose
+            //       exact generic type info. So we need the
+            //       original type for the comparison; comparing to
+            //       Callable<Anything, Nothing> isn't good enough.
+            //       We could just always box, but then we'll have to
+            //       worry about optimizing function expressions.
+            return dartFunction;
         }
         else if (typeFactory.isCeylonBoolean(definiteType)) {
             return dartBool;

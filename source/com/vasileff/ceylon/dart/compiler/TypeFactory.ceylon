@@ -84,6 +84,11 @@ class TypeFactory(Unit unit) {
     Boolean isCeylonByte(Type type)
         =>  type.isExactly(byteType);
 
+    "True iff the declaration for this type is `Callable`"
+    shared
+    Boolean isCeylonCallable(Type type)
+        =>  isCallableDeclaration(type.declaration);
+
     shared
     Boolean isCeylonCharacter(Type type)
         =>  type.isExactly(characterType);
@@ -118,6 +123,9 @@ class TypeFactory(Unit unit) {
     Declaration booleanFalseDeclaration
         =>  unit.getLanguageModuleDeclaration("false");
 
+    Declaration callableDeclaration
+        =>  unit.getLanguageModuleDeclaration("Callable");
+
     Declaration nullDeclaration
         =>  unit.getLanguageModuleDeclaration("null");
 
@@ -136,6 +144,10 @@ class TypeFactory(Unit unit) {
     shared
     Boolean isBooleanFalseDeclaration(Declaration declaration)
         =>  equalDeclarations(declaration, booleanFalseDeclaration);
+
+    shared
+    Boolean isCallableDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, callableDeclaration);
 
     shared
     Boolean isNullDeclaration(Declaration declaration)
