@@ -19,13 +19,10 @@ class CompilationContext(unit, tokens) {
     StringBuilder result = StringBuilder();
 
     shared
-    CodeWriter dcw = CodeWriter(result.append);
-
-    shared
     TypeFactory typeFactory = TypeFactory(unit);
 
     shared
-    Naming naming = Naming();
+    Naming naming = Naming(typeFactory);
 
     shared variable
     TypeOrNoType? lhsTypeTop = null;

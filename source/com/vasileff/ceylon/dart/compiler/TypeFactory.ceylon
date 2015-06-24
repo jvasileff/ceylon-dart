@@ -24,6 +24,9 @@ class TypeFactory(Unit unit) {
     Type objectType => unit.objectType;
 
     shared
+    Type basicType => unit.basicType;
+
+    shared
     Type booleanType => unit.booleanType;
 
     shared
@@ -54,8 +57,16 @@ class TypeFactory(Unit unit) {
         =>  !type.nothing && type.isSubtypeOf(nullType);
 
     shared
+    Boolean isCeylonAnything(Type type)
+        =>  type.isExactly(anythingType);
+
+    shared
     Boolean isCeylonObject(Type type)
         =>  type.isExactly(objectType);
+
+    shared
+    Boolean isCeylonBasic(Type type)
+        =>  type.isExactly(basicType);
 
     shared
     Boolean isCeylonBoolean(Type type)
@@ -134,13 +145,35 @@ class TypeFactory(Unit unit) {
     // utilities
     /////////////////////////////////////////////
 
+    "Form the intersection of the given types, without
+     eliminating duplicates nor canonicalizing."
     shared
     Type intersection(Type *types)
         =>  ModelUtil.intersection(javaList(types), unit);
 
+    "Form the intersection of the given types,
+     canonicalizing, and eliminating duplicates."
+    shared
+    Type intersectionType(Type first, Type second)
+        =>  ModelUtil.intersectionType(first, second, unit);
+
+    "Form the union of the given types, without
+     eliminating duplicates."
     shared
     Type union(Type *types)
         =>  ModelUtil.union(javaList(types), unit);
+
+    "Form the union of the given types, without
+     eliminating duplicates."
+    shared
+    Type unionType(Type first, Type second)
+        =>  ModelUtil.unionType(first, second, unit);
+
+    "The canonicalized intersection of the given
+     type and Object"
+    shared
+    Type definiteType(Type type)
+        =>  unit.getDefiniteType(type);
 
     shared
     Boolean equalDeclarations(Declaration first, Declaration second)

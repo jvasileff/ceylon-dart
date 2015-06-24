@@ -59,9 +59,12 @@ class DartTransformer(CompilationContext ctx)
         value expression = ctx.withLhsType(declarationModel.type, ()
             =>  that.definition.expression.transform(expressionTransformer));
 
-        return DartVariableDeclarationList {
-            keyword = "var";
-            type = null; // TODO types!
+        return
+        DartVariableDeclarationList {
+            null;
+            ctx.naming.dartTypeName(
+                    info.declarationModel,
+                    info.declarationModel.type);
             [DartVariableDeclaration {
                     name = name;
                     initializer = expression;

@@ -90,6 +90,8 @@ void run() {
 
                 toplevelBoolean = false;
                 toplevelObject = false;
+
+                Null nil = null;
             }
          """;
 
@@ -181,5 +183,5 @@ void run() {
             }
          """;
 
-    compile(programAssertions);
+    compile(programBoxing);
 }

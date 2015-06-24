@@ -451,9 +451,11 @@ class DartFunctionDeclaration(
         writer.writeIndent();
         if (exists returnType) {
             returnType.write(writer);
+            writer.write(" ");
         }
         if (exists propertyKeyword) {
-            writer.write(" " + propertyKeyword + " ");
+            writer.write(propertyKeyword);
+            writer.write(" ");
         }
         name.write(writer);
         functionExpression.write(writer);

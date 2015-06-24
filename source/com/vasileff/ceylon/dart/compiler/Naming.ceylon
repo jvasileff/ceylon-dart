@@ -14,10 +14,12 @@ import com.redhat.ceylon.model.typechecker.model {
     ElementModel=Element,
     UnitModel=Unit,
     ModuleModel=Module,
-    SetterModel=Setter
+    SetterModel=Setter,
+    ScopeModel=Scope,
+    TypeModel=Type
 }
 
-class Naming() {
+class Naming(TypeFactory typeFactory) {
 
     variable value counter = 0;
 
@@ -112,6 +114,120 @@ class Naming() {
                     .interpose("$")
                     .reduce(plus)
                     ?.plus("$") else "");
+
+    shared
+    DartTypeName dartObject
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("Object");
+                };
+            };
+
+    shared
+    DartTypeName dartBool
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("bool");
+                };
+            };
+
+    shared
+    DartTypeName dartInt
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("int");
+                };
+            };
+
+    shared
+    DartTypeName dartDouble
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("double");
+                };
+            };
+
+    shared
+    DartTypeName dartString
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("String");
+                };
+            };
+
+    see(`function TypeFactory.boxingConversionFor`) // erasureFor?
+    shared
+    DartTypeName dartTypeName
+            (ElementModel inRelationTo, TypeModel type) {
+
+        // TODO document/explore erasure for generics
+        //      and also for covariant returns. Can the
+        //      caller always just use the `formal`,
+        //      non-refined type? Is it readily available?
+
+        // TODO erasing Object & Basic here, but need to
+        //      address boxing/erasure issues elsewhere, like
+        //      method invocations
+
+        value definiteType = typeFactory.definiteType(type);
+
+        if (definiteType.union || definiteType.intersection) {
+            return dartObject;
+        }
+        else if (typeFactory.isCeylonAnything(definiteType)) {
+            return dartObject;
+        }
+        else if (typeFactory.isCeylonNothing(definiteType)) {
+            // this handles the `Null` case too,
+            // since Null & Object = Nothing
+            return dartObject;
+        }
+        else if (typeFactory.isCeylonObject(definiteType)) {
+            return dartObject;
+        }
+        else if (typeFactory.isCeylonBasic(definiteType)) {
+            return dartObject;
+        }
+        else if (typeFactory.isCeylonBoolean(definiteType)) {
+            return dartBool;
+        }
+        else if (typeFactory.isCeylonInteger(definiteType)) {
+            return dartInt;
+        }
+        else if (typeFactory.isCeylonFloat(definiteType)) {
+            return dartDouble;
+        }
+        else if (typeFactory.isCeylonString(definiteType)) {
+            return dartString;
+        }
+        else if (sameModule(inRelationTo, definiteType.declaration)) {
+            return
+            DartTypeName {
+                DartSimpleIdentifier(
+                    identifierPackagePrefix(definiteType.declaration) +
+                    getName(definiteType.declaration));
+            };
+        }
+        else {
+            return
+            DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier {
+                        moduleImportPrefix(definiteType.declaration);
+                    };
+                    DartSimpleIdentifier {
+                        identifierPackagePrefix(definiteType.declaration) +
+                            getName(definiteType.declaration);
+                    };
+                };
+            };
+        }
+    }
 }
 
 Result memoize<Result, Argument>

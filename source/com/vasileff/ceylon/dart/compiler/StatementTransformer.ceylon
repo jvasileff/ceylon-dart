@@ -16,6 +16,9 @@ import ceylon.collection {
 import org.antlr.runtime {
     Token
 }
+import com.redhat.ceylon.model.typechecker.model {
+    TypedDeclaration
+}
 
 class StatementTransformer
         (CompilationContext ctx)
@@ -66,12 +69,15 @@ class StatementTransformer
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.naming.getName(functionModel);
+        value returnType = ctx.naming.dartTypeName(
+                info.declarationModel,
+                (info.declarationModel of TypedDeclaration).type);
 
         return [
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType = null; // TODO Types!
+                    returnType = returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer
@@ -90,12 +96,15 @@ class StatementTransformer
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.naming.getName(functionModel);
+        value returnType = ctx.naming.dartTypeName(
+                info.declarationModel,
+                (info.declarationModel of TypedDeclaration).type);
 
         return [
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType = null; // TODO Types!
+                    returnType = returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer
@@ -227,13 +236,8 @@ class StatementTransformer
             DartIfStatement {
                 DartIsExpression {
                     dartIdentifierToCheck;
-                    DartTypeName {
-                        DartPrefixedIdentifier {
-                            // TODO actual type!
-                            DartSimpleIdentifier("$dart");
-                            DartSimpleIdentifier("object");
-                        };
-                    };
+                    // TODO actual type!
+                    ctx.naming.dartObject;
                     notOperator = !that.negated;
                 };
                 DartExpressionStatement {
