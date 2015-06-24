@@ -123,15 +123,15 @@ shared
                         // TODO process all module.ceylon imports
                         [DartImportDirective {
                             DartSimpleStringLiteral(
-                                "package:ceylon/language/language.dart");
-                            DartSimpleIdentifier(
-                                "$ceylon$language");
-                        },
-                        DartImportDirective {
-                            DartSimpleStringLiteral(
                                 "dart:core");
                             DartSimpleIdentifier(
                                 "$dart$core");
+                        },
+                        DartImportDirective {
+                            DartSimpleStringLiteral(
+                                "package:ceylon/language/language.dart");
+                            DartSimpleIdentifier(
+                                "$ceylon$language");
                         }];
                         dartDeclarations;
                     };

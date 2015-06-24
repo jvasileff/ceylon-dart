@@ -1,4 +1,0 @@
-shared
-void dartCompilerTests() {
-
-}
