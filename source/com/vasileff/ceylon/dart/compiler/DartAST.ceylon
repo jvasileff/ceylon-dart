@@ -592,11 +592,11 @@ class DartNormalFormalParameter()
 
 "A simple formal parameter."
 class DartSimpleFormalParameter
-        (identifier, final=false, var=false, type=null)
+        (final, var, type, identifier)
         extends DartNormalFormalParameter() {
 
-    shared Boolean final;
-    shared Boolean var;
+    shared Boolean final; // false
+    shared Boolean var; // false
     shared DartTypeName? type;
     shared DartSimpleIdentifier identifier;
 

@@ -15,7 +15,7 @@ import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
     ModuleModel=Module,
     SetterModel=Setter,
-    ScopeModel=Scope,
+    ParameterModel=Parameter,
     TypeModel=Type
 }
 
@@ -26,7 +26,7 @@ class Naming(TypeFactory typeFactory) {
     value nameCache = HashMap<TypedDeclarationModel, String>();
 
     shared
-    String getName(DeclarationModel declaration) {
+    String getName(DeclarationModel|ParameterModel declaration) {
         if (is SetterModel declaration) {
             getName(declaration.getter);
         }
@@ -55,6 +55,9 @@ class Naming(TypeFactory typeFactory) {
         }
         case (is ClassModel) {
             return (declaration of DeclarationModel).name;
+        }
+        case (is ParameterModel) {
+            return declaration.name;
         }
         else {
             throw Exception("declaration type not yet supported \

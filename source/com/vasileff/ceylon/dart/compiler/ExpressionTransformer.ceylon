@@ -292,28 +292,36 @@ class ExpressionTransformer
             }
 
             value parameters = list.parameters.collect((parameter) {
-                //value parameterInfo = ParameterInfo(parameter);
-                //value model = parameterInfo.parameterModel;
+                value parameterInfo = ParameterInfo(parameter);
+                value parameterModel = parameterInfo.parameterModel;
+                value parameterType = ctx.naming.dartTypeName(
+                        parameterModel.model, parameterModel.type);
 
                 switch(parameter)
                 case (is DefaultedValueParameter) {
-                    value name = DartSimpleIdentifier(
-                            parameter.parameter.name.name); // TODO name
-                    return DartDefaultFormalParameter {
-                        parameter = DartSimpleFormalParameter {
-                            identifier = name;
+                    return
+                    DartDefaultFormalParameter {
+                        DartSimpleFormalParameter {
+                            false; false;
+                            parameterType;
+                            DartSimpleIdentifier {
+                                ctx.naming.getName(parameterModel);
+                            };
                         };
-                        defaultValue = DartPrefixedIdentifier {
+                        DartPrefixedIdentifier {
                             prefix = DartSimpleIdentifier("$ceylon$language");
                             identifier = DartSimpleIdentifier("dart$defaulted");
                         };
                     };
                 }
                 case (is ValueParameter) {
-                    value name = DartSimpleIdentifier(
-                            parameter.name.name); // TODO name
-                    return DartSimpleFormalParameter {
-                        identifier = name;
+                    return
+                    DartSimpleFormalParameter {
+                        false; false;
+                        parameterType;
+                        DartSimpleIdentifier {
+                            ctx.naming.getName(parameterModel);
+                        };
                     };
                 }
                 case (is VariadicParameter
@@ -321,8 +329,9 @@ class ExpressionTransformer
                         | ParameterReference
                         | DefaultedCallableParameter
                         | DefaultedParameterReference) {
-                    throw CompilerBug(that, "Parameter type not supported: \
-                                             ``className(parameter)``");
+                    throw CompilerBug(that,
+                            "Parameter type not supported: \
+                             ``className(parameter)``");
                 }
             });
             return DartFormalParameterList {
