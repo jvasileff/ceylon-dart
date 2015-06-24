@@ -183,5 +183,5 @@ void run() {
             }
          """;
 
-    compile(programFunctions);
+    compile(programAssertions);
 }

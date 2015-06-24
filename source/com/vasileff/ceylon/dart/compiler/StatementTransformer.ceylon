@@ -206,12 +206,15 @@ class StatementTransformer
         if (exists expression) {
             // check type of an expression
             assert (exists dartIdentifier);
+            value expressionInfo = ExpressionInfo(expression);
 
             statements.add {
                 DartVariableDeclarationStatement {
                     DartVariableDeclarationList {
-                        keyword = "var";
-                        type = null;
+                        keyword = null;
+                        ctx.naming.dartTypeName(
+                                variableDeclaration,
+                                expressionInfo.typeModel);
                         [DartVariableDeclaration {
                             name = dartIdentifier;
                             initializer = ctx.withLhsType(noType, ()
@@ -272,8 +275,10 @@ class StatementTransformer
             statements.add {
                 DartVariableDeclarationStatement {
                     DartVariableDeclarationList {
-                        keyword = "var";
-                        type = null;
+                        keyword = null;
+                        ctx.naming.dartTypeName(
+                                variableDeclaration,
+                                variableDeclaration.type);
                         [DartVariableDeclaration {
                             dartIdentifier;
                             DartSimpleIdentifier {
