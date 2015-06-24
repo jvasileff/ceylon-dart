@@ -77,7 +77,11 @@ class StatementTransformer
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType = returnType;
+                    returnType =
+                        // TODO seems like a hacky way to create a void keyword
+                        if (functionModel.declaredVoid)
+                        then DartTypeName(DartSimpleIdentifier("void"))
+                        else returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer
@@ -104,7 +108,11 @@ class StatementTransformer
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType = returnType;
+                    returnType =
+                        // TODO seems like a hacky way to create a void keyword
+                        if (functionModel.declaredVoid)
+                        then DartTypeName(DartSimpleIdentifier("void"))
+                        else returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer
