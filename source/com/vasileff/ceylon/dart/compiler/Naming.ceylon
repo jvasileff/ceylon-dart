@@ -181,6 +181,8 @@ class Naming(TypeFactory typeFactory) {
     DartTypeName dartTypeName
             (ElementModel inRelationTo, TypeModel type) {
 
+        // TODO add tests for non-boxed types
+
         // TODO document/explore erasure for generics
         //      and also for covariant returns. Can the
         //      caller always just use the `formal`,
@@ -190,7 +192,13 @@ class Naming(TypeFactory typeFactory) {
         //      address boxing/erasure issues elsewhere, like
         //      method invocations
 
-        value definiteType = typeFactory.definiteType(type);
+        variable value definiteType = typeFactory.definiteType(type);
+
+        // special case the rare but possible boolean
+        // union \Itrue|\Ifalse
+        if (typeFactory.isCeylonBoolean(definiteType)) {
+            definiteType = typeFactory.booleanType;
+        }
 
         if (definiteType.union || definiteType.intersection) {
             return dartObject;
