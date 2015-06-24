@@ -67,13 +67,18 @@ class StatementTransformer
         value functionModel = info.declarationModel;
         value functionName = ctx.naming.getName(functionModel);
 
-        return [DartFunctionDeclarationStatement {
-            DartFunctionDeclaration {
-                name = DartSimpleIdentifier(functionName);
-                functionExpression = expressionTransformer
-                        .generateFunctionExpression(that);
-            };
-        }];
+        return [
+            DartFunctionDeclarationStatement {
+                DartFunctionDeclaration {
+                    external = false;
+                    returnType = null; // TODO Types!
+                    propertyKeyword = null;
+                    name = DartSimpleIdentifier(functionName);
+                    functionExpression = expressionTransformer
+                            .generateFunctionExpression(that);
+                };
+            }
+        ];
     }
 
     see(`function transformFunctionDefinition`)
@@ -86,13 +91,18 @@ class StatementTransformer
         value functionModel = info.declarationModel;
         value functionName = ctx.naming.getName(functionModel);
 
-        return [DartFunctionDeclarationStatement {
-            DartFunctionDeclaration {
-                name = DartSimpleIdentifier(functionName);
-                functionExpression = expressionTransformer
+        return [
+            DartFunctionDeclarationStatement {
+                DartFunctionDeclaration {
+                    external = false;
+                    returnType = null; // TODO Types!
+                    propertyKeyword = null;
+                    name = DartSimpleIdentifier(functionName);
+                    functionExpression = expressionTransformer
                         .generateFunctionExpression(that);
-            };
-        }];
+                };
+            }
+        ];
     }
 
     shared actual
@@ -102,7 +112,7 @@ class StatementTransformer
         //      VariableDeclarationStatement(VariableDeclarationList)
         //
         // TODO classes and interfaces need jump back to toplevel w/captures
-        =>  [DartBlock(*expand(that.transformChildren(this)))];
+        =>  [DartBlock([*expand(that.transformChildren(this))])];
 
     shared actual
     [DartStatement+] transformAssertion(Assertion that) {
@@ -188,12 +198,20 @@ class StatementTransformer
             // check type of an expression
             assert (exists dartIdentifier);
 
-            statements.add(DartVariableDeclarationStatement(
-                    DartVariableDeclarationList([DartVariableDeclaration {
-                name = dartIdentifier;
-                initializer = ctx.withLhsType(noType, ()
-                        =>  expression.transform(expressionTransformer)); // (not boxing)
-            }])));
+            statements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        keyword = "var";
+                        type = null;
+                        [DartVariableDeclaration {
+                            name = dartIdentifier;
+                            initializer = ctx.withLhsType(noType, ()
+                                // (not boxing)
+                                =>  expression.transform(expressionTransformer));
+                        }];
+                    };
+                };
+            };
             dartIdentifierToCheck = dartIdentifier;
         }
         else {
@@ -204,42 +222,63 @@ class StatementTransformer
         }
 
         // check the type
-        statements.add(DartIfStatement {
-            DartIsExpression {
-                dartIdentifierToCheck;
-                DartTypeName(DartPrefixedIdentifier {
-                    // TODO actual type!
-                    DartSimpleIdentifier("$dart");
-                    DartSimpleIdentifier("object");
-                });
-                notOperator = !that.negated;
-            };
-            DartExpressionStatement(DartThrowExpression(
+        // if (x is !y) then throw new AssertionError(...)
+        statements.add {
+            DartIfStatement {
+                DartIsExpression {
+                    dartIdentifierToCheck;
+                    DartTypeName {
+                        DartPrefixedIdentifier {
+                            // TODO actual type!
+                            DartSimpleIdentifier("$dart");
+                            DartSimpleIdentifier("object");
+                        };
+                    };
+                    notOperator = !that.negated;
+                };
+                DartExpressionStatement {
+                    DartThrowExpression {
                         DartInstanceCreationExpression {
-                const = false;
-                DartConstructorName {
-                    DartTypeName(DartPrefixedIdentifier {
-                         DartSimpleIdentifier("$ceylon$language");
-                         DartSimpleIdentifier(ctx.naming.getName(
-                             ctx.typeFactory.assertionErrorDeclaration));
-                    });
+                            const = false;
+                            DartConstructorName {
+                                DartTypeName {
+                                    DartPrefixedIdentifier {
+                                        DartSimpleIdentifier("$ceylon$language");
+                                        DartSimpleIdentifier(ctx.naming.getName(
+                                            ctx.typeFactory.assertionErrorDeclaration));
+                                    };
+                                };
+                            };
+                            DartArgumentList {
+                                [DartSimpleStringLiteral {
+                                    "Violated: ``errorMessage``";
+                                }];
+                            };
+                        };
+                    };
                 };
-                DartArgumentList {
-                    [DartSimpleStringLiteral("Violated: ``errorMessage``")];
-                };
-            }));
-        });
+            };
+        };
 
         // define an unboxed replacement variable
         if (exists boxingConversion) {
             assert (exists dartIdentifier);
-            assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
+            assert (exists originalDeclaration = variableDeclaration.originalDeclaration);
 
-            statements.add(DartVariableDeclarationStatement(DartVariableDeclarationList(
-                    [DartVariableDeclaration {
-                dartIdentifier;
-                DartSimpleIdentifier(ctx.naming.getName(originalDeclaration));
-            }])));
+            statements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        keyword = "var";
+                        type = null;
+                        [DartVariableDeclaration {
+                            dartIdentifier;
+                            DartSimpleIdentifier {
+                                ctx.naming.getName(originalDeclaration);
+                            };
+                        }];
+                    };
+                };
+            };
         }
 
         assert(nonempty result = statements.sequence());

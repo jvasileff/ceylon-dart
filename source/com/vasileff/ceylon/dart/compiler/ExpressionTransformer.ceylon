@@ -216,14 +216,14 @@ class ExpressionTransformer
         if (isMethod) {
             return DartFunctionExpressionInvocation {
                 func = targetOrSetter;
-                argumentList = DartArgumentList(rhs);
+                argumentList = DartArgumentList([rhs]);
             };
         }
         else {
             return DartAssignmentExpression {
-                lhsExpression = targetOrSetter;
-                operator = "=";
-                rhsExpression =  rhs;
+                targetOrSetter;
+                DartAssignmentOperator.equal;
+                rhs;
             };
         }
     }
@@ -343,11 +343,11 @@ class ExpressionTransformer
             switch (definition)
             case (is Block) {
                 body = ctx.withReturnType(returnType, ()
-                    => DartBlockFunctionBody(statementTransformer
+                    => DartBlockFunctionBody(null, false, statementTransformer
                             .transformBlock(definition)[0]));
             }
             case (is LazySpecifier) {
-                body = DartExpressionFunctionBody(ctx.withLhsType(returnType, ()
+                body = DartExpressionFunctionBody(false, ctx.withLhsType(returnType, ()
                     => definition.expression.transform(expressionTransformer)));
             }
         }
@@ -379,9 +379,9 @@ class ExpressionTransformer
                     // then statement
                     DartExpressionStatement {
                         DartAssignmentExpression {
-                            lhsExpression = paramName;
-                            operator = "=";
-                            rhsExpression = ctx.withLhsType(parameterType, ()
+                            paramName;
+                            DartAssignmentOperator.equal;
+                            ctx.withLhsType(parameterType, ()
                                 =>  param.specifier.expression
                                         .transform(expressionTransformer));
                         };
@@ -401,7 +401,7 @@ class ExpressionTransformer
                             =>  definition.expression.transform(this));
                 });
             }
-            body = DartBlockFunctionBody(DartBlock(*statements));
+            body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
         }
         return DartFunctionExpression(dartParameterList(), body);
     }
@@ -443,7 +443,7 @@ class ExpressionTransformer
                     func = DartPrefixedIdentifier(
                                 DartSimpleIdentifier("$ceylon$language"),
                                 boxingFunction);
-                    argumentList = DartArgumentList(expression);
+                    argumentList = DartArgumentList([expression]);
                 };
             }
             else {

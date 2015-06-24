@@ -35,13 +35,13 @@ class DartTransformer(CompilationContext ctx)
 
         // ceylon.ast doesn't have a node for 'PositionalArgument'
         // so we are getting model info from the argument list
-        value args = zip(that.listedArguments, info.listedArgumentModels).map((t) {
+        value args = zip(that.listedArguments, info.listedArgumentModels).collect((t) {
             value [expression, argumentTypeModel, parameterModel] = t;
             return ctx.withLhsType(parameterModel.type, ()
                 =>  expression.transform(expressionTransformer));
         });
 
-        return DartArgumentList(*args);
+        return DartArgumentList(args);
     }
 
     shared actual
@@ -60,10 +60,9 @@ class DartTransformer(CompilationContext ctx)
             =>  that.definition.expression.transform(expressionTransformer));
 
         return DartVariableDeclarationList {
-            // TODO types!
             keyword = "var";
-            variables = [
-                DartVariableDeclaration {
+            type = null; // TODO types!
+            [DartVariableDeclaration {
                     name = name;
                     initializer = expression;
                 }

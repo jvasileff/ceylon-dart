@@ -27,9 +27,12 @@ class TopLevelTransformer
         value functionName = ctx.naming.getName(functionModel);
 
         return DartFunctionDeclaration {
+            external = false;
+            returnType = null; // TODO Types!
+            propertyKeyword = null;
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
-                    .generateFunctionExpression(that);
+                .generateFunctionExpression(that);
         };
     }
 
@@ -44,6 +47,9 @@ class TopLevelTransformer
         value functionName = ctx.naming.getName(functionModel);
 
         return DartFunctionDeclaration {
+            external = false;
+            returnType = null; // TODO Types!
+            propertyKeyword = null;
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
                     .generateFunctionExpression(that);
