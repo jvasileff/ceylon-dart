@@ -19,6 +19,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     TypeModel=Type
 }
+import com.vasileff.ceylon.dart.model {
+    DartTypeModel
+}
 
 class Naming(TypeFactory typeFactory) {
 
@@ -176,10 +179,35 @@ class Naming(TypeFactory typeFactory) {
                 };
             };
 
+    shared
+    DartTypeModel dartObjectModel
+        =   DartTypeModel("$dart$core", "Object");
+
+    shared
+    DartTypeModel dartBoolModel
+        =   DartTypeModel("$dart$core", "bool");
+
+    shared
+    DartTypeModel dartIntModel
+        =   DartTypeModel("$dart$core", "int");
+
+    shared
+    DartTypeModel dartDoubleModel
+        =   DartTypeModel("$dart$core", "double");
+
+    shared
+    DartTypeModel dartFunctionModel
+        =   DartTypeModel("$dart$core", "Function");
+
+    shared
+    DartTypeModel dartStringModel
+        =   DartTypeModel("$dart$core", "String");
+
     see(`function TypeFactory.boxingConversionFor`) // erasureFor?
     shared
-    DartTypeName dartTypeName
-            (ElementModel inRelationTo, TypeModel type) {
+    DartTypeName dartTypeName(
+            ElementModel inRelationTo,
+            TypeModel|DartTypeModel type) {
 
         // TODO add tests for non-boxed types
 
@@ -192,35 +220,64 @@ class Naming(TypeFactory typeFactory) {
         //      address boxing/erasure issues elsewhere, like
         //      method invocations
 
+        value dartModel =
+                if (is DartTypeModel type)
+                then type
+                else dartTypeModel(type);
+
+        value fromDartPrefix = moduleImportPrefix(inRelationTo);
+
+        if (dartModel.dartModule == fromDartPrefix) {
+            return
+            DartTypeName {
+                DartSimpleIdentifier(dartModel.name);
+            };
+        }
+        else {
+            return
+            DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier(dartModel.dartModule);
+                    DartSimpleIdentifier(dartModel.name);
+                };
+            };
+        }
+    }
+
+    "Obtain the [[DartTypeModel]] that will be used for
+     the given [[TypeModel]]."
+    see(`function TypeFactory.boxingConversionFor`)
+    shared
+    DartTypeModel dartTypeModel(TypeModel type) {
         value definiteType = typeFactory.definiteType(type);
 
         // handle well known types first, before giving up
         // on unions and intersections
         if (typeFactory.isCeylonBoolean(definiteType)) {
-            return dartBool;
+            return dartBoolModel;
         }
         else if (typeFactory.isCeylonInteger(definiteType)) {
-            return dartInt;
+            return dartIntModel;
         }
         else if (typeFactory.isCeylonFloat(definiteType)) {
-            return dartDouble;
+            return dartDoubleModel;
         }
         else if (typeFactory.isCeylonString(definiteType)) {
-            return dartString;
+            return dartStringModel;
         }
         else if (typeFactory.isCeylonAnything(definiteType)) {
-            return dartObject;
+            return dartObjectModel;
         }
         else if (typeFactory.isCeylonNothing(definiteType)) {
             // this handles the `Null` case too,
             // since Null & Object = Nothing
-            return dartObject;
+            return dartObjectModel;
         }
         else if (typeFactory.isCeylonObject(definiteType)) {
-            return dartObject;
+            return dartObjectModel;
         }
         else if (typeFactory.isCeylonBasic(definiteType)) {
-            return dartObject;
+            return dartObjectModel;
         }
         else if (typeFactory.isCeylonCallable(definiteType)) {
             // FIXME only erase to function when the types match exactly
@@ -230,36 +287,17 @@ class Naming(TypeFactory typeFactory) {
             //       Callable<Anything, Nothing> isn't good enough.
             //       We could just always box, but then we'll have to
             //       worry about optimizing function expressions.
-            return dartFunction;
+            return dartFunctionModel;
         }
         else if (definiteType.union || definiteType.intersection) {
             // settle for Object for other unions and intersections
-            return dartObject;
+            return dartObjectModel;
         }
         else {
-            // finally, just regular, unerased, unboxed types
-            if (sameModule(inRelationTo, definiteType.declaration)) {
-                return
-                DartTypeName {
-                    DartSimpleIdentifier(
-                        identifierPackagePrefix(definiteType.declaration) +
+            return
+            DartTypeModel(moduleImportPrefix(definiteType.declaration),
+                    identifierPackagePrefix(definiteType.declaration) +
                         getName(definiteType.declaration));
-                };
-            }
-            else {
-                return
-                DartTypeName {
-                    DartPrefixedIdentifier {
-                        DartSimpleIdentifier {
-                            moduleImportPrefix(definiteType.declaration);
-                        };
-                        DartSimpleIdentifier {
-                            identifierPackagePrefix(definiteType.declaration) +
-                                getName(definiteType.declaration);
-                        };
-                    };
-                };
-            }
         }
     }
 }
