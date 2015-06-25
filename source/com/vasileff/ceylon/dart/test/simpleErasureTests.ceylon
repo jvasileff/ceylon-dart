@@ -178,38 +178,27 @@ void booleanArgumentErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void f1([$dart$core.bool x]) {
-            }
+            void f1([$dart$core.bool x]) {}
 
-            void f2([$dart$core.bool x]) {
-            }
+            void f2([$dart$core.bool x]) {}
 
-            void f3([$dart$core.Object x]) {
-            }
+            void f3([$dart$core.Object x]) {}
 
-            void f4([$dart$core.Object x]) {
-            }
+            void f4([$dart$core.Object x]) {}
 
-            void f5([$dart$core.bool x]) {
-            }
+            void f5([$dart$core.bool x]) {}
 
-            void f6([$dart$core.bool x]) {
-            }
+            void f6([$dart$core.bool x]) {}
 
-            void f7([$dart$core.bool x]) {
-            }
+            void f7([$dart$core.bool x]) {}
 
-            void f8([$dart$core.bool x]) {
-            }
+            void f8([$dart$core.bool x]) {}
 
-            void f9([$dart$core.bool x]) {
-            }
+            void f9([$dart$core.bool x]) {}
 
-            void f10([$dart$core.bool x]) {
-            }
+            void f10([$dart$core.bool x]) {}
 
-            void f11([$dart$core.bool x]) {
-            }
+            void f11([$dart$core.bool x]) {}
 
             $dart$core.bool booleanBoolean = true;
 

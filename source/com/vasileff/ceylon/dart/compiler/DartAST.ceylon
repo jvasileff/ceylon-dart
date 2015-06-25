@@ -767,11 +767,16 @@ class DartBlock(statements)
 
     shared actual
     void write(CodeWriter writer) {
-        writer.startBlock();
-        for (statement in statements) {
-            statement.write(writer);
+        if (nonempty statements) {
+            writer.startBlock();
+            for (statement in statements) {
+                statement.write(writer);
+            }
+            writer.endBlock();
         }
-        writer.endBlock();
+        else {
+            writer.write("{}");
+        }
     }
 }
 
