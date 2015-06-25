@@ -56,6 +56,7 @@ class DartImportDirective(uri, prefix)
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent(); // noop
         writer.write("import ");
         uri.write(writer);
@@ -64,7 +65,6 @@ class DartImportDirective(uri, prefix)
             prefix.write(writer);
         }
         writer.write(";");
-        writer.writeLine();
     }
 }
 
@@ -77,6 +77,7 @@ class DartReturnStatement(expression = null)
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent();
         writer.write("return");
         if (exists expression) {
@@ -84,7 +85,6 @@ class DartReturnStatement(expression = null)
             expression.write(writer);
         }
         writer.write(";");
-        writer.writeLine();
     }
 }
 
@@ -135,10 +135,10 @@ class DartExpressionStatement(expression)
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent();
         expression.write(writer);
         writer.write(";");
-        writer.writeLine();
     }
 }
 
@@ -367,6 +367,7 @@ class DartIfStatement
                 else
                     null;
 
+        writer.writeLine();
         writer.writeIndent();
         writer.write("if (");
         condition.write(writer);
@@ -376,7 +377,6 @@ class DartIfStatement
             writer.write("else ");
             elseBlock.write(writer);
         }
-        writer.writeLine();
     }
 }
 
@@ -465,9 +465,10 @@ class DartVariableDeclarationStatement(variableList)
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent();
         variableList.write(writer);
-        writer.writeLine(";");
+        writer.write(";");
     }
 }
 
@@ -507,10 +508,10 @@ class DartTopLevelVariableDeclaration(variableList)
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent();
         variableList.write(writer);
         writer.writeLine(";");
-        writer.writeLine();
     }
 }
 
@@ -545,6 +546,7 @@ class DartFunctionDeclaration(
 
     shared actual
     void write(CodeWriter writer) {
+        writer.writeLine();
         writer.writeIndent();
         if (exists returnType) {
             returnType.write(writer);
@@ -559,7 +561,6 @@ class DartFunctionDeclaration(
         if (functionExpression.body is DartExpressionFunctionBody) {
             writer.write(";");
         }
-        writer.writeLine();
         writer.writeLine();
     }
 }

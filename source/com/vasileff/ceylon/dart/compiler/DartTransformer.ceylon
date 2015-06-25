@@ -53,11 +53,6 @@ class DartTransformer(CompilationContext ctx)
         }
 
         value info = ValueDefinitionInfo(that);
-        value declarationModel = info.declarationModel;
-
-        value name = DartSimpleIdentifier(ctx.naming.getName(declarationModel));
-        value expression = ctx.withLhsType(declarationModel.type, ()
-            =>  that.definition.expression.transform(expressionTransformer));
 
         return
         DartVariableDeclarationList {
@@ -66,10 +61,12 @@ class DartTransformer(CompilationContext ctx)
                     info.declarationModel,
                     info.declarationModel.type);
             [DartVariableDeclaration {
-                    name = name;
-                    initializer = expression;
-                }
-            ];
+                DartSimpleIdentifier {
+                    ctx.naming.getName(info.declarationModel);
+                };
+                ctx.withLhsType(info.declarationModel.type, ()
+                    =>  that.definition.expression.transform(expressionTransformer));
+            }];
         };
     }
 

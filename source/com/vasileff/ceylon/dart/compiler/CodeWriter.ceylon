@@ -40,7 +40,6 @@ class CodeWriter(
     shared
     CodeWriter startBlock() {
         write("{");
-        writeLine();
         indentPlus();
         return this;
     }
@@ -48,7 +47,9 @@ class CodeWriter(
     shared
     CodeWriter endBlock() {
         indentMinus();
-        writeIndent().write("}");
+        writeLine();
+        writeIndent();
+        write("}");
         return this;
     }
 }

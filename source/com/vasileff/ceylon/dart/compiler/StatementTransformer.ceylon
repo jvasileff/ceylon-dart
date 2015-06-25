@@ -177,29 +177,6 @@ class StatementTransformer
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
-        "The original variable's type, if there is one"
-        value originalType = conditionInfo.variableDeclarationModel
-                .originalDeclaration?.type;
-
-        "If we are narrowing an existing variable, will there also be unboxing?"
-        value boxingConversion =
-                if (exists originalType)
-                then ctx.typeFactory.boxingConversionFor(
-                        originalType, variableType)
-                else null;
-
-        "The identifier for the new variable, if defining one"
-        value dartIdentifier =
-                if (exists boxingConversion)
-                    then DartSimpleIdentifier(
-                            ctx.naming.createReplacementName(
-                                variableDeclaration))
-                else if (exists expression)
-                    then DartSimpleIdentifier(
-                            ctx.naming.getName(
-                                variableDeclaration))
-                else null;
-
         "The Ceylon source code for the condition"
         value errorMessage =
                 ctx.tokens[conditionInfo.token.tokenIndex..
@@ -209,47 +186,122 @@ class StatementTransformer
 
         value statements = LinkedList<DartStatement>();
 
-        // determine what to check
-        DartIdentifier dartIdentifierToCheck;
+        // new variable, or narrowing existing?
         if (exists expression) {
-            // check type of an expression
-            assert (exists dartIdentifier);
-            value expressionInfo = ExpressionInfo(expression);
+            // 1. declare new variable
+            // 2. evaluate expression to temp variable of type of expression
+            // 3. check type of the temp variable
+            // 4. set new variable, with appropriate boxing
+            // (perform 2-4 in a new block to scope the temp var)
 
+            value variableIdentifier = DartSimpleIdentifier(
+                    ctx.naming.getName(variableDeclaration));
+            value expressionType = ExpressionInfo(expression).typeModel;
+
+            // 1. declare the new variable
             statements.add {
                 DartVariableDeclarationStatement {
                     DartVariableDeclarationList {
                         keyword = null;
                         ctx.naming.dartTypeName(
                                 variableDeclaration,
-                                expressionInfo.typeModel);
+                                variableType);
                         [DartVariableDeclaration {
-                            name = dartIdentifier;
-                            initializer = ctx.withLhsType(noType, ()
-                                // (not boxing)
-                                =>  expression.transform(expressionTransformer));
+                            variableIdentifier;
                         }];
                     };
                 };
             };
-            dartIdentifierToCheck = dartIdentifier;
+
+            value tmpVariable = DartSimpleIdentifier(
+                    ctx.naming.createTempName(variableDeclaration));
+
+            statements.add {
+                DartBlock {[
+                    // 2. evaluate to tmp variable
+                    DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            ctx.naming.dartTypeName(
+                                    variableDeclaration,
+                                    expressionType);
+                            [DartVariableDeclaration {
+                                tmpVariable;
+                                ctx.withLhsType(expressionType, ()
+                                    =>  expression.transform(
+                                            expressionTransformer));
+                            }];
+                        };
+                    },
+
+                    // 3. perform is check on tmp variable
+                    generateIsAssertion(tmpVariable, that.negated, errorMessage),
+
+                    // 4. set variable
+                    DartExpressionStatement {
+                        DartAssignmentExpression {
+                            variableIdentifier;
+                            DartAssignmentOperator.equal;
+                            ctx.withLhsType(variableType, ()
+                                =>  withBoxing(expressionType, tmpVariable));
+                        };
+                    }];
+                };
+            };
         }
         else {
-            // check type of the original variable
+            // check type of the original variable,
+            // possibly declare new variable narrowed type
             assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
-            dartIdentifierToCheck = DartSimpleIdentifier(
-                    ctx.naming.getName(originalDeclaration));
+            value originalDartVariable =
+                    DartSimpleIdentifier(ctx.naming.getName(originalDeclaration));
+
+            statements.add(generateIsAssertion(
+                    originalDartVariable,
+                    that.negated, errorMessage));
+
+            // TODO should base this on the *dart* static type instead
+            value typeChanged = !ctx.typeFactory.equalDefiniteTypes(
+                    variableType, originalDeclaration.type);
+
+            if (typeChanged) {
+                value replacementVar = DartSimpleIdentifier(
+                        ctx.naming.createReplacementName(variableDeclaration));
+
+                statements.add {
+                    DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            ctx.naming.dartTypeName(
+                                    variableDeclaration,
+                                    variableDeclaration.type);
+                            [DartVariableDeclaration {
+                                replacementVar;
+                                ctx.withLhsType(variableType, ()
+                                    =>  withBoxing(originalDeclaration.type,
+                                                   originalDartVariable));
+                            }];
+                        };
+                    };
+                };
+            }
         }
 
-        // check the type
+        assert(nonempty result = statements.sequence());
+        return result;
+    }
+
+    DartStatement generateIsAssertion(
+            DartExpression expressionToCheck,
+            Boolean not,
+            String errorMessage)
         // if (x is !y) then throw new AssertionError(...)
-        statements.add {
-            DartIfStatement {
+        =>  DartIfStatement {
                 DartIsExpression {
-                    dartIdentifierToCheck;
+                    expressionToCheck;
                     // TODO actual type!
                     ctx.naming.dartObject;
-                    notOperator = !that.negated;
+                    notOperator = !not;
                 };
                 DartExpressionStatement {
                     DartThrowExpression {
@@ -260,7 +312,8 @@ class StatementTransformer
                                     DartPrefixedIdentifier {
                                         DartSimpleIdentifier("$ceylon$language");
                                         DartSimpleIdentifier(ctx.naming.getName(
-                                            ctx.typeFactory.assertionErrorDeclaration));
+                                            ctx.typeFactory
+                                                .assertionErrorDeclaration));
                                     };
                                 };
                             };
@@ -273,32 +326,4 @@ class StatementTransformer
                     };
                 };
             };
-        };
-
-        // define an unboxed replacement variable
-        if (exists boxingConversion) {
-            assert (exists dartIdentifier);
-            assert (exists originalDeclaration = variableDeclaration.originalDeclaration);
-
-            statements.add {
-                DartVariableDeclarationStatement {
-                    DartVariableDeclarationList {
-                        keyword = null;
-                        ctx.naming.dartTypeName(
-                                variableDeclaration,
-                                variableDeclaration.type);
-                        [DartVariableDeclaration {
-                            dartIdentifier;
-                            DartSimpleIdentifier {
-                                ctx.naming.getName(originalDeclaration);
-                            };
-                        }];
-                    };
-                };
-            };
-        }
-
-        assert(nonempty result = statements.sequence());
-        return result;
-    }
 }

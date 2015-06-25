@@ -191,6 +191,12 @@ class TypeFactory(Unit unit) {
     Boolean equalDeclarations(Declaration first, Declaration second)
         =>  ModelUtil.equal(first, second);
 
+    "True if the definite type of [[first]] is exactly the
+     definite type of [[second]]."
+    shared
+    Boolean equalDefiniteTypes(Type first, Type second)
+        =>  definiteType(first).isExactly(definiteType(second));
+
     /////////////////////////////////////////////
     // boxing
     /////////////////////////////////////////////
