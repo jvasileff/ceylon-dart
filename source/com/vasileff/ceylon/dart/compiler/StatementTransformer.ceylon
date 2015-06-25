@@ -260,11 +260,10 @@ class StatementTransformer
                     originalDartVariable,
                     that.negated, errorMessage));
 
-            // TODO should base this on the *dart* static type instead
-            value typeChanged = !ctx.typeFactory.equalDefiniteTypes(
+            value dartTypeChanged = !ctx.naming.equalErasure(
                     variableType, originalDeclaration.type);
 
-            if (typeChanged) {
+            if (dartTypeChanged) {
                 value replacementVar = DartSimpleIdentifier(
                         ctx.naming.createReplacementName(variableDeclaration));
 

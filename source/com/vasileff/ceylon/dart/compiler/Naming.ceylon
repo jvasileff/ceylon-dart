@@ -300,6 +300,10 @@ class Naming(TypeFactory typeFactory) {
                         getName(definiteType.declaration));
         }
     }
+
+    shared
+    Boolean equalErasure(TypeModel first, TypeModel second)
+        =>  dartTypeModel(first) == dartTypeModel(second);
 }
 
 Result memoize<Result, Argument>

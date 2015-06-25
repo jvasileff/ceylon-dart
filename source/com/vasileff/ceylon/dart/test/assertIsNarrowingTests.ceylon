@@ -29,9 +29,8 @@ void narrowObjectToString() {
 
 shared test
 void narrowDontShadow() {
-    // TODO currently shadowing, since we are considering the
-    // change in the Ceylon static type instead of the less
-    // precise Dart static type
+    // the narrowing doesn't affect the Dart type,
+    // so a new variable declaration is not required
     compileAndCompare {
          """void assertions() {
                 String|Integer|Float obj = "x";
@@ -47,7 +46,6 @@ void narrowDontShadow() {
                 if (obj is $dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: !is String obj");
                 }
-                $dart$core.Object obj$0 = obj;
             }
          """;
     };
