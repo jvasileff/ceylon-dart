@@ -368,8 +368,8 @@ class ExpressionTransformer
                 value parameterInfo = ParameterInfo(param);
                 value model = parameterInfo.parameterModel;
                 value parameterType = model.type;
-                value paramName = DartSimpleIdentifier
-                        (param.parameter.name.name); // TODO Name
+                value paramName = DartSimpleIdentifier(
+                        ctx.naming.getName(parameterInfo.parameterModel));
                 statements.add(DartIfStatement {
                     // condition
                     DartFunctionExpressionInvocation {
