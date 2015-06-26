@@ -31,6 +31,7 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     ConstructorModel=Constructor,
     TypedDeclarationModel=TypedDeclaration,
+    DeclarationModel=Declaration,
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
@@ -156,20 +157,34 @@ class ExpressionTransformer
         TypeModel rhsType;
 
         value primary = that.invoked;
-        if (is BaseExpression primary) {
-            value primaryInfo = BaseExpressionInfo(primary);
-            assert (is TypedDeclarationModel m = primaryInfo.declaration);
-            rhsType = m.type;
+
+        // find the declaration for `invoked`
+        DeclarationModel primaryDeclaration;
+        switch (primary)
+        case (is BaseExpression) {
+            primaryDeclaration = BaseExpressionInfo(primary).declaration;
         }
-        else if (is QualifiedExpression primary) {
-            value primaryInfo = QualifiedExpressionInfo(primary);
-            assert (is TypedDeclarationModel m = primaryInfo.declaration);
-            rhsType = m.type;
+        case (is QualifiedExpression) {
+            primaryDeclaration = QualifiedExpressionInfo(primary).declaration;
         }
         else {
             throw CompilerBug(that,
-                    "Primary type not yet supported: \
-                     '``className(primary)``'");
+                "Primary type not yet supported: '``className(primary)``'");
+        }
+
+        // calculate rhsType from the declaration
+        switch (primaryDeclaration)
+        case (is FunctionModel) {
+            rhsType = (primaryDeclaration of TypedDeclarationModel).type;
+        }
+        case (is ValueModel) {
+            // callables never return erased values
+            rhsType = ctx.typeFactory.anythingType;
+        }
+        else {
+            throw CompilerBug(that,
+                "The invoked expression's declaration type is not supported: \
+                 '``className(primaryDeclaration)``'");
         }
 
         return withBoxing(rhsType, DartFunctionExpressionInvocation {

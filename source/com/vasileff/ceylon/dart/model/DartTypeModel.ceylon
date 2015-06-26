@@ -4,6 +4,9 @@ class DartTypeModel(dartModule, name) extends Object() {
     shared String name;
 
     shared actual
+    String string => {dartModule, name}.string;
+
+    shared actual
     Boolean equals(Object that) {
         if (is DartTypeModel that) {
             return dartModule==that.dartModule &&

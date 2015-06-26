@@ -184,10 +184,10 @@ void run() {
          """;
 
     value programGenericErasure =
-         """shared T generic<T>(T x) given T satisfies String {
-                String s = x;
-                assert (is T s);
-                return s;
+         """shared T generic<T>(T t) given T satisfies String {
+                //String s = t;
+                //assert (is T s);
+                return t;
             }
             //shared String nonGeneric(String x) {
             //    return x;
@@ -201,11 +201,11 @@ void run() {
          """;
 
     value programCallableErasure =
-         """String() echoString = () => "x";
+         """String() echoString = () => nothing;
             shared void run() {
                 String result = echoString();
             }
          """;
 
-    compile { true; programGenericErasure };
+    compile { true; programCallableErasure };
 }
