@@ -184,17 +184,19 @@ void run() {
          """;
 
     value programGenericErasure =
-         """shared T generic<T>(T x)  {
-                return x;
+         """shared T generic<T>(T x) given T satisfies String {
+                String s = x;
+                assert (is T s);
+                return s;
             }
-            shared String nonGeneric(String x) {
-                return x;
-            }
+            //shared String nonGeneric(String x) {
+            //    return x;
+            //}
 
             shared void run() {
                 String myString1 = generic("true");
-                myString1.compare("other");
-                value myString2 = nonGeneric("true");
+                //myString1.compare("other");
+                //value myString2 = nonGeneric("true");
             }
          """;
 
@@ -205,5 +207,5 @@ void run() {
             }
          """;
 
-    compile { true; programCallableErasure };
+    compile { true; programGenericErasure };
 }

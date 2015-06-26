@@ -103,3 +103,36 @@ void defineValueWithAssert() {
          """;
     };
 }
+
+shared test
+void narrowToGenericTypeWithErasure() {
+    compileAndCompare {
+         """shared T echoString<T>(T t) given T satisfies String {
+                String s = t;
+                assert (is T s);
+                return s;
+            }
+
+            shared void run() {
+                String myString1 = echoString("x");
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.Object echoString([$dart$core.Object t]) {
+                $dart$core.String s = $ceylon$language.dart$ceylonStringToNative(t);
+                if (s is !$dart$core.Object) {
+                    throw new $ceylon$language.AssertionError("Violated: is T s");
+                }
+                $dart$core.Object s$0 = $ceylon$language.dart$nativeToCeylonString(s);
+                return s$0;
+            }
+
+            void run() {
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative(echoString($ceylon$language.dart$nativeToCeylonString("x")));
+            }
+         """;
+     };
+}
