@@ -37,6 +37,13 @@ class DartTransformer(CompilationContext ctx)
         // so we are getting model info from the argument list
         value args = zip(that.listedArguments, info.listedArgumentModels).collect((t) {
             value [expression, argumentTypeModel, parameterModel] = t;
+            // presumably, (argumentTypeModel === ExpressionInfo(expression).typeModel)
+            // whereas parameterModel.type describes the parameter, which may be generic
+
+            // A question is if we can always get by with using `Type` for lhs,
+            // or if we'll need the element models in order to always base things on
+            // the type used in the `formal` declaration associated with this parameter
+            // Where should this calculation go? Here, or wherever lhs is put to use?
             return ctx.withLhsType(parameterModel.type, ()
                 =>  expression.transform(expressionTransformer));
         });

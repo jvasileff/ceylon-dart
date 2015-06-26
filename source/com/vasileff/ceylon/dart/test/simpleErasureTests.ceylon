@@ -212,3 +212,40 @@ void booleanArgumentErasure() {
          """;
     };
 }
+
+
+shared test
+void genericNonErasure() {
+     compileAndCompare {
+         """shared T generic<T>(T x)  {
+                return x;
+            }
+
+            shared String nonGeneric(String x) {
+                return x;
+            }
+
+            shared void run() {
+                String myString1 = generic("true");
+                String myString2 = nonGeneric("true");
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.Object generic([$dart$core.Object x]) {
+                return x;
+            }
+
+            $dart$core.String nonGeneric([$dart$core.String x]) {
+                return x;
+            }
+
+            void run() {
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative(generic($ceylon$language.dart$nativeToCeylonString("true")));
+                $dart$core.String myString2 = nonGeneric("true");
+            }
+         """;
+    };
+}

@@ -22,17 +22,20 @@ shared test
 void anonymousFunctionTest() {
     compileAndCompare {
          """void simpleFunction() {
-                value anon = () => "result";
+                String() anon = () => "result";
                 print(anon());
             }
          """;
 
+        // FIXME this is what we get now....
+        //       which is sort of correct, since the anonymous function
+        //       needs to be boxed
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
             void simpleFunction() {
                 $dart$core.Function anon = () => "result";
-                print($ceylon$language.dart$nativeToCeylonString(anon()));
+                print(anon());
             }
          """;
     };

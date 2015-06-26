@@ -184,14 +184,26 @@ void run() {
          """;
 
     value programGenericErasure =
-         """shared T generic<T>(T x) given T satisfies String {
+         """shared T generic<T>(T x)  {
+                return x;
+            }
+            shared String nonGeneric(String x) {
                 return x;
             }
 
             shared void run() {
-                generic("true");
+                String myString1 = generic("true");
+                myString1.compare("other");
+                value myString2 = nonGeneric("true");
             }
          """;
 
-    compile { true; programGenericErasure };
+    value programCallableErasure =
+         """String() echoString = () => "x";
+            shared void run() {
+                String result = echoString();
+            }
+         """;
+
+    compile { true; programCallableErasure };
 }

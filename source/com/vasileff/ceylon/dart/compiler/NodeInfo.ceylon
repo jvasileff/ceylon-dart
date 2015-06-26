@@ -24,7 +24,10 @@ import ceylon.ast.core {
     LetExpression,
     TryClause,
     While,
-    ValueSpecification
+    ValueSpecification,
+    Primary,
+    Invocation,
+    QualifiedExpression
 }
 import ceylon.interop.java {
     CeylonList,
@@ -107,6 +110,32 @@ class BaseExpressionInfo(BaseExpression node)
     shared TypeModel? parameterType => tcNode.parameterType;
 }
 
+class QualifiedExpressionInfo(QualifiedExpression node)
+        extends ExpressionInfo<QualifiedExpression>(node) {
+
+    value tcNode = assertedTcNode<Tree.QualifiedMemberOrTypeExpression>(node);
+
+    // MemberOrTypeExpression
+
+    "The declaration and type arguments of the target
+     of the QualifiedExpression"
+    shared ReferenceModel target => tcNode.target;
+
+    "The declaration of the target of the QualifiedExpression"
+    shared DeclarationModel declaration => tcNode.declaration;
+
+    shared
+    {TypeModel*}? signature
+        =>  if (exists sig = tcNode.signature)
+            then CeylonList(sig)
+            else null;
+
+    // StaticMemberOrTypeExpression
+
+    shared TypedReferenceModel? targetParameter => tcNode.targetParameter;
+    shared TypeModel? parameterType => tcNode.parameterType;
+}
+
 class TypedDeclarationInfo<out NodeType>(NodeType node)
         extends NodeInfo<TypedDeclaration>(node)
         given NodeType satisfies TypedDeclaration {
@@ -119,7 +148,9 @@ class ArgumentListInfo(ArgumentList node)
         extends NodeInfo<ArgumentList>(node) {
 
     value tcNode = assertedTcNode<Tree.SequencedArgument>(node);
-    shared ParameterModel? parameterModel => tcNode.parameter;
+
+    // what's this for?
+    shared ParameterModel? parameter => tcNode.parameter;
 
     // FIXME last argument may be JSpreadArgument or JComprehension
     // see ceylon.ast.redhat::argumentListToCeylon code
@@ -228,6 +259,13 @@ class ValueSpecificationInfo(ValueSpecification node)
         return result;
     }
     //shared TypedDeclarationModel? refined => tcNode.refined;
+}
+
+class InvocationInfo<NodeType>(NodeType node)
+        extends ExpressionInfo<NodeType>(node)
+        given NodeType satisfies Invocation {
+
+    //value tcNode = assertedTcNode<Tree.InvocationExpression>(node);
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node node)

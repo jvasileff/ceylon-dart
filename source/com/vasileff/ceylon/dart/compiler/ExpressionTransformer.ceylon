@@ -19,7 +19,8 @@ import ceylon.ast.core {
     FunctionShortcutDefinition,
     FloatLiteral,
     Node,
-    Expression
+    Expression,
+    QualifiedExpression
 }
 import ceylon.collection {
     LinkedList
@@ -141,11 +142,38 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-        value info = ExpressionInfo(that);
-        value rhsType = info.typeModel;
+        // Note: `ExpressionInfo(that).typeModel` is the correct result
+        //       type of the invocation, but it doesn't let us account
+        //       for generics and covariant refinements, which affect
+        //       erasure.
+
+        // FIXME covariant refinement erasure calc.
+        // FIXME what about references to functions?
+        // FIXME what about anonymous functions?
+
+        // Erasure is based on the return type of the function,
+        // not on the type of the invocation expression:
+        TypeModel rhsType;
+
+        value primary = that.invoked;
+        if (is BaseExpression primary) {
+            value primaryInfo = BaseExpressionInfo(primary);
+            assert (is TypedDeclarationModel m = primaryInfo.declaration);
+            rhsType = m.type;
+        }
+        else if (is QualifiedExpression primary) {
+            value primaryInfo = QualifiedExpressionInfo(primary);
+            assert (is TypedDeclarationModel m = primaryInfo.declaration);
+            rhsType = m.type;
+        }
+        else {
+            throw CompilerBug(that,
+                    "Primary type not yet supported: \
+                     '``className(primary)``'");
+        }
 
         return withBoxing(rhsType, DartFunctionExpressionInvocation {
-            // we want a boxed type to invoke, so use 'Anything' (unoptimized!)
+            // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
             func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
                     =>  that.invoked.transform(this));
             argumentList = dartTransformer.transformArguments(that.arguments);
