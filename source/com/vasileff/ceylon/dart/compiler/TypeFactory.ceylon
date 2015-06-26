@@ -1,8 +1,18 @@
+import ceylon.interop.java {
+    CeylonIterable
+}
+import ceylon.language.meta.declaration {
+    ValueDeclaration
+}
+
 import com.redhat.ceylon.model.typechecker.model {
     Type,
     Unit,
     ModelUtil,
-    Declaration
+    Declaration,
+    TypedDeclaration,
+    TypeDeclaration,
+    Value
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -53,8 +63,9 @@ class TypeFactory(Unit unit) {
 
     shared
     Boolean isCeylonNull(Type type)
-        // Null, \Inull, but not Nothing
-        =>  !type.nothing && type.isSubtypeOf(nullType);
+        // Null, \Inull
+        =>  type.isExactly(nullType) ||
+            isNullTypeDeclaration(type.declaration);
 
     shared
     Boolean isCeylonAnything(Type type)
@@ -70,15 +81,12 @@ class TypeFactory(Unit unit) {
 
     shared
     Boolean isCeylonBoolean(Type type)
-        // Boolean, \Itrue, \Ifalse
-        =>  !type.nothing && type.isSubtypeOf(booleanType);
-
-    shared
-    Boolean isCeylonOptionalBoolean(Type type)
-        // Boolean, \Itrue, \Ifalse, \Inull, Null
-        =>  !type.nothing &&
-                intersection(type, objectType)
-                .isSubtypeOf(booleanType);
+        // Boolean, \Itrue, \Ifalse, \Itrue|\Ifalse
+        =>  type.isExactly(booleanType) || (
+                let (declaration = type.declaration)
+                isBooleanTrueTypeDeclaration(declaration) ||
+                isBooleanFalseTypeDeclaration(declaration) ||
+                type.union && CeylonIterable(type.caseTypes).every(isCeylonBoolean));
 
     shared
     Boolean isCeylonByte(Type type)
@@ -117,33 +125,78 @@ class TypeFactory(Unit unit) {
     // to duplicate instances re:
     // https://github.com/ceylon/ceylon-compiler/issues/1815
 
-    Declaration booleanTrueDeclaration
-        =>  unit.getLanguageModuleDeclaration("true");
+    TypeDeclaration booleanDeclaration {
+        assert (is TypeDeclaration declaration =
+            unit.getLanguageModuleDeclaration("Boolean"));
+        return declaration;
+    }
 
-    Declaration booleanFalseDeclaration
-        =>  unit.getLanguageModuleDeclaration("false");
+    Value booleanTrueValueDeclaration {
+        assert (is Value declaration =
+            unit.getLanguageModuleDeclaration("true"));
+        return declaration;
+    }
+
+    TypeDeclaration booleanTrueTypeDeclaration
+        =>  booleanTrueValueDeclaration.typeDeclaration;
+
+    Value booleanFalseValueDeclaration {
+        assert (is Value declaration =
+            unit.getLanguageModuleDeclaration("false"));
+        return declaration;
+    }
+
+    TypeDeclaration booleanFalseTypeDeclaration
+        =>  booleanFalseValueDeclaration.typeDeclaration;
 
     Declaration callableDeclaration
         =>  unit.getLanguageModuleDeclaration("Callable");
 
-    Declaration nullDeclaration
-        =>  unit.getLanguageModuleDeclaration("null");
+    TypeDeclaration nullDeclaration {
+        assert (is TypeDeclaration declaration =
+            unit.getLanguageModuleDeclaration("Null"));
+        return declaration;
+    }
+
+    Value nullValueDeclaration {
+        assert (is Value declaration =
+                unit.getLanguageModuleDeclaration("null"));
+        return declaration;
+    }
+
+    TypeDeclaration nullTypeDeclaration
+        =>  nullValueDeclaration.typeDeclaration;
 
     shared
-    Declaration assertionErrorDeclaration
-        =>  unit.getLanguageModuleDeclaration("AssertionError");
+    TypeDeclaration assertionErrorDeclaration {
+        assert (is TypeDeclaration declaration =
+            unit.getLanguageModuleDeclaration("AssertionError"));
+        return declaration;
+    }
 
     /////////////////////////////////////////////
     // declaration tests
     /////////////////////////////////////////////
 
     shared
-    Boolean isBooleanTrueDeclaration(Declaration declaration)
-        =>  equalDeclarations(declaration, booleanTrueDeclaration);
+    Boolean isBooleanDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanDeclaration);
 
     shared
-    Boolean isBooleanFalseDeclaration(Declaration declaration)
-        =>  equalDeclarations(declaration, booleanFalseDeclaration);
+    Boolean isBooleanTrueValueDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanTrueValueDeclaration);
+
+    shared
+    Boolean isBooleanTrueTypeDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanTrueTypeDeclaration);
+
+    shared
+    Boolean isBooleanFalseValueDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanFalseValueDeclaration);
+
+    shared
+    Boolean isBooleanFalseTypeDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, booleanFalseTypeDeclaration);
 
     shared
     Boolean isCallableDeclaration(Declaration declaration)
@@ -152,6 +205,14 @@ class TypeFactory(Unit unit) {
     shared
     Boolean isNullDeclaration(Declaration declaration)
         =>  equalDeclarations(declaration, nullDeclaration);
+
+    shared
+    Boolean isNullValueDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, nullValueDeclaration);
+
+    shared
+    Boolean isNullTypeDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, nullTypeDeclaration);
 
     /////////////////////////////////////////////
     // utilities
