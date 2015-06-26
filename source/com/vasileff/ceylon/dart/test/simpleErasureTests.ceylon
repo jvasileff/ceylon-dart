@@ -3,22 +3,6 @@ import ceylon.test {
 }
 
 shared test
-void voidFunctionTest() {
-    compileAndCompare {
-         """void simpleFunction() { return; }
-         """;
-
-         """import "dart:core" as $dart$core;
-            import "package:ceylon/language/language.dart" as $ceylon$language;
-
-            void simpleFunction() {
-                return;
-            }
-         """;
-    };
-}
-
-shared test
 void booleanFunctionReturnErasure() {
      compileAndCompare {
          """Boolean f1() => true;
