@@ -262,28 +262,36 @@ class TypeFactory(Unit unit) {
     // boxing
     /////////////////////////////////////////////
 
+    see(`function Naming.dartTypeModel`)
     shared
     BoxingConversion? boxingConversionFor(
-            Type lhs, Type rhs) {
+            variable Type lhs,
+            variable Type rhs) {
 
-        // NOTE: we are assuming from and to are not any of the
-        // exceptional cases, such as type parameters or actual
-        // refinements of formal methods and attributes
+        // never erase for type parameters
+        if (lhs.typeParameter) {
+            lhs = anythingType;
+        }
+
+        if (rhs.typeParameter) {
+            rhs = anythingType;
+        }
+
+        // NOTE: we are assuming lhs and rhs are not
+        //       refinements of formal method or attribute
+        //       types
 
         // assigments to or from null don't need conversion
-        // (they will be the null value)
+        // (they will be the null value which is always erased)
         if (isCeylonNull(rhs) || isCeylonNull(lhs)) {
             return null;
         }
 
-        value intersectedLhs = intersection(
-                objectType, lhs);
-
-        value intersectedRhs = intersection(
-                objectType, rhs);
+        value definiteLhs = definiteType(lhs);
+        value definiteRhs = definiteType(rhs);
 
         // obvious case
-        if (intersectedLhs.isExactly(intersectedRhs)) {
+        if (definiteLhs.isExactly(definiteRhs)) {
             return null;
         }
 
@@ -292,32 +300,32 @@ class TypeFactory(Unit unit) {
         // "lhs" and "rhs" are not exactly the same
 
         // to Ceylon conversions
-        if (isCeylonBoolean(intersectedRhs)) {
-            return !isCeylonBoolean(intersectedLhs)
+        if (isCeylonBoolean(definiteRhs)) {
+            return !isCeylonBoolean(definiteLhs)
                     then nativeToCeylonBoolean;
         }
-        else if (isCeylonFloat(intersectedRhs)) {
+        else if (isCeylonFloat(definiteRhs)) {
             return nativeToCeylonFloat;
         }
-        else if (isCeylonInteger(intersectedRhs)) {
+        else if (isCeylonInteger(definiteRhs)) {
             return nativeToCeylonInteger;
         }
-        else if (isCeylonString(intersectedRhs)) {
+        else if (isCeylonString(definiteRhs)) {
             return nativeToCeylonString;
         }
 
         // to native conversions
-        if (isCeylonBoolean(intersectedLhs)) {
-            return !isCeylonBoolean(intersectedRhs)
+        if (isCeylonBoolean(definiteLhs)) {
+            return !isCeylonBoolean(definiteRhs)
                     then ceylonBooleanToNative;
         }
-        else if (isCeylonFloat(intersectedLhs)) {
+        else if (isCeylonFloat(definiteLhs)) {
             return ceylonFloatToNative;
         }
-        else if (isCeylonInteger(intersectedLhs)) {
+        else if (isCeylonInteger(definiteLhs)) {
             return ceylonIntegerToNative;
         }
-        else if (isCeylonString(intersectedLhs)) {
+        else if (isCeylonString(definiteLhs)) {
             return ceylonStringToNative;
         }
         return null;

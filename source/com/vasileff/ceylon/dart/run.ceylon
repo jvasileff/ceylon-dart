@@ -183,5 +183,15 @@ void run() {
             }
          """;
 
-    compile { true; programAssertions };
+    value programGenericErasure =
+         """shared T generic<T>(T x) given T satisfies String {
+                return x;
+            }
+
+            shared void run() {
+                generic("true");
+            }
+         """;
+
+    compile { true; programGenericErasure };
 }

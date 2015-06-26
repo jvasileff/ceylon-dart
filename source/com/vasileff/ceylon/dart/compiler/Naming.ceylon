@@ -249,6 +249,17 @@ class Naming(TypeFactory typeFactory) {
     see(`function TypeFactory.boxingConversionFor`)
     shared
     DartTypeModel dartTypeModel(TypeModel type) {
+        // TODO consider using `dynamic` instead of `core.Object`
+        //      for unions, intersections, Nothing,
+        //      and generic type parameters
+
+        // TODO type.typeAlias
+
+        if (type.typeParameter) {
+            // treat all generic types as `core.Object`
+            return dartObjectModel;
+        }
+
         value definiteType = typeFactory.definiteType(type);
 
         // handle well known types first, before giving up
