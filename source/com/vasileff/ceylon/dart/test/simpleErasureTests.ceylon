@@ -249,3 +249,29 @@ void genericNonErasure() {
          """;
     };
 }
+
+shared test
+void functionRefNonErasure() {
+    // TODO the erasure is correct, but need to wrap the function
+    //      reference in a Callable
+    compileAndCompare {
+         """String echoString() => "x";
+
+            shared void run() {
+                value ref = echoString;
+                value result = ref();
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.String echoString() => "x";
+
+            void run() {
+                $dart$core.Function ref = echoString;
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref());
+            }
+         """;
+    };
+}
