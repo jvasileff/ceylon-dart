@@ -275,3 +275,27 @@ void functionRefNonErasure() {
          """;
     };
 }
+
+shared test
+void dontEraseArgumentsToValue() {
+    compileAndCompare {
+         """String echoString(String s) => s;
+
+            shared void run() {
+                value ref = echoString;
+                value result = ref(".");
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.String echoString([$dart$core.String s]) => s;
+
+            void run() {
+                $dart$core.Function ref = echoString;
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref($ceylon$language.dart$nativeToCeylonString(".")));
+            }
+         """;
+     };
+}
