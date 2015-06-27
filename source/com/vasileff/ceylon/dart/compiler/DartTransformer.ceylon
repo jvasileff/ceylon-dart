@@ -44,7 +44,12 @@ class DartTransformer(CompilationContext ctx)
             // or if we'll need the element models in order to always base things on
             // the type used in the `formal` declaration associated with this parameter
             // Where should this calculation go? Here, or wherever lhs is put to use?
-            return ctx.withLhsType(parameterModel.type, ()
+
+            // If parameterModel is null, we must be invoking a value, so use
+            // type `Anything` to disable erasure.
+            return ctx.withLhsType(
+                        parameterModel?.type
+                        else ctx.typeFactory.anythingType, ()
                 =>  expression.transform(expressionTransformer));
         });
 

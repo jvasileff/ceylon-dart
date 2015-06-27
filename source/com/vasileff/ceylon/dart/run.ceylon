@@ -200,12 +200,22 @@ void run() {
             }
          """;
 
-    value programCallableErasure =
+    value programAnonymousCallableErasure =
          """String() echoString = () => nothing;
             shared void run() {
                 String result = echoString();
             }
          """;
 
-    compile { true; programCallableErasure };
+    value programFunctionReferenceErasure =
+         """String echoString(String s) => s;
+            shared void run(String es(String s)) {
+                //value ref = echoString;
+                //value ref = (String s) => s;
+                //value result = ref(".");
+                value result = es(".");
+            }
+         """;
+
+    compile { true; programFunctionReferenceErasure };
 }

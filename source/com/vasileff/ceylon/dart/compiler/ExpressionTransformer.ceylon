@@ -187,12 +187,14 @@ class ExpressionTransformer
                  '``className(primaryDeclaration)``'");
         }
 
-        return withBoxing(rhsType, DartFunctionExpressionInvocation {
-            // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
-            func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
+        return withBoxing(rhsType,
+            DartFunctionExpressionInvocation {
+                // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
+                func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
                     =>  that.invoked.transform(this));
-            argumentList = dartTransformer.transformArguments(that.arguments);
-        });
+                argumentList = dartTransformer.transformArguments(that.arguments);
+            }
+        );
     }
 
     shared actual
