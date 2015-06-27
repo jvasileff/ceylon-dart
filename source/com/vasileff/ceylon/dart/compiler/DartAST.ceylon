@@ -870,3 +870,38 @@ class DartThrowExpression(expression)
         expression.write(writer);
     }
 }
+
+"A parenthesized expression."
+shared
+class DartParenthesizedExpression(expression)
+        extends DartExpression() {
+
+    shared DartExpression expression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("(");
+        expression.write(writer);
+        writer.write(")");
+    }
+}
+
+"A conditional expression."
+shared
+class DartConditionalExpression(
+        condition, thenExpression,elseExpression)
+        extends DartExpression() {
+
+    shared DartExpression condition;
+    shared DartExpression thenExpression;
+    shared DartExpression elseExpression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        condition.write(writer);
+        writer.write(" ? ");
+        thenExpression.write(writer);
+        writer.write(" : ");
+        elseExpression.write(writer);
+    }
+}
