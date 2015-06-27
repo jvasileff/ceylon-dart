@@ -252,8 +252,7 @@ void genericNonErasure() {
 
 shared test
 void functionRefNonErasure() {
-    // TODO the erasure is correct, but need to wrap the function
-    //      reference in a Callable
+    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """String echoString() => "x";
 
@@ -269,8 +268,8 @@ void functionRefNonErasure() {
             $dart$core.String echoString() => "x";
 
             void run() {
-                $dart$core.Function ref = echoString;
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref());
+                $ceylon$language.Callable ref = echoString;
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$());
             }
          """;
     };
@@ -278,6 +277,7 @@ void functionRefNonErasure() {
 
 shared test
 void dontEraseArgumentsToValue() {
+    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """String echoString(String s) => s;
 
@@ -293,8 +293,8 @@ void dontEraseArgumentsToValue() {
             $dart$core.String echoString([$dart$core.String s]) => s;
 
             void run() {
-                $dart$core.Function ref = echoString;
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref($ceylon$language.dart$nativeToCeylonString(".")));
+                $ceylon$language.Callable ref = echoString;
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")));
             }
          """;
      };

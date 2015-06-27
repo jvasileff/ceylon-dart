@@ -27,15 +27,14 @@ void anonymousFunctionTest() {
             }
          """;
 
-        // FIXME this is what we get now....
-        //       which is sort of correct, since the anonymous function
-        //       needs to be boxed
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
             void simpleFunction() {
-                $dart$core.Function anon = () => "result";
-                print(anon());
+                $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
+                    return $ceylon$language.dart$nativeToCeylonString((() => "result")());
+                });
+                print((anon).$delegate$());
             }
          """;
     };
@@ -43,7 +42,6 @@ void anonymousFunctionTest() {
 
 shared test
 void functionReturnBoxingTest() {
-    // FIXME bad code; need to box the function to box the result
     compileAndCompare {
          """void simpleFunction() {
                 Anything() anon = () => "result";
@@ -55,9 +53,12 @@ void functionReturnBoxingTest() {
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
             void simpleFunction() {
-                $dart$core.Function anon = () => "result";
-                print(anon());
+                $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
+                    return $ceylon$language.dart$nativeToCeylonString((() => "result")());
+                });
+                print((anon).$delegate$());
             }
+
          """;
     };
 }
@@ -92,12 +93,13 @@ void nestedFunctionTest() {
 
 shared test
 void functionReferenceTest() {
-    // TODO this works, but pretty much by accident
+    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """void simpleFunction() {
                 String nested1() => "result1";
                 value nested1Ref = nested1;
                 print(nested1());
+                print(nested1Ref());
             }
          """;
 
@@ -107,8 +109,9 @@ void functionReferenceTest() {
             void simpleFunction() {
                 $dart$core.String nested1() => "result1";
 
-                $dart$core.Function nested1Ref = nested1;
+                $ceylon$language.Callable nested1Ref = nested1;
                 print($ceylon$language.dart$nativeToCeylonString(nested1()));
+                print((nested1Ref).$delegate$());
             }
          """;
     };
