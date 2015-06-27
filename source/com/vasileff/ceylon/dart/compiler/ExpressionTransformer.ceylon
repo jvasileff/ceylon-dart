@@ -30,7 +30,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     FunctionOrValueModel=FunctionOrValue,
     ConstructorModel=Constructor,
-    TypedDeclarationModel=TypedDeclaration,
     DeclarationModel=Declaration,
     FunctionModel=Function,
     ValueModel=Value,
@@ -178,7 +177,7 @@ class ExpressionTransformer
         // calculate rhsType from the declaration
         switch (primaryDeclaration)
         case (is FunctionModel) {
-            rhsType = (primaryDeclaration of TypedDeclarationModel).type;
+            rhsType = primaryDeclaration.type;
             isCallable = false;
         }
         case (is ValueModel) {
@@ -237,7 +236,7 @@ class ExpressionTransformer
         functionModel = info.declarationModel;
         functionName = null;
 
-        value innerReturnType = (functionModel of TypedDeclarationModel).type;
+        value innerReturnType = functionModel.type;
 
         // determine return type boxing
         value returnConversion = ctx.typeFactory.boxingConversionFor(
@@ -555,7 +554,7 @@ class ExpressionTransformer
             throw CompilerBug(that, "Multiple parameter lists not supported");
         }
 
-        value returnType = (functionModel of TypedDeclarationModel).type;
+        value returnType = functionModel.type;
 
         function dartParameterList() {
             value list = parameterLists.first;

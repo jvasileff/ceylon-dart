@@ -55,13 +55,13 @@ class Naming(TypeFactory typeFactory) {
             return declaration.name;
         }
         case (is FunctionModel) {
-            return (declaration of DeclarationModel).name;
+            return declaration.name;
         }
         case (is ClassModel) {
-            return (declaration of DeclarationModel).name;
+            return declaration.name;
         }
         case (is InterfaceModel) {
-            return (declaration of DeclarationModel).name;
+            return declaration.name;
         }
         case (is ParameterModel) {
             return declaration.name;

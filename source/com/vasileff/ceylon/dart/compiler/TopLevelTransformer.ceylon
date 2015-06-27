@@ -3,9 +3,6 @@ import ceylon.ast.core {
     ValueDefinition,
     FunctionShortcutDefinition
 }
-import com.redhat.ceylon.model.typechecker.model {
-    TypedDeclaration
-}
 
 "For Dart TopLevel declarations, which are distinct from
  declarations made within blocks."
@@ -30,7 +27,7 @@ class TopLevelTransformer
         value functionName = ctx.naming.getName(functionModel);
         value returnType = ctx.naming.dartTypeName(
                 info.declarationModel,
-                (info.declarationModel of TypedDeclaration).type);
+                info.declarationModel.type);
 
         return DartFunctionDeclaration {
             external = false;
@@ -57,7 +54,7 @@ class TopLevelTransformer
         value functionName = ctx.naming.getName(functionModel);
         value returnType = ctx.naming.dartTypeName(
                 info.declarationModel,
-                (info.declarationModel of TypedDeclaration).type);
+                info.declarationModel.type);
 
         return DartFunctionDeclaration {
             external = false;

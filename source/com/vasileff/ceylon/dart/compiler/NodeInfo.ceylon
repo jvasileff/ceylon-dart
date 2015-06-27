@@ -25,7 +25,6 @@ import ceylon.ast.core {
     TryClause,
     While,
     ValueSpecification,
-    Primary,
     Invocation,
     QualifiedExpression
 }

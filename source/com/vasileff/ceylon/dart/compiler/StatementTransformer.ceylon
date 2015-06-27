@@ -16,9 +16,6 @@ import ceylon.collection {
 import org.antlr.runtime {
     Token
 }
-import com.redhat.ceylon.model.typechecker.model {
-    TypedDeclaration
-}
 
 class StatementTransformer
         (CompilationContext ctx)
@@ -71,7 +68,7 @@ class StatementTransformer
         value functionName = ctx.naming.getName(functionModel);
         value returnType = ctx.naming.dartTypeName(
                 info.declarationModel,
-                (info.declarationModel of TypedDeclaration).type);
+                info.declarationModel.type);
 
         return [
             DartFunctionDeclarationStatement {
@@ -102,7 +99,7 @@ class StatementTransformer
         value functionName = ctx.naming.getName(functionModel);
         value returnType = ctx.naming.dartTypeName(
                 info.declarationModel,
-                (info.declarationModel of TypedDeclaration).type);
+                info.declarationModel.type);
 
         return [
             DartFunctionDeclarationStatement {
