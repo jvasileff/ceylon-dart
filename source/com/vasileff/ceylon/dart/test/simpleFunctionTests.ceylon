@@ -113,3 +113,36 @@ void functionReferenceTest() {
          """;
     };
 }
+
+shared test
+void functionDefaultedParameters() {
+    compileAndCompare {
+         """shared Integer withDefaults(Integer x = 1, Integer y = 2) {
+                return y;
+            }
+
+            shared void run() {
+                withDefaults(3);
+                withDefaults(4, 5);
+            }
+         """;
+
+         """import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.int withDefaults([$dart$core.int x = $ceylon$language.dart$defaulted, $dart$core.int y = $ceylon$language.dart$defaulted]) {
+                if ($dart$core.identical(x, $ceylon$language.dart$defaulted)) {
+                    x = 1;
+                }
+                if ($dart$core.identical(y, $ceylon$language.dart$defaulted)) {
+                    y = 2;
+                }
+                return y;
+            }
+
+            void run() {
+                withDefaults(3);
+                withDefaults(4, 5);
+            }""";
+     };
+}
