@@ -318,20 +318,3 @@ class Naming(TypeFactory typeFactory) {
     Boolean equalErasure(TypeModel first, TypeModel second)
         =>  dartTypeModel(first) == dartTypeModel(second);
 }
-
-Result memoize<Result, Argument>
-        (Result compute(Argument argument),
-         HashMap<Argument, Result> cache =
-                HashMap<Argument, Result>())
-        (Argument argument)
-        given Argument satisfies Object
-        given Result satisfies Object {
-    if (exists result = cache.get(argument)) {
-        return result;
-    }
-    else {
-        value result = compute(argument);
-        cache.put(argument, result);
-        return result;
-    }
-}

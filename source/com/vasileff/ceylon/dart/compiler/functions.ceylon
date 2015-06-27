@@ -5,6 +5,9 @@ import ceylon.ast.redhat {
     RedHatTransformer,
     SimpleTokenFactory
 }
+import ceylon.collection {
+    HashMap
+}
 import ceylon.formatter {
     format
 }
@@ -119,3 +122,20 @@ Boolean useGetterSetterMethods
             case (is SetterModel) declaration.getter.transient)
         else
             false;
+
+Result memoize<Result, Argument>
+        (Result compute(Argument argument),
+         HashMap<Argument, Result> cache =
+                HashMap<Argument, Result>())
+        (Argument argument)
+        given Argument satisfies Object
+        given Result satisfies Object {
+    if (exists result = cache.get(argument)) {
+        return result;
+    }
+    else {
+        value result = compute(argument);
+        cache.put(argument, result);
+        return result;
+    }
+}
