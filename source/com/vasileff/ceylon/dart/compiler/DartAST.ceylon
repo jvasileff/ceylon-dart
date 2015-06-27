@@ -267,6 +267,25 @@ class DartMethodInvocation
     }
 }
 
+"The access of a property of an object.
+ Note: [[DartPrefixedIdentifier]] can
+ also be used."
+shared
+class DartPropertyAccess
+        (target, propertyName)
+        extends DartExpression() {
+
+    shared DartExpression target;
+    shared DartSimpleIdentifier propertyName;
+
+    shared actual
+    void write(CodeWriter writer) {
+        target.write(writer);
+        writer.write(".");
+        propertyName.write(writer);
+    }
+}
+
 "A node that represents an identifier."
 shared abstract
 class DartIdentifier()

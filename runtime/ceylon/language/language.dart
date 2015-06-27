@@ -8,6 +8,7 @@ part 'Array.dart';
 part 'ArraySequence.dart';
 part 'AssertionError.dart';
 part 'Boolean.dart';
+part 'Callable.dart';
 part 'Character.dart';
 part 'Collection.dart';
 part 'Correspondence.dart';

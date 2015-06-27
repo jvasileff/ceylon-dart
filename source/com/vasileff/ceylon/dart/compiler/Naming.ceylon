@@ -207,7 +207,8 @@ class Naming(TypeFactory typeFactory) {
     shared
     DartTypeName dartTypeName(
             ElementModel inRelationTo,
-            TypeModel|DartTypeModel type) {
+            TypeModel|DartTypeModel type,
+            Boolean disableErasure = false) {
 
         // TODO add tests for non-boxed types
 
@@ -223,7 +224,7 @@ class Naming(TypeFactory typeFactory) {
         value dartModel =
                 if (is DartTypeModel type)
                 then type
-                else dartTypeModel(type);
+                else dartTypeModel(type, disableErasure);
 
         value fromDartPrefix = moduleImportPrefix(inRelationTo);
 
@@ -248,7 +249,10 @@ class Naming(TypeFactory typeFactory) {
      the given [[TypeModel]]."
     see(`function TypeFactory.boxingConversionFor`)
     shared
-    DartTypeModel dartTypeModel(TypeModel type) {
+    DartTypeModel dartTypeModel(
+            TypeModel type,
+            Boolean disableErasure = false) {
+
         // TODO consider using `dynamic` instead of `core.Object`
         //      for unions, intersections, Nothing,
         //      and generic type parameters
@@ -264,52 +268,50 @@ class Naming(TypeFactory typeFactory) {
 
         // handle well known types first, before giving up
         // on unions and intersections
-        if (typeFactory.isCeylonBoolean(definiteType)) {
-            return dartBoolModel;
+
+        // these types are erased when statically known
+        if (!disableErasure) {
+            if (typeFactory.isCeylonBoolean(definiteType)) {
+                return dartBoolModel;
+            }
+            if (typeFactory.isCeylonInteger(definiteType)) {
+                return dartIntModel;
+            }
+            if (typeFactory.isCeylonFloat(definiteType)) {
+                return dartDoubleModel;
+            }
+            if (typeFactory.isCeylonString(definiteType)) {
+                return dartStringModel;
+            }
         }
-        else if (typeFactory.isCeylonInteger(definiteType)) {
-            return dartIntModel;
-        }
-        else if (typeFactory.isCeylonFloat(definiteType)) {
-            return dartDoubleModel;
-        }
-        else if (typeFactory.isCeylonString(definiteType)) {
-            return dartStringModel;
-        }
-        else if (typeFactory.isCeylonAnything(definiteType)) {
+
+        // types like Anything and Object are _always_ erased
+        if (typeFactory.isCeylonAnything(definiteType)) {
             return dartObjectModel;
         }
-        else if (typeFactory.isCeylonNothing(definiteType)) {
+        if (typeFactory.isCeylonNothing(definiteType)) {
             // this handles the `Null` case too,
             // since Null & Object = Nothing
             return dartObjectModel;
         }
-        else if (typeFactory.isCeylonObject(definiteType)) {
+        if (typeFactory.isCeylonObject(definiteType)) {
             return dartObjectModel;
         }
-        else if (typeFactory.isCeylonBasic(definiteType)) {
+        if (typeFactory.isCeylonBasic(definiteType)) {
             return dartObjectModel;
         }
-        else if (typeFactory.isCeylonCallable(definiteType)) {
-            // FIXME only erase to function when the types match exactly
-            //       The plan is to box as soon as we lose
-            //       exact generic type info. So we need the
-            //       original type for the comparison; comparing to
-            //       Callable<Anything, Nothing> isn't good enough.
-            //       We could just always box, but then we'll have to
-            //       worry about optimizing function expressions.
-            return dartFunctionModel;
-        }
-        else if (definiteType.union || definiteType.intersection) {
-            // settle for Object for other unions and intersections
+
+        // at this point, settle for Object for other
+        // unions and intersections
+        if (definiteType.union || definiteType.intersection) {
             return dartObjectModel;
         }
-        else {
-            return
-            DartTypeModel(moduleImportPrefix(definiteType.declaration),
-                    identifierPackagePrefix(definiteType.declaration) +
-                        getName(definiteType.declaration));
-        }
+
+        // not erased
+        return
+        DartTypeModel(moduleImportPrefix(definiteType.declaration),
+                identifierPackagePrefix(definiteType.declaration) +
+                    getName(definiteType.declaration));
     }
 
     shared

@@ -8,6 +8,7 @@ void run() {
            """
               void prog2() {}
            """;
+
     value programBoxing =
          """
             import ceylon.language { myTrue = true, myNull = null }
@@ -217,5 +218,24 @@ void run() {
             }
          """;
 
-    compile { true; programFunctionReferenceErasure };
+    value programCallables =
+         """shared void run() {
+                value callableShort = (String x) => x;
+                value callableBlock = (String x) {
+                    return x;
+                };
+            }
+         """;
+
+    value defaultedParameters =
+         """shared void run() {
+                value withDefaults = (Integer x, Integer y = 2) {
+                    return y;
+                };
+                withDefaults(3);
+                withDefaults(4, 5);
+            }
+         """;
+
+    compile { true; defaultedParameters };
 }

@@ -172,14 +172,19 @@ class ExpressionTransformer
                 "Primary type not yet supported: '``className(primary)``'");
         }
 
+        "Are we invoking a real function, or a value of type Callable?"
+        Boolean isCallable;
+
         // calculate rhsType from the declaration
         switch (primaryDeclaration)
         case (is FunctionModel) {
             rhsType = (primaryDeclaration of TypedDeclarationModel).type;
+            isCallable = false;
         }
         case (is ValueModel) {
             // callables never return erased values
             rhsType = ctx.typeFactory.anythingType;
+            isCallable = true;
         }
         else {
             throw CompilerBug(that,
@@ -187,20 +192,242 @@ class ExpressionTransformer
                  '``className(primaryDeclaration)``'");
         }
 
+        DartExpression func;
+        if (!isCallable) {
+            // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
+            func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
+                =>  that.invoked.transform(this));
+        }
+        else {
+            // Boxing/erasure shouldn't matter here, right? With any luck, the
+            // expression will evaluate to a `Callable`.
+            func =
+                DartPropertyAccess {
+                    DartParenthesizedExpression {
+                        ctx.withLhsType(noType, ()
+                            =>  that.invoked.transform(this));
+                    };
+                    DartSimpleIdentifier("$delegate$");
+                };
+        }
+
         return withBoxing(rhsType,
             DartFunctionExpressionInvocation {
-                // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
-                func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
-                    =>  that.invoked.transform(this));
-                argumentList = dartTransformer.transformArguments(that.arguments);
+                func;
+                dartTransformer.transformArguments(that.arguments);
             }
         );
     }
 
     shared actual
-    DartFunctionExpression transformFunctionExpression
-            (FunctionExpression that)
-        =>  generateFunctionExpression(that);
+    DartExpression transformFunctionExpression
+            (FunctionExpression that) {
+
+        // TODO this could use some cleanup/refactoring, along
+        //      with support for all types of parameters
+
+        FunctionModel functionModel;
+        [Parameters+] parameterLists;
+        LazySpecifier|Block definition;
+        String? functionName;
+
+        value info = FunctionExpressionInfo(that);
+        parameterLists = that.parameterLists;
+        definition = that.definition;
+        functionModel = info.declarationModel;
+        functionName = null;
+
+        value innerReturnType = (functionModel of TypedDeclarationModel).type;
+
+        // determine return type boxing
+        value returnConversion = ctx.typeFactory.boxingConversionFor(
+                ctx.typeFactory.anythingType,
+                innerReturnType);
+
+        // determine parameter type boxing
+        if (parameterLists.size != 1) {
+            throw CompilerBug(that, "Multiple parameter lists not supported");
+        }
+        value parameterConversions = parameterLists[0].parameters.collect((parameter) {
+            value parameterInfo = ParameterInfo(parameter);
+            value parameterModel = parameterInfo.parameterModel;
+
+            switch(parameter)
+            case (is DefaultedValueParameter | ValueParameter) {
+                return ctx.typeFactory.boxingConversionFor(
+                    ctx.typeFactory.anythingType,
+                    parameterModel.type);
+            }
+            case (is VariadicParameter
+                    | CallableParameter
+                    | ParameterReference
+                    | DefaultedCallableParameter
+                    | DefaultedParameterReference) {
+                throw CompilerBug(that,
+                        "Parameter type not supported: \
+                         ``className(parameter)``");
+            }
+        });
+
+        DartFunctionExpression outerFunction;
+        value innerFunction = generateFunctionExpression(that);
+
+        if (returnConversion exists || !parameterConversions.coalesced.empty) {
+
+            value outerParameters = parameterLists[0].parameters.collect((parameter) {
+                value parameterInfo = ParameterInfo(parameter);
+                value parameterModel = parameterInfo.parameterModel;
+
+                value dartSimpleParameter =
+                        DartSimpleFormalParameter {
+                            false; false;
+                            ctx.naming.dartTypeName {
+                                inRelationTo = parameterModel.model;
+                                type = parameterModel.type;
+                                // no erasure for the outer parameters,
+                                // which will be for the generic Callable
+                                disableErasure =  true;
+                            };
+                            DartSimpleIdentifier {
+                                ctx.naming.getName(parameterModel);
+                            };
+                        };
+
+                switch(parameter)
+                case (is DefaultedValueParameter) {
+                    return
+                    DartDefaultFormalParameter {
+                        dartSimpleParameter;
+                        DartPrefixedIdentifier {
+                            prefix = DartSimpleIdentifier("$ceylon$language");
+                            identifier = DartSimpleIdentifier("dart$defaulted");
+                        };
+                    };
+                }
+                case (is ValueParameter) {
+                    return dartSimpleParameter;
+                }
+                else {
+                    // TODO other types
+                    assert(false);
+                }
+            });
+
+            value innerArguments = parameterLists[0].parameters.collect((parameter) {
+                value parameterInfo = ParameterInfo(parameter);
+                value parameterModel = parameterInfo.parameterModel;
+
+                value parameterName = ctx.naming.getName(parameterModel);
+                value parameterIdentifier = DartSimpleIdentifier(parameterName);
+
+                Boolean defaulted;
+
+                switch(parameter)
+                case (is DefaultedValueParameter) {
+                     defaulted = true;
+                }
+                case (is ValueParameter) {
+                    defaulted = false;
+                }
+                case (is VariadicParameter
+                        | CallableParameter
+                        | ParameterReference
+                        | DefaultedCallableParameter
+                        | DefaultedParameterReference) {
+                    throw CompilerBug(that,
+                            "Parameter type not supported: \
+                             ``className(parameter)``");
+                }
+
+                value unboxed = withBoxingLhsRhs {
+                    // "lhs" is the inner function's parameter
+                    // "rhs" the outer function's argument which
+                    // is never erased
+                    lhsType = parameterModel.type;
+                    rhsType = ctx.typeFactory.anythingType;
+                    parameterIdentifier;
+                };
+
+                if (defaulted) {
+                    return
+                    DartConditionalExpression {
+                        // condition
+                        DartFunctionExpressionInvocation {
+                            dartDCIdentical;
+                            DartArgumentList {
+                                [parameterIdentifier,
+                                 dartCLDDefaulted];
+                            };
+                        };
+                        // propagate defaulted
+                        dartCLDDefaulted;
+                        // not default, unbox as necessary
+                        unboxed;
+
+                    };
+                }
+                else {
+                    return
+                    unboxed;
+                }
+            });
+
+            // the outer function accepts and returns non-erased types
+            // using the inner function that follows normal erasure rules
+            outerFunction =
+            DartFunctionExpression {
+                DartFormalParameterList {
+                    positional = true;
+                    named = false;
+                    parameters = outerParameters;
+                };
+                DartBlockFunctionBody {
+                    keyword = null;
+                    star = false;
+                    DartBlock {
+                        // return boxed (no erasure) result of
+                        // the invocation of the original function
+                        [DartReturnStatement {
+                            withBoxingLhsRhs {
+                                // Anything prevents erasure
+                                ctx.typeFactory.anythingType;
+                                innerReturnType;
+                                DartFunctionExpressionInvocation {
+                                    DartParenthesizedExpression {
+                                        innerFunction;
+                                    };
+                                    DartArgumentList {
+                                        innerArguments;
+                                    };
+                                };
+                            };
+                        }];
+                    };
+                };
+            };
+        }
+        else {
+            outerFunction = innerFunction;
+        }
+
+        // create the Callable!
+        return
+        DartInstanceCreationExpression {
+            const = false;
+            DartConstructorName {
+                type = DartTypeName {
+                    DartPrefixedIdentifier {
+                        DartSimpleIdentifier("$ceylon$language");
+                        DartSimpleIdentifier("dart$Callable");
+                    };
+                };
+                name = null;
+            };
+            argumentList = DartArgumentList {
+                [outerFunction];
+            };
+        };
+    }
 
     shared
     DartFunctionExpressionInvocation | DartAssignmentExpression
@@ -419,7 +646,7 @@ class ExpressionTransformer
                     // condition
                     DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier("$dart");
+                            prefix = DartSimpleIdentifier("$dart$core");
                             identifier = DartSimpleIdentifier("identical");
                         };
                         DartArgumentList {
@@ -461,3 +688,19 @@ class ExpressionTransformer
     }
 
 }
+
+// TODO come up with a plan for this stuff
+//      and it should be integrated with the
+//      typechecker, since prefixing is dependent
+//      on scope
+DartIdentifier dartDCIdentical
+    =   DartPrefixedIdentifier {
+            prefix = DartSimpleIdentifier("$dart$core");
+            identifier = DartSimpleIdentifier("identical");
+        };
+
+DartIdentifier dartCLDDefaulted
+    =   DartPrefixedIdentifier {
+            prefix = DartSimpleIdentifier("$ceylon$language");
+            identifier = DartSimpleIdentifier("dart$defaulted");
+        };

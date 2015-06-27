@@ -53,6 +53,15 @@ class BaseTransformer<Result>
             given Absent satisfies Null {
 
         assert (exists lhsType = ctx.lhsTypeTop);
+        return withBoxingLhsRhs(lhsType, rhsType, expression);
+    }
+
+    shared
+    DartExpression|Absent withBoxingLhsRhs<Absent=Nothing>(
+            TypeModel|NoType lhsType,
+            TypeModel rhsType,
+            DartExpression|Absent expression)
+            given Absent satisfies Null {
 
         if (exists expression) {
             value conversion =

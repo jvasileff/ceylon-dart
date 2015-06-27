@@ -77,3 +77,16 @@ Boolean dart$nativeToCeylonBoolean(core.bool value)
 
 core.bool dart$ceylonBooleanToNative(Boolean value)
   =>  value == null ? null : value._value;
+
+///////////////////////////////////////
+//
+// Misc
+//
+///////////////////////////////////////
+
+class dart$Callable implements Callable {
+
+  final core.Function $delegate$;
+
+  dart$Callable(core.Function this.$delegate$);
+}
