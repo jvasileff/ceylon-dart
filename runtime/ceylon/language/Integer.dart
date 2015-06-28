@@ -32,7 +32,7 @@ class Integer implements Integral, Exponentiable { // Binary
 
   //Comparison compare(Integer other);
   core.bool largerThan(Integer other) => _value > other._value;
-  core.bool smallerThan(Integer other) => _value > other._value;
-  core.bool notLargerThan(Integer other) => _value > other._value;
-  core.bool notSmallerThan(Integer other) => _value > other._value;
+  core.bool smallerThan(Integer other) => _value < other._value;
+  core.bool notLargerThan(Integer other) => _value <= other._value;
+  core.bool notSmallerThan(Integer other) => _value >= other._value;
 }
