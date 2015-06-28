@@ -8,19 +8,19 @@ import ceylon.ast.core {
  declarations made within blocks."
 class TopLevelTransformer
         (CompilationContext ctx)
-        extends BaseTransformer<DartCompilationUnitMember>(ctx) {
+        extends BaseTransformer<[DartCompilationUnitMember*]>(ctx) {
 
     shared actual
-    DartTopLevelVariableDeclaration transformValueDefinition
+    [DartTopLevelVariableDeclaration+] transformValueDefinition
             (ValueDefinition that)
-        =>  DartTopLevelVariableDeclaration(dartTransformer
-                .transformValueDefinition(that));
+        =>  [DartTopLevelVariableDeclaration(dartTransformer
+                .transformValueDefinition(that))];
 
     see(`function transformFunctionShortcutDefinition`)
     see(`function StatementTransformer.transformFunctionDefinition`)
     see(`function StatementTransformer.transformFunctionShortcutDefinition`)
     shared actual
-    DartFunctionDeclaration transformFunctionDefinition
+    [DartFunctionDeclaration+] transformFunctionDefinition
             (FunctionDefinition that) {
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
@@ -29,7 +29,7 @@ class TopLevelTransformer
                 info.declarationModel,
                 info.declarationModel.type);
 
-        return DartFunctionDeclaration {
+        return [DartFunctionDeclaration {
             external = false;
             returnType =
                 // TODO seems like a hacky way to create a void keyword
@@ -40,14 +40,14 @@ class TopLevelTransformer
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
                 .generateFunctionExpression(that);
-        };
+        }];
     }
 
     see(`function transformFunctionDefinition`)
     see(`function StatementTransformer.transformFunctionDefinition`)
     see(`function StatementTransformer.transformFunctionShortcutDefinition`)
     shared actual
-    DartFunctionDeclaration transformFunctionShortcutDefinition
+    [DartFunctionDeclaration+] transformFunctionShortcutDefinition
                 (FunctionShortcutDefinition that) {
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
@@ -56,7 +56,7 @@ class TopLevelTransformer
                 info.declarationModel,
                 info.declarationModel.type);
 
-        return DartFunctionDeclaration {
+        return [DartFunctionDeclaration {
             external = false;
             returnType =
                 // TODO seems like a hacky way to create a void keyword
@@ -67,6 +67,6 @@ class TopLevelTransformer
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
                     .generateFunctionExpression(that);
-        };
+        }];
     }
 }

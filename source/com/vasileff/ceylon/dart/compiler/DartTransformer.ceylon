@@ -86,6 +86,6 @@ class DartTransformer(CompilationContext ctx)
      imports are ignored."
     shared actual
     [DartCompilationUnitMember*] transformCompilationUnit(CompilationUnit that)
-        =>  that.declarations.collect((d)
-            => d.transform(topLevelTransformer));
+        =>  that.declarations.flatMap((d)
+            => d.transform(topLevelTransformer)).sequence();
 }
