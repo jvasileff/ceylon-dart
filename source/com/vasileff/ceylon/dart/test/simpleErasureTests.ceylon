@@ -21,49 +21,49 @@ void booleanFunctionReturnErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.bool f1() => true;
+            $dart$core.bool $package$f1() => true;
 
-            $dart$core.bool $package$f1() => f1();
+            $dart$core.bool f1() => $package$f1();
 
-            $dart$core.bool f2() => true;
+            $dart$core.bool $package$f2() => true;
 
-            $dart$core.bool $package$f2() => f2();
+            $dart$core.bool f2() => $package$f2();
 
-            $dart$core.Object f3() => $ceylon$language.$true;
+            $dart$core.Object $package$f3() => $ceylon$language.$true;
 
-            $dart$core.Object $package$f3() => f3();
+            $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object f4() => $ceylon$language.$true;
+            $dart$core.Object $package$f4() => $ceylon$language.$true;
 
-            $dart$core.Object $package$f4() => f4();
+            $dart$core.Object f4() => $package$f4();
 
-            $dart$core.bool f5() => true;
+            $dart$core.bool $package$f5() => true;
 
-            $dart$core.bool $package$f5() => f5();
+            $dart$core.bool f5() => $package$f5();
 
-            $dart$core.bool f6() => true;
+            $dart$core.bool $package$f6() => true;
 
-            $dart$core.bool $package$f6() => f6();
+            $dart$core.bool f6() => $package$f6();
 
-            $dart$core.bool f7() => false;
+            $dart$core.bool $package$f7() => false;
 
-            $dart$core.bool $package$f7() => f7();
+            $dart$core.bool f7() => $package$f7();
 
-            $dart$core.bool f8() => false;
+            $dart$core.bool $package$f8() => false;
 
-            $dart$core.bool $package$f8() => f8();
+            $dart$core.bool f8() => $package$f8();
 
-            $dart$core.bool f9() => true;
+            $dart$core.bool $package$f9() => true;
 
-            $dart$core.bool $package$f9() => f9();
+            $dart$core.bool f9() => $package$f9();
 
-            $dart$core.bool f10() => true;
+            $dart$core.bool $package$f10() => true;
 
-            $dart$core.bool $package$f10() => f10();
+            $dart$core.bool f10() => $package$f10();
 
-            $dart$core.bool f11() => true;
+            $dart$core.bool $package$f11() => true;
 
-            $dart$core.bool $package$f11() => f11();
+            $dart$core.bool f11() => $package$f11();
          """;
     };
 }
@@ -80,21 +80,21 @@ void integerFunctionReturnErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.int f1() => 1;
+            $dart$core.int $package$f1() => 1;
 
-            $dart$core.int $package$f1() => f1();
+            $dart$core.int f1() => $package$f1();
 
-            $dart$core.int f2() => 1;
+            $dart$core.int $package$f2() => 1;
 
-            $dart$core.int $package$f2() => f2();
+            $dart$core.int f2() => $package$f2();
 
-            $dart$core.Object f3() => $ceylon$language.dart$nativeToCeylonInteger(1);
+            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonInteger(1);
 
-            $dart$core.Object $package$f3() => f3();
+            $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object f4() => $ceylon$language.dart$nativeToCeylonInteger(1);
+            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonInteger(1);
 
-            $dart$core.Object $package$f4() => f4();
+            $dart$core.Object f4() => $package$f4();
          """;
     };
 }
@@ -111,21 +111,21 @@ void floatFunctionReturnErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.double f1() => 1.0;
+            $dart$core.double $package$f1() => 1.0;
 
-            $dart$core.double $package$f1() => f1();
+            $dart$core.double f1() => $package$f1();
 
-            $dart$core.double f2() => 1.0;
+            $dart$core.double $package$f2() => 1.0;
 
-            $dart$core.double $package$f2() => f2();
+            $dart$core.double f2() => $package$f2();
 
-            $dart$core.Object f3() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
+            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
 
-            $dart$core.Object $package$f3() => f3();
+            $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object f4() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
+            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
 
-            $dart$core.Object $package$f4() => f4();
+            $dart$core.Object f4() => $package$f4();
          """;
     };
 }
@@ -142,21 +142,21 @@ void stringFunctionReturnErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.String f1() => "x";
+            $dart$core.String $package$f1() => "x";
 
-            $dart$core.String $package$f1() => f1();
+            $dart$core.String f1() => $package$f1();
 
-            $dart$core.String f2() => "x";
+            $dart$core.String $package$f2() => "x";
 
-            $dart$core.String $package$f2() => f2();
+            $dart$core.String f2() => $package$f2();
 
-            $dart$core.Object f3() => $ceylon$language.dart$nativeToCeylonString("x");
+            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonString("x");
 
-            $dart$core.Object $package$f3() => f3();
+            $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object f4() => $ceylon$language.dart$nativeToCeylonString("x");
+            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonString("x");
 
-            $dart$core.Object $package$f4() => f4();
+            $dart$core.Object f4() => $package$f4();
          """;
     };
 }
@@ -208,55 +208,55 @@ void booleanArgumentErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void f1([$dart$core.bool x]) {}
+            void $package$f1([$dart$core.bool x]) {}
 
-            void $package$f1([$dart$core.bool x]) => f1(x);
+            void f1([$dart$core.bool x]) => $package$f1(x);
 
-            void f2([$dart$core.bool x]) {}
+            void $package$f2([$dart$core.bool x]) {}
 
-            void $package$f2([$dart$core.bool x]) => f2(x);
+            void f2([$dart$core.bool x]) => $package$f2(x);
 
-            void f3([$dart$core.Object x]) {}
+            void $package$f3([$dart$core.Object x]) {}
 
-            void $package$f3([$dart$core.Object x]) => f3(x);
+            void f3([$dart$core.Object x]) => $package$f3(x);
 
-            void f4([$dart$core.Object x]) {}
+            void $package$f4([$dart$core.Object x]) {}
 
-            void $package$f4([$dart$core.Object x]) => f4(x);
+            void f4([$dart$core.Object x]) => $package$f4(x);
 
-            void f5([$dart$core.bool x]) {}
+            void $package$f5([$dart$core.bool x]) {}
 
-            void $package$f5([$dart$core.bool x]) => f5(x);
+            void f5([$dart$core.bool x]) => $package$f5(x);
 
-            void f6([$dart$core.bool x]) {}
+            void $package$f6([$dart$core.bool x]) {}
 
-            void $package$f6([$dart$core.bool x]) => f6(x);
+            void f6([$dart$core.bool x]) => $package$f6(x);
 
-            void f7([$dart$core.bool x]) {}
+            void $package$f7([$dart$core.bool x]) {}
 
-            void $package$f7([$dart$core.bool x]) => f7(x);
+            void f7([$dart$core.bool x]) => $package$f7(x);
 
-            void f8([$dart$core.bool x]) {}
+            void $package$f8([$dart$core.bool x]) {}
 
-            void $package$f8([$dart$core.bool x]) => f8(x);
+            void f8([$dart$core.bool x]) => $package$f8(x);
 
-            void f9([$dart$core.bool x]) {}
+            void $package$f9([$dart$core.bool x]) {}
 
-            void $package$f9([$dart$core.bool x]) => f9(x);
+            void f9([$dart$core.bool x]) => $package$f9(x);
 
-            void f10([$dart$core.bool x]) {}
+            void $package$f10([$dart$core.bool x]) {}
 
-            void $package$f10([$dart$core.bool x]) => f10(x);
+            void f10([$dart$core.bool x]) => $package$f10(x);
 
-            void f11([$dart$core.bool x]) {}
+            void $package$f11([$dart$core.bool x]) {}
 
-            void $package$f11([$dart$core.bool x]) => f11(x);
+            void f11([$dart$core.bool x]) => $package$f11(x);
 
             $dart$core.bool booleanBoolean = true;
 
             $dart$core.Object booleanObject = $ceylon$language.$true;
 
-            void callFunctions() {
+            void $package$callFunctions() {
                 $package$f1($package$booleanBoolean);
                 $package$f2($package$booleanBoolean);
                 $package$f2(null);
@@ -278,7 +278,7 @@ void booleanArgumentErasure() {
                 $package$f11($package$booleanBoolean);
             }
 
-            void $package$callFunctions() => callFunctions();
+            void callFunctions() => $package$callFunctions();
          """;
     };
 }
@@ -303,24 +303,24 @@ void genericNonErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.Object generic([$dart$core.Object x]) {
+            $dart$core.Object $package$generic([$dart$core.Object x]) {
                 return x;
             }
 
-            $dart$core.Object $package$generic([$dart$core.Object x]) => generic(x);
+            $dart$core.Object generic([$dart$core.Object x]) => $package$generic(x);
 
-            $dart$core.String nonGeneric([$dart$core.String x]) {
+            $dart$core.String $package$nonGeneric([$dart$core.String x]) {
                 return x;
             }
 
-            $dart$core.String $package$nonGeneric([$dart$core.String x]) => nonGeneric(x);
+            $dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
 
-            void run() {
+            void $package$run() {
                 $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$generic($ceylon$language.dart$nativeToCeylonString("true")));
                 $dart$core.String myString2 = $package$nonGeneric("true");
             }
 
-            void $package$run() => run();
+            void run() => $package$run();
          """;
     };
 }
@@ -339,18 +339,18 @@ void functionRefNonErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.String echoString() => "x";
+            $dart$core.String $package$echoString() => "x";
 
-            $dart$core.String $package$echoString() => echoString();
+            $dart$core.String echoString() => $package$echoString();
 
-            void run() {
+            void $package$run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString($package$echoString());
                 });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$());
             }
 
-            void $package$run() => run();
+            void run() => $package$run();
          """;
     };
 }
@@ -369,18 +369,18 @@ void dontEraseArgumentsToValue() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.String echoString([$dart$core.String s]) => s;
+            $dart$core.String $package$echoString([$dart$core.String s]) => s;
 
-            $dart$core.String $package$echoString([$dart$core.String s]) => echoString(s);
+            $dart$core.String echoString([$dart$core.String s]) => $package$echoString(s);
 
-            void run() {
+            void $package$run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) {
                     return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s)));
                 });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")));
             }
 
-            void $package$run() => run();
+            void run() => $package$run();
          """;
      };
 }

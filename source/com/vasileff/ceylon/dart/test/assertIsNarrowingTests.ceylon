@@ -16,7 +16,7 @@ void narrowObjectToString() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void assertions() {
+            void $package$assertions() {
                 $dart$core.Object obj = $ceylon$language.dart$nativeToCeylonString("x");
                 if (obj is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is String obj");
@@ -24,7 +24,7 @@ void narrowObjectToString() {
                 $dart$core.String obj$0 = $ceylon$language.dart$ceylonStringToNative(obj);
             }
 
-            void $package$assertions() => assertions();
+            void assertions() => $package$assertions();
          """;
     };
 }
@@ -43,14 +43,14 @@ void narrowDontShadow() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void assertions() {
+            void $package$assertions() {
                 $dart$core.Object obj = $ceylon$language.dart$nativeToCeylonString("x");
                 if (obj is $dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: !is String obj");
                 }
             }
 
-            void $package$assertions() => assertions();
+            void assertions() => $package$assertions();
          """;
     };
 }
@@ -68,7 +68,7 @@ void useShadowAfterNarrowing() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void assertions() {
+            void $package$assertions() {
                 $dart$core.Object obj = $ceylon$language.$true;
                 if (obj is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
@@ -77,7 +77,7 @@ void useShadowAfterNarrowing() {
                 $dart$core.bool bool = obj$0;
             }
 
-            void $package$assertions() => assertions();
+            void assertions() => $package$assertions();
          """;
     };
 }
@@ -95,7 +95,7 @@ void defineValueWithAssert() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void assertions() {
+            void $package$assertions() {
                 $dart$core.Object obj = $ceylon$language.dart$nativeToCeylonFloat(1.0);
                 $dart$core.double f;{
                     $dart$core.Object f$0 = obj;
@@ -107,7 +107,7 @@ void defineValueWithAssert() {
                 $dart$core.double g = f;
             }
 
-            void $package$assertions() => assertions();
+            void assertions() => $package$assertions();
          """;
     };
 }
@@ -129,7 +129,7 @@ void narrowToGenericTypeWithErasure() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.Object echoString([$dart$core.Object t]) {
+            $dart$core.Object $package$echoString([$dart$core.Object t]) {
                 $dart$core.String s = $ceylon$language.dart$ceylonStringToNative(t);
                 if (s is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is T s");
@@ -138,13 +138,13 @@ void narrowToGenericTypeWithErasure() {
                 return s$0;
             }
 
-            $dart$core.Object $package$echoString([$dart$core.Object t]) => echoString(t);
+            $dart$core.Object echoString([$dart$core.Object t]) => $package$echoString(t);
 
-            void run() {
+            void $package$run() {
                 $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$echoString($ceylon$language.dart$nativeToCeylonString("x")));
             }
 
-            void $package$run() => run();
+            void run() => $package$run();
          """;
      };
 }

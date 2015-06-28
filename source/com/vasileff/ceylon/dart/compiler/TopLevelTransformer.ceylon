@@ -46,7 +46,7 @@ class TopLevelTransformer
                 then DartTypeName(DartSimpleIdentifier("void"))
                 else returnType;
             propertyKeyword = null;
-            name = DartSimpleIdentifier(functionName);
+            name = DartSimpleIdentifier("$package$" + functionName);
             functionExpression = expressionTransformer
                 .generateFunctionExpression(that);
         }, generateForwardingFunction(that)];
@@ -73,7 +73,7 @@ class TopLevelTransformer
                 then DartTypeName(DartSimpleIdentifier("void"))
                 else returnType;
             propertyKeyword = null;
-            name = DartSimpleIdentifier(functionName);
+            name = DartSimpleIdentifier("$package$" + functionName);
             functionExpression = expressionTransformer
                     .generateFunctionExpression(that);
         }, generateForwardingFunction(that)];
@@ -106,14 +106,14 @@ class TopLevelTransformer
                 then DartTypeName(DartSimpleIdentifier("void"))
                 else returnType;
             propertyKeyword = null;
-            DartSimpleIdentifier("$package$" + functionName);
+            DartSimpleIdentifier(functionName);
             DartFunctionExpression {
                 parameterList;
                 DartExpressionFunctionBody {
                     async = false;
                     expression = DartMethodInvocation {
                         target = null;
-                        DartSimpleIdentifier(functionName);
+                        DartSimpleIdentifier("$package$" + functionName);
                         DartArgumentList {
                             CeylonList(functionModel.firstParameterList.parameters)
                                     .collect { (ParameterModel parameterModel) =>

@@ -11,11 +11,11 @@ void voidFunctionTest() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void simpleFunction() {
+            void $package$simpleFunction() {
                 return;
             }
 
-            void $package$simpleFunction() => simpleFunction();
+            void simpleFunction() => $package$simpleFunction();
          """;
     };
 }
@@ -32,14 +32,14 @@ void anonymousFunctionTest() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void simpleFunction() {
+            void $package$simpleFunction() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
                 $ceylon$language.print((anon).$delegate$());
             }
 
-            void $package$simpleFunction() => simpleFunction();
+            void simpleFunction() => $package$simpleFunction();
          """;
     };
 }
@@ -56,14 +56,14 @@ void functionReturnBoxingTest() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void simpleFunction() {
+            void $package$simpleFunction() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
                 $ceylon$language.print((anon).$delegate$());
             }
 
-            void $package$simpleFunction() => simpleFunction();
+            void simpleFunction() => $package$simpleFunction();
          """;
     };
 }
@@ -82,7 +82,7 @@ void nestedFunctionTest() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void simpleFunction() {
+            void $package$simpleFunction() {
                 $dart$core.String nested1() => "result1";
 
                 $dart$core.Object nested2() {
@@ -93,7 +93,7 @@ void nestedFunctionTest() {
                 $ceylon$language.print(nested2());
             }
 
-            void $package$simpleFunction() => simpleFunction();
+            void simpleFunction() => $package$simpleFunction();
          """;
     };
 }
@@ -112,7 +112,7 @@ void functionReferenceTest() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            void simpleFunction() {
+            void $package$simpleFunction() {
                 $dart$core.String nested1() => "result1";
 
                 $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
@@ -122,7 +122,7 @@ void functionReferenceTest() {
                 $ceylon$language.print((nested1Ref).$delegate$());
             }
 
-            void $package$simpleFunction() => simpleFunction();
+            void simpleFunction() => $package$simpleFunction();
          """;
     };
 }
@@ -143,7 +143,7 @@ void functionDefaultedParameters() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.int withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) {
+            $dart$core.int $package$withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) {
                 if ($dart$core.identical(x, $ceylon$language.dart$default)) {
                     x = 1;
                 }
@@ -153,14 +153,14 @@ void functionDefaultedParameters() {
                 return y;
             }
 
-            $dart$core.int $package$withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) => withDefaults(x, y);
+            $dart$core.int withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
 
-            void run() {
+            void $package$run() {
                 $package$withDefaults(3);
                 $package$withDefaults(4, 5);
             }
 
-            void $package$run() => run();
+            void run() => $package$run();
          """;
      };
 }
