@@ -20,7 +20,12 @@ import ceylon.ast.core {
     FloatLiteral,
     Node,
     Expression,
-    QualifiedExpression
+    QualifiedExpression,
+    LargerOperation,
+    ComparisonOperation,
+    SmallerOperation,
+    LargeAsOperation,
+    SmallAsOperation
 }
 import ceylon.collection {
     LinkedList
@@ -674,6 +679,34 @@ class ExpressionTransformer
             body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
         }
         return DartFunctionExpression(dartParameterList(), body);
+    }
+
+    shared actual
+    DartExpression transformComparisonOperation(ComparisonOperation that) {
+        // unoptimized approach: box & invoke Comparable method, unbox
+        value info = ExpressionInfo(that);
+
+        value lhsBoxed = ctx.withLhsType(ctx.typeFactory.anythingType, ()
+            =>  that.leftOperand.transform(this));
+
+        value rhsBoxed =  ctx.withLhsType(ctx.typeFactory.anythingType, ()
+            =>  that.rightOperand.transform(this));
+
+        value method
+            =   switch (that)
+                case (is LargerOperation) "largerThan"
+                case (is SmallerOperation) "smallerThan"
+                case (is LargeAsOperation) "notSmallerThan"
+                case (is SmallAsOperation) "notLargerThan";
+
+        return withBoxing {
+            rhsType = info.typeModel;
+            DartMethodInvocation {
+                lhsBoxed;
+                DartSimpleIdentifier { method; };
+                DartArgumentList { [rhsBoxed]; };
+            };
+        };
     }
 }
 

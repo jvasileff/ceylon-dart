@@ -238,5 +238,14 @@ void run() {
             }
          """;
 
-    compile { true; programFunctionReferenceErasure };
+    value basicExpressions =
+         """shared void run() {
+                value v1 = 1 < 2;
+                value v2 = 1 > 2;
+                value v3 = 1 <= 2;
+                value v4 = 1 >= 2;
+            }
+         """;
+
+    compile { true; basicExpressions };
 }
