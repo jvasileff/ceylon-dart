@@ -387,9 +387,7 @@ class ExpressionTransformer
                                 ctx.typeFactory.anythingType;
                                 innerReturnType;
                                 DartFunctionExpressionInvocation {
-                                    DartParenthesizedExpression {
-                                        delegateFunction;
-                                    };
+                                    delegateFunction;
                                     DartArgumentList {
                                         innerArguments;
                                     };
@@ -677,7 +675,6 @@ class ExpressionTransformer
         }
         return DartFunctionExpression(dartParameterList(), body);
     }
-
 }
 
 // TODO come up with a plan for this stuff

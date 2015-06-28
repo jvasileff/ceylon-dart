@@ -109,7 +109,7 @@ void functionReferenceTest() {
                 $dart$core.String nested1() => "result1";
 
                 $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString((nested1)());
+                    return $ceylon$language.dart$nativeToCeylonString(nested1());
                 });
                 print($ceylon$language.dart$nativeToCeylonString(nested1()));
                 print((nested1Ref).$delegate$());

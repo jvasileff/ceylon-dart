@@ -237,7 +237,12 @@ class DartFunctionExpressionInvocation
 
     shared actual
     void write(CodeWriter writer) {
-        func.write(writer);
+        if (func is DartIdentifier | DartPropertyAccess) {
+            func.write(writer);
+        }
+        else {
+            DartParenthesizedExpression(func).write(writer);
+        }
         argumentList.write(writer);
     }
 }
