@@ -239,25 +239,37 @@ void run() {
          """;
 
     value basicExpressions =
-         """shared void run() {
+         """shared void main() {
                 function seven() => 7;
                 function ten() => 10;
+                function sameBool(Boolean b) => b;
+
+                Boolean likelyTrue(Boolean b=true) {
+                    Object o = b;
+                    assert (is Boolean o);
+                    return o;
+                }
+
                 value tenRef = ten;
+                value sameBoolRef = sameBool;
 
-                value v1 = 1 < 2;
-                value v2 = 1 > 2;
-                value v3 = 1 <= 2;
-                value v4 = 1 >= 2;
+                value b1 = 3 < 2;
+                value b2 = 1 > 2;
+                value b3 = true;
+                value b4 = false;
 
-                value v5 =
-                    if (1 < 2, 3 < 4, 5 < 6) then
-                        seven()
+                value i5 =
+                    if (1 < 2, 3 < 4, b1)
+                    then seven()
                     else
-                        if (8 < 9)
+                        if (8 > 9)
                         then tenRef()
-                        else 11;
+                        else
+                            if (likelyTrue(), likelyTrue(false), sameBool(b2), sameBoolRef(b3))
+                            then 11
+                            else 12;
 
-                print(v5);
+                print(i5);
             }
          """;
 
