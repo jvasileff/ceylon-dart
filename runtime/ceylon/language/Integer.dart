@@ -28,11 +28,19 @@ class Integer implements Integral, Exponentiable { // Binary
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
 
-  // Comparable (TODO abstract class/interface)
+  // Comparable
 
   //Comparison compare(Integer other);
+
+  @$dart$core.override
   $dart$core.bool largerThan(Integer other) => _value > other._value;
+
+  @$dart$core.override
   $dart$core.bool smallerThan(Integer other) => _value < other._value;
+
+  @$dart$core.override
   $dart$core.bool notLargerThan(Integer other) => _value <= other._value;
+
+  @$dart$core.override
   $dart$core.bool notSmallerThan(Integer other) => _value >= other._value;
 }

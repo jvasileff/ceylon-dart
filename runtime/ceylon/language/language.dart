@@ -12,6 +12,7 @@ part 'Callable.dart';
 part 'Character.dart';
 part 'Collection.dart';
 part 'Correspondence.dart';
+part 'Comparable.dart';
 part 'Empty.dart';
 part 'Exception.dart';
 part 'Exponentiable.dart';
@@ -32,6 +33,7 @@ part 'Summable.dart';
 part 'Throwable.dart';
 part 'Tuple.dart';
 part 'className.dart';
+part 'compiledFromCeylon.dart';
 part 'print.dart';
 
 part "dart/runtime.dart";

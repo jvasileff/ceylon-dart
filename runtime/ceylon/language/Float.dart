@@ -18,4 +18,20 @@ class Float implements Number, Exponentiable {
   Float plus(Float other) => new Float(this._value + other._value);
 
   Float power(Float other) => new Float($dart$math.pow(this._value, other._value));
+
+  // Comparable
+
+  //Comparison compare(Integer other);
+
+  @$dart$core.override
+  $dart$core.bool largerThan(Float other) => _value > other._value;
+
+  @$dart$core.override
+  $dart$core.bool smallerThan(Float other) => _value < other._value;
+
+  @$dart$core.override
+  $dart$core.bool notLargerThan(Float other) => _value <= other._value;
+
+  @$dart$core.override
+  $dart$core.bool notSmallerThan(Float other) => _value >= other._value;
 }
