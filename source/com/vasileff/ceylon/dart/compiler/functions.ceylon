@@ -53,24 +53,27 @@ Boolean hasError(Node that)
     =>  that.transform(hasErrorTransformer);
 
 UnitModel getUnit
-        (ElementModel|UnitModel declaration)
+        (ElementModel|UnitModel|ScopeModel declaration)
     =>  if (is UnitModel declaration)
-        then declaration
-        else declaration.unit;
+            then declaration
+        else if (is ElementModel declaration)
+            then declaration.unit
+        else
+            getUnit(declaration.container);
 
 PackageModel getPackage
-        (ElementModel|UnitModel declaration)
+        (ElementModel|UnitModel|ScopeModel declaration)
     =>  getUnit(declaration).\ipackage;
 
 ModuleModel getModule
-        (ElementModel|UnitModel|ModuleModel declaration)
+        (ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
     =>  if (!is ModuleModel declaration)
         then getUnit(declaration).\ipackage.\imodule
         else declaration;
 
 Boolean sameModule(
-        ElementModel|UnitModel first,
-        ElementModel|UnitModel second)
+        ElementModel|UnitModel|ScopeModel first,
+        ElementModel|UnitModel|ScopeModel second)
     =>  getModule(first) == getModule(second);
 
 //not allowing `ScopeModel` arguments since they have `null` containers

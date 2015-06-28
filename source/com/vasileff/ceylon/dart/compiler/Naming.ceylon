@@ -15,6 +15,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ElementModel=Element,
     UnitModel=Unit,
     ModuleModel=Module,
+    ScopeModel=Scope,
     SetterModel=Setter,
     ParameterModel=Parameter,
     TypeModel=Type,
@@ -105,10 +106,10 @@ class Naming(TypeFactory typeFactory) {
     "The Dart library prefix for the Ceylon module."
     shared
     String moduleImportPrefix
-            (ElementModel|UnitModel|ModuleModel declaration);
+            (ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
 
     moduleImportPrefix
-        =   memoize((ElementModel|UnitModel|ModuleModel declaration)
+        =   memoize((ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
             =>  CeylonIterable(getModule(declaration).name)
                     .map(Object.string)
                     .interpose("$")
@@ -212,7 +213,7 @@ class Naming(TypeFactory typeFactory) {
     see(`function TypeFactory.boxingConversionFor`) // erasureFor?
     shared
     DartTypeName dartTypeName(
-            ElementModel inRelationTo,
+            ElementModel|ScopeModel inRelationTo,
             TypeModel|DartTypeModel type,
             Boolean disableErasure = false) {
 
@@ -318,6 +319,18 @@ class Naming(TypeFactory typeFactory) {
         DartTypeModel(moduleImportPrefix(definiteType.declaration),
                 identifierPackagePrefix(definiteType.declaration) +
                     getName(definiteType.declaration));
+    }
+
+    "True if `type` is a type parameter or a union or intersection
+     that cannot be represented in Dart. This is an ugly violation
+     of DRY re [[dartTypeModel]], and a better way to express various
+     erasure and boxing notions is needed."
+    shared
+    Boolean erasedToObject(TypeModel type) {
+        return type.typeParameter || (
+                let (definiteType = typeFactory.definiteType(type))
+                !typeFactory.isCeylonBoolean(definiteType)
+                    && (definiteType.union || definiteType.intersection));
     }
 
     shared

@@ -952,3 +952,20 @@ class DartBinaryExpression(
         DartParenthesizedExpression(rightOperand).write(writer);
     }
 }
+
+shared
+class DartAsExpression(expression, type)
+        extends DartExpression() {
+
+    shared DartExpression expression;
+    shared DartTypeName type;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("(");
+        expression.write(writer);
+        writer.write(" as ");
+        type.write(writer);
+        writer.write(")");
+    }
+}

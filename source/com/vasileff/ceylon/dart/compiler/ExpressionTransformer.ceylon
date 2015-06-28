@@ -44,6 +44,7 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
+    TypeDeclarationModel=TypeDeclaration,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
     ParameterModel=Parameter
@@ -179,8 +180,6 @@ class ExpressionTransformer
         //       erasure.
 
         // FIXME covariant refinement erasure calc.
-        // FIXME what about references to functions?
-        // FIXME what about anonymous functions?
 
         // Erasure is based on the return type of the function,
         // not on the type of the invocation expression:
@@ -643,6 +642,16 @@ class ExpressionTransformer
         value rhsBoxed =  ctx.withLhsType(ctx.typeFactory.anythingType, ()
             =>  that.rightOperand.transform(this));
 
+        // lhs may have been erased to Object for generics
+        // or intersection or union and may require an `as`
+        // cast to `Comparable`
+        value lhsType = ExpressionInfo(that.leftOperand).typeModel;
+
+        DartTypeName? asType = ctx.naming.erasedToObject(lhsType) then (
+            let(comparableType = lhsType.getSupertype(
+                    ctx.typeFactory.comparableDeclaration))
+            ctx.naming.dartTypeName(info.scope, comparableType));
+
         value method
             =   switch (that)
                 case (is LargerOperation) "largerThan"
@@ -653,7 +662,9 @@ class ExpressionTransformer
         return withBoxing {
             rhsType = info.typeModel;
             DartMethodInvocation {
-                lhsBoxed;
+                if (exists asType)
+                    then DartAsExpression(lhsBoxed, asType)
+                    else lhsBoxed;
                 DartSimpleIdentifier { method; };
                 DartArgumentList { [rhsBoxed]; };
             };

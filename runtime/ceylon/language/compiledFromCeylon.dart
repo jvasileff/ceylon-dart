@@ -2,7 +2,6 @@ part of ceylon.language;
 
 // largest.ceylon
 $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (() {
-    // TODO manually added `x as ...`
     if ((x as Comparable).largerThan(y)) {
         return x;
     } else {
@@ -14,7 +13,6 @@ $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $packag
 
 // smallest.ceylon
 $dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (() {
-    // TODO manually added `x as ...`
     if ((x as Comparable).smallerThan(y)) {
         return x;
     } else {

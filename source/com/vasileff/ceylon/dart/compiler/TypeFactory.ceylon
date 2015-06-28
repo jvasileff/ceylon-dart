@@ -11,6 +11,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ModelUtil,
     Declaration,
     TypedDeclaration,
+    Interface,
     TypeDeclaration,
     Value
 }
@@ -151,6 +152,13 @@ class TypeFactory(Unit unit) {
 
     Declaration callableDeclaration
         =>  unit.getLanguageModuleDeclaration("Callable");
+
+    shared
+    Interface comparableDeclaration {
+        assert (is Interface declaration =
+            unit.getLanguageModuleDeclaration("Comparable"));
+        return declaration;
+    }
 
     TypeDeclaration nullDeclaration {
         assert (is TypeDeclaration declaration =
