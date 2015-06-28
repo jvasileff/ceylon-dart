@@ -1,8 +1,8 @@
 library ceylon.language;
 
-import 'dart:core' as core;
-import 'dart:math' as math;
-import 'dart:mirrors' as mirrors;
+import 'dart:core' as $dart$core;
+import 'dart:math' as $dart$math;
+import 'dart:mirrors' as $dart$mirrors;
 
 part 'Array.dart';
 part 'ArraySequence.dart';

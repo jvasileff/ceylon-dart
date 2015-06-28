@@ -1,8 +1,8 @@
 part of ceylon.language;
 
-core.String className(core.Object obj) {
+$dart$core.String className($dart$core.Object obj) {
   // TODO use our own reified metadata when available?
   // removing dependency on `dart:mirrors` would be nice
-  mirrors.ClassMirror mirror = mirrors.reflectClass(obj.runtimeType);
-  return mirrors.MirrorSystem.getName(mirror.qualifiedName);
+  $dart$mirrors.ClassMirror mirror = $dart$mirrors.reflectClass(obj.runtimeType);
+  return $dart$mirrors.MirrorSystem.getName(mirror.qualifiedName);
 }

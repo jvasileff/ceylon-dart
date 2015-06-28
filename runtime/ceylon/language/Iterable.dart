@@ -3,21 +3,21 @@ part of ceylon.language;
 abstract class Iterable {
   Iterator get iterator;
 
-  core.int get size;
-  static core.int $get$size(Iterable $this) {
+  $dart$core.int get size;
+  static $dart$core.int $get$size(Iterable $this) {
     var count = 0;
     $this.each((_) { count++; });
     return count;
   }
 
-  core.bool get empty;
-  static core.bool $empty(Iterable $this)
-    =>  core.identical($this.iterator.next(), finished);
+  $dart$core.bool get empty;
+  static $dart$core.bool $empty(Iterable $this)
+    =>  $dart$core.identical($this.iterator.next(), finished);
 
-  void each(void f(core.Object item));
+  void each(void f($dart$core.Object item));
   static void $each(
       Collection $this,
-      void f(core.Object item)) {
+      void f($dart$core.Object item)) {
     var it = $this.iterator;
     for (var item = it.next(); item != finished;
           item = it.next()) {

@@ -1,42 +1,42 @@
 part of ceylon.language;
 
 abstract class List implements Collection, Correspondence {
-  core.int get lastIndex;
+  $dart$core.int get lastIndex;
 
-  core.Object getFromFirst(core.int index);
+  $dart$core.Object getFromFirst($dart$core.int index);
 
-  core.Object get(core.Object index);
-  static core.Object $get
-        (List $this, core.Object index)
+  $dart$core.Object get($dart$core.Object index);
+  static $dart$core.Object $get
+        (List $this, $dart$core.Object index)
     =>  index is Integer &&
         $this.getFromFirst(index._value);
 
-  core.Object getFromLast(core.int index);
-  static core.Object $getFromLast
-        (List $this, core.int index)
+  $dart$core.Object getFromLast($dart$core.int index);
+  static $dart$core.Object $getFromLast
+        (List $this, $dart$core.int index)
     =>  $this.get($this.lastIndex);
 
-  core.bool defines(core.Object index);
-  static core.Object $defines
-        (List $this, core.Object index) {
-    core.int lastIndex = $this.lastIndex;
+  $dart$core.bool defines($dart$core.Object index);
+  static $dart$core.Object $defines
+        (List $this, $dart$core.Object index) {
+    $dart$core.int lastIndex = $this.lastIndex;
     return lastIndex != null &&
         index is Integer &&
         0 <= index._value &&
         index._value <= $this.lastIndex;
   }
 
-  @core.override
-  core.int get size;
-  static core.int $get$size
+  @$dart$core.override
+  $dart$core.int get size;
+  static $dart$core.int $get$size
         (List $this)
     =>  $this.lastIndex == null ? 0 : $this.lastIndex + 1;
 
-  core.bool get empty;
-  static core.bool $empty(List $this)
+  $dart$core.bool get empty;
+  static $dart$core.bool $empty(List $this)
     =>  $this.lastIndex == null;
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator;
   static Iterator $get$iterator(List $this) {
     // capture a variable (very unoptimized!)
@@ -57,7 +57,7 @@ class _$ListIterator_anon implements Iterator {
 
   _$ListIterator_anon(List this.$outer, dart$VariableBoxInt this.index);
 
-  core.Object next() {
+  $dart$core.Object next() {
     if (index.ref <= $outer.lastIndex) {
       return $outer.getFromFirst(index.ref++);
     }

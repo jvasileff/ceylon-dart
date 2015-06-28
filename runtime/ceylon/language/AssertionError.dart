@@ -1,6 +1,6 @@
 part of ceylon.language;
 
 class AssertionError extends Throwable {
-  AssertionError(core.String message)
+  AssertionError($dart$core.String message)
       : super(message);
 }

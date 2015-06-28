@@ -5,12 +5,12 @@ abstract class Sequence implements Sequential {
   static Sequence $sequence(Iterable $this)
     =>  $this;
 
-  @core.override
-  Sequence withTrailing(core.Object other);
+  @$dart$core.override
+  Sequence withTrailing($dart$core.Object other);
   static Sequence $withTrailing
-        (Sequence $this, core.Object other) {
+        (Sequence $this, $dart$core.Object other) {
     var oldSize = $this.size;
-    var list = new core.List(oldSize + 1);
+    var list = new $dart$core.List(oldSize + 1);
     for (var i = 0; i < oldSize; i++) {
       list[i] = $this.get(i);
     }
@@ -18,9 +18,9 @@ abstract class Sequence implements Sequential {
     return new ArraySequence(new Array._withList(list));
   }
 
-  @core.override
-  Sequence withLeading(core.Object other);
+  @$dart$core.override
+  Sequence withLeading($dart$core.Object other);
   static Sequence $withLeading
-        (Sequence $this, core.Object other)
+        (Sequence $this, $dart$core.Object other)
     =>  new Tuple(other, $this);
 }

@@ -10,51 +10,51 @@ class ArraySequence implements Sequence {
   }
 
   // delegate
-  @core.override
-  core.int get lastIndex
+  @$dart$core.override
+  $dart$core.int get lastIndex
     =>  array.lastIndex;
 
-  @core.override
-  core.Object getFromFirst(core.int index)
+  @$dart$core.override
+  $dart$core.Object getFromFirst($dart$core.int index)
     =>  array.getFromFirst(index);
 
-  @core.override
-  core.bool defines(core.Object index)
+  @$dart$core.override
+  $dart$core.bool defines($dart$core.Object index)
     =>  array.defines(index);
 
-  @core.override
-  core.bool get empty
+  @$dart$core.override
+  $dart$core.bool get empty
     =>  List.$empty(this);
 
-  @core.override
-  get(core.Object index)
+  @$dart$core.override
+  get($dart$core.Object index)
     =>  array.get(index);
 
-  @core.override
-  getFromLast(core.int index)
+  @$dart$core.override
+  getFromLast($dart$core.int index)
     =>  array.getFromLast(index);
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator
     =>  array.iterator;
 
-  @core.override
-  core.int get size
+  @$dart$core.override
+  $dart$core.int get size
     =>  array.size;
 
-  @core.override
-  void each(void f(core.Object item))
+  @$dart$core.override
+  void each(void f($dart$core.Object item))
     =>  array.each(f);
 
-  @core.override
+  @$dart$core.override
   Sequence sequence()
     =>  Sequence.$sequence(this);
 
-  @core.override
-  Sequence withLeading(core.Object other)
+  @$dart$core.override
+  Sequence withLeading($dart$core.Object other)
     =>  Sequence.$withLeading(this, other);
 
-  @core.override
-  Sequence withTrailing(core.Object other)
+  @$dart$core.override
+  Sequence withTrailing($dart$core.Object other)
     =>  Sequence.$withTrailing(this, other);
 }

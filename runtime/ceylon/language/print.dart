@@ -1,10 +1,10 @@
 part of ceylon.language;
 
-void print(core.Object val) {
+void print($dart$core.Object val) {
   if (val == null) {
     print("<null>");
   }
   else {
-    core.print(val);
+    $dart$core.print(val);
   }
 }

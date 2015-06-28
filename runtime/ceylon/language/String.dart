@@ -1,53 +1,53 @@
 part of ceylon.language;
 
 class String implements List {
-  final core.String _value;
+  final $dart$core.String _value;
 
-  String(core.String this._value);
+  String($dart$core.String this._value);
 
-  @core.override
-  core.Object getFromFirst(core.int index)
+  @$dart$core.override
+  $dart$core.Object getFromFirst($dart$core.int index)
     => index >= 0 && index <= lastIndex
         ? new Character._fromInt(
                 _value.codeUnitAt(index))
         : null;
 
-  @core.override
-  core.int get lastIndex
+  @$dart$core.override
+  $dart$core.int get lastIndex
     => _value.isNotEmpty
           ? _value.length - 1
           : null;
 
   // bridge methods
-  @core.override
-  core.bool defines(core.Object index)
+  @$dart$core.override
+  $dart$core.bool defines($dart$core.Object index)
     => List.$defines(this, index);
 
-  @core.override
-  core.bool get empty
+  @$dart$core.override
+  $dart$core.bool get empty
     =>  List.$empty(this);
 
-  @core.override
-  get(core.Object index)
+  @$dart$core.override
+  get($dart$core.Object index)
     => List.$get(this, index);
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator
     => List.$get$iterator(this);
 
-  @core.override
+  @$dart$core.override
   getFromLast(index)
     => List.$getFromLast(this, index);
 
-  @core.override
-  core.int get size
+  @$dart$core.override
+  $dart$core.int get size
     => List.$get$size(this);
 
-  @core.override
-  void each(void f(core.Object item))
+  @$dart$core.override
+  void each(void f($dart$core.Object item))
     => Iterable.$each(this, f);
 
-  @core.override
+  @$dart$core.override
   Sequential sequence()
     =>  Iterable.$sequence(this);
 }

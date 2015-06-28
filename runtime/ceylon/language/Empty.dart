@@ -3,42 +3,42 @@ part of ceylon.language;
 class Empty implements Sequential {
   const Empty();
 
-  @core.override
+  @$dart$core.override
   get size => 0;
 
-  @core.override
-  each(core.Function f) {}
+  @$dart$core.override
+  each($dart$core.Function f) {}
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator => emptyIterator;
 
-  @core.override
+  @$dart$core.override
   getFromFirst(index) => null;
 
-  @core.override
+  @$dart$core.override
   getFromLast(index) => null;
 
-  @core.override
-  get(core.Object index) => null;
+  @$dart$core.override
+  get($dart$core.Object index) => null;
 
-  @core.override
-  core.bool defines(core.Object el) => false;
+  @$dart$core.override
+  $dart$core.bool defines($dart$core.Object el) => false;
 
-  @core.override
-  core.int get lastIndex => null;
+  @$dart$core.override
+  $dart$core.int get lastIndex => null;
 
-  @core.override
-  core.bool get empty => true;
+  @$dart$core.override
+  $dart$core.bool get empty => true;
 
-  @core.override
+  @$dart$core.override
   Sequential sequence() => $toplevel$empty;
 
-  @core.override
-  Sequence withTrailing(core.Object other)
+  @$dart$core.override
+  Sequence withTrailing($dart$core.Object other)
     =>  new Tuple(other, $toplevel$empty);
 
-  @core.override
-  Sequence withLeading(core.Object other)
+  @$dart$core.override
+  Sequence withLeading($dart$core.Object other)
     =>  new Tuple(other, $toplevel$empty);
 }
 
@@ -48,7 +48,7 @@ final $toplevel$empty = empty; // FIXME?
 class $EmptyIterator implements Iterator {
   const $EmptyIterator();
 
-  @core.override
+  @$dart$core.override
   next() => finished;
 }
 final emptyIterator = new $EmptyIterator();

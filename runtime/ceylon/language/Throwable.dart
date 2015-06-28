@@ -1,24 +1,24 @@
 part of ceylon.language;
 
- class Throwable extends core.Error {
-  core.String _description;
+ class Throwable extends $dart$core.Error {
+  $dart$core.String _description;
   final Throwable cause;
 
   Sequential _suppressed = empty;
 
   Throwable.$(
-        core.String message,
+        $dart$core.String message,
         Throwable this.cause) {
     this._description = message;
   }
 
   Throwable([
-      core.String message = dart$default,
+      $dart$core.String message = dart$default,
       Throwable cause = dart$default]) : this.$(
-          core.identical(message, dart$default) ? null : message,
-          core.identical(cause, dart$default) ? null : cause);
+          $dart$core.identical(message, dart$default) ? null : message,
+          $dart$core.identical(cause, dart$default) ? null : cause);
 
-  core.String get message {
+  $dart$core.String get message {
     if (_description != null) {
       return _description;
     }
@@ -28,7 +28,7 @@ part of ceylon.language;
     return "";
   }
 
-  core.String toString() {
+  $dart$core.String toString() {
     return className(this) + " \"$message\"";
   }
 

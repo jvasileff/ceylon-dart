@@ -1,66 +1,66 @@
 part of ceylon.language;
 
 class Tuple implements List, Sequence, Iterable {
-  final core.List _list = [];
+  final $dart$core.List _list = [];
 
-  Tuple(core.Object first, Iterable rest) {
+  Tuple($dart$core.Object first, Iterable rest) {
     _list.add(first);
     rest.each((e) => _list.add(e));
   }
 
-  Tuple._trailing(Iterable initial, core.Object element) {
+  Tuple._trailing(Iterable initial, $dart$core.Object element) {
     initial.each((e) => _list.add(e));
     _list.add(element);
   }
 
-  @core.override
-  core.int get lastIndex =>
+  @$dart$core.override
+  $dart$core.int get lastIndex =>
       _list.length - 1;
 
-  @core.override
-  core.Object getFromFirst(core.int index)
+  @$dart$core.override
+  $dart$core.Object getFromFirst($dart$core.int index)
     =>  (0 <= index && index < size)
             ? _list[index]
             : null;
 
-  @core.override
-  Sequence withTrailing(core.Object other)
+  @$dart$core.override
+  Sequence withTrailing($dart$core.Object other)
     =>  new Tuple._trailing(this, other);
 
-  @core.override
-  Sequence withLeading(core.Object other)
+  @$dart$core.override
+  Sequence withLeading($dart$core.Object other)
     =>  new Tuple(other, this);
 
   // bridge methods
-  @core.override
-  core.bool defines(core.Object index)
+  @$dart$core.override
+  $dart$core.bool defines($dart$core.Object index)
     =>  List.$defines(this, index);
 
-  @core.override
-  core.bool get empty
+  @$dart$core.override
+  $dart$core.bool get empty
     =>  List.$empty(this);
 
-  @core.override
-  get(core.Object index)
+  @$dart$core.override
+  get($dart$core.Object index)
     =>  List.$get(this, index);
 
-  @core.override
-  getFromLast(core.int index)
+  @$dart$core.override
+  getFromLast($dart$core.int index)
     =>  List.$getFromLast(this, index);
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator
     =>  List.$get$iterator(this);
 
-  @core.override
-  core.int get size
+  @$dart$core.override
+  $dart$core.int get size
     =>  List.$get$size(this);
 
-  @core.override
-  void each(void f(core.Object item))
+  @$dart$core.override
+  void each(void f($dart$core.Object item))
     =>  Iterable.$each(this, f);
 
-  @core.override
+  @$dart$core.override
   Sequence sequence()
     =>  Sequence.$sequence(this);
 }

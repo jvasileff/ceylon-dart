@@ -1,5 +1,5 @@
 part of ceylon.language;
 
 abstract class Iterator {
-  core.Object next();
+  $dart$core.Object next();
 }

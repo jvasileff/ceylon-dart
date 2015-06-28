@@ -1,9 +1,9 @@
 part of ceylon.language;
 
 abstract class Integral implements Number { // Enumerable
-  core.bool get unit;
-  core.bool get zero;
+  $dart$core.bool get unit;
+  $dart$core.bool get zero;
 
-  core.bool divides(core.Object other);
-  core.Object remainder(core.Object other);
+  $dart$core.bool divides($dart$core.Object other);
+  $dart$core.Object remainder($dart$core.Object other);
 }

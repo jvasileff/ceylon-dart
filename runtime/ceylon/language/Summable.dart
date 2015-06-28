@@ -1,5 +1,5 @@
 part of ceylon.language;
 
 abstract class Summable {
-  core.Object plus(core.Object other);
+  $dart$core.Object plus($dart$core.Object other);
 }

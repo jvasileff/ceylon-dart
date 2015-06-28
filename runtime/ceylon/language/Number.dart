@@ -1,7 +1,7 @@
 part of ceylon.language;
 
 abstract class Number implements Numeric { // Comparable
-  core.Object plusInteger(core.int integer);
-  core.Object powerOfInteger(core.int integer);
-  core.Object timesInteger(core.int integer);
+  $dart$core.Object plusInteger($dart$core.int integer);
+  $dart$core.Object powerOfInteger($dart$core.int integer);
+  $dart$core.Object timesInteger($dart$core.int integer);
 }

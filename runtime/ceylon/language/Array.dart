@@ -1,66 +1,66 @@
 part of ceylon.language;
 
 class Array implements List {
-  core.List _list;
+  $dart$core.List _list;
 
   Array(Iterable elements) {
     _list = [];
     elements.each((e) => _list.add(e));
   }
 
-  Array.OfSize(core.int size, core.Object element) {
-    _list = new core.List.filled(size, element);
+  Array.OfSize($dart$core.int size, $dart$core.Object element) {
+    _list = new $dart$core.List.filled(size, element);
   }
 
-  Array._withList(core.List this._list);
+  Array._withList($dart$core.List this._list);
 
-  void set(core.int index, core.Object element) {
+  void set($dart$core.int index, $dart$core.Object element) {
     if (index < 0 || index > lastIndex) {
       throw new AssertionError("Index out of bounds");
     }
     _list[index] = element;
   }
 
-  @core.override
-  core.int get lastIndex
+  @$dart$core.override
+  $dart$core.int get lastIndex
     =>  _list.length - 1;
 
-  @core.override
-  core.Object getFromFirst(core.int index)
+  @$dart$core.override
+  $dart$core.Object getFromFirst($dart$core.int index)
     =>  (0 <= index && index < size)
             ? _list[index]
             : null;
 
   // bridge methods
-  @core.override
-  core.bool defines(core.Object index)
+  @$dart$core.override
+  $dart$core.bool defines($dart$core.Object index)
     =>  List.$defines(this, index);
 
-  @core.override
-  core.bool get empty
+  @$dart$core.override
+  $dart$core.bool get empty
     =>  List.$empty(this);
 
-  @core.override
-  get(core.Object index)
+  @$dart$core.override
+  get($dart$core.Object index)
     =>  List.$get(this, index);
 
-  @core.override
-  getFromLast(core.int index)
+  @$dart$core.override
+  getFromLast($dart$core.int index)
     =>  List.$getFromLast(this, index);
 
-  @core.override
+  @$dart$core.override
   Iterator get iterator
     =>  List.$get$iterator(this);
 
-  @core.override
-  core.int get size
+  @$dart$core.override
+  $dart$core.int get size
     =>  List.$get$size(this);
 
-  @core.override
-  void each(void f(core.Object item))
+  @$dart$core.override
+  void each(void f($dart$core.Object item))
     =>  Iterable.$each(this, f);
 
-  @core.override
+  @$dart$core.override
   Sequential sequence()
     =>  Iterable.$sequence(this);
 }
