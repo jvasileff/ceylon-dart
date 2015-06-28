@@ -210,11 +210,12 @@ void run() {
 
     value programFunctionReferenceErasure =
          """String echoString(String s) => s;
-            shared void run(String es(String s)) {
-                //value ref = echoString;
+            shared void run() {
+                value ref = echoString;
                 //value ref = (String s) => s;
                 //value result = ref(".");
-                value result = es(".");
+                value result = ref(".");
+                print("x");
             }
          """;
 
@@ -237,5 +238,5 @@ void run() {
             }
          """;
 
-    compile { true; defaultedParameters };
+    compile { true; programFunctionReferenceErasure };
 }

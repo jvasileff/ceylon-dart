@@ -252,7 +252,6 @@ void genericNonErasure() {
 
 shared test
 void functionRefNonErasure() {
-    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """String echoString() => "x";
 
@@ -268,7 +267,9 @@ void functionRefNonErasure() {
             $dart$core.String echoString() => "x";
 
             void run() {
-                $ceylon$language.Callable ref = echoString;
+                $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
+                    return $ceylon$language.dart$nativeToCeylonString((echoString)());
+                });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$());
             }
          """;
@@ -277,7 +278,6 @@ void functionRefNonErasure() {
 
 shared test
 void dontEraseArgumentsToValue() {
-    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """String echoString(String s) => s;
 
@@ -293,7 +293,9 @@ void dontEraseArgumentsToValue() {
             $dart$core.String echoString([$dart$core.String s]) => s;
 
             void run() {
-                $ceylon$language.Callable ref = echoString;
+                $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) {
+                    return $ceylon$language.dart$nativeToCeylonString((echoString)($ceylon$language.dart$ceylonStringToNative(s)));
+                });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")));
             }
          """;

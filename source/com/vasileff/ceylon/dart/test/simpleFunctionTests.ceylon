@@ -93,7 +93,6 @@ void nestedFunctionTest() {
 
 shared test
 void functionReferenceTest() {
-    // TODO creating Callable's for references to functions not implemented yet
     compileAndCompare {
          """void simpleFunction() {
                 String nested1() => "result1";
@@ -109,7 +108,9 @@ void functionReferenceTest() {
             void simpleFunction() {
                 $dart$core.String nested1() => "result1";
 
-                $ceylon$language.Callable nested1Ref = nested1;
+                $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
+                    return $ceylon$language.dart$nativeToCeylonString((nested1)());
+                });
                 print($ceylon$language.dart$nativeToCeylonString(nested1()));
                 print((nested1Ref).$delegate$());
             }

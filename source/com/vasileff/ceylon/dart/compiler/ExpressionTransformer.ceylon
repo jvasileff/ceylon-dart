@@ -25,6 +25,9 @@ import ceylon.ast.core {
 import ceylon.collection {
     LinkedList
 }
+import ceylon.interop.java {
+    CeylonList
+}
 
 import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
@@ -36,14 +39,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
-    ParameterListModel=ParameterList,
     ParameterModel=Parameter
-}
-import java.lang {
-    Iterable
-}
-import ceylon.interop.java {
-    CeylonList
 }
 
 class ExpressionTransformer
@@ -119,12 +115,30 @@ class ExpressionTransformer
                          container type '``className(container)``'");
                 }
             }
+            case (is FunctionModel) {
+                switch (ctx.lhsTypeTop)
+                case (noType) {
+                    // must be an invocation, do not wrap in a callable
+                    // withBoxing below will be a noop
+                    unboxed = DartSimpleIdentifier(
+                            ctx.naming.getName(targetDeclaration));
+                }
+                else {
+                    // Anything, Callable, etc.
+                    // take a reference to the function
+                    // withBoxing below will be a noop
+                    unboxed = generateNewCallable {
+                        that = that;
+                        functionModel = targetDeclaration;
+                        delegateFunction = DartSimpleIdentifier(
+                                ctx.naming.getName(targetDeclaration));
+                    };
+                }
+            }
             else {
-                // FIXME asap
-                unboxed = DartSimpleIdentifier(ctx.naming.getName(targetDeclaration));
-                //throw CompilerBug(that,
-                //        "Unexpected declaration type for base expression: \
-                //         ``className(targetDeclaration)``");
+                throw CompilerBug(that,
+                        "Unexpected declaration type for base expression: \
+                         ``className(targetDeclaration)``");
             }
             return withBoxing(rhsType, unboxed);
         }
