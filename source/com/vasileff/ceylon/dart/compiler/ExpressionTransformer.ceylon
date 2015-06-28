@@ -35,7 +35,15 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     TypeModel=Type,
     PackageModel=Package,
-    ClassOrInterfaceModel=ClassOrInterface
+    ClassOrInterfaceModel=ClassOrInterface,
+    ParameterListModel=ParameterList,
+    ParameterModel=Parameter
+}
+import java.lang {
+    Iterable
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 class ExpressionTransformer
@@ -193,13 +201,14 @@ class ExpressionTransformer
 
         DartExpression func;
         if (!isCallable) {
-            // we want a non-erased type to invoke, so use 'Anything' (unoptimized!)
-            func = ctx.withLhsType(ctx.typeFactory.anythingType, ()
+            // use `noType` to disable boxing. We want to invoke the function
+            // directly, not a newly created Callable!
+            func = ctx.withLhsType(noType, ()
                 =>  that.invoked.transform(this));
         }
         else {
             // Boxing/erasure shouldn't matter here, right? With any luck, the
-            // expression will evaluate to a `Callable`.
+            // expression will evaluate to a `Callable`
             func =
                 DartPropertyAccess {
                     DartParenthesizedExpression {
@@ -222,61 +231,57 @@ class ExpressionTransformer
     DartExpression transformFunctionExpression
             (FunctionExpression that) {
 
-        // TODO this could use some cleanup/refactoring, along
-        //      with support for all types of parameters
-
-        FunctionModel functionModel;
-        [Parameters+] parameterLists;
-        LazySpecifier|Block definition;
-        String? functionName;
+        // FunctionExpressions always get wrapped in a
+        // Callable immediately.
+        //
+        // Technically, we should be honoring `ctx.lhsTypeTop`,
+        // and will need to if we discover a need to optimize
+        // expressions that are immediately invoked.
 
         value info = FunctionExpressionInfo(that);
-        parameterLists = that.parameterLists;
-        definition = that.definition;
-        functionModel = info.declarationModel;
-        functionName = null;
+
+        return generateNewCallable {
+            that = that;
+            functionModel = info.declarationModel;
+            delegateFunction = generateFunctionExpression(that);
+        };
+    }
+
+    shared
+    DartInstanceCreationExpression generateNewCallable
+            (Node that, functionModel, delegateFunction) {
+
+        FunctionModel functionModel;
+        {ParameterModel*} parameters;
+        DartExpression delegateFunction;
+        DartExpression outerFunction;
+
+        if (functionModel.parameterLists.size() != 1) {
+            throw CompilerBug(that, "Multiple parameter lists not supported");
+        }
+        else {
+            value list = functionModel.parameterLists.get(0);
+            parameters = CeylonList(list.parameters);
+        }
 
         value innerReturnType = functionModel.type;
 
-        // determine return type boxing
-        value returnConversion = ctx.typeFactory.boxingConversionFor(
-                ctx.typeFactory.anythingType,
-                innerReturnType);
-
-        // determine parameter type boxing
-        if (parameterLists.size != 1) {
-            throw CompilerBug(that, "Multiple parameter lists not supported");
-        }
-        value parameterConversions = parameterLists[0].parameters.collect((parameter) {
-            value parameterInfo = ParameterInfo(parameter);
-            value parameterModel = parameterInfo.parameterModel;
-
-            switch(parameter)
-            case (is DefaultedValueParameter | ValueParameter) {
-                return ctx.typeFactory.boxingConversionFor(
+        // determine if return or arguments need boxing
+        value boxingRequired =
+                ctx.typeFactory.boxingConversionFor(
                     ctx.typeFactory.anythingType,
-                    parameterModel.type);
-            }
-            case (is VariadicParameter
-                    | CallableParameter
-                    | ParameterReference
-                    | DefaultedCallableParameter
-                    | DefaultedParameterReference) {
-                throw CompilerBug(that,
-                        "Parameter type not supported: \
-                         ``className(parameter)``");
-            }
-        });
+                    innerReturnType) exists ||
+                parameters.any((parameterModel)
+                    =>  ctx.typeFactory.boxingConversionFor(
+                        ctx.typeFactory.anythingType,
+                        parameterModel.type) exists);
 
-        DartFunctionExpression outerFunction;
-        value innerFunction = generateFunctionExpression(that);
-
-        if (returnConversion exists || !parameterConversions.coalesced.empty) {
-
-            value outerParameters = parameterLists[0].parameters.collect((parameter) {
-                value parameterInfo = ParameterInfo(parameter);
-                value parameterModel = parameterInfo.parameterModel;
-
+        // generate outerFunction to handle boxing
+        if (!boxingRequired) {
+            outerFunction = delegateFunction;
+        }
+        else {
+            value outerParameters = parameters.collect((parameterModel) {
                 value dartSimpleParameter =
                         DartSimpleFormalParameter {
                             false; false;
@@ -292,8 +297,7 @@ class ExpressionTransformer
                             };
                         };
 
-                switch(parameter)
-                case (is DefaultedValueParameter) {
+                if (parameterModel.defaulted) {
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
@@ -303,40 +307,17 @@ class ExpressionTransformer
                         };
                     };
                 }
-                case (is ValueParameter) {
-                    return dartSimpleParameter;
-                }
                 else {
-                    // TODO other types
-                    assert(false);
+                    return dartSimpleParameter;
                 }
             });
 
-            value innerArguments = parameterLists[0].parameters.collect((parameter) {
-                value parameterInfo = ParameterInfo(parameter);
-                value parameterModel = parameterInfo.parameterModel;
+            value innerArguments = parameters.collect((parameterModel) {
+                //value parameterInfo = ParameterInfo(parameter);
+                //value parameterModel = parameterInfo.parameterModel;
 
                 value parameterName = ctx.naming.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
-
-                Boolean defaulted;
-
-                switch(parameter)
-                case (is DefaultedValueParameter) {
-                     defaulted = true;
-                }
-                case (is ValueParameter) {
-                    defaulted = false;
-                }
-                case (is VariadicParameter
-                        | CallableParameter
-                        | ParameterReference
-                        | DefaultedCallableParameter
-                        | DefaultedParameterReference) {
-                    throw CompilerBug(that,
-                            "Parameter type not supported: \
-                             ``className(parameter)``");
-                }
 
                 value unboxed = withBoxingLhsRhs {
                     // "lhs" is the inner function's parameter
@@ -347,7 +328,7 @@ class ExpressionTransformer
                     parameterIdentifier;
                 };
 
-                if (defaulted) {
+                if (parameterModel.defaulted) {
                     return
                     DartConditionalExpression {
                         // condition
@@ -393,7 +374,7 @@ class ExpressionTransformer
                                 innerReturnType;
                                 DartFunctionExpressionInvocation {
                                     DartParenthesizedExpression {
-                                        innerFunction;
+                                        delegateFunction;
                                     };
                                     DartArgumentList {
                                         innerArguments;
@@ -404,9 +385,6 @@ class ExpressionTransformer
                     };
                 };
             };
-        }
-        else {
-            outerFunction = innerFunction;
         }
 
         // create the Callable!
