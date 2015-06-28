@@ -1,19 +1,17 @@
 see(`function TypeFactory.boxingConversionFor`)
 abstract
-class BoxingConversion(
-        shared String prefix,
-        shared String suffix)
+class BoxingConversion()
         of ceylonBooleanToNative | ceylonFloatToNative |
             ceylonIntegerToNative | ceylonStringToNative |
             nativeToCeylonBoolean | nativeToCeylonFloat |
             nativeToCeylonInteger | nativeToCeylonString {}
 
-object ceylonBooleanToNative extends BoxingConversion("dart$ceylonBooleanToNative(",")") {}
-object ceylonFloatToNative extends BoxingConversion("dart$ceylonFloatToNative(",")") {}
-object ceylonIntegerToNative extends BoxingConversion("dart$ceylonIntegerToNative(",")") {}
-object ceylonStringToNative extends BoxingConversion("dart$ceylonStringToNative(",")") {}
+object ceylonBooleanToNative extends BoxingConversion() {}
+object ceylonFloatToNative extends BoxingConversion() {}
+object ceylonIntegerToNative extends BoxingConversion() {}
+object ceylonStringToNative extends BoxingConversion() {}
 
-object nativeToCeylonBoolean extends BoxingConversion("dart$nativeToCeylonBoolean(",")") {}
-object nativeToCeylonFloat extends BoxingConversion("dart$nativeToCeylonFloat(",")") {}
-object nativeToCeylonInteger extends BoxingConversion("dart$nativeToCeylonInteger(",")") {}
-object nativeToCeylonString extends BoxingConversion("dart$nativeToCeylonString(",")") {}
+object nativeToCeylonBoolean extends BoxingConversion() {}
+object nativeToCeylonFloat extends BoxingConversion() {}
+object nativeToCeylonInteger extends BoxingConversion() {}
+object nativeToCeylonString extends BoxingConversion() {}
