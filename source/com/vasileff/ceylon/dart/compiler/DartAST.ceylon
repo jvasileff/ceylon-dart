@@ -608,12 +608,15 @@ shared
 class DartFunctionExpression(parameters, body)
         extends DartExpression() {
 
-    shared DartFormalParameterList parameters;
+    "`parameters` must be `null` for getters"
+    shared DartFormalParameterList? parameters;
     shared DartFunctionBody body;
 
     shared actual
     void write(CodeWriter writer) {
-        parameters.write(writer);
+        if (exists parameters) {
+            parameters.write(writer);
+        }
         writer.write(" ");
         body.write(writer);
     }

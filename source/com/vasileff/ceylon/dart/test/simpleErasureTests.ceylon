@@ -252,9 +252,13 @@ void booleanArgumentErasure() {
 
             void f11([$dart$core.bool x]) => $package$f11(x);
 
-            $dart$core.bool booleanBoolean = true;
+            $dart$core.bool $package$booleanBoolean = true;
 
-            $dart$core.Object booleanObject = $ceylon$language.$true;
+            $dart$core.bool get booleanBoolean => $package$booleanBoolean;
+
+            $dart$core.Object $package$booleanObject = $ceylon$language.$true;
+
+            $dart$core.Object get booleanObject => $package$booleanObject;
 
             void $package$callFunctions() {
                 $package$f1($package$booleanBoolean);

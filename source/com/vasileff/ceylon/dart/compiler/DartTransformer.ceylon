@@ -8,6 +8,19 @@ import ceylon.ast.core {
     CompilationUnit
 }
 
+import com.redhat.ceylon.model.typechecker.model {
+    ControlBlockModel=ControlBlock,
+    FunctionOrValueModel=FunctionOrValue,
+    ConstructorModel=Constructor,
+    DeclarationModel=Declaration,
+    FunctionModel=Function,
+    ValueModel=Value,
+    TypeModel=Type,
+    PackageModel=Package,
+    ClassOrInterfaceModel=ClassOrInterface,
+    ParameterModel=Parameter
+}
+
 class DartTransformer(CompilationContext ctx)
         extends BaseTransformer<Anything>(ctx) {
 
@@ -66,6 +79,11 @@ class DartTransformer(CompilationContext ctx)
 
         value info = ValueDefinitionInfo(that);
 
+        value packagePrefix =
+                if (info.declarationModel.container is PackageModel)
+                then "$package$"
+                else "";
+
         return
         DartVariableDeclarationList {
             null;
@@ -74,7 +92,7 @@ class DartTransformer(CompilationContext ctx)
                     info.declarationModel.type);
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    ctx.naming.getName(info.declarationModel);
+                    packagePrefix + ctx.naming.getName(info.declarationModel);
                 };
                 ctx.withLhsType(info.declarationModel.type, ()
                     =>  that.definition.expression.transform(expressionTransformer));
