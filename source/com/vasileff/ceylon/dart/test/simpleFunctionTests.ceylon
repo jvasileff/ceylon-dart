@@ -134,7 +134,7 @@ void functionDefaultedParameters() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.int withDefaults([$dart$core.int x = $ceylon$language.dart$default, $dart$core.int y = $ceylon$language.dart$default]) {
+            $dart$core.int withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) {
                 if ($dart$core.identical(x, $ceylon$language.dart$default)) {
                     x = 1;
                 }

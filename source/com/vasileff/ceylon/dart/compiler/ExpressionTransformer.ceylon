@@ -569,11 +569,21 @@ class ExpressionTransformer
 
                 switch(parameter)
                 case (is DefaultedValueParameter) {
+                    // Use dynamic `var` type:
+                    //      we can't use the correct type for defaulted parameters
+                    //      since we want to assign `dart$default`, which causes
+                    //      a runtime error in checked mode. We *should* be using
+                    //      core.Object as the parameter type, and then casting and
+                    //      assigning to a correctly typed variable after the
+                    //      final value is assigned. But this will take more work
+                    //      to track the new name (naming does have a HashMap to
+                    //      help with this, though)
                     return
                     DartDefaultFormalParameter {
                         DartSimpleFormalParameter {
-                            false; false;
-                            parameterType;
+                            false;
+                            var = true;
+                            type = null;
                             DartSimpleIdentifier {
                                 ctx.naming.getName(parameterModel);
                             };
