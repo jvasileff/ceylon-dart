@@ -326,7 +326,7 @@ class ExpressionTransformer
                         dartSimpleParameter;
                         DartPrefixedIdentifier {
                             prefix = DartSimpleIdentifier("$ceylon$language");
-                            identifier = DartSimpleIdentifier("dart$defaulted");
+                            identifier = DartSimpleIdentifier("dart$default");
                         };
                     };
                 }
@@ -580,7 +580,7 @@ class ExpressionTransformer
                         };
                         DartPrefixedIdentifier {
                             prefix = DartSimpleIdentifier("$ceylon$language");
-                            identifier = DartSimpleIdentifier("dart$defaulted");
+                            identifier = DartSimpleIdentifier("dart$default");
                         };
                     };
                 }
@@ -651,7 +651,7 @@ class ExpressionTransformer
                             [paramName,
                              DartPrefixedIdentifier {
                                 prefix = DartSimpleIdentifier("$ceylon$language");
-                                identifier = DartSimpleIdentifier("dart$defaulted");
+                                identifier = DartSimpleIdentifier("dart$default");
                             }];
                         };
                     };
@@ -771,5 +771,5 @@ DartIdentifier dartDCIdentical
 DartIdentifier dartCLDDefaulted
     =   DartPrefixedIdentifier {
             prefix = DartSimpleIdentifier("$ceylon$language");
-            identifier = DartSimpleIdentifier("dart$defaulted");
+            identifier = DartSimpleIdentifier("dart$default");
         };

@@ -134,11 +134,11 @@ void functionDefaultedParameters() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.int withDefaults([$dart$core.int x = $ceylon$language.dart$defaulted, $dart$core.int y = $ceylon$language.dart$defaulted]) {
-                if ($dart$core.identical(x, $ceylon$language.dart$defaulted)) {
+            $dart$core.int withDefaults([$dart$core.int x = $ceylon$language.dart$default, $dart$core.int y = $ceylon$language.dart$default]) {
+                if ($dart$core.identical(x, $ceylon$language.dart$default)) {
                     x = 1;
                 }
-                if ($dart$core.identical(y, $ceylon$language.dart$defaulted)) {
+                if ($dart$core.identical(y, $ceylon$language.dart$default)) {
                     y = 2;
                 }
                 return y;
@@ -147,6 +147,7 @@ void functionDefaultedParameters() {
             void run() {
                 $package$withDefaults(3);
                 $package$withDefaults(4, 5);
-            }""";
+            }
+         """;
      };
 }
