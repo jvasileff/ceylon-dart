@@ -34,7 +34,7 @@ void anonymousFunctionTest() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
-                print((anon).$delegate$());
+                $ceylon$language.print((anon).$delegate$());
             }
          """;
     };
@@ -56,7 +56,7 @@ void functionReturnBoxingTest() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
-                print((anon).$delegate$());
+                $ceylon$language.print((anon).$delegate$());
             }
 
          """;
@@ -84,8 +84,8 @@ void nestedFunctionTest() {
                     return $ceylon$language.dart$nativeToCeylonString("result2");
                 }
 
-                print($ceylon$language.dart$nativeToCeylonString(nested1()));
-                print(nested2());
+                $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
+                $ceylon$language.print(nested2());
             }
          """;
     };
@@ -111,8 +111,8 @@ void functionReferenceTest() {
                 $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString(nested1());
                 });
-                print($ceylon$language.dart$nativeToCeylonString(nested1()));
-                print((nested1Ref).$delegate$());
+                $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
+                $ceylon$language.print((nested1Ref).$delegate$());
             }
          """;
     };
@@ -145,8 +145,8 @@ void functionDefaultedParameters() {
             }
 
             void run() {
-                withDefaults(3);
-                withDefaults(4, 5);
+                $package$withDefaults(3);
+                $package$withDefaults(4, 5);
             }""";
      };
 }

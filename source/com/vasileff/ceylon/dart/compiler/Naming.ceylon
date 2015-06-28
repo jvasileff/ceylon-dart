@@ -17,8 +17,14 @@ import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
     SetterModel=Setter,
     ParameterModel=Parameter,
-    TypeModel=Type
+    TypeModel=Type,
+    PackageModel=Package,
+    ClassOrInterfaceModel=ClassOrInterface,
+    FunctionOrValueModel=FunctionOrValue,
+    ControlBlockModel=ControlBlock,
+    ConstructorModel=Constructor
 }
+
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
 }
@@ -317,4 +323,46 @@ class Naming(TypeFactory typeFactory) {
     shared
     Boolean equalErasure(TypeModel first, TypeModel second)
         =>  dartTypeModel(first) == dartTypeModel(second);
+
+    shared
+    DartIdentifier qualifyIdentifier(
+            ElementModel|UnitModel inRelationTo,
+            DeclarationModel declaration,
+            String simpleName) {
+
+        switch (container = containerOfDeclaration(declaration))
+        case (is PackageModel) {
+            if (sameModule(inRelationTo, declaration)) {
+                // qualify toplevel in same module with '$package.'
+                return DartSimpleIdentifier(
+                    "$package$" +
+                    identifierPackagePrefix(declaration) +
+                    simpleName);
+            }
+            else {
+                // qualify toplevel with Dart import prefix
+                return DartPrefixedIdentifier {
+                    prefix = DartSimpleIdentifier(
+                        moduleImportPrefix(declaration));
+                    identifier = DartSimpleIdentifier(
+                        identifierPackagePrefix(declaration) +
+                        simpleName);
+                };
+            }
+        }
+        case (is ClassOrInterfaceModel
+                    | FunctionOrValueModel
+                    | ControlBlockModel
+                    | ConstructorModel) {
+            // TODO should be in scope? consider capture, etc.
+            return DartSimpleIdentifier(simpleName);
+        }
+        else {
+            // FIXME this needs to be a CompilerBug exception
+            throw Exception(
+                "Unexpected container for base expression: \
+                 declaration type '``className(declaration)``' \
+                 container type '``className(container)``'");
+        }
+    }
 }

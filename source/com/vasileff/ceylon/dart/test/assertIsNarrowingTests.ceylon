@@ -131,7 +131,7 @@ void narrowToGenericTypeWithErasure() {
             }
 
             void run() {
-                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative(echoString($ceylon$language.dart$nativeToCeylonString("x")));
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$echoString($ceylon$language.dart$nativeToCeylonString("x")));
             }
          """;
      };

@@ -123,12 +123,15 @@ class ExpressionTransformer
                 }
             }
             case (is FunctionModel) {
+                value qualified = ctx.naming.qualifyIdentifier(
+                        ctx.unit, targetDeclaration,
+                        ctx.naming.getName(targetDeclaration));
+
                 switch (ctx.lhsTypeTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
                     // withBoxing below will be a noop
-                    unboxed = DartSimpleIdentifier(
-                            ctx.naming.getName(targetDeclaration));
+                    unboxed = qualified;
                 }
                 else {
                     // Anything, Callable, etc.
@@ -137,8 +140,7 @@ class ExpressionTransformer
                     unboxed = generateNewCallable {
                         that = that;
                         functionModel = targetDeclaration;
-                        delegateFunction = DartSimpleIdentifier(
-                                ctx.naming.getName(targetDeclaration));
+                        delegateFunction = qualified;
                     };
                 }
             }

@@ -189,25 +189,25 @@ void booleanArgumentErasure() {
             $dart$core.Object booleanObject = $ceylon$language.$true;
 
             void callFunctions() {
-                f1($package$booleanBoolean);
-                f2($package$booleanBoolean);
-                f2(null);
-                f3($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
-                f3($package$booleanObject);
-                f4($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
-                f4($package$booleanObject);
-                f4(null);
-                f5(true);
-                f6(true);
-                f6(null);
-                f7(false);
-                f8(false);
-                f8(null);
-                f9(true);
-                f10($package$booleanBoolean);
-                f10($package$booleanBoolean);
-                f11($package$booleanBoolean);
-                f11($package$booleanBoolean);
+                $package$f1($package$booleanBoolean);
+                $package$f2($package$booleanBoolean);
+                $package$f2(null);
+                $package$f3($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                $package$f3($package$booleanObject);
+                $package$f4($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                $package$f4($package$booleanObject);
+                $package$f4(null);
+                $package$f5(true);
+                $package$f6(true);
+                $package$f6(null);
+                $package$f7(false);
+                $package$f8(false);
+                $package$f8(null);
+                $package$f9(true);
+                $package$f10($package$booleanBoolean);
+                $package$f10($package$booleanBoolean);
+                $package$f11($package$booleanBoolean);
+                $package$f11($package$booleanBoolean);
             }
          """;
     };
@@ -243,8 +243,8 @@ void genericNonErasure() {
             }
 
             void run() {
-                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative(generic($ceylon$language.dart$nativeToCeylonString("true")));
-                $dart$core.String myString2 = nonGeneric("true");
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$generic($ceylon$language.dart$nativeToCeylonString("true")));
+                $dart$core.String myString2 = $package$nonGeneric("true");
             }
          """;
     };
@@ -268,7 +268,7 @@ void functionRefNonErasure() {
 
             void run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString(echoString());
+                    return $ceylon$language.dart$nativeToCeylonString($package$echoString());
                 });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$());
             }
@@ -294,7 +294,7 @@ void dontEraseArgumentsToValue() {
 
             void run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) {
-                    return $ceylon$language.dart$nativeToCeylonString(echoString($ceylon$language.dart$ceylonStringToNative(s)));
+                    return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s)));
                 });
                 $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")));
             }
