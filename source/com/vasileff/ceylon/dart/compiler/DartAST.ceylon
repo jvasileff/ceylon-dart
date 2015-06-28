@@ -621,7 +621,9 @@ class DartFunctionExpression(parameters, body)
 
 "A node representing the body of a function or method."
 shared abstract
-class DartFunctionBody() extends DartNode() {}
+class DartFunctionBody()
+        of DartBlockFunctionBody | DartExpressionFunctionBody
+        extends DartNode() {}
 
 "A function body that consists of a block of statements."
 shared

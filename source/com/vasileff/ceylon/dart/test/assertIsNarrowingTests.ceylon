@@ -23,6 +23,8 @@ void narrowObjectToString() {
                 }
                 $dart$core.String obj$0 = $ceylon$language.dart$ceylonStringToNative(obj);
             }
+
+            void $package$assertions() => assertions();
          """;
     };
 }
@@ -47,6 +49,8 @@ void narrowDontShadow() {
                     throw new $ceylon$language.AssertionError("Violated: !is String obj");
                 }
             }
+
+            void $package$assertions() => assertions();
          """;
     };
 }
@@ -72,6 +76,8 @@ void useShadowAfterNarrowing() {
                 $dart$core.bool obj$0 = $ceylon$language.dart$ceylonBooleanToNative(obj);
                 $dart$core.bool bool = obj$0;
             }
+
+            void $package$assertions() => assertions();
          """;
     };
 }
@@ -100,6 +106,8 @@ void defineValueWithAssert() {
                 }
                 $dart$core.double g = f;
             }
+
+            void $package$assertions() => assertions();
          """;
     };
 }
@@ -130,9 +138,13 @@ void narrowToGenericTypeWithErasure() {
                 return s$0;
             }
 
+            $dart$core.Object $package$echoString([$dart$core.Object t]) => echoString(t);
+
             void run() {
                 $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$echoString($ceylon$language.dart$nativeToCeylonString("x")));
             }
+
+            void $package$run() => run();
          """;
      };
 }

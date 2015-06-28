@@ -14,6 +14,8 @@ void voidFunctionTest() {
             void simpleFunction() {
                 return;
             }
+
+            void $package$simpleFunction() => simpleFunction();
          """;
     };
 }
@@ -36,6 +38,8 @@ void anonymousFunctionTest() {
                 });
                 $ceylon$language.print((anon).$delegate$());
             }
+
+            void $package$simpleFunction() => simpleFunction();
          """;
     };
 }
@@ -59,6 +63,7 @@ void functionReturnBoxingTest() {
                 $ceylon$language.print((anon).$delegate$());
             }
 
+            void $package$simpleFunction() => simpleFunction();
          """;
     };
 }
@@ -87,6 +92,8 @@ void nestedFunctionTest() {
                 $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
                 $ceylon$language.print(nested2());
             }
+
+            void $package$simpleFunction() => simpleFunction();
          """;
     };
 }
@@ -114,6 +121,8 @@ void functionReferenceTest() {
                 $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
                 $ceylon$language.print((nested1Ref).$delegate$());
             }
+
+            void $package$simpleFunction() => simpleFunction();
          """;
     };
 }
@@ -144,10 +153,14 @@ void functionDefaultedParameters() {
                 return y;
             }
 
+            $dart$core.int $package$withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) => withDefaults(x, y);
+
             void run() {
                 $package$withDefaults(3);
                 $package$withDefaults(4, 5);
             }
+
+            void $package$run() => run();
          """;
      };
 }

@@ -555,71 +555,6 @@ class ExpressionTransformer
 
         value returnType = functionModel.type;
 
-        function dartParameterList() {
-            value list = parameterLists.first;
-            if (list.parameters.empty) {
-                return DartFormalParameterList();
-            }
-
-            value parameters = list.parameters.collect((parameter) {
-                value parameterInfo = ParameterInfo(parameter);
-                value parameterModel = parameterInfo.parameterModel;
-                value parameterType = ctx.naming.dartTypeName(
-                        parameterModel.model, parameterModel.type);
-
-                switch(parameter)
-                case (is DefaultedValueParameter) {
-                    // Use dynamic `var` type:
-                    //      we can't use the correct type for defaulted parameters
-                    //      since we want to assign `dart$default`, which causes
-                    //      a runtime error in checked mode. We *should* be using
-                    //      core.Object as the parameter type, and then casting and
-                    //      assigning to a correctly typed variable after the
-                    //      final value is assigned. But this will take more work
-                    //      to track the new name (naming does have a HashMap to
-                    //      help with this, though)
-                    return
-                    DartDefaultFormalParameter {
-                        DartSimpleFormalParameter {
-                            false;
-                            var = true;
-                            type = null;
-                            DartSimpleIdentifier {
-                                ctx.naming.getName(parameterModel);
-                            };
-                        };
-                        DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier("$ceylon$language");
-                            identifier = DartSimpleIdentifier("dart$default");
-                        };
-                    };
-                }
-                case (is ValueParameter) {
-                    return
-                    DartSimpleFormalParameter {
-                        false; false;
-                        parameterType;
-                        DartSimpleIdentifier {
-                            ctx.naming.getName(parameterModel);
-                        };
-                    };
-                }
-                case (is VariadicParameter
-                        | CallableParameter
-                        | ParameterReference
-                        | DefaultedCallableParameter
-                        | DefaultedParameterReference) {
-                    throw CompilerBug(that,
-                            "Parameter type not supported: \
-                             ``className(parameter)``");
-                }
-            });
-            return DartFormalParameterList {
-                positional = true;
-                parameters = parameters;
-            };
-        }
-
         //Defaulted Parameters:
         //If any exist, use a block (not lazy specifier)
         //At start of block, assign values as necessary
@@ -692,7 +627,9 @@ class ExpressionTransformer
             }
             body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
         }
-        return DartFunctionExpression(dartParameterList(), body);
+        return DartFunctionExpression(
+                generateFormalParameterList(
+                    that, parameterLists.first), body);
     }
 
     shared actual
@@ -765,6 +702,73 @@ class ExpressionTransformer
                 };
                 DartArgumentList { []; };
             });
+    }
+
+    shared
+    DartFormalParameterList generateFormalParameterList
+            (Node that, Parameters parameters) {
+
+        if (parameters.parameters.empty) {
+            return DartFormalParameterList();
+        }
+
+        value dartParameters = parameters.parameters.collect((parameter) {
+            value parameterInfo = ParameterInfo(parameter);
+            value parameterModel = parameterInfo.parameterModel;
+            value parameterType = ctx.naming.dartTypeName(
+                    parameterModel.model, parameterModel.type);
+
+            switch(parameter)
+            case (is DefaultedValueParameter) {
+                // Use dynamic `var` type:
+                //      we can't use the correct type for defaulted parameters
+                //      since we want to assign `dart$default`, which causes
+                //      a runtime error in checked mode. We *should* be using
+                //      core.Object as the parameter type, and then casting and
+                //      assigning to a correctly typed variable after the
+                //      final value is assigned. But this will take more work
+                //      to track the new name (naming does have a HashMap to
+                //      help with this, though)
+                return
+                DartDefaultFormalParameter {
+                    DartSimpleFormalParameter {
+                        false;
+                        var = true;
+                        type = null;
+                        DartSimpleIdentifier {
+                            ctx.naming.getName(parameterModel);
+                        };
+                    };
+                    DartPrefixedIdentifier {
+                        prefix = DartSimpleIdentifier("$ceylon$language");
+                        identifier = DartSimpleIdentifier("dart$default");
+                    };
+                };
+            }
+            case (is ValueParameter) {
+                return
+                DartSimpleFormalParameter {
+                    false; false;
+                    parameterType;
+                    DartSimpleIdentifier {
+                        ctx.naming.getName(parameterModel);
+                    };
+                };
+            }
+            case (is VariadicParameter
+                    | CallableParameter
+                    | ParameterReference
+                    | DefaultedCallableParameter
+                    | DefaultedParameterReference) {
+                throw CompilerBug(that,
+                        "Parameter type not supported: \
+                         ``className(parameter)``");
+            }
+        });
+        return DartFormalParameterList {
+            positional = true;
+            parameters = dartParameters;
+        };
     }
 }
 

@@ -1,7 +1,16 @@
 import ceylon.ast.core {
     FunctionDefinition,
     ValueDefinition,
-    FunctionShortcutDefinition
+    FunctionShortcutDefinition,
+    AnyFunction,
+    FunctionDeclaration
+}
+import ceylon.interop.java {
+    CeylonList
+}
+
+import com.redhat.ceylon.model.typechecker.model {
+    ParameterModel=Parameter
 }
 
 "For Dart TopLevel declarations, which are distinct from
@@ -40,7 +49,7 @@ class TopLevelTransformer
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
                 .generateFunctionExpression(that);
-        }];
+        }, generateForwardingFunction(that)];
     }
 
     see(`function transformFunctionDefinition`)
@@ -67,6 +76,55 @@ class TopLevelTransformer
             name = DartSimpleIdentifier(functionName);
             functionExpression = expressionTransformer
                     .generateFunctionExpression(that);
-        }];
+        }, generateForwardingFunction(that)];
+    }
+
+    DartFunctionDeclaration generateForwardingFunction
+            (AnyFunction that) {
+
+        value info =
+            switch (that)
+            case (is FunctionDeclaration) FunctionDeclarationInfo(that)
+            case (is FunctionDefinition) FunctionDefinitionInfo(that)
+            case (is FunctionShortcutDefinition) FunctionShortcutDefinitionInfo(that);
+
+        value functionModel = info.declarationModel;
+        value functionName = ctx.naming.getName(functionModel);
+        value returnType = ctx.naming.dartTypeName(
+                info.declarationModel,
+                info.declarationModel.type);
+
+        value parameterList =expressionTransformer.generateFormalParameterList
+                (that, that.parameterLists.first);
+
+        return
+        DartFunctionDeclaration {
+            external = false;
+            returnType =
+                // TODO seems like a hacky way to create a void keyword
+                if (functionModel.declaredVoid)
+                then DartTypeName(DartSimpleIdentifier("void"))
+                else returnType;
+            propertyKeyword = null;
+            DartSimpleIdentifier("$package$" + functionName);
+            DartFunctionExpression {
+                parameterList;
+                DartExpressionFunctionBody {
+                    async = false;
+                    expression = DartMethodInvocation {
+                        target = null;
+                        DartSimpleIdentifier(functionName);
+                        DartArgumentList {
+                            CeylonList(functionModel.firstParameterList.parameters)
+                                    .collect { (ParameterModel parameterModel) =>
+                                DartSimpleIdentifier {
+                                    ctx.naming.getName(parameterModel);
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
     }
 }
