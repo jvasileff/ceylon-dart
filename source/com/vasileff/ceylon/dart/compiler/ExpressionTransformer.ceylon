@@ -25,7 +25,9 @@ import ceylon.ast.core {
     ComparisonOperation,
     SmallerOperation,
     LargeAsOperation,
-    SmallAsOperation
+    SmallAsOperation,
+    IfElseExpression,
+    BooleanCondition
 }
 import ceylon.collection {
     LinkedList
@@ -707,6 +709,50 @@ class ExpressionTransformer
                 DartArgumentList { [rhsBoxed]; };
             };
         };
+    }
+
+    shared actual
+    DartExpression transformIfElseExpression(IfElseExpression that) {
+        // TODO IsCondition & ExistsOrNonemptyCondition
+        if (that.conditions.conditions.any((condition)
+                =>  !condition is BooleanCondition)) {
+            throw CompilerBug(that,
+                "Only BooleanConditions are currently supported.");
+        }
+
+        value dartCondition = ctx.withLhsType(ctx.typeFactory.booleanType, ()
+            =>  that.conditions.conditions
+                    .reversed
+                    .narrow<BooleanCondition>()
+                    .map((c)
+                        =>  c.condition.transform(this))
+                    .reduce((DartExpression partial, c)
+                        =>  DartBinaryExpression(c, "&&", partial)));
+        assert (exists dartCondition);
+
+        // create a function expression for the
+        // IfElseExpression, then invoke it.
+        return ctx.withLhsType((ExpressionInfo(that).typeModel), () =>
+            DartFunctionExpressionInvocation {
+                DartFunctionExpression {
+                    DartFormalParameterList();
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            [DartIfStatement {
+                                dartCondition;
+                                DartReturnStatement {
+                                    that.thenExpression.transform(this);
+                                };
+                                DartReturnStatement {
+                                    that.elseExpression.transform(this);
+                                };
+                            }];
+                        };
+                    };
+                };
+                DartArgumentList { []; };
+            });
     }
 }
 

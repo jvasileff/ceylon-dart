@@ -240,10 +240,24 @@ void run() {
 
     value basicExpressions =
          """shared void run() {
+                function seven() => 7;
+                function ten() => 10;
+                value tenRef = ten;
+
                 value v1 = 1 < 2;
                 value v2 = 1 > 2;
                 value v3 = 1 <= 2;
                 value v4 = 1 >= 2;
+
+                value v5 =
+                    if (1 < 2, 3 < 4, 5 < 6) then
+                        seven()
+                    else
+                        if (8 < 9)
+                        then tenRef()
+                        else 11;
+
+                print(v5);
             }
          """;
 

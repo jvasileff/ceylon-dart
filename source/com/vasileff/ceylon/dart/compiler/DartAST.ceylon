@@ -398,7 +398,7 @@ class DartIfStatement
         writer.write(") ");
         thenBlock.write(writer);
         if (exists elseBlock) {
-            writer.write("else ");
+            writer.write(" else ");
             elseBlock.write(writer);
         }
     }
@@ -927,5 +927,23 @@ class DartConditionalExpression(
         thenExpression.write(writer);
         writer.write(" : ");
         elseExpression.write(writer);
+    }
+}
+
+"A binary (infix) expression."
+shared
+class DartBinaryExpression(
+        leftOperand, operator, rightOperand)
+        extends DartExpression() {
+
+    shared DartExpression leftOperand;
+    shared String operator;
+    shared DartExpression rightOperand;
+
+    shared actual
+    void write(CodeWriter writer) {
+        DartParenthesizedExpression(leftOperand).write(writer);
+        writer.write(" " + operator + " ");
+        DartParenthesizedExpression(rightOperand).write(writer);
     }
 }

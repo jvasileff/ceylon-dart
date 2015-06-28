@@ -24,4 +24,15 @@ class Integer implements Integral, Exponentiable { // Binary
   Integer plus(Integer other) => new Integer(this._value + other._value);
 
   Integer power(Integer other) => new Integer(math.pow(this._value, other._value));
+
+  @core.override
+  core.String toString() => _value.toString();
+
+  // Comparable (TODO abstract class/interface)
+
+  //Comparison compare(Integer other);
+  core.bool largerThan(Integer other) => _value > other._value;
+  core.bool smallerThan(Integer other) => _value > other._value;
+  core.bool notLargerThan(Integer other) => _value > other._value;
+  core.bool notSmallerThan(Integer other) => _value > other._value;
 }
