@@ -34,8 +34,8 @@ class TopLevelTransformer
             (FunctionDefinition that) {
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
-        value functionName = ctx.naming.getName(functionModel);
-        value returnType = ctx.naming.dartTypeName(
+        value functionName = ctx.dartTypes.getName(functionModel);
+        value returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
 
@@ -61,8 +61,8 @@ class TopLevelTransformer
                 (FunctionShortcutDefinition that) {
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
-        value functionName = ctx.naming.getName(functionModel);
-        value returnType = ctx.naming.dartTypeName(
+        value functionName = ctx.dartTypes.getName(functionModel);
+        value returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
 
@@ -88,19 +88,19 @@ class TopLevelTransformer
         value getter =
         DartFunctionDeclaration {
             external = false;
-            returnType = ctx.naming.dartTypeName(
+            returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
             propertyKeyword = "get";
             DartSimpleIdentifier {
-                ctx.naming.getName(info.declarationModel);
+                ctx.dartTypes.getName(info.declarationModel);
             };
             DartFunctionExpression {
                 null;
                 DartExpressionFunctionBody {
                     async = false;
                     DartSimpleIdentifier {
-                        "$package$" + ctx.naming.getName(info.declarationModel);
+                        "$package$" + ctx.dartTypes.getName(info.declarationModel);
                     };
                 };
             };
@@ -112,7 +112,7 @@ class TopLevelTransformer
                 returnType = null;
                 propertyKeyword = "set";
                 DartSimpleIdentifier {
-                    ctx.naming.getName(info.declarationModel);
+                    ctx.dartTypes.getName(info.declarationModel);
                 };
                 DartFunctionExpression {
                     DartFormalParameterList {
@@ -121,7 +121,7 @@ class TopLevelTransformer
                         [DartSimpleFormalParameter {
                             final = false;
                             var = false;
-                            type = ctx.naming.dartTypeName(
+                            type = ctx.dartTypes.dartTypeName(
                                 info.declarationModel,
                                 info.declarationModel.type);
                             identifier = DartSimpleIdentifier("value");
@@ -131,7 +131,7 @@ class TopLevelTransformer
                         async = false;
                         DartAssignmentExpression {
                             DartSimpleIdentifier {
-                                "$package$" + ctx.naming.getName(info.declarationModel);
+                                "$package$" + ctx.dartTypes.getName(info.declarationModel);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier("value");
@@ -156,8 +156,8 @@ class TopLevelTransformer
             case (is FunctionShortcutDefinition) FunctionShortcutDefinitionInfo(that);
 
         value functionModel = info.declarationModel;
-        value functionName = ctx.naming.getName(functionModel);
-        value returnType = ctx.naming.dartTypeName(
+        value functionName = ctx.dartTypes.getName(functionModel);
+        value returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
 
@@ -185,7 +185,7 @@ class TopLevelTransformer
                             CeylonList(functionModel.firstParameterList.parameters)
                                     .collect { (ParameterModel parameterModel) =>
                                 DartSimpleIdentifier {
-                                    ctx.naming.getName(parameterModel);
+                                    ctx.dartTypes.getName(parameterModel);
                                 };
                             };
                         };

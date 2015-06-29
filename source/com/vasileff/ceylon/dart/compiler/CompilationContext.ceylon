@@ -19,10 +19,10 @@ class CompilationContext(unit, tokens) {
     StringBuilder result = StringBuilder();
 
     shared
-    TypeFactory typeFactory = TypeFactory(unit);
+    CeylonTypes ceylonTypes = CeylonTypes(unit);
 
     shared
-    Naming naming = Naming(typeFactory);
+    DartTypes dartTypes = DartTypes(ceylonTypes);
 
     shared variable
     TypeOrNoType? lhsTypeTop = null;

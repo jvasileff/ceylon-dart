@@ -74,13 +74,13 @@ class BaseTransformer<Result>
         else if (lhsType.isSubtypeOf(rhsType)) {
             // they're either the same, or this is the result
             // of a narrowing operation
-            castType = ctx.naming.dartTypeModel(lhsType, disableErasure);
+            castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
         }
-        else if (ctx.naming.erasedToObject(rhsType)) {
+        else if (ctx.dartTypes.erasedToObject(rhsType)) {
             // the result of a call to a generic function, or
             // something like a Ceylon intersection type. Either
             // may result in a Dart narrowing.
-            castType = ctx.naming.dartTypeModel(lhsType, disableErasure);
+            castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
         }
         else {
             // rhs is neither a supertype of lhs nor erased,
@@ -90,7 +90,7 @@ class BaseTransformer<Result>
 
         // the rhs may still have the same erasure
         // (this is actually the normal case)
-        if (castType == ctx.naming.dartTypeModel(rhsType)) {
+        if (castType == ctx.dartTypes.dartTypeModel(rhsType)) {
             return dartExpression;
         }
 
@@ -98,7 +98,7 @@ class BaseTransformer<Result>
         return
         DartAsExpression {
             dartExpression;
-            ctx.naming.dartTypeName(inRelationTo, castType);
+            ctx.dartTypes.dartTypeName(inRelationTo, castType);
         };
     }
 
@@ -122,7 +122,7 @@ class BaseTransformer<Result>
         =>  let (conversion =
                     switch (lhsType)
                     case (is NoType) null
-                    case (is TypeModel) ctx.typeFactory
+                    case (is TypeModel) ctx.ceylonTypes
                         .boxingConversionFor(lhsType, rhsType))
             if (exists conversion)
             then withBoxingConversion(inRelationTo, rhsType, dartExpression, conversion)
@@ -138,28 +138,28 @@ class BaseTransformer<Result>
             switch (conversion)
             case (ceylonBooleanToNative)
                 [DartSimpleIdentifier("dart$ceylonBooleanToNative"),
-                 ctx.typeFactory.booleanType]
+                 ctx.ceylonTypes.booleanType]
             case (ceylonFloatToNative)
                 [DartSimpleIdentifier("dart$ceylonFloatToNative"),
-                 ctx.typeFactory.floatType]
+                 ctx.ceylonTypes.floatType]
             case (ceylonIntegerToNative)
                 [DartSimpleIdentifier("dart$ceylonIntegerToNative"),
-                 ctx.typeFactory.integerType]
+                 ctx.ceylonTypes.integerType]
             case (ceylonStringToNative)
                 [DartSimpleIdentifier("dart$ceylonStringToNative"),
-                 ctx.typeFactory.stringType]
+                 ctx.ceylonTypes.stringType]
             case (nativeToCeylonBoolean)
                 [DartSimpleIdentifier("dart$nativeToCeylonBoolean"),
-                 ctx.naming.dartBoolModel]
+                 ctx.dartTypes.dartBoolModel]
             case (nativeToCeylonFloat)
                 [DartSimpleIdentifier("dart$nativeToCeylonFloat"),
-                 ctx.naming.dartDoubleModel]
+                 ctx.dartTypes.dartDoubleModel]
             case (nativeToCeylonInteger)
                 [DartSimpleIdentifier("dart$nativeToCeylonInteger"),
-                 ctx.naming.dartIntModel]
+                 ctx.dartTypes.dartIntModel]
             case (nativeToCeylonString)
                 [DartSimpleIdentifier("dart$nativeToCeylonString"),
-                 ctx.naming.dartStringModel];
+                 ctx.dartTypes.dartStringModel];
 
         // For native to ceylon, we'll never need an 'as' cast
         value castedExpression  =

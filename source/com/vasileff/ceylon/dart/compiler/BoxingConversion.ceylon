@@ -1,4 +1,4 @@
-see(`function TypeFactory.boxingConversionFor`)
+see(`function CeylonTypes.boxingConversionFor`)
 abstract
 class BoxingConversion()
         of ceylonBooleanToNative | ceylonFloatToNative |

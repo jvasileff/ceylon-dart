@@ -15,7 +15,7 @@ import com.vasileff.jl4c.guava.collect {
     javaList
 }
 
-class TypeFactory(Unit unit) {
+class CeylonTypes(Unit unit) {
 
     /////////////////////////////////////////////
     // common types
@@ -266,7 +266,7 @@ class TypeFactory(Unit unit) {
     // boxing
     /////////////////////////////////////////////
 
-    see(`function Naming.dartTypeModel`)
+    see(`function DartTypes.dartTypeModel`)
     shared
     BoxingConversion? boxingConversionFor(
             variable Type lhs,

@@ -53,7 +53,7 @@ class DartTransformer(CompilationContext ctx)
             // type `Anything` to disable erasure.
             return ctx.withLhsType(
                         parameterModel?.type
-                        else ctx.typeFactory.anythingType, ()
+                        else ctx.ceylonTypes.anythingType, ()
                 =>  expression.transform(expressionTransformer));
         });
 
@@ -78,12 +78,12 @@ class DartTransformer(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.naming.dartTypeName(
+            ctx.dartTypes.dartTypeName(
                     info.declarationModel,
                     info.declarationModel.type);
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + ctx.naming.getName(info.declarationModel);
+                    packagePrefix + ctx.dartTypes.getName(info.declarationModel);
                 };
                 ctx.withLhsType(info.declarationModel.type, ()
                     =>  that.definition.expression.transform(expressionTransformer));

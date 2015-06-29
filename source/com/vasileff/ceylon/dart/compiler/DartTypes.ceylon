@@ -33,7 +33,7 @@ import ceylon.ast.core {
     Node
 }
 
-class Naming(TypeFactory typeFactory) {
+class DartTypes(CeylonTypes ceylonTypes) {
 
     variable value counter = 0;
 
@@ -215,7 +215,7 @@ class Naming(TypeFactory typeFactory) {
     DartTypeModel dartStringModel
         =   DartTypeModel("$dart$core", "String");
 
-    see(`function TypeFactory.boxingConversionFor`) // erasureFor?
+    see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
     shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel inRelationTo,
@@ -259,7 +259,7 @@ class Naming(TypeFactory typeFactory) {
 
     "Obtain the [[DartTypeModel]] that will be used for
      the given [[TypeModel]]."
-    see(`function TypeFactory.boxingConversionFor`)
+    see(`function CeylonTypes.boxingConversionFor`)
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
@@ -278,40 +278,40 @@ class Naming(TypeFactory typeFactory) {
             return dartObjectModel;
         }
 
-        value definiteType = typeFactory.definiteType(type);
+        value definiteType = ceylonTypes.definiteType(type);
 
         // handle well known types first, before giving up
         // on unions and intersections
 
         // these types are erased when statically known
         if (!disableErasure) {
-            if (typeFactory.isCeylonBoolean(definiteType)) {
+            if (ceylonTypes.isCeylonBoolean(definiteType)) {
                 return dartBoolModel;
             }
-            if (typeFactory.isCeylonInteger(definiteType)) {
+            if (ceylonTypes.isCeylonInteger(definiteType)) {
                 return dartIntModel;
             }
-            if (typeFactory.isCeylonFloat(definiteType)) {
+            if (ceylonTypes.isCeylonFloat(definiteType)) {
                 return dartDoubleModel;
             }
-            if (typeFactory.isCeylonString(definiteType)) {
+            if (ceylonTypes.isCeylonString(definiteType)) {
                 return dartStringModel;
             }
         }
 
         // types like Anything and Object are _always_ erased
-        if (typeFactory.isCeylonAnything(definiteType)) {
+        if (ceylonTypes.isCeylonAnything(definiteType)) {
             return dartObjectModel;
         }
-        if (typeFactory.isCeylonNothing(definiteType)) {
+        if (ceylonTypes.isCeylonNothing(definiteType)) {
             // this handles the `Null` case too,
             // since Null & Object = Nothing
             return dartObjectModel;
         }
-        if (typeFactory.isCeylonObject(definiteType)) {
+        if (ceylonTypes.isCeylonObject(definiteType)) {
             return dartObjectModel;
         }
-        if (typeFactory.isCeylonBasic(definiteType)) {
+        if (ceylonTypes.isCeylonBasic(definiteType)) {
             return dartObjectModel;
         }
 
@@ -335,8 +335,8 @@ class Naming(TypeFactory typeFactory) {
     shared
     Boolean erasedToObject(TypeModel type)
         =>  type.typeParameter || (
-                let (definiteType = typeFactory.definiteType(type))
-                (!typeFactory.isCeylonBoolean(definiteType) &&
+                let (definiteType = ceylonTypes.definiteType(type))
+                (!ceylonTypes.isCeylonBoolean(definiteType) &&
                     (definiteType.union || definiteType.intersection)));
 
     shared

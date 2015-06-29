@@ -64,13 +64,13 @@ class ExpressionTransformer
 
         assert (exists lhsType = ctx.lhsTypeTop);
 
-        if (ctx.typeFactory.isBooleanTrueValueDeclaration(targetDeclaration)) {
+        if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
             return generateBooleanLiteral(lhsType, true);
         }
-        else if (ctx.typeFactory.isBooleanFalseValueDeclaration(targetDeclaration)) {
+        else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
             return generateBooleanLiteral(lhsType, false);
         }
-        else if (ctx.typeFactory.isNullValueDeclaration(targetDeclaration)) {
+        else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
         }
         else {
@@ -83,17 +83,17 @@ class ExpressionTransformer
                         // qualify toplevel in same module with '$package.'
                         unboxed = DartSimpleIdentifier(
                             "$package$" +
-                            ctx.naming.identifierPackagePrefix(targetDeclaration) +
-                            ctx.naming.getName(targetDeclaration));
+                            ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                            ctx.dartTypes.getName(targetDeclaration));
                     }
                     else {
                         // qualify toplevel with Dart import prefix
                         unboxed = DartPrefixedIdentifier {
                             prefix = DartSimpleIdentifier(
-                                ctx.naming.moduleImportPrefix(targetDeclaration));
+                                ctx.dartTypes.moduleImportPrefix(targetDeclaration));
                             identifier = DartSimpleIdentifier(
-                                ctx.naming.identifierPackagePrefix(targetDeclaration) +
-                                ctx.naming.getName(targetDeclaration));
+                                ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                                ctx.dartTypes.getName(targetDeclaration));
                         };
                     }
                 }
@@ -105,14 +105,14 @@ class ExpressionTransformer
                         // invoke the getter
                         unboxed = DartFunctionExpressionInvocation {
                             func = DartSimpleIdentifier(
-                                ctx.naming.getName(targetDeclaration) + "$get");
+                                ctx.dartTypes.getName(targetDeclaration) + "$get");
                             argumentList = DartArgumentList();
                         };
                     }
                     else {
                         // identifier for the variable
                         unboxed = DartSimpleIdentifier(
-                                ctx.naming.getName(targetDeclaration));
+                                ctx.dartTypes.getName(targetDeclaration));
                     }
                 }
                 else {
@@ -123,9 +123,9 @@ class ExpressionTransformer
                 }
             }
             case (is FunctionModel) {
-                value qualified = ctx.naming.qualifyIdentifier(
+                value qualified = ctx.dartTypes.qualifyIdentifier(
                         ctx.unit, targetDeclaration,
-                        ctx.naming.getName(targetDeclaration));
+                        ctx.dartTypes.getName(targetDeclaration));
 
                 switch (ctx.lhsTypeTop)
                 case (noType) {
@@ -156,19 +156,19 @@ class ExpressionTransformer
     shared actual
     DartExpression transformFloatLiteral(FloatLiteral that)
         =>  withBoxing(that,
-                ctx.typeFactory.floatType,
+                ctx.ceylonTypes.floatType,
                 DartDoubleLiteral(that.float));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(that,
-                ctx.typeFactory.integerType,
+                ctx.ceylonTypes.integerType,
                 DartIntegerLiteral(that.integer));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
         =>  withBoxing(that,
-                ctx.typeFactory.stringType,
+                ctx.ceylonTypes.stringType,
                 DartSimpleStringLiteral(that.text));
 
     shared actual
@@ -211,7 +211,7 @@ class ExpressionTransformer
         }
         case (is ValueModel) {
             // callables never return erased values
-            rhsType = ctx.typeFactory.anythingType;
+            rhsType = ctx.ceylonTypes.anythingType;
             isCallable = true;
         }
         else {
@@ -290,12 +290,12 @@ class ExpressionTransformer
 
         // determine if return or arguments need boxing
         value boxingRequired =
-                ctx.typeFactory.boxingConversionFor(
-                    ctx.typeFactory.anythingType,
+                ctx.ceylonTypes.boxingConversionFor(
+                    ctx.ceylonTypes.anythingType,
                     innerReturnType) exists ||
                 parameters.any((parameterModel)
-                    =>  ctx.typeFactory.boxingConversionFor(
-                        ctx.typeFactory.anythingType,
+                    =>  ctx.ceylonTypes.boxingConversionFor(
+                        ctx.ceylonTypes.anythingType,
                         parameterModel.type) exists);
 
         // generate outerFunction to handle boxing
@@ -307,14 +307,14 @@ class ExpressionTransformer
                 value dartSimpleParameter =
                         DartSimpleFormalParameter {
                             false; false;
-                            ctx.naming.dartTypeName {
+                            ctx.dartTypes.dartTypeName {
                                 // use Anything (core.Object) for all
                                 // parameters since `Callable` is generic
                                 inRelationTo = that;
-                                type = ctx.typeFactory.anythingType;
+                                type = ctx.ceylonTypes.anythingType;
                             };
                             DartSimpleIdentifier {
-                                ctx.naming.getName(parameterModel);
+                                ctx.dartTypes.getName(parameterModel);
                             };
                         };
 
@@ -337,7 +337,7 @@ class ExpressionTransformer
                 //value parameterInfo = ParameterInfo(parameter);
                 //value parameterModel = parameterInfo.parameterModel;
 
-                value parameterName = ctx.naming.getName(parameterModel);
+                value parameterName = ctx.dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
                 value unboxed = withBoxingLhsRhs {
@@ -346,7 +346,7 @@ class ExpressionTransformer
                     // is never erased
                     inRelationTo = that;
                     lhsType = parameterModel.type;
-                    rhsType = ctx.typeFactory.anythingType;
+                    rhsType = ctx.ceylonTypes.anythingType;
                     parameterIdentifier;
                 };
 
@@ -393,7 +393,7 @@ class ExpressionTransformer
                             withBoxingLhsRhs {
                                 // Anything prevents erasure
                                 inRelationTo = that;
-                                ctx.typeFactory.anythingType;
+                                ctx.ceylonTypes.anythingType;
                                 innerReturnType;
                                 DartFunctionExpressionInvocation {
                                     delegateFunction;
@@ -445,17 +445,17 @@ class ExpressionTransformer
                 // qualify toplevel in same module with '$package$'
                 targetOrSetter = DartSimpleIdentifier(
                     "$package$" +
-                    ctx.naming.identifierPackagePrefix(targetDeclaration) +
-                    ctx.naming.getName(targetDeclaration));
+                    ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                    ctx.dartTypes.getName(targetDeclaration));
             }
             else {
                 // qualify toplevel with Dart import prefix
                 targetOrSetter = DartPrefixedIdentifier(
                     DartSimpleIdentifier(
-                        ctx.naming.moduleImportPrefix(targetDeclaration)),
+                        ctx.dartTypes.moduleImportPrefix(targetDeclaration)),
                     DartSimpleIdentifier(
-                        ctx.naming.identifierPackagePrefix(targetDeclaration) +
-                        ctx.naming.getName(targetDeclaration)));
+                        ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                        ctx.dartTypes.getName(targetDeclaration)));
             }
         }
         case (is ClassOrInterfaceModel
@@ -467,11 +467,11 @@ class ExpressionTransformer
                 if (!isMethod) then
                     // regular variable; no lazy or block getter
                     DartSimpleIdentifier(
-                        ctx.naming.getName(targetDeclaration))
+                        ctx.dartTypes.getName(targetDeclaration))
                 else
                     // setter method
                     DartSimpleIdentifier(
-                        ctx.naming.getName(targetDeclaration) + "$set");
+                        ctx.dartTypes.getName(targetDeclaration) + "$set");
         }
         else {
             throw CompilerBug(that,
@@ -502,8 +502,8 @@ class ExpressionTransformer
         value box =
             switch(type)
             case (is NoType) false
-            case (is TypeModel) ctx.typeFactory.isCeylonBoolean(
-                    ctx.typeFactory.definiteType(type));
+            case (is TypeModel) ctx.ceylonTypes.isCeylonBoolean(
+                    ctx.ceylonTypes.definiteType(type));
         if (box) {
             return DartBooleanLiteral(boolean);
         }
@@ -539,14 +539,14 @@ class ExpressionTransformer
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = ctx.naming.getName(functionModel);
+            functionName = ctx.dartTypes.getName(functionModel);
         }
         case (is FunctionShortcutDefinition) {
             value info = FunctionShortcutDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = ctx.naming.getName(functionModel);
+            functionName = ctx.dartTypes.getName(functionModel);
         }
 
         if (parameterLists.size != 1) {
@@ -584,7 +584,7 @@ class ExpressionTransformer
                 value model = parameterInfo.parameterModel;
                 value parameterType = model.type;
                 value paramName = DartSimpleIdentifier(
-                        ctx.naming.getName(parameterInfo.parameterModel));
+                        ctx.dartTypes.getName(parameterInfo.parameterModel));
                 statements.add(DartIfStatement {
                     // condition
                     DartFunctionExpressionInvocation {
@@ -643,12 +643,12 @@ class ExpressionTransformer
         // intersections, unions, Nothing)
         value lhsType = ExpressionInfo(that.leftOperand).typeModel;
         value comparableType = lhsType.getSupertype(
-                ctx.typeFactory.comparableDeclaration);
+                ctx.ceylonTypes.comparableDeclaration);
 
         value lhsBoxed = ctx.withLhsType(comparableType, () =>
                 that.leftOperand.transform(this));
 
-        value rhsBoxed =  ctx.withLhsType(ctx.typeFactory.anythingType, () =>
+        value rhsBoxed =  ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
                 that.rightOperand.transform(this));
 
         value method =
@@ -678,7 +678,7 @@ class ExpressionTransformer
                 "Only BooleanConditions are currently supported.");
         }
 
-        value dartCondition = ctx.withLhsType(ctx.typeFactory.booleanType, ()
+        value dartCondition = ctx.withLhsType(ctx.ceylonTypes.booleanType, ()
             =>  that.conditions.conditions
                     .reversed
                     .narrow<BooleanCondition>()
@@ -724,7 +724,7 @@ class ExpressionTransformer
         value dartParameters = parameters.parameters.collect((parameter) {
             value parameterInfo = ParameterInfo(parameter);
             value parameterModel = parameterInfo.parameterModel;
-            value parameterType = ctx.naming.dartTypeName(
+            value parameterType = ctx.dartTypes.dartTypeName(
                     parameterModel.model, parameterModel.type);
 
             switch(parameter)
@@ -745,7 +745,7 @@ class ExpressionTransformer
                         var = true;
                         type = null;
                         DartSimpleIdentifier {
-                            ctx.naming.getName(parameterModel);
+                            ctx.dartTypes.getName(parameterModel);
                         };
                     };
                     DartPrefixedIdentifier {
@@ -760,7 +760,7 @@ class ExpressionTransformer
                     false; false;
                     parameterType;
                     DartSimpleIdentifier {
-                        ctx.naming.getName(parameterModel);
+                        ctx.dartTypes.getName(parameterModel);
                     };
                 };
             }

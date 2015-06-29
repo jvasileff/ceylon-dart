@@ -65,8 +65,8 @@ class StatementTransformer
             (FunctionDefinition that) {
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
-        value functionName = ctx.naming.getName(functionModel);
-        value returnType = ctx.naming.dartTypeName(
+        value functionName = ctx.dartTypes.getName(functionModel);
+        value returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
 
@@ -96,8 +96,8 @@ class StatementTransformer
                 (FunctionShortcutDefinition that) {
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
-        value functionName = ctx.naming.getName(functionModel);
-        value returnType = ctx.naming.dartTypeName(
+        value functionName = ctx.dartTypes.getName(functionModel);
+        value returnType = ctx.dartTypes.dartTypeName(
                 info.declarationModel,
                 info.declarationModel.type);
 
@@ -192,7 +192,7 @@ class StatementTransformer
             // (perform 2-4 in a new block to scope the temp var)
 
             value variableIdentifier = DartSimpleIdentifier(
-                    ctx.naming.getName(variableDeclaration));
+                    ctx.dartTypes.getName(variableDeclaration));
             value expressionType = ExpressionInfo(expression).typeModel;
 
             // 1. declare the new variable
@@ -200,7 +200,7 @@ class StatementTransformer
                 DartVariableDeclarationStatement {
                     DartVariableDeclarationList {
                         keyword = null;
-                        ctx.naming.dartTypeName(
+                        ctx.dartTypes.dartTypeName(
                                 variableDeclaration,
                                 variableType);
                         [DartVariableDeclaration {
@@ -211,7 +211,7 @@ class StatementTransformer
             };
 
             value tmpVariable = DartSimpleIdentifier(
-                    ctx.naming.createTempName(variableDeclaration));
+                    ctx.dartTypes.createTempName(variableDeclaration));
 
             statements.add {
                 DartBlock {[
@@ -219,7 +219,7 @@ class StatementTransformer
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.naming.dartTypeName(
+                            ctx.dartTypes.dartTypeName(
                                     variableDeclaration,
                                     expressionType);
                             [DartVariableDeclaration {
@@ -253,24 +253,24 @@ class StatementTransformer
             // possibly declare new variable narrowed type
             assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
             value originalDartVariable =
-                    DartSimpleIdentifier(ctx.naming.getName(originalDeclaration));
+                    DartSimpleIdentifier(ctx.dartTypes.getName(originalDeclaration));
 
             statements.add(generateIsAssertion(
                     originalDartVariable,
                     that.negated, errorMessage));
 
-            value dartTypeChanged = !ctx.naming.equalErasure(
+            value dartTypeChanged = !ctx.dartTypes.equalErasure(
                     variableType, originalDeclaration.type);
 
             if (dartTypeChanged) {
                 value replacementVar = DartSimpleIdentifier(
-                        ctx.naming.createReplacementName(variableDeclaration));
+                        ctx.dartTypes.createReplacementName(variableDeclaration));
 
                 statements.add {
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.naming.dartTypeName(
+                            ctx.dartTypes.dartTypeName(
                                     variableDeclaration,
                                     variableDeclaration.type);
                             [DartVariableDeclaration {
@@ -299,7 +299,7 @@ class StatementTransformer
                 DartIsExpression {
                     expressionToCheck;
                     // TODO actual type!
-                    ctx.naming.dartObject;
+                    ctx.dartTypes.dartObject;
                     notOperator = !not;
                 };
                 DartExpressionStatement {
@@ -310,8 +310,8 @@ class StatementTransformer
                                 DartTypeName {
                                     DartPrefixedIdentifier {
                                         DartSimpleIdentifier("$ceylon$language");
-                                        DartSimpleIdentifier(ctx.naming.getName(
-                                            ctx.typeFactory.assertionErrorDeclaration));
+                                        DartSimpleIdentifier(ctx.dartTypes.getName(
+                                            ctx.ceylonTypes.assertionErrorDeclaration));
                                     };
                                 };
                             };
