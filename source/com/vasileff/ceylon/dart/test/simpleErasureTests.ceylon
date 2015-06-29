@@ -320,7 +320,7 @@ void genericNonErasure() {
             $dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
 
             void $package$run() {
-                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$generic($ceylon$language.dart$nativeToCeylonString("true")));
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$generic($ceylon$language.dart$nativeToCeylonString("true")) as $ceylon$language.String);
                 $dart$core.String myString2 = $package$nonGeneric("true");
             }
 
@@ -351,7 +351,7 @@ void functionRefNonErasure() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString($package$echoString());
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$());
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$() as $ceylon$language.String);
             }
 
             void run() => $package$run();
@@ -378,10 +378,10 @@ void dontEraseArgumentsToValue() {
             $dart$core.String echoString([$dart$core.String s]) => $package$echoString(s);
 
             void $package$run() {
-                $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) {
-                    return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s)));
+                $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$dart$core.Object s]) {
+                    return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s as $ceylon$language.String)));
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")));
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")) as $ceylon$language.String);
             }
 
             void run() => $package$run();

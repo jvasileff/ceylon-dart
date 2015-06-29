@@ -962,10 +962,8 @@ class DartAsExpression(expression, type)
 
     shared actual
     void write(CodeWriter writer) {
-        writer.write("(");
         expression.write(writer);
         writer.write(" as ");
         type.write(writer);
-        writer.write(")");
     }
 }

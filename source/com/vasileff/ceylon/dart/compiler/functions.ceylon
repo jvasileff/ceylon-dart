@@ -66,10 +66,13 @@ PackageModel getPackage
     =>  getUnit(declaration).\ipackage;
 
 ModuleModel getModule
-        (ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
-    =>  if (!is ModuleModel declaration)
-        then getUnit(declaration).\ipackage.\imodule
-        else declaration;
+        (Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
+    =>  if (is Node declaration) then
+            getUnit(NodeInfo(declaration).scope).\ipackage.\imodule
+        else if (!is ModuleModel declaration) then
+            getUnit(declaration).\ipackage.\imodule
+        else
+            declaration;
 
 Boolean sameModule(
         ElementModel|UnitModel|ScopeModel first,

@@ -1,16 +1,12 @@
 import ceylon.interop.java {
     CeylonIterable
 }
-import ceylon.language.meta.declaration {
-    ValueDeclaration
-}
 
 import com.redhat.ceylon.model.typechecker.model {
     Type,
     Unit,
     ModelUtil,
     Declaration,
-    TypedDeclaration,
     Interface,
     TypeDeclaration,
     Value

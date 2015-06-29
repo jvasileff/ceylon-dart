@@ -9,16 +9,7 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ControlBlockModel=ControlBlock,
-    FunctionOrValueModel=FunctionOrValue,
-    ConstructorModel=Constructor,
-    DeclarationModel=Declaration,
-    FunctionModel=Function,
-    ValueModel=Value,
-    TypeModel=Type,
-    PackageModel=Package,
-    ClassOrInterfaceModel=ClassOrInterface,
-    ParameterModel=Parameter
+    PackageModel=Package
 }
 
 class DartTransformer(CompilationContext ctx)

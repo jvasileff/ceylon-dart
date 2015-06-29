@@ -44,7 +44,6 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
-    TypeDeclarationModel=TypeDeclaration,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
     ParameterModel=Parameter
@@ -150,25 +149,25 @@ class ExpressionTransformer
                         "Unexpected declaration type for base expression: \
                          ``className(targetDeclaration)``");
             }
-            return withBoxing(rhsType, unboxed);
+            return withBoxing(that, rhsType, unboxed);
         }
     }
 
     shared actual
     DartExpression transformFloatLiteral(FloatLiteral that)
-        =>  withBoxing(
+        =>  withBoxing(that,
                 ctx.typeFactory.floatType,
                 DartDoubleLiteral(that.float));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
-        =>  withBoxing(
+        =>  withBoxing(that,
                 ctx.typeFactory.integerType,
                 DartIntegerLiteral(that.integer));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
-        =>  withBoxing(
+        =>  withBoxing(that,
                 ctx.typeFactory.stringType,
                 DartSimpleStringLiteral(that.text));
 
@@ -241,7 +240,8 @@ class ExpressionTransformer
                 };
         }
 
-        return withBoxing(rhsType,
+        return withBoxing(that,
+            rhsType,
             DartFunctionExpressionInvocation {
                 func;
                 dartTransformer.transformArguments(that.arguments);
@@ -308,11 +308,10 @@ class ExpressionTransformer
                         DartSimpleFormalParameter {
                             false; false;
                             ctx.naming.dartTypeName {
-                                inRelationTo = parameterModel.model;
-                                type = parameterModel.type;
-                                // no erasure for the outer parameters,
-                                // which will be for the generic Callable
-                                disableErasure =  true;
+                                // use Anything (core.Object) for all
+                                // parameters since `Callable` is generic
+                                inRelationTo = that;
+                                type = ctx.typeFactory.anythingType;
                             };
                             DartSimpleIdentifier {
                                 ctx.naming.getName(parameterModel);
@@ -345,6 +344,7 @@ class ExpressionTransformer
                     // "lhs" is the inner function's parameter
                     // "rhs" the outer function's argument which
                     // is never erased
+                    inRelationTo = that;
                     lhsType = parameterModel.type;
                     rhsType = ctx.typeFactory.anythingType;
                     parameterIdentifier;
@@ -392,6 +392,7 @@ class ExpressionTransformer
                         [DartReturnStatement {
                             withBoxingLhsRhs {
                                 // Anything prevents erasure
+                                inRelationTo = that;
                                 ctx.typeFactory.anythingType;
                                 innerReturnType;
                                 DartFunctionExpressionInvocation {
@@ -660,6 +661,7 @@ class ExpressionTransformer
                 case (is SmallAsOperation) "notLargerThan";
 
         return withBoxing {
+            inRelationTo = that;
             rhsType = info.typeModel;
             DartMethodInvocation {
                 if (exists asType)

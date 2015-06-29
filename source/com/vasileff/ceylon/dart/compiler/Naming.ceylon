@@ -29,6 +29,9 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
 }
+import ceylon.ast.core {
+    Node
+}
 
 class Naming(TypeFactory typeFactory) {
 
@@ -106,10 +109,10 @@ class Naming(TypeFactory typeFactory) {
     "The Dart library prefix for the Ceylon module."
     shared
     String moduleImportPrefix
-            (ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
+            (Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
 
     moduleImportPrefix
-        =   memoize((ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
+        =   memoize((Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
             =>  CeylonIterable(getModule(declaration).name)
                     .map(Object.string)
                     .interpose("$")
@@ -132,6 +135,8 @@ class Naming(TypeFactory typeFactory) {
                     .reduce(plus)
                     ?.plus("$") else "");
 
+    // FIXME DartTypeName values should be removed; they assume we aren't
+    //       compiling the language module...
     shared
     DartTypeName dartObject
         =   DartTypeName {
@@ -213,7 +218,7 @@ class Naming(TypeFactory typeFactory) {
     see(`function TypeFactory.boxingConversionFor`) // erasureFor?
     shared
     DartTypeName dartTypeName(
-            ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel inRelationTo,
             TypeModel|DartTypeModel type,
             Boolean disableErasure = false) {
 
@@ -258,6 +263,8 @@ class Naming(TypeFactory typeFactory) {
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
+            "Don't erase `Boolean`, `Integer`, `Float`,
+             and `String` to native types."
             Boolean disableErasure = false) {
 
         // TODO consider using `dynamic` instead of `core.Object`
@@ -324,14 +331,13 @@ class Naming(TypeFactory typeFactory) {
     "True if `type` is a type parameter or a union or intersection
      that cannot be represented in Dart. This is an ugly violation
      of DRY re [[dartTypeModel]], and a better way to express various
-     erasure and boxing notions is needed."
+     erasure and boxing notions may be needed."
     shared
-    Boolean erasedToObject(TypeModel type) {
-        return type.typeParameter || (
+    Boolean erasedToObject(TypeModel type)
+        =>  type.typeParameter || (
                 let (definiteType = typeFactory.definiteType(type))
-                !typeFactory.isCeylonBoolean(definiteType)
-                    && (definiteType.union || definiteType.intersection));
-    }
+                (!typeFactory.isCeylonBoolean(definiteType) &&
+                    (definiteType.union || definiteType.intersection)));
 
     shared
     Boolean equalErasure(TypeModel first, TypeModel second)

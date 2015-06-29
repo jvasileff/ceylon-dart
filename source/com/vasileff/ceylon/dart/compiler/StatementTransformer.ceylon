@@ -160,13 +160,13 @@ class StatementTransformer
         // TODO consider null issues for negated checks
 
         //value typeInfo = TypeInfo(that.variable.type);
-        value conditionInfo = IsConditionInfo(that);
+        value info = IsConditionInfo(that);
 
         //"The type we are testing for"
         //value isType = typeInfo.typeModel;
 
         "The declaration model for the new variable"
-        value variableDeclaration = conditionInfo.variableDeclarationModel;
+        value variableDeclaration = info.variableDeclarationModel;
 
         "The type of the new variable (intersection of isType and expression/old type)"
         value variableType = variableDeclaration.type;
@@ -176,8 +176,8 @@ class StatementTransformer
 
         "The Ceylon source code for the condition"
         value errorMessage =
-                ctx.tokens[conditionInfo.token.tokenIndex..
-                       conditionInfo.endToken.tokenIndex]
+                ctx.tokens[info.token.tokenIndex..
+                           info.endToken.tokenIndex]
                 .map(Token.text)
                 .reduce(plus) else "";
 
@@ -240,7 +240,9 @@ class StatementTransformer
                             variableIdentifier;
                             DartAssignmentOperator.equal;
                             ctx.withLhsType(variableType, ()
-                                =>  withBoxing(expressionType, tmpVariable));
+                                =>  withBoxing(that,
+                                            expressionType,
+                                            tmpVariable));
                         };
                     }];
                 };
@@ -274,8 +276,9 @@ class StatementTransformer
                             [DartVariableDeclaration {
                                 replacementVar;
                                 ctx.withLhsType(variableType, ()
-                                    =>  withBoxing(originalDeclaration.type,
-                                                   originalDartVariable));
+                                    =>  withBoxing(that,
+                                            originalDeclaration.type,
+                                            originalDartVariable));
                             }];
                         };
                     };
@@ -308,8 +311,7 @@ class StatementTransformer
                                     DartPrefixedIdentifier {
                                         DartSimpleIdentifier("$ceylon$language");
                                         DartSimpleIdentifier(ctx.naming.getName(
-                                            ctx.typeFactory
-                                                .assertionErrorDeclaration));
+                                            ctx.typeFactory.assertionErrorDeclaration));
                                     };
                                 };
                             };

@@ -21,7 +21,7 @@ void narrowObjectToString() {
                 if (obj is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is String obj");
                 }
-                $dart$core.String obj$0 = $ceylon$language.dart$ceylonStringToNative(obj);
+                $dart$core.String obj$0 = $ceylon$language.dart$ceylonStringToNative(obj as $ceylon$language.String);
             }
 
             void assertions() => $package$assertions();
@@ -73,7 +73,7 @@ void useShadowAfterNarrowing() {
                 if (obj is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
                 }
-                $dart$core.bool obj$0 = $ceylon$language.dart$ceylonBooleanToNative(obj);
+                $dart$core.bool obj$0 = $ceylon$language.dart$ceylonBooleanToNative(obj as $ceylon$language.Boolean);
                 $dart$core.bool bool = obj$0;
             }
 
@@ -102,7 +102,7 @@ void defineValueWithAssert() {
                     if (f$0 is !$dart$core.Object) {
                         throw new $ceylon$language.AssertionError("Violated: is Float f = obj");
                     }
-                    f = $ceylon$language.dart$ceylonFloatToNative(f$0);
+                    f = $ceylon$language.dart$ceylonFloatToNative(f$0 as $ceylon$language.Float);
                 }
                 $dart$core.double g = f;
             }
@@ -130,7 +130,7 @@ void narrowToGenericTypeWithErasure() {
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
             $dart$core.Object $package$echoString([$dart$core.Object t]) {
-                $dart$core.String s = $ceylon$language.dart$ceylonStringToNative(t);
+                $dart$core.String s = $ceylon$language.dart$ceylonStringToNative(t as $ceylon$language.String);
                 if (s is !$dart$core.Object) {
                     throw new $ceylon$language.AssertionError("Violated: is T s");
                 }
@@ -141,7 +141,7 @@ void narrowToGenericTypeWithErasure() {
             $dart$core.Object echoString([$dart$core.Object t]) => $package$echoString(t);
 
             void $package$run() {
-                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$echoString($ceylon$language.dart$nativeToCeylonString("x")));
+                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$echoString($ceylon$language.dart$nativeToCeylonString("x")) as $ceylon$language.String);
             }
 
             void run() => $package$run();
