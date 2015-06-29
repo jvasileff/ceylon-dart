@@ -143,17 +143,17 @@ void functionDefaultedParameters() {
          """import "dart:core" as $dart$core;
             import "package:ceylon/language/language.dart" as $ceylon$language;
 
-            $dart$core.int $package$withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) {
+            $dart$core.int $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) {
                 if ($dart$core.identical(x, $ceylon$language.dart$default)) {
                     x = 1;
                 }
                 if ($dart$core.identical(y, $ceylon$language.dart$default)) {
                     y = 2;
                 }
-                return y;
+                return y as $dart$core.int;
             }
 
-            $dart$core.int withDefaults([var x = $ceylon$language.dart$default, var y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
+            $dart$core.int withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
 
             void $package$run() {
                 $package$withDefaults(3);

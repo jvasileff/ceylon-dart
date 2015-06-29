@@ -283,5 +283,13 @@ void run() {
                         => if (x<y) then x else y;
          """;
 
-    compile { true; aos };
+    value castDynamics =
+         """T foo<T>(Integer i = 1) {
+                print(i);
+                foo<Float>(i);
+                return nothing;
+            }
+         """;
+
+    compile { true; castDynamics };
 }

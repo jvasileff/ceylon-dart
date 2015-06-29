@@ -62,6 +62,11 @@ class ExpressionTransformer
         value targetDeclaration = info.declaration;
         value rhsType = info.typeModel.type;
 
+        // If dynamic, the rhsType will actually be `Anything`/`core.Object`
+        // Currently, this is for defaulted parameters which are not assigned
+        // precise types
+        Boolean dartDynamic;
+
         assert (exists lhsType = ctx.lhsTypeTop);
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
@@ -77,6 +82,10 @@ class ExpressionTransformer
             DartExpression unboxed;
             switch (targetDeclaration)
             case (is ValueModel) {
+                // defaulted parameters are dynamic
+                dartDynamic = targetDeclaration.initializerParameter?.defaulted
+                                    else false;
+
                 switch (container = containerOfDeclaration(targetDeclaration))
                 case (is PackageModel) {
                     if (sameModule(ctx.unit, targetDeclaration)) {
@@ -123,6 +132,7 @@ class ExpressionTransformer
                 }
             }
             case (is FunctionModel) {
+                dartDynamic = false;
                 value qualified = ctx.dartTypes.qualifyIdentifier(
                         ctx.unit, targetDeclaration,
                         ctx.dartTypes.getName(targetDeclaration));
@@ -149,7 +159,23 @@ class ExpressionTransformer
                         "Unexpected declaration type for base expression: \
                          ``className(targetDeclaration)``");
             }
-            return withBoxing(that, rhsType, unboxed);
+
+            return withBoxing {
+                inRelationTo = that;
+                rhsType = rhsType;
+                dartExpression =
+                    if (dartDynamic) then
+                        // Special case where the Dart static type is
+                        // equiv to `Anything` despite the Ceylon static
+                        // type possibly being denotable in Dart
+                        withCasting {
+                            inRelationTo = that;
+                            lhsType = rhsType;
+                            rhsType = ctx.ceylonTypes.anythingType;
+                            dartExpression = unboxed;
+                        }
+                    else unboxed;
+            };
         }
     }
 
@@ -180,10 +206,6 @@ class ExpressionTransformer
 
         // FIXME covariant refinement erasure calc.
 
-        // Erasure is based on the return type of the function,
-        // not on the type of the invocation expression:
-        TypeModel rhsType;
-
         value primary = that.invoked;
 
         // find the declaration for `invoked`
@@ -200,6 +222,17 @@ class ExpressionTransformer
                 "Primary type not yet supported: '``className(primary)``'");
         }
 
+        "Erasure is based on the return type of the function,
+         not on the type of the invocation expression. If it's
+         generic, we'll fully erase to `core.Object`. But, if
+         we add support for Dart generics, we'll need the function's
+         type to determine boxing, and the expression's type to
+         determine the Dart type, taking boxing into account.
+
+         This is also a concern for covariant refinement. I suppose
+         we need both `formal` and `actual` types."
+        TypeModel rhsType;
+
         "Are we invoking a real function, or a value of type Callable?"
         Boolean isCallable;
 
@@ -210,7 +243,7 @@ class ExpressionTransformer
             isCallable = false;
         }
         case (is ValueModel) {
-            // callables never return erased values
+            // callables (being generic) always return `core.Object`
             rhsType = ctx.ceylonTypes.anythingType;
             isCallable = true;
         }
@@ -729,21 +762,19 @@ class ExpressionTransformer
 
             switch(parameter)
             case (is DefaultedValueParameter) {
-                // Use dynamic `var` type:
-                //      we can't use the correct type for defaulted parameters
-                //      since we want to assign `dart$default`, which causes
-                //      a runtime error in checked mode. We *should* be using
-                //      core.Object as the parameter type, and then casting and
-                //      assigning to a correctly typed variable after the
-                //      final value is assigned. But this will take more work
-                //      to track the new name (naming does have a HashMap to
-                //      help with this, though)
+                // Use core.Object for parameter type
+                //      We need to be able to assign `dart$default`, so
+                //      we can't use the correct type for defaulted
+                //      parameters. When the parameter is used, it will
+                //      be casted with `as` as necessary. Better would be
+                //      to immediately narrow to a new variable after
+                //      default value processing.
+
                 return
                 DartDefaultFormalParameter {
                     DartSimpleFormalParameter {
-                        false;
-                        var = true;
-                        type = null;
+                        false; false;
+                        type = ctx.dartTypes.dartObject;
                         DartSimpleIdentifier {
                             ctx.dartTypes.getName(parameterModel);
                         };
