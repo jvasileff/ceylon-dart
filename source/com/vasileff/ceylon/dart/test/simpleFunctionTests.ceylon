@@ -36,7 +36,7 @@ void anonymousFunctionTest() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
-                $ceylon$language.print((anon).$delegate$());
+                $ceylon$language.print(anon.$delegate$());
             }
 
             void simpleFunction() => $package$simpleFunction();
@@ -60,7 +60,7 @@ void functionReturnBoxingTest() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString((() => "result")());
                 });
-                $ceylon$language.print((anon).$delegate$());
+                $ceylon$language.print(anon.$delegate$());
             }
 
             void simpleFunction() => $package$simpleFunction();
@@ -119,7 +119,7 @@ void functionReferenceTest() {
                     return $ceylon$language.dart$nativeToCeylonString(nested1());
                 });
                 $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
-                $ceylon$language.print((nested1Ref).$delegate$());
+                $ceylon$language.print(nested1Ref.$delegate$());
             }
 
             void simpleFunction() => $package$simpleFunction();

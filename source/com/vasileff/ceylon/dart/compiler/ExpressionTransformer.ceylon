@@ -265,10 +265,8 @@ class ExpressionTransformer
             // expression will evaluate to a `Callable`
             func =
                 DartPropertyAccess {
-                    DartParenthesizedExpression {
-                        ctx.withLhsType(noType, ()
-                            =>  that.invoked.transform(this));
-                    };
+                    ctx.withLhsType(noType, () =>
+                        that.invoked.transform(this));
                     DartSimpleIdentifier("$delegate$");
                 };
         }

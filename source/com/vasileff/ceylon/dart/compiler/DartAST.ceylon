@@ -237,12 +237,7 @@ class DartFunctionExpressionInvocation
 
     shared actual
     void write(CodeWriter writer) {
-        if (func is DartIdentifier | DartPropertyAccess) {
-            func.write(writer);
-        }
-        else {
-            DartParenthesizedExpression(func).write(writer);
-        }
+        parenthesizeNonPrimary(func).write(writer);
         argumentList.write(writer);
     }
 }
@@ -264,12 +259,7 @@ class DartMethodInvocation
     shared actual
     void write(CodeWriter writer) {
         if (exists target) {
-            if (target is DartIdentifier | DartPropertyAccess) {
-                target.write(writer);
-            }
-            else {
-                DartParenthesizedExpression(target).write(writer);
-            }
+            parenthesizeNonPrimary(target).write(writer);
             writer.write(".");
         }
         methodName.write(writer);
@@ -290,7 +280,7 @@ class DartPropertyAccess
 
     shared actual
     void write(CodeWriter writer) {
-        target.write(writer);
+        parenthesizeNonPrimary(target).write(writer);
         writer.write(".");
         propertyName.write(writer);
     }
@@ -952,9 +942,9 @@ class DartBinaryExpression(
 
     shared actual
     void write(CodeWriter writer) {
-        DartParenthesizedExpression(leftOperand).write(writer);
+        parenthesizeNonPrimary(leftOperand).write(writer);
         writer.write(" " + operator + " ");
-        DartParenthesizedExpression(rightOperand).write(writer);
+        parenthesizeNonPrimary(rightOperand).write(writer);
     }
 }
 
@@ -972,3 +962,14 @@ class DartAsExpression(expression, type)
         type.write(writer);
     }
 }
+
+shared
+alias DartPrimary =>
+        DartIdentifier | DartLiteral | DartMethodInvocation |
+        DartParenthesizedExpression  | DartPropertyAccess;
+
+DartExpression parenthesizeNonPrimary
+        (DartExpression expression)
+    =>  if (expression is DartPrimary)
+        then expression
+        else DartParenthesizedExpression(expression);

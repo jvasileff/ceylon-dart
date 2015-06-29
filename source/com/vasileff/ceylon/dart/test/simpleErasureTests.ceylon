@@ -351,7 +351,7 @@ void functionRefNonErasure() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
                     return $ceylon$language.dart$nativeToCeylonString($package$echoString());
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$() as $ceylon$language.String);
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref.$delegate$() as $ceylon$language.String);
             }
 
             void run() => $package$run();
@@ -381,7 +381,7 @@ void dontEraseArgumentsToValue() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$dart$core.Object s]) {
                     return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s as $ceylon$language.String)));
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative((ref).$delegate$($ceylon$language.dart$nativeToCeylonString(".")) as $ceylon$language.String);
+                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref.$delegate$($ceylon$language.dart$nativeToCeylonString(".")) as $ceylon$language.String);
             }
 
             void run() => $package$run();
