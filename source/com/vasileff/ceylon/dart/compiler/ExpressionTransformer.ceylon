@@ -637,24 +637,22 @@ class ExpressionTransformer
         // unoptimized approach: box & invoke Comparable method, unbox
         value info = ExpressionInfo(that);
 
-        value lhsBoxed = ctx.withLhsType(ctx.typeFactory.anythingType, ()
-            =>  that.leftOperand.transform(this));
-
-        value rhsBoxed =  ctx.withLhsType(ctx.typeFactory.anythingType, ()
-            =>  that.rightOperand.transform(this));
-
-        // lhs may have been erased to Object for generics
-        // or intersection or union and may require an `as`
-        // cast to `Comparable`
+        // The lhs must be a Comparable. So let's find a suitable instantiation
+        // and use it as our type for withLhsType(). This will take care of
+        // casting anything that may have been erased to `core.Object` (generics,
+        // intersections, unions, Nothing)
         value lhsType = ExpressionInfo(that.leftOperand).typeModel;
+        value comparableType = lhsType.getSupertype(
+                ctx.typeFactory.comparableDeclaration);
 
-        DartTypeName? asType = ctx.naming.erasedToObject(lhsType) then (
-            let(comparableType = lhsType.getSupertype(
-                    ctx.typeFactory.comparableDeclaration))
-            ctx.naming.dartTypeName(info.scope, comparableType));
+        value lhsBoxed = ctx.withLhsType(comparableType, () =>
+                that.leftOperand.transform(this));
 
-        value method
-            =   switch (that)
+        value rhsBoxed =  ctx.withLhsType(ctx.typeFactory.anythingType, () =>
+                that.rightOperand.transform(this));
+
+        value method =
+                switch (that)
                 case (is LargerOperation) "largerThan"
                 case (is SmallerOperation) "smallerThan"
                 case (is LargeAsOperation) "notSmallerThan"
@@ -664,9 +662,7 @@ class ExpressionTransformer
             inRelationTo = that;
             rhsType = info.typeModel;
             DartMethodInvocation {
-                if (exists asType)
-                    then DartAsExpression(lhsBoxed, asType)
-                    else lhsBoxed;
+                lhsBoxed;
                 DartSimpleIdentifier { method; };
                 DartArgumentList { [rhsBoxed]; };
             };

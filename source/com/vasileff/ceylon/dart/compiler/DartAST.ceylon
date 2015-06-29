@@ -264,7 +264,12 @@ class DartMethodInvocation
     shared actual
     void write(CodeWriter writer) {
         if (exists target) {
-            target.write(writer);
+            if (target is DartIdentifier | DartPropertyAccess) {
+                target.write(writer);
+            }
+            else {
+                DartParenthesizedExpression(target).write(writer);
+            }
             writer.write(".");
         }
         methodName.write(writer);
