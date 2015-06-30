@@ -115,7 +115,7 @@ shared
                 value ctx = CompilationContext(
                         phasedUnit.unit, CeylonList(phasedUnit.tokens));
                 ctx.init();
-                value dartDeclarations = ctx.dartTransformer
+                value dartDeclarations = ctx.miscTransformer
                         .transformCompilationUnit(unit);
 
                 value dartCompilationUnit =

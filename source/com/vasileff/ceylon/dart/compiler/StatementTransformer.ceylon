@@ -44,7 +44,7 @@ class StatementTransformer
     shared actual
     [DartVariableDeclarationStatement] transformValueDefinition
             (ValueDefinition that)
-        =>  [DartVariableDeclarationStatement(dartTransformer
+        =>  [DartVariableDeclarationStatement(miscTransformer
                 .transformValueDefinition(that))];
 
     shared actual

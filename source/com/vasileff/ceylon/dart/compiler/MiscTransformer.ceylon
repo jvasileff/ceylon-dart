@@ -12,7 +12,7 @@ import com.redhat.ceylon.model.typechecker.model {
     PackageModel=Package
 }
 
-class DartTransformer(CompilationContext ctx)
+class MiscTransformer(CompilationContext ctx)
         extends BaseTransformer<Anything>(ctx) {
 
     shared actual

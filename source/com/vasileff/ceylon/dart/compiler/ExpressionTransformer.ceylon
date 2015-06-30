@@ -275,7 +275,7 @@ class ExpressionTransformer
             rhsType,
             DartFunctionExpressionInvocation {
                 func;
-                dartTransformer.transformArguments(that.arguments);
+                miscTransformer.transformArguments(that.arguments);
             }
         );
     }

@@ -31,7 +31,7 @@ class CompilationContext(unit, tokens) {
     TypeOrNoType? returnTypeTop = null;
 
     shared late
-    DartTransformer dartTransformer;
+    MiscTransformer miscTransformer;
 
     shared late
     ExpressionTransformer expressionTransformer;
@@ -44,7 +44,7 @@ class CompilationContext(unit, tokens) {
 
     shared
     void init() {
-        dartTransformer = DartTransformer(this);
+        miscTransformer = MiscTransformer(this);
         expressionTransformer = ExpressionTransformer(this);
         statementTransformer = StatementTransformer(this);
         topLevelTransformer = TopLevelTransformer(this);

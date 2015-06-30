@@ -22,8 +22,8 @@ class BaseTransformer<Result>
         =>  ctx.expressionTransformer;
 
     shared
-    DartTransformer dartTransformer
-        =>  ctx.dartTransformer;
+    MiscTransformer miscTransformer
+        =>  ctx.miscTransformer;
 
     shared
     StatementTransformer statementTransformer

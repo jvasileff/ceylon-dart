@@ -22,7 +22,7 @@ class TopLevelTransformer
     shared actual
     [DartTopLevelVariableDeclaration|DartFunctionDeclaration+] transformValueDefinition
             (ValueDefinition that)
-        =>  [DartTopLevelVariableDeclaration(dartTransformer
+        =>  [DartTopLevelVariableDeclaration(miscTransformer
                 .transformValueDefinition(that)),
             *generateForwardingGetterSetter(that)];
 
