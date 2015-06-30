@@ -9,7 +9,8 @@ import com.redhat.ceylon.model.typechecker.model {
     Declaration,
     Interface,
     TypeDeclaration,
-    Value
+    Value,
+    Class
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -153,6 +154,10 @@ class CeylonTypes(Unit unit) {
     Interface comparableDeclaration
         =>  unit.comparableDeclaration;
 
+    shared
+    Class objectDeclaration
+        =>  unit.objectDeclaration;
+
     TypeDeclaration nullDeclaration {
         assert (is TypeDeclaration declaration =
             unit.getLanguageModuleDeclaration("Null"));
@@ -174,6 +179,14 @@ class CeylonTypes(Unit unit) {
             unit.getLanguageModuleDeclaration("AssertionError"));
         return declaration;
     }
+
+    shared
+    Interface integralDeclaration
+        =>  unit.integralDeclaration;
+
+    shared
+    Interface invertibleDeclaration
+        =>  unit.invertableDeclaration;
 
     shared
     Interface numericDeclaration

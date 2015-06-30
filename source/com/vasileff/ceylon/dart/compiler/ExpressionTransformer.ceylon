@@ -26,7 +26,13 @@ import ceylon.ast.core {
     SumOperation,
     ProductOperation,
     BinaryOperation,
-    ExponentiationOperation
+    ExponentiationOperation,
+    QuotientOperation,
+    RemainderOperation,
+    DifferenceOperation,
+    CompareOperation,
+    EqualOperation,
+    NotEqualOperation
 }
 import ceylon.collection {
     LinkedList
@@ -804,19 +810,49 @@ class ExpressionTransformer
                 that, ctx.ceylonTypes.comparableDeclaration, method);
 
     shared actual
+    DartExpression transformCompareOperation(CompareOperation that)
+        =>  generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.comparableDeclaration, "compare");
+
+    shared actual
+    DartExpression transformEqualOperation(EqualOperation that)
+        =>  generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.objectDeclaration, "equals");
+
+    shared actual
+    DartExpression transformNotEqualOperation(NotEqualOperation that)
+        =>  DartPrefixExpression("!", generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.objectDeclaration, "equals"));
+
+    shared actual
     DartExpression transformProductOperation(ProductOperation that)
-        =>   generateInvocationForBinaryOperation(
+        =>  generateInvocationForBinaryOperation(
                 that, ctx.ceylonTypes.numericDeclaration, "times");
 
     shared actual
+    DartExpression transformQuotientOperation(QuotientOperation that)
+        =>  generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.numericDeclaration, "divided");
+
+    shared actual
+    DartExpression transformRemainderOperation(RemainderOperation that)
+        =>  generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.integralDeclaration, "remainder");
+
+    shared actual
     DartExpression transformSumOperation(SumOperation that)
-        =>   generateInvocationForBinaryOperation(
+        =>  generateInvocationForBinaryOperation(
                 that, ctx.ceylonTypes.summableDeclaration, "plus");
+
+    shared actual
+    DartExpression transformDifferenceOperation(DifferenceOperation that)
+        =>  generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.invertibleDeclaration, "minus");
 
     shared actual
     DartExpression transformExponentiationOperation
             (ExponentiationOperation that)
-        =>   generateInvocationForBinaryOperation(
+        =>  generateInvocationForBinaryOperation(
                 that, ctx.ceylonTypes.exponentiableDeclaration, "power");
 
     DartExpression generateInvocationForBinaryOperation(
