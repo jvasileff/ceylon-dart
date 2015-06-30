@@ -1,5 +1,11 @@
 part of ceylon.language;
 
+// identical.ceylon
+$dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$core.identical(x, y);
+
+$dart$core.bool identical([Identifiable x, Identifiable y]) => $package$identical(x, y);
+
+
 // largest.ceylon
 $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (() {
     if ((x as Comparable).largerThan(y)) {

@@ -21,7 +21,8 @@ import ceylon.ast.core {
     SmallAsOperation,
     IfElseExpression,
     BooleanCondition,
-    DefaultedParameter
+    DefaultedParameter,
+    IdenticalOperation
 }
 import ceylon.collection {
     LinkedList
@@ -823,6 +824,27 @@ class ExpressionTransformer
             };
         };
     }
+
+    shared actual
+    DartExpression transformIdenticalOperation(IdenticalOperation that)
+        =>  withBoxing {
+                inRelationTo => that;
+                rhsType => ctx.ceylonTypes.booleanType;
+                dartExpression = ctx.withLhsType {
+                    // both operands should be "Identifiable"
+                    ctx.ceylonTypes.identifiableType; () =>
+                    DartFunctionExpressionInvocation {
+                        DartPrefixedIdentifier {
+                            DartSimpleIdentifier("$dart$core");
+                            DartSimpleIdentifier("identical");
+                        };
+                        DartArgumentList {
+                            [that.leftOperand.transform(this),
+                             that.rightOperand.transform(this)];
+                        };
+                    };
+                };
+            };
 
     shared actual
     DartExpression transformIfElseExpression(IfElseExpression that) {

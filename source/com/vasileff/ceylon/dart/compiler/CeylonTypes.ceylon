@@ -49,6 +49,9 @@ class CeylonTypes(Unit unit) {
     Type integerType => unit.integerType;
 
     shared
+    Type identifiableType => unit.identifiableType;
+
+    shared
     Type stringType => unit.stringType;
 
     shared
