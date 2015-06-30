@@ -123,6 +123,7 @@ class QualifiedExpressionInfo(QualifiedExpression node)
     "The declaration of the target of the QualifiedExpression"
     shared DeclarationModel declaration => tcNode.declaration;
 
+    "If being invoked, the signature (parameters)."
     shared
     {TypeModel*}? signature
         =>  if (exists sig = tcNode.signature)
@@ -131,7 +132,10 @@ class QualifiedExpressionInfo(QualifiedExpression node)
 
     // StaticMemberOrTypeExpression
 
+    "If being passed as an argument, the parameter."
     shared TypedReferenceModel? targetParameter => tcNode.targetParameter;
+
+    "If being passed as an argument, the parameter type."
     shared TypeModel? parameterType => tcNode.parameterType;
 }
 

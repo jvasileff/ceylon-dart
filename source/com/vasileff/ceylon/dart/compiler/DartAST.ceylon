@@ -818,9 +818,7 @@ class DartPrefixExpression
     shared actual
     void write(CodeWriter writer) {
         writer.write(operator);
-        writer.write("(");
-        operand.write(writer);
-        writer.write(")");
+        parenthesizeNonPrimary(operand).write(writer);
     }
 }
 
@@ -966,7 +964,8 @@ class DartAsExpression(expression, type)
 shared
 alias DartPrimary =>
         DartIdentifier | DartLiteral | DartMethodInvocation |
-        DartParenthesizedExpression  | DartPropertyAccess;
+        DartParenthesizedExpression  | DartPropertyAccess |
+        DartFunctionExpressionInvocation;
 
 DartExpression parenthesizeNonPrimary
         (DartExpression expression)

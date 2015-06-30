@@ -88,9 +88,11 @@ class BaseTransformer<Result>
             return dartExpression;
         }
 
-        // the rhs may still have the same erasure
+        // the rhs may still have the same dart type
         // (this is actually the normal case)
-        if (castType == ctx.dartTypes.dartTypeModel(rhsType)) {
+        // `disableErasure` here is used for qualified expressions
+        // where we are forcing an unerased type (for now)
+        if (castType == ctx.dartTypes.dartTypeModel(rhsType, disableErasure)) {
             return dartExpression;
         }
 
@@ -101,6 +103,26 @@ class BaseTransformer<Result>
             ctx.dartTypes.dartTypeName(inRelationTo, castType);
         };
     }
+
+    "Returns the non-erased result of [[fun]] with proper casting
+     to [[lhsType]]."
+    shared
+    DartExpression withLhsTypeNoErasure(
+            Node|ElementModel|ScopeModel inRelationTo,
+            TypeModel lhsType, TypeModel rhsType, DartExpression fun())
+        // This is a small hack, but at least isolated.
+        // We are counting on the `dartExpression` not being wrapped
+        // in an `as` cast since we are claiming we want an `Anything`.
+        // And then, we'll cast to `lhsType`.
+        =>  ctx.withLhsType(ctx.ceylonTypes.anythingType, ()
+            =>  let (dartExpression = fun())
+                withCasting {
+                    inRelationTo = inRelationTo;
+                    lhsType = lhsType;
+                    rhsType = rhsType;
+                    dartExpression = dartExpression;
+                    disableErasure = true;
+                });
 
     shared
     DartExpression withBoxing(

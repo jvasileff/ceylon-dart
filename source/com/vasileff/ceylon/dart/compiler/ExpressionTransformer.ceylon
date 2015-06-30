@@ -41,12 +41,17 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     ConstructorModel=Constructor,
     DeclarationModel=Declaration,
+    TypedDeclarationModel=TypedDeclaration,
+    TypeDeclarationModel=TypeDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
     ParameterModel=Parameter
+}
+import ceylon.language.meta {
+    type
 }
 
 class ExpressionTransformer
@@ -55,7 +60,12 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformBaseExpression(BaseExpression that) {
-        "Supports MNWTA for BaseExpressions"
+
+        if (!is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs) {
+            throw CompilerBug(that,
+                    "BaseExpression nameAndArgs type not yet supported: \
+                     '``className(that.nameAndArgs)``'");
+        }
         assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
 
         value info = BaseExpressionInfo(that);
@@ -82,7 +92,7 @@ class ExpressionTransformer
             DartExpression unboxed;
             switch (targetDeclaration)
             case (is ValueModel) {
-                // defaulted parameters are dynamic
+                // Does this baseExpression target a defaulted parameter?
                 dartDynamic = targetDeclaration.initializerParameter?.defaulted
                                     else false;
 
@@ -177,6 +187,129 @@ class ExpressionTransformer
                     else unboxed;
             };
         }
+    }
+
+    shared actual
+    DartExpression transformQualifiedExpression
+            (QualifiedExpression that) {
+
+        if (that.memberOperator.text != ".") {
+            throw CompilerBug(that,
+                    "Member operator not yet supported: \
+                     '``that.memberOperator.text``'");
+        }
+
+        value info = QualifiedExpressionInfo(that);
+        value receiverInfo = ExpressionInfo(that.receiverExpression);
+        value receiverType = receiverInfo.typeModel;
+        value targetDeclaration = info.target.declaration;
+        value rhsType = info.typeModel.type;
+        value targetContainer = targetDeclaration.container;
+
+        // The receiverType may be generic or a union or something.
+        // Try to determine the exact receiver type needed, that
+        // should be denotable in Dart
+        TypeModel exactReceiverType;
+        if (is TypeDeclarationModel targetContainer) {
+            exactReceiverType = receiverType.getSupertype(targetContainer);
+        }
+        else {
+            // TODO try harder...
+            exactReceiverType = receiverType;
+        }
+
+        DartExpression unboxed;
+
+        switch (targetDeclaration)
+        case (is ValueModel) {
+            // Should be easy; don't worry about getters/setters
+            // being methods since that doesn't happen in locations
+            // that can be qualified.
+            unboxed = DartPropertyAccess {
+                // Use `Anything` to disable erasure since we need
+                // a non-native receiver.
+                withLhsTypeNoErasure {
+                    that;
+                    exactReceiverType;
+                    receiverType;
+                    () => that.receiverExpression.transform(this);
+                };
+                DartSimpleIdentifier {
+                    ctx.dartTypes.getName(targetDeclaration);
+                };
+            };
+        }
+        case (is FunctionModel) {
+            value dartQualified = DartPropertyAccess {
+                // Use `Anything` to disable erasure since we need
+                // a non-native receiver.
+                withLhsTypeNoErasure {
+                    that;
+                    exactReceiverType;
+                    receiverType;
+                    () => that.receiverExpression.transform(this);
+                };
+                DartSimpleIdentifier {
+                    ctx.dartTypes.getName(targetDeclaration);
+                };
+            };
+
+            switch (ctx.lhsTypeTop)
+            case (noType) {
+                // must be an invocation; do not wrap in a callable
+                unboxed = dartQualified;
+            }
+            else {
+                // The function result of the qualified expression must be
+                // captured to avoid re-evaluating the receiver expression
+                // each time Callable is invoked.
+                // So...
+                //   - create a closure that
+                //     - declares a variable holding the evaluated qe
+                //     - returns a new Callable that invokes the saved function
+                //   - invoke it
+                unboxed =
+                DartFunctionExpressionInvocation {
+                    DartFunctionExpression {
+                        DartFormalParameterList();
+                        DartBlockFunctionBody {
+                            null; false;
+                            DartBlock {
+                                [DartVariableDeclarationStatement {
+                                    DartVariableDeclarationList {
+                                        keyword = null;
+                                        type = ctx.dartTypes.dartFunction;
+                                        [DartVariableDeclaration {
+                                            DartSimpleIdentifier {
+                                                "$capturedDelegate$";
+                                            };
+                                            dartQualified;
+                                        }];
+                                    };
+                                },
+                                DartReturnStatement {
+                                    generateNewCallable {
+                                        that;
+                                        targetDeclaration;
+                                        DartSimpleIdentifier {
+                                            "$capturedDelegate$";
+                                        };
+                                    };
+                                }];
+                            };
+                        };
+                    };
+                    DartArgumentList();
+                };
+            }
+        }
+        else {
+            throw CompilerBug(that,
+                "Unexpected declaration type for qualified expression: \
+                 ``className(targetDeclaration)``");
+        }
+
+        return withBoxing(that, rhsType, unboxed);
     }
 
     shared actual

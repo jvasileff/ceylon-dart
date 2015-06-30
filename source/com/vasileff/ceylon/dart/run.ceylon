@@ -283,13 +283,26 @@ void run() {
                         => if (x<y) then x else y;
          """;
 
-    value castDynamics =
-         """T foo<T>(Integer i = 1) {
+    // TODO make tests out of these
+    value castDynamicsAndQualifiedExpression =
+         """List&Usable something = nothing;
+
+            T foo<T>(Integer i = 1) {
                 print(i);
                 foo<Float>(i);
+                variable Integer j = 99;
+                j = 100;
+                //print(j = 101);
+                Integer jj = j;
+                print(j.string);
+                Object x = j.string;
+                value y = "".contains;
+                value z = "".contains("apples");
+                //value z = String.contains;
+                value zz = something.contains;
                 return nothing;
             }
          """;
 
-    compile { true; castDynamics };
+    compile { true; castDynamicsAndQualifiedExpression };
 }

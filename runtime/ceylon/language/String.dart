@@ -50,4 +50,10 @@ class String implements List {
   @$dart$core.override
   Sequential sequence()
     =>  Iterable.$sequence(this);
+
+  @$dart$core.override
+  $dart$core.bool contains($dart$core.Object element) {
+    // TODO
+    return false;
+  }
 }
