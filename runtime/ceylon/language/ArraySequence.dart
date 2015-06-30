@@ -47,6 +47,10 @@ class ArraySequence implements Sequence {
     =>  array.each(f);
 
   @$dart$core.override
+  $dart$core.bool contains($dart$core.Object element)
+    =>  Iterable.$contains(this, element);
+
+  @$dart$core.override
   Sequence sequence()
     =>  Sequence.$sequence(this);
 

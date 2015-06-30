@@ -61,6 +61,10 @@ class Array implements List {
     =>  Iterable.$each(this, f);
 
   @$dart$core.override
+  $dart$core.bool contains($dart$core.Object element)
+    =>  Iterable.$contains(this, element);
+
+  @$dart$core.override
   Sequential sequence()
     =>  Iterable.$sequence(this);
 }

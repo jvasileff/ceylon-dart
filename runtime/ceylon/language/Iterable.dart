@@ -33,4 +33,11 @@ abstract class Iterable {
     }
     return new ArraySequence(array);
   }
+
+
+  $dart$core.bool contains($dart$core.Object element);
+  static $dart$core.bool $contains(Iterable $this, $dart$core.Object element) {
+    // TODO
+    throw new AssertionError("not yet implemented");
+  }
 }

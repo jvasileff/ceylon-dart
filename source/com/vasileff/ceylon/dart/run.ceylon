@@ -283,7 +283,6 @@ void run() {
                         => if (x<y) then x else y;
          """;
 
-    // TODO make tests out of these
     value castDynamicsAndQualifiedExpression =
          """List&Usable something = nothing;
 
