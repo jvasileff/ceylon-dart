@@ -26,7 +26,10 @@ import ceylon.ast.core {
     While,
     ValueSpecification,
     Invocation,
-    QualifiedExpression
+    QualifiedExpression,
+    ValueDeclaration,
+    AnyValue,
+    ValueGetterDefinition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -147,6 +150,25 @@ class TypedDeclarationInfo<out NodeType>(NodeType node)
     shared default TypedDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
+class AnyValueInfo<out NodeType>(NodeType node)
+        extends TypedDeclarationInfo<NodeType>(node)
+        given NodeType satisfies AnyValue {
+
+    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(node);
+
+    shared actual default
+    ValueModel declarationModel => tcNode.declarationModel;
+}
+
+class ValueDefinitionInfo(ValueDefinition node)
+        extends AnyValueInfo<ValueDefinition>(node) {}
+
+class ValueDeclarationInfo(ValueDeclaration node)
+        extends AnyValueInfo<ValueDeclaration>(node) {}
+
+class ValueGetterDefinitionInfo(ValueGetterDefinition node)
+        extends AnyValueInfo<ValueGetterDefinition>(node) {}
+
 class ArgumentListInfo(ArgumentList node)
         extends NodeInfo<ArgumentList>(node) {
 
@@ -245,13 +267,6 @@ class ComprehensionClauseInfo<NodeType>(NodeType node)
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
-}
-
-class ValueDefinitionInfo(ValueDefinition node)
-        extends NodeInfo<ValueDefinition>(node) {
-
-    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(node);
-    shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
 class ValueSpecificationInfo(ValueSpecification node)

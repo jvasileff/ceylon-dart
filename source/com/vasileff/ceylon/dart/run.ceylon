@@ -303,5 +303,12 @@ void run() {
             }
          """;
 
-    compile { true; castDynamicsAndQualifiedExpression };
+    value parameterReferences =
+         """
+            void foo(arg1, arg2=5) {
+                String arg1;
+                Integer arg2;
+            }
+         """;
+    compile { true; parameterReferences };
 }

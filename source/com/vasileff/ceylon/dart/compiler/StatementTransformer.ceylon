@@ -7,7 +7,8 @@ import ceylon.ast.core {
     FunctionShortcutDefinition,
     Assertion,
     IsCondition,
-    ValueSpecification
+    ValueSpecification,
+    ValueDeclaration
 }
 import ceylon.collection {
     LinkedList
@@ -19,7 +20,7 @@ import org.antlr.runtime {
 
 class StatementTransformer
         (CompilationContext ctx)
-        extends BaseTransformer<[DartStatement+]>(ctx) {
+        extends BaseTransformer<[DartStatement*]>(ctx) {
 
     "Parents must set `returnTypeTop`"
     see(`function ExpressionTransformer.generateFunctionExpression`)
@@ -129,7 +130,7 @@ class StatementTransformer
         =>  [DartBlock([*expand(that.transformChildren(this))])];
 
     shared actual
-    [DartStatement+] transformAssertion(Assertion that) {
+    [DartStatement*] transformAssertion(Assertion that) {
         // children are 'Annotations' and 'Conditions'
         // 'Conditions' has 'Condition's.
 
@@ -138,8 +139,20 @@ class StatementTransformer
         // annotations, especially 'doc', need to apply to
         // each condition. Any other annotations matter?
 
+        // won't be empty
         return [*that.conditions.children.flatMap((c)
             =>  c.transform(this))];
+    }
+
+    shared actual
+    [DartStatement*] transformValueDeclaration(ValueDeclaration that) {
+        value info = ValueDeclarationInfo(that);
+        if (info.declarationModel.parameter) {
+            // ignore; must be a declaration for
+            // a parameter reference
+            return [];
+        }
+        return super.transformValueDeclaration(that);
     }
 
     shared actual

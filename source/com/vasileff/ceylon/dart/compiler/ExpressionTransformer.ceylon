@@ -1,6 +1,4 @@
 import ceylon.ast.core {
-    ValueParameter,
-    DefaultedValueParameter,
     FunctionDefinition,
     Block,
     Invocation,
@@ -8,11 +6,6 @@ import ceylon.ast.core {
     MemberNameWithTypeArguments,
     IntegerLiteral,
     StringLiteral,
-    ParameterReference,
-    VariadicParameter,
-    DefaultedCallableParameter,
-    DefaultedParameterReference,
-    CallableParameter,
     LazySpecifier,
     FunctionExpression,
     Parameters,
@@ -27,7 +20,8 @@ import ceylon.ast.core {
     LargeAsOperation,
     SmallAsOperation,
     IfElseExpression,
-    BooleanCondition
+    BooleanCondition,
+    DefaultedParameter
 }
 import ceylon.collection {
     LinkedList
@@ -41,7 +35,6 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     ConstructorModel=Constructor,
     DeclarationModel=Declaration,
-    TypedDeclarationModel=TypedDeclaration,
     TypeDeclarationModel=TypeDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
@@ -49,9 +42,6 @@ import com.redhat.ceylon.model.typechecker.model {
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
     ParameterModel=Parameter
-}
-import ceylon.language.meta {
-    type
 }
 
 class ExpressionTransformer
@@ -724,7 +714,7 @@ class ExpressionTransformer
         //If any exist, use a block (not lazy specifier)
         //At start of block, assign values as necessary
         value defaultedParameters = parameterLists.first
-                .parameters.narrow<DefaultedValueParameter>();
+                .parameters.narrow<DefaultedParameter>();
 
         DartFunctionBody body;
         if (defaultedParameters.empty) {
@@ -889,52 +879,49 @@ class ExpressionTransformer
         value dartParameters = parameters.parameters.collect((parameter) {
             value parameterInfo = ParameterInfo(parameter);
             value parameterModel = parameterInfo.parameterModel;
-            value parameterType = ctx.dartTypes.dartTypeName(
-                    parameterModel.model, parameterModel.type);
 
-            switch(parameter)
-            case (is DefaultedValueParameter) {
-                // Use core.Object for parameter type
-                //      We need to be able to assign `dart$default`, so
-                //      we can't use the correct type for defaulted
-                //      parameters. When the parameter is used, it will
-                //      be casted with `as` as necessary. Better would be
-                //      to immediately narrow to a new variable after
-                //      default value processing.
+            value defaulted = parameterModel.defaulted;
+            value callable = parameterModel.model is FunctionModel;
+            value variadic = parameterModel.sequenced;
 
-                return
-                DartDefaultFormalParameter {
-                    DartSimpleFormalParameter {
-                        false; false;
-                        type = ctx.dartTypes.dartObject;
-                        DartSimpleIdentifier {
-                            ctx.dartTypes.getName(parameterModel);
-                        };
-                    };
-                    DartPrefixedIdentifier {
-                        prefix = DartSimpleIdentifier("$ceylon$language");
-                        identifier = DartSimpleIdentifier("dart$default");
-                    };
-                };
+            if (callable) {
+                print(parameterModel.model.name);
+                print(parameterModel.name);
+                throw CompilerBug(that, "Callable parameters not yet supported");
             }
-            case (is ValueParameter) {
-                return
+            else if (variadic) {
+                throw CompilerBug(that, "Variadic parameters not yet supported");
+            }
+            else {
+                // Use core.Object for defaulted parameters so we can
+                // initialize with `dart$default`
+                value dartParameterType =
+                    if (defaulted)
+                    then ctx.dartTypes.dartTypeName(that, ctx.ceylonTypes.anythingType)
+                    else ctx.dartTypes.dartTypeName(that, parameterModel.type);
+
+                value dartSimpleParameter =
                 DartSimpleFormalParameter {
                     false; false;
-                    parameterType;
+                    dartParameterType;
                     DartSimpleIdentifier {
                         ctx.dartTypes.getName(parameterModel);
                     };
                 };
-            }
-            case (is VariadicParameter
-                    | CallableParameter
-                    | ParameterReference
-                    | DefaultedCallableParameter
-                    | DefaultedParameterReference) {
-                throw CompilerBug(that,
-                        "Parameter type not supported: \
-                         ``className(parameter)``");
+
+                if (defaulted) {
+                    return
+                    DartDefaultFormalParameter {
+                        dartSimpleParameter;
+                        DartPrefixedIdentifier {
+                            prefix = DartSimpleIdentifier("$ceylon$language");
+                            identifier = DartSimpleIdentifier("dart$default");
+                        };
+                    };
+                }
+                else {
+                    return dartSimpleParameter;
+                }
             }
         });
         return DartFormalParameterList {
