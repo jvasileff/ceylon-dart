@@ -37,3 +37,8 @@ $dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) 
 })();
 
 $dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $package$smallest(x, y);
+
+// times.ceylon
+$dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => (x as Numeric).times(y);
+
+$dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);

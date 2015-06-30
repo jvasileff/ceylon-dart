@@ -23,7 +23,10 @@ import ceylon.ast.core {
     BooleanCondition,
     DefaultedParameter,
     IdenticalOperation,
-    SumOperation
+    SumOperation,
+    ProductOperation,
+    BinaryOperation,
+    ExponentiationOperation
 }
 import ceylon.collection {
     LinkedList
@@ -790,65 +793,58 @@ class ExpressionTransformer
     }
 
     shared actual
-    DartExpression transformComparisonOperation(ComparisonOperation that) {
-        // unoptimized approach: box & invoke Comparable method, unbox
-        value info = ExpressionInfo(that);
-
-        // The lhs must be a Comparable. So let's find a suitable instantiation
-        // and use it as our type for withLhsType(). This will take care of
-        // casting anything that may have been erased to `core.Object` (generics,
-        // intersections, unions, Nothing)
-        value leftOperandType = ExpressionInfo(that.leftOperand).typeModel;
-        value comparableType = leftOperandType.getSupertype(
-                ctx.ceylonTypes.comparableDeclaration);
-
-        value leftOperandBoxed = ctx.withLhsType(comparableType, () =>
-                that.leftOperand.transform(this));
-
-        value rightOperandBoxed = ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
-                that.rightOperand.transform(this));
-
-        value method =
-                switch (that)
-                case (is LargerOperation) "largerThan"
-                case (is SmallerOperation) "smallerThan"
-                case (is LargeAsOperation) "notSmallerThan"
-                case (is SmallAsOperation) "notLargerThan";
-
-        return withBoxing {
-            scope = that;
-            rhsType = info.typeModel;
-            DartMethodInvocation {
-                leftOperandBoxed;
-                DartSimpleIdentifier { method; };
-                DartArgumentList { [rightOperandBoxed]; };
-            };
-        };
-    }
+    DartExpression transformComparisonOperation(ComparisonOperation that)
+        =>  let (method =
+                    switch (that)
+                    case (is LargerOperation) "largerThan"
+                    case (is SmallerOperation) "smallerThan"
+                    case (is LargeAsOperation) "notSmallerThan"
+                    case (is SmallAsOperation) "notLargerThan")
+            generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.comparableDeclaration, method);
 
     shared actual
-    DartExpression transformSumOperation(SumOperation that) {
-        // unoptimized approach: box & invoke Summable method, unbox
-        value info = ExpressionInfo(that);
+    DartExpression transformProductOperation(ProductOperation that)
+        =>   generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.numericDeclaration, "times");
 
-        // Find a suitable Summable type
-        value leftOperandType = ExpressionInfo(that.leftOperand).typeModel;
-        value summableType = leftOperandType.getSupertype(
-                ctx.ceylonTypes.summableDeclaration);
+    shared actual
+    DartExpression transformSumOperation(SumOperation that)
+        =>   generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.summableDeclaration, "plus");
 
-        value leftOperandBoxed = ctx.withLhsType(summableType, () =>
-                that.leftOperand.transform(this));
+    shared actual
+    DartExpression transformExponentiationOperation
+            (ExponentiationOperation that)
+        =>   generateInvocationForBinaryOperation(
+                that, ctx.ceylonTypes.exponentiableDeclaration, "power");
 
-        // sum() is generic, so we'll just use Anything
+    DartExpression generateInvocationForBinaryOperation(
+            BinaryOperation that,
+            TypeDeclarationModel definingInterface,
+            String methodName) {
+
+        value leftOperand = that.leftOperand;
+        value rightOperand = that.rightOperand;
+        value expressionType = ExpressionInfo(that).typeModel;
+
+        // find a suitable type that is denotable in Dart
+        value leftOperandType = ExpressionInfo(leftOperand).typeModel;
+        value denotableType = leftOperandType.getSupertype(definingInterface);
+
+        value leftOperandBoxed = ctx.withLhsType(denotableType, () =>
+                leftOperand.transform(this));
+
+        // assume generic parameter, so we'll use Anything
         value rightOperandBoxed = ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
-                that.rightOperand.transform(this));
+                rightOperand.transform(this));
 
         return withBoxing {
             scope = that;
-            rhsType = info.typeModel;
+            rhsType = expressionType;
             DartMethodInvocation {
                 leftOperandBoxed;
-                DartSimpleIdentifier { "plus"; };
+                DartSimpleIdentifier { methodName; };
                 DartArgumentList { [rightOperandBoxed]; };
             };
         };

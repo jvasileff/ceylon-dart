@@ -125,11 +125,8 @@ class CeylonTypes(Unit unit) {
     // to duplicate instances re:
     // https://github.com/ceylon/ceylon-compiler/issues/1815
 
-    TypeDeclaration booleanDeclaration {
-        assert (is TypeDeclaration declaration =
-            unit.getLanguageModuleDeclaration("Boolean"));
-        return declaration;
-    }
+    TypeDeclaration booleanDeclaration
+        =>  unit.booleanDeclaration;
 
     Value booleanTrueValueDeclaration {
         assert (is Value declaration =
@@ -149,15 +146,12 @@ class CeylonTypes(Unit unit) {
     TypeDeclaration booleanFalseTypeDeclaration
         =>  booleanFalseValueDeclaration.typeDeclaration;
 
-    Declaration callableDeclaration
-        =>  unit.getLanguageModuleDeclaration("Callable");
+    Interface callableDeclaration
+        =>  unit.callableDeclaration;
 
     shared
-    Interface comparableDeclaration {
-        assert (is Interface declaration =
-            unit.getLanguageModuleDeclaration("Comparable"));
-        return declaration;
-    }
+    Interface comparableDeclaration
+        =>  unit.comparableDeclaration;
 
     TypeDeclaration nullDeclaration {
         assert (is TypeDeclaration declaration =
@@ -182,11 +176,16 @@ class CeylonTypes(Unit unit) {
     }
 
     shared
-    Interface summableDeclaration {
-        assert (is Interface declaration =
-            unit.getLanguageModuleDeclaration("Summable"));
-        return declaration;
-    }
+    Interface numericDeclaration
+        =>  unit.numericDeclaration;
+
+    shared
+    Interface summableDeclaration
+        =>  unit.summableDeclaration;
+
+    shared
+    Interface exponentiableDeclaration
+        =>  unit.exponentiableDeclaration;
 
     /////////////////////////////////////////////
     // declaration tests
