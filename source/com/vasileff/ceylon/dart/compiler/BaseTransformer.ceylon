@@ -54,7 +54,7 @@ class BaseTransformer<Result>
 
     shared
     DartExpression withCasting(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,
             TypeModel rhsType,
             DartExpression dartExpression,
@@ -100,7 +100,7 @@ class BaseTransformer<Result>
         return
         DartAsExpression {
             dartExpression;
-            ctx.dartTypes.dartTypeName(inRelationTo, castType);
+            ctx.dartTypes.dartTypeName(scope, castType);
         };
     }
 
@@ -108,7 +108,7 @@ class BaseTransformer<Result>
      to [[lhsType]]."
     shared
     DartExpression withLhsTypeNoErasure(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel lhsType, TypeModel rhsType, DartExpression fun())
         // This is a small hack, but at least isolated.
         // We are counting on the `dartExpression` not being wrapped
@@ -117,7 +117,7 @@ class BaseTransformer<Result>
         =>  ctx.withLhsType(ctx.ceylonTypes.anythingType, ()
             =>  let (dartExpression = fun())
                 withCasting {
-                    inRelationTo = inRelationTo;
+                    scope = scope;
                     lhsType = lhsType;
                     rhsType = rhsType;
                     dartExpression = dartExpression;
@@ -126,18 +126,18 @@ class BaseTransformer<Result>
 
     shared
     DartExpression withBoxing(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel rhsType,
             DartExpression dartExpression) {
 
         assert (exists lhsType = ctx.lhsTypeTop);
-        return withBoxingLhsRhs(inRelationTo,
+        return withBoxingLhsRhs(scope,
                 lhsType, rhsType, dartExpression);
     }
 
     shared
     DartExpression withBoxingLhsRhs(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,
             TypeModel rhsType,
             DartExpression dartExpression)
@@ -147,11 +147,11 @@ class BaseTransformer<Result>
                     case (is TypeModel) ctx.ceylonTypes
                         .boxingConversionFor(lhsType, rhsType))
             if (exists conversion)
-            then withBoxingConversion(inRelationTo, rhsType, dartExpression, conversion)
-            else withCasting(inRelationTo, lhsType, rhsType, dartExpression);
+            then withBoxingConversion(scope, rhsType, dartExpression, conversion)
+            else withCasting(scope, lhsType, rhsType, dartExpression);
 
     DartExpression withBoxingConversion(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel expressionType,
             DartExpression expression,
             BoxingConversion conversion) {
@@ -187,7 +187,7 @@ class BaseTransformer<Result>
         value castedExpression  =
             switch (requiredType)
             case (is DartTypeModel) expression
-            case (is TypeModel) withCasting(inRelationTo,
+            case (is TypeModel) withCasting(scope,
                     requiredType, expressionType, expression, true);
 
         return DartFunctionExpressionInvocation {

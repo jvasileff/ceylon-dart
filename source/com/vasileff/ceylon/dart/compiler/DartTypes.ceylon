@@ -218,7 +218,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
     see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
     shared
     DartTypeName dartTypeName(
-            Node|ElementModel|ScopeModel inRelationTo,
+            Node|ElementModel|ScopeModel scope,
             TypeModel|DartTypeModel type,
             Boolean disableErasure = false) {
 
@@ -238,7 +238,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 then type
                 else dartTypeModel(type, disableErasure);
 
-        value fromDartPrefix = moduleImportPrefix(inRelationTo);
+        value fromDartPrefix = moduleImportPrefix(scope);
 
         if (dartModel.dartModule == fromDartPrefix) {
             return
@@ -345,13 +345,13 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
     shared
     DartIdentifier qualifyIdentifier(
-            ElementModel|UnitModel inRelationTo,
+            ElementModel|UnitModel scope,
             DeclarationModel declaration,
             String simpleName) {
 
         switch (container = containerOfDeclaration(declaration))
         case (is PackageModel) {
-            if (sameModule(inRelationTo, declaration)) {
+            if (sameModule(scope, declaration)) {
                 // qualify toplevel in same module with '$package.'
                 return DartSimpleIdentifier(
                     "$package$" +

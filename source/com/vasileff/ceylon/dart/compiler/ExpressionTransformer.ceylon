@@ -162,7 +162,7 @@ class ExpressionTransformer
             }
 
             return withBoxing {
-                inRelationTo = that;
+                scope = that;
                 rhsType = rhsType;
                 dartExpression =
                     if (dartDynamic) then
@@ -170,7 +170,7 @@ class ExpressionTransformer
                         // equiv to `Anything` despite the Ceylon static
                         // type possibly being denotable in Dart
                         withCasting {
-                            inRelationTo = that;
+                            scope = that;
                             lhsType = rhsType;
                             rhsType = ctx.ceylonTypes.anythingType;
                             dartExpression = unboxed;
@@ -465,7 +465,7 @@ class ExpressionTransformer
                             ctx.dartTypes.dartTypeName {
                                 // use Anything (core.Object) for all
                                 // parameters since `Callable` is generic
-                                inRelationTo = that;
+                                scope = that;
                                 type = ctx.ceylonTypes.anythingType;
                             };
                             DartSimpleIdentifier {
@@ -499,7 +499,7 @@ class ExpressionTransformer
                     // "lhs" is the inner function's parameter
                     // "rhs" the outer function's argument which
                     // is never erased
-                    inRelationTo = that;
+                    scope = that;
                     lhsType = parameterModel.type;
                     rhsType = ctx.ceylonTypes.anythingType;
                     parameterIdentifier;
@@ -547,7 +547,7 @@ class ExpressionTransformer
                         [DartReturnStatement {
                             withBoxingLhsRhs {
                                 // Anything prevents erasure
-                                inRelationTo = that;
+                                scope = that;
                                 ctx.ceylonTypes.anythingType;
                                 innerReturnType;
                                 DartFunctionExpressionInvocation {
@@ -815,7 +815,7 @@ class ExpressionTransformer
                 case (is SmallAsOperation) "notLargerThan";
 
         return withBoxing {
-            inRelationTo = that;
+            scope = that;
             rhsType = info.typeModel;
             DartMethodInvocation {
                 lhsBoxed;
@@ -828,7 +828,7 @@ class ExpressionTransformer
     shared actual
     DartExpression transformIdenticalOperation(IdenticalOperation that)
         =>  withBoxing {
-                inRelationTo => that;
+                scope => that;
                 rhsType => ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
                     // both operands should be "Identifiable"
