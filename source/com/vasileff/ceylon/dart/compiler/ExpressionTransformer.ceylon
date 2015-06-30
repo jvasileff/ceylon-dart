@@ -826,10 +826,11 @@ class ExpressionTransformer
     }
 
     shared actual
-    DartExpression transformIdenticalOperation(IdenticalOperation that)
+    DartExpression transformIdenticalOperation
+            (IdenticalOperation that)
         =>  withBoxing {
-                scope => that;
-                rhsType => ctx.ceylonTypes.booleanType;
+                scope = that;
+                rhsType = ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
                     // both operands should be "Identifiable"
                     ctx.ceylonTypes.identifiableType; () =>
