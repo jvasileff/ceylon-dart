@@ -22,7 +22,8 @@ import ceylon.ast.core {
     IfElseExpression,
     BooleanCondition,
     DefaultedParameter,
-    IdenticalOperation
+    IdenticalOperation,
+    SumOperation
 }
 import ceylon.collection {
     LinkedList
@@ -797,14 +798,14 @@ class ExpressionTransformer
         // and use it as our type for withLhsType(). This will take care of
         // casting anything that may have been erased to `core.Object` (generics,
         // intersections, unions, Nothing)
-        value lhsType = ExpressionInfo(that.leftOperand).typeModel;
-        value comparableType = lhsType.getSupertype(
+        value leftOperandType = ExpressionInfo(that.leftOperand).typeModel;
+        value comparableType = leftOperandType.getSupertype(
                 ctx.ceylonTypes.comparableDeclaration);
 
-        value lhsBoxed = ctx.withLhsType(comparableType, () =>
+        value leftOperandBoxed = ctx.withLhsType(comparableType, () =>
                 that.leftOperand.transform(this));
 
-        value rhsBoxed =  ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
+        value rightOperandBoxed = ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
                 that.rightOperand.transform(this));
 
         value method =
@@ -818,9 +819,37 @@ class ExpressionTransformer
             scope = that;
             rhsType = info.typeModel;
             DartMethodInvocation {
-                lhsBoxed;
+                leftOperandBoxed;
                 DartSimpleIdentifier { method; };
-                DartArgumentList { [rhsBoxed]; };
+                DartArgumentList { [rightOperandBoxed]; };
+            };
+        };
+    }
+
+    shared actual
+    DartExpression transformSumOperation(SumOperation that) {
+        // unoptimized approach: box & invoke Summable method, unbox
+        value info = ExpressionInfo(that);
+
+        // Find a suitable Summable type
+        value leftOperandType = ExpressionInfo(that.leftOperand).typeModel;
+        value summableType = leftOperandType.getSupertype(
+                ctx.ceylonTypes.summableDeclaration);
+
+        value leftOperandBoxed = ctx.withLhsType(summableType, () =>
+                that.leftOperand.transform(this));
+
+        // sum() is generic, so we'll just use Anything
+        value rightOperandBoxed = ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
+                that.rightOperand.transform(this));
+
+        return withBoxing {
+            scope = that;
+            rhsType = info.typeModel;
+            DartMethodInvocation {
+                leftOperandBoxed;
+                DartSimpleIdentifier { "plus"; };
+                DartArgumentList { [rightOperandBoxed]; };
             };
         };
     }

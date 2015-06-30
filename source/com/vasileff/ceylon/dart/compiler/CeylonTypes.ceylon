@@ -181,6 +181,13 @@ class CeylonTypes(Unit unit) {
         return declaration;
     }
 
+    shared
+    Interface summableDeclaration {
+        assert (is Interface declaration =
+            unit.getLanguageModuleDeclaration("Summable"));
+        return declaration;
+    }
+
     /////////////////////////////////////////////
     // declaration tests
     /////////////////////////////////////////////
