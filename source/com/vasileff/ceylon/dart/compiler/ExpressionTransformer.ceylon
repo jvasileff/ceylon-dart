@@ -70,10 +70,10 @@ class ExpressionTransformer
         assert (exists lhsType = ctx.lhsTypeTop);
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
-            return generateBooleanLiteral(lhsType, true);
+            return generateBooleanExpression(lhsType, true);
         }
         else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
-            return generateBooleanLiteral(lhsType, false);
+            return generateBooleanExpression(lhsType, false);
         }
         else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
@@ -529,7 +529,8 @@ class ExpressionTransformer
         }
     }
 
-    DartExpression generateBooleanLiteral(TypeOrNoType type, Boolean boolean) {
+    DartExpression generateBooleanExpression
+            (TypeOrNoType type, Boolean boolean) {
         value box =
             switch(type)
             case (is NoType) false
