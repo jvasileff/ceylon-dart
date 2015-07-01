@@ -29,7 +29,13 @@ import ceylon.ast.core {
     QualifiedExpression,
     ValueDeclaration,
     AnyValue,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    AnyInterfaceDefinition,
+    TypeDeclaration,
+    Declaration,
+    ClassOrInterface,
+    AnyInterface,
+    AnyClass
 }
 import ceylon.interop.java {
     CeylonList,
@@ -42,7 +48,11 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     Message
 }
 import com.redhat.ceylon.model.typechecker.model {
+    ClassOrInterfaceModel=ClassOrInterface,
+    InterfaceModel=Interface,
+    ClassModel=Class,
     DeclarationModel=Declaration,
+    TypeDeclarationModel=TypeDeclaration,
     TypedDeclarationModel=TypedDeclaration,
     ReferenceModel=Reference,
     TypeModel=Type,
@@ -142,12 +152,23 @@ class QualifiedExpressionInfo(QualifiedExpression node)
     shared TypeModel? parameterType => tcNode.parameterType;
 }
 
+class DeclarationInfo<out NodeType>(NodeType node)
+        extends NodeInfo<Declaration>(node)
+        given NodeType satisfies Declaration {
+
+    value tcNode = assertedTcNode<Tree.Declaration>(node);
+    shared default DeclarationModel declarationModel => tcNode.declarationModel;
+}
+
 class TypedDeclarationInfo<out NodeType>(NodeType node)
-        extends NodeInfo<TypedDeclaration>(node)
+        extends DeclarationInfo<TypedDeclaration>(node)
         given NodeType satisfies TypedDeclaration {
 
-    value tcNode = assertedTcNode<Tree.TypedDeclaration>(node);
-    shared default TypedDeclarationModel declarationModel => tcNode.declarationModel;
+    shared actual default
+    TypedDeclarationModel declarationModel {
+        assert (is TypedDeclarationModel result = super.declarationModel);
+        return result;
+    }
 }
 
 class AnyValueInfo<out NodeType>(NodeType node)
@@ -285,6 +306,52 @@ class InvocationInfo<NodeType>(NodeType node)
         given NodeType satisfies Invocation {
 
     //value tcNode = assertedTcNode<Tree.InvocationExpression>(node);
+}
+
+class TypeDeclarationInfo<out NodeType>(NodeType node)
+        extends DeclarationInfo<TypeDeclaration>(node)
+        given NodeType satisfies TypeDeclaration {
+
+    shared actual default
+    TypeDeclarationModel declarationModel {
+        assert (is TypeDeclarationModel result = super.declarationModel);
+        return result;
+    }
+}
+
+class ClassOrInterfaceDefinitionInfo<NodeType>(NodeType node)
+        extends TypeDeclarationInfo<NodeType>(node)
+        given NodeType satisfies ClassOrInterface {
+
+
+    shared actual default
+    ClassOrInterfaceModel declarationModel {
+        assert (is ClassOrInterfaceModel result = super.declarationModel);
+        return result;
+    }
+}
+
+class AnyInterfaceInfo<NodeType>(NodeType node)
+        extends TypeDeclarationInfo<NodeType>(node)
+        given NodeType satisfies AnyInterface {
+
+
+    shared actual default
+    InterfaceModel declarationModel {
+        assert (is InterfaceModel result = super.declarationModel);
+        return result;
+    }
+}
+
+class AnyClassInfo<NodeType>(NodeType node)
+        extends TypeDeclarationInfo<NodeType>(node)
+        given NodeType satisfies AnyClass {
+
+    shared actual default
+    ClassModel declarationModel {
+        assert (is ClassModel result = super.declarationModel);
+        return result;
+    }
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node node)

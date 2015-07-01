@@ -962,6 +962,149 @@ class DartAsExpression(expression, type)
 }
 
 shared
+class DartClassDeclaration(
+        abstract, name, extendsClause,
+        implementsClause, members)
+        extends DartNamedCompilationUnitMember(name) {
+
+    shared Boolean abstract;
+    DartSimpleIdentifier name;
+    // DartTypeParameterList typeParameters
+    shared DartExtendsClause? extendsClause;
+    // DartWithClause withClause
+    shared DartImplementsClause? implementsClause;
+    shared [DartClassMember*] members;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        if (abstract) {
+            writer.write("abstract ");
+        }
+        writer.write("class ");
+        name.write(writer);
+        if (exists extendsClause) {
+            extendsClause.write(writer);
+            writer.write(" ");
+        }
+        if (exists implementsClause) {
+            implementsClause.write(writer);
+            writer.write(" ");
+        }
+        writer.startBlock();
+        for (member in members) {
+            member.write(writer);
+        }
+        writer.endBlock();
+    }
+}
+
+shared
+class DartExtendsClause(superClass)
+        extends DartNode() {
+
+    shared DartTypeName superClass;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write(" extends ");
+        superClass.write(writer);
+    }
+}
+
+shared
+class DartImplementsClause(interfaces)
+        extends DartNode() {
+
+    shared [DartTypeName+] interfaces;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write(" implements ");
+        variable value first = true;
+        for (iface in interfaces) {
+            if (first) {
+                first = false;
+            }
+            else {
+                writer.write(", ");
+            }
+            iface.write(writer);
+        }
+    }
+}
+
+shared abstract
+class DartClassMember()
+        of  //DartConstructorDeclaration |
+            DartFieldDeclaration |
+            DartMethodDeclaration
+        extends DartDeclaration() {}
+
+shared
+class DartFieldDeclaration(static, fieldList)
+        extends DartClassMember() {
+
+    shared Boolean static;
+    shared DartVariableDeclarationList fieldList;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        if (static) {
+            writer.write("static ");
+        }
+        fieldList.write(writer);
+        writer.write(";");
+    }
+}
+
+class DartMethodDeclaration(
+        external, modifierKeyword, returnType,
+        propertyKeyword, name, parameters, body)
+        extends DartClassMember() {
+
+    shared Boolean external;
+    shared String? modifierKeyword; // abstract | static
+    shared DartTypeName? returnType;
+    shared String? propertyKeyword; // get | set
+    // shared String operatorKeyword
+    shared DartSimpleIdentifier name;
+    shared DartFormalParameterList parameters;
+    shared DartFunctionBody? body;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        if (external) {
+            writer.write("external ");
+        }
+        if (exists modifierKeyword) {
+            writer.write(modifierKeyword);
+            writer.write(" ");
+        }
+        if (exists returnType) {
+            returnType.write(writer);
+            writer.write(" ");
+        }
+        if (exists propertyKeyword) {
+            writer.write(propertyKeyword);
+            writer.write(" ");
+        }
+        name.write(writer);
+        parameters.write(writer);
+        if (exists body) {
+            body.write(writer);
+        }
+        else {
+            writer.write(";");
+        }
+    }
+}
+
+shared
 alias DartPrimary =>
         DartIdentifier | DartLiteral | DartMethodInvocation |
         DartParenthesizedExpression  | DartPropertyAccess |

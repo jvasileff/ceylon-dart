@@ -5,7 +5,8 @@ import ceylon.ast.core {
     NamedArguments,
     ValueDefinition,
     Specifier,
-    CompilationUnit
+    CompilationUnit,
+    ValueDeclaration
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -58,6 +59,32 @@ class MiscTransformer(CompilationContext ctx)
         });
 
         return DartArgumentList(args);
+    }
+
+    shared actual
+    DartVariableDeclarationList transformValueDeclaration
+            (ValueDeclaration that) {
+
+        value info = ValueDeclarationInfo(that);
+
+        value packagePrefix =
+                if (info.declarationModel.container is PackageModel)
+                then "$package$"
+                else "";
+
+        return
+        DartVariableDeclarationList {
+            null;
+            ctx.dartTypes.dartTypeName(
+                    info.declarationModel,
+                    info.declarationModel.type);
+            [DartVariableDeclaration {
+                DartSimpleIdentifier {
+                    packagePrefix + ctx.dartTypes.getName(info.declarationModel);
+                };
+                initializer = null;
+            }];
+        };
     }
 
     shared actual

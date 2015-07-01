@@ -3,7 +3,8 @@ import ceylon.ast.core {
     ValueDefinition,
     FunctionShortcutDefinition,
     AnyFunction,
-    FunctionDeclaration
+    FunctionDeclaration,
+    InterfaceDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -78,6 +79,35 @@ class TopLevelTransformer
             functionExpression = expressionTransformer
                     .generateFunctionExpression(that);
         }, generateForwardingFunction(that)];
+    }
+
+    shared actual
+    [DartClassDeclaration] transformInterfaceDefinition
+            (InterfaceDefinition that) {
+
+        value info = AnyInterfaceInfo(that);
+
+        value name = DartSimpleIdentifier(ctx.dartTypes.getName(info.declarationModel));
+
+        value implementsTypes = sequence(CeylonList(
+                    info.declarationModel.satisfiedTypes).map((satisfiedType)
+            =>  ctx.dartTypes.dartTypeName(that, satisfiedType)
+        ));
+
+        value members = expand(that.body.transformChildren(
+                ctx.classMemberTransformer)).sequence();
+
+        return
+        [DartClassDeclaration {
+            abstract = true;
+            name = name;
+            extendsClause = null;
+            implementsClause =
+                if (exists implementsTypes)
+                then DartImplementsClause(implementsTypes)
+                else null;
+            members = members;
+        }];
     }
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter

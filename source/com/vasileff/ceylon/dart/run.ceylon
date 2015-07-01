@@ -305,10 +305,28 @@ void run() {
 
     value parameterReferences =
          """
-            void foo(arg1, arg2=5) {
-                String arg1;
-                Integer arg2;
+            shared Boolean identical(
+            "An object with well-defined identity."
+            Identifiable x,
+            "A second object with well-defined identity."
+            Identifiable y)
+                    => x===y;
+
+            shared void run() {
+                Array<String> x = nothing;
+                Array<String> y = nothing;
+                Boolean b = x === y;
+                Object o = x === y;
             }
          """;
-    compile { true; parameterReferences };
+
+    value scratch =
+         """
+            interface FirstInterface satisfies Identifiable {
+                shared formal String something;
+
+                shared formal String someFunction(String arg1, String arg2="dv");
+            }
+         """;
+    compile { true; scratch };
 }

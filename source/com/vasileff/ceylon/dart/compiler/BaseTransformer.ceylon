@@ -18,6 +18,10 @@ class BaseTransformer<Result>
         satisfies WideningTransformer<Result> {
 
     shared
+    ClassMemberTransformer classMemberTransformer
+        =>  ctx.classMemberTransformer;
+
+    shared
     ExpressionTransformer expressionTransformer
         =>  ctx.expressionTransformer;
 
