@@ -25,3 +25,30 @@ void genericComparable() {
          """;
     };
 }
+
+shared test
+void addNumbers() {
+    // TODO unnecessary casts
+    compileAndCompare {
+         """
+            shared void run() {
+                Integer i = 1;
+                Integer j = i + 1 + 1;
+                Object k = i + 1 + 1;
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            void $package$run() {
+                $dart$core.int i = 1;
+                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative(($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+                $dart$core.Object k = ($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1));
+            }
+
+            void run() => $package$run();
+         """;
+     };
+}

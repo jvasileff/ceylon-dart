@@ -802,72 +802,75 @@ class ExpressionTransformer
     DartExpression transformComparisonOperation(ComparisonOperation that)
         =>  let (method =
                     switch (that)
-                    case (is LargerOperation) "largerThan"
-                    case (is SmallerOperation) "smallerThan"
-                    case (is LargeAsOperation) "notSmallerThan"
-                    case (is SmallAsOperation) "notLargerThan")
-            generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.comparableDeclaration, method);
+                    case (is LargerOperation) ctx.ceylonTypes.largerThanFunction
+                    case (is SmallerOperation) ctx.ceylonTypes.smallerThanFunction
+                    case (is LargeAsOperation) ctx.ceylonTypes.notSmallerThanFunction
+                    case (is SmallAsOperation) ctx.ceylonTypes.notLargerThanFunction)
+            generateInvocationForBinaryOperation(that, method);
 
     shared actual
     DartExpression transformCompareOperation(CompareOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.comparableDeclaration, "compare");
+                that, ctx.ceylonTypes.compareFunction);
 
     shared actual
     DartExpression transformEqualOperation(EqualOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.objectDeclaration, "equals");
+                that, ctx.ceylonTypes.equalsFunction);
 
     shared actual
     DartExpression transformNotEqualOperation(NotEqualOperation that)
         =>  DartPrefixExpression("!", generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.objectDeclaration, "equals"));
+                that, ctx.ceylonTypes.equalsFunction));
 
     shared actual
     DartExpression transformProductOperation(ProductOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.numericDeclaration, "times");
+                that, ctx.ceylonTypes.timesFunction);
 
     shared actual
     DartExpression transformQuotientOperation(QuotientOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.numericDeclaration, "divided");
+                that, ctx.ceylonTypes.dividedFunction);
 
     shared actual
     DartExpression transformRemainderOperation(RemainderOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.integralDeclaration, "remainder");
+                that, ctx.ceylonTypes.remainderFunction);
 
     shared actual
     DartExpression transformSumOperation(SumOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.summableDeclaration, "plus");
+                that, ctx.ceylonTypes.plusFunction);
 
     shared actual
     DartExpression transformDifferenceOperation(DifferenceOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.invertibleDeclaration, "minus");
+                that, ctx.ceylonTypes.minusFunction);
 
     shared actual
     DartExpression transformExponentiationOperation
             (ExponentiationOperation that)
         =>  generateInvocationForBinaryOperation(
-                that, ctx.ceylonTypes.exponentiableDeclaration, "power");
+                that, ctx.ceylonTypes.powerFunction);
 
     DartExpression generateInvocationForBinaryOperation(
             BinaryOperation that,
-            TypeDeclarationModel definingInterface,
-            String methodName) {
+            FunctionModel functionModel) {
+
+        assert (is ClassOrInterfaceModel definingInterface = functionModel.container);
 
         value leftOperand = that.leftOperand;
         value rightOperand = that.rightOperand;
-        value expressionType = ExpressionInfo(that).typeModel;
 
         // find a suitable type that is denotable in Dart
-        value leftOperandType = ExpressionInfo(leftOperand).typeModel;
-        value denotableType = leftOperandType.getSupertype(definingInterface);
+        // this will be something like
+        // "ceylon.language::Summable<ceylon.language::Integer>"
+        // better would be "Integer" with forced boxing
+        value denotableType = ExpressionInfo(leftOperand).typeModel
+                .getSupertype(definingInterface);
 
+        // TODO force boxing; the code below boxes (un-erases) almost by accident
         value leftOperandBoxed = ctx.withLhsType(denotableType, () =>
                 leftOperand.transform(this));
 
@@ -875,12 +878,18 @@ class ExpressionTransformer
         value rightOperandBoxed = ctx.withLhsType(ctx.ceylonTypes.anythingType, () =>
                 rightOperand.transform(this));
 
+        // The return value of the function. This ends up being something like
+        // "ceylon.language::Summable<Other>", even though the Dart return type is
+        // usually more precise, such as "Integer", causing us to produce unnecessary
+        // "as" casts.
+        value rhsType = functionModel.reference.type;
+
         return withBoxing {
             scope = that;
-            rhsType = expressionType;
+            rhsType;
             DartMethodInvocation {
                 leftOperandBoxed;
-                DartSimpleIdentifier { methodName; };
+                DartSimpleIdentifier { ctx.dartTypes.getName(functionModel); };
                 DartArgumentList { [rightOperandBoxed]; };
             };
         };

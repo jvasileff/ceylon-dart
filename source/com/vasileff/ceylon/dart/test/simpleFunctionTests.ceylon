@@ -164,3 +164,46 @@ void functionDefaultedParameters() {
          """;
      };
 }
+
+shared test
+void functionDefaultedParameters2() {
+    // TODO unnecessary casts
+    compileAndCompare {
+         """
+            shared Integer withDefaults(Integer x = 1, Integer y = x + 1 + 1) {
+                return y;
+            }
+
+            shared void run() {
+                withDefaults();
+                withDefaults(1);
+                withDefaults(2, 3);
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.int $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) {
+                if ($dart$core.identical(x, $ceylon$language.dart$default)) {
+                    x = 1;
+                }
+                if ($dart$core.identical(y, $ceylon$language.dart$default)) {
+                    y = $ceylon$language.dart$ceylonIntegerToNative(($ceylon$language.dart$nativeToCeylonInteger(x as $dart$core.int).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+                }
+                return y as $dart$core.int;
+            }
+
+            $dart$core.int withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
+
+            void $package$run() {
+                $package$withDefaults();
+                $package$withDefaults(1);
+                $package$withDefaults(2, 3);
+            }
+
+            void run() => $package$run();
+         """;
+     };
+}
