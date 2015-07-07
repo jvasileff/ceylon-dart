@@ -388,3 +388,38 @@ void dontEraseArgumentsToValue() {
          """;
      };
 }
+
+shared test
+void methodRefinementArgumentErasure() {
+    // TODO casting of invocation results isn't correct when the
+    //      result is an expression for the receiver of a subsequent
+    //      invocation
+    compileAndCompare {
+         """
+            shared void run() {
+                Integer i = 1;
+                Integer j = i.plus(1);
+                Integer k = i.plus(2).plus(3);
+                Object l = i.plus(4);
+                Object m = i.plus(5).plus(6);
+                Integer n = 1.plus(1).plus(1);
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            void $package$run() {
+                $dart$core.int i = 1;
+                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+                $dart$core.int k = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(2)).plus($ceylon$language.dart$nativeToCeylonInteger(3)) as $ceylon$language.Integer);
+                $dart$core.Object l = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(4));
+                $dart$core.Object m = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(5)).plus($ceylon$language.dart$nativeToCeylonInteger(6));
+                $dart$core.int n = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(1).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+            }
+
+            void run() => $package$run();
+         """;
+     };
+}
