@@ -123,6 +123,10 @@ class CeylonTypes(Unit unit) {
     // common declarations
     /////////////////////////////////////////////
 
+    shared
+    Declaration getLanguageModuleDeclaration(String name)
+        =>  unit.getLanguageModuleDeclaration(name);
+
     // not sure about the safety implications due
     // to duplicate instances re:
     // https://github.com/ceylon/ceylon-compiler/issues/1815

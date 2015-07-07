@@ -32,7 +32,11 @@ import ceylon.ast.core {
     DifferenceOperation,
     CompareOperation,
     EqualOperation,
-    NotEqualOperation
+    NotEqualOperation,
+    Arguments,
+    PositionalArguments,
+    NamedArguments,
+    ArgumentList
 }
 import ceylon.collection {
     LinkedList
@@ -52,7 +56,8 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
-    ParameterModel=Parameter
+    ParameterModel=Parameter,
+    ParameterListModel=ParameterList
 }
 
 class ExpressionTransformer
@@ -210,6 +215,8 @@ class ExpressionTransformer
         // The receiverType may be generic or a union or something.
         // Try to determine the exact receiver type needed, that
         // should be denotable in Dart
+        // TODO test this, with a receiver expression that is a function invocation or
+        //      value that returns a generic, union, or intersection, I suppose
         TypeModel exactReceiverType;
         if (is TypeDeclarationModel targetContainer) {
             exactReceiverType = receiverType.getSupertype(targetContainer);
@@ -247,6 +254,11 @@ class ExpressionTransformer
                 withLhsTypeNoErasure {
                     that;
                     exactReceiverType;
+                    // FIXME problem is: we don't actually know what the receiverType
+                    //       will be; we're being optimistic that it is the same as the
+                    //       expression type, but it may just be `core.Object`. Casting
+                    //       needs to be handled by the transformer; the
+                    //       `withLhsTypeNoErasure` hack fails to acknowledge this.
                     receiverType;
                     () => that.receiverExpression.transform(this);
                 };
@@ -333,27 +345,18 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-        // Note: `ExpressionInfo(that).typeModel` is the correct result
-        //       type of the invocation, but it doesn't let us account
-        //       for generics and covariant refinements, which affect
-        //       erasure.
 
-        // FIXME covariant refinement erasure calc.
-
-        value primary = that.invoked;
-
-        // find the declaration for `invoked`
-        DeclarationModel primaryDeclaration;
-        switch (primary)
+        DeclarationModel invokedDeclaration;
+        switch (invoked = that.invoked)
         case (is BaseExpression) {
-            primaryDeclaration = BaseExpressionInfo(primary).declaration;
+            invokedDeclaration = BaseExpressionInfo(invoked).declaration;
         }
         case (is QualifiedExpression) {
-            primaryDeclaration = QualifiedExpressionInfo(primary).declaration;
+            invokedDeclaration = QualifiedExpressionInfo(invoked).declaration;
         }
         else {
             throw CompilerBug(that,
-                "Primary type not yet supported: '``className(primary)``'");
+                "Primary type not yet supported: '``className(invoked)``'");
         }
 
         "Erasure is based on the return type of the function,
@@ -370,34 +373,38 @@ class ExpressionTransformer
         "Are we invoking a real function, or a value of type Callable?"
         Boolean isCallable;
 
-        // calculate rhsType from the declaration
-        switch (primaryDeclaration)
+        ParameterListModel? parameterList;
+
+        // use types from the original, `formal` declaration
+        switch (refinedDeclaration = invokedDeclaration.refinedDeclaration)
         case (is FunctionModel) {
-            rhsType = primaryDeclaration.type;
             isCallable = false;
+            rhsType = refinedDeclaration.type;
+            parameterList = refinedDeclaration.firstParameterList;
         }
         case (is ValueModel) {
             // callables (being generic) always return `core.Object`
-            rhsType = ctx.ceylonTypes.anythingType;
             isCallable = true;
+            rhsType = ctx.ceylonTypes.anythingType;
+            parameterList = null;
         }
         else {
             throw CompilerBug(that,
                 "The invoked expression's declaration type is not supported: \
-                 '``className(primaryDeclaration)``'");
+                 '``className(invokedDeclaration)``'");
         }
 
-        DartExpression func;
+        DartExpression functionExpression;
         if (!isCallable) {
             // use `noType` to disable boxing. We want to invoke the function
             // directly, not a newly created Callable!
-            func = ctx.withLhsType(noType, ()
+            functionExpression = ctx.withLhsType(noType, ()
                 =>  that.invoked.transform(this));
         }
         else {
             // Boxing/erasure shouldn't matter here, right? With any luck, the
             // expression will evaluate to a `Callable`
-            func =
+            functionExpression =
                 DartPropertyAccess {
                     ctx.withLhsType(noType, () =>
                         that.invoked.transform(this));
@@ -408,8 +415,9 @@ class ExpressionTransformer
         return withBoxing(that,
             rhsType,
             DartFunctionExpressionInvocation {
-                func;
-                miscTransformer.transformArguments(that.arguments);
+                functionExpression;
+                generateArgumentListFromArguments(
+                    that.arguments, parameterList);
             }
         );
     }
@@ -1021,6 +1029,55 @@ class ExpressionTransformer
             positional = true;
             parameters = dartParameters;
         };
+    }
+
+    shared
+    DartArgumentList generateArgumentListFromArguments(
+            Arguments that,
+            ParameterListModel? forParameterList) {
+
+        switch (that)
+        case (is PositionalArguments) {
+            return generateArgumentListFromArgumentList(
+                    that.argumentList, forParameterList);
+        }
+        case (is NamedArguments) {
+            throw CompilerBug(that, "NamedArguments not supported");
+        }
+    }
+
+    shared
+    DartArgumentList generateArgumentListFromArgumentList(
+            ArgumentList that,
+            "The `ParameterList` from the `refinedDeclaration` which may
+             have generic or more general types than the `Parameter`s of
+             the `actual` declaration being invoked, or `null` if a
+             `Callable` value is being invoked."
+            ParameterListModel? forParameterList) {
+
+        "spread arguments not supported"
+        assert(that.sequenceArgument is Null);
+
+        value parameters =
+                if (exists forParameterList)
+                then CeylonList(forParameterList.parameters)
+                else [];
+
+        // use the passed in `formal` parameters, not the parameter models
+        // available from the argument list.
+        value args = that.listedArguments.indexed.collect((x) {
+            value i -> expression = x;
+            value parameterModel = parameters[i];
+
+            // If parameterModel is null, we must be invoking a value, so use
+            // type `Anything` to disable erasure. We don't need to cast, since
+            // `Callable`'s take `core.Object`s.
+            return ctx.withLhsType(
+                        parameterModel?.type
+                        else ctx.ceylonTypes.anythingType, ()
+                =>  expression.transform(expressionTransformer));
+        });
+        return DartArgumentList(args);
     }
 }
 
