@@ -57,7 +57,7 @@ class BaseTransformer<Result>
                 message?.string else "<null>");
 
     shared
-    DartExpression withCasting(
+    DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,
             TypeModel rhsType,
@@ -120,7 +120,7 @@ class BaseTransformer<Result>
         // And then, we'll cast to `lhsType`.
         =>  ctx.withLhsType(ctx.ceylonTypes.anythingType, ()
             =>  let (dartExpression = fun())
-                withCasting {
+                withCastingLhsRhs {
                     scope = scope;
                     lhsType = lhsType;
                     rhsType = rhsType;
@@ -152,7 +152,7 @@ class BaseTransformer<Result>
                         .boxingConversionFor(lhsType, rhsType))
             if (exists conversion)
             then withBoxingConversion(scope, rhsType, dartExpression, conversion)
-            else withCasting(scope, lhsType, rhsType, dartExpression);
+            else withCastingLhsRhs(scope, lhsType, rhsType, dartExpression);
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,
@@ -191,7 +191,7 @@ class BaseTransformer<Result>
         value castedExpression  =
             switch (requiredType)
             case (is DartTypeModel) expression
-            case (is TypeModel) withCasting(scope,
+            case (is TypeModel) withCastingLhsRhs(scope,
                     requiredType, expressionType, expression, true);
 
         return DartFunctionExpressionInvocation {

@@ -184,7 +184,7 @@ class ExpressionTransformer
                         // Special case where the Dart static type is
                         // equiv to `Anything` despite the Ceylon static
                         // type possibly being denotable in Dart
-                        withCasting {
+                        withCastingLhsRhs {
                             scope = that;
                             lhsType = rhsType;
                             rhsType = ctx.ceylonTypes.anythingType;
