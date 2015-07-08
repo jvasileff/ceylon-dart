@@ -57,6 +57,16 @@ class BaseTransformer<Result>
                 message?.string else "<null>");
 
     shared
+    DartExpression withCasting(
+            Node|ElementModel|ScopeModel scope,
+            TypeModel rhsType,
+            DartExpression dartExpression) {
+
+        assert (exists lhsType = ctx.lhsTypeTop);
+        return withCastingLhsRhs(scope,
+                lhsType, rhsType, dartExpression);
+    }
+
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,
