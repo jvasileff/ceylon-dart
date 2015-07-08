@@ -139,7 +139,6 @@ class BaseTransformer<Result>
                 lhsType, rhsType, dartExpression);
     }
 
-    shared
     DartExpression withBoxingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,

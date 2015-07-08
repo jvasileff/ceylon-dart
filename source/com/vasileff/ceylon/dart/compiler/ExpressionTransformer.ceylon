@@ -513,14 +513,16 @@ class ExpressionTransformer
                 value parameterName = ctx.dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
-                value unboxed = withBoxingLhsRhs {
+                value unboxed = ctx.withLhsType {
                     // "lhs" is the inner function's parameter
-                    // "rhs" the outer function's argument which
-                    // is never erased
-                    scope = that;
                     lhsType = parameterModel.type;
-                    rhsType = ctx.ceylonTypes.anythingType;
-                    parameterIdentifier;
+                    () => withBoxing {
+                        // "rhs" the outer function's argument which
+                        // is never erased
+                        scope = that;
+                        rhsType = ctx.ceylonTypes.anythingType;
+                        parameterIdentifier;
+                    };
                 };
 
                 if (parameterModel.defaulted) {
@@ -563,15 +565,17 @@ class ExpressionTransformer
                         // return boxed (no erasure) result of
                         // the invocation of the original function
                         [DartReturnStatement {
-                            withBoxingLhsRhs {
+                            ctx.withLhsType {
                                 // Anything prevents erasure
-                                scope = that;
-                                ctx.ceylonTypes.anythingType;
-                                innerReturnType;
-                                DartFunctionExpressionInvocation {
-                                    delegateFunction;
-                                    DartArgumentList {
-                                        innerArguments;
+                                lhsType = ctx.ceylonTypes.anythingType;
+                                () => withBoxing {
+                                    scope = that;
+                                    rhsType = innerReturnType;
+                                    DartFunctionExpressionInvocation {
+                                        delegateFunction;
+                                        DartArgumentList {
+                                            innerArguments;
+                                        };
                                     };
                                 };
                             };
