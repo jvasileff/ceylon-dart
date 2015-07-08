@@ -145,23 +145,32 @@ class BaseTransformer<Result>
             DartExpression dartExpression) {
 
         assert (exists lhsType = ctx.lhsTypeTop);
-        return withBoxingLhsRhs(scope,
-                lhsType, rhsType, dartExpression);
+        return withBoxingLhsRhs(
+                scope, lhsType, lhsType, rhsType, rhsType, dartExpression);
     }
 
     DartExpression withBoxingLhsRhs(
             Node|ElementModel|ScopeModel scope,
-            TypeModel|NoType lhsType,
-            TypeModel rhsType,
+            TypeModel|NoType lhsFormal,
+            TypeModel|NoType lhsActual,
+            TypeModel rhsFormal,
+            TypeModel rhsActual,
             DartExpression dartExpression)
         =>  let (conversion =
-                    switch (lhsType)
+                    switch (lhsFormal)
                     case (is NoType) null
                     case (is TypeModel) ctx.ceylonTypes
-                        .boxingConversionFor(lhsType, rhsType))
-            if (exists conversion)
-            then withBoxingConversion(scope, rhsType, dartExpression, conversion)
-            else withCastingLhsRhs(scope, lhsType, rhsType, dartExpression);
+                        .boxingConversionFor(lhsFormal, rhsFormal))
+            if (exists conversion) then
+                // we'll assume that lhsActual is a supertype of the result
+                // of the boxing conversion
+                withBoxingConversion(scope, rhsActual, dartExpression, conversion)
+            else
+                withCastingLhsRhs(
+                        scope, lhsActual, rhsActual, dartExpression,
+                        // disable erasure to native types if the rhs static
+                        // type is erased to Object
+                        ctx.dartTypes.erasedToObject(rhsFormal));
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,

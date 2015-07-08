@@ -334,7 +334,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
      erasure and boxing notions may be needed."
     shared
     Boolean erasedToObject(TypeModel type)
-        =>  type.typeParameter || (
+        =>  type.involvesTypeParameters() || (
                 let (definiteType = ceylonTypes.definiteType(type))
                 (!ceylonTypes.isCeylonBoolean(definiteType) &&
                     (definiteType.union || definiteType.intersection)));
