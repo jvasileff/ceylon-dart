@@ -64,6 +64,17 @@ class ExpressionTransformer
         (CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {
 
+    """
+       A base expression can be:
+
+       - a reference to a toplevel function, value, or class
+       - a reference to a function, value, constructor, or class in the current scope
+       - a reference to a function, value, constructor, or class in the current block
+
+       If a base expression is a reference to an attribute, method, member class,
+       or member class constructor of a class, the receiving instance is the current
+       instance of that class. Otherwise, there is no receiving instance.
+    """
     shared actual
     DartExpression transformBaseExpression(BaseExpression that) {
 
@@ -76,12 +87,9 @@ class ExpressionTransformer
 
         value info = BaseExpressionInfo(that);
         value targetDeclaration = info.declaration;
-        value rhsType = info.typeModel.type;
-
-        // If dynamic, the rhsType will actually be `Anything`/`core.Object`
-        // Currently, this is for defaulted parameters which are not assigned
-        // precise types
-        Boolean dartDynamic;
+        value expressionType = info.typeModel;
+        TypeModel rhsFormal;
+        TypeModel rhsActual;
 
         assert (exists lhsType = ctx.lhsTypeTop);
 
@@ -98,9 +106,19 @@ class ExpressionTransformer
             DartExpression unboxed;
             switch (targetDeclaration)
             case (is ValueModel) {
-                // Does this baseExpression target a defaulted parameter?
-                dartDynamic = targetDeclaration.initializerParameter?.defaulted
-                                    else false;
+                // The actual type is usually the targetDeclaration.type. But,
+                // for defaulted parameters, we'll lie and use `Anything`, since
+                // we force the Dart type to `core.Object` for defaulted parameters.
+                rhsActual =
+                        if (targetDeclaration.initializerParameter?.defaulted else false)
+                        then ctx.ceylonTypes.anythingType
+                        else targetDeclaration.type;
+
+                rhsFormal =
+                        if (is ValueModel refined =
+                                targetDeclaration.refinedDeclaration)
+                        then refined.type
+                        else targetDeclaration.type;
 
                 switch (container = containerOfDeclaration(targetDeclaration))
                 case (is PackageModel) {
@@ -148,7 +166,10 @@ class ExpressionTransformer
                 }
             }
             case (is FunctionModel) {
-                dartDynamic = false;
+                // will be Callable<...>, which is a noop for boxing
+                rhsFormal = expressionType;
+                rhsActual = expressionType;
+
                 value qualified = ctx.dartTypes.qualifyIdentifier(
                         ctx.unit, targetDeclaration,
                         ctx.dartTypes.getName(targetDeclaration));
@@ -156,13 +177,11 @@ class ExpressionTransformer
                 switch (ctx.lhsTypeTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
-                    // withBoxing below will be a noop
                     unboxed = qualified;
                 }
                 else {
-                    // Anything, Callable, etc.
-                    // take a reference to the function
-                    // withBoxing below will be a noop
+                    // probably `Anything` or `Callable`; doesn't really
+                    // matter. Take a reference to the function:
                     unboxed = generateNewCallable {
                         that = that;
                         functionModel = targetDeclaration;
@@ -176,24 +195,7 @@ class ExpressionTransformer
                          ``className(targetDeclaration)``");
             }
 
-            return withBoxing {
-                scope = that;
-                rhsType = rhsType;
-                dartExpression =
-                    if (dartDynamic) then
-                        // Special case where the Dart static type is
-                        // equiv to `Anything` despite the Ceylon static
-                        // type possibly being denotable in Dart
-                        ctx.withLhsType {
-                            lhsType = rhsType;
-                            () => withCasting {
-                                scope = that;
-                                rhsType = ctx.ceylonTypes.anythingType;
-                                dartExpression = unboxed;
-                            };
-                        }
-                    else unboxed;
-            };
+            return withBoxing(that, rhsFormal, rhsActual, unboxed);
         }
     }
 
@@ -324,12 +326,13 @@ class ExpressionTransformer
                  ``className(targetDeclaration)``");
         }
 
-        return withBoxing(that, rhsType, unboxed);
+        return withBoxing(that, rhsType, rhsType, unboxed); // FIXME WIP
     }
 
     shared actual
     DartExpression transformFloatLiteral(FloatLiteral that)
         =>  withBoxing(that,
+                ctx.ceylonTypes.floatType,
                 ctx.ceylonTypes.floatType,
                 DartDoubleLiteral(that.float));
 
@@ -337,11 +340,13 @@ class ExpressionTransformer
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(that,
                 ctx.ceylonTypes.integerType,
+                ctx.ceylonTypes.integerType,
                 DartIntegerLiteral(that.integer));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
         =>  withBoxing(that,
+                ctx.ceylonTypes.stringType,
                 ctx.ceylonTypes.stringType,
                 DartSimpleStringLiteral(that.text));
 
@@ -416,6 +421,7 @@ class ExpressionTransformer
 
         return withBoxing(that,
             rhsType,
+            rhsType, // FIXME WIP
             DartFunctionExpressionInvocation {
                 functionExpression;
                 generateArgumentListFromArguments(
@@ -522,7 +528,8 @@ class ExpressionTransformer
                         // "rhs" the outer function's argument which
                         // is never erased
                         scope = that;
-                        rhsType = ctx.ceylonTypes.anythingType;
+                        rhsFormal = ctx.ceylonTypes.anythingType;
+                        rhsActual = ctx.ceylonTypes.anythingType; // FIXME WIP
                         parameterIdentifier;
                     };
                 };
@@ -572,7 +579,8 @@ class ExpressionTransformer
                                 lhsType = ctx.ceylonTypes.anythingType;
                                 () => withBoxing {
                                     scope = that;
-                                    rhsType = innerReturnType;
+                                    rhsFormal = innerReturnType;
+                                    rhsActual = innerReturnType; // FIXME WIP
                                     DartFunctionExpressionInvocation {
                                         delegateFunction;
                                         DartArgumentList {
@@ -901,6 +909,7 @@ class ExpressionTransformer
         return withBoxing {
             scope = that;
             rhsType;
+            rhsType; // FIXME WIP
             DartMethodInvocation {
                 leftOperandBoxed;
                 DartSimpleIdentifier { ctx.dartTypes.getName(functionModel); };
@@ -914,7 +923,8 @@ class ExpressionTransformer
             (IdenticalOperation that)
         =>  withBoxing {
                 scope = that;
-                rhsType = ctx.ceylonTypes.booleanType;
+                ctx.ceylonTypes.booleanType;
+                ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
                     // both operands should be "Identifiable"
                     ctx.ceylonTypes.identifiableType; () =>

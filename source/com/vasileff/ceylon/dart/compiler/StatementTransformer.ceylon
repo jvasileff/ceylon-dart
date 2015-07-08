@@ -255,6 +255,7 @@ class StatementTransformer
                             ctx.withLhsType(variableType, ()
                                 =>  withBoxing(that,
                                             expressionType,
+                                            expressionType, // FIXME WIP
                                             tmpVariable));
                         };
                     }];
@@ -291,6 +292,7 @@ class StatementTransformer
                                 ctx.withLhsType(variableType, ()
                                     =>  withBoxing(that,
                                             originalDeclaration.type,
+                                            originalDeclaration.type, // FIXME WIP
                                             originalDartVariable));
                             }];
                         };

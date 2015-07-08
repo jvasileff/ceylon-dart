@@ -141,12 +141,13 @@ class BaseTransformer<Result>
     shared
     DartExpression withBoxing(
             Node|ElementModel|ScopeModel scope,
-            TypeModel rhsType,
+            TypeModel rhsFormal,
+            TypeModel rhsActual,
             DartExpression dartExpression) {
 
         assert (exists lhsType = ctx.lhsTypeTop);
         return withBoxingLhsRhs(
-                scope, lhsType, lhsType, rhsType, rhsType, dartExpression);
+                scope, lhsType, lhsType, rhsFormal, rhsActual, dartExpression);
     }
 
     DartExpression withBoxingLhsRhs(
@@ -185,42 +186,44 @@ class BaseTransformer<Result>
             "The conversion to apply to the result of [[expression]]."
             BoxingConversion conversion) {
 
-        value [boxingFunction, lhsActual] =
+        value [boxingFunction, lhsActual, unbox] =
             switch (conversion)
             case (ceylonBooleanToNative)
                 [DartSimpleIdentifier("dart$ceylonBooleanToNative"),
-                 ctx.ceylonTypes.booleanType]
+                 ctx.ceylonTypes.booleanType, true]
             case (ceylonFloatToNative)
                 [DartSimpleIdentifier("dart$ceylonFloatToNative"),
-                 ctx.ceylonTypes.floatType]
+                 ctx.ceylonTypes.floatType, true]
             case (ceylonIntegerToNative)
                 [DartSimpleIdentifier("dart$ceylonIntegerToNative"),
-                 ctx.ceylonTypes.integerType]
+                 ctx.ceylonTypes.integerType, true]
             case (ceylonStringToNative)
                 [DartSimpleIdentifier("dart$ceylonStringToNative"),
-                 ctx.ceylonTypes.stringType]
+                 ctx.ceylonTypes.stringType, true]
             case (nativeToCeylonBoolean)
                 [DartSimpleIdentifier("dart$nativeToCeylonBoolean"),
-                 ctx.dartTypes.dartBoolModel]
+                 ctx.ceylonTypes.booleanType, false]
             case (nativeToCeylonFloat)
                 [DartSimpleIdentifier("dart$nativeToCeylonFloat"),
-                 ctx.dartTypes.dartDoubleModel]
+                 ctx.ceylonTypes.floatType, false]
             case (nativeToCeylonInteger)
                 [DartSimpleIdentifier("dart$nativeToCeylonInteger"),
-                 ctx.dartTypes.dartIntModel]
+                 ctx.ceylonTypes.integerType, false]
             case (nativeToCeylonString)
                 [DartSimpleIdentifier("dart$nativeToCeylonString"),
-                 ctx.dartTypes.dartStringModel];
+                 ctx.ceylonTypes.stringType, false];
 
         value castedExpression =
-                switch (lhsActual)
-                // for native to ceylon, we'll never need an 'as' cast
-                case (is DartTypeModel) expression
-                // for ceylon to native, we may need to cast the arg
-                case (is TypeModel) withCastingLhsRhs(
-                        // disable erasure; we *know* that the result
-                        // of the expression is not erased
-                        scope, lhsActual, rhsActual, expression, true);
+                if (!unbox) then
+                    // for native to ceylon, an `as` cast is required in the
+                    // unusual case that `rhsActual` is `Anything`, which happens
+                    // for defaulted parameters
+                    withCastingLhsRhs(scope, lhsActual, rhsActual, expression, false)
+                else
+                    // for ceylon to native, we may need to narrow the arg
+                    // disable erasure; we *know* that the result of the expression is
+                    // not erased, regardless of `rhsActual`
+                    withCastingLhsRhs(scope, lhsActual, rhsActual, expression, true);
 
         return
         DartFunctionExpressionInvocation {
