@@ -165,11 +165,18 @@ class BaseTransformer<Result>
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,
-            TypeModel expressionType,
+            "The `actual` type of the expression. Whether the expression produces
+             erased or boxed values will be inferred from [[conversion]], so the
+             [[rhsActual]] type does not necessarily indicate the Dart static type
+             of the [[expression]]."
+            TypeModel rhsActual,
+            "The expression that produces values that can be used as inputs to
+             [[conversion]]."
             DartExpression expression,
+            "The conversion to apply to the result of [[expression]]."
             BoxingConversion conversion) {
 
-        value [boxingFunction, requiredType] =
+        value [boxingFunction, lhsActual] =
             switch (conversion)
             case (ceylonBooleanToNative)
                 [DartSimpleIdentifier("dart$ceylonBooleanToNative"),
@@ -196,20 +203,26 @@ class BaseTransformer<Result>
                 [DartSimpleIdentifier("dart$nativeToCeylonString"),
                  ctx.dartTypes.dartStringModel];
 
-        // For native to ceylon, we'll never need an 'as' cast
-        value castedExpression  =
-            switch (requiredType)
-            case (is DartTypeModel) expression
-            case (is TypeModel) withCastingLhsRhs(scope,
-                    requiredType, expressionType, expression, true);
+        value castedExpression =
+                switch (lhsActual)
+                // for native to ceylon, we'll never need an 'as' cast
+                case (is DartTypeModel) expression
+                // for ceylon to native, we may need to cast the arg
+                case (is TypeModel) withCastingLhsRhs(
+                        // disable erasure; we *know* that the result
+                        // of the expression is not erased
+                        scope, lhsActual, rhsActual, expression, true);
 
-        return DartFunctionExpressionInvocation {
+        return
+        DartFunctionExpressionInvocation {
             DartPrefixedIdentifier {
                 // TODO qualify programatically so we can compile lang module
                 DartSimpleIdentifier("$ceylon$language");
                 boxingFunction;
             };
-            DartArgumentList([castedExpression]);
+            DartArgumentList {
+                [castedExpression];
+            };
         };
     }
 }

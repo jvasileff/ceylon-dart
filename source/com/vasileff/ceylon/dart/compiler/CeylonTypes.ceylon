@@ -353,21 +353,21 @@ class CeylonTypes(Unit unit) {
     see(`function DartTypes.dartTypeModel`)
     shared
     BoxingConversion? boxingConversionFor(
+            "[[lhs]] should be the *formal* lhs type, to avoid erasure to
+             native types for generics and covariant returns."
             variable Type lhs,
+            "[[rhs]] should be the *formal* rhs type, to avoid erasure to
+             native types for generics and covariant returns."
             variable Type rhs) {
 
-        // never erase for type parameters
-        if (lhs.typeParameter) {
+        // never erase generic types
+        if (lhs.involvesTypeParameters()) {
             lhs = anythingType;
         }
 
-        if (rhs.typeParameter) {
+        if (rhs.involvesTypeParameters()) {
             rhs = anythingType;
         }
-
-        // NOTE: we are assuming lhs and rhs are not
-        //       refinements of formal method or attribute
-        //       types
 
         // assigments to or from null don't need conversion
         // (they will be the null value which is always erased)
