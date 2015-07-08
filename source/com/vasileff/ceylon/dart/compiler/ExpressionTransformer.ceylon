@@ -213,8 +213,10 @@ class ExpressionTransformer
         value receiverInfo = ExpressionInfo(that.receiverExpression);
         value receiverType = receiverInfo.typeModel;
         value targetDeclaration = info.target.declaration;
-        value rhsType = info.typeModel.type;
+        value expressionType = info.typeModel;
         value targetContainer = targetDeclaration.container;
+        TypeModel rhsFormal;
+        TypeModel rhsActual;
 
         // The receiverType may be generic or a union or something.
         // Try to determine the exact receiver type needed, that
@@ -234,6 +236,19 @@ class ExpressionTransformer
 
         switch (targetDeclaration)
         case (is ValueModel) {
+            // see BaseExpression notes about using `Anything` for defaulted params
+            // TODO needs a test
+            rhsActual =
+                    if (targetDeclaration.initializerParameter?.defaulted else false)
+                    then ctx.ceylonTypes.anythingType
+                    else targetDeclaration.type;
+
+            rhsFormal =
+                    if (is ValueModel refined =
+                            targetDeclaration.refinedDeclaration)
+                    then refined.type
+                    else targetDeclaration.type;
+
             // Should be easy; don't worry about getters/setters
             // being methods since that doesn't happen in locations
             // that can be qualified.
@@ -252,6 +267,10 @@ class ExpressionTransformer
             };
         }
         case (is FunctionModel) {
+            // will be Callable<...>, which is a noop for boxing
+            rhsFormal = expressionType;
+            rhsActual = expressionType;
+
             value dartQualified = DartPropertyAccess {
                 // Use `Anything` to disable erasure since we need
                 // a non-native receiver.
@@ -326,7 +345,7 @@ class ExpressionTransformer
                  ``className(targetDeclaration)``");
         }
 
-        return withBoxing(that, rhsType, rhsType, unboxed); // FIXME WIP
+        return withBoxing(that, rhsFormal, rhsActual, unboxed);
     }
 
     shared actual
