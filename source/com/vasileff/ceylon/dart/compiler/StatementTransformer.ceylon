@@ -15,7 +15,8 @@ import ceylon.collection {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ValueModel=Value
+    ValueModel=Value,
+    FunctionOrValueModel=FunctionOrValue
 }
 
 import org.antlr.runtime {
@@ -177,6 +178,7 @@ class StatementTransformer
         // TODO check not null for Objects
         // TODO check null for Null
         // TODO consider null issues for negated checks
+        // TODO consider erased types, like `Integer? i = 1; assert (is Integer i);`
 
         //value typeInfo = TypeInfo(that.variable.type);
         value info = IsConditionInfo(that);
@@ -219,9 +221,10 @@ class StatementTransformer
                 DartVariableDeclarationStatement {
                     DartVariableDeclarationList {
                         keyword = null;
-                        ctx.dartTypes.dartTypeName(
-                                variableDeclaration,
-                                variableType);
+                        ctx.dartTypes.dartTypeNameForDeclaration {
+                            that;
+                            variableDeclaration;
+                        };
                         [DartVariableDeclaration {
                             variableIdentifier;
                         }];
@@ -238,16 +241,15 @@ class StatementTransformer
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.dartTypes.dartTypeName(
-                                    variableDeclaration,
-                                    expressionType);
+                            ctx.dartTypes.dartTypeName(that, expressionType, false);
                             [DartVariableDeclaration {
                                 tmpVariable;
-                                ctx.withLhsType(
-                                    expressionType,
-                                    expressionType, // FIXME WIP
-                                    () => expression.transform(
-                                            expressionTransformer));
+                                ctx.withLhsType {
+                                    // possibly erased to a native type!
+                                    expressionType;
+                                    expressionType;
+                                    () => expression.transform(expressionTransformer);
+                                };
                             }];
                         };
                     },
@@ -260,9 +262,8 @@ class StatementTransformer
                         DartAssignmentExpression {
                             variableIdentifier;
                             DartAssignmentOperator.equal;
-                            ctx.withLhsType {
-                                variableType;
-                                variableType; // FIXME WIP
+                            withLhs {
+                                variableDeclaration;
                                 () => withBoxing {
                                     that;
                                     expressionType;
@@ -278,19 +279,15 @@ class StatementTransformer
         else {
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
-            assert(exists originalDeclaration = variableDeclaration.originalDeclaration);
-            // FIXME may be a defaulted parameter?
-            value originalActualType = originalDeclaration.type;
+            assert(is FunctionOrValueModel originalDeclaration =
+                    variableDeclaration.originalDeclaration);
+            value originalActualType = ctx.dartTypes.actualType(originalDeclaration);
             // FIXME possibly false assumption that refined will be null for
-            // non-initial declarations (does refinedDeclaration propagate through?)
-            value originalFormalType =
-                    if (is ValueModel refined =
-                            originalDeclaration.refinedDeclaration)
-                    then refined.type
-                    else originalDeclaration.type;
+            //       non-initial declarations (is refinedDeclaration propagated?)
+            value originalFormalType = ctx.dartTypes.formalType(originalDeclaration);
 
-            value originalDartVariable =
-                    DartSimpleIdentifier(ctx.dartTypes.getName(originalDeclaration));
+            value originalDartVariable = DartSimpleIdentifier(
+                    ctx.dartTypes.getName(originalDeclaration));
 
             statements.add(generateIsAssertion(
                     originalDartVariable, that.negated, errorMessage));
@@ -306,18 +303,19 @@ class StatementTransformer
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.dartTypes.dartTypeName(
-                                    variableDeclaration,
-                                    variableDeclaration.type);
+                            ctx.dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                variableDeclaration;
+                            };
                             [DartVariableDeclaration {
                                 replacementVar;
-                                ctx.withLhsType(
-                                    variableType,
-                                    variableType, // FIXME WIP
+                                withLhs {
+                                    variableDeclaration;
                                     () => withBoxing(that,
                                             originalFormalType,
                                             originalActualType,
-                                            originalDartVariable));
+                                            originalDartVariable);
+                                };
                             }];
                         };
                     };
