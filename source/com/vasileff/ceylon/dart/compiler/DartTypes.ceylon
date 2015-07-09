@@ -135,8 +135,6 @@ class DartTypes(CeylonTypes ceylonTypes) {
                     .reduce(plus)
                     ?.plus("$") else "");
 
-    // FIXME DartTypeName values should be removed; they assume we aren't
-    //       compiling the language module...
     shared
     DartTypeName dartObject
         =   DartTypeName {
@@ -216,12 +214,11 @@ class DartTypes(CeylonTypes ceylonTypes) {
         =   DartTypeModel("$dart$core", "String");
 
     see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
-    shared deprecated
+    shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
             TypeModel|DartTypeModel type,
-            // FIXME remove default; callers should use dartTypeNameForDeclaration
-            Boolean disableErasure = false) {
+            Boolean disableErasure) {
 
         // TODO add tests for non-boxed types
 

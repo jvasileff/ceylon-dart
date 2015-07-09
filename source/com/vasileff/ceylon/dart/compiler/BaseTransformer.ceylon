@@ -124,7 +124,7 @@ class BaseTransformer<Result>
         return
         DartAsExpression {
             dartExpression;
-            ctx.dartTypes.dartTypeName(scope, castType);
+            ctx.dartTypes.dartTypeName(scope, castType, false);
         };
     }
 

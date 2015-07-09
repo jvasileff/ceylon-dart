@@ -502,13 +502,9 @@ class ExpressionTransformer
                 value dartSimpleParameter =
                         DartSimpleFormalParameter {
                             false; false;
-                            ctx.dartTypes.dartTypeName {
-                                // use Anything (core.Object) for the type of all
-                                // parameters since `Callable` is generic
-                                scope = that;
-                                type = ctx.ceylonTypes.anythingType;
-                                disableErasure = false; // doesn't matter
-                            };
+                            // core.Object for the type of all parameters since
+                            // `Callable` is generic
+                            ctx.dartTypes.dartObject;
                             DartSimpleIdentifier {
                                 ctx.dartTypes.getName(parameterModel);
                             };
@@ -1035,8 +1031,9 @@ class ExpressionTransformer
                 // initialize with `dart$default`
                 value dartParameterType =
                     if (defaulted)
-                    then ctx.dartTypes.dartTypeName(that, ctx.ceylonTypes.anythingType)
-                    else ctx.dartTypes.dartTypeName(that, parameterModel.type);
+                    then ctx.dartTypes.dartObject
+                    else ctx.dartTypes.dartTypeNameForDeclaration(
+                            that, parameterModel.model);
 
                 value dartSimpleParameter =
                 DartSimpleFormalParameter {

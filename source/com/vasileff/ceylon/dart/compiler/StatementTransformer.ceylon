@@ -73,9 +73,8 @@ class StatementTransformer
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType = ctx.dartTypes.dartTypeName(
-                info.declarationModel,
-                info.declarationModel.type);
+        value returnType = ctx.dartTypes.dartTypeNameForDeclaration(
+                that, info.declarationModel);
 
         return [
             DartFunctionDeclarationStatement {
@@ -104,9 +103,8 @@ class StatementTransformer
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType = ctx.dartTypes.dartTypeName(
-                info.declarationModel,
-                info.declarationModel.type);
+        value returnType = ctx.dartTypes.dartTypeNameForDeclaration(
+                that, info.declarationModel);
 
         return [
             DartFunctionDeclarationStatement {
