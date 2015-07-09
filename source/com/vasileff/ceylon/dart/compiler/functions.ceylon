@@ -67,8 +67,10 @@ PackageModel getPackage
 
 ModuleModel getModule
         (Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
-    =>  if (is Node declaration) then
-            getUnit(NodeInfo(declaration).scope).\ipackage.\imodule
+    =>  if (is PackageModel declaration) then
+            declaration.\imodule
+        else if (is Node declaration) then
+            getModule(NodeInfo(declaration).scope)
         else if (!is ModuleModel declaration) then
             getUnit(declaration).\ipackage.\imodule
         else

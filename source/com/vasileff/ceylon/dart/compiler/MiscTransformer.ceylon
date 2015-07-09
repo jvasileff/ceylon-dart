@@ -27,9 +27,10 @@ class MiscTransformer(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.dartTypes.dartTypeName(
-                    info.declarationModel,
-                    info.declarationModel.type);
+            ctx.dartTypes.dartTypeNameForDeclaration {
+                that;
+                info.declarationModel;
+            };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);
@@ -63,9 +64,10 @@ class MiscTransformer(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.dartTypes.dartTypeName(
-                    info.declarationModel,
-                    info.declarationModel.type);
+            ctx.dartTypes.dartTypeNameForDeclaration {
+                that;
+                info.declarationModel;
+            };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);

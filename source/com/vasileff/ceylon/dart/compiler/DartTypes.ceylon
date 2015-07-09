@@ -216,10 +216,11 @@ class DartTypes(CeylonTypes ceylonTypes) {
         =   DartTypeModel("$dart$core", "String");
 
     see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
-    shared
+    shared deprecated
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
             TypeModel|DartTypeModel type,
+            // FIXME remove default; callers should use dartTypeNameForDeclaration
             Boolean disableErasure = false) {
 
         // TODO add tests for non-boxed types
@@ -257,12 +258,55 @@ class DartTypes(CeylonTypes ceylonTypes) {
         }
     }
 
+    shared
+    DartTypeName dartTypeNameForDeclaration(
+            Node|ElementModel|ScopeModel scope,
+            FunctionOrValueModel declaration) {
+
+        value dartModel = dartTypeModelForDeclaration(declaration);
+        value fromDartPrefix = moduleImportPrefix(scope);
+        if (dartModel.dartModule == fromDartPrefix) {
+            return
+            DartTypeName {
+                DartSimpleIdentifier(dartModel.name);
+            };
+        }
+        else {
+            return
+            DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier(dartModel.dartModule);
+                    DartSimpleIdentifier(dartModel.name);
+                };
+            };
+        }
+    }
+
+    shared
+    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration) {
+        // determine erasure
+        assert (is FunctionOrValueModel? refined = declaration.refinedDeclaration);
+        value nonErased = erasedToObject(refined?.type else declaration.type);
+
+        // determine actualType, which indicates the Dart static type
+        value defaulted = declaration.initializerParameter?.defaulted else false;
+        value actualType =
+            if (defaulted)
+            // we'll lie and use `Anything`, since we use `core.Object` in Dart for
+            // defaulted parameters.
+            then ceylonTypes.anythingType
+            else declaration.type;
+
+        return dartTypeModel(actualType, nonErased);
+    }
+
     "Obtain the [[DartTypeModel]] that will be used for
      the given [[TypeModel]]."
     see(`function CeylonTypes.boxingConversionFor`)
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
+            // FIXME remove default value; callers should use dartTypeModelForDeclaration instead
             "Don't erase `Boolean`, `Integer`, `Float`,
              and `String` to native types."
             Boolean disableErasure = false) {
