@@ -56,18 +56,6 @@ class BaseTransformer<Result>
         =>  process.writeErrorLine(
                 message?.string else "<null>");
 
-    shared
-    DartExpression withCasting(
-            Node|ElementModel|ScopeModel scope,
-            // FIXME take formal & actual to determine boxing/erasure
-            TypeModel rhsType,
-            DartExpression dartExpression) {
-
-        assert (exists lhsType = ctx.lhsActualTop);
-        return withCastingLhsRhs(scope,
-                lhsType, rhsType, dartExpression);
-    }
-
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,
