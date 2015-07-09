@@ -962,9 +962,9 @@ class ExpressionTransformer
                 ctx.ceylonTypes.booleanType;
                 ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
-                    // both operands should be "Identifiable"
+                    // both operands should be "Identifiable", which isn't generic
                     ctx.ceylonTypes.identifiableType;
-                    ctx.ceylonTypes.identifiableType; // FIXME WIP
+                    ctx.ceylonTypes.identifiableType;
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");
@@ -989,7 +989,7 @@ class ExpressionTransformer
 
         value dartCondition = ctx.withLhsType(
             ctx.ceylonTypes.booleanType,
-            ctx.ceylonTypes.booleanType, // FIXME WIP
+            ctx.ceylonTypes.booleanType,
             () => that.conditions.conditions
                     .reversed
                     .narrow<BooleanCondition>()
@@ -999,31 +999,33 @@ class ExpressionTransformer
                         =>  DartBinaryExpression(c, "&&", partial)));
         assert (exists dartCondition);
 
-        // create a function expression for the
-        // IfElseExpression, then invoke it.
-        return ctx.withLhsType(
-            ExpressionInfo(that).typeModel,
-            ExpressionInfo(that).typeModel, // FIXME WIP
-            () => DartFunctionExpressionInvocation {
-                DartFunctionExpression {
-                    DartFormalParameterList();
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartIfStatement {
-                                dartCondition;
-                                DartReturnStatement {
-                                    that.thenExpression.transform(this);
-                                };
-                                DartReturnStatement {
-                                    that.elseExpression.transform(this);
-                                };
-                            }];
-                        };
+        // Create a function expression for the IfElseExpression and invoke it.
+        // No need for `withLhs` or `withBoxing`; our parent should have set the
+        // lhs, and child transformations should perform boxing.
+        //
+        // Alternately, we could wrap in withBoxing, and perform each transformation
+        // inside withLhs, but that would run the risk of unnecessary boxing/unboxing ops.
+        return
+        DartFunctionExpressionInvocation {
+            DartFunctionExpression {
+                DartFormalParameterList();
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        [DartIfStatement {
+                            dartCondition;
+                            DartReturnStatement {
+                                that.thenExpression.transform(this);
+                            };
+                            DartReturnStatement {
+                                that.elseExpression.transform(this);
+                            };
+                        }];
                     };
                 };
-                DartArgumentList { []; };
-            });
+            };
+            DartArgumentList { []; };
+        };
     }
 
     shared

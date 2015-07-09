@@ -51,3 +51,59 @@ void addNumbers() {
          """;
      };
 }
+
+shared test
+void boxIfElseExpression() {
+    compileAndCompare {
+         """
+            shared void run() {
+                Integer x = 1;
+                Integer y = 1;
+                Integer z = if (x > y) then x else y;
+                Object o = if (x > y) then x else y;
+                Object p = if (x > y) then x else "";
+                Object q = if (x > y) then x else o;
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            void $package$run() {
+                $dart$core.int x = 1;
+                $dart$core.int y = 1;
+                $dart$core.int z = (() {
+                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
+                        return x;
+                    } else {
+                        return y;
+                    }
+                })();
+                $dart$core.Object o = (() {
+                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
+                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    } else {
+                        return $ceylon$language.dart$nativeToCeylonInteger(y);
+                    }
+                })();
+                $dart$core.Object p = (() {
+                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
+                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    } else {
+                        return $ceylon$language.dart$nativeToCeylonString("");
+                    }
+                })();
+                $dart$core.Object q = (() {
+                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
+                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    } else {
+                        return o;
+                    }
+                })();
+            }
+
+            void run() => $package$run();
+         """;
+    };
+}
