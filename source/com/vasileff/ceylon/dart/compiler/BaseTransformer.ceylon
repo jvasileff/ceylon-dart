@@ -58,15 +58,16 @@ class BaseTransformer<Result>
 
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
+            "The *actual* lhs type, which indicates the Dart static type"
             TypeModel|NoType lhsType,
+            "The *actual* rhs type, which indicates the Dart static type"
             TypeModel rhsType,
+            "The expression of type [[rhsType]]"
             DartExpression dartExpression,
-            "Set to `true` on the rare occasion that a `Boolean`,
-             `Integer`, `Float`, or `String` as the expected
-             [[lhsType]] indicates an unerased Ceylon object
-             rather than a native type. This happens for narrowing
-             operations where the lhs is the argument to an unboxing
-             function, and for generic types and covariant
+            "Set to `true` when a `Boolean`, `Integer`, `Float`, or `String` as the
+             expected [[lhsType]] indicates an unerased Ceylon object rather than a
+             native type. This happens for narrowing operations where the lhs is the
+             argument to an unboxing function, and for generic types and covariant
              refinements."
             Boolean disableErasure = false) {
 
@@ -76,26 +77,20 @@ class BaseTransformer<Result>
             return dartExpression;
         }
         else if (lhsType.isSubtypeOf(rhsType)) {
-            // they're either the same, or this is the result
-            // of a narrowing operation
+            // they're either the same, or this is the result of a narrowing operation
             castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
         }
         else if (ctx.dartTypes.erasedToObject(rhsType)) {
-            // the result of a call to a generic function, or
-            // something like a Ceylon intersection type. Either
-            // may result in a Dart narrowing.
+            // the result of a call to a generic function, or something like a Ceylon
+            // intersection type. May result in a Dart narrowing.
             castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
         }
         else {
-            // rhs is neither a supertype of lhs nor erased,
-            // so don't bother
+            // rhs is neither a supertype of lhs nor erased, so don't bother
             return dartExpression;
         }
 
-        // the rhs may still have the same dart type
-        // (this is actually the normal case)
-        // `disableErasure` here is used for qualified expressions
-        // where we are forcing an unerased type (for now)
+        // the rhs may still have the same dart type, which is actually the normal case
         if (castType == ctx.dartTypes.dartTypeModel(rhsType, disableErasure)) {
             return dartExpression;
         }
