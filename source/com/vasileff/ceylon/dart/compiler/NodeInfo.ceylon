@@ -199,7 +199,8 @@ class ArgumentListInfo(ArgumentList node)
 
     // FIXME last argument may be JSpreadArgument or JComprehension
     // see ceylon.ast.redhat::argumentListToCeylon code
-    // note: arg.parameter will be null when calling a value
+    "A stream of pairs containing each argument's type and corresponding parameter.
+     The parameter will be null for invocations on values."
     shared {[TypeModel, ParameterModel?]*} listedArgumentModels
         =>  CeylonIterable(tcNode.positionalArguments).map((arg)
                 =>  [arg.typeModel, arg.parameter else null]);

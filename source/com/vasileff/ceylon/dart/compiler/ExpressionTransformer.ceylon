@@ -57,8 +57,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
-    ParameterModel=Parameter,
-    ParameterListModel=ParameterList
+    ParameterModel=Parameter
 }
 
 class ExpressionTransformer
@@ -392,22 +391,18 @@ class ExpressionTransformer
 
         TypeModel rhsFormal;
         TypeModel rhsActual;
-        ParameterListModel? parameterList;
 
         switch (invokedDeclaration)
         case (is FunctionModel) {
-            assert (is FunctionModel refined = invokedDeclaration.refinedDeclaration);
             isCallableValue = false;
-            rhsFormal = refined.type;
-            rhsActual = invokedDeclaration.type;
-            parameterList = refined.firstParameterList;
+            rhsFormal = ctx.dartTypes.formalType(invokedDeclaration);
+            rhsActual = ctx.dartTypes.actualType(invokedDeclaration);
         }
         case (is ValueModel) {
             // callables (being generic) always return `core.Object`
             isCallableValue = true;
             rhsFormal = ctx.ceylonTypes.anythingType;
             rhsActual = ctx.ceylonTypes.anythingType;
-            parameterList = null;
         }
         case (is SetterModel) {
             throw CompilerBug(that,
@@ -448,8 +443,7 @@ class ExpressionTransformer
             rhsActual;
             DartFunctionExpressionInvocation {
                 functionExpression;
-                generateArgumentListFromArguments(
-                    that.arguments, parameterList);
+                generateArgumentListFromArguments(that.arguments);
             };
         };
     }
@@ -1091,14 +1085,10 @@ class ExpressionTransformer
     }
 
     shared
-    DartArgumentList generateArgumentListFromArguments(
-            Arguments that,
-            ParameterListModel? forParameterList) {
-
+    DartArgumentList generateArgumentListFromArguments(Arguments that) {
         switch (that)
         case (is PositionalArguments) {
-            return generateArgumentListFromArgumentList(
-                    that.argumentList, forParameterList);
+            return generateArgumentListFromArgumentList(that.argumentList);
         }
         case (is NamedArguments) {
             throw CompilerBug(that, "NamedArguments not supported");
@@ -1106,34 +1096,35 @@ class ExpressionTransformer
     }
 
     shared
-    DartArgumentList generateArgumentListFromArgumentList(
-            ArgumentList that,
-            "The `ParameterList` from the `refinedDeclaration` which may
-             have generic or more general types than the `Parameter`s of
-             the `actual` declaration being invoked, or `null` if a
-             `Callable` value is being invoked."
-            ParameterListModel? forParameterList) {
-
+    DartArgumentList generateArgumentListFromArgumentList(ArgumentList that) {
         "spread arguments not supported"
         assert(that.sequenceArgument is Null);
 
-        value parameters =
-                if (exists forParameterList)
-                then CeylonList(forParameterList.parameters)
-                else [];
+        value info = ArgumentListInfo(that);
 
         // use the passed in `formal` parameters, not the parameter models
         // available from the argument list.
-        value args = that.listedArguments.indexed.collect((x) {
-            value i -> expression = x;
-            value parameterModel = parameters[i];
+        value args = that.listedArguments.indexed.collect((e) {
+            value i -> expression = e;
+            assert (is ParameterModel? parameterModel =
+                    info.listedArgumentModels.getFromFirst(i)?.get(1));
 
-            // If parameterModel is null, we must be invoking a value, so use
-            // type `Anything` to disable erasure. We don't need to cast, since
-            // `Callable`'s take `core.Object`s.
+            // If parameterModel is null, we must be invoking a value, so use type
+            // `Anything` to disable erasure. We don't need to cast, since `Callable`'s
+            // take `core.Object`s.
+            TypeModel lhsFormal =
+                    if (exists parameterModel)
+                    then ctx.dartTypes.formalType(parameterModel.model)
+                    else ctx.ceylonTypes.anythingType;
+
+            TypeModel lhsActual =
+                    if (exists parameterModel)
+                    then ctx.dartTypes.actualType(parameterModel.model)
+                    else ctx.ceylonTypes.anythingType;
+
             return ctx.withLhsType(
-                parameterModel?.type else ctx.ceylonTypes.anythingType,
-                parameterModel?.type else ctx.ceylonTypes.anythingType, // FIXME WIP
+                lhsFormal,
+                lhsActual,
                 () => expression.transform(expressionTransformer));
         });
         return DartArgumentList(args);
