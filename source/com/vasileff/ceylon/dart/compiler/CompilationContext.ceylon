@@ -25,10 +25,16 @@ class CompilationContext(unit, tokens) {
     DartTypes dartTypes = DartTypes(ceylonTypes);
 
     shared variable
-    TypeOrNoType? lhsTypeTop = null;
+    TypeOrNoType? lhsFormalTop = null;
 
     shared variable
-    TypeOrNoType? returnTypeTop = null;
+    TypeOrNoType? lhsActualTop = null;
+
+    shared variable
+    TypeOrNoType? returnFormalTop = null;
+
+    shared variable
+    TypeOrNoType? returnActualTop = null;
 
     shared late
     ClassMemberTransformer classMemberTransformer;
@@ -55,29 +61,39 @@ class CompilationContext(unit, tokens) {
     }
 
     shared
-    Result withLhsType<Result>
-            (TypeOrNoType lhsType, Result fun()) {
-        value save = lhsTypeTop;
+    Result withLhsType<Result>(
+            TypeOrNoType lhsFormal,
+            TypeOrNoType lhsActual,
+            Result fun()) {
+        value saveFormal = lhsFormalTop;
+        value saveActual = lhsActualTop;
         try {
-            lhsTypeTop = lhsType;
+            lhsFormalTop = lhsFormal;
+            lhsActualTop = lhsActual;
             value result = fun();
             return result;
         }
         finally {
-            lhsTypeTop = save;
+            lhsFormalTop = saveFormal;
+            lhsActualTop = saveActual;
         }
     }
 
     shared
-    Result withReturnType<Result>
-            (TypeOrNoType returnType, Result fun()) {
-        value save = returnTypeTop;
+    Result withReturnType<Result>(
+            TypeOrNoType returnFormal,
+            TypeOrNoType returnActual,
+            Result fun()) {
+        value saveFormal = returnFormalTop;
+        value saveActual = returnActualTop;
         try {
-            returnTypeTop = returnType;
+            returnFormalTop = returnFormal;
+            returnActualTop = returnActual;
             return fun();
         }
         finally {
-            returnTypeTop = save;
+            returnFormalTop = saveFormal;
+            returnActualTop = saveActual;
         }
     }
 }

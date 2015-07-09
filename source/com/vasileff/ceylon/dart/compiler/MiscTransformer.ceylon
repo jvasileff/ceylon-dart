@@ -63,8 +63,10 @@ class MiscTransformer(CompilationContext ctx)
                 DartSimpleIdentifier {
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);
                 };
-                ctx.withLhsType(info.declarationModel.type, ()
-                    =>  that.definition.expression.transform(expressionTransformer));
+                ctx.withLhsType(
+                    info.declarationModel.type,
+                    info.declarationModel.type, // FIXME WIP
+                    () => that.definition.expression.transform(expressionTransformer));
             }];
         };
     }

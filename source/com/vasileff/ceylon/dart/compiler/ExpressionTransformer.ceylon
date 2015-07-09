@@ -91,7 +91,7 @@ class ExpressionTransformer
         TypeModel rhsFormal;
         TypeModel rhsActual;
 
-        assert (exists lhsType = ctx.lhsTypeTop);
+        assert (exists lhsType = ctx.lhsActualTop);
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
             return generateBooleanExpression(lhsType, true);
@@ -174,7 +174,7 @@ class ExpressionTransformer
                         ctx.unit, targetDeclaration,
                         ctx.dartTypes.getName(targetDeclaration));
 
-                switch (ctx.lhsTypeTop)
+                switch (ctx.lhsActualTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
                     unboxed = qualified;
@@ -290,7 +290,7 @@ class ExpressionTransformer
                 };
             };
 
-            switch (ctx.lhsTypeTop)
+            switch (ctx.lhsActualTop)
             case (noType) {
                 // must be an invocation; do not wrap in a callable
                 unboxed = dartQualified;
@@ -416,14 +416,16 @@ class ExpressionTransformer
         if (!isCallable) {
             // use `noType` to disable boxing. We want to invoke the function
             // directly, not a newly created Callable!
-            functionExpression = ctx.withLhsType(noType, ()
+            functionExpression = ctx.withLhsType(noType, noType, ()
                 =>  that.invoked.transform(this));
         }
         else {
             functionExpression =
                 DartPropertyAccess {
-                    ctx.withLhsType(noType, () =>
-                        that.invoked.transform(this));
+                    ctx.withLhsType(
+                        noType,
+                        noType, // FIXME WIP
+                        () => that.invoked.transform(this));
                     DartSimpleIdentifier("$delegate$");
                 };
         }
@@ -536,7 +538,8 @@ class ExpressionTransformer
                 value unboxed = ctx.withLhsType {
                     // FIXME need to consider formal parameters, which may be generic
                     // "lhs" is the inner function's parameter
-                    lhsType = parameterModel.type;
+                    lhsFormal = parameterModel.type;
+                    lhsActual = parameterModel.type; // FIXME WIP
                     () => withBoxing {
                         // the outer function's argument which
                         // is never erased
@@ -589,7 +592,8 @@ class ExpressionTransformer
                         [DartReturnStatement {
                             ctx.withLhsType {
                                 // Anything prevents erasure
-                                lhsType = ctx.ceylonTypes.anythingType;
+                                lhsFormal = ctx.ceylonTypes.anythingType;
+                                lhsActual = ctx.ceylonTypes.anythingType; // FIXME WIP
                                 () => withBoxing {
                                     scope = that;
                                     rhsFormal = innerReturnTypeFormal;
@@ -680,8 +684,10 @@ class ExpressionTransformer
                  container type '``className(container)``'");
         }
 
-        DartExpression rhs = ctx.withLhsType(targetDeclaration.type, ()
-                =>  rhsExpression.transform(this));
+        DartExpression rhs = ctx.withLhsType(
+                targetDeclaration.type,
+                targetDeclaration.type, // FIXME WIP
+                () => rhsExpression.transform(this));
 
         if (isMethod) {
             return DartFunctionExpressionInvocation {
@@ -767,13 +773,17 @@ class ExpressionTransformer
             // no defaulted parameters
             switch (definition)
             case (is Block) {
-                body = ctx.withReturnType(returnType, ()
-                    => DartBlockFunctionBody(null, false, statementTransformer
+                body = ctx.withReturnType(
+                    returnType,
+                    returnType, // FIXME WIP
+                    () => DartBlockFunctionBody(null, false, statementTransformer
                             .transformBlock(definition)[0]));
             }
             case (is LazySpecifier) {
-                body = DartExpressionFunctionBody(false, ctx.withLhsType(returnType, ()
-                    => definition.expression.transform(expressionTransformer)));
+                body = DartExpressionFunctionBody(false, ctx.withLhsType(
+                    returnType,
+                    returnType, // FIXME WIP
+                    () => definition.expression.transform(expressionTransformer)));
             }
         }
         else {
@@ -806,8 +816,10 @@ class ExpressionTransformer
                         DartAssignmentExpression {
                             paramName;
                             DartAssignmentOperator.equal;
-                            ctx.withLhsType(parameterType, ()
-                                =>  param.specifier.expression
+                            ctx.withLhsType(
+                                parameterType,
+                                parameterType, // FIXME WIP
+                                () => param.specifier.expression
                                         .transform(expressionTransformer));
                         };
                     };
@@ -815,15 +827,19 @@ class ExpressionTransformer
             }
             switch (definition)
             case (is Block) {
-                statements.addAll(expand(ctx.withReturnType(returnType, ()
-                    =>  definition.transformChildren(statementTransformer))));
+                statements.addAll(expand(ctx.withReturnType(
+                    returnType,
+                    returnType, // FIXME WIP
+                    () => definition.transformChildren(statementTransformer))));
             }
             case (is LazySpecifier) {
                 // for FunctionShortcutDefinition
                 statements.add(
                     DartReturnStatement {
-                        ctx.withLhsType(returnType, ()
-                            =>  definition.expression.transform(this));
+                        ctx.withLhsType(
+                            returnType,
+                            returnType, // FIXME WIP
+                            () => definition.expression.transform(this));
                 });
             }
             body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
@@ -943,8 +959,9 @@ class ExpressionTransformer
                 ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
                     // both operands should be "Identifiable"
-                    ctx.ceylonTypes.identifiableType; () =>
-                    DartFunctionExpressionInvocation {
+                    ctx.ceylonTypes.identifiableType;
+                    ctx.ceylonTypes.identifiableType; // FIXME WIP
+                    () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");
                             DartSimpleIdentifier("identical");
@@ -966,8 +983,10 @@ class ExpressionTransformer
                 "Only BooleanConditions are currently supported.");
         }
 
-        value dartCondition = ctx.withLhsType(ctx.ceylonTypes.booleanType, ()
-            =>  that.conditions.conditions
+        value dartCondition = ctx.withLhsType(
+            ctx.ceylonTypes.booleanType,
+            ctx.ceylonTypes.booleanType, // FIXME WIP
+            () => that.conditions.conditions
                     .reversed
                     .narrow<BooleanCondition>()
                     .map((c)
@@ -978,8 +997,10 @@ class ExpressionTransformer
 
         // create a function expression for the
         // IfElseExpression, then invoke it.
-        return ctx.withLhsType((ExpressionInfo(that).typeModel), () =>
-            DartFunctionExpressionInvocation {
+        return ctx.withLhsType(
+            ExpressionInfo(that).typeModel,
+            ExpressionInfo(that).typeModel, // FIXME WIP
+            () => DartFunctionExpressionInvocation {
                 DartFunctionExpression {
                     DartFormalParameterList();
                     DartBlockFunctionBody {
@@ -1105,9 +1126,9 @@ class ExpressionTransformer
             // type `Anything` to disable erasure. We don't need to cast, since
             // `Callable`'s take `core.Object`s.
             return ctx.withLhsType(
-                        parameterModel?.type
-                        else ctx.ceylonTypes.anythingType, ()
-                =>  expression.transform(expressionTransformer));
+                parameterModel?.type else ctx.ceylonTypes.anythingType,
+                parameterModel?.type else ctx.ceylonTypes.anythingType, // FIXME WIP
+                () => expression.transform(expressionTransformer));
         });
         return DartArgumentList(args);
     }

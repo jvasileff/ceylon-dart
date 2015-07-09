@@ -59,10 +59,11 @@ class BaseTransformer<Result>
     shared
     DartExpression withCasting(
             Node|ElementModel|ScopeModel scope,
+            // FIXME take formal & actual to determine boxing/erasure
             TypeModel rhsType,
             DartExpression dartExpression) {
 
-        assert (exists lhsType = ctx.lhsTypeTop);
+        assert (exists lhsType = ctx.lhsActualTop);
         return withCastingLhsRhs(scope,
                 lhsType, rhsType, dartExpression);
     }
@@ -75,9 +76,10 @@ class BaseTransformer<Result>
             "Set to `true` on the rare occasion that a `Boolean`,
              `Integer`, `Float`, or `String` as the expected
              [[lhsType]] indicates an unerased Ceylon object
-             rather than a native type. Likely, this will only
-             be for narrowing operations where the lhs is the
-             argument to an unboxing function."
+             rather than a native type. This happens for narrowing
+             operations where the lhs is the argument to an unboxing
+             function, and for generic types and covariant
+             refinements."
             Boolean disableErasure = false) {
 
         DartTypeModel castType;
@@ -128,8 +130,10 @@ class BaseTransformer<Result>
         // We are counting on the `dartExpression` not being wrapped
         // in an `as` cast since we are claiming we want an `Anything`.
         // And then, we'll cast to `lhsType`.
-        =>  ctx.withLhsType(ctx.ceylonTypes.anythingType, ()
-            =>  let (dartExpression = fun())
+        =>  ctx.withLhsType(
+                ctx.ceylonTypes.anythingType,
+                ctx.ceylonTypes.anythingType, // FIXME WIP
+                () => let (dartExpression = fun())
                 withCastingLhsRhs {
                     scope = scope;
                     lhsType = lhsType;
@@ -145,9 +149,10 @@ class BaseTransformer<Result>
             TypeModel rhsActual,
             DartExpression dartExpression) {
 
-        assert (exists lhsType = ctx.lhsTypeTop);
+        assert (exists lhsFormal = ctx.lhsFormalTop);
+        assert (exists lhsActual = ctx.lhsActualTop);
         return withBoxingLhsRhs(
-                scope, lhsType, lhsType, rhsFormal, rhsActual, dartExpression);
+                scope, lhsFormal, lhsActual, rhsFormal, rhsActual, dartExpression);
     }
 
     DartExpression withBoxingLhsRhs(

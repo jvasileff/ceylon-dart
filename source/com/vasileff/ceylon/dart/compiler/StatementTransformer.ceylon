@@ -31,9 +31,11 @@ class StatementTransformer
     shared actual
     [DartReturnStatement] transformReturn(Return that) {
         if (exists result = that.result) {
-            assert (exists lhsType = ctx.returnTypeTop);
-            value expression = ctx.withLhsType(lhsType, ()
-                =>  result.transform(expressionTransformer));
+            assert (exists formalType = ctx.returnFormalTop);
+            assert (exists actualType = ctx.returnActualTop);
+            value expression = ctx.withLhsType(
+                formalType, actualType, () =>
+                result.transform(expressionTransformer));
             return [DartReturnStatement(expression)];
         }
         else {
@@ -43,7 +45,7 @@ class StatementTransformer
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
-        =>  [DartExpressionStatement(ctx.withLhsType(noType, ()
+        =>  [DartExpressionStatement(ctx.withLhsType(noType, noType, ()
             => expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
@@ -241,8 +243,10 @@ class StatementTransformer
                                     expressionType);
                             [DartVariableDeclaration {
                                 tmpVariable;
-                                ctx.withLhsType(expressionType, ()
-                                    =>  expression.transform(
+                                ctx.withLhsType(
+                                    expressionType,
+                                    expressionType, // FIXME WIP
+                                    () => expression.transform(
                                             expressionTransformer));
                             }];
                         };
@@ -258,6 +262,7 @@ class StatementTransformer
                             DartAssignmentOperator.equal;
                             ctx.withLhsType {
                                 variableType;
+                                variableType; // FIXME WIP
                                 () => withBoxing {
                                     that;
                                     expressionType;
@@ -306,8 +311,10 @@ class StatementTransformer
                                     variableDeclaration.type);
                             [DartVariableDeclaration {
                                 replacementVar;
-                                ctx.withLhsType(variableType, ()
-                                    =>  withBoxing(that,
+                                ctx.withLhsType(
+                                    variableType,
+                                    variableType, // FIXME WIP
+                                    () => withBoxing(that,
                                             originalFormalType,
                                             originalActualType,
                                             originalDartVariable));
