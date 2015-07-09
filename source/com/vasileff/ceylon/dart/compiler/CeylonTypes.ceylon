@@ -206,63 +206,6 @@ class CeylonTypes(Unit unit) {
         =>  unit.exponentiableDeclaration;
 
     /////////////////////////////////////////////
-    // function declarations
-    /////////////////////////////////////////////
-
-    shared
-    Function largerThanFunction
-        =>  assertFunction(comparableDeclaration.getMember("largerThan", null, false));
-
-    shared
-    Function smallerThanFunction
-        =>  assertFunction(comparableDeclaration.getMember("smallerThan", null, false));
-
-    shared
-    Function notLargerThanFunction
-        =>  assertFunction(comparableDeclaration.getMember("notLargerThan", null, false));
-
-    shared
-    Function notSmallerThanFunction
-        =>  assertFunction(comparableDeclaration.getMember("notSmallerThan", null, false));
-
-    shared
-    Function compareFunction
-        =>  assertFunction(comparableDeclaration.getMember("compare", null, false));
-
-    shared
-    Function dividedFunction
-        =>  assertFunction(numericDeclaration.getMember("divided", null, false));
-
-    shared
-    Function equalsFunction
-        =>  assertFunction(objectDeclaration.getMember("equals", null, false));
-
-    shared
-    Function minusFunction
-        =>  assertFunction(invertibleDeclaration.getMember("minus", null, false));
-
-    shared
-    Function plusFunction
-        =>  assertFunction(summableDeclaration.getMember("plus", null, false));
-
-    shared
-    Function powerFunction
-        =>  assertFunction(exponentiableDeclaration.getMember("power", null, false));
-
-    shared
-    Function remainderFunction
-        =>  assertFunction(numericDeclaration.getMember("remainder", null, false));
-
-    shared
-    Function timesFunction
-        =>  assertFunction(numericDeclaration.getMember("times", null, false));
-
-    Function assertFunction(Declaration declaration) {
-        assert (is Function declaration);
-        return declaration;
-    }
-
-    /////////////////////////////////////////////
     // declaration tests
     /////////////////////////////////////////////
 
