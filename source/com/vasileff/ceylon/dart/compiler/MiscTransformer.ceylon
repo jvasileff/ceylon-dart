@@ -6,6 +6,7 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
+    ValueModel=Value,
     PackageModel=Package
 }
 
@@ -53,6 +54,12 @@ class MiscTransformer(CompilationContext ctx)
                 then "$package$"
                 else "";
 
+        value lhsActual = info.declarationModel.type;
+        value lhsFormal =
+                if (is ValueModel refined = info.declarationModel.refinedDeclaration)
+                then refined.type
+                else info.declarationModel.type;
+
         return
         DartVariableDeclarationList {
             null;
@@ -63,10 +70,11 @@ class MiscTransformer(CompilationContext ctx)
                 DartSimpleIdentifier {
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);
                 };
-                ctx.withLhsType(
-                    info.declarationModel.type,
-                    info.declarationModel.type, // FIXME WIP
-                    () => that.definition.expression.transform(expressionTransformer));
+                ctx.withLhsType {
+                    lhsFormal;
+                    lhsActual;
+                    () => that.definition.expression.transform(expressionTransformer);
+                };
             }];
         };
     }
