@@ -223,13 +223,13 @@ class ExpressionTransformer
         // should be denotable in Dart
         // TODO test this, with a receiver expression that is a function invocation or
         //      value that returns a generic, union, or intersection, I suppose
-        TypeModel exactReceiverType;
+        TypeModel denotableReceiverType;
         if (is TypeDeclarationModel targetContainer) {
-            exactReceiverType = receiverType.getSupertype(targetContainer);
+            denotableReceiverType = receiverType.getSupertype(targetContainer);
         }
         else {
             // TODO try harder...
-            exactReceiverType = receiverType;
+            denotableReceiverType = receiverType;
         }
 
         DartExpression unboxed;
@@ -253,12 +253,11 @@ class ExpressionTransformer
             // being methods since that doesn't happen in locations
             // that can be qualified.
             unboxed = DartPropertyAccess {
-                // Use `Anything` to disable erasure since we need
+                // use `Anything` as the formal type to disable erasure since we need
                 // a non-native receiver.
-                withLhsTypeNoErasure {
-                    that;
-                    exactReceiverType;
-                    receiverType;
+                ctx.withLhsType {
+                    ctx.ceylonTypes.anythingType;
+                    denotableReceiverType;
                     () => that.receiverExpression.transform(this);
                 };
                 DartSimpleIdentifier {
@@ -272,17 +271,11 @@ class ExpressionTransformer
             rhsActual = expressionType;
 
             value dartQualified = DartPropertyAccess {
-                // Use `Anything` to disable erasure since we need
+                // use `Anything` as the formal type to disable erasure since we need
                 // a non-native receiver.
-                withLhsTypeNoErasure {
-                    that;
-                    exactReceiverType;
-                    // FIXME problem is: we don't actually know what the receiverType
-                    //       will be; we're being optimistic that it is the same as the
-                    //       expression type, but it may just be `core.Object`. Casting
-                    //       needs to be handled by the transformer; the
-                    //       `withLhsTypeNoErasure` hack fails to acknowledge this.
-                    receiverType;
+                ctx.withLhsType {
+                    ctx.ceylonTypes.anythingType;
+                    denotableReceiverType;
                     () => that.receiverExpression.transform(this);
                 };
                 DartSimpleIdentifier {
@@ -908,33 +901,26 @@ class ExpressionTransformer
             String methodName) {
 
         value leftType = ExpressionInfo(that.leftOperand).typeModel;
-        value rightType = ExpressionInfo(that.rightOperand).typeModel;
 
-        assert (is FunctionModel method = leftType.declaration.getMember(
-                    methodName, null, false));
-        assert (is FunctionModel refined = method.refinedDeclaration);
+        assert (is FunctionModel method =
+                leftType.declaration.getMember(methodName, null, false));
         assert (is ClassOrInterfaceModel container = method.container);
 
         value receiverType = leftType.getSupertype(container);
-        //value formalParameter = refined.firstParameterList.parameters.get(0);
-        value actualParameter = method.firstParameterList.parameters.get(0);
+        value parameterModel = method.firstParameterList.parameters.get(0).model;
 
-        // TODO remove hack once formal+actual lhs is ready
-        value leftOperandBoxed = withLhsTypeNoErasure(
-                that,
+        value leftOperandBoxed = ctx.withLhsType(
+                // defeat erasure, we need a non-native object
+                ctx.ceylonTypes.anythingType,
                 receiverType,
-                leftType,
                 () => that.leftOperand.transform(this));
 
-        // TODO remove hack once formal+actual lhs is ready
-        value rightOperandBoxed = withLhsTypeNoErasure(
-                that,
-                actualParameter.type,
-                rightType,
+        value rightOperandBoxed = withLhs(
+                parameterModel,
                 () => that.rightOperand.transform(this));
 
-        value rhsFormal = refined.type;
-        value rhsActual = method.type;
+        value rhsFormal = ctx.dartTypes.formalType(method);
+        value rhsActual = ctx.dartTypes.actualType(method);
 
         return withBoxing {
             scope = that;
