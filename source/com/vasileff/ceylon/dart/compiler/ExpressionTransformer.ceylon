@@ -477,13 +477,18 @@ class ExpressionTransformer
             parameters = CeylonList(list.parameters);
         }
 
-        value innerReturnType = functionModel.type;
+        value innerReturnTypeActual = functionModel.type;
+        value innerReturnTypeFormal =
+                if (is FunctionModel refined = functionModel.refinedDeclaration)
+                then refined.type
+                else functionModel.type;
 
         // determine if return or arguments need boxing
         value boxingRequired =
                 ctx.ceylonTypes.boxingConversionFor(
                     ctx.ceylonTypes.anythingType,
-                    innerReturnType) exists ||
+                    innerReturnTypeFormal) exists ||
+                // FIXME we should be looking at formal parameters, which may be generic
                 parameters.any((parameterModel)
                     =>  ctx.ceylonTypes.boxingConversionFor(
                         ctx.ceylonTypes.anythingType,
@@ -525,21 +530,19 @@ class ExpressionTransformer
             });
 
             value innerArguments = parameters.collect((parameterModel) {
-                //value parameterInfo = ParameterInfo(parameter);
-                //value parameterModel = parameterInfo.parameterModel;
-
                 value parameterName = ctx.dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
                 value unboxed = ctx.withLhsType {
+                    // FIXME need to consider formal parameters, which may be generic
                     // "lhs" is the inner function's parameter
                     lhsType = parameterModel.type;
                     () => withBoxing {
-                        // "rhs" the outer function's argument which
+                        // the outer function's argument which
                         // is never erased
                         scope = that;
                         rhsFormal = ctx.ceylonTypes.anythingType;
-                        rhsActual = ctx.ceylonTypes.anythingType; // FIXME WIP
+                        rhsActual = ctx.ceylonTypes.anythingType;
                         parameterIdentifier;
                     };
                 };
@@ -589,8 +592,8 @@ class ExpressionTransformer
                                 lhsType = ctx.ceylonTypes.anythingType;
                                 () => withBoxing {
                                     scope = that;
-                                    rhsFormal = innerReturnType;
-                                    rhsActual = innerReturnType; // FIXME WIP
+                                    rhsFormal = innerReturnTypeFormal;
+                                    rhsActual = innerReturnTypeActual;
                                     DartFunctionExpressionInvocation {
                                         delegateFunction;
                                         DartArgumentList {
