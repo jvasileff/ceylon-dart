@@ -6,7 +6,8 @@ import ceylon.ast.core {
 import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ScopeModel=Scope,
-    ElementModel=Element
+    ElementModel=Element,
+    FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
@@ -55,6 +56,18 @@ class BaseTransformer<Result>
     void error(Node that, Anything message)
         =>  process.writeErrorLine(
                 message?.string else "<null>");
+
+    shared
+    Result withLhs<Result>(
+            FunctionOrValueModel|NoType declaration,
+            Result fun())
+        =>  if (is NoType declaration) then
+                ctx.withLhsType(noType, noType, fun)
+            else
+                ctx.withLhsType(
+                    ctx.dartTypes.formalTypeForDeclaration(declaration),
+                    ctx.dartTypes.actualTypeForDeclaration(declaration),
+                    fun);
 
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,

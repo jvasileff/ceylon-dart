@@ -6,7 +6,6 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ValueModel=Value,
     PackageModel=Package
 }
 
@@ -41,9 +40,7 @@ class MiscTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartVariableDeclarationList transformValueDefinition
-            (ValueDefinition that) {
-
+    DartVariableDeclarationList transformValueDefinition(ValueDefinition that) {
         if (!that.definition is Specifier) {
             throw CompilerBug(that, "LazySpecifier not supported");
         }
@@ -54,12 +51,6 @@ class MiscTransformer(CompilationContext ctx)
                 if (info.declarationModel.container is PackageModel)
                 then "$package$"
                 else "";
-
-        value lhsActual = info.declarationModel.type;
-        value lhsFormal =
-                if (is ValueModel refined = info.declarationModel.refinedDeclaration)
-                then refined.type
-                else info.declarationModel.type;
 
         return
         DartVariableDeclarationList {
@@ -72,9 +63,8 @@ class MiscTransformer(CompilationContext ctx)
                 DartSimpleIdentifier {
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);
                 };
-                ctx.withLhsType {
-                    lhsFormal;
-                    lhsActual;
+                withLhs {
+                    info.declarationModel;
                     () => that.definition.expression.transform(expressionTransformer);
                 };
             }];

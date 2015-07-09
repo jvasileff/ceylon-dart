@@ -282,23 +282,30 @@ class DartTypes(CeylonTypes ceylonTypes) {
         }
     }
 
+    "Determine the *actual* type, which indicates the Dart static type"
     shared
-    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration) {
-        // determine erasure
-        assert (is FunctionOrValueModel? refined = declaration.refinedDeclaration);
-        value nonErased = erasedToObject(refined?.type else declaration.type);
-
-        // determine actualType, which indicates the Dart static type
-        value defaulted = declaration.initializerParameter?.defaulted else false;
-        value actualType =
+    TypeModel actualTypeForDeclaration(FunctionOrValueModel declaration)
+        =>  let (defaulted = declaration.initializerParameter?.defaulted else false)
             if (defaulted)
-            // we'll lie and use `Anything`, since we use `core.Object` in Dart for
+            // lie and use `Anything`, since we use `core.Object` in Dart for
             // defaulted parameters.
             then ceylonTypes.anythingType
             else declaration.type;
 
-        return dartTypeModel(actualType, nonErased);
-    }
+    "Determine the *formal* type, which indicates Dart erasure/boxing"
+    shared
+    TypeModel formalTypeForDeclaration(FunctionOrValueModel declaration)
+        =>  if (is FunctionOrValueModel refined = declaration.refinedDeclaration)
+            then refined.type
+            else declaration.type;
+
+    shared
+    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
+        =>  dartTypeModel {
+                type = actualTypeForDeclaration(declaration);
+                // confusing: erased to Object means not erased to a native type!
+                disableErasure = erasedToObject(formalTypeForDeclaration(declaration));
+            };
 
     "Obtain the [[DartTypeModel]] that will be used for
      the given [[TypeModel]]."
