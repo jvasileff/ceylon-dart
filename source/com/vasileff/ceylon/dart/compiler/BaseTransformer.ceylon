@@ -131,6 +131,21 @@ class BaseTransformer<Result>
     shared
     DartExpression withBoxing(
             Node|ElementModel|ScopeModel scope,
+            FunctionOrValueModel rhsDeclaration,
+            DartExpression dartExpression) {
+
+        assert (exists lhsFormal = ctx.lhsFormalTop);
+        assert (exists lhsActual = ctx.lhsActualTop);
+        return withBoxingLhsRhs(
+                scope, lhsFormal, lhsActual,
+                ctx.dartTypes.formalType(rhsDeclaration),
+                ctx.dartTypes.actualType(rhsDeclaration),
+                dartExpression);
+    }
+
+    shared
+    DartExpression withBoxingTypes(
+            Node|ElementModel|ScopeModel scope,
             TypeModel rhsFormal,
             TypeModel rhsActual,
             DartExpression dartExpression) {

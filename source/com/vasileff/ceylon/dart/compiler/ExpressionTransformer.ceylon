@@ -106,19 +106,8 @@ class ExpressionTransformer
             DartExpression unboxed;
             switch (targetDeclaration)
             case (is ValueModel) {
-                // The actual type is usually the targetDeclaration.type. But,
-                // for defaulted parameters, we'll lie and use `Anything`, since
-                // we force the Dart type to `core.Object` for defaulted parameters.
-                rhsActual =
-                        if (targetDeclaration.initializerParameter?.defaulted else false)
-                        then ctx.ceylonTypes.anythingType
-                        else targetDeclaration.type;
-
-                rhsFormal =
-                        if (is ValueModel refined =
-                                targetDeclaration.refinedDeclaration)
-                        then refined.type
-                        else targetDeclaration.type;
+                rhsActual = ctx.dartTypes.actualType(targetDeclaration);
+                rhsFormal = ctx.dartTypes.formalType(targetDeclaration);
 
                 switch (container = containerOfDeclaration(targetDeclaration))
                 case (is PackageModel) {
@@ -195,7 +184,7 @@ class ExpressionTransformer
                          ``className(targetDeclaration)``");
             }
 
-            return withBoxing(that, rhsFormal, rhsActual, unboxed);
+            return withBoxingTypes(that, rhsFormal, rhsActual, unboxed);
         }
     }
 
@@ -236,18 +225,9 @@ class ExpressionTransformer
 
         switch (targetDeclaration)
         case (is ValueModel) {
-            // see BaseExpression notes about using `Anything` for defaulted params
             // TODO needs a test
-            rhsActual =
-                    if (targetDeclaration.initializerParameter?.defaulted else false)
-                    then ctx.ceylonTypes.anythingType
-                    else targetDeclaration.type;
-
-            rhsFormal =
-                    if (is ValueModel refined =
-                            targetDeclaration.refinedDeclaration)
-                    then refined.type
-                    else targetDeclaration.type;
+            rhsActual = ctx.dartTypes.actualType(targetDeclaration);
+            rhsFormal = ctx.dartTypes.formalType(targetDeclaration);
 
             // Should be easy; don't worry about getters/setters
             // being methods since that doesn't happen in locations
@@ -338,26 +318,26 @@ class ExpressionTransformer
                  ``className(targetDeclaration)``");
         }
 
-        return withBoxing(that, rhsFormal, rhsActual, unboxed);
+        return withBoxingTypes(that, rhsFormal, rhsActual, unboxed);
     }
 
     shared actual
     DartExpression transformFloatLiteral(FloatLiteral that)
-        =>  withBoxing(that,
+        =>  withBoxingTypes(that,
                 ctx.ceylonTypes.floatType,
                 ctx.ceylonTypes.floatType,
                 DartDoubleLiteral(that.float));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
-        =>  withBoxing(that,
+        =>  withBoxingTypes(that,
                 ctx.ceylonTypes.integerType,
                 ctx.ceylonTypes.integerType,
                 DartIntegerLiteral(that.integer));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
-        =>  withBoxing(that,
+        =>  withBoxingTypes(that,
                 ctx.ceylonTypes.stringType,
                 ctx.ceylonTypes.stringType,
                 DartSimpleStringLiteral(that.text));
@@ -430,7 +410,7 @@ class ExpressionTransformer
             functionExpression = withLhs(noType, () => that.invoked.transform(this));
         }
 
-        return withBoxing {
+        return withBoxingTypes {
             that;
             rhsFormal;
             rhsActual;
@@ -463,22 +443,22 @@ class ExpressionTransformer
 
     shared
     DartInstanceCreationExpression generateNewCallable
-            (Node that, functionModel, delegateFunction) {
+            (that, functionModel, delegateFunction) {
 
+        Node that;
         FunctionModel functionModel;
+        DartExpression delegateFunction;
         {ParameterModel*} parameters;
         {ParameterModel*} formalParameters;
-        DartExpression delegateFunction;
         DartExpression outerFunction;
 
         if (functionModel.parameterLists.size() != 1) {
             throw CompilerBug(that, "Multiple parameter lists not supported");
         }
-        else {
-            parameters = CeylonList(functionModel.parameterLists.get(0).parameters);
-            assert (is FunctionModel refined = functionModel.refinedDeclaration);
-            formalParameters = CeylonList(refined.parameterLists.get(0).parameters);
-        }
+
+        parameters = CeylonList(functionModel.parameterLists.get(0).parameters);
+        assert (is FunctionModel refined = functionModel.refinedDeclaration);
+        formalParameters = CeylonList(refined.parameterLists.get(0).parameters);
 
         value innerReturnTypeFormal = ctx.dartTypes.formalType(functionModel);
         value innerReturnTypeActual = ctx.dartTypes.actualType(functionModel);
@@ -532,9 +512,8 @@ class ExpressionTransformer
                 value unboxed = withLhs {
                     // "lhs" is the inner function's parameter
                     lhsDeclaration = parameterModel.model;
-                    () => withBoxing {
-                        // the outer function's argument which
-                        // is never erased
+                    () => withBoxingTypes {
+                        // the outer function's argument which is never erased
                         scope = that;
                         rhsFormal = ctx.ceylonTypes.anythingType;
                         rhsActual = ctx.ceylonTypes.anythingType;
@@ -586,7 +565,7 @@ class ExpressionTransformer
                                 // generic; Anything prevents erasure
                                 lhsFormal = ctx.ceylonTypes.anythingType;
                                 lhsActual = innerReturnTypeActual;
-                                () => withBoxing {
+                                () => withBoxingTypes {
                                     scope = that;
                                     rhsFormal = innerReturnTypeFormal;
                                     rhsActual = innerReturnTypeActual;
@@ -915,13 +894,9 @@ class ExpressionTransformer
                 parameterModel,
                 () => that.rightOperand.transform(this));
 
-        value rhsFormal = ctx.dartTypes.formalType(method);
-        value rhsActual = ctx.dartTypes.actualType(method);
-
         return withBoxing {
-            scope = that;
-            rhsFormal;
-            rhsActual;
+            that;
+            method;
             DartMethodInvocation {
                 leftOperandBoxed;
                 DartSimpleIdentifier { ctx.dartTypes.getName(method); };
@@ -933,8 +908,8 @@ class ExpressionTransformer
     shared actual
     DartExpression transformIdenticalOperation
             (IdenticalOperation that)
-        =>  withBoxing {
-                scope = that;
+        =>  withBoxingTypes {
+                that;
                 ctx.ceylonTypes.booleanType;
                 ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
@@ -947,8 +922,10 @@ class ExpressionTransformer
                             DartSimpleIdentifier("identical");
                         };
                         DartArgumentList {
-                            [that.leftOperand.transform(this),
-                             that.rightOperand.transform(this)];
+                            [
+                                that.leftOperand.transform(this),
+                                that.rightOperand.transform(this)
+                            ];
                         };
                     };
                 };

@@ -261,7 +261,7 @@ class StatementTransformer
                             DartAssignmentOperator.equal;
                             withLhs {
                                 variableDeclaration;
-                                () => withBoxing {
+                                () => withBoxingTypes {
                                     that;
                                     expressionType;
                                     expressionType;
@@ -308,7 +308,7 @@ class StatementTransformer
                                 replacementVar;
                                 withLhs {
                                     variableDeclaration;
-                                    () => withBoxing(that,
+                                    () => withBoxingTypes(that,
                                             originalFormalType,
                                             originalActualType,
                                             originalDartVariable);
