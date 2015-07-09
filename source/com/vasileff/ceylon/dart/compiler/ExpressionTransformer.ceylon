@@ -48,6 +48,7 @@ import ceylon.interop.java {
 import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     FunctionOrValueModel=FunctionOrValue,
+    SetterModel=Setter,
     ConstructorModel=Constructor,
     DeclarationModel=Declaration,
     TypeDeclarationModel=TypeDeclaration,
@@ -383,9 +384,11 @@ class ExpressionTransformer
             throw CompilerBug(that,
                 "Primary type not yet supported: '``className(invoked)``'");
         }
+        // the subtypes of FunctionOrValueModel
+        assert (is FunctionModel|ValueModel|SetterModel invokedDeclaration);
 
         "Are we invoking a real function, or a value of type Callable?"
-        Boolean isCallable;
+        Boolean isCallableValue;
 
         TypeModel rhsFormal;
         TypeModel rhsActual;
@@ -394,40 +397,49 @@ class ExpressionTransformer
         switch (invokedDeclaration)
         case (is FunctionModel) {
             assert (is FunctionModel refined = invokedDeclaration.refinedDeclaration);
-            isCallable = false;
+            isCallableValue = false;
             rhsFormal = refined.type;
             rhsActual = invokedDeclaration.type;
             parameterList = refined.firstParameterList;
         }
         case (is ValueModel) {
             // callables (being generic) always return `core.Object`
-            isCallable = true;
+            isCallableValue = true;
             rhsFormal = ctx.ceylonTypes.anythingType;
             rhsActual = ctx.ceylonTypes.anythingType;
             parameterList = null;
         }
-        else {
+        case (is SetterModel) {
             throw CompilerBug(that,
                 "The invoked expression's declaration type is not supported: \
                  '``className(invokedDeclaration)``'");
         }
 
         DartExpression functionExpression;
-        if (!isCallable) {
-            // use `noType` to disable boxing. We want to invoke the function
-            // directly, not a newly created Callable!
-            functionExpression = ctx.withLhsType(noType, noType, ()
-                =>  that.invoked.transform(this));
-        }
-        else {
+        if (isCallableValue) {
+            // the expression might have a union or intersection type or something,
+            // so determine a `Callable` type we can use. (Of course, for our purposes,
+            // *any* Callable would work, so this is a bit unnecessary)
+            // TODO tests for complex expression types
+            value expressionType = ExpressionInfo(that.invoked).typeModel;
+            value denotableType = expressionType.getSupertype(
+                    ctx.ceylonTypes.callableDeclaration);
+
+            // resolve the $delegate$ property of the Callable
             functionExpression =
                 DartPropertyAccess {
-                    ctx.withLhsType(
-                        noType,
-                        noType, // FIXME WIP
-                        () => that.invoked.transform(this));
+                    ctx.withLhsType {
+                        denotableType;
+                        denotableType;
+                        () => that.invoked.transform(this);
+                    };
                     DartSimpleIdentifier("$delegate$");
                 };
+        }
+        else {
+            // use `noType` to disable boxing; we want to invoke the function directly,
+            // not a newly created Callable!
+            functionExpression = withLhs(noType, () => that.invoked.transform(this));
         }
 
         return withBoxing {

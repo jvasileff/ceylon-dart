@@ -295,6 +295,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
     "Determine the *formal* type, which indicates Dart erasure/boxing"
     shared
     TypeModel formalTypeForDeclaration(FunctionOrValueModel declaration)
+        // FIXME likely incorrect for Parameters, which may not point to the refined dec.
         =>  if (is FunctionOrValueModel refined = declaration.refinedDeclaration)
             then refined.type
             else declaration.type;

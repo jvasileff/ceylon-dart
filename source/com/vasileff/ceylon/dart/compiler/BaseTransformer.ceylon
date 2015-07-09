@@ -118,7 +118,7 @@ class BaseTransformer<Result>
 
     "Returns the non-erased result of [[fun]] with proper casting
      to [[lhsType]]."
-    shared
+    shared deprecated
     DartExpression withLhsTypeNoErasure(
             Node|ElementModel|ScopeModel scope,
             TypeModel lhsType, TypeModel rhsType, DartExpression fun())

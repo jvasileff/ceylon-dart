@@ -151,6 +151,7 @@ class CeylonTypes(Unit unit) {
     TypeDeclaration booleanFalseTypeDeclaration
         =>  booleanFalseValueDeclaration.typeDeclaration;
 
+    shared
     Interface callableDeclaration
         =>  unit.callableDeclaration;
 
