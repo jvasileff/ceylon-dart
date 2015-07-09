@@ -167,7 +167,6 @@ void functionDefaultedParameters() {
 
 shared test
 void functionDefaultedParameters2() {
-    // TODO unnecessary casts
     compileAndCompare {
          """
             shared Integer withDefaults(Integer x = 1, Integer y = x + 1 + 1) {
@@ -190,7 +189,7 @@ void functionDefaultedParameters2() {
                     x = 1;
                 }
                 if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-                    y = $ceylon$language.dart$ceylonIntegerToNative(($ceylon$language.dart$nativeToCeylonInteger(x as $dart$core.int).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+                    y = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(x as $dart$core.int).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
                 }
                 return y as $dart$core.int;
             }

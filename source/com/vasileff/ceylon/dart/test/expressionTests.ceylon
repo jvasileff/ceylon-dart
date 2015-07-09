@@ -28,7 +28,6 @@ void genericComparable() {
 
 shared test
 void addNumbers() {
-    // TODO unnecessary casts
     compileAndCompare {
          """
             shared void run() {
@@ -44,8 +43,8 @@ void addNumbers() {
 
             void $package$run() {
                 $dart$core.int i = 1;
-                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative(($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
-                $dart$core.Object k = ($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Summable).plus($ceylon$language.dart$nativeToCeylonInteger(1));
+                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
+                $dart$core.Object k = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1));
             }
 
             void run() => $package$run();
