@@ -693,9 +693,8 @@ class ExpressionTransformer
                  container type '``className(container)``'");
         }
 
-        DartExpression rhs = ctx.withLhsType(
-                targetDeclaration.type,
-                targetDeclaration.type, // FIXME WIP
+        DartExpression rhs = withLhs(
+                targetDeclaration,
                 () => rhsExpression.transform(this));
 
         if (isMethod) {
@@ -769,8 +768,6 @@ class ExpressionTransformer
             throw CompilerBug(that, "Multiple parameter lists not supported");
         }
 
-        value returnType = functionModel.type;
-
         //Defaulted Parameters:
         //If any exist, use a block (not lazy specifier)
         //At start of block, assign values as necessary
@@ -782,16 +779,14 @@ class ExpressionTransformer
             // no defaulted parameters
             switch (definition)
             case (is Block) {
-                body = ctx.withReturnType(
-                    returnType,
-                    returnType, // FIXME WIP
+                body = withReturn(
+                    functionModel,
                     () => DartBlockFunctionBody(null, false, statementTransformer
                             .transformBlock(definition)[0]));
             }
             case (is LazySpecifier) {
-                body = DartExpressionFunctionBody(false, ctx.withLhsType(
-                    returnType,
-                    returnType, // FIXME WIP
+                body = DartExpressionFunctionBody(false, withLhs(
+                    functionModel,
                     () => definition.expression.transform(expressionTransformer)));
             }
         }
@@ -801,55 +796,55 @@ class ExpressionTransformer
 
             for (param in defaultedParameters) {
                 value parameterInfo = ParameterInfo(param);
-                value model = parameterInfo.parameterModel;
-                value parameterType = model.type;
                 value paramName = DartSimpleIdentifier(
                         ctx.dartTypes.getName(parameterInfo.parameterModel));
-                statements.add(DartIfStatement {
-                    // condition
-                    DartFunctionExpressionInvocation {
-                        DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier("$dart$core");
-                            identifier = DartSimpleIdentifier("identical");
+                statements.add {
+                    DartIfStatement {
+                        // condition
+                        DartFunctionExpressionInvocation {
+                            DartPrefixedIdentifier {
+                                prefix = DartSimpleIdentifier("$dart$core");
+                                identifier = DartSimpleIdentifier("identical");
+                            };
+                            DartArgumentList {
+                                [paramName,
+                                 DartPrefixedIdentifier {
+                                    prefix = DartSimpleIdentifier("$ceylon$language");
+                                    identifier = DartSimpleIdentifier("dart$default");
+                                }];
+                            };
                         };
-                        DartArgumentList {
-                            [paramName,
-                             DartPrefixedIdentifier {
-                                prefix = DartSimpleIdentifier("$ceylon$language");
-                                identifier = DartSimpleIdentifier("dart$default");
-                            }];
+                        // then statement
+                        DartExpressionStatement {
+                            DartAssignmentExpression {
+                                paramName;
+                                DartAssignmentOperator.equal;
+                                withLhs {
+                                    parameterInfo.parameterModel.model;
+                                    () => param.specifier.expression
+                                            .transform(expressionTransformer);
+                                };
+                            };
                         };
                     };
-                    // then statement
-                    DartExpressionStatement {
-                        DartAssignmentExpression {
-                            paramName;
-                            DartAssignmentOperator.equal;
-                            ctx.withLhsType(
-                                parameterType,
-                                parameterType, // FIXME WIP
-                                () => param.specifier.expression
-                                        .transform(expressionTransformer));
-                        };
-                    };
-                });
+                };
             }
             switch (definition)
             case (is Block) {
-                statements.addAll(expand(ctx.withReturnType(
-                    returnType,
-                    returnType, // FIXME WIP
+                statements.addAll(expand(withReturn(
+                    functionModel,
                     () => definition.transformChildren(statementTransformer))));
             }
             case (is LazySpecifier) {
                 // for FunctionShortcutDefinition
-                statements.add(
+                statements.add {
                     DartReturnStatement {
-                        ctx.withLhsType(
-                            returnType,
-                            returnType, // FIXME WIP
-                            () => definition.expression.transform(this));
-                });
+                        withLhs {
+                            functionModel;
+                            () => definition.expression.transform(this);
+                        };
+                    };
+                };
             }
             body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
         }

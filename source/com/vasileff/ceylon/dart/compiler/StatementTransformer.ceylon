@@ -15,7 +15,6 @@ import ceylon.collection {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ValueModel=Value,
     FunctionOrValueModel=FunctionOrValue
 }
 

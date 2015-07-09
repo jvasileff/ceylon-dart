@@ -69,6 +69,18 @@ class BaseTransformer<Result>
                     ctx.dartTypes.actualType(lhsDeclaration),
                     fun);
 
+    shared
+    Result withReturn<Result>(
+            FunctionOrValueModel|NoType lhsDeclaration,
+            Result fun())
+        =>  if (is NoType lhsDeclaration) then
+                ctx.withReturnType(noType, noType, fun)
+            else
+                ctx.withReturnType(
+                    ctx.dartTypes.formalType(lhsDeclaration),
+                    ctx.dartTypes.actualType(lhsDeclaration),
+                    fun);
+
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             "The *actual* lhs type, which indicates the Dart static type"
