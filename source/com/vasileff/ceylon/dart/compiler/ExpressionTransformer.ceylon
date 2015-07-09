@@ -1025,8 +1025,6 @@ class ExpressionTransformer
             value variadic = parameterModel.sequenced;
 
             if (callable) {
-                print(parameterModel.model.name);
-                print(parameterModel.name);
                 throw CompilerBug(that, "Callable parameters not yet supported");
             }
             else if (variadic) {
