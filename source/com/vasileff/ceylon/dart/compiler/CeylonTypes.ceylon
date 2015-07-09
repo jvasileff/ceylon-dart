@@ -10,8 +10,7 @@ import com.redhat.ceylon.model.typechecker.model {
     Interface,
     TypeDeclaration,
     Value,
-    Class,
-    Function
+    Class
 }
 import com.vasileff.jl4c.guava.collect {
     javaList

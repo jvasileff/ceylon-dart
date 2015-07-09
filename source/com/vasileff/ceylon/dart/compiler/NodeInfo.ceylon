@@ -30,7 +30,6 @@ import ceylon.ast.core {
     ValueDeclaration,
     AnyValue,
     ValueGetterDefinition,
-    AnyInterfaceDefinition,
     TypeDeclaration,
     Declaration,
     ClassOrInterface,
