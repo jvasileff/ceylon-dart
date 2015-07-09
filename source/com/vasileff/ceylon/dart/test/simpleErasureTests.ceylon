@@ -391,9 +391,6 @@ void dontEraseArgumentsToValue() {
 
 shared test
 void methodRefinementArgumentErasure() {
-    // TODO casting of invocation results isn't correct when the
-    //      result is an expression for the receiver of a subsequent
-    //      invocation
     compileAndCompare {
          """
             shared void run() {
@@ -412,11 +409,11 @@ void methodRefinementArgumentErasure() {
 
             void $package$run() {
                 $dart$core.int i = 1;
-                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
-                $dart$core.int k = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(2)).plus($ceylon$language.dart$nativeToCeylonInteger(3)) as $ceylon$language.Integer);
+                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
+                $dart$core.int k = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(2)).plus($ceylon$language.dart$nativeToCeylonInteger(3)));
                 $dart$core.Object l = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(4));
                 $dart$core.Object m = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(5)).plus($ceylon$language.dart$nativeToCeylonInteger(6));
-                $dart$core.int n = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(1).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)) as $ceylon$language.Integer);
+                $dart$core.int n = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(1).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
             }
 
             void run() => $package$run();

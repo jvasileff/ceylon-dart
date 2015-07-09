@@ -371,7 +371,6 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-
         DeclarationModel invokedDeclaration;
         switch (invoked = that.invoked)
         case (is BaseExpression) {
@@ -385,33 +384,26 @@ class ExpressionTransformer
                 "Primary type not yet supported: '``className(invoked)``'");
         }
 
-        "Erasure is based on the return type of the function,
-         not on the type of the invocation expression. If it's
-         generic, we'll fully erase to `core.Object`. But, if
-         we add support for Dart generics, we'll need the function's
-         type to determine boxing, and the expression's type to
-         determine the Dart type, taking boxing into account.
-
-         This is also a concern for covariant refinement. I suppose
-         we need both `formal` and `actual` types."
-        TypeModel rhsType;
-
         "Are we invoking a real function, or a value of type Callable?"
         Boolean isCallable;
 
+        TypeModel rhsFormal;
+        TypeModel rhsActual;
         ParameterListModel? parameterList;
 
-        // use types from the original, `formal` declaration
-        switch (refinedDeclaration = invokedDeclaration.refinedDeclaration)
+        switch (invokedDeclaration)
         case (is FunctionModel) {
+            assert (is FunctionModel refined = invokedDeclaration.refinedDeclaration);
             isCallable = false;
-            rhsType = refinedDeclaration.type;
-            parameterList = refinedDeclaration.firstParameterList;
+            rhsFormal = refined.type;
+            rhsActual = invokedDeclaration.type;
+            parameterList = refined.firstParameterList;
         }
         case (is ValueModel) {
             // callables (being generic) always return `core.Object`
             isCallable = true;
-            rhsType = ctx.ceylonTypes.anythingType;
+            rhsFormal = ctx.ceylonTypes.anythingType;
+            rhsActual = ctx.ceylonTypes.anythingType;
             parameterList = null;
         }
         else {
@@ -428,8 +420,6 @@ class ExpressionTransformer
                 =>  that.invoked.transform(this));
         }
         else {
-            // Boxing/erasure shouldn't matter here, right? With any luck, the
-            // expression will evaluate to a `Callable`
             functionExpression =
                 DartPropertyAccess {
                     ctx.withLhsType(noType, () =>
@@ -438,15 +428,16 @@ class ExpressionTransformer
                 };
         }
 
-        return withBoxing(that,
-            rhsType,
-            rhsType, // FIXME WIP
+        return withBoxing {
+            that;
+            rhsFormal;
+            rhsActual;
             DartFunctionExpressionInvocation {
                 functionExpression;
                 generateArgumentListFromArguments(
                     that.arguments, parameterList);
-            }
-        );
+            };
+        };
     }
 
     shared actual
