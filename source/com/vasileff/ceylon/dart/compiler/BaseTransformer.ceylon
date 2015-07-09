@@ -59,14 +59,14 @@ class BaseTransformer<Result>
 
     shared
     Result withLhs<Result>(
-            FunctionOrValueModel|NoType declaration,
+            FunctionOrValueModel|NoType lhsDeclaration,
             Result fun())
-        =>  if (is NoType declaration) then
+        =>  if (is NoType lhsDeclaration) then
                 ctx.withLhsType(noType, noType, fun)
             else
                 ctx.withLhsType(
-                    ctx.dartTypes.formalTypeForDeclaration(declaration),
-                    ctx.dartTypes.actualTypeForDeclaration(declaration),
+                    ctx.dartTypes.formalType(lhsDeclaration),
+                    ctx.dartTypes.actualType(lhsDeclaration),
                     fun);
 
     DartExpression withCastingLhsRhs(

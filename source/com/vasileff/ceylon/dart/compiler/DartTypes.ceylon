@@ -225,15 +225,6 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
         // TODO add tests for non-boxed types
 
-        // TODO document/explore erasure for generics
-        //      and also for covariant returns. Can the
-        //      caller always just use the `formal`,
-        //      non-refined type? Is it readily available?
-
-        // TODO we erase Object & Basic here, but need to
-        //      address boxing/erasure issues elsewhere, like
-        //      method invocations
-
         value dartModel =
                 if (is DartTypeModel type)
                 then type
@@ -284,7 +275,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
     "Determine the *actual* type, which indicates the Dart static type"
     shared
-    TypeModel actualTypeForDeclaration(FunctionOrValueModel declaration)
+    TypeModel actualType(FunctionOrValueModel declaration)
         =>  let (defaulted = declaration.initializerParameter?.defaulted else false)
             if (defaulted)
             // lie and use `Anything`, since we use `core.Object` in Dart for
@@ -294,18 +285,25 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
     "Determine the *formal* type, which indicates Dart erasure/boxing"
     shared
-    TypeModel formalTypeForDeclaration(FunctionOrValueModel declaration)
-        // FIXME likely incorrect for Parameters, which may not point to the refined dec.
-        =>  if (is FunctionOrValueModel refined = declaration.refinedDeclaration)
-            then refined.type
-            else declaration.type;
+    TypeModel formalType(FunctionOrValueModel declaration)
+        =>  if (declaration.parameter,
+                    is FunctionModel c = declaration.container,
+                    is FunctionModel r = c.refinedDeclaration) then
+                // for parameters of method refinements, use the type of the parameter
+                // of the refined method
+                r.getParameter(declaration.name).type
+            else if (is FunctionOrValueModel r =
+                    declaration.refinedDeclaration) then
+                r.type
+            else
+                declaration.type;
 
     shared
     DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
         =>  dartTypeModel {
-                type = actualTypeForDeclaration(declaration);
+                type = actualType(declaration);
                 // confusing: erased to Object means not erased to a native type!
-                disableErasure = erasedToObject(formalTypeForDeclaration(declaration));
+                disableErasure = erasedToObject(formalType(declaration));
             };
 
     "Obtain the [[DartTypeModel]] that will be used for

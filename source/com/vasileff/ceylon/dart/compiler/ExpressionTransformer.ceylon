@@ -480,6 +480,7 @@ class ExpressionTransformer
 
         FunctionModel functionModel;
         {ParameterModel*} parameters;
+        {ParameterModel*} formalParameters;
         DartExpression delegateFunction;
         DartExpression outerFunction;
 
@@ -487,23 +488,20 @@ class ExpressionTransformer
             throw CompilerBug(that, "Multiple parameter lists not supported");
         }
         else {
-            value list = functionModel.parameterLists.get(0);
-            parameters = CeylonList(list.parameters);
+            parameters = CeylonList(functionModel.parameterLists.get(0).parameters);
+            assert (is FunctionModel refined = functionModel.refinedDeclaration);
+            formalParameters = CeylonList(refined.parameterLists.get(0).parameters);
         }
 
-        value innerReturnTypeActual = functionModel.type;
-        value innerReturnTypeFormal =
-                if (is FunctionModel refined = functionModel.refinedDeclaration)
-                then refined.type
-                else functionModel.type;
+        value innerReturnTypeFormal = ctx.dartTypes.formalType(functionModel);
+        value innerReturnTypeActual = ctx.dartTypes.actualType(functionModel);
 
         // determine if return or arguments need boxing
         value boxingRequired =
                 ctx.ceylonTypes.boxingConversionFor(
                     ctx.ceylonTypes.anythingType,
                     innerReturnTypeFormal) exists ||
-                // FIXME we should be looking at formal parameters, which may be generic
-                parameters.any((parameterModel)
+                formalParameters.any((parameterModel)
                     =>  ctx.ceylonTypes.boxingConversionFor(
                         ctx.ceylonTypes.anythingType,
                         parameterModel.type) exists);
@@ -518,10 +516,11 @@ class ExpressionTransformer
                         DartSimpleFormalParameter {
                             false; false;
                             ctx.dartTypes.dartTypeName {
-                                // use Anything (core.Object) for all
+                                // use Anything (core.Object) for the type of all
                                 // parameters since `Callable` is generic
                                 scope = that;
                                 type = ctx.ceylonTypes.anythingType;
+                                disableErasure = false; // doesn't matter
                             };
                             DartSimpleIdentifier {
                                 ctx.dartTypes.getName(parameterModel);
@@ -547,11 +546,9 @@ class ExpressionTransformer
                 value parameterName = ctx.dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
-                value unboxed = ctx.withLhsType {
-                    // FIXME need to consider formal parameters, which may be generic
+                value unboxed = withLhs {
                     // "lhs" is the inner function's parameter
-                    lhsFormal = parameterModel.type;
-                    lhsActual = parameterModel.type; // FIXME WIP
+                    lhsDeclaration = parameterModel.model;
                     () => withBoxing {
                         // the outer function's argument which
                         // is never erased
@@ -603,9 +600,9 @@ class ExpressionTransformer
                         // the invocation of the original function
                         [DartReturnStatement {
                             ctx.withLhsType {
-                                // Anything prevents erasure
+                                // generic; Anything prevents erasure
                                 lhsFormal = ctx.ceylonTypes.anythingType;
-                                lhsActual = ctx.ceylonTypes.anythingType; // FIXME WIP
+                                lhsActual = innerReturnTypeActual;
                                 () => withBoxing {
                                     scope = that;
                                     rhsFormal = innerReturnTypeFormal;
