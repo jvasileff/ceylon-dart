@@ -128,28 +128,6 @@ class BaseTransformer<Result>
         };
     }
 
-    "Returns the non-erased result of [[fun]] with proper casting
-     to [[lhsType]]."
-    shared deprecated
-    DartExpression withLhsTypeNoErasure(
-            Node|ElementModel|ScopeModel scope,
-            TypeModel lhsType, TypeModel rhsType, DartExpression fun())
-        // This is a small hack, but at least isolated.
-        // We are counting on the `dartExpression` not being wrapped
-        // in an `as` cast since we are claiming we want an `Anything`.
-        // And then, we'll cast to `lhsType`.
-        =>  ctx.withLhsType(
-                ctx.ceylonTypes.anythingType,
-                ctx.ceylonTypes.anythingType, // FIXME WIP
-                () => let (dartExpression = fun())
-                withCastingLhsRhs {
-                    scope = scope;
-                    lhsType = lhsType;
-                    rhsType = rhsType;
-                    dartExpression = dartExpression;
-                    disableErasure = true;
-                });
-
     shared
     DartExpression withBoxing(
             Node|ElementModel|ScopeModel scope,
