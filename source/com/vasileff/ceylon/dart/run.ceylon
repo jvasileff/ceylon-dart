@@ -328,5 +328,35 @@ void run() {
                 shared formal String someFunction(String arg1, String arg2="dv");
             }
          """;
-    compile { true; scratch };
+
+    value scratchMPL =
+         """
+            shared Integer mpl(Integer w)(Integer x)(Integer y)(Integer z) {
+                return w + x + y + z;
+            }
+
+            shared Integer mpl2(Integer w)(Integer x)(Integer y)(Integer z)
+                =>  w + x + y + z;
+
+            shared void run() {
+                Integer mpli(Integer w)(Integer x) {
+                    return w + x;
+                }
+
+                value mpa = (Integer w)(Integer x) {
+                    return w + x;
+                };
+
+                value f = mpl(1);
+                value g = f(2);
+                value h = g(3);
+                value i = h(4);
+                print(i);
+                //value g = mpl(2)(3);
+                //mpl(1);
+                //print(mpl(1)(2)(3)(4));
+            }
+         """;
+
+    compile { true; scratchMPL };
 }

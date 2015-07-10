@@ -269,16 +269,16 @@ class ExpressionTransformer
                 unboxed = dartQualified;
             }
             else {
-                // The function result of the qualified expression must be
+                // The core.Function result of the qualified expression must be
                 // captured to avoid re-evaluating the receiver expression
                 // each time Callable is invoked.
                 // So...
                 //   - create a closure that
-                //     - declares a variable holding the evaluated qe
-                //     - returns a new Callable that invokes the saved function
-                //   - invoke it
+                //     - declares a variable holding the evaluated qe (1)
+                //     - returns a new Callable that invokes the saved function (2)
+                //   - invoke it (3)
                 unboxed =
-                DartFunctionExpressionInvocation {
+                DartFunctionExpressionInvocation { // (3)
                     DartFunctionExpression {
                         DartFormalParameterList();
                         DartBlockFunctionBody {
@@ -288,7 +288,7 @@ class ExpressionTransformer
                                     DartVariableDeclarationList {
                                         keyword = null;
                                         type = ctx.dartTypes.dartFunction;
-                                        [DartVariableDeclaration {
+                                        [DartVariableDeclaration { // (1)
                                             DartSimpleIdentifier {
                                                 "$capturedDelegate$";
                                             };
@@ -296,7 +296,7 @@ class ExpressionTransformer
                                         }];
                                     };
                                 },
-                                DartReturnStatement {
+                                DartReturnStatement { // (2)
                                     generateNewCallable {
                                         that;
                                         targetDeclaration;
@@ -308,7 +308,7 @@ class ExpressionTransformer
                             };
                         };
                     };
-                    DartArgumentList();
+                    DartArgumentList(); // (3)
                 };
             }
         }
@@ -344,7 +344,7 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-        DeclarationModel invokedDeclaration;
+        DeclarationModel? invokedDeclaration;
         switch (invoked = that.invoked)
         case (is BaseExpression) {
             invokedDeclaration = BaseExpressionInfo(invoked).declaration;
@@ -353,11 +353,12 @@ class ExpressionTransformer
             invokedDeclaration = QualifiedExpressionInfo(invoked).declaration;
         }
         else {
-            throw CompilerBug(that,
-                "Primary type not yet supported: '``className(invoked)``'");
+            // an Invocation or some other expression that yields a Callable
+            invokedDeclaration = null;
         }
+
         // the subtypes of FunctionOrValueModel
-        assert (is FunctionModel|ValueModel|SetterModel invokedDeclaration);
+        assert (is FunctionModel|ValueModel|SetterModel|Null invokedDeclaration);
 
         "Are we invoking a real function, or a value of type Callable?"
         Boolean isCallableValue;
@@ -368,10 +369,18 @@ class ExpressionTransformer
         switch (invokedDeclaration)
         case (is FunctionModel) {
             isCallableValue = false;
-            rhsFormal = ctx.dartTypes.formalType(invokedDeclaration);
-            rhsActual = ctx.dartTypes.actualType(invokedDeclaration);
+            if (invokedDeclaration.parameterLists.size() > 1) {
+                // return type will be a Callable, not the ultimate return type
+                // of this function that has multiple parameter lists
+                rhsFormal = InvocationInfo(that).typeModel;
+                rhsActual = rhsFormal;
+            }
+            else {
+                rhsFormal = ctx.dartTypes.formalType(invokedDeclaration);
+                rhsActual = ctx.dartTypes.actualType(invokedDeclaration);
+            }
         }
-        case (is ValueModel) {
+        case (is ValueModel?) {
             // callables (being generic) always return `core.Object`
             isCallableValue = true;
             rhsFormal = ctx.ceylonTypes.anythingType;
@@ -388,7 +397,6 @@ class ExpressionTransformer
             // the expression might have a union or intersection type or something,
             // so determine a `Callable` type we can use. (Of course, for our purposes,
             // *any* Callable would work, so this is a bit unnecessary)
-            // TODO tests for complex expression types
             value expressionType = ExpressionInfo(that.invoked).typeModel;
             value denotableType = expressionType.getSupertype(
                     ctx.ceylonTypes.callableDeclaration);
@@ -422,56 +430,45 @@ class ExpressionTransformer
     }
 
     shared actual
-    DartExpression transformFunctionExpression
-            (FunctionExpression that) {
+    DartExpression transformFunctionExpression(FunctionExpression that)
+        // FunctionExpressions are always wrapped in a Callable, although we probably
+        // could optimize for expressions that are immediately invoked
+        =>  generateNewCallable(
+                that,
+                FunctionExpressionInfo(that).declarationModel,
+                generateFunctionExpression(that), 0, false);
 
-        // FunctionExpressions always get wrapped in a
-        // Callable immediately.
-        //
-        // Technically, we should be honoring `ctx.lhsTypeTop`,
-        // and will need to if we discover a need to optimize
-        // expressions that are immediately invoked.
+    DartInstanceCreationExpression generateNewCallable(
+            Node that, FunctionModel functionModel,
+            DartExpression delegateFunction,
+            Integer parameterListNumber = 0,
+            Boolean delegateReturnsCallable =
+                    parameterListNumber <
+                    functionModel.parameterLists.size() - 1) {
 
-        value info = FunctionExpressionInfo(that);
-
-        return generateNewCallable {
-            that = that;
-            functionModel = info.declarationModel;
-            delegateFunction = generateFunctionExpression(that);
-        };
-    }
-
-    shared
-    DartInstanceCreationExpression generateNewCallable
-            (that, functionModel, delegateFunction) {
-
-        Node that;
-        FunctionModel functionModel;
-        DartExpression delegateFunction;
-        {ParameterModel*} parameters;
-        {ParameterModel*} formalParameters;
         DartExpression outerFunction;
-
-        if (functionModel.parameterLists.size() != 1) {
-            throw CompilerBug(that, "Multiple parameter lists not supported");
+        TypeModel returnTypeFormal;
+        TypeModel returnTypeActual;
+        if (delegateReturnsCallable) {
+            returnTypeFormal = ctx.ceylonTypes.callableDeclaration.type;
+            returnTypeActual = ctx.ceylonTypes.callableDeclaration.type;
         }
-
-        parameters = CeylonList(functionModel.parameterLists.get(0).parameters);
-        assert (is FunctionModel refined = functionModel.refinedDeclaration);
-        formalParameters = CeylonList(refined.parameterLists.get(0).parameters);
-
-        value innerReturnTypeFormal = ctx.dartTypes.formalType(functionModel);
-        value innerReturnTypeActual = ctx.dartTypes.actualType(functionModel);
+        else {
+            returnTypeFormal = ctx.dartTypes.formalType(functionModel);
+            returnTypeActual = ctx.dartTypes.actualType(functionModel);
+        }
+        value parameters = CeylonList(functionModel.parameterLists
+                .get(parameterListNumber).parameters);
 
         // determine if return or arguments need boxing
         value boxingRequired =
                 ctx.ceylonTypes.boxingConversionFor(
                     ctx.ceylonTypes.anythingType,
-                    innerReturnTypeFormal) exists ||
-                formalParameters.any((parameterModel)
+                    returnTypeFormal) exists ||
+                parameters.any((parameterModel)
                     =>  ctx.ceylonTypes.boxingConversionFor(
                         ctx.ceylonTypes.anythingType,
-                        parameterModel.type) exists);
+                        ctx.dartTypes.formalType(parameterModel.model)) exists);
 
         // generate outerFunction to handle boxing
         if (!boxingRequired) {
@@ -564,11 +561,11 @@ class ExpressionTransformer
                             ctx.withLhsType {
                                 // generic; Anything prevents erasure
                                 lhsFormal = ctx.ceylonTypes.anythingType;
-                                lhsActual = innerReturnTypeActual;
+                                lhsActual = returnTypeActual;
                                 () => withBoxingTypes {
                                     scope = that;
-                                    rhsFormal = innerReturnTypeFormal;
-                                    rhsActual = innerReturnTypeActual;
+                                    rhsFormal = returnTypeFormal;
+                                    rhsActual = returnTypeActual;
                                     DartFunctionExpressionInvocation {
                                         delegateFunction;
                                         DartArgumentList {
@@ -726,93 +723,129 @@ class ExpressionTransformer
             functionName = ctx.dartTypes.getName(functionModel);
         }
 
-        if (parameterLists.size != 1) {
-            throw CompilerBug(that, "Multiple parameter lists not supported");
-        }
+        variable DartExpression? result = null;
 
-        //Defaulted Parameters:
-        //If any exist, use a block (not lazy specifier)
-        //At start of block, assign values as necessary
-        value defaultedParameters = parameterLists.first
-                .parameters.narrow<DefaultedParameter>();
+        for (i -> list in parameterLists.indexed.sequence().reversed) {
+            if (i < parameterLists.size - 1) {
+                assert(exists previous = result);
+                TypeModel formalReturn;
+                TypeModel actualReturn;
+                if (i == parameterLists.size - 2) {
+                    // innermost Callable, return is the actual Function's result
+                    formalReturn = ctx.dartTypes.formalType(functionModel);
+                    actualReturn = ctx.dartTypes.actualType(functionModel);
+                }
+                else {
+                    // outer Callable that returns a Callable
+                    formalReturn = ctx.ceylonTypes.callableDeclaration.type;
+                    actualReturn = ctx.ceylonTypes.callableDeclaration.type;
+                }
 
-        DartFunctionBody body;
-        if (defaultedParameters.empty) {
-            // no defaulted parameters
-            switch (definition)
-            case (is Block) {
-                body = withReturn(
-                    functionModel,
-                    () => DartBlockFunctionBody(null, false, statementTransformer
-                            .transformBlock(definition)[0]));
+                // wrap nested function in a callable
+                result = generateNewCallable(that, functionModel, previous, i+1);
             }
-            case (is LazySpecifier) {
-                body = DartExpressionFunctionBody(false, withLhs(
-                    functionModel,
-                    () => definition.expression.transform(expressionTransformer)));
-            }
-        }
-        else {
-            // defaulted parameters exist
-            value statements = LinkedList<DartStatement>();
 
-            for (param in defaultedParameters) {
-                value parameterInfo = ParameterInfo(param);
-                value paramName = DartSimpleIdentifier(
-                        ctx.dartTypes.getName(parameterInfo.parameterModel));
-                statements.add {
-                    DartIfStatement {
-                        // condition
-                        DartFunctionExpressionInvocation {
-                            DartPrefixedIdentifier {
-                                prefix = DartSimpleIdentifier("$dart$core");
-                                identifier = DartSimpleIdentifier("identical");
+            //Defaulted Parameters:
+            //If any exist, use a block (not lazy specifier)
+            //At start of block, assign values as necessary
+            value defaultedParameters = list.parameters.narrow<DefaultedParameter>();
+
+            DartFunctionBody body;
+            if (defaultedParameters.empty) {
+                // no defaulted parameters
+                if (i == parameterLists.size - 1) {
+                    // the actual function body
+                    switch (definition)
+                    case (is Block) {
+                        body = withReturn(
+                            functionModel,
+                            () => DartBlockFunctionBody(null, false, statementTransformer
+                                    .transformBlock(definition)[0]));
+                    }
+                    case (is LazySpecifier) {
+                        body = DartExpressionFunctionBody(false, withLhs(
+                            functionModel,
+                            () => definition.expression
+                                    .transform(expressionTransformer)));
+                    }
+                }
+                else {
+                    assert(exists previous = result);
+                    body = DartExpressionFunctionBody(false, previous);
+                }
+            }
+            else {
+                // defaulted parameters exist
+                value statements = LinkedList<DartStatement>();
+
+                for (param in defaultedParameters) {
+                    value parameterInfo = ParameterInfo(param);
+                    value paramName = DartSimpleIdentifier(
+                            ctx.dartTypes.getName(parameterInfo.parameterModel));
+                    statements.add {
+                        DartIfStatement {
+                            // condition
+                            DartFunctionExpressionInvocation {
+                                DartPrefixedIdentifier {
+                                    prefix = DartSimpleIdentifier("$dart$core");
+                                    identifier = DartSimpleIdentifier("identical");
+                                };
+                                DartArgumentList {
+                                    [paramName,
+                                     DartPrefixedIdentifier {
+                                        prefix = DartSimpleIdentifier("$ceylon$language");
+                                        identifier = DartSimpleIdentifier("dart$default");
+                                    }];
+                                };
                             };
-                            DartArgumentList {
-                                [paramName,
-                                 DartPrefixedIdentifier {
-                                    prefix = DartSimpleIdentifier("$ceylon$language");
-                                    identifier = DartSimpleIdentifier("dart$default");
-                                }];
-                            };
-                        };
-                        // then statement
-                        DartExpressionStatement {
-                            DartAssignmentExpression {
-                                paramName;
-                                DartAssignmentOperator.equal;
-                                withLhs {
-                                    parameterInfo.parameterModel.model;
-                                    () => param.specifier.expression
-                                            .transform(expressionTransformer);
+                            // then statement
+                            DartExpressionStatement {
+                                DartAssignmentExpression {
+                                    paramName;
+                                    DartAssignmentOperator.equal;
+                                    withLhs {
+                                        parameterInfo.parameterModel.model;
+                                        () => param.specifier.expression
+                                                .transform(expressionTransformer);
+                                    };
                                 };
                             };
                         };
                     };
-                };
-            }
-            switch (definition)
-            case (is Block) {
-                statements.addAll(expand(withReturn(
-                    functionModel,
-                    () => definition.transformChildren(statementTransformer))));
-            }
-            case (is LazySpecifier) {
-                // for FunctionShortcutDefinition
-                statements.add {
-                    DartReturnStatement {
-                        withLhs {
-                            functionModel;
-                            () => definition.expression.transform(this);
+                }
+                if (i == parameterLists.size - 1) {
+                    // the actual function body
+                    switch (definition)
+                    case (is Block) {
+                        statements.addAll(expand(withReturn(
+                            functionModel,
+                            () => definition.transformChildren(statementTransformer))));
+                    }
+                    case (is LazySpecifier) {
+                        // for FunctionShortcutDefinition
+                        statements.add {
+                            DartReturnStatement {
+                                withLhs {
+                                    functionModel;
+                                    () => definition.expression.transform(this);
+                                };
+                            };
                         };
-                    };
-                };
+                    }
+                }
+                else {
+                    assert(exists previous = result);
+                    statements.add(DartReturnStatement(previous));
+                }
+                body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
             }
-            body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
+            result = DartFunctionExpression {
+                generateFormalParameterList(that, list);
+                body;
+            };
         }
-        return DartFunctionExpression(
-                generateFormalParameterList(
-                    that, parameterLists.first), body);
+        assert (is DartFunctionExpression r = result);
+        return r;
     }
 
     shared actual

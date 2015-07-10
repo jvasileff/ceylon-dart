@@ -73,18 +73,23 @@ class StatementTransformer
         value info = FunctionDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType = ctx.dartTypes.dartTypeNameForDeclaration(
-                that, info.declarationModel);
+        value returnType =
+            if (that.parameterLists.size > 1) then
+                // return type is a `Callable`; we're not yet generic, so the Callable's
+                // return is erased. Even on the Java backend, the arguments are erased.
+                ctx.dartTypes.dartTypeName(that,
+                    ctx.ceylonTypes.callableDeclaration.type, false)
+            else if (!functionModel.declaredVoid) then
+                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
+            else
+                // TODO seems like a hacky way to create a void keyword
+                DartTypeName(DartSimpleIdentifier("void"));
 
         return [
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType =
-                        // TODO seems like a hacky way to create a void keyword
-                        if (functionModel.declaredVoid)
-                        then DartTypeName(DartSimpleIdentifier("void"))
-                        else returnType;
+                    returnType = returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer
@@ -103,18 +108,23 @@ class StatementTransformer
         value info = FunctionShortcutDefinitionInfo(that);
         value functionModel = info.declarationModel;
         value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType = ctx.dartTypes.dartTypeNameForDeclaration(
-                that, info.declarationModel);
+        value returnType =
+            if (that.parameterLists.size > 1) then
+                // return type is a `Callable`; we're not get generic, so the Callable's
+                // return is erased. Even on the Java backend, the arguments are erased.
+                ctx.dartTypes.dartTypeName(that,
+                    ctx.ceylonTypes.callableDeclaration.type, false)
+            else if (!functionModel.declaredVoid) then
+                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
+            else
+                // TODO seems like a hacky way to create a void keyword
+                DartTypeName(DartSimpleIdentifier("void"));
 
         return [
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     external = false;
-                    returnType =
-                        // TODO seems like a hacky way to create a void keyword
-                        if (functionModel.declaredVoid)
-                        then DartTypeName(DartSimpleIdentifier("void"))
-                        else returnType;
+                    returnType = returnType;
                     propertyKeyword = null;
                     name = DartSimpleIdentifier(functionName);
                     functionExpression = expressionTransformer

@@ -42,7 +42,7 @@ Checked items are complete in the sense that they offer basic functionality.
 Checking off "Base Expressions" for instance does *not* mean that they are
 completely finished, or even 30% finished!
 
-- [ ] Multiple parameter lists
+- [x] Multiple parameter lists
 - [ ] Remaining parameter types (variadic, callable)
 - [ ] Base expressions for objects
 - [ ] `of` operation
