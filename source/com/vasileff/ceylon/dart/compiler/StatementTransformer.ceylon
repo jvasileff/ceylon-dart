@@ -64,75 +64,17 @@ class StatementTransformer
                 };
             }];
 
-    see(`function transformFunctionShortcutDefinition`)
-    see(`function TopLevelTransformer.transformFunctionDefinition`)
-    see(`function TopLevelTransformer.transformFunctionShortcutDefinition`)
     shared actual
     [DartFunctionDeclarationStatement] transformFunctionDefinition
-            (FunctionDefinition that) {
-        value info = FunctionDefinitionInfo(that);
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType =
-            if (that.parameterLists.size > 1) then
-                // return type is a `Callable`; we're not yet generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(that,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
-            else
-                // TODO seems like a hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
+            (FunctionDefinition that)
+        =>  [DartFunctionDeclarationStatement(
+            generateFunctionDefinition(that))];
 
-        return [
-            DartFunctionDeclarationStatement {
-                DartFunctionDeclaration {
-                    external = false;
-                    returnType = returnType;
-                    propertyKeyword = null;
-                    name = DartSimpleIdentifier(functionName);
-                    functionExpression = expressionTransformer
-                            .generateFunctionExpression(that);
-                };
-            }
-        ];
-    }
-
-    see(`function transformFunctionDefinition`)
-    see(`function TopLevelTransformer.transformFunctionDefinition`)
-    see(`function TopLevelTransformer.transformFunctionShortcutDefinition`)
     shared actual
     [DartFunctionDeclarationStatement] transformFunctionShortcutDefinition
-                (FunctionShortcutDefinition that) {
-        value info = FunctionShortcutDefinitionInfo(that);
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType =
-            if (that.parameterLists.size > 1) then
-                // return type is a `Callable`; we're not get generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(that,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
-            else
-                // TODO seems like a hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
-
-        return [
-            DartFunctionDeclarationStatement {
-                DartFunctionDeclaration {
-                    external = false;
-                    returnType = returnType;
-                    propertyKeyword = null;
-                    name = DartSimpleIdentifier(functionName);
-                    functionExpression = expressionTransformer
-                        .generateFunctionExpression(that);
-                };
-            }
-        ];
-    }
+            (FunctionShortcutDefinition that)
+        =>  [DartFunctionDeclarationStatement(
+            generateFunctionDefinition(that))];
 
     shared actual
     [DartBlock] transformBlock(Block that)

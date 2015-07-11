@@ -152,7 +152,7 @@ class QualifiedExpressionInfo(QualifiedExpression node)
 }
 
 class DeclarationInfo<out NodeType>(NodeType node)
-        extends NodeInfo<Declaration>(node)
+        extends NodeInfo<NodeType>(node)
         given NodeType satisfies Declaration {
 
     value tcNode = assertedTcNode<Tree.Declaration>(node);
@@ -160,7 +160,7 @@ class DeclarationInfo<out NodeType>(NodeType node)
 }
 
 class TypedDeclarationInfo<out NodeType>(NodeType node)
-        extends DeclarationInfo<TypedDeclaration>(node)
+        extends DeclarationInfo<NodeType>(node)
         given NodeType satisfies TypedDeclaration {
 
     shared actual default
@@ -206,14 +206,6 @@ class ArgumentListInfo(ArgumentList node)
                 =>  [arg.typeModel, arg.parameter else null]);
 }
 
-abstract
-class AnyFunctionInfo<out NodeType>(NodeType node)
-        extends TypedDeclarationInfo<NodeType>(node)
-        given NodeType satisfies AnyFunction {
-
-    shared actual formal FunctionModel declarationModel;
-}
-
 class FunctionExpressionInfo(FunctionExpression node)
         extends ExpressionInfo<FunctionExpression>(node) {
 
@@ -221,26 +213,22 @@ class FunctionExpressionInfo(FunctionExpression node)
     shared FunctionModel declarationModel => tcNode.declarationModel;
 }
 
-class FunctionDeclarationInfo(FunctionDeclaration node)
-        extends AnyFunctionInfo<FunctionDeclaration>(node) {
+class AnyFunctionInfo<out NodeType=AnyFunction>(NodeType node)
+        extends TypedDeclarationInfo<NodeType>(node)
+        given NodeType satisfies AnyFunction {
 
-    value tcNode = assertedTcNode<Tree.MethodDeclaration>(node);
+    value tcNode = assertedTcNode<Tree.AnyMethod>(node);
     shared actual FunctionModel declarationModel => tcNode.declarationModel;
 }
+
+class FunctionDeclarationInfo(FunctionDeclaration node)
+        extends AnyFunctionInfo<FunctionDeclaration>(node) {}
 
 class FunctionDefinitionInfo(FunctionDefinition node)
-        extends AnyFunctionInfo<FunctionDefinition>(node) {
-
-    value tcNode = assertedTcNode<Tree.MethodDefinition>(node);
-    shared actual FunctionModel declarationModel => tcNode.declarationModel;
-}
+        extends AnyFunctionInfo<FunctionDefinition>(node) {}
 
 class FunctionShortcutDefinitionInfo(FunctionShortcutDefinition node)
-        extends AnyFunctionInfo<FunctionShortcutDefinition>(node) {
-
-    value tcNode = assertedTcNode<Tree.MethodDeclaration>(node);
-    shared actual FunctionModel declarationModel => tcNode.declarationModel;
-}
+        extends AnyFunctionInfo<FunctionShortcutDefinition>(node) {}
 
 class ParameterInfo<out NodeType>(NodeType node)
         extends NodeInfo<NodeType>(node)

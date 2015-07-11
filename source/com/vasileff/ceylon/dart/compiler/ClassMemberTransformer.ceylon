@@ -30,29 +30,18 @@ class ClassMemberTransformer
         }];
     }
 
-    // TODO lots of DRY violations here
-    see(`function transformFunctionShortcutDefinition`)
-    see(`function TopLevelTransformer.transformFunctionDefinition`)
-    see(`function TopLevelTransformer.transformFunctionShortcutDefinition`)
     shared actual [DartMethodDeclaration] transformFunctionDeclaration
             (FunctionDeclaration that) {
-        value info = FunctionDeclarationInfo(that);
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType = ctx.dartTypes.dartTypeNameForDeclaration(
-                that, info.declarationModel);
 
-        // TODO multiple parameter lists
+        value info = FunctionDeclarationInfo(that);
+        value functionName = ctx.dartTypes.getName(info.declarationModel);
+
         // TODO where do we put the parameter default values?
         return [
             DartMethodDeclaration {
                 external = false;
                 modifierKeyword = null;
-                returnType =
-                    // TODO seems like a hacky way to create a void keyword
-                    if (functionModel.declaredVoid)
-                    then DartTypeName(DartSimpleIdentifier("void"))
-                    else returnType;
+                returnType = generateFunctionReturnType(info);
                 propertyKeyword = null;
                 name = DartSimpleIdentifier(functionName);
                 parameters = ctx.expressionTransformer

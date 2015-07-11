@@ -3,16 +3,10 @@ import ceylon.ast.core {
     ValueDefinition,
     FunctionShortcutDefinition,
     AnyFunction,
-    FunctionDeclaration,
     InterfaceDefinition
 }
 import ceylon.interop.java {
     CeylonList
-}
-
-import com.redhat.ceylon.model.typechecker.model {
-    ParameterModel=Parameter,
-    TypeModel=Type
 }
 
 "For Dart TopLevel declarations, which are distinct from
@@ -24,71 +18,21 @@ class TopLevelTransformer
     shared actual
     [DartTopLevelVariableDeclaration|DartFunctionDeclaration+] transformValueDefinition
             (ValueDefinition that)
-        =>  [DartTopLevelVariableDeclaration(miscTransformer
-                .transformValueDefinition(that)),
-            *generateForwardingGetterSetter(that)];
+        =>  [DartTopLevelVariableDeclaration(
+                miscTransformer.transformValueDefinition(that)),
+             *generateForwardingGetterSetter(that)];
 
-    see(`function transformFunctionShortcutDefinition`)
-    see(`function StatementTransformer.transformFunctionDefinition`)
-    see(`function StatementTransformer.transformFunctionShortcutDefinition`)
     shared actual
     [DartFunctionDeclaration+] transformFunctionDefinition
-            (FunctionDefinition that) {
-        value info = FunctionDefinitionInfo(that);
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType =
-            if (that.parameterLists.size > 1) then
-                // return type is a `Callable`; we're not get generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(that,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
-            else
-                // TODO seems like a hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
+            (FunctionDefinition that)
+        =>  [generateFunctionDefinition(that, true),
+             generateForwardingFunction(that)];
 
-        return [DartFunctionDeclaration {
-            external = false;
-            returnType = returnType;
-            propertyKeyword = null;
-            name = DartSimpleIdentifier("$package$" + functionName);
-            functionExpression = expressionTransformer
-                .generateFunctionExpression(that);
-        }, generateForwardingFunction(that)];
-    }
-
-    see(`function transformFunctionDefinition`)
-    see(`function StatementTransformer.transformFunctionDefinition`)
-    see(`function StatementTransformer.transformFunctionShortcutDefinition`)
     shared actual
     [DartFunctionDeclaration+] transformFunctionShortcutDefinition
-                (FunctionShortcutDefinition that) {
-        value info = FunctionShortcutDefinitionInfo(that);
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType =
-            if (that.parameterLists.size > 1) then
-                // return type is a `Callable`; we're not get generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(that,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
-            else
-                // TODO seems like a hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
-
-        return [DartFunctionDeclaration {
-            external = false;
-            returnType = returnType;
-            propertyKeyword = null;
-            name = DartSimpleIdentifier("$package$" + functionName);
-            functionExpression = expressionTransformer
-                    .generateFunctionExpression(that);
-        }, generateForwardingFunction(that)];
-    }
+                (FunctionShortcutDefinition that)
+        =>  [generateFunctionDefinition(that, true),
+             generateForwardingFunction(that)];
 
     shared actual
     [DartClassDeclaration] transformInterfaceDefinition
@@ -183,56 +127,35 @@ class TopLevelTransformer
             else [getter];
     }
 
-    DartFunctionDeclaration generateForwardingFunction
-            (AnyFunction that) {
-
-        value info =
-            switch (that)
-            case (is FunctionDeclaration) FunctionDeclarationInfo(that)
-            case (is FunctionDefinition) FunctionDefinitionInfo(that)
-            case (is FunctionShortcutDefinition) FunctionShortcutDefinitionInfo(that);
-
-        value functionModel = info.declarationModel;
-        value functionName = ctx.dartTypes.getName(functionModel);
-        value returnType =
-            if (that.parameterLists.size > 1) then
-                // return type is a `Callable`; we're not get generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(that,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(that, info.declarationModel)
-            else
-                // TODO seems like a hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
-
-        value parameterList = expressionTransformer.generateFormalParameterList
-                (that, that.parameterLists.first);
-
-        return
-        DartFunctionDeclaration {
-            external = false;
-            returnType = returnType;
-            propertyKeyword = null;
-            DartSimpleIdentifier(functionName);
-            DartFunctionExpression {
-                parameterList;
-                DartExpressionFunctionBody {
-                    async = false;
-                    expression = DartMethodInvocation {
-                        target = null;
-                        DartSimpleIdentifier("$package$" + functionName);
-                        DartArgumentList {
-                            CeylonList(functionModel.firstParameterList.parameters)
-                                    .collect { (ParameterModel parameterModel) =>
-                                DartSimpleIdentifier {
-                                    ctx.dartTypes.getName(parameterModel);
+    DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
+        =>  let (info = AnyFunctionInfo(that),
+                functionName = ctx.dartTypes.getName(info.declarationModel),
+                parameterModels = CeylonList(
+                        info.declarationModel.firstParameterList.parameters))
+            DartFunctionDeclaration {
+                external = false;
+                generateFunctionReturnType(info);
+                propertyKeyword = null;
+                DartSimpleIdentifier(functionName);
+                DartFunctionExpression {
+                    expressionTransformer.generateFormalParameterList {
+                        that;
+                        that.parameterLists.first;
+                    };
+                    DartExpressionFunctionBody {
+                        async = false;
+                        expression = DartMethodInvocation {
+                            target = null;
+                            DartSimpleIdentifier("$package$" + functionName);
+                            DartArgumentList {
+                                parameterModels.collect { (parameterModel) =>
+                                    DartSimpleIdentifier {
+                                        ctx.dartTypes.getName(parameterModel);
+                                    };
                                 };
                             };
                         };
                     };
                 };
             };
-        };
-    }
 }
