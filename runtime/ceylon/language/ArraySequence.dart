@@ -43,8 +43,8 @@ class ArraySequence implements Sequence {
     =>  array.size;
 
   @$dart$core.override
-  void each(void f($dart$core.Object item))
-    =>  array.each(f);
+  void each(Callable step)
+    =>  array.each(step);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)

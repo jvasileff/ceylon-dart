@@ -5,7 +5,7 @@ class Array implements List {
 
   Array(Iterable elements) {
     _list = [];
-    elements.each((e) => _list.add(e));
+    elements.each(new dart$Callable((e) => _list.add(e)));
   }
 
   Array.OfSize($dart$core.int size, $dart$core.Object element) {
@@ -57,8 +57,8 @@ class Array implements List {
     =>  List.$get$size(this);
 
   @$dart$core.override
-  void each(void f($dart$core.Object item))
-    =>  Iterable.$each(this, f);
+  void each(Callable step)
+    =>  Iterable.$each(this, step);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)

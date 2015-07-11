@@ -1,6 +1,7 @@
 library ceylon.language;
 
 import 'dart:core' as $dart$core;
+import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import 'dart:mirrors' as $dart$mirrors;
 

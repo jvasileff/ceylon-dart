@@ -44,8 +44,8 @@ class String implements List {
     => List.$get$size(this);
 
   @$dart$core.override
-  void each(void f($dart$core.Object item))
-    => Iterable.$each(this, f);
+  void each(Callable step)
+    => Iterable.$each(this, step);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)

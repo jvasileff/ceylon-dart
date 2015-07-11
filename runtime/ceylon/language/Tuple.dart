@@ -5,11 +5,11 @@ class Tuple implements List, Sequence, Iterable {
 
   Tuple($dart$core.Object first, Iterable rest) {
     _list.add(first);
-    rest.each((e) => _list.add(e));
+    rest.each(new dart$Callable((e) => _list.add(e)));
   }
 
   Tuple._trailing(Iterable initial, $dart$core.Object element) {
-    initial.each((e) => _list.add(e));
+    initial.each(new dart$Callable((e) => _list.add(e)));
     _list.add(element);
   }
 
@@ -57,8 +57,8 @@ class Tuple implements List, Sequence, Iterable {
     =>  List.$get$size(this);
 
   @$dart$core.override
-  void each(void f($dart$core.Object item))
-    =>  Iterable.$each(this, f);
+  void each(Callable step)
+    =>  Iterable.$each(this, step);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)

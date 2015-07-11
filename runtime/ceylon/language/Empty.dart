@@ -7,7 +7,7 @@ class Empty implements Sequential {
   get size => 0;
 
   @$dart$core.override
-  each($dart$core.Function f) {}
+  each(Callable step) {}
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element) => false;
