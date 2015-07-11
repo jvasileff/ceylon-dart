@@ -25,7 +25,8 @@ import ceylon.ast.core {
     EqualOperation,
     NotEqualOperation,
     Node,
-    ElseOperation
+    ElseOperation,
+    ThenOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -448,6 +449,18 @@ class ExpressionTransformer
                     case (is LargeAsOperation) "notSmallerThan"
                     case (is SmallAsOperation) "notLargerThan")
             generateInvocationForBinaryOperation(that, method);
+
+    shared actual
+    DartExpression transformThenOperation(ThenOperation that)
+        =>  DartConditionalExpression {
+                ctx.withLhsType {
+                    ctx.ceylonTypes.booleanType;
+                    ctx.ceylonTypes.booleanType;
+                    () => that.leftOperand.transform(this);
+                };
+                that.result.transform(this);
+                DartNullLiteral();
+            };
 
     shared actual
     DartExpression transformElseOperation(ElseOperation that)

@@ -58,7 +58,7 @@ completely finished, or even 30% finished!
   `$dart$core.int` for example.)
 - [ ] Map members like `toString()`, `hash`, etc.
 - [ ] Statements: for, ~~if~~, while
-- [ ] Expressions: ~~if~~, then, ~~else~~
+- [x] Expressions: ~~if~~, ~~then~~, ~~else~~
 - [ ] Use compiler for language module functions: `corresponding`, `count`,
   `every`, ~~identity~~, `noop`, ~~identical~~, `max`, `nothing`, ~~plus~~,
   `printAll`, `product`, ~~smallest~~, `sort`, `sum`, `times`.
