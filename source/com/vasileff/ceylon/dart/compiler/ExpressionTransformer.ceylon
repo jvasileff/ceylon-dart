@@ -13,7 +13,6 @@ import ceylon.ast.core {
     LargeAsOperation,
     SmallAsOperation,
     IfElseExpression,
-    BooleanCondition,
     IdenticalOperation,
     SumOperation,
     ProductOperation,
@@ -26,7 +25,7 @@ import ceylon.ast.core {
     EqualOperation,
     NotEqualOperation,
     Node,
-    Conditions
+    ElseOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -449,6 +448,38 @@ class ExpressionTransformer
                     case (is LargeAsOperation) "notSmallerThan"
                     case (is SmallAsOperation) "notLargerThan")
             generateInvocationForBinaryOperation(that, method);
+
+    shared actual
+    DartExpression transformElseOperation(ElseOperation that)
+        =>  DartFunctionExpressionInvocation {
+                DartFunctionExpression {
+                    DartFormalParameterList {
+                        positional = false;
+                        named = false;
+                        [DartSimpleFormalParameter {
+                            false;
+                            false;
+                            null;
+                            DartSimpleIdentifier("$lhs$");
+                        }];
+                    };
+                    body = DartExpressionFunctionBody {
+                        async = false;
+                        DartConditionalExpression {
+                            DartBinaryExpression {
+                                DartSimpleIdentifier("$lhs$");
+                                "==";
+                                DartNullLiteral();
+                            };
+                            DartSimpleIdentifier("$lhs$");
+                            that.rightOperand.transform(this);
+                        };
+                    };
+                };
+                DartArgumentList {
+                    [that.leftOperand.transform(this)];
+                };
+            };
 
     shared actual
     DartExpression transformCompareOperation(CompareOperation that)
