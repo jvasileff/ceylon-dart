@@ -380,29 +380,38 @@ class DartIfStatement
 
     shared actual
     void write(CodeWriter writer) {
-        value thenBlock =
-                if (is DartBlock thenStatement)
-                then thenStatement
-                else DartBlock([thenStatement]);
+        void writeIfNoIndent(DartIfStatement ifStatement) {
+            value thenBlock =
+                    if (is DartBlock b = ifStatement.thenStatement)
+                    then b
+                    else DartBlock([ifStatement.thenStatement]);
 
-        value elseBlock =
-                if (is DartBlock elseStatement) then
-                    elseStatement
-                else if (exists elseStatement) then
-                    DartBlock([elseStatement])
-                else
-                    null;
+            value elseBlock =
+                    if (is DartBlock|DartIfStatement e = ifStatement.elseStatement) then
+                        e
+                    else if (exists e = ifStatement.elseStatement) then
+                        DartBlock([e])
+                    else
+                        null;
+
+            writer.write("if (");
+            ifStatement.condition.write(writer);
+            writer.write(") ");
+            thenBlock.write(writer);
+            if (exists elseBlock) {
+                writer.write(" else ");
+                if (is DartIfStatement elseBlock) {
+                    writeIfNoIndent(elseBlock);
+                }
+                else {
+                    elseBlock.write(writer);
+                }
+            }
+        }
 
         writer.writeLine();
         writer.writeIndent();
-        writer.write("if (");
-        condition.write(writer);
-        writer.write(") ");
-        thenBlock.write(writer);
-        if (exists elseBlock) {
-            writer.write(" else ");
-            elseBlock.write(writer);
-        }
+        writeIfNoIndent(this);
     }
 }
 

@@ -8,7 +8,8 @@ import ceylon.ast.core {
     Assertion,
     IsCondition,
     ValueSpecification,
-    ValueDeclaration
+    ValueDeclaration,
+    IfElse
 }
 import ceylon.collection {
     LinkedList
@@ -41,6 +42,22 @@ class StatementTransformer
         else {
             return [DartReturnStatement()];
         }
+    }
+
+    shared actual
+    [DartIfStatement] transformIfElse(IfElse that) {
+        // workaround https://github.com/ceylon/ceylon-compiler/issues/2219
+        value elseStatement =
+                    (switch (c = that.elseClause?.child)
+                    case (is Block) transformBlock(c).first
+                    case (is IfElse) transformIfElse(c).first
+                    case (is Null) null);
+
+        return [DartIfStatement {
+            generateBooleanDartCondition(that.ifClause.conditions);
+            statementTransformer.transformBlock(that.ifClause.block).first;
+            elseStatement;
+        }];
     }
 
     shared actual
@@ -310,4 +327,16 @@ class StatementTransformer
                     };
                 };
             };
+
+    DartStatement? singleStatementOrNull([DartStatement*] statements) {
+        if (nonempty statements) {
+            if (statements.size > 1) {
+                return DartBlock(statements);
+            }
+            else {
+                return statements.first;
+            }
+        }
+        return null;
+    }
 }

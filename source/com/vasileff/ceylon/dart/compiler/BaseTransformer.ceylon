@@ -13,7 +13,9 @@ import ceylon.ast.core {
     Block,
     LazySpecifier,
     DefaultedParameter,
-    Expression
+    Expression,
+    Conditions,
+    BooleanCondition
 }
 import ceylon.collection {
     LinkedList
@@ -485,6 +487,30 @@ class BaseTransformer<Result>
                 [outerFunction];
             };
         };
+    }
+
+    "Only handles `BooleanCondition`s!!!"
+    shared
+    DartExpression generateBooleanDartCondition(Conditions that) {
+        // TODO IsCondition & ExistsOrNonemptyCondition
+        if (that.conditions.any((condition)
+                =>  !condition is BooleanCondition)) {
+            throw CompilerBug(that,
+                "Only BooleanConditions are currently supported.");
+        }
+
+        value dartCondition = ctx.withLhsType(
+            ctx.ceylonTypes.booleanType,
+            ctx.ceylonTypes.booleanType,
+            () => that.conditions
+                    .reversed
+                    .narrow<BooleanCondition>()
+                    .map((c)
+                        =>  c.condition.transform(expressionTransformer))
+                    .reduce((DartExpression partial, c)
+                        =>  DartBinaryExpression(c, "&&", partial)));
+        assert (exists dartCondition);
+        return dartCondition;
     }
 
     shared

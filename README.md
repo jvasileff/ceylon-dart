@@ -57,7 +57,8 @@ completely finished, or even 30% finished!
   Ceylon types. (We can't compile the language module using the prefixed
   `$dart$core.int` for example.)
 - [ ] Map members like `toString()`, `hash`, etc.
-- [ ] Statements & Expressions: for, if, while, then/else
+- [ ] Statements: for, ~~if~~, while, then/else
+- [ ] Expressions: ~~if~~, then/else
 - [ ] Use compiler for language module functions: `corresponding`, `count`,
   `every`, ~~identity~~, `noop`, ~~identical~~, `max`, `nothing`, ~~plus~~,
   `printAll`, `product`, ~~smallest~~, `sort`, `sum`, `times`.

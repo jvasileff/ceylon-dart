@@ -358,5 +358,20 @@ void run() {
             }
          """;
 
-    compile { true; scratchMPL };
+    value scratchStatements =
+         """
+            shared void run() {
+                if (true) {
+                    print("it's true");
+                }
+                else if (1 == 5) {
+                    print("strange");
+                }
+                else {
+                    print("final else");
+                }
+            }
+         """;
+
+    compile { true; scratchStatements };
 }

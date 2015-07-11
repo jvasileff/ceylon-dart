@@ -25,7 +25,8 @@ import ceylon.ast.core {
     CompareOperation,
     EqualOperation,
     NotEqualOperation,
-    Node
+    Node,
+    Conditions
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -556,25 +557,10 @@ class ExpressionTransformer
             };
 
     shared actual
+    see(`function StatementTransformer.transformIfElse`)
     DartExpression transformIfElseExpression(IfElseExpression that) {
         // TODO IsCondition & ExistsOrNonemptyCondition
-        if (that.conditions.conditions.any((condition)
-                =>  !condition is BooleanCondition)) {
-            throw CompilerBug(that,
-                "Only BooleanConditions are currently supported.");
-        }
-
-        value dartCondition = ctx.withLhsType(
-            ctx.ceylonTypes.booleanType,
-            ctx.ceylonTypes.booleanType,
-            () => that.conditions.conditions
-                    .reversed
-                    .narrow<BooleanCondition>()
-                    .map((c)
-                        =>  c.condition.transform(this))
-                    .reduce((DartExpression partial, c)
-                        =>  DartBinaryExpression(c, "&&", partial)));
-        assert (exists dartCondition);
+        value dartCondition = generateBooleanDartCondition(that.conditions);
 
         // Create a function expression for the IfElseExpression and invoke it.
         // No need for `withLhs` or `withBoxing`; our parent should have set the
