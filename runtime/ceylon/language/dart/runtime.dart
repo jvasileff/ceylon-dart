@@ -50,36 +50,6 @@ const dart$default = const dart$Default();
 
 ///////////////////////////////////////
 //
-// Boxing Helpers
-//
-///////////////////////////////////////
-
-String dart$nativeToCeylonString($dart$core.String value)
-  =>  value == null ? null : new String(value);
-
-$dart$core.String dart$ceylonStringToNative(String value)
-  =>  value == null ? null : value._value;
-
-Integer dart$nativeToCeylonInteger($dart$core.int value)
-  =>  value == null ? null : new Integer(value);
-
-$dart$core.int dart$ceylonIntegerToNative(Integer value)
-  =>  value == null ? null : value._value;
-
-Float dart$nativeToCeylonFloat($dart$core.double value)
-  =>  value == null ? null : new Float(value);
-
-$dart$core.double dart$ceylonFloatToNative(Float value)
-  =>  value == null ? null : value._value;
-
-Boolean dart$nativeToCeylonBoolean($dart$core.bool value)
-  =>  value == null ? null : (value ? $true : $false);
-
-$dart$core.bool dart$ceylonBooleanToNative(Boolean value)
-  =>  value == null ? null : value._value;
-
-///////////////////////////////////////
-//
 // Misc
 //
 ///////////////////////////////////////

@@ -754,51 +754,51 @@ class BaseTransformer<Result>
             "The conversion to apply to the result of [[expression]]."
             BoxingConversion conversion) {
 
-        value [boxingFunction, lhsActual, unbox] =
+        value [boxTypeDeclaration, unbox] =
             switch (conversion)
             case (ceylonBooleanToNative)
-                [DartSimpleIdentifier("dart$ceylonBooleanToNative"),
-                 ctx.ceylonTypes.booleanType, true]
+                [ctx.ceylonTypes.booleanDeclaration, true]
             case (ceylonFloatToNative)
-                [DartSimpleIdentifier("dart$ceylonFloatToNative"),
-                 ctx.ceylonTypes.floatType, true]
+                [ctx.ceylonTypes.floatDeclaration, true]
             case (ceylonIntegerToNative)
-                [DartSimpleIdentifier("dart$ceylonIntegerToNative"),
-                 ctx.ceylonTypes.integerType, true]
+                [ctx.ceylonTypes.integerDeclaration, true]
             case (ceylonStringToNative)
-                [DartSimpleIdentifier("dart$ceylonStringToNative"),
-                 ctx.ceylonTypes.stringType, true]
+                [ctx.ceylonTypes.stringDeclaration, true]
             case (nativeToCeylonBoolean)
-                [DartSimpleIdentifier("dart$nativeToCeylonBoolean"),
-                 ctx.ceylonTypes.booleanType, false]
+                [ctx.ceylonTypes.booleanDeclaration, false]
             case (nativeToCeylonFloat)
-                [DartSimpleIdentifier("dart$nativeToCeylonFloat"),
-                 ctx.ceylonTypes.floatType, false]
+                [ctx.ceylonTypes.floatDeclaration, false]
             case (nativeToCeylonInteger)
-                [DartSimpleIdentifier("dart$nativeToCeylonInteger"),
-                 ctx.ceylonTypes.integerType, false]
+                [ctx.ceylonTypes.integerDeclaration, false]
             case (nativeToCeylonString)
-                [DartSimpleIdentifier("dart$nativeToCeylonString"),
-                 ctx.ceylonTypes.stringType, false];
+                [ctx.ceylonTypes.stringDeclaration, false];
 
         value castedExpression =
                 if (!unbox) then
                     // for native to ceylon, an `as` cast is required in the
                     // unusual case that `rhsActual` is `Anything`, which happens
                     // for defaulted parameters
-                    withCastingLhsRhs(scope, lhsActual, rhsActual, expression, false)
+                    withCastingLhsRhs(scope, boxTypeDeclaration.type,
+                            rhsActual, expression, false)
                 else
                     // for ceylon to native, we may need to narrow the arg
                     // disable erasure; we *know* that the result of the expression is
                     // not erased, regardless of `rhsActual`
-                    withCastingLhsRhs(scope, lhsActual, rhsActual, expression, true);
+                    withCastingLhsRhs(scope, boxTypeDeclaration.type,
+                            rhsActual, expression, true);
 
         return
         DartFunctionExpressionInvocation {
-            DartPrefixedIdentifier {
-                // TODO qualify programatically so we can compile lang module
-                DartSimpleIdentifier("$ceylon$language");
-                boxingFunction;
+            DartPropertyAccess {
+                ctx.dartTypes.qualifyIdentifier {
+                    scope;
+                    boxTypeDeclaration;
+                };
+                DartSimpleIdentifier {
+                    if (unbox)
+                    then "nativeValue"
+                    else "instance";
+                };
             };
             DartArgumentList {
                 [castedExpression];

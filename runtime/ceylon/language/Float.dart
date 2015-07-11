@@ -34,4 +34,12 @@ class Float implements Number, Exponentiable {
 
   @$dart$core.override
   $dart$core.bool notSmallerThan(Float other) => _value >= other._value;
+
+  // Dart runtime
+
+  static Float instance($dart$core.double value)
+    => value == null ? null : new Float(value);
+
+  static $dart$core.double nativeValue(Float value)
+    => value == null ? null : value._value;
 }

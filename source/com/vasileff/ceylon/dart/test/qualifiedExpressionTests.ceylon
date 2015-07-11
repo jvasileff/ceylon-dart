@@ -23,16 +23,16 @@ void simpleQualifiedExpressions() {
 
             void $package$run() {
                 $dart$core.String s = "-";
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonInteger($ceylon$language.dart$nativeToCeylonString(s).size));
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonInteger($ceylon$language.dart$nativeToCeylonString("").size));
-                $dart$core.Object o = $ceylon$language.dart$nativeToCeylonInteger($ceylon$language.dart$nativeToCeylonString(s).size);
+                $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(s).size));
+                $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance("").size));
+                $dart$core.Object o = $ceylon$language.Integer.instance($ceylon$language.String.instance(s).size);
                 $ceylon$language.Callable f1 = (() {
-                    $dart$core.Function $capturedDelegate$ = $ceylon$language.dart$nativeToCeylonString("").contains;
+                    $dart$core.Function $capturedDelegate$ = $ceylon$language.String.instance("").contains;
                     return new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.dart$nativeToCeylonBoolean($capturedDelegate$(element));
+                        return $ceylon$language.Boolean.instance($capturedDelegate$(element));
                     });
                 })();
-                $dart$core.bool b = $ceylon$language.dart$nativeToCeylonString("").contains($ceylon$language.dart$nativeToCeylonString("apples"));
+                $dart$core.bool b = $ceylon$language.String.instance("").contains($ceylon$language.String.instance("apples"));
             }
 
             void run() => $package$run();
@@ -65,11 +65,11 @@ void toplevelQualifiedExpressionWithCasting() {
                 $ceylon$language.Callable c = (() {
                     $dart$core.Function $capturedDelegate$ = ($package$something as $ceylon$language.List).contains;
                     return new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.dart$nativeToCeylonBoolean($capturedDelegate$(element));
+                        return $ceylon$language.Boolean.instance($capturedDelegate$(element));
                     });
                 })();
-                ($package$something as $ceylon$language.List).contains($ceylon$language.dart$nativeToCeylonString("x"));
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonBoolean(($package$something as $ceylon$language.List).contains($ceylon$language.dart$nativeToCeylonString("x"))));
+                ($package$something as $ceylon$language.List).contains($ceylon$language.String.instance("x"));
+                $ceylon$language.print($ceylon$language.Boolean.instance(($package$something as $ceylon$language.List).contains($ceylon$language.String.instance("x"))));
             }
 
             void run() => $package$run();
@@ -102,11 +102,11 @@ void toplevelQualifiedExpressionWithoutCasting() {
                 $ceylon$language.Callable c = (() {
                     $dart$core.Function $capturedDelegate$ = $package$something.contains;
                     return new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.dart$nativeToCeylonBoolean($capturedDelegate$(element));
+                        return $ceylon$language.Boolean.instance($capturedDelegate$(element));
                     });
                 })();
-                $package$something.contains($ceylon$language.dart$nativeToCeylonString("x"));
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonBoolean($package$something.contains($ceylon$language.dart$nativeToCeylonString("x"))));
+                $package$something.contains($ceylon$language.String.instance("x"));
+                $ceylon$language.print($ceylon$language.Boolean.instance($package$something.contains($ceylon$language.String.instance("x"))));
             }
 
             void run() => $package$run();

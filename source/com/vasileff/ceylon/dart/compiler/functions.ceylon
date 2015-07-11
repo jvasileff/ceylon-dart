@@ -77,8 +77,8 @@ ModuleModel getModule
             declaration;
 
 Boolean sameModule(
-        ElementModel|UnitModel|ScopeModel first,
-        ElementModel|UnitModel|ScopeModel second)
+        Node|ElementModel|UnitModel|ScopeModel first,
+        Node|ElementModel|UnitModel|ScopeModel second)
     =>  getModule(first) == getModule(second);
 
 //not allowing `ScopeModel` arguments since they have `null` containers

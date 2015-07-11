@@ -34,7 +34,7 @@ void anonymousFunctionTest() {
 
             void $package$simpleFunction() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString((() => "result")());
+                    return $ceylon$language.String.instance((() => "result")());
                 });
                 $ceylon$language.print(anon.$delegate$());
             }
@@ -58,7 +58,7 @@ void functionReturnBoxingTest() {
 
             void $package$simpleFunction() {
                 $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString((() => "result")());
+                    return $ceylon$language.String.instance((() => "result")());
                 });
                 $ceylon$language.print(anon.$delegate$());
             }
@@ -86,10 +86,10 @@ void nestedFunctionTest() {
                 $dart$core.String nested1() => "result1";
 
                 $dart$core.Object nested2() {
-                    return $ceylon$language.dart$nativeToCeylonString("result2");
+                    return $ceylon$language.String.instance("result2");
                 }
 
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
+                $ceylon$language.print($ceylon$language.String.instance(nested1()));
                 $ceylon$language.print(nested2());
             }
 
@@ -116,9 +116,9 @@ void functionReferenceTest() {
                 $dart$core.String nested1() => "result1";
 
                 $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString(nested1());
+                    return $ceylon$language.String.instance(nested1());
                 });
-                $ceylon$language.print($ceylon$language.dart$nativeToCeylonString(nested1()));
+                $ceylon$language.print($ceylon$language.String.instance(nested1()));
                 $ceylon$language.print(nested1Ref.$delegate$());
             }
 
@@ -189,7 +189,7 @@ void functionDefaultedParameters2() {
                     x = 1;
                 }
                 if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-                    y = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(x as $dart$core.int).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
+                    y = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(x as $dart$core.int).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
                 }
                 return y as $dart$core.int;
             }

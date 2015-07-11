@@ -43,4 +43,12 @@ class Integer implements Integral, Exponentiable { // Binary
 
   @$dart$core.override
   $dart$core.bool notSmallerThan(Integer other) => _value >= other._value;
+
+  // Dart runtime
+
+  static Integer instance($dart$core.int value)
+    => value == null ? null : new Integer(value);
+
+  static $dart$core.int nativeValue(Integer value)
+    => value == null ? null : value._value;
 }

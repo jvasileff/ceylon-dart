@@ -54,4 +54,12 @@ class String implements List {
   @$dart$core.override
   Sequential sequence()
     =>  Iterable.$sequence(this);
+
+  // Dart runtime
+
+  static String instance($dart$core.String value)
+    => value == null ? null : new String(value);
+
+  static $dart$core.String nativeValue(String value)
+    => value == null ? null : value._value;
 }

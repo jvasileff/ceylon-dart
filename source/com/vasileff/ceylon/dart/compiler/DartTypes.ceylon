@@ -392,9 +392,8 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
     shared
     DartIdentifier qualifyIdentifier(
-            ElementModel|UnitModel scope,
-            DeclarationModel declaration,
-            String simpleName) {
+            Node|ElementModel|UnitModel|ScopeModel scope,
+            DeclarationModel declaration) {
 
         switch (container = containerOfDeclaration(declaration))
         case (is PackageModel) {
@@ -403,7 +402,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 return DartSimpleIdentifier(
                     "$package$" +
                     identifierPackagePrefix(declaration) +
-                    simpleName);
+                    getName(declaration));
             }
             else {
                 // qualify toplevel with Dart import prefix
@@ -412,7 +411,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
                         moduleImportPrefix(declaration));
                     identifier = DartSimpleIdentifier(
                         identifierPackagePrefix(declaration) +
-                        simpleName);
+                        getName(declaration));
                 };
             }
         }
@@ -421,7 +420,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
                     | ControlBlockModel
                     | ConstructorModel) {
             // TODO should be in scope? consider capture, etc.
-            return DartSimpleIdentifier(simpleName);
+            return DartSimpleIdentifier(getName(declaration));
         }
         else {
             // FIXME this needs to be a CompilerBug exception

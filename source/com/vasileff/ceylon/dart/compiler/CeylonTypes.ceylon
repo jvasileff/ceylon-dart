@@ -122,32 +122,41 @@ class CeylonTypes(Unit unit) {
     // common declarations
     /////////////////////////////////////////////
 
+    Class assertClass(Declaration declaration) {
+        assert (is Class declaration);
+        return declaration;
+    }
+
+    Value assertValue(Declaration declaration) {
+        assert (is Value declaration);
+        return declaration;
+    }
+
     shared
     Declaration getLanguageModuleDeclaration(String name)
         =>  unit.getLanguageModuleDeclaration(name);
 
-    // not sure about the safety implications due
-    // to duplicate instances re:
-    // https://github.com/ceylon/ceylon-compiler/issues/1815
+    shared
+    Class assertionErrorDeclaration
+        =>  assertClass(getLanguageModuleDeclaration("AssertionError"));
 
-    TypeDeclaration booleanDeclaration
-        =>  unit.booleanDeclaration;
+    shared
+    Class booleanDeclaration
+        =>  assertClass(unit.booleanDeclaration);
 
-    Value booleanTrueValueDeclaration {
-        assert (is Value declaration =
-            unit.getLanguageModuleDeclaration("true"));
-        return declaration;
-    }
+    shared
+    Value booleanTrueValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("true"));
 
+    shared
     TypeDeclaration booleanTrueTypeDeclaration
         =>  booleanTrueValueDeclaration.typeDeclaration;
 
-    Value booleanFalseValueDeclaration {
-        assert (is Value declaration =
-            unit.getLanguageModuleDeclaration("false"));
-        return declaration;
-    }
+    shared
+    Value booleanFalseValueDeclaration
+        => assertValue(getLanguageModuleDeclaration("false"));
 
+    shared
     TypeDeclaration booleanFalseTypeDeclaration
         =>  booleanFalseValueDeclaration.typeDeclaration;
 
@@ -160,30 +169,16 @@ class CeylonTypes(Unit unit) {
         =>  unit.comparableDeclaration;
 
     shared
-    Class objectDeclaration
-        =>  unit.objectDeclaration;
-
-    TypeDeclaration nullDeclaration {
-        assert (is TypeDeclaration declaration =
-            unit.getLanguageModuleDeclaration("Null"));
-        return declaration;
-    }
-
-    Value nullValueDeclaration {
-        assert (is Value declaration =
-                unit.getLanguageModuleDeclaration("null"));
-        return declaration;
-    }
-
-    TypeDeclaration nullTypeDeclaration
-        =>  nullValueDeclaration.typeDeclaration;
+    Interface exponentiableDeclaration
+        =>  unit.exponentiableDeclaration;
 
     shared
-    TypeDeclaration assertionErrorDeclaration {
-        assert (is TypeDeclaration declaration =
-            unit.getLanguageModuleDeclaration("AssertionError"));
-        return declaration;
-    }
+    Class floatDeclaration
+        =>  assertClass(unit.floatDeclaration);
+
+    shared
+    Class integerDeclaration
+        =>  assertClass(unit.integerDeclaration);
 
     shared
     Interface integralDeclaration
@@ -194,16 +189,32 @@ class CeylonTypes(Unit unit) {
         =>  unit.invertableDeclaration;
 
     shared
+    Class nullDeclaration
+        =>  unit.nullDeclaration;
+
+    shared
+    Value nullValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("null"));
+
+    shared
+    TypeDeclaration nullTypeDeclaration
+        =>  nullValueDeclaration.typeDeclaration;
+
+    shared
     Interface numericDeclaration
         =>  unit.numericDeclaration;
 
     shared
-    Interface summableDeclaration
-        =>  unit.summableDeclaration;
+    Class objectDeclaration
+        =>  unit.objectDeclaration;
 
     shared
-    Interface exponentiableDeclaration
-        =>  unit.exponentiableDeclaration;
+    Class stringDeclaration
+        =>  assertClass(unit.stringDeclaration);
+
+    shared
+    Interface summableDeclaration
+        =>  unit.summableDeclaration;
 
     /////////////////////////////////////////////
     // declaration tests

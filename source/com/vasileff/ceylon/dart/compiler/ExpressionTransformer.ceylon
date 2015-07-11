@@ -141,8 +141,7 @@ class ExpressionTransformer
                 rhsActual = expressionType;
 
                 value qualified = ctx.dartTypes.qualifyIdentifier(
-                        ctx.unit, targetDeclaration,
-                        ctx.dartTypes.getName(targetDeclaration));
+                        ctx.unit, targetDeclaration);
 
                 switch (ctx.lhsActualTop)
                 case (noType) {

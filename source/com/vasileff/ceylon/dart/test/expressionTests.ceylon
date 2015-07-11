@@ -43,8 +43,8 @@ void addNumbers() {
 
             void $package$run() {
                 $dart$core.int i = 1;
-                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
-                $dart$core.Object k = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1));
+                $dart$core.int j = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
+                $dart$core.Object k = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1));
             }
 
             void run() => $package$run();
@@ -74,29 +74,29 @@ void boxIfElseExpression() {
                 $dart$core.int x = 1;
                 $dart$core.int y = 1;
                 $dart$core.int z = (() {
-                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
+                    if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
                         return x;
                     } else {
                         return y;
                     }
                 })();
                 $dart$core.Object o = (() {
-                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
-                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        return $ceylon$language.Integer.instance(x);
                     } else {
-                        return $ceylon$language.dart$nativeToCeylonInteger(y);
+                        return $ceylon$language.Integer.instance(y);
                     }
                 })();
                 $dart$core.Object p = (() {
-                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
-                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        return $ceylon$language.Integer.instance(x);
                     } else {
-                        return $ceylon$language.dart$nativeToCeylonString("");
+                        return $ceylon$language.String.instance("");
                     }
                 })();
                 $dart$core.Object q = (() {
-                    if ($ceylon$language.dart$nativeToCeylonInteger(x).largerThan($ceylon$language.dart$nativeToCeylonInteger(y))) {
-                        return $ceylon$language.dart$nativeToCeylonInteger(x);
+                    if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        return $ceylon$language.Integer.instance(x);
                     } else {
                         return o;
                     }

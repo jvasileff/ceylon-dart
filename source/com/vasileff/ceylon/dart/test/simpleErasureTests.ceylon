@@ -88,11 +88,11 @@ void integerFunctionReturnErasure() {
 
             $dart$core.int f2() => $package$f2();
 
-            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonInteger(1);
+            $dart$core.Object $package$f3() => $ceylon$language.Integer.instance(1);
 
             $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonInteger(1);
+            $dart$core.Object $package$f4() => $ceylon$language.Integer.instance(1);
 
             $dart$core.Object f4() => $package$f4();
          """;
@@ -119,11 +119,11 @@ void floatFunctionReturnErasure() {
 
             $dart$core.double f2() => $package$f2();
 
-            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
+            $dart$core.Object $package$f3() => $ceylon$language.Float.instance(1.0);
 
             $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonFloat(1.0);
+            $dart$core.Object $package$f4() => $ceylon$language.Float.instance(1.0);
 
             $dart$core.Object f4() => $package$f4();
          """;
@@ -150,11 +150,11 @@ void stringFunctionReturnErasure() {
 
             $dart$core.String f2() => $package$f2();
 
-            $dart$core.Object $package$f3() => $ceylon$language.dart$nativeToCeylonString("x");
+            $dart$core.Object $package$f3() => $ceylon$language.String.instance("x");
 
             $dart$core.Object f3() => $package$f3();
 
-            $dart$core.Object $package$f4() => $ceylon$language.dart$nativeToCeylonString("x");
+            $dart$core.Object $package$f4() => $ceylon$language.String.instance("x");
 
             $dart$core.Object f4() => $package$f4();
          """;
@@ -264,9 +264,9 @@ void booleanArgumentErasure() {
                 $package$f1($package$booleanBoolean);
                 $package$f2($package$booleanBoolean);
                 $package$f2(null);
-                $package$f3($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                $package$f3($ceylon$language.Boolean.instance($package$booleanBoolean));
                 $package$f3($package$booleanObject);
-                $package$f4($ceylon$language.dart$nativeToCeylonBoolean($package$booleanBoolean));
+                $package$f4($ceylon$language.Boolean.instance($package$booleanBoolean));
                 $package$f4($package$booleanObject);
                 $package$f4(null);
                 $package$f5(true);
@@ -320,7 +320,7 @@ void genericNonErasure() {
             $dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
 
             void $package$run() {
-                $dart$core.String myString1 = $ceylon$language.dart$ceylonStringToNative($package$generic($ceylon$language.dart$nativeToCeylonString("true")) as $ceylon$language.String);
+                $dart$core.String myString1 = $ceylon$language.String.nativeValue($package$generic($ceylon$language.String.instance("true")) as $ceylon$language.String);
                 $dart$core.String myString2 = $package$nonGeneric("true");
             }
 
@@ -349,9 +349,9 @@ void functionRefNonErasure() {
 
             void $package$run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() {
-                    return $ceylon$language.dart$nativeToCeylonString($package$echoString());
+                    return $ceylon$language.String.instance($package$echoString());
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref.$delegate$() as $ceylon$language.String);
+                $dart$core.String result = $ceylon$language.String.nativeValue(ref.$delegate$() as $ceylon$language.String);
             }
 
             void run() => $package$run();
@@ -379,9 +379,9 @@ void dontEraseArgumentsToValue() {
 
             void $package$run() {
                 $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$dart$core.Object s]) {
-                    return $ceylon$language.dart$nativeToCeylonString($package$echoString($ceylon$language.dart$ceylonStringToNative(s as $ceylon$language.String)));
+                    return $ceylon$language.String.instance($package$echoString($ceylon$language.String.nativeValue(s as $ceylon$language.String)));
                 });
-                $dart$core.String result = $ceylon$language.dart$ceylonStringToNative(ref.$delegate$($ceylon$language.dart$nativeToCeylonString(".")) as $ceylon$language.String);
+                $dart$core.String result = $ceylon$language.String.nativeValue(ref.$delegate$($ceylon$language.String.instance(".")) as $ceylon$language.String);
             }
 
             void run() => $package$run();
@@ -409,11 +409,11 @@ void methodRefinementArgumentErasure() {
 
             void $package$run() {
                 $dart$core.int i = 1;
-                $dart$core.int j = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
-                $dart$core.int k = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(2)).plus($ceylon$language.dart$nativeToCeylonInteger(3)));
-                $dart$core.Object l = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(4));
-                $dart$core.Object m = $ceylon$language.dart$nativeToCeylonInteger(i).plus($ceylon$language.dart$nativeToCeylonInteger(5)).plus($ceylon$language.dart$nativeToCeylonInteger(6));
-                $dart$core.int n = $ceylon$language.dart$ceylonIntegerToNative($ceylon$language.dart$nativeToCeylonInteger(1).plus($ceylon$language.dart$nativeToCeylonInteger(1)).plus($ceylon$language.dart$nativeToCeylonInteger(1)));
+                $dart$core.int j = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)));
+                $dart$core.int k = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(2)).plus($ceylon$language.Integer.instance(3)));
+                $dart$core.Object l = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(4));
+                $dart$core.Object m = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(5)).plus($ceylon$language.Integer.instance(6));
+                $dart$core.int n = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(1).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
             }
 
             void run() => $package$run();
