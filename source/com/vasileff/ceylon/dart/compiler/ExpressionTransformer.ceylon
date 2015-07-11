@@ -24,7 +24,8 @@ import ceylon.ast.core {
     DifferenceOperation,
     CompareOperation,
     EqualOperation,
-    NotEqualOperation
+    NotEqualOperation,
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -72,13 +73,13 @@ class ExpressionTransformer
         TypeModel rhsFormal;
         TypeModel rhsActual;
 
-        assert (exists lhsType = ctx.lhsActualTop);
-
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(lhsType, true);
+            assert (exists formalType = ctx.lhsFormalTop);
+            return generateBooleanExpression(that, formalType, true);
         }
         else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(lhsType, false);
+            assert (exists formalType = ctx.lhsFormalTop);
+            return generateBooleanExpression(that, formalType, false);
         }
         else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
@@ -418,23 +419,25 @@ class ExpressionTransformer
                 FunctionExpressionInfo(that).declarationModel,
                 generateFunctionExpression(that), 0, false);
 
-    DartExpression generateBooleanExpression
-            (TypeOrNoType type, Boolean boolean) {
-        value box =
-            switch(type)
-            case (is NoType) false
-            case (is TypeModel) ctx.ceylonTypes.isCeylonBoolean(
-                    ctx.ceylonTypes.definiteType(type));
-        if (box) {
-            return DartBooleanLiteral(boolean);
-        }
-        else {
-            // TODO naming
-            return DartPrefixedIdentifier(
-                DartSimpleIdentifier("$ceylon$language"),
-                DartSimpleIdentifier(if(boolean) then "$true" else "$false"));
-        }
-    }
+    DartExpression generateBooleanExpression(
+            Node scope,
+            "The *formal* type; determines boxing."
+            TypeOrNoType type,
+            "The value to produce"
+            Boolean boolean)
+        =>  let (native =
+                switch(type)
+                case (is NoType) false
+                case (is TypeModel) ctx.ceylonTypes.isCeylonBoolean(
+                        ctx.ceylonTypes.definiteType(type)))
+            if (native) then
+                DartBooleanLiteral(boolean)
+            else if (boolean) then
+                ctx.dartTypes.qualifyIdentifier(scope,ctx.ceylonTypes
+                    .booleanTrueValueDeclaration)
+            else
+                ctx.dartTypes.qualifyIdentifier(scope, ctx.ceylonTypes
+                    .booleanFalseValueDeclaration);
 
     shared actual
     DartExpression transformComparisonOperation(ComparisonOperation that)

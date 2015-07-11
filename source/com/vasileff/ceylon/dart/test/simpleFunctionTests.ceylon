@@ -204,5 +204,55 @@ void functionDefaultedParameters2() {
 
             void run() => $package$run();
          """;
-     };
+    };
+}
+
+shared test
+void functionDefaultedBoolean() {
+    compileAndCompare {
+         """
+            shared Boolean withDefaults(Boolean x = true) {
+                return x;
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.bool $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) {
+                if ($dart$core.identical(x, $ceylon$language.dart$default)) {
+                    x = true;
+                }
+                return x as $dart$core.bool;
+            }
+
+            $dart$core.bool withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) => $package$withDefaults(x);
+         """;
+    };
+}
+
+shared test
+void functionDefaultedFloat() {
+    compileAndCompare {
+         """
+            shared Float withDefaults(Float x = 1.0) {
+                return x;
+            }
+         """;
+
+         """
+            import "dart:core" as $dart$core;
+            import "package:ceylon/language/language.dart" as $ceylon$language;
+
+            $dart$core.double $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) {
+                if ($dart$core.identical(x, $ceylon$language.dart$default)) {
+                    x = 1.0;
+                }
+                return x as $dart$core.double;
+            }
+
+            $dart$core.double withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) => $package$withDefaults(x);
+         """;
+    };
 }

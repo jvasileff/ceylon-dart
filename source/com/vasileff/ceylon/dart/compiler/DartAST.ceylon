@@ -2,6 +2,13 @@ shared abstract
 class DartNode() {
     shared formal
     void write(CodeWriter writer);
+
+    shared actual default
+    String string {
+        value sb = StringBuilder();
+        write(CodeWriter(sb.append));
+        return sb.string;
+    }
 }
 
 "A node that represents an expression."

@@ -62,7 +62,11 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
         switch (declaration)
         case (is ValueModel) {
-            return declaration.name;
+            // TODO generalize this Dart reserved word hack
+            return switch (n = declaration.name)
+                case ("true") "$true"
+                case ("false") "$false"
+                else n;
         }
         case (is FunctionModel) {
             return declaration.name;
