@@ -3,14 +3,37 @@ import ceylon.ast.core {
     WideningTransformer,
     FunctionShortcutDefinition,
     FunctionDefinition,
-    AnyFunction
+    AnyFunction,
+    Parameters,
+    Arguments,
+    PositionalArguments,
+    NamedArguments,
+    ArgumentList,
+    FunctionExpression,
+    Block,
+    LazySpecifier,
+    DefaultedParameter,
+    Expression
+}
+import ceylon.collection {
+    LinkedList
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 import com.redhat.ceylon.model.typechecker.model {
+    FunctionModel=Function,
     TypeModel=Type,
     ScopeModel=Scope,
     ElementModel=Element,
-    FunctionOrValueModel=FunctionOrValue
+    FunctionOrValueModel=FunctionOrValue,
+    ControlBlockModel=ControlBlock,
+    ConstructorModel=Constructor,
+    ValueModel=Value,
+    PackageModel=Package,
+    ClassOrInterfaceModel=ClassOrInterface,
+    ParameterModel=Parameter
 }
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
@@ -63,7 +86,7 @@ class BaseTransformer<Result>
             returnType = generateFunctionReturnType(info);
             propertyKeyword = null;
             name = DartSimpleIdentifier(functionName);
-            functionExpression = expressionTransformer.generateFunctionExpression(that);
+            functionExpression = generateFunctionExpression(that);
         };
     }
 
@@ -80,6 +103,507 @@ class BaseTransformer<Result>
             else
                 // TODO seems like a hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
+
+    shared
+    DartFunctionExpression generateFunctionExpression(
+            FunctionExpression
+                | FunctionDefinition
+                | FunctionShortcutDefinition that) {
+
+        FunctionModel functionModel;
+        [Parameters+] parameterLists;
+        LazySpecifier|Block definition;
+        String? functionName;
+
+        switch (that)
+        case (is FunctionExpression) {
+            value info = FunctionExpressionInfo(that);
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionModel = info.declarationModel;
+            functionName = null;
+        }
+        case (is FunctionDefinition) {
+            value info = FunctionDefinitionInfo(that);
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionModel = info.declarationModel;
+            functionName = ctx.dartTypes.getName(functionModel);
+        }
+        case (is FunctionShortcutDefinition) {
+            value info = FunctionShortcutDefinitionInfo(that);
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionModel = info.declarationModel;
+            functionName = ctx.dartTypes.getName(functionModel);
+        }
+
+        variable DartExpression? result = null;
+
+        for (i -> list in parameterLists.indexed.sequence().reversed) {
+            if (i < parameterLists.size - 1) {
+                assert(exists previous = result);
+                TypeModel formalReturn;
+                TypeModel actualReturn;
+                if (i == parameterLists.size - 2) {
+                    // innermost Callable, return is the actual Function's result
+                    formalReturn = ctx.dartTypes.formalType(functionModel);
+                    actualReturn = ctx.dartTypes.actualType(functionModel);
+                }
+                else {
+                    // outer Callable that returns a Callable
+                    formalReturn = ctx.ceylonTypes.callableDeclaration.type;
+                    actualReturn = ctx.ceylonTypes.callableDeclaration.type;
+                }
+
+                // wrap nested function in a callable
+                result = generateNewCallable(that, functionModel, previous, i+1);
+            }
+
+            //Defaulted Parameters:
+            //If any exist, use a block (not lazy specifier)
+            //At start of block, assign values as necessary
+            value defaultedParameters = list.parameters.narrow<DefaultedParameter>();
+
+            DartFunctionBody body;
+            if (defaultedParameters.empty) {
+                // no defaulted parameters
+                if (i == parameterLists.size - 1) {
+                    // the actual function body
+                    switch (definition)
+                    case (is Block) {
+                        body = withReturn(
+                            functionModel,
+                            () => DartBlockFunctionBody(null, false, statementTransformer
+                                    .transformBlock(definition)[0]));
+                    }
+                    case (is LazySpecifier) {
+                        body = DartExpressionFunctionBody(false, withLhs(
+                            functionModel,
+                            () => definition.expression
+                                    .transform(expressionTransformer)));
+                    }
+                }
+                else {
+                    assert(exists previous = result);
+                    body = DartExpressionFunctionBody(false, previous);
+                }
+            }
+            else {
+                // defaulted parameters exist
+                value statements = LinkedList<DartStatement>();
+
+                for (param in defaultedParameters) {
+                    value parameterInfo = ParameterInfo(param);
+                    value paramName = DartSimpleIdentifier(
+                            ctx.dartTypes.getName(parameterInfo.parameterModel));
+                    statements.add {
+                        DartIfStatement {
+                            // condition
+                            DartFunctionExpressionInvocation {
+                                DartPrefixedIdentifier {
+                                    prefix = DartSimpleIdentifier("$dart$core");
+                                    identifier = DartSimpleIdentifier("identical");
+                                };
+                                DartArgumentList {
+                                    [paramName,
+                                     DartPrefixedIdentifier {
+                                        prefix = DartSimpleIdentifier("$ceylon$language");
+                                        identifier = DartSimpleIdentifier("dart$default");
+                                    }];
+                                };
+                            };
+                            // then statement
+                            DartExpressionStatement {
+                                DartAssignmentExpression {
+                                    paramName;
+                                    DartAssignmentOperator.equal;
+                                    withLhs {
+                                        parameterInfo.parameterModel.model;
+                                        () => param.specifier.expression
+                                                .transform(expressionTransformer);
+                                    };
+                                };
+                            };
+                        };
+                    };
+                }
+                if (i == parameterLists.size - 1) {
+                    // the actual function body
+                    switch (definition)
+                    case (is Block) {
+                        statements.addAll(expand(withReturn(
+                            functionModel,
+                            () => definition.transformChildren(statementTransformer))));
+                    }
+                    case (is LazySpecifier) {
+                        // for FunctionShortcutDefinition
+                        statements.add {
+                            DartReturnStatement {
+                                withLhs {
+                                    functionModel;
+                                    () => definition.expression.transform(
+                                            expressionTransformer);
+                                };
+                            };
+                        };
+                    }
+                }
+                else {
+                    assert(exists previous = result);
+                    statements.add(DartReturnStatement(previous));
+                }
+                body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
+            }
+            result = DartFunctionExpression {
+                generateFormalParameterList(that, list);
+                body;
+            };
+        }
+        assert (is DartFunctionExpression r = result);
+        return r;
+    }
+
+    shared
+    DartFormalParameterList generateFormalParameterList
+            (Node that, Parameters parameters) {
+
+        if (parameters.parameters.empty) {
+            return DartFormalParameterList();
+        }
+
+        value dartParameters = parameters.parameters.collect((parameter) {
+            value parameterInfo = ParameterInfo(parameter);
+            value parameterModel = parameterInfo.parameterModel;
+
+            value defaulted = parameterModel.defaulted;
+            value callable = parameterModel.model is FunctionModel;
+            value variadic = parameterModel.sequenced;
+
+            if (callable) {
+                throw CompilerBug(that, "Callable parameters not yet supported");
+            }
+            else if (variadic) {
+                throw CompilerBug(that, "Variadic parameters not yet supported");
+            }
+            else {
+                // Use core.Object for defaulted parameters so we can
+                // initialize with `dart$default`
+                value dartParameterType =
+                    if (defaulted)
+                    then ctx.dartTypes.dartObject
+                    else ctx.dartTypes.dartTypeNameForDeclaration(
+                            that, parameterModel.model);
+
+                value dartSimpleParameter =
+                DartSimpleFormalParameter {
+                    false; false;
+                    dartParameterType;
+                    DartSimpleIdentifier {
+                        ctx.dartTypes.getName(parameterModel);
+                    };
+                };
+
+                if (defaulted) {
+                    return
+                    DartDefaultFormalParameter {
+                        dartSimpleParameter;
+                        DartPrefixedIdentifier {
+                            prefix = DartSimpleIdentifier("$ceylon$language");
+                            identifier = DartSimpleIdentifier("dart$default");
+                        };
+                    };
+                }
+                else {
+                    return dartSimpleParameter;
+                }
+            }
+        });
+        return DartFormalParameterList {
+            positional = true;
+            parameters = dartParameters;
+        };
+    }
+
+    shared
+    DartInstanceCreationExpression generateNewCallable(
+            Node that, FunctionModel functionModel,
+            DartExpression delegateFunction,
+            Integer parameterListNumber = 0,
+            Boolean delegateReturnsCallable =
+                    parameterListNumber <
+                    functionModel.parameterLists.size() - 1) {
+
+        DartExpression outerFunction;
+        TypeModel returnTypeFormal;
+        TypeModel returnTypeActual;
+        if (delegateReturnsCallable) {
+            returnTypeFormal = ctx.ceylonTypes.callableDeclaration.type;
+            returnTypeActual = ctx.ceylonTypes.callableDeclaration.type;
+        }
+        else {
+            returnTypeFormal = ctx.dartTypes.formalType(functionModel);
+            returnTypeActual = ctx.dartTypes.actualType(functionModel);
+        }
+        value parameters = CeylonList(functionModel.parameterLists
+                .get(parameterListNumber).parameters);
+
+        // determine if return or arguments need boxing
+        value boxingRequired =
+                ctx.ceylonTypes.boxingConversionFor(
+                    ctx.ceylonTypes.anythingType,
+                    returnTypeFormal) exists ||
+                parameters.any((parameterModel)
+                    =>  ctx.ceylonTypes.boxingConversionFor(
+                        ctx.ceylonTypes.anythingType,
+                        ctx.dartTypes.formalType(parameterModel.model)) exists);
+
+        // generate outerFunction to handle boxing
+        if (!boxingRequired) {
+            outerFunction = delegateFunction;
+        }
+        else {
+            value outerParameters = parameters.collect((parameterModel) {
+                value dartSimpleParameter =
+                        DartSimpleFormalParameter {
+                            false; false;
+                            // core.Object for the type of all parameters since
+                            // `Callable` is generic
+                            ctx.dartTypes.dartObject;
+                            DartSimpleIdentifier {
+                                ctx.dartTypes.getName(parameterModel);
+                            };
+                        };
+
+                if (parameterModel.defaulted) {
+                    return
+                    DartDefaultFormalParameter {
+                        dartSimpleParameter;
+                        DartPrefixedIdentifier {
+                            prefix = DartSimpleIdentifier("$ceylon$language");
+                            identifier = DartSimpleIdentifier("dart$default");
+                        };
+                    };
+                }
+                else {
+                    return dartSimpleParameter;
+                }
+            });
+
+            value innerArguments = parameters.collect((parameterModel) {
+                value parameterName = ctx.dartTypes.getName(parameterModel);
+                value parameterIdentifier = DartSimpleIdentifier(parameterName);
+
+                value unboxed = withLhs {
+                    // "lhs" is the inner function's parameter
+                    lhsDeclaration = parameterModel.model;
+                    () => withBoxingTypes {
+                        // the outer function's argument which is never erased
+                        scope = that;
+                        rhsFormal = ctx.ceylonTypes.anythingType;
+                        rhsActual = ctx.ceylonTypes.anythingType;
+                        parameterIdentifier;
+                    };
+                };
+
+                if (parameterModel.defaulted) {
+                    return
+                    DartConditionalExpression {
+                        // condition
+                        DartFunctionExpressionInvocation {
+                            dartDCIdentical;
+                            DartArgumentList {
+                                [parameterIdentifier,
+                                 dartCLDDefaulted];
+                            };
+                        };
+                        // propagate defaulted
+                        dartCLDDefaulted;
+                        // not default, unbox as necessary
+                        unboxed;
+
+                    };
+                }
+                else {
+                    return
+                    unboxed;
+                }
+            });
+
+            // the outer function accepts and returns non-erased types
+            // using the inner function that follows normal erasure rules
+            outerFunction =
+            DartFunctionExpression {
+                DartFormalParameterList {
+                    positional = true;
+                    named = false;
+                    parameters = outerParameters;
+                };
+                DartBlockFunctionBody {
+                    keyword = null;
+                    star = false;
+                    DartBlock {
+                        // return boxed (no erasure) result of
+                        // the invocation of the original function
+                        [DartReturnStatement {
+                            ctx.withLhsType {
+                                // generic; Anything prevents erasure
+                                lhsFormal = ctx.ceylonTypes.anythingType;
+                                lhsActual = returnTypeActual;
+                                () => withBoxingTypes {
+                                    scope = that;
+                                    rhsFormal = returnTypeFormal;
+                                    rhsActual = returnTypeActual;
+                                    DartFunctionExpressionInvocation {
+                                        delegateFunction;
+                                        DartArgumentList {
+                                            innerArguments;
+                                        };
+                                    };
+                                };
+                            };
+                        }];
+                    };
+                };
+            };
+        }
+
+        // create the Callable!
+        return
+        DartInstanceCreationExpression {
+            const = false;
+            DartConstructorName {
+                type = DartTypeName {
+                    DartPrefixedIdentifier {
+                        DartSimpleIdentifier("$ceylon$language");
+                        DartSimpleIdentifier("dart$Callable");
+                    };
+                };
+                name = null;
+            };
+            argumentList = DartArgumentList {
+                [outerFunction];
+            };
+        };
+    }
+
+    shared
+    DartArgumentList generateArgumentListFromArguments(Arguments that) {
+        switch (that)
+        case (is PositionalArguments) {
+            return generateArgumentListFromArgumentList(that.argumentList);
+        }
+        case (is NamedArguments) {
+            throw CompilerBug(that, "NamedArguments not supported");
+        }
+    }
+
+    shared
+    DartArgumentList generateArgumentListFromArgumentList(ArgumentList that) {
+        "spread arguments not supported"
+        assert(that.sequenceArgument is Null);
+
+        value info = ArgumentListInfo(that);
+
+        // use the passed in `formal` parameters, not the parameter models
+        // available from the argument list.
+        value args = that.listedArguments.indexed.collect((e) {
+            value i -> expression = e;
+            assert (is ParameterModel? parameterModel =
+                    info.listedArgumentModels.getFromFirst(i)?.get(1));
+
+            // If parameterModel is null, we must be invoking a value, so use type
+            // `Anything` to disable erasure. We don't need to cast, since `Callable`'s
+            // take `core.Object`s.
+            TypeModel lhsFormal =
+                    if (exists parameterModel)
+                    then ctx.dartTypes.formalType(parameterModel.model)
+                    else ctx.ceylonTypes.anythingType;
+
+            TypeModel lhsActual =
+                    if (exists parameterModel)
+                    then ctx.dartTypes.actualType(parameterModel.model)
+                    else ctx.ceylonTypes.anythingType;
+
+            return ctx.withLhsType(
+                lhsFormal,
+                lhsActual,
+                () => expression.transform(expressionTransformer));
+        });
+        return DartArgumentList(args);
+    }
+
+    shared
+    DartFunctionExpressionInvocation | DartAssignmentExpression
+    generateAssignmentExpression(
+                Node that,
+                ValueModel targetDeclaration,
+                Expression rhsExpression) {
+
+        // TODO make sure setters return the new value, or do somthing here
+        DartIdentifier targetOrSetter;
+        Boolean isMethod;
+
+        switch (container = containerOfDeclaration(targetDeclaration))
+        case (is PackageModel) {
+            isMethod = false;
+            if (sameModule(ctx.unit, targetDeclaration)) {
+                // qualify toplevel in same module with '$package$'
+                targetOrSetter = DartSimpleIdentifier(
+                    "$package$" +
+                    ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                    ctx.dartTypes.getName(targetDeclaration));
+            }
+            else {
+                // qualify toplevel with Dart import prefix
+                targetOrSetter = DartPrefixedIdentifier(
+                    DartSimpleIdentifier(
+                        ctx.dartTypes.moduleImportPrefix(targetDeclaration)),
+                    DartSimpleIdentifier(
+                        ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
+                        ctx.dartTypes.getName(targetDeclaration)));
+            }
+        }
+        case (is ClassOrInterfaceModel
+                    | FunctionOrValueModel
+                    | ControlBlockModel
+                    | ConstructorModel) {
+            isMethod = useGetterSetterMethods(targetDeclaration);
+            targetOrSetter =
+                if (!isMethod) then
+                    // regular variable; no lazy or block getter
+                    DartSimpleIdentifier(
+                        ctx.dartTypes.getName(targetDeclaration))
+                else
+                    // setter method
+                    DartSimpleIdentifier(
+                        ctx.dartTypes.getName(targetDeclaration) + "$set");
+        }
+        else {
+            throw CompilerBug(that,
+                "Unexpected container for base expression: \
+                 declaration type '``className(targetDeclaration)``' \
+                 container type '``className(container)``'");
+        }
+
+        DartExpression rhs = withLhs(
+                targetDeclaration,
+                () => rhsExpression.transform(expressionTransformer));
+
+        if (isMethod) {
+            return DartFunctionExpressionInvocation {
+                func = targetOrSetter;
+                argumentList = DartArgumentList([rhs]);
+            };
+        }
+        else {
+            return DartAssignmentExpression {
+                targetOrSetter;
+                DartAssignmentOperator.equal;
+                rhs;
+            };
+        }
+    }
 
     shared
     void unimplementedError(Node that, String? message=null)

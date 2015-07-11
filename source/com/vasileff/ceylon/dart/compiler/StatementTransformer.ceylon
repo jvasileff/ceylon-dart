@@ -27,7 +27,7 @@ class StatementTransformer
         extends BaseTransformer<[DartStatement*]>(ctx) {
 
     "Parents must set `returnTypeTop`"
-    see(`function ExpressionTransformer.generateFunctionExpression`)
+    see(`function generateFunctionExpression`)
     shared actual
     [DartReturnStatement] transformReturn(Return that) {
         if (exists result = that.result) {
@@ -57,7 +57,7 @@ class StatementTransformer
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that)
         =>  [DartExpressionStatement {
-                expression = expressionTransformer.generateAssignmentExpression {
+                expression = generateAssignmentExpression {
                     that = that;
                     targetDeclaration = ValueSpecificationInfo(that).declaration;
                     rhsExpression = that.specifier.expression;

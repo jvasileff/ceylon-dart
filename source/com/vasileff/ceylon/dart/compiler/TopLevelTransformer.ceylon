@@ -19,7 +19,7 @@ class TopLevelTransformer
     [DartTopLevelVariableDeclaration|DartFunctionDeclaration+] transformValueDefinition
             (ValueDefinition that)
         =>  [DartTopLevelVariableDeclaration(
-                miscTransformer.transformValueDefinition(that)),
+                    miscTransformer.transformValueDefinition(that)),
              *generateForwardingGetterSetter(that)];
 
     shared actual
@@ -112,7 +112,8 @@ class TopLevelTransformer
                         async = false;
                         DartAssignmentExpression {
                             DartSimpleIdentifier {
-                                "$package$" + ctx.dartTypes.getName(info.declarationModel);
+                                "$package$"
+                                    + ctx.dartTypes.getName(info.declarationModel);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier("value");
@@ -138,7 +139,7 @@ class TopLevelTransformer
                 propertyKeyword = null;
                 DartSimpleIdentifier(functionName);
                 DartFunctionExpression {
-                    expressionTransformer.generateFormalParameterList {
+                    generateFormalParameterList {
                         that;
                         that.parameterLists.first;
                     };

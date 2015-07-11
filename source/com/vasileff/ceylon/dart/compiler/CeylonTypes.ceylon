@@ -83,11 +83,11 @@ class CeylonTypes(Unit unit) {
     shared
     Boolean isCeylonBoolean(Type type)
         // Boolean, \Itrue, \Ifalse, \Itrue|\Ifalse
-        =>  type.isExactly(booleanType) || (
-                let (declaration = type.declaration)
-                isBooleanTrueTypeDeclaration(declaration) ||
-                isBooleanFalseTypeDeclaration(declaration) ||
-                type.union && CeylonIterable(type.caseTypes).every(isCeylonBoolean));
+        =>  type.isExactly(booleanType)
+            || (let (declaration = type.declaration)
+                isBooleanTrueTypeDeclaration(declaration)
+                || isBooleanFalseTypeDeclaration(declaration)
+                || type.union && CeylonIterable(type.caseTypes).every(isCeylonBoolean));
 
     shared
     Boolean isCeylonByte(Type type)
