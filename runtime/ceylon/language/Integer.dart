@@ -51,4 +51,7 @@ class Integer implements Integral, Exponentiable { // Binary
 
   static $dart$core.int nativeValue(Integer value)
     => value == null ? null : value._value;
+
+  // TODO remove this hack (compiler needs to translate)
+  $dart$core.String get string => toString();
 }
