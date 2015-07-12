@@ -380,6 +380,7 @@ void run() {
                 printAll("hello world", "!");
             }
          """;
+
     value scratchStatements2 =
          """
             shared void run() {
@@ -394,6 +395,9 @@ void run() {
 
                 print(fos1(0));
                 print(fos2(0));
+
+                print(os1?.getFromFirst(0));
+                print(os2?.getFromFirst(0));
             }
          """;
 

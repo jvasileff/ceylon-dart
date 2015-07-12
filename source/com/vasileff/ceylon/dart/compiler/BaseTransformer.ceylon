@@ -98,11 +98,11 @@ class BaseTransformer<Result>
                         DartConditionalExpression {
                             DartBinaryExpression {
                                 parameterIdentifier;
-                                "!=";
+                                "==";
                                 DartNullLiteral();
                             };
-                            ifNotNullExpression;
                             ifNullExpression;
+                            ifNotNullExpression;
                         };
                     };
                 };

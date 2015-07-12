@@ -173,8 +173,7 @@ class ExpressionTransformer
     }
 
     shared actual
-    DartExpression transformQualifiedExpression
-            (QualifiedExpression that) {
+    DartExpression transformQualifiedExpression(QualifiedExpression that) {
 
         if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
@@ -182,16 +181,14 @@ class ExpressionTransformer
                      '``that.memberOperator.text``'");
         }
 
-        value safeOperator = that.memberOperator is SafeMemberOperator;
-
         value info = QualifiedExpressionInfo(that);
+        value safeOperator = that.memberOperator is SafeMemberOperator;
         value receiverInfo = ExpressionInfo(that.receiverExpression);
         value receiverType =
                 if (!safeOperator)
                 then receiverInfo.typeModel
                 else ctx.ceylonTypes.definiteType(receiverInfo.typeModel);
         value targetDeclaration = info.target.declaration;
-        value expressionType = info.typeModel;
         value targetContainer = targetDeclaration.container;
         TypeModel rhsFormal;
         TypeModel rhsActual;
@@ -214,7 +211,6 @@ class ExpressionTransformer
 
         switch (targetDeclaration)
         case (is ValueModel) {
-            // TODO needs a test
             rhsActual = ctx.dartTypes.actualType(targetDeclaration);
             rhsFormal = ctx.dartTypes.formalType(targetDeclaration);
 
@@ -250,8 +246,8 @@ class ExpressionTransformer
         }
         case (is FunctionModel) {
             // will be Callable<...>, which is a noop for boxing
-            rhsFormal = expressionType;
-            rhsActual = expressionType;
+            rhsFormal = info.typeModel;
+            rhsActual = info.typeModel;
 
             value receiver = ctx.withLhsType {
                 // use `Anything` as the formal type to disable erasure since we need
@@ -267,12 +263,12 @@ class ExpressionTransformer
 
             switch (ctx.lhsActualTop)
             case (noType) {
-                // FIXME likely bad assumption
-                "Parent node transformer will probably need to get involved to return
-                 null instead of making the invocation if the receiver is null."
-                assert(!safeOperator);
-
-                // must be an invocation; do not wrap in a callable
+                // An invocation; do not wrap in a callable
+                //
+                // IMPORTANT NOTE: we will completely disregard possible use of the
+                // SafeMemberOperator, and let the outer invocatino node rewrite the
+                // expression (we can't; we don't have the args)
+                see(`function transformInvocation`);
                 unboxed = DartPropertyAccess(receiver, target);
             }
             else {
@@ -379,15 +375,13 @@ class ExpressionTransformer
         // the subtypes of FunctionOrValueModel
         assert (is FunctionModel|ValueModel|SetterModel|Null invokedDeclaration);
 
-        "Are we invoking a real function, or a value of type Callable?"
-        Boolean isCallableValue;
-
+        value argumentList = generateArgumentListFromArguments(that.arguments);
+        DartExpression invocation;
         TypeModel rhsFormal;
         TypeModel rhsActual;
 
         switch (invokedDeclaration)
         case (is FunctionModel) {
-            isCallableValue = false;
             if (invokedDeclaration.parameterLists.size() > 1) {
                 // return type will be a Callable, not the ultimate return type
                 // of this function that has multiple parameter lists
@@ -398,21 +392,44 @@ class ExpressionTransformer
                 rhsFormal = ctx.dartTypes.formalType(invokedDeclaration);
                 rhsActual = ctx.dartTypes.actualType(invokedDeclaration);
             }
+
+            // use `noType` to disable boxing; we want to invoke the function directly,
+            // not a newly created Callable!
+            value func = withLhs(noType, () => that.invoked.transform(this));
+
+            // special case where we need to handle SafeMemberOperator
+            // see transformQualifiedExpression
+            if (is QualifiedExpression invoked = that.invoked,
+                    invoked.memberOperator is SafeMemberOperator) {
+                // rewrite the expression with null safety
+                assert (is DartPropertyAccess func);
+                value receiverParameter = DartSimpleIdentifier("$r$");
+                invocation = createNullSafeExpression {
+                    parameterIdentifier = receiverParameter;
+                    maybeNullExpression = func.target;
+                    DartNullLiteral();
+                    DartFunctionExpressionInvocation {
+                        DartPropertyAccess {
+                            receiverParameter;
+                            func.propertyName;
+                        };
+                        argumentList;
+                    };
+                };
+            }
+            else {
+                invocation =
+                DartFunctionExpressionInvocation {
+                    func;
+                    argumentList;
+                };
+            }
         }
         case (is ValueModel?) {
             // callables (being generic) always return `core.Object`
-            isCallableValue = true;
             rhsFormal = ctx.ceylonTypes.anythingType;
             rhsActual = ctx.ceylonTypes.anythingType;
-        }
-        case (is SetterModel) {
-            throw CompilerBug(that,
-                "The invoked expression's declaration type is not supported: \
-                 '``className(invokedDeclaration)``'");
-        }
 
-        DartExpression functionExpression;
-        if (isCallableValue) {
             // the expression might have a union or intersection type or something,
             // so determine a `Callable` type we can use. (Of course, for our purposes,
             // *any* Callable would work, so this is a bit unnecessary)
@@ -420,8 +437,9 @@ class ExpressionTransformer
             value denotableType = expressionType.getSupertype(
                     ctx.ceylonTypes.callableDeclaration);
 
-            // resolve the $delegate$ property of the Callable
-            functionExpression =
+            invocation =
+            DartFunctionExpressionInvocation {
+                // resolve the $delegate$ property of the Callable
                 DartPropertyAccess {
                     ctx.withLhsType {
                         denotableType;
@@ -430,21 +448,20 @@ class ExpressionTransformer
                     };
                     DartSimpleIdentifier("$delegate$");
                 };
+                argumentList;
+            };
         }
-        else {
-            // use `noType` to disable boxing; we want to invoke the function directly,
-            // not a newly created Callable!
-            functionExpression = withLhs(noType, () => that.invoked.transform(this));
+        case (is SetterModel) {
+            throw CompilerBug(that,
+                "The invoked expression's declaration type is not supported: \
+                 '``className(invokedDeclaration)``'");
         }
 
         return withBoxingTypes {
             that;
             rhsFormal;
             rhsActual;
-            DartFunctionExpressionInvocation {
-                functionExpression;
-                generateArgumentListFromArguments(that.arguments);
-            };
+            invocation;
         };
     }
 
