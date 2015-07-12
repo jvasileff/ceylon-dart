@@ -360,18 +360,42 @@ void run() {
 
     value scratchStatements =
          """
+            shared void printAll({Anything*} values, String separator=", ") {
+                variable value first = true;
+                values.each(void (element) {
+                    if (first) {
+                        first = false;
+                    }
+                    else {
+                        process.write(separator);
+                    }
+                    process.write(stringify(element));
+                });
+                process.write(operatingSystem.newline);
+            }
+
+            String stringify(Anything val) => val?.string else "<null>";
+
             shared void run() {
-                if (true) {
-                    print("it's true");
-                }
-                else if (1 == 5) {
-                    print("strange");
-                }
-                else {
-                    print("final else");
-                }
+                printAll("hello world", "!");
+            }
+         """;
+    value scratchStatements2 =
+         """
+            shared void run() {
+                String? os1 = "os1";
+                String? os2 = null;
+
+                print(os1?.size);
+                print(os2?.size);
+
+                value fos1 = os1?.getFromFirst;
+                value fos2 = os2?.getFromFirst;
+
+                print(fos1(0));
+                print(fos2(0));
             }
          """;
 
-    compile { true; scratchStatements };
+    compile { true; scratchStatements2 };
 }

@@ -72,6 +72,46 @@ class BaseTransformer<Result>
     }
 
     shared
+    DartExpression createNullSafeExpression(
+            "Identifier for result of [[maybeNullExpression]]"
+            DartSimpleIdentifier parameterIdentifier,
+            "Evaluate, test for null, and make available as [[parameterIdentifier]]"
+            DartExpression maybeNullExpression,
+            "Only evaluate if maybeNullExpression is null"
+            DartExpression ifNullExpression,
+            "Only evaluate if maybeNullExpression is not null"
+            DartExpression ifNotNullExpression)
+        =>  DartFunctionExpressionInvocation {
+                DartFunctionExpression {
+                    DartFormalParameterList {
+                        positional = false;
+                        named = false;
+                        [DartSimpleFormalParameter {
+                            false;
+                            false;
+                            null;
+                            parameterIdentifier;
+                        }];
+                    };
+                    body = DartExpressionFunctionBody {
+                        async = false;
+                        DartConditionalExpression {
+                            DartBinaryExpression {
+                                parameterIdentifier;
+                                "!=";
+                                DartNullLiteral();
+                            };
+                            ifNotNullExpression;
+                            ifNullExpression;
+                        };
+                    };
+                };
+                DartArgumentList {
+                    [maybeNullExpression];
+                };
+            };
+
+    shared
     DartFunctionDeclaration generateFunctionDefinition(
             FunctionShortcutDefinition | FunctionDefinition that,
             "The function name of toplevels is prefixed with `$package$`"
@@ -329,9 +369,12 @@ class BaseTransformer<Result>
 
     shared
     DartInstanceCreationExpression generateNewCallable(
-            Node that, FunctionModel functionModel,
+            Node that,
+            FunctionModel functionModel,
             DartExpression delegateFunction,
             Integer parameterListNumber = 0,
+            "Handle null delegates produces with the null safe member operator"
+            Boolean delegateMayBeNull = false,
             Boolean delegateReturnsCallable =
                     parameterListNumber <
                     functionModel.parameterLists.size() - 1) {
@@ -432,6 +475,30 @@ class BaseTransformer<Result>
                 }
             });
 
+            // prepare the actual invocation expression, which
+            // may need to protect against a null receiver.
+            value invocation =
+                DartFunctionExpressionInvocation {
+                    delegateFunction;
+                    DartArgumentList {
+                        innerArguments;
+                    };
+                };
+
+            value wrappedInvocation =
+                if (!delegateMayBeNull) then
+                    invocation
+                else
+                    DartConditionalExpression {
+                        DartBinaryExpression {
+                            delegateFunction;
+                            "==";
+                            DartNullLiteral();
+                        };
+                        DartNullLiteral();
+                        invocation;
+                    };
+
             // the outer function accepts and returns non-erased types
             // using the inner function that follows normal erasure rules
             outerFunction =
@@ -456,12 +523,7 @@ class BaseTransformer<Result>
                                     scope = that;
                                     rhsFormal = returnTypeFormal;
                                     rhsActual = returnTypeActual;
-                                    DartFunctionExpressionInvocation {
-                                        delegateFunction;
-                                        DartArgumentList {
-                                            innerArguments;
-                                        };
-                                    };
+                                    wrappedInvocation;
                                 };
                             };
                         }];

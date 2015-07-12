@@ -328,6 +328,7 @@ class StatementTransformer
                 };
             };
 
+    suppressWarnings("unusedDeclaration")
     DartStatement? singleStatementOrNull([DartStatement*] statements) {
         if (nonempty statements) {
             if (statements.size > 1) {

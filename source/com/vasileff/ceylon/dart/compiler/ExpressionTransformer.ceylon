@@ -26,7 +26,9 @@ import ceylon.ast.core {
     NotEqualOperation,
     Node,
     ElseOperation,
-    ThenOperation
+    ThenOperation,
+    SafeMemberOperator,
+    SpreadMemberOperator
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -174,15 +176,20 @@ class ExpressionTransformer
     DartExpression transformQualifiedExpression
             (QualifiedExpression that) {
 
-        if (that.memberOperator.text != ".") {
+        if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
                     "Member operator not yet supported: \
                      '``that.memberOperator.text``'");
         }
 
+        value safeOperator = that.memberOperator is SafeMemberOperator;
+
         value info = QualifiedExpressionInfo(that);
         value receiverInfo = ExpressionInfo(that.receiverExpression);
-        value receiverType = receiverInfo.typeModel;
+        value receiverType =
+                if (!safeOperator)
+                then receiverInfo.typeModel
+                else ctx.ceylonTypes.definiteType(receiverInfo.typeModel);
         value targetDeclaration = info.target.declaration;
         value expressionType = info.typeModel;
         value targetContainer = targetDeclaration.container;
@@ -214,41 +221,59 @@ class ExpressionTransformer
             // Should be easy; don't worry about getters/setters
             // being methods since that doesn't happen in locations
             // that can be qualified.
-            unboxed = DartPropertyAccess {
+
+            value receiver = ctx.withLhsType {
                 // use `Anything` as the formal type to disable erasure since we need
                 // a non-native receiver.
-                ctx.withLhsType {
-                    ctx.ceylonTypes.anythingType;
-                    denotableReceiverType;
-                    () => that.receiverExpression.transform(this);
-                };
-                DartSimpleIdentifier {
-                    ctx.dartTypes.getName(targetDeclaration);
-                };
+                ctx.ceylonTypes.anythingType;
+                denotableReceiverType;
+                () => that.receiverExpression.transform(this);
             };
+            value target = DartSimpleIdentifier {
+                ctx.dartTypes.getName(targetDeclaration);
+            };
+
+            unboxed =
+                if (!safeOperator) then
+                    DartPropertyAccess(receiver, target)
+                else
+                    let (parameterIdentifier = DartSimpleIdentifier("$r$"))
+                    createNullSafeExpression {
+                        parameterIdentifier;
+                        maybeNullExpression = receiver;
+                        ifNullExpression = DartNullLiteral();
+                        ifNotNullExpression = DartPropertyAccess {
+                            parameterIdentifier;
+                            target;
+                        };
+                    };
         }
         case (is FunctionModel) {
             // will be Callable<...>, which is a noop for boxing
             rhsFormal = expressionType;
             rhsActual = expressionType;
 
-            value dartQualified = DartPropertyAccess {
+            value receiver = ctx.withLhsType {
                 // use `Anything` as the formal type to disable erasure since we need
                 // a non-native receiver.
-                ctx.withLhsType {
-                    ctx.ceylonTypes.anythingType;
-                    denotableReceiverType;
-                    () => that.receiverExpression.transform(this);
-                };
-                DartSimpleIdentifier {
-                    ctx.dartTypes.getName(targetDeclaration);
-                };
+                ctx.ceylonTypes.anythingType;
+                denotableReceiverType;
+                () => that.receiverExpression.transform(this);
+            };
+
+            value target = DartSimpleIdentifier {
+                ctx.dartTypes.getName(targetDeclaration);
             };
 
             switch (ctx.lhsActualTop)
             case (noType) {
+                // FIXME likely bad assumption
+                "Parent node transformer will probably need to get involved to return
+                 null instead of making the invocation if the receiver is null."
+                assert(!safeOperator);
+
                 // must be an invocation; do not wrap in a callable
-                unboxed = dartQualified;
+                unboxed = DartPropertyAccess(receiver, target);
             }
             else {
                 // The core.Function result of the qualified expression must be
@@ -257,8 +282,8 @@ class ExpressionTransformer
                 // So...
                 //   - create a closure that
                 //     - declares a variable holding the evaluated qe (1)
-                //     - returns a new Callable that invokes the saved function (2)
-                //   - invoke it (3)
+                //     - returns a new Callable that holds the saved function (2)
+                //   - invoke the closure to obtain the Callable (3)
                 unboxed =
                 DartFunctionExpressionInvocation { // (3)
                     DartFunctionExpression {
@@ -274,7 +299,18 @@ class ExpressionTransformer
                                             DartSimpleIdentifier {
                                                 "$capturedDelegate$";
                                             };
-                                            dartQualified;
+                                            if (!safeOperator)
+                                            then DartPropertyAccess(receiver, target)
+                                            else createNullSafeExpression {
+                                                DartSimpleIdentifier("$r$");
+                                                receiver;
+                                                DartNullLiteral();
+                                                DartPropertyAccess {
+                                                    DartSimpleIdentifier("$r$");
+                                                    target;
+                                                };
+                                            };
+
                                         }];
                                     };
                                 },
@@ -285,6 +321,7 @@ class ExpressionTransformer
                                         DartSimpleIdentifier {
                                             "$capturedDelegate$";
                                         };
+                                        delegateMayBeNull = safeOperator;
                                     };
                                 }];
                             };
@@ -418,7 +455,7 @@ class ExpressionTransformer
         =>  generateNewCallable(
                 that,
                 FunctionExpressionInfo(that).declarationModel,
-                generateFunctionExpression(that), 0, false);
+                generateFunctionExpression(that), 0, false, false);
 
     DartExpression generateBooleanExpression(
             Node scope,
@@ -464,34 +501,12 @@ class ExpressionTransformer
 
     shared actual
     DartExpression transformElseOperation(ElseOperation that)
-        =>  DartFunctionExpressionInvocation {
-                DartFunctionExpression {
-                    DartFormalParameterList {
-                        positional = false;
-                        named = false;
-                        [DartSimpleFormalParameter {
-                            false;
-                            false;
-                            null;
-                            DartSimpleIdentifier("$lhs$");
-                        }];
-                    };
-                    body = DartExpressionFunctionBody {
-                        async = false;
-                        DartConditionalExpression {
-                            DartBinaryExpression {
-                                DartSimpleIdentifier("$lhs$");
-                                "==";
-                                DartNullLiteral();
-                            };
-                            DartSimpleIdentifier("$lhs$");
-                            that.rightOperand.transform(this);
-                        };
-                    };
-                };
-                DartArgumentList {
-                    [that.leftOperand.transform(this)];
-                };
+        =>  let (parameterIdentifier = DartSimpleIdentifier("$lhs$"))
+            createNullSafeExpression {
+                parameterIdentifier;
+                maybeNullExpression = that.leftOperand.transform(this);
+                ifNullExpression = that.rightOperand.transform(this);
+                ifNotNullExpression = parameterIdentifier;
             };
 
     shared actual

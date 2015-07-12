@@ -14,4 +14,7 @@ class Character {
   @$dart$core.override
   $dart$core.String toString()
     => new $dart$core.String.fromCharCode(_value);
+
+  // TODO remove this hack (compiler needs to translate)
+  $dart$core.String get string => toString();
 }
