@@ -114,7 +114,6 @@ shared
             try {
                 value ctx = CompilationContext(
                         phasedUnit.unit, CeylonList(phasedUnit.tokens));
-                ctx.init();
                 value dartDeclarations = ctx.miscTransformer
                         .transformCompilationUnit(unit);
 

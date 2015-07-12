@@ -1,6 +1,5 @@
 import com.redhat.ceylon.model.typechecker.model {
-    UnitModel=Unit,
-    TypeModel=Type
+    UnitModel=Unit
 }
 
 import org.antlr.runtime {
@@ -30,20 +29,40 @@ class CompilationContext(unit, tokens) {
     shared variable
     FormalActualOrNoType? returnFormalActualTop = null;
 
-    shared late
-    ClassMemberTransformer classMemberTransformer;
+    variable
+    ClassMemberTransformer? cmtMemo = null;
 
-    shared late
-    ExpressionTransformer expressionTransformer;
+    variable
+    ExpressionTransformer? etMemo = null;
 
-    shared late
-    MiscTransformer miscTransformer;
+    variable
+    MiscTransformer? mtMemo = null;
 
-    shared late
-    StatementTransformer statementTransformer;
+    variable
+    StatementTransformer? stMemo = null;
 
-    shared late
-    TopLevelTransformer topLevelTransformer;
+    variable
+    TopLevelTransformer? tltMemo = null;
+
+    shared
+    ClassMemberTransformer classMemberTransformer
+        =>  cmtMemo else (cmtMemo = ClassMemberTransformer(this));
+
+    shared
+    ExpressionTransformer expressionTransformer
+        =>  etMemo else (etMemo = ExpressionTransformer(this));
+
+    shared
+    MiscTransformer miscTransformer
+        =>  mtMemo else (mtMemo = MiscTransformer(this));
+
+    shared
+    StatementTransformer statementTransformer
+        =>  stMemo else (stMemo = StatementTransformer(this));
+
+    shared
+    TopLevelTransformer topLevelTransformer
+        =>  tltMemo else (tltMemo = TopLevelTransformer(this));
 
     shared
     FormalActualOrNoType assertedLhsFormalActualTop {
@@ -67,15 +86,6 @@ class CompilationContext(unit, tokens) {
     FormalActualOrNoType assertedReturnFormalActualTop {
         assert(exists fat = returnFormalActualTop);
         return fat;
-    }
-
-    shared
-    void init() {
-        classMemberTransformer = ClassMemberTransformer(this);
-        expressionTransformer = ExpressionTransformer(this);
-        miscTransformer = MiscTransformer(this);
-        statementTransformer = StatementTransformer(this);
-        topLevelTransformer = TopLevelTransformer(this);
     }
 
     shared
@@ -107,14 +117,3 @@ class CompilationContext(unit, tokens) {
         }
     }
 }
-
-"Indicates the absence of a type (like void). One use is to
- indicate the absence of a `lhsType` when determining if
- the result of an expression should be boxed."
-interface NoType of noType {}
-
-"The instance of `NoType`"
-object noType satisfies NoType {}
-
-alias TypeOrNoType => TypeModel | NoType;
-alias FormalActualOrNoType => [TypeModel, TypeModel] | NoType;
