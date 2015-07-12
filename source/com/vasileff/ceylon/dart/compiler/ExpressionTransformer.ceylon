@@ -37,7 +37,6 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     ConstructorModel=Constructor,
     DeclarationModel=Declaration,
-    TypeDeclarationModel=TypeDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
@@ -184,28 +183,44 @@ class ExpressionTransformer
         value info = QualifiedExpressionInfo(that);
         value safeOperator = that.memberOperator is SafeMemberOperator;
         value receiverInfo = ExpressionInfo(that.receiverExpression);
-        value receiverType =
-                if (!safeOperator)
-                then receiverInfo.typeModel
-                else ctx.ceylonTypes.definiteType(receiverInfo.typeModel);
+        value receiverType = receiverInfo.typeModel; // optional with nullsafe operator!
         value targetDeclaration = info.target.declaration;
         value targetContainer = targetDeclaration.container;
         TypeModel rhsFormal;
         TypeModel rhsActual;
 
-        // The receiverType may be generic or a union or something.
-        // Try to determine the exact receiver type needed, that
-        // should be denotable in Dart
         // TODO test this, with a receiver expression that is a function invocation or
         //      value that returns a generic, union, or intersection, I suppose
         TypeModel denotableReceiverType;
-        if (is TypeDeclarationModel targetContainer) {
-            denotableReceiverType = receiverType.getSupertype(targetContainer);
+        if (is ClassOrInterfaceModel targetContainer) {
+            denotableReceiverType = ctx.ceylonTypes.denotableType(
+                    receiverType, targetContainer);
         }
         else {
-            // TODO try harder...
-            denotableReceiverType = receiverType;
+            // probably need to resolve type aliases, but lets wait and see.
+            throw CompilerBug(that,
+                "Cannot determine the receiver type for thequalified expression.");
         }
+
+        value receiver = ctx.withLhsType {
+            // use `Anything` as the formal type to disable erasure
+            // since we need a non-native receiver.
+            ctx.ceylonTypes.anythingType;
+            denotableReceiverType;
+            () => that.receiverExpression.transform(this);
+        };
+
+        value receiverDartType = ctx.dartTypes.dartTypeName {
+            that;
+            denotableReceiverType;
+            // see above; we used `Anything` as the
+            // formal type for the receiver
+            disableErasure = true;
+        };
+
+        value target = DartSimpleIdentifier {
+            ctx.dartTypes.getName(targetDeclaration);
+        };
 
         DartExpression unboxed;
 
@@ -217,18 +232,6 @@ class ExpressionTransformer
             // Should be easy; don't worry about getters/setters
             // being methods since that doesn't happen in locations
             // that can be qualified.
-
-            value receiver = ctx.withLhsType {
-                // use `Anything` as the formal type to disable erasure since we need
-                // a non-native receiver.
-                ctx.ceylonTypes.anythingType;
-                denotableReceiverType;
-                () => that.receiverExpression.transform(this);
-            };
-            value target = DartSimpleIdentifier {
-                ctx.dartTypes.getName(targetDeclaration);
-            };
-
             unboxed =
                 if (!safeOperator) then
                     DartPropertyAccess(receiver, target)
@@ -236,6 +239,7 @@ class ExpressionTransformer
                     let (parameterIdentifier = DartSimpleIdentifier("$r$"))
                     createNullSafeExpression {
                         parameterIdentifier;
+                        receiverDartType;
                         maybeNullExpression = receiver;
                         ifNullExpression = DartNullLiteral();
                         ifNotNullExpression = DartPropertyAccess {
@@ -249,27 +253,17 @@ class ExpressionTransformer
             rhsFormal = info.typeModel;
             rhsActual = info.typeModel;
 
-            value receiver = ctx.withLhsType {
-                // use `Anything` as the formal type to disable erasure since we need
-                // a non-native receiver.
-                ctx.ceylonTypes.anythingType;
-                denotableReceiverType;
-                () => that.receiverExpression.transform(this);
-            };
-
-            value target = DartSimpleIdentifier {
-                ctx.dartTypes.getName(targetDeclaration);
-            };
-
             switch (ctx.lhsActualTop)
             case (noType) {
                 // An invocation; do not wrap in a callable
                 //
                 // IMPORTANT NOTE: we will completely disregard possible use of the
-                // SafeMemberOperator, and let the outer invocatino node rewrite the
+                // SafeMemberOperator, and let the outer invocation node rewrite the
                 // expression (we can't; we don't have the args)
-                see(`function transformInvocation`);
-                unboxed = DartPropertyAccess(receiver, target);
+                // see transformInvocation
+
+                // boxing and casting must be handled by outer node
+                return DartPropertyAccess(receiver, target);
             }
             else {
                 // The core.Function result of the qualified expression must be
@@ -299,6 +293,7 @@ class ExpressionTransformer
                                             then DartPropertyAccess(receiver, target)
                                             else createNullSafeExpression {
                                                 DartSimpleIdentifier("$r$");
+                                                receiverDartType;
                                                 receiver;
                                                 DartNullLiteral();
                                                 DartPropertyAccess {
@@ -403,9 +398,25 @@ class ExpressionTransformer
                     invoked.memberOperator is SafeMemberOperator) {
                 // rewrite the expression with null safety
                 assert (is DartPropertyAccess func);
+
                 value receiverParameter = DartSimpleIdentifier("$r$");
+
+                // determine receiverDartType, duplicating logic in
+                // transformQualifiedExpression
+                value receiverType = ExpressionInfo(invoked.receiverExpression).typeModel;
+                // will probably fail for type aliases
+                assert (is ClassOrInterfaceModel targetContainer =
+                        QualifiedExpressionInfo(invoked).declaration.container);
+                value denotableReceiverType = ctx.ceylonTypes.denotableType(
+                        receiverType, targetContainer);
+                value receiverDartType = ctx.dartTypes.dartTypeName(
+                    that, denotableReceiverType, true);
+
                 invocation = createNullSafeExpression {
                     parameterIdentifier = receiverParameter;
+                    receiverDartType;
+                    // func.target (the receiver) has alread been cast correctly by
+                    // transformQualifiedExpression
                     maybeNullExpression = func.target;
                     DartNullLiteral();
                     DartFunctionExpressionInvocation {
@@ -521,6 +532,12 @@ class ExpressionTransformer
         =>  let (parameterIdentifier = DartSimpleIdentifier("$lhs$"))
             createNullSafeExpression {
                 parameterIdentifier;
+                // the result of the leftOperand transformation should be this:
+                if (is TypeModel lhsActual = ctx.lhsActualTop,
+                    is TypeModel lhsFormal = ctx.lhsFormalTop)
+                    then ctx.dartTypes.dartTypeNameFormalActual(
+                            that, lhsFormal, lhsActual)
+                    else ctx.dartTypes.dartObject;
                 maybeNullExpression = that.leftOperand.transform(this);
                 ifNullExpression = that.rightOperand.transform(this);
                 ifNotNullExpression = parameterIdentifier;

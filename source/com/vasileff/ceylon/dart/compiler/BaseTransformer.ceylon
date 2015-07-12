@@ -71,11 +71,18 @@ class BaseTransformer<Result>
         throw CompilerBug(that, "Unhandled node '``className(that)``'");
     }
 
+    "Note: technically callers should cast the returned DartExpression to the desired
+     lhs type, since Dart appears to treat the result of anonymous function invocations
+     as `var`. So type information is lost. But lets not get too pedantic."
     shared
     DartExpression createNullSafeExpression(
             "Identifier for result of [[maybeNullExpression]]"
             DartSimpleIdentifier parameterIdentifier,
-            "Evaluate, test for null, and make available as [[parameterIdentifier]]"
+            "The type of the [[maybeNullExpression]] that will be exposed as
+             [[parameterIdentifier]]"
+            DartTypeName parameterType,
+            "Evaluate, test for null, and make available as [[parameterIdentifier]].
+             Must be of [[parameterType]]."
             DartExpression maybeNullExpression,
             "Only evaluate if maybeNullExpression is null"
             DartExpression ifNullExpression,
@@ -89,7 +96,7 @@ class BaseTransformer<Result>
                         [DartSimpleFormalParameter {
                             false;
                             false;
-                            null;
+                            parameterType;
                             parameterIdentifier;
                         }];
                     };
@@ -822,12 +829,16 @@ class BaseTransformer<Result>
                 // we'll assume that lhsActual is a supertype of the result
                 // of the boxing conversion
                 withBoxingConversion(scope, rhsActual, dartExpression, conversion)
-            else
+            else if (is TypeModel lhsFormal) then
                 withCastingLhsRhs(
                         scope, lhsActual, rhsActual, dartExpression,
-                        // disable erasure to native types if the rhs static
-                        // type is erased to Object
-                        ctx.dartTypes.erasedToObject(rhsFormal));
+                        // disable erasure to native types if the lhs static type is
+                        // erased to Object (never native)
+                        // TODO need a test for this; false works ok for what we have
+                        // is `true` ever necessary?
+                        ctx.dartTypes.erasedToObject(lhsFormal))
+            else
+                dartExpression;
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,

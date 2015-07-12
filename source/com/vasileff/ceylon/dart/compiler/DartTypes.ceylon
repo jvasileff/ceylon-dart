@@ -217,6 +217,15 @@ class DartTypes(CeylonTypes ceylonTypes) {
     DartTypeModel dartStringModel
         =   DartTypeModel("$dart$core", "String");
 
+    shared
+    DartTypeName dartTypeNameFormalActual(
+            Node|ElementModel|ScopeModel scope,
+            TypeModel formalType,
+            TypeModel actualType)
+        =>  dartTypeName(scope,
+                dartTypeModelFormalActual(formalType, actualType),
+                false);
+
     see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
     shared
     DartTypeName dartTypeName(
@@ -300,29 +309,25 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 declaration.type;
 
     shared
-    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
+    DartTypeModel dartTypeModelFormalActual(TypeModel formalType, TypeModel actualType)
         =>  dartTypeModel {
-                type = actualType(declaration);
+                actualType;
                 // confusing: erased to Object means not erased to a native type!
-                disableErasure = erasedToObject(formalType(declaration));
+                disableErasure = erasedToObject(formalType);
             };
 
-    "Obtain the [[DartTypeModel]] that will be used for
-     the given [[TypeModel]]."
+    shared
+    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
+        =>  dartTypeModelFormalActual(actualType(declaration), formalType(declaration));
+
+    "Obtain the [[DartTypeModel]] that will be used for the given [[TypeModel]]."
     see(`function CeylonTypes.boxingConversionFor`)
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
-            // FIXME remove default value; callers should use dartTypeModelForDeclaration instead
             "Don't erase `Boolean`, `Integer`, `Float`,
              and `String` to native types."
-            Boolean disableErasure = false) {
-
-        // TODO consider using `dynamic` instead of `core.Object`
-        //      for unions, intersections, Nothing,
-        //      and generic type parameters
-
-        // TODO type.typeAlias
+            Boolean disableErasure) {
 
         if (type.typeParameter) {
             // treat all generic types as `core.Object`
@@ -392,7 +397,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
 
     shared
     Boolean equalErasure(TypeModel first, TypeModel second)
-        =>  dartTypeModel(first) == dartTypeModel(second);
+        =>  dartTypeModel(first, false) == dartTypeModel(second, false);
 
     shared
     DartIdentifier qualifyIdentifier(

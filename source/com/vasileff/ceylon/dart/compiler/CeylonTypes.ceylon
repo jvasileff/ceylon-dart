@@ -10,7 +10,8 @@ import com.redhat.ceylon.model.typechecker.model {
     Interface,
     TypeDeclaration,
     Value,
-    Class
+    Class,
+    ClassOrInterface
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -299,6 +300,14 @@ class CeylonTypes(Unit unit) {
     shared
     Boolean equalDefiniteTypes(Type first, Type second)
         =>  definiteType(first).isExactly(definiteType(second));
+
+    "Returns a type that should be denotable on platforms that do not support union and
+     intersection types and that treat `null` as the bottom type. This is useful when
+     accessing members of [[required]], since [[expressionType]] may translate to a top
+     type, such as `Object`, on the target platform."
+    shared
+    Type denotableType(Type expressionType, ClassOrInterface required)
+        =>  definiteType(expressionType).getSupertype(required);
 
     /////////////////////////////////////////////
     // boxing
