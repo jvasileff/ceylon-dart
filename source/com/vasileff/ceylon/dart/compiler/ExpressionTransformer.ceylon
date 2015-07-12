@@ -76,12 +76,10 @@ class ExpressionTransformer
         TypeModel rhsActual;
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
-            assert (exists formalType = ctx.lhsFormalTop);
-            return generateBooleanExpression(that, formalType, true);
+            return generateBooleanExpression(that, ctx.assertedLhsFormalTop, true);
         }
         else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
-            assert (exists formalType = ctx.lhsFormalTop);
-            return generateBooleanExpression(that, formalType, false);
+            return generateBooleanExpression(that, ctx.assertedLhsFormalTop, false);
         }
         else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
@@ -146,7 +144,7 @@ class ExpressionTransformer
                 value qualified = ctx.dartTypes.qualifyIdentifier(
                         ctx.unit, targetDeclaration);
 
-                switch (ctx.lhsActualTop)
+                switch (ctx.assertedLhsFormalActualTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
                     unboxed = qualified;
@@ -155,7 +153,7 @@ class ExpressionTransformer
                     // probably `Anything` or `Callable`; doesn't really
                     // matter. Take a reference to the function:
                     unboxed = generateNewCallable {
-                        that = that;
+                        that;
                         functionModel = targetDeclaration;
                         delegateFunction = qualified;
                     };
@@ -205,8 +203,7 @@ class ExpressionTransformer
         value receiver = ctx.withLhsType {
             // use `Anything` as the formal type to disable erasure
             // since we need a non-native receiver.
-            ctx.ceylonTypes.anythingType;
-            denotableReceiverType;
+            [ctx.ceylonTypes.anythingType, denotableReceiverType];
             () => that.receiverExpression.transform(this);
         };
 
@@ -253,7 +250,7 @@ class ExpressionTransformer
             rhsFormal = info.typeModel;
             rhsActual = info.typeModel;
 
-            switch (ctx.lhsActualTop)
+            switch (ctx.assertedLhsActualTop)
             case (noType) {
                 // An invocation; do not wrap in a callable
                 //
@@ -453,8 +450,7 @@ class ExpressionTransformer
                 // resolve the $delegate$ property of the Callable
                 DartPropertyAccess {
                     ctx.withLhsType {
-                        denotableType;
-                        denotableType;
+                        [denotableType, denotableType];
                         () => that.invoked.transform(this);
                     };
                     DartSimpleIdentifier("$delegate$");
@@ -519,8 +515,7 @@ class ExpressionTransformer
     DartExpression transformThenOperation(ThenOperation that)
         =>  DartConditionalExpression {
                 ctx.withLhsType {
-                    ctx.ceylonTypes.booleanType;
-                    ctx.ceylonTypes.booleanType;
+                    [ctx.ceylonTypes.booleanType, ctx.ceylonTypes.booleanType];
                     () => that.leftOperand.transform(this);
                 };
                 that.result.transform(this);
@@ -533,11 +528,8 @@ class ExpressionTransformer
             createNullSafeExpression {
                 parameterIdentifier;
                 // the result of the leftOperand transformation should be this:
-                if (is TypeModel lhsActual = ctx.lhsActualTop,
-                    is TypeModel lhsFormal = ctx.lhsFormalTop)
-                    then ctx.dartTypes.dartTypeNameFormalActual(
-                            that, lhsFormal, lhsActual)
-                    else ctx.dartTypes.dartObject;
+                ctx.dartTypes.dartTypeNameFormalActual(that,
+                        ctx.assertedLhsFormalActualTop);
                 maybeNullExpression = that.leftOperand.transform(this);
                 ifNullExpression = that.rightOperand.transform(this);
                 ifNotNullExpression = parameterIdentifier;
@@ -604,8 +596,7 @@ class ExpressionTransformer
 
         value leftOperandBoxed = ctx.withLhsType(
                 // defeat erasure, we need a non-native object
-                ctx.ceylonTypes.anythingType,
-                receiverType,
+                [ctx.ceylonTypes.anythingType, receiverType],
                 () => that.leftOperand.transform(this));
 
         value rightOperandBoxed = withLhs(
@@ -632,8 +623,7 @@ class ExpressionTransformer
                 ctx.ceylonTypes.booleanType;
                 dartExpression = ctx.withLhsType {
                     // both operands should be "Identifiable", which isn't generic
-                    ctx.ceylonTypes.identifiableType;
-                    ctx.ceylonTypes.identifiableType;
+                    [ctx.ceylonTypes.identifiableType, ctx.ceylonTypes.identifiableType];
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");

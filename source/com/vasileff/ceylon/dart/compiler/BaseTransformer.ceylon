@@ -523,9 +523,11 @@ class BaseTransformer<Result>
                         // the invocation of the original function
                         [DartReturnStatement {
                             ctx.withLhsType {
-                                // generic; Anything prevents erasure
-                                lhsFormal = ctx.ceylonTypes.anythingType;
-                                lhsActual = returnTypeActual;
+                                lhsFormalActual = [
+                                    // generic; Anything prevents erasure
+                                    ctx.ceylonTypes.anythingType,
+                                    returnTypeActual
+                                ];
                                 () => withBoxingTypes {
                                     scope = that;
                                     rhsFormal = returnTypeFormal;
@@ -569,8 +571,7 @@ class BaseTransformer<Result>
         }
 
         value dartCondition = ctx.withLhsType(
-            ctx.ceylonTypes.booleanType,
-            ctx.ceylonTypes.booleanType,
+            [ctx.ceylonTypes.booleanType, ctx.ceylonTypes.booleanType],
             () => that.conditions
                     .reversed
                     .narrow<BooleanCondition>()
@@ -621,8 +622,7 @@ class BaseTransformer<Result>
                     else ctx.ceylonTypes.anythingType;
 
             return ctx.withLhsType(
-                lhsFormal,
-                lhsActual,
+                [lhsFormal, lhsActual],
                 () => expression.transform(expressionTransformer));
         });
         return DartArgumentList(args);
@@ -719,11 +719,11 @@ class BaseTransformer<Result>
             FunctionOrValueModel|NoType lhsDeclaration,
             Result fun())
         =>  if (is NoType lhsDeclaration) then
-                ctx.withLhsType(noType, noType, fun)
+                ctx.withLhsType(noType, fun)
             else
                 ctx.withLhsType(
-                    ctx.dartTypes.formalType(lhsDeclaration),
-                    ctx.dartTypes.actualType(lhsDeclaration),
+                    [ctx.dartTypes.formalType(lhsDeclaration),
+                     ctx.dartTypes.actualType(lhsDeclaration)],
                     fun);
 
     shared
@@ -731,11 +731,11 @@ class BaseTransformer<Result>
             FunctionOrValueModel|NoType lhsDeclaration,
             Result fun())
         =>  if (is NoType lhsDeclaration) then
-                ctx.withReturnType(noType, noType, fun)
+                ctx.withReturnType(noType, fun)
             else
                 ctx.withReturnType(
-                    ctx.dartTypes.formalType(lhsDeclaration),
-                    ctx.dartTypes.actualType(lhsDeclaration),
+                    [ctx.dartTypes.formalType(lhsDeclaration),
+                     ctx.dartTypes.actualType(lhsDeclaration)],
                     fun);
 
     DartExpression withCastingLhsRhs(
@@ -789,56 +789,46 @@ class BaseTransformer<Result>
     DartExpression withBoxing(
             Node|ElementModel|ScopeModel scope,
             FunctionOrValueModel rhsDeclaration,
-            DartExpression dartExpression) {
-
-        assert (exists lhsFormal = ctx.lhsFormalTop);
-        assert (exists lhsActual = ctx.lhsActualTop);
-        return withBoxingLhsRhs(
-                scope, lhsFormal, lhsActual,
+            DartExpression dartExpression)
+        =>  withBoxingLhsRhs(
+                scope, ctx.assertedLhsFormalActualTop,
                 ctx.dartTypes.formalType(rhsDeclaration),
                 ctx.dartTypes.actualType(rhsDeclaration),
                 dartExpression);
-    }
 
     shared
     DartExpression withBoxingTypes(
             Node|ElementModel|ScopeModel scope,
             TypeModel rhsFormal,
             TypeModel rhsActual,
-            DartExpression dartExpression) {
-
-        assert (exists lhsFormal = ctx.lhsFormalTop);
-        assert (exists lhsActual = ctx.lhsActualTop);
-        return withBoxingLhsRhs(
-                scope, lhsFormal, lhsActual, rhsFormal, rhsActual, dartExpression);
-    }
+            DartExpression dartExpression)
+        =>  withBoxingLhsRhs(scope, ctx.assertedLhsFormalActualTop,
+                    rhsFormal, rhsActual, dartExpression);
 
     DartExpression withBoxingLhsRhs(
             Node|ElementModel|ScopeModel scope,
-            TypeModel|NoType lhsFormal,
-            TypeModel|NoType lhsActual,
+            FormalActualOrNoType lhsFormalActual,
             TypeModel rhsFormal,
             TypeModel rhsActual,
             DartExpression dartExpression)
-        =>  let (conversion =
-                    switch (lhsFormal)
-                    case (is NoType) null
-                    case (is TypeModel) ctx.ceylonTypes
-                        .boxingConversionFor(lhsFormal, rhsFormal))
-            if (exists conversion) then
-                // we'll assume that lhsActual is a supertype of the result
-                // of the boxing conversion
-                withBoxingConversion(scope, rhsActual, dartExpression, conversion)
-            else if (is TypeModel lhsFormal) then
-                withCastingLhsRhs(
-                        scope, lhsActual, rhsActual, dartExpression,
-                        // disable erasure to native types if the lhs static type is
-                        // erased to Object (never native)
-                        // TODO need a test for this; false works ok for what we have
-                        // is `true` ever necessary?
-                        ctx.dartTypes.erasedToObject(lhsFormal))
+        =>  if (is NoType lhsFormalActual) then
+                dartExpression
             else
-                dartExpression;
+                let ([lhsFormal, lhsActual] = lhsFormalActual,
+                    conversion = ctx.ceylonTypes
+                            .boxingConversionFor(lhsFormal, rhsFormal))
+                if (exists conversion) then
+                    // we'll assume that lhsActual is a supertype of the result
+                    // of the boxing conversion
+                    withBoxingConversion(scope, rhsActual, dartExpression, conversion)
+                else
+                    withCastingLhsRhs(
+                            scope, lhsActual, rhsActual, dartExpression,
+                            // disable erasure to native types if the lhs static type is
+                            // erased to Object (never native)
+                            // TODO need a test for this; false works ok for what we have
+                            // is `true` ever necessary?
+                            ctx.dartTypes.erasedToObject(lhsFormal));
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,

@@ -220,11 +220,8 @@ class DartTypes(CeylonTypes ceylonTypes) {
     shared
     DartTypeName dartTypeNameFormalActual(
             Node|ElementModel|ScopeModel scope,
-            TypeModel formalType,
-            TypeModel actualType)
-        =>  dartTypeName(scope,
-                dartTypeModelFormalActual(formalType, actualType),
-                false);
+            FormalActualOrNoType formalActualType)
+        =>  dartTypeName(scope, dartTypeModelFormalActual(formalActualType), false);
 
     see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
     shared
@@ -309,16 +306,18 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 declaration.type;
 
     shared
-    DartTypeModel dartTypeModelFormalActual(TypeModel formalType, TypeModel actualType)
-        =>  dartTypeModel {
-                actualType;
+    DartTypeModel dartTypeModelFormalActual(FormalActualOrNoType formalActualType)
+        =>  switch (formalActualType)
+            case (is NoType) dartObjectModel
+            else dartTypeModel {
+                formalActualType[1];
                 // confusing: erased to Object means not erased to a native type!
-                disableErasure = erasedToObject(formalType);
+                disableErasure = erasedToObject(formalActualType[0]);
             };
 
     shared
     DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
-        =>  dartTypeModelFormalActual(actualType(declaration), formalType(declaration));
+        =>  dartTypeModelFormalActual([formalType(declaration), actualType(declaration)]);
 
     "Obtain the [[DartTypeModel]] that will be used for the given [[TypeModel]]."
     see(`function CeylonTypes.boxingConversionFor`)

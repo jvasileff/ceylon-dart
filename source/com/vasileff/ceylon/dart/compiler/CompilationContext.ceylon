@@ -25,16 +25,10 @@ class CompilationContext(unit, tokens) {
     DartTypes dartTypes = DartTypes(ceylonTypes);
 
     shared variable
-    TypeOrNoType? lhsFormalTop = null;
+    FormalActualOrNoType? lhsFormalActualTop = null;
 
     shared variable
-    TypeOrNoType? lhsActualTop = null;
-
-    shared variable
-    TypeOrNoType? returnFormalTop = null;
-
-    shared variable
-    TypeOrNoType? returnActualTop = null;
+    FormalActualOrNoType? returnFormalActualTop = null;
 
     shared late
     ClassMemberTransformer classMemberTransformer;
@@ -52,6 +46,30 @@ class CompilationContext(unit, tokens) {
     TopLevelTransformer topLevelTransformer;
 
     shared
+    FormalActualOrNoType assertedLhsFormalActualTop {
+        assert(exists fat = lhsFormalActualTop);
+        return fat;
+    }
+
+    shared
+    TypeOrNoType assertedLhsFormalTop
+        =>  switch (fat = assertedLhsFormalActualTop)
+            case (is NoType) noType
+            else fat[0];
+
+    shared
+    TypeOrNoType assertedLhsActualTop
+        =>  switch (fat = assertedLhsFormalActualTop)
+            case (is NoType) noType
+            else fat[1];
+
+    shared
+    FormalActualOrNoType assertedReturnFormalActualTop {
+        assert(exists fat = returnFormalActualTop);
+        return fat;
+    }
+
+    shared
     void init() {
         classMemberTransformer = ClassMemberTransformer(this);
         expressionTransformer = ExpressionTransformer(this);
@@ -62,38 +80,30 @@ class CompilationContext(unit, tokens) {
 
     shared
     Result withLhsType<Result>(
-            TypeOrNoType lhsFormal,
-            TypeOrNoType lhsActual,
+            FormalActualOrNoType lhsFormalActual,
             Result fun()) {
-        value saveFormal = lhsFormalTop;
-        value saveActual = lhsActualTop;
+        value save = lhsFormalActualTop;
         try {
-            lhsFormalTop = lhsFormal;
-            lhsActualTop = lhsActual;
+            lhsFormalActualTop = lhsFormalActual;
             value result = fun();
             return result;
         }
         finally {
-            lhsFormalTop = saveFormal;
-            lhsActualTop = saveActual;
+            lhsFormalActualTop = save;
         }
     }
 
     shared
     Result withReturnType<Result>(
-            TypeOrNoType returnFormal,
-            TypeOrNoType returnActual,
+            FormalActualOrNoType returnFormalActual,
             Result fun()) {
-        value saveFormal = returnFormalTop;
-        value saveActual = returnActualTop;
+        value save = returnFormalActualTop;
         try {
-            returnFormalTop = returnFormal;
-            returnActualTop = returnActual;
+            returnFormalActualTop = returnFormalActual;
             return fun();
         }
         finally {
-            returnFormalTop = saveFormal;
-            returnActualTop = saveActual;
+            returnFormalActualTop = save;
         }
     }
 }
@@ -107,3 +117,4 @@ interface NoType of noType {}
 object noType satisfies NoType {}
 
 alias TypeOrNoType => TypeModel | NoType;
+alias FormalActualOrNoType => [TypeModel, TypeModel] | NoType;

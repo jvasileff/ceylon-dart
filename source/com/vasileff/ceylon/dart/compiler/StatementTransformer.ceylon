@@ -30,19 +30,16 @@ class StatementTransformer
     "Parents must set `returnTypeTop`"
     see(`function generateFunctionExpression`)
     shared actual
-    [DartReturnStatement] transformReturn(Return that) {
-        if (exists result = that.result) {
-            assert (exists formalType = ctx.returnFormalTop);
-            assert (exists actualType = ctx.returnActualTop);
-            value expression = ctx.withLhsType(
-                formalType, actualType, () =>
-                result.transform(expressionTransformer));
-            return [DartReturnStatement(expression)];
-        }
-        else {
-            return [DartReturnStatement()];
-        }
-    }
+    [DartReturnStatement] transformReturn(Return that)
+        =>  if (exists result = that.result) then
+                [DartReturnStatement {
+                    ctx.withLhsType {
+                        ctx.assertedReturnFormalActualTop;
+                        () => result.transform(expressionTransformer);
+                    };
+                }]
+            else
+                [DartReturnStatement()];
 
     shared actual
     [DartIfStatement] transformIfElse(IfElse that) {
@@ -62,7 +59,7 @@ class StatementTransformer
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
-        =>  [DartExpressionStatement(ctx.withLhsType(noType, noType, ()
+        =>  [DartExpressionStatement(ctx.withLhsType(noType, ()
             => expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
@@ -212,8 +209,7 @@ class StatementTransformer
                                 tmpVariable;
                                 ctx.withLhsType {
                                     // possibly erased to a native type!
-                                    expressionType;
-                                    expressionType;
+                                    [expressionType, expressionType];
                                     () => expression.transform(expressionTransformer);
                                 };
                             }];
