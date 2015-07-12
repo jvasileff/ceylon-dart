@@ -10,7 +10,6 @@ $dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$co
 
 $dart$core.bool identical([Identifiable x, Identifiable y]) => $package$identical(x, y);
 
-
 // largest.ceylon
 $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (() {
     if ((x as Comparable).largerThan(y)) {
@@ -42,3 +41,30 @@ $dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $packa
 $dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => (x as Numeric).times(y);
 
 $dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);
+
+// print.ceylon
+void $package$print([$dart$core.Object val]) => process.writeLine($package$stringify(val));
+
+void print([$dart$core.Object val]) => $package$print(val);
+
+void $package$printAll([Iterable values, $dart$core.Object separator = dart$default]) {
+    if ($dart$core.identical(separator, dart$default)) {
+        separator = ", ";
+    }
+    $dart$core.bool first = true;
+    values.each(new dart$Callable(([$dart$core.Object element]) {
+        if (first) {
+            first = false;
+        } else {
+            process.write(separator as $dart$core.String);
+        }
+        process.write($package$stringify(element));
+    }));
+    process.write(operatingSystem.newline);
+}
+
+void printAll([Iterable values, $dart$core.Object separator = dart$default]) => $package$printAll(values, separator);
+
+$dart$core.String $package$stringify([$dart$core.Object val]) => (($lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($r$) => $r$ == null ? null : $r$.string)(val));
+
+$dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);

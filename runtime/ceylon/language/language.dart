@@ -38,6 +38,5 @@ part 'Throwable.dart';
 part 'Tuple.dart';
 part 'className.dart';
 part 'compiledFromCeylon.dart';
-part 'print.dart';
 
 part "dart/runtime.dart";

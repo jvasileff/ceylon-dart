@@ -358,9 +358,13 @@ void run() {
             }
          """;
 
-    value scratchStatements =
+    value printFunctions =
          """
-            shared void printAll({Anything*} values, String separator=", ") {
+            shared void print(Anything val)
+                    => process.writeLine(stringify(val));
+
+            shared void printAll({Anything*} values,
+                    String separator=", ") {
                 variable value first = true;
                 values.each(void (element) {
                     if (first) {
@@ -375,10 +379,6 @@ void run() {
             }
 
             String stringify(Anything val) => val?.string else "<null>";
-
-            shared void run() {
-                printAll("hello world", "!");
-            }
          """;
 
     value scratchStatements2 =
@@ -401,5 +401,5 @@ void run() {
             }
          """;
 
-    compile { true; scratchStatements2 };
+    compile { true; printFunctions };
 }

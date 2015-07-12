@@ -38,21 +38,18 @@ as a transpiler target.
 
 ### Short Term, Fine Grained Tasks
 
-Checked items are complete in the sense that they offer basic functionality.
-Checking off "Base Expressions" for instance does *not* mean that they are
-completely finished, or even 30% finished!
+Checked items are complete in the sense that they at least offer basic
+functionality.
 
 - [x] Multiple parameter lists
+- [x] Null safe member operator
 - [ ] Remaining parameter types (variadic, callable)
 - [ ] Base expressions for objects
 - [ ] `of` operation
 - [ ] More work on `assert`
 - [ ] `is` narrowing for `if`, attempt at generalization
-- [ ] Erasure for covariant returns (use the `formal` return type for erasure/boxing)
+- [x] Erasure for covariant returns (use the `formal` return type for erasure/boxing)
 - [ ] Named argument invocations (and... transition to Dart named parameters, ugh)
-- [ ] Consider adding concept of "effective type" to erasure/boxing/casting logic,
-  which would be a Ceylon type representative of the Dart type. For example,
-  this would be `Anything` for generics, most unions, and intersections.
 - [ ] Remove hard-coded `DartTypeName`s. Calculate them instead, as we do for
   Ceylon types. (We can't compile the language module using the prefixed
   `$dart$core.int` for example.)
@@ -61,7 +58,7 @@ completely finished, or even 30% finished!
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
 - [ ] Use compiler for language module functions: `corresponding`, `count`,
   `every`, ~~identity~~, `noop`, ~~identical~~, `max`, `nothing`, ~~plus~~,
-  `printAll`, `product`, ~~smallest~~, `sort`, `sum`, `times`.
+  ~~print~~, ~~printAll~~, `product`, ~~smallest~~, `sort`, `sum`, `times`.
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations
 
