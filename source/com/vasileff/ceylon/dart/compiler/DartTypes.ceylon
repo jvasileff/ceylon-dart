@@ -221,21 +221,21 @@ class DartTypes(CeylonTypes ceylonTypes) {
     DartTypeName dartTypeNameFormalActual(
             Node|ElementModel|ScopeModel scope,
             FormalActualOrNoType formalActualType)
-        =>  dartTypeName(scope, dartTypeModelFormalActual(formalActualType), false);
+        =>  dartTypeName(scope, dartTypeModelFormalActual(formalActualType), true);
 
-    see(`function CeylonTypes.boxingConversionFor`) // erasureFor?
+    see(`function CeylonTypes.boxingConversionFor`)
     shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
             TypeModel|DartTypeModel type,
-            Boolean disableErasure) {
+            Boolean eraseToNative) {
 
         // TODO add tests for non-boxed types
 
         value dartModel =
                 if (is DartTypeModel type)
                 then type
-                else dartTypeModel(type, disableErasure);
+                else dartTypeModel(type, eraseToNative);
 
         value fromDartPrefix = moduleImportPrefix(scope);
 
@@ -311,8 +311,10 @@ class DartTypes(CeylonTypes ceylonTypes) {
             case (is NoType) dartObjectModel
             else dartTypeModel {
                 formalActualType[1];
-                // confusing: erased to Object means not erased to a native type!
-                disableErasure = erasedToObject(formalActualType[0]);
+                // only erase to native if the formal type is a denotable native
+                // type (ruling out generics, unions, intersections, and covariant
+                // refinements)
+                eraseToNative = native(formalActualType[0]);
             };
 
     shared
@@ -326,7 +328,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
             TypeModel type,
             "Don't erase `Boolean`, `Integer`, `Float`,
              and `String` to native types."
-            Boolean disableErasure) {
+            Boolean eraseToNative) {
 
         if (type.typeParameter) {
             // treat all generic types as `core.Object`
@@ -339,7 +341,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
         // on unions and intersections
 
         // these types are erased when statically known
-        if (!disableErasure) {
+        if (eraseToNative) {
             if (ceylonTypes.isCeylonBoolean(definiteType)) {
                 return dartBoolModel;
             }
@@ -383,20 +385,29 @@ class DartTypes(CeylonTypes ceylonTypes) {
                     getName(definiteType.declaration));
     }
 
-    "True if `type` is a type parameter or a union or intersection
-     that cannot be represented in Dart. This is an ugly violation
-     of DRY re [[dartTypeModel]], and a better way to express various
-     erasure and boxing notions may be needed."
+    "True if [[type]] is denotable in Dart (not a type parameter, union type, or
+     intersection type.) Note: generic types such as `List<String>` and `List<T>` are
+     considered denotable by this method, whereas type parameters, like `T`, are not."
     shared
-    Boolean erasedToObject(TypeModel type)
-        =>  type.involvesTypeParameters() || (
+    Boolean denotable(TypeModel type)
+        =>  !type.typeParameter && (
                 let (definiteType = ceylonTypes.definiteType(type))
-                (!ceylonTypes.isCeylonBoolean(definiteType) &&
-                    (definiteType.union || definiteType.intersection)));
+                // union types that are booleans are denotable, as bool/Boolean
+                (ceylonTypes.isCeylonBoolean(definiteType) ||
+                    (!definiteType.union && !definiteType.intersection)));
+
+    "True if [[type]] has a corresponding Dart native type such as `dart.core.int`."
+    shared
+    Boolean native(TypeModel type)
+        =>  let (definiteType = ceylonTypes.definiteType(type))
+            ceylonTypes.isCeylonBoolean(definiteType)
+            || ceylonTypes.isCeylonInteger(definiteType)
+            || ceylonTypes.isCeylonFloat(definiteType)
+            || ceylonTypes.isCeylonString(definiteType);
 
     shared
     Boolean equalErasure(TypeModel first, TypeModel second)
-        =>  dartTypeModel(first, false) == dartTypeModel(second, false);
+        =>  dartTypeModel(first, true) == dartTypeModel(second, true);
 
     shared
     DartIdentifier qualifyIdentifier(

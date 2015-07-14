@@ -204,7 +204,7 @@ class StatementTransformer
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.dartTypes.dartTypeName(that, expressionType, false);
+                            ctx.dartTypes.dartTypeName(that, expressionType, true);
                             [DartVariableDeclaration {
                                 tmpVariable;
                                 ctx.withLhsType {

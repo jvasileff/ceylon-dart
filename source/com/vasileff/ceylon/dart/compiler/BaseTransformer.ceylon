@@ -146,7 +146,7 @@ class BaseTransformer<Result>
                 // return type is a `Callable`; we're not get generic, so the Callable's
                 // return is erased. Even on the Java backend, the arguments are erased.
                 ctx.dartTypes.dartTypeName(info.node,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
+                    ctx.ceylonTypes.callableDeclaration.type, true)
             else if (!functionModel.declaredVoid) then
                 ctx.dartTypes.dartTypeNameForDeclaration(info.node, functionModel)
             else
@@ -747,33 +747,33 @@ class BaseTransformer<Result>
             "The expression of type [[rhsType]]"
             DartExpression dartExpression,
             "Set to `true` when a `Boolean`, `Integer`, `Float`, or `String` as the
-             expected [[lhsType]] indicates an unerased Ceylon object rather than a
-             native type. This happens for narrowing operations where the lhs is the
-             argument to an unboxing function, and for generic types and covariant
-             refinements."
-            Boolean disableErasure = false) {
+             expected [[lhsType]] is erased to the corresponding Dart native type.
+             This must be false for narrowing operations where the lhs is the argument
+             to an unboxing function, or the lhs is a type parameter or a covariant
+             refinement."
+            Boolean eraseToNative = true) {
 
         DartTypeModel castType;
 
         if (is NoType lhsType) {
             return dartExpression;
         }
-        else if (lhsType.isSubtypeOf(rhsType)) {
-            // they're either the same, or this is the result of a narrowing operation
-            castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
+        else if (lhsType.isSubtypeOf(rhsType) && !lhsType.isExactly(rhsType)) {
+            // lhs is the result of a narrowing operation
+            castType = ctx.dartTypes.dartTypeModel(lhsType, eraseToNative);
         }
-        else if (ctx.dartTypes.erasedToObject(rhsType)) {
-            // the result of a call to a generic function, or something like a Ceylon
-            // intersection type. May result in a Dart narrowing.
-            castType = ctx.dartTypes.dartTypeModel(lhsType, disableErasure);
+        else if (!ctx.dartTypes.denotable(rhsType)) {
+            // may be narrowing the Dart static type
+            castType = ctx.dartTypes.dartTypeModel(lhsType, eraseToNative);
         }
         else {
-            // rhs is neither a supertype of lhs nor erased, so don't bother
+            // narrowing neither the Ceylon type nor the Dart type; avoid unnecessary
+            // widening casts
             return dartExpression;
         }
 
-        // the rhs may still have the same dart type, which is actually the normal case
-        if (castType == ctx.dartTypes.dartTypeModel(rhsType, disableErasure)) {
+        // the rhs may still have the same Dart type
+        if (castType == ctx.dartTypes.dartTypeModel(rhsType, eraseToNative)) {
             return dartExpression;
         }
 
@@ -781,7 +781,7 @@ class BaseTransformer<Result>
         return
         DartAsExpression {
             dartExpression;
-            ctx.dartTypes.dartTypeName(scope, castType, false);
+            ctx.dartTypes.dartTypeName(scope, castType, true);
         };
     }
 
@@ -819,16 +819,14 @@ class BaseTransformer<Result>
                             .boxingConversionFor(lhsFormal, rhsFormal))
                 if (exists conversion) then
                     // we'll assume that lhsActual is a supertype of the result
-                    // of the boxing conversion
+                    // of the boxing conversion, and not cast
                     withBoxingConversion(scope, rhsActual, dartExpression, conversion)
                 else
                     withCastingLhsRhs(
                             scope, lhsActual, rhsActual, dartExpression,
-                            // disable erasure to native types if the lhs static type is
-                            // erased to Object (never native)
-                            // TODO need a test for this; false works ok for what we have
-                            // is `true` ever necessary?
-                            ctx.dartTypes.erasedToObject(lhsFormal));
+                            // indicate not erasured to native if the lhs static type
+                            // cannot be represented as a native type
+                            ctx.dartTypes.native(lhsFormal));
 
     DartExpression withBoxingConversion(
             Node|ElementModel|ScopeModel scope,
@@ -843,7 +841,7 @@ class BaseTransformer<Result>
             "The conversion to apply to the result of [[expression]]."
             BoxingConversion conversion) {
 
-        value [boxTypeDeclaration, unbox] =
+        value [boxTypeDeclaration, toNative] =
             switch (conversion)
             case (ceylonBooleanToNative)
                 [ctx.ceylonTypes.booleanDeclaration, true]
@@ -862,19 +860,15 @@ class BaseTransformer<Result>
             case (nativeToCeylonString)
                 [ctx.ceylonTypes.stringDeclaration, false];
 
-        value castedExpression =
-                if (!unbox) then
-                    // for native to ceylon, an `as` cast is required in the
-                    // unusual case that `rhsActual` is `Anything`, which happens
-                    // for defaulted parameters
-                    withCastingLhsRhs(scope, boxTypeDeclaration.type,
-                            rhsActual, expression, false)
-                else
-                    // for ceylon to native, we may need to narrow the arg
-                    // disable erasure; we *know* that the result of the expression is
-                    // not erased, regardless of `rhsActual`
-                    withCastingLhsRhs(scope, boxTypeDeclaration.type,
-                            rhsActual, expression, true);
+        value castedArgument =
+                // For ceylon to native, we may need to narrow the non-native
+                // argument.
+                //
+                // For native to ceylon, we may need to narrow the native argument
+                // in the unusual case that `rhsActual` is `Anything` despite being
+                // native, which happens for defaulted parameters.
+                withCastingLhsRhs(scope, boxTypeDeclaration.type,
+                        rhsActual, expression, !toNative);
 
         return
         DartFunctionExpressionInvocation {
@@ -884,13 +878,13 @@ class BaseTransformer<Result>
                     boxTypeDeclaration;
                 };
                 DartSimpleIdentifier {
-                    if (unbox)
+                    if (toNative)
                     then "nativeValue"
                     else "instance";
                 };
             };
             DartArgumentList {
-                [castedExpression];
+                [castedArgument];
             };
         };
     }

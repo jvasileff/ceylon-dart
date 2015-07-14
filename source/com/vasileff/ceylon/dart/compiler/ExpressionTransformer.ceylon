@@ -212,7 +212,7 @@ class ExpressionTransformer
             denotableReceiverType;
             // see above; we used `Anything` as the
             // formal type for the receiver
-            disableErasure = true;
+            eraseToNative = false;
         };
 
         value target = DartSimpleIdentifier {
@@ -393,6 +393,7 @@ class ExpressionTransformer
             // see transformQualifiedExpression
             if (is QualifiedExpression invoked = that.invoked,
                     invoked.memberOperator is SafeMemberOperator) {
+
                 // rewrite the expression with null safety
                 assert (is DartPropertyAccess func);
 
@@ -407,7 +408,7 @@ class ExpressionTransformer
                 value denotableReceiverType = ctx.ceylonTypes.denotableType(
                         receiverType, targetContainer);
                 value receiverDartType = ctx.dartTypes.dartTypeName(
-                    that, denotableReceiverType, true);
+                        that, denotableReceiverType, false);
 
                 invocation = createNullSafeExpression {
                     parameterIdentifier = receiverParameter;
@@ -587,6 +588,7 @@ class ExpressionTransformer
 
         value leftType = ExpressionInfo(that.leftOperand).typeModel;
 
+        // FIXME shouldn't be calling `leftType.declaration`
         assert (is FunctionModel method =
                 leftType.declaration.getMember(methodName, null, false));
         assert (is ClassOrInterfaceModel container = method.container);
