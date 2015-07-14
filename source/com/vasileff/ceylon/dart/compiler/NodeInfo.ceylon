@@ -135,7 +135,10 @@ class QualifiedExpressionInfo(QualifiedExpression node)
 
     "The declaration and type arguments of the target
      of the QualifiedExpression"
-    shared ReferenceModel target => tcNode.target;
+    shared TypedReferenceModel target {
+        assert (is TypedReferenceModel result = tcNode.target);
+        return result;
+    }
 
     "The declaration of the target of the QualifiedExpression"
     shared DeclarationModel declaration => tcNode.declaration;

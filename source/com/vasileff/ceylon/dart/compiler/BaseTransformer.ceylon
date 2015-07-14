@@ -727,6 +727,29 @@ class BaseTransformer<Result>
                     fun);
 
     shared
+    Result withLhsDenotable<Result>(
+            TypeModel expressionType,
+            ClassOrInterfaceModel container,
+            Result fun())
+        =>  withLhsNonNative {
+                ctx.ceylonTypes.denotableType(expressionType, container);
+                fun;
+            };
+
+    shared
+    Result withLhsNonNative<Result>(
+            TypeModel type,
+            Result fun())
+        =>  ctx.withLhsType {
+                [
+                    // `Anything` formal type to disable erasure to native
+                    ctx.ceylonTypes.anythingType,
+                    type
+                ];
+                fun;
+            };
+
+    shared
     Result withReturn<Result>(
             FunctionOrValueModel|NoType lhsDeclaration,
             Result fun())

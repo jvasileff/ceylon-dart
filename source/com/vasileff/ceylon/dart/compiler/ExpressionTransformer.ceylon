@@ -181,38 +181,29 @@ class ExpressionTransformer
         value info = QualifiedExpressionInfo(that);
         value safeOperator = that.memberOperator is SafeMemberOperator;
         value receiverInfo = ExpressionInfo(that.receiverExpression);
-        value receiverType = receiverInfo.typeModel; // optional with nullsafe operator!
+        value receiverType = receiverInfo.typeModel; // is optional w/nullsafe operator!
         value targetDeclaration = info.target.declaration;
         value targetContainer = targetDeclaration.container;
         TypeModel rhsFormal;
         TypeModel rhsActual;
 
-        // TODO test this, with a receiver expression that is a function invocation or
-        //      value that returns a generic, union, or intersection, I suppose
-        TypeModel denotableReceiverType;
-        if (is ClassOrInterfaceModel targetContainer) {
-            denotableReceiverType = ctx.ceylonTypes.denotableType(
-                    receiverType, targetContainer);
-        }
-        else {
-            // probably need to resolve type aliases, but lets wait and see.
-            throw CompilerBug(that,
-                "Cannot determine the receiver type for thequalified expression.");
-        }
+        "Maybe this is a type alias?"
+        assert (is ClassOrInterfaceModel targetContainer);
 
-        value receiver = ctx.withLhsType {
-            // use `Anything` as the formal type to disable erasure
-            // since we need a non-native receiver.
-            [ctx.ceylonTypes.anythingType, denotableReceiverType];
-            () => that.receiverExpression.transform(this);
+        value denotableReceiverType = ctx.ceylonTypes.denotableType {
+            receiverType;
+            targetContainer;
         };
 
         value receiverDartType = ctx.dartTypes.dartTypeName {
             that;
             denotableReceiverType;
-            // see above; we used `Anything` as the
-            // formal type for the receiver
             eraseToNative = false;
+        };
+
+        value receiver = withLhsNonNative {
+            denotableReceiverType;
+            () => that.receiverExpression.transform(this);
         };
 
         value target = DartSimpleIdentifier {
@@ -397,18 +388,25 @@ class ExpressionTransformer
                 // rewrite the expression with null safety
                 assert (is DartPropertyAccess func);
 
-                value receiverParameter = DartSimpleIdentifier("$r$");
-
-                // determine receiverDartType, duplicating logic in
-                // transformQualifiedExpression
+                // determine receiverDartType; same as in transformQualifiedExpression
                 value receiverType = ExpressionInfo(invoked.receiverExpression).typeModel;
-                // will probably fail for type aliases
+
+                "Maybe this is a type alias?"
                 assert (is ClassOrInterfaceModel targetContainer =
                         QualifiedExpressionInfo(invoked).declaration.container);
-                value denotableReceiverType = ctx.ceylonTypes.denotableType(
-                        receiverType, targetContainer);
-                value receiverDartType = ctx.dartTypes.dartTypeName(
-                        that, denotableReceiverType, false);
+
+                value denotableReceiverType = ctx.ceylonTypes.denotableType {
+                    receiverType;
+                    targetContainer;
+                };
+
+                value receiverDartType = ctx.dartTypes.dartTypeName {
+                    that;
+                    denotableReceiverType;
+                    eraseToNative = false;
+                };
+
+                value receiverParameter = DartSimpleIdentifier("$r$");
 
                 invocation = createNullSafeExpression {
                     parameterIdentifier = receiverParameter;
@@ -439,19 +437,15 @@ class ExpressionTransformer
             rhsFormal = ctx.ceylonTypes.anythingType;
             rhsActual = ctx.ceylonTypes.anythingType;
 
-            // the expression might have a union or intersection type or something,
-            // so determine a `Callable` type we can use. (Of course, for our purposes,
-            // *any* Callable would work, so this is a bit unnecessary)
-            value expressionType = ExpressionInfo(that.invoked).typeModel;
-            value denotableType = expressionType.getSupertype(
-                    ctx.ceylonTypes.callableDeclaration);
-
             invocation =
             DartFunctionExpressionInvocation {
                 // resolve the $delegate$ property of the Callable
                 DartPropertyAccess {
-                    ctx.withLhsType {
-                        [denotableType, denotableType];
+                    // use a denotable `Callable` type. Although, for non-generic Dart,
+                    // any Callable would work, so this is a bit over engineered
+                    withLhsDenotable {
+                        ExpressionInfo(that.invoked).typeModel;
+                        ctx.ceylonTypes.callableDeclaration;
                         () => that.invoked.transform(this);
                     };
                     DartSimpleIdentifier("$delegate$");
@@ -593,17 +587,18 @@ class ExpressionTransformer
                 leftType.declaration.getMember(methodName, null, false));
         assert (is ClassOrInterfaceModel container = method.container);
 
-        value receiverType = leftType.getSupertype(container);
         value parameterModel = method.firstParameterList.parameters.get(0).model;
 
-        value leftOperandBoxed = ctx.withLhsType(
-                // defeat erasure, we need a non-native object
-                [ctx.ceylonTypes.anythingType, receiverType],
-                () => that.leftOperand.transform(this));
+        value leftOperandBoxed = withLhsDenotable {
+            leftType;
+            container;
+            () => that.leftOperand.transform(this);
+        };
 
-        value rightOperandBoxed = withLhs(
-                parameterModel,
-                () => that.rightOperand.transform(this));
+        value rightOperandBoxed = withLhs {
+            parameterModel;
+            () => that.rightOperand.transform(this);
+        };
 
         return withBoxing {
             that;
