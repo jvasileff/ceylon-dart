@@ -522,12 +522,8 @@ class BaseTransformer<Result>
                         // return boxed (no erasure) result of
                         // the invocation of the original function
                         [DartReturnStatement {
-                            withLhsType {
-                                lhsFormalActual = [
-                                    // generic; Anything prevents erasure
-                                    ctx.ceylonTypes.anythingType,
-                                    returnTypeActual
-                                ];
+                            withLhsNonNative {
+                                returnTypeActual;
                                 () => withBoxingTypes {
                                     scope = that;
                                     rhsFormal = returnTypeFormal;
@@ -570,15 +566,17 @@ class BaseTransformer<Result>
                 "Only BooleanConditions are currently supported.");
         }
 
-        value dartCondition = withLhsType(
-            [ctx.ceylonTypes.booleanType, ctx.ceylonTypes.booleanType],
+        value dartCondition = withLhsNative {
+            ctx.ceylonTypes.booleanType;
             () => that.conditions
                     .reversed
                     .narrow<BooleanCondition>()
                     .map((c)
                         =>  c.condition.transform(expressionTransformer))
                     .reduce((DartExpression partial, c)
-                        =>  DartBinaryExpression(c, "&&", partial)));
+                        =>  DartBinaryExpression(c, "&&", partial));
+        };
+
         assert (exists dartCondition);
         return dartCondition;
     }
@@ -730,16 +728,17 @@ class BaseTransformer<Result>
     }
 
     shared
+    Result withLhsNoType<Result>(Result fun())
+        =>  withLhsType(noType, fun);
+
+    shared
     Result withLhs<Result>(
-            FunctionOrValueModel|NoType lhsDeclaration,
+            FunctionOrValueModel lhsDeclaration,
             Result fun())
-        =>  if (is NoType lhsDeclaration) then
-                withLhsType(noType, fun)
-            else
-                withLhsType(
-                    [ctx.dartTypes.formalType(lhsDeclaration),
-                     ctx.dartTypes.actualType(lhsDeclaration)],
-                    fun);
+        =>  withLhsType(
+                [ctx.dartTypes.formalType(lhsDeclaration),
+                 ctx.dartTypes.actualType(lhsDeclaration)],
+                fun);
 
     shared
     Result withLhsDenotable<Result>(
@@ -751,16 +750,23 @@ class BaseTransformer<Result>
                 fun;
             };
 
+    "Erase to native if possible"
+    shared
+    Result withLhsNative<Result>(
+            TypeModel type,
+            Result fun())
+        =>  withLhsType {
+                [type, type];
+                fun;
+            };
+
+    "Never erase to native (always box)"
     shared
     Result withLhsNonNative<Result>(
             TypeModel type,
             Result fun())
         =>  withLhsType {
-                [
-                    // `Anything` formal type to disable erasure to native
-                    ctx.ceylonTypes.anythingType,
-                    type
-                ];
+                [ctx.ceylonTypes.anythingType, type];
                 fun;
             };
 

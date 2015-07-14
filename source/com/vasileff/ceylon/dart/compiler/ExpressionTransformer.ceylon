@@ -378,7 +378,7 @@ class ExpressionTransformer
 
             // use `noType` to disable boxing; we want to invoke the function directly,
             // not a newly created Callable!
-            value func = withLhs(noType, () => that.invoked.transform(this));
+            value func = withLhsNoType(() => that.invoked.transform(this));
 
             // special case where we need to handle SafeMemberOperator
             // see transformQualifiedExpression
@@ -509,8 +509,8 @@ class ExpressionTransformer
     shared actual
     DartExpression transformThenOperation(ThenOperation that)
         =>  DartConditionalExpression {
-                withLhsType {
-                    [ctx.ceylonTypes.booleanType, ctx.ceylonTypes.booleanType];
+                withLhsNative {
+                    ctx.ceylonTypes.booleanType;
                     () => that.leftOperand.transform(this);
                 };
                 that.result.transform(this);
@@ -618,9 +618,10 @@ class ExpressionTransformer
                 that;
                 ctx.ceylonTypes.booleanType;
                 ctx.ceylonTypes.booleanType;
-                dartExpression = withLhsType {
-                    // both operands should be "Identifiable", which isn't generic
-                    [ctx.ceylonTypes.identifiableType, ctx.ceylonTypes.identifiableType];
+                dartExpression = withLhsNonNative {
+                    // both operands should be "Identifiable", which isn't generic, so
+                    // using the denotable type isn't necessary
+                    ctx.ceylonTypes.identifiableType;
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");

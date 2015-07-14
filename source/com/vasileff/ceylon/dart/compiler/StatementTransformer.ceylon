@@ -59,8 +59,8 @@ class StatementTransformer
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
-        =>  [DartExpressionStatement(withLhsType(noType, ()
-            => expressionTransformer.transformInvocation(that.expression)))];
+        =>  [DartExpressionStatement(withLhsNoType(()
+            =>  expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
     [DartVariableDeclarationStatement] transformValueDefinition
@@ -207,9 +207,9 @@ class StatementTransformer
                             ctx.dartTypes.dartTypeName(that, expressionType, true);
                             [DartVariableDeclaration {
                                 tmpVariable;
-                                withLhsType {
-                                    // possibly erased to a native type!
-                                    [expressionType, expressionType];
+                                // possibly erase to a native type!
+                                withLhsNative {
+                                    expressionType;
                                     () => expression.transform(expressionTransformer);
                                 };
                             }];
