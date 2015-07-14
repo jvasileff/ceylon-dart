@@ -87,33 +87,4 @@ class CompilationContext(unit, tokens) {
         assert(exists fat = returnFormalActualTop);
         return fat;
     }
-
-    shared
-    Result withLhsType<Result>(
-            FormalActualOrNoType lhsFormalActual,
-            Result fun()) {
-        value save = lhsFormalActualTop;
-        try {
-            lhsFormalActualTop = lhsFormalActual;
-            value result = fun();
-            return result;
-        }
-        finally {
-            lhsFormalActualTop = save;
-        }
-    }
-
-    shared
-    Result withReturnType<Result>(
-            FormalActualOrNoType returnFormalActual,
-            Result fun()) {
-        value save = returnFormalActualTop;
-        try {
-            returnFormalActualTop = returnFormalActual;
-            return fun();
-        }
-        finally {
-            returnFormalActualTop = save;
-        }
-    }
 }

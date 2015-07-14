@@ -33,7 +33,7 @@ class StatementTransformer
     [DartReturnStatement] transformReturn(Return that)
         =>  if (exists result = that.result) then
                 [DartReturnStatement {
-                    ctx.withLhsType {
+                    withLhsType {
                         ctx.assertedReturnFormalActualTop;
                         () => result.transform(expressionTransformer);
                     };
@@ -59,7 +59,7 @@ class StatementTransformer
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
-        =>  [DartExpressionStatement(ctx.withLhsType(noType, ()
+        =>  [DartExpressionStatement(withLhsType(noType, ()
             => expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
@@ -207,7 +207,7 @@ class StatementTransformer
                             ctx.dartTypes.dartTypeName(that, expressionType, true);
                             [DartVariableDeclaration {
                                 tmpVariable;
-                                ctx.withLhsType {
+                                withLhsType {
                                     // possibly erased to a native type!
                                     [expressionType, expressionType];
                                     () => expression.transform(expressionTransformer);

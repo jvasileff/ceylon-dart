@@ -509,7 +509,7 @@ class ExpressionTransformer
     shared actual
     DartExpression transformThenOperation(ThenOperation that)
         =>  DartConditionalExpression {
-                ctx.withLhsType {
+                withLhsType {
                     [ctx.ceylonTypes.booleanType, ctx.ceylonTypes.booleanType];
                     () => that.leftOperand.transform(this);
                 };
@@ -618,7 +618,7 @@ class ExpressionTransformer
                 that;
                 ctx.ceylonTypes.booleanType;
                 ctx.ceylonTypes.booleanType;
-                dartExpression = ctx.withLhsType {
+                dartExpression = withLhsType {
                     // both operands should be "Identifiable", which isn't generic
                     [ctx.ceylonTypes.identifiableType, ctx.ceylonTypes.identifiableType];
                     () => DartFunctionExpressionInvocation {
