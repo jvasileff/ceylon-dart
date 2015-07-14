@@ -218,24 +218,16 @@ class DartTypes(CeylonTypes ceylonTypes) {
         =   DartTypeModel("$dart$core", "String");
 
     shared
-    DartTypeName dartTypeNameFormalActual(
-            Node|ElementModel|ScopeModel scope,
-            FormalActualOrNoType formalActualType)
-        =>  dartTypeName(scope, dartTypeModelFormalActual(formalActualType), true);
-
-    see(`function CeylonTypes.boxingConversionFor`)
-    shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
-            TypeModel|DartTypeModel type,
-            Boolean eraseToNative) {
+            TypeModel type,
+            Boolean eraseToNative)
+        =>  dartTypeNameForDartModel(scope, dartTypeModel(type, eraseToNative));
 
-        // TODO add tests for non-boxed types
-
-        value dartModel =
-                if (is DartTypeModel type)
-                then type
-                else dartTypeModel(type, eraseToNative);
+    shared
+    DartTypeName dartTypeNameForDartModel(
+            Node|ElementModel|ScopeModel scope,
+            DartTypeModel dartModel) {
 
         value fromDartPrefix = moduleImportPrefix(scope);
 
@@ -279,6 +271,12 @@ class DartTypes(CeylonTypes ceylonTypes) {
             };
         }
     }
+
+    shared
+    DartTypeName dartTypeNameForFormalActual(
+            Node|ElementModel|ScopeModel scope,
+            FormalActualOrNoType formalActualType)
+        =>  dartTypeNameForDartModel(scope, dartTypeModelFormalActual(formalActualType));
 
     "Determine the *actual* type, which indicates the Dart static type"
     shared
