@@ -34,7 +34,12 @@ import ceylon.ast.core {
     Declaration,
     ClassOrInterface,
     AnyInterface,
-    AnyClass
+    AnyClass,
+    ForFail,
+    Statement,
+    ForIterator,
+    UnspecifiedVariable,
+    Variable
 }
 import ceylon.interop.java {
     CeylonList,
@@ -85,7 +90,7 @@ class NodeInfo<out NodeType>(shared NodeType node)
     shared void addUnsupportedError(String string) => tcNode.addUnsupportedError(string);
 }
 
-class ExpressionInfo<out NodeType>(NodeType node)
+class ExpressionInfo<out NodeType=Expression>(NodeType node)
         extends NodeInfo<NodeType>(node)
         given NodeType satisfies Expression {
 
@@ -219,6 +224,44 @@ class AnyFunctionInfo<out NodeType=AnyFunction>(NodeType node)
 
     value tcNode = assertedTcNode<Tree.AnyMethod>(node);
     shared actual FunctionModel declarationModel => tcNode.declarationModel;
+}
+
+"Tree.ExecutableStatement"
+class StatementInfo<out NodeType=Statement>(NodeType node)
+        extends NodeInfo<NodeType>(node)
+        given NodeType satisfies Statement {}
+
+abstract
+class VariableInfo<NodeType>(NodeType node)
+        extends NodeInfo<NodeType>(node)
+        given NodeType satisfies Variable {}
+
+class UnspecifiedVariableInfo(UnspecifiedVariable node)
+        extends VariableInfo<UnspecifiedVariable>(node) {
+
+    // ForIterator -> VariablePattern -> UnspecifiedVariable
+    //      Tree.ValueIterator -> Tree.Variable
+    // ForIterator -> ... -> VariablePattern -> UnspecifiedValue
+    //      Tree.PatternIterator -> Tree.VariablePattern -> Tree.Variable
+    value tcNode = assertedTcNode<Tree.Variable>(node);
+    shared ValueModel declarationModel => tcNode.declarationModel;
+}
+
+class ForFailInfo(ForFail node)
+        extends StatementInfo<ForFail>(node) {}
+
+class ForClauseInfo(ForClause node)
+        extends NodeInfo<ForClause>(node) {}
+
+class ForIteratorInfo(ForIterator node)
+        extends NodeInfo<ForIterator>(node) {
+    // Tree.ForIterator of PatternIterator | ValueIterator
+    //
+    //   Tree.PatternIterator
+    //        Tree.KeyValuePattern -> Pattern (key), Pattern (value)
+    //      | Tree.TuplePattern -> List<Pattern>
+    //      | Tree.VariablePattern -> Tree.Variable
+    // | Tree.ValueIterator -> Tree.Variable
 }
 
 class FunctionDeclarationInfo(FunctionDeclaration node)
