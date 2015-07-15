@@ -248,6 +248,7 @@ class DartTypes(CeylonTypes ceylonTypes) {
         }
     }
 
+    "For the Value, or the return type of the Function"
     shared
     DartTypeName dartTypeNameForDeclaration(
             Node|ElementModel|ScopeModel scope,
@@ -316,20 +317,28 @@ class DartTypes(CeylonTypes ceylonTypes) {
             };
 
     shared
-    DartTypeModel dartTypeModelForDeclaration(FunctionOrValueModel declaration)
-        =>  dartTypeModelFormalActual([formalType(declaration), actualType(declaration)]);
+    DartTypeModel dartTypeModelForDeclaration(
+            FunctionOrValueModel declaration)
+        =>  dartTypeModel {
+                declaration.type;
+                erasedToNative(declaration);
+                erasedToObject(declaration);
+            };
 
     "Obtain the [[DartTypeModel]] that will be used for the given [[TypeModel]]."
-    see(`function CeylonTypes.boxingConversionFor`)
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
             "Don't erase `Boolean`, `Integer`, `Float`,
              and `String` to native types."
-            Boolean eraseToNative) {
+            Boolean eraseToNative,
+            "Treat all generic types as `core.Object`.
 
-        if (type.typeParameter) {
-            // treat all generic types as `core.Object`
+             *NOTE:* the default value does not account for erasure to object for
+             defaulted parameters!"
+            Boolean eraseToObject = type.typeParameter) {
+
+        if (eraseToObject) {
             return dartObjectModel;
         }
 
@@ -394,18 +403,16 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 (ceylonTypes.isCeylonBoolean(definiteType) ||
                     (!definiteType.union && !definiteType.intersection)));
 
-    "True if [[type]] has a corresponding Dart native type such as `dart.core.int`."
+    "True if [[type]] is not a type parameter and has a corresponding Dart native type
+     such as `dart.core.int`."
     shared
     Boolean native(TypeModel type)
-        =>  let (definiteType = ceylonTypes.definiteType(type))
-            ceylonTypes.isCeylonBoolean(definiteType)
-            || ceylonTypes.isCeylonInteger(definiteType)
-            || ceylonTypes.isCeylonFloat(definiteType)
-            || ceylonTypes.isCeylonString(definiteType);
-
-    shared
-    Boolean equalErasure(TypeModel first, TypeModel second)
-        =>  dartTypeModel(first, true) == dartTypeModel(second, true);
+        =>  !type.typeParameter
+            && (let (definiteType = ceylonTypes.definiteType(type))
+                ceylonTypes.isCeylonBoolean(definiteType)
+                || ceylonTypes.isCeylonInteger(definiteType)
+                || ceylonTypes.isCeylonFloat(definiteType)
+                || ceylonTypes.isCeylonString(definiteType));
 
     shared
     DartIdentifier qualifyIdentifier(
@@ -447,4 +454,78 @@ class DartTypes(CeylonTypes ceylonTypes) {
                  container type '``className(container)``'");
         }
     }
+
+    shared
+    BoxingConversion? boxingConversionFor(
+            "The lhs expression type"
+            TypeModel lhsType,
+            "True if the lhs is native"
+            Boolean lhsEraseToNative,
+            "The rhs expression type"
+            TypeModel rhsType,
+            "True if the rhs is native"
+            Boolean rhsEraseToNative) {
+
+        // The provided lhsType and rhsType should be subtypes of the formal types
+        // used to calculate erasue to native
+        //assert(!lhsEraseToNative || native(lhsType));
+        //assert(!rhsEraseToNative || native(rhsType));
+
+        if (lhsEraseToNative == rhsEraseToNative) {
+            // if erased, they must be the same type (we don't coerce)
+            // if neither should be erased, no conversion necessary
+            return null;
+        }
+
+        if (lhsEraseToNative) {
+            value definiteLhs = ceylonTypes.definiteType(lhsType);
+            if (ceylonTypes.isCeylonBoolean(definiteLhs)) {
+                return ceylonBooleanToNative;
+            }
+            else if (ceylonTypes.isCeylonFloat(definiteLhs)) {
+                return ceylonFloatToNative;
+            }
+            else if (ceylonTypes.isCeylonInteger(definiteLhs)) {
+                return ceylonIntegerToNative;
+            }
+            else if (ceylonTypes.isCeylonString(definiteLhs)) {
+                return ceylonStringToNative;
+            }
+            else {
+                throw Exception(
+                        "Cannot find native type for lhs type \
+                         '``definiteLhs.asQualifiedString()``'");
+            }
+        } else {
+            value definiteRhs = ceylonTypes.definiteType(rhsType);
+            if (ceylonTypes.isCeylonBoolean(definiteRhs)) {
+                return nativeToCeylonBoolean;
+            }
+            else if (ceylonTypes.isCeylonFloat(definiteRhs)) {
+                return nativeToCeylonFloat;
+            }
+            else if (ceylonTypes.isCeylonInteger(definiteRhs)) {
+                return nativeToCeylonInteger;
+            }
+            else if (ceylonTypes.isCeylonString(definiteRhs)) {
+                return nativeToCeylonString;
+            }
+            else {
+                throw Exception(
+                        "Cannot find native type for rhs type \
+                         '``definiteRhs.asQualifiedString()``'");
+            }
+        }
+    }
+
+    "For the Value, or the return type of the Function"
+    shared
+    Boolean erasedToNative(FunctionOrValueModel declaration)
+        =>  native(formalType(declaration));
+
+    "For the Value, or the return type of the Function"
+    shared
+    Boolean erasedToObject(FunctionOrValueModel declaration)
+        =>  (declaration.initializerParameter?.defaulted else false)
+                || !denotable(declaration.type);
 }

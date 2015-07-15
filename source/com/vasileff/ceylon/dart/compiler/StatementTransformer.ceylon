@@ -152,8 +152,8 @@ class StatementTransformer
         "The declaration model for the new variable"
         value variableDeclaration = info.variableDeclarationModel;
 
-        "The type of the new variable (intersection of isType and expression/old type)"
-        value variableType = variableDeclaration.type;
+        //"The type of the new variable (intersection of isType and expression/old type)"
+        //value variableType = variableDeclaration.type;
 
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
@@ -226,10 +226,12 @@ class StatementTransformer
                             DartAssignmentOperator.equal;
                             withLhs {
                                 variableDeclaration;
-                                () => withBoxingTypes {
+                                () => withBoxing {
                                     that;
+                                    // as noted above, tmpVariable may be erased. Maybe
+                                    // when narrowing optionals like String?.
                                     expressionType;
-                                    expressionType;
+                                    null;
                                     tmpVariable;
                                 };
                             };
@@ -243,10 +245,6 @@ class StatementTransformer
             // possibly declare new variable with a narrowed type
             assert(is FunctionOrValueModel originalDeclaration =
                     variableDeclaration.originalDeclaration);
-            value originalActualType = ctx.dartTypes.actualType(originalDeclaration);
-            // FIXME possibly false assumption that refined will be null for
-            //       non-initial declarations (is refinedDeclaration propagated?)
-            value originalFormalType = ctx.dartTypes.formalType(originalDeclaration);
 
             value originalDartVariable = DartSimpleIdentifier(
                     ctx.dartTypes.getName(originalDeclaration));
@@ -254,8 +252,12 @@ class StatementTransformer
             statements.add(generateIsAssertion(
                     originalDartVariable, that.negated, errorMessage));
 
-            value dartTypeChanged = !ctx.dartTypes.equalErasure(
-                    variableType, originalFormalType);
+            // erasure to native may have changed
+            // erasure to object may have changed
+            // type may have narrowed
+            value dartTypeChanged =
+                ctx.dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
+                ctx.dartTypes.dartTypeModelForDeclaration(variableDeclaration);
 
             if (dartTypeChanged) {
                 value replacementVar = DartSimpleIdentifier(
@@ -273,10 +275,17 @@ class StatementTransformer
                                 replacementVar;
                                 withLhs {
                                     variableDeclaration;
-                                    () => withBoxingTypes(that,
-                                            originalFormalType,
-                                            originalActualType,
-                                            originalDartVariable);
+                                    () => withBoxing {
+                                        that;
+                                        originalDeclaration.type; // good enough???
+                                        // FIXME possibly false assumption that refined
+                                        // will be null for non-initial declarations
+                                        // (is refinedDeclaration propagated?)
+                                        originalDeclaration;
+                                        DartSimpleIdentifier {
+                                            ctx.dartTypes.getName(originalDeclaration);
+                                        };
+                                    };
                                 };
                             }];
                         };
