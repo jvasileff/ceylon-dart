@@ -220,9 +220,15 @@ class DartTypes(CeylonTypes ceylonTypes) {
     shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
-            TypeModel type,
-            Boolean eraseToNative)
-        =>  dartTypeNameForDartModel(scope, dartTypeModel(type, eraseToNative));
+            TypeOrNoType type,
+            Boolean eraseToNative,
+            Boolean eraseToObject = false)
+        =>  if (eraseToObject) then
+                dartTypeNameForDartModel(scope, dartObjectModel)
+            else if (is NoType type) then
+                dartTypeNameForDartModel(scope, dartObjectModel)
+            else
+                dartTypeNameForDartModel(scope, dartTypeModel(type, eraseToNative));
 
     shared
     DartTypeName dartTypeNameForDartModel(
@@ -273,22 +279,6 @@ class DartTypes(CeylonTypes ceylonTypes) {
         }
     }
 
-    shared
-    DartTypeName dartTypeNameForFormalActual(
-            Node|ElementModel|ScopeModel scope,
-            FormalActualOrNoType formalActualType)
-        =>  dartTypeNameForDartModel(scope, dartTypeModelFormalActual(formalActualType));
-
-    "Determine the *actual* type, which indicates the Dart static type"
-    shared
-    TypeModel actualType(FunctionOrValueModel declaration)
-        =>  let (defaulted = declaration.initializerParameter?.defaulted else false)
-            if (defaulted)
-            // lie and use `Anything`, since we use `core.Object` in Dart for
-            // defaulted parameters.
-            then ceylonTypes.anythingType
-            else declaration.type;
-
     "Determine the *formal* type, which indicates Dart erasure/boxing"
     shared
     TypeModel formalType(FunctionOrValueModel declaration)
@@ -303,18 +293,6 @@ class DartTypes(CeylonTypes ceylonTypes) {
                 r.type
             else
                 declaration.type;
-
-    shared
-    DartTypeModel dartTypeModelFormalActual(FormalActualOrNoType formalActualType)
-        =>  switch (formalActualType)
-            case (is NoType) dartObjectModel
-            else dartTypeModel {
-                formalActualType[1];
-                // only erase to native if the formal type is a denotable native
-                // type (ruling out generics, unions, intersections, and covariant
-                // refinements)
-                eraseToNative = native(formalActualType[0]);
-            };
 
     shared
     DartTypeModel dartTypeModelForDeclaration(

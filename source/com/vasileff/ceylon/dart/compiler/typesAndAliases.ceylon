@@ -11,7 +11,3 @@ interface NoType of noType {}
 object noType satisfies NoType {}
 
 alias TypeOrNoType => TypeModel | NoType;
-
-alias FormalActual => [TypeModel, TypeModel];
-
-alias FormalActualOrNoType => FormalActual | NoType;

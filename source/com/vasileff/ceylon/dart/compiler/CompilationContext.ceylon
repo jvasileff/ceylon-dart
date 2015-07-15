@@ -1,5 +1,6 @@
 import com.redhat.ceylon.model.typechecker.model {
-    UnitModel=Unit
+    UnitModel=Unit,
+    FunctionModel=Function
 }
 
 import org.antlr.runtime {
@@ -15,19 +16,22 @@ class CompilationContext(unit, tokens) {
     List<Token> tokens;
 
     shared
-    StringBuilder result = StringBuilder();
-
-    shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
 
     shared
     DartTypes dartTypes = DartTypes(ceylonTypes);
 
     shared variable
-    FormalActualOrNoType? lhsFormalActualTop = null;
+    TypeOrNoType? lhsTypeTop = null;
 
     shared variable
-    FormalActualOrNoType? returnFormalActualTop = null;
+    Boolean? lhsErasedToNativeTop = null;
+
+    shared variable
+    Boolean? lhsErasedToObjectTop = null;
+
+    shared variable
+    FunctionModel? returnDeclarationTop = null;
 
     variable
     ClassMemberTransformer? cmtMemo = null;
@@ -65,26 +69,26 @@ class CompilationContext(unit, tokens) {
         =>  tltMemo else (tltMemo = TopLevelTransformer(this));
 
     shared
-    FormalActualOrNoType assertedLhsFormalActualTop {
-        assert(exists fat = lhsFormalActualTop);
-        return fat;
+    TypeOrNoType assertedLhsTypeTop {
+        assert (exists top = lhsTypeTop);
+        return top;
     }
 
     shared
-    TypeOrNoType assertedLhsFormalTop
-        =>  switch (fat = assertedLhsFormalActualTop)
-            case (is NoType) noType
-            else fat[0];
+    Boolean assertedLhsErasedToNativeTop {
+        assert (exists top = lhsErasedToNativeTop);
+        return top;
+    }
 
     shared
-    TypeOrNoType assertedLhsActualTop
-        =>  switch (fat = assertedLhsFormalActualTop)
-            case (is NoType) noType
-            else fat[1];
+    Boolean assertedLhsErasedToObjectTop {
+        assert (exists top = lhsErasedToObjectTop);
+        return top;
+    }
 
     shared
-    FormalActualOrNoType assertedReturnFormalActualTop {
-        assert(exists fat = returnFormalActualTop);
-        return fat;
+    FunctionModel assertedReturnDeclaration {
+        assert(exists top = returnDeclarationTop);
+        return top;
     }
 }

@@ -44,8 +44,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface
 }
 
-class ExpressionTransformer
-        (CompilationContext ctx)
+class ExpressionTransformer(CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {
 
     """
@@ -75,10 +74,12 @@ class ExpressionTransformer
         FunctionOrValueModel? rhsDeclaration;
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(that, ctx.assertedLhsFormalTop, true);
+            return generateBooleanExpression(
+                    that, ctx.assertedLhsErasedToNativeTop, true);
         }
         else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(that, ctx.assertedLhsFormalTop, false);
+            return generateBooleanExpression(
+                    that, ctx.assertedLhsErasedToNativeTop, false);
         }
         else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
@@ -141,7 +142,7 @@ class ExpressionTransformer
                 value qualified = ctx.dartTypes.qualifyIdentifier(
                         ctx.unit, targetDeclaration);
 
-                switch (ctx.assertedLhsFormalActualTop)
+                switch (ctx.assertedLhsTypeTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
                     unboxed = qualified;
@@ -241,7 +242,7 @@ class ExpressionTransformer
             // will be newly created Callable<...>, which is not erased
             rhsDeclaration = null;
 
-            switch (ctx.assertedLhsActualTop)
+            switch (ctx.assertedLhsTypeTop)
             case (noType) {
                 // An invocation; do not wrap in a callable
                 //
@@ -482,16 +483,10 @@ class ExpressionTransformer
 
     DartExpression generateBooleanExpression(
             Node scope,
-            "The *formal* type; determines boxing."
-            TypeOrNoType type,
+            Boolean native,
             "The value to produce"
             Boolean boolean)
-        =>  let (native =
-                switch(type)
-                case (is NoType) false
-                case (is TypeModel) ctx.ceylonTypes.isCeylonBoolean(
-                        ctx.ceylonTypes.definiteType(type)))
-            if (native) then
+        =>  if (native) then
                 DartBooleanLiteral(boolean)
             else if (boolean) then
                 ctx.dartTypes.qualifyIdentifier(scope,ctx.ceylonTypes
@@ -527,8 +522,12 @@ class ExpressionTransformer
             createNullSafeExpression {
                 parameterIdentifier;
                 // the result of the leftOperand transformation should be this:
-                ctx.dartTypes.dartTypeNameForFormalActual(that,
-                        ctx.assertedLhsFormalActualTop);
+                ctx.dartTypes.dartTypeName {
+                    that;
+                    ctx.assertedLhsTypeTop;
+                    ctx.assertedLhsErasedToNativeTop;
+                    ctx.assertedLhsErasedToObjectTop;
+                };
                 maybeNullExpression = that.leftOperand.transform(this);
                 ifNullExpression = that.rightOperand.transform(this);
                 ifNotNullExpression = parameterIdentifier;
@@ -600,6 +599,9 @@ class ExpressionTransformer
         };
 
         value rightOperandBoxed = withLhs {
+// FIXME WIP
+// TODO should be using a better type
+            parameterModel.type;
             parameterModel;
             () => that.rightOperand.transform(this);
         };
@@ -622,7 +624,7 @@ class ExpressionTransformer
                 that;
                 rhsType = ctx.ceylonTypes.booleanType;
                 rhsDeclaration = null;
-                dartExpression = withLhsNonNative {
+                withLhsNonNative {
                     // both operands should be "Identifiable", which isn't generic, so
                     // using the denotable type isn't necessary
                     ctx.ceylonTypes.identifiableType;

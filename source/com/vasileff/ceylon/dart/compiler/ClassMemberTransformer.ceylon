@@ -4,8 +4,7 @@ import ceylon.ast.core {
     FunctionDeclaration
 }
 
-class ClassMemberTransformer
-        (CompilationContext ctx)
+class ClassMemberTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartClassMember*]>(ctx) {
 
     shared actual

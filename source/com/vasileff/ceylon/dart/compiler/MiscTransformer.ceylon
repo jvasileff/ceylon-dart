@@ -64,6 +64,7 @@ class MiscTransformer(CompilationContext ctx)
                     packagePrefix + ctx.dartTypes.getName(info.declarationModel);
                 };
                 withLhs {
+                    null;
                     info.declarationModel;
                     () => that.definition.expression.transform(expressionTransformer);
                 };

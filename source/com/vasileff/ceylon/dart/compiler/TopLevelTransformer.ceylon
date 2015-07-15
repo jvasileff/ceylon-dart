@@ -11,8 +11,7 @@ import ceylon.interop.java {
 
 "For Dart TopLevel declarations, which are distinct from
  declarations made within blocks."
-class TopLevelTransformer
-        (CompilationContext ctx)
+class TopLevelTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartCompilationUnitMember*]>(ctx) {
 
     shared actual

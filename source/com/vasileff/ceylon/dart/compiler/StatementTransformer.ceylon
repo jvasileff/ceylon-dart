@@ -23,8 +23,7 @@ import org.antlr.runtime {
     Token
 }
 
-class StatementTransformer
-        (CompilationContext ctx)
+class StatementTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartStatement*]>(ctx) {
 
     "Parents must set `returnTypeTop`"
@@ -33,8 +32,9 @@ class StatementTransformer
     [DartReturnStatement] transformReturn(Return that)
         =>  if (exists result = that.result) then
                 [DartReturnStatement {
-                    withLhsType {
-                        ctx.assertedReturnFormalActualTop;
+                    withLhs {
+                        null;
+                        ctx.assertedReturnDeclaration;
                         () => result.transform(expressionTransformer);
                     };
                 }]
@@ -225,6 +225,7 @@ class StatementTransformer
                             variableIdentifier;
                             DartAssignmentOperator.equal;
                             withLhs {
+                                null;
                                 variableDeclaration;
                                 () => withBoxing {
                                     that;
@@ -274,6 +275,7 @@ class StatementTransformer
                             [DartVariableDeclaration {
                                 replacementVar;
                                 withLhs {
+                                    null;
                                     variableDeclaration;
                                     () => withBoxing {
                                         that;

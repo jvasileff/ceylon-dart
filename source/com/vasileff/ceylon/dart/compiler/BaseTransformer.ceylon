@@ -191,21 +191,8 @@ class BaseTransformer<Result>
 
         for (i -> list in parameterLists.indexed.sequence().reversed) {
             if (i < parameterLists.size - 1) {
-                assert(exists previous = result);
-                TypeModel formalReturn;
-                TypeModel actualReturn;
-                if (i == parameterLists.size - 2) {
-                    // innermost Callable, return is the actual Function's result
-                    formalReturn = ctx.dartTypes.formalType(functionModel);
-                    actualReturn = ctx.dartTypes.actualType(functionModel);
-                }
-                else {
-                    // outer Callable that returns a Callable
-                    formalReturn = ctx.ceylonTypes.callableDeclaration.type;
-                    actualReturn = ctx.ceylonTypes.callableDeclaration.type;
-                }
-
                 // wrap nested function in a callable
+                assert(exists previous = result);
                 result = generateNewCallable(that, functionModel, previous, i+1);
             }
 
@@ -228,6 +215,7 @@ class BaseTransformer<Result>
                     }
                     case (is LazySpecifier) {
                         body = DartExpressionFunctionBody(false, withLhs(
+                            null,
                             functionModel,
                             () => definition.expression
                                     .transform(expressionTransformer)));
@@ -248,26 +236,27 @@ class BaseTransformer<Result>
                             ctx.dartTypes.getName(parameterInfo.parameterModel));
                     statements.add {
                         DartIfStatement {
-                            // condition
+                            // if (parm === default)
                             DartFunctionExpressionInvocation {
                                 DartPrefixedIdentifier {
-                                    prefix = DartSimpleIdentifier("$dart$core");
-                                    identifier = DartSimpleIdentifier("identical");
+                                    DartSimpleIdentifier("$dart$core");
+                                    DartSimpleIdentifier("identical");
                                 };
                                 DartArgumentList {
                                     [paramName,
                                      DartPrefixedIdentifier {
-                                        prefix = DartSimpleIdentifier("$ceylon$language");
-                                        identifier = DartSimpleIdentifier("dart$default");
+                                        DartSimpleIdentifier("$ceylon$language");
+                                        DartSimpleIdentifier("dart$default");
                                     }];
                                 };
                             };
-                            // then statement
+                            // then set to default expression
                             DartExpressionStatement {
                                 DartAssignmentExpression {
                                     paramName;
                                     DartAssignmentOperator.equal;
                                     withLhs {
+                                        null;
                                         parameterInfo.parameterModel.model;
                                         () => param.specifier.expression
                                                 .transform(expressionTransformer);
@@ -290,6 +279,7 @@ class BaseTransformer<Result>
                         statements.add {
                             DartReturnStatement {
                                 withLhs {
+                                    null;
                                     functionModel;
                                     () => definition.expression.transform(
                                             expressionTransformer);
@@ -386,31 +376,32 @@ class BaseTransformer<Result>
                     parameterListNumber <
                     functionModel.parameterLists.size() - 1) {
 
+        // TODO take the Callable's TypeModel as an argument in order to have
+        //      correct (non-erased-to-Object) parameter and return types for
+        //      generic functions
+
         DartExpression outerFunction;
 
         TypeModel returnType;
         FunctionOrValueModel? returnDeclaration;
-        Boolean returnErasedToNative;
-
         if (delegateReturnsCallable) {
             returnType = ctx.ceylonTypes.callableDeclaration.type;
             returnDeclaration = null;
-            returnErasedToNative = false;
         }
         else {
             returnType = functionModel.type;
             returnDeclaration = functionModel;
-            returnErasedToNative = ctx.dartTypes.erasedToNative(functionModel);
         }
+
         value parameters = CeylonList(functionModel.parameterLists
                 .get(parameterListNumber).parameters);
 
         // determine if return or arguments need boxing
         value boxingRequired =
-                returnErasedToNative ||
-                parameters.any((parameterModel)
-                    =>  ctx.dartTypes.native(ctx.dartTypes
-                                .formalType(parameterModel.model)));
+                (!delegateReturnsCallable
+                    && ctx.dartTypes.erasedToNative(functionModel))
+                || parameters.any((parameterModel)
+                    =>  ctx.dartTypes.erasedToNative(parameterModel.model));
 
         // generate outerFunction to handle boxing
         if (!boxingRequired) {
@@ -449,6 +440,7 @@ class BaseTransformer<Result>
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
                 value unboxed = withLhs {
+                    null;
                     // "lhs" is the inner function's parameter
                     lhsDeclaration = parameterModel.model;
                     () => withBoxing {
@@ -608,22 +600,30 @@ class BaseTransformer<Result>
             assert (is ParameterModel? parameterModel =
                     info.listedArgumentModels.getFromFirst(i)?.get(1));
 
-            // If parameterModel is null, we must be invoking a value, so use type
-            // `Anything` to disable erasure. We don't need to cast, since `Callable`'s
-            // take `core.Object`s.
-            TypeModel lhsFormal =
-                    if (exists parameterModel)
-                    then ctx.dartTypes.formalType(parameterModel.model)
-                    else ctx.ceylonTypes.anythingType;
+            // FIXME we need the caller to pass in the Callable we are invoking,
+            //       which would allow us to use unit.getCallableArgumentTypes
+            //       for a "good" lhsType
+            // For now, hack into old system.
 
-            TypeModel lhsActual =
-                    if (exists parameterModel)
-                    then ctx.dartTypes.actualType(parameterModel.model)
-                    else ctx.ceylonTypes.anythingType;
+            TypeModel? lhsType;
+            FunctionOrValueModel? lhsDeclaration;
 
-            return withLhsType(
-                [lhsFormal, lhsActual],
-                () => expression.transform(expressionTransformer));
+            if (exists parameterModel) {
+                // Invoking a real function (not a callable value)
+                lhsType = null; // see fixme; use a better type
+                lhsDeclaration = parameterModel.model;
+            }
+            else {
+                // Invoking a generic callable; all parameters take `core.Object`
+                lhsType = ctx.ceylonTypes.anythingType;
+                lhsDeclaration = null;
+            }
+
+            return withLhs {
+                lhsType;
+                lhsDeclaration;
+                () => expression.transform(expressionTransformer);
+            };
         });
         return DartArgumentList(args);
     }
@@ -682,6 +682,7 @@ class BaseTransformer<Result>
         }
 
         DartExpression rhs = withLhs(
+                null,
                 targetDeclaration,
                 () => rhsExpression.transform(expressionTransformer));
 
@@ -715,40 +716,41 @@ class BaseTransformer<Result>
                 message?.string else "<null>");
 
     shared
-    Result withLhsType<Result>(
-            FormalActualOrNoType lhsFormalActual,
+    Result withLhs<Result>(
+            TypeModel? lhsType,
+            FunctionOrValueModel? lhsDeclaration,
             Result fun()) {
-        value save = ctx.lhsFormalActualTop;
-        try {
-            ctx.lhsFormalActualTop = lhsFormalActual;
-            value result = fun();
-            return result;
+
+        if (exists lhsDeclaration) {
+            return withLhsValues {
+                lhsType = lhsType else lhsDeclaration.type;
+                ctx.dartTypes.erasedToNative(lhsDeclaration);
+                ctx.dartTypes.erasedToObject(lhsDeclaration);
+                fun;
+            };
         }
-        finally {
-            ctx.lhsFormalActualTop = save;
+        else if (exists lhsType) {
+            return withLhsValues {
+                lhsType = lhsType;
+                ctx.dartTypes.native(lhsType);
+                false;
+                fun;
+            };
+        }
+        else {
+            return withLhsNoType(fun);
         }
     }
-
-    shared
-    Result withLhsNoType<Result>(Result fun())
-        =>  withLhsType(noType, fun);
-
-    shared
-    Result withLhs<Result>(
-            FunctionOrValueModel lhsDeclaration,
-            Result fun())
-        =>  withLhsType(
-                [ctx.dartTypes.formalType(lhsDeclaration),
-                 ctx.dartTypes.actualType(lhsDeclaration)],
-                fun);
 
     shared
     Result withLhsDenotable<Result>(
             TypeModel expressionType,
             ClassOrInterfaceModel container,
             Result fun())
-        =>  withLhsNonNative {
+        =>  withLhsValues {
                 ctx.ceylonTypes.denotableType(expressionType, container);
+                false;
+                false;
                 fun;
             };
 
@@ -757,8 +759,15 @@ class BaseTransformer<Result>
     Result withLhsNative<Result>(
             TypeModel type,
             Result fun())
-        =>  withLhsType {
-                [type, type];
+        =>  withLhs(type, null, fun);
+
+    "No specific lhs type required; disable boxing and casting."
+    shared
+    Result withLhsNoType<Result>(Result fun())
+        =>  withLhsValues {
+                lhsType = noType;
+                lhsErasedToNative = true;
+                lhsErasedToObject = true;
                 fun;
             };
 
@@ -767,36 +776,42 @@ class BaseTransformer<Result>
     Result withLhsNonNative<Result>(
             TypeModel type,
             Result fun())
-        =>  withLhsType {
-                [ctx.ceylonTypes.anythingType, type];
-                fun;
-            };
+        =>  withLhsValues(type, false, false, fun);
 
-    shared
-    Result withReturnType<Result>(
-            FormalActualOrNoType returnFormalActual,
+    Result withLhsValues<Result>(
+            TypeOrNoType lhsType,
+            Boolean lhsErasedToNative,
+            Boolean lhsErasedToObject,
             Result fun()) {
-        value save = ctx.returnFormalActualTop;
+        value saveLhsType = ctx.lhsTypeTop;
+        value saveLhsErasedToNative = ctx.lhsErasedToNativeTop;
+        value saveLhsErasedToObject = ctx.lhsErasedToObjectTop;
         try {
-            ctx.returnFormalActualTop = returnFormalActual;
+            ctx.lhsTypeTop = lhsType;
+            ctx.lhsErasedToNativeTop = lhsErasedToNative;
+            ctx.lhsErasedToObjectTop = lhsErasedToObject;
             return fun();
         }
         finally {
-            ctx.returnFormalActualTop = save;
+            ctx.lhsTypeTop = saveLhsType;
+            ctx.lhsErasedToNativeTop = saveLhsErasedToNative;
+            ctx.lhsErasedToObjectTop = saveLhsErasedToObject;
         }
     }
 
     shared
     Result withReturn<Result>(
-            FunctionOrValueModel|NoType lhsDeclaration,
-            Result fun())
-        =>  if (is NoType lhsDeclaration) then
-                withReturnType(noType, fun)
-            else
-                withReturnType(
-                    [ctx.dartTypes.formalType(lhsDeclaration),
-                     ctx.dartTypes.actualType(lhsDeclaration)],
-                    fun);
+            FunctionModel functionDeclaration,
+            Result fun()) {
+        value save = ctx.returnDeclarationTop;
+        try {
+            ctx.returnDeclarationTop = functionDeclaration;
+            return fun();
+        }
+        finally {
+            ctx.returnDeclarationTop = save;
+        }
+    }
 
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
@@ -883,37 +898,21 @@ class BaseTransformer<Result>
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
-            DartExpression dartExpression) {
-
-        value lhsFormalActual = ctx.assertedLhsFormalActualTop;
-
-        if (is NoType lhsFormalActual) {
-            return dartExpression;
-        }
-        else {
-            value [lhsFormal, lhsActual] = lhsFormalActual;
-
-            // normally, actual will be a subtype of formal. But, due to our hack
-            // replacement of actual with Anything to signal "erasedToObject", we
-            // don't always have a good rhsActual. So, another hack, for now:
-            value lhsType = if (lhsActual.anything) then lhsFormal else lhsActual;
-
-            // and another hack, for now:
-            value lhsErasedToObject = if (lhsActual.anything)
-                    then true else !ctx.dartTypes.denotable(lhsActual);
-
-            return withBoxingLhsRhs {
-                scope;
-                lhsType;
-                ctx.dartTypes.native(lhsFormal);
-                lhsErasedToObject;
-                rhsType;
-                rhsErasedToNative;
-                rhsErasedToObject;
-                dartExpression;
-            };
-        }
-    }
+            DartExpression dartExpression)
+        =>  let (lhsType = ctx.assertedLhsTypeTop)
+            if (is NoType lhsType) then
+                dartExpression
+            else
+                withBoxingLhsRhs {
+                    scope;
+                    lhsType;
+                    ctx.assertedLhsErasedToNativeTop;
+                    ctx.assertedLhsErasedToObjectTop;
+                    rhsType;
+                    rhsErasedToNative;
+                    rhsErasedToObject;
+                    dartExpression;
+                };
 
     DartExpression withBoxingLhsRhs(
             Node|ElementModel|ScopeModel scope,
@@ -950,54 +949,45 @@ class BaseTransformer<Result>
              [[conversion]]."
             DartExpression expression,
             "The conversion to apply to the result of [[expression]]."
-            BoxingConversion conversion) {
-
-        value [boxTypeDeclaration, toNative] =
-            switch (conversion)
-            case (ceylonBooleanToNative)
-                [ctx.ceylonTypes.booleanDeclaration, true]
-            case (ceylonFloatToNative)
-                [ctx.ceylonTypes.floatDeclaration, true]
-            case (ceylonIntegerToNative)
-                [ctx.ceylonTypes.integerDeclaration, true]
-            case (ceylonStringToNative)
-                [ctx.ceylonTypes.stringDeclaration, true]
-            case (nativeToCeylonBoolean)
-                [ctx.ceylonTypes.booleanDeclaration, false]
-            case (nativeToCeylonFloat)
-                [ctx.ceylonTypes.floatDeclaration, false]
-            case (nativeToCeylonInteger)
-                [ctx.ceylonTypes.integerDeclaration, false]
-            case (nativeToCeylonString)
-                [ctx.ceylonTypes.stringDeclaration, false];
-
-        value castedArgument =
-                // For ceylon to native, we may need to narrow the non-native
-                // argument.
-                //
-                // For native to ceylon, we may need to narrow the native argument
-                // in the unusual case that `rhsActual` is `Anything` despite being
-                // native, which happens for defaulted parameters.
-                withCastingLhsRhs(scope,
-                    boxTypeDeclaration.type, false,
-                    rhsType, erasedToObject, !toNative, expression);
-
-        return
-        DartFunctionExpressionInvocation {
-            DartPropertyAccess {
-                ctx.dartTypes.qualifyIdentifier {
-                    scope;
-                    boxTypeDeclaration;
+            BoxingConversion conversion)
+        =>  let ([boxTypeDeclaration, toNative] =
+                switch (conversion)
+                case (ceylonBooleanToNative) [ctx.ceylonTypes.booleanDeclaration, true]
+                case (ceylonFloatToNative)   [ctx.ceylonTypes.floatDeclaration, true]
+                case (ceylonIntegerToNative) [ctx.ceylonTypes.integerDeclaration, true]
+                case (ceylonStringToNative)  [ctx.ceylonTypes.stringDeclaration, true]
+                case (nativeToCeylonBoolean) [ctx.ceylonTypes.booleanDeclaration, false]
+                case (nativeToCeylonFloat)   [ctx.ceylonTypes.floatDeclaration, false]
+                case (nativeToCeylonInteger) [ctx.ceylonTypes.integerDeclaration, false]
+                case (nativeToCeylonString)  [ctx.ceylonTypes.stringDeclaration, false])
+            DartFunctionExpressionInvocation {
+                DartPropertyAccess {
+                    ctx.dartTypes.qualifyIdentifier {
+                        scope;
+                        boxTypeDeclaration;
+                    };
+                    DartSimpleIdentifier {
+                        if (toNative)
+                        then "nativeValue"
+                        else "instance";
+                    };
                 };
-                DartSimpleIdentifier {
-                    if (toNative)
-                    then "nativeValue"
-                    else "instance";
+                DartArgumentList {
+                    // For ceylon to native, we may need to narrow the non-native
+                    // argument.
+                    //
+                    // For native to ceylon, we may need to narrow the native argument
+                    // in the unusual case that `rhsActual` is `Anything` despite being
+                    // native, which happens for defaulted parameters.
+                    [withCastingLhsRhs {
+                        scope;
+                        lhsType = boxTypeDeclaration.type;
+                        lhsErasedToObject = false;
+                        rhsType = rhsType;
+                        rhsErasedToObject = erasedToObject;
+                        erasedToNative = !toNative;
+                        expression;
+                    }];
                 };
             };
-            DartArgumentList {
-                [castedArgument];
-            };
-        };
-    }
 }
