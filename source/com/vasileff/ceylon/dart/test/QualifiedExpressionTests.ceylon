@@ -97,7 +97,7 @@ class QualifiedExpressionTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                $ceylon$language.List $package$something = $ceylon$language.nothing;
+                $ceylon$language.List $package$something = $ceylon$language.nothing as $ceylon$language.List;
 
                 $ceylon$language.List get something => $package$something;
 

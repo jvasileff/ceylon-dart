@@ -375,11 +375,12 @@ class DartTypes(CeylonTypes ceylonTypes) {
      considered denotable by this method, whereas type parameters, like `T`, are not."
     shared
     Boolean denotable(TypeModel type)
-        =>  !type.typeParameter && (
-                let (definiteType = ceylonTypes.definiteType(type))
-                // union types that are booleans are denotable, as bool/Boolean
-                (ceylonTypes.isCeylonBoolean(definiteType) ||
-                    (!definiteType.union && !definiteType.intersection)));
+        =>  !type.typeParameter
+                && !ceylonTypes.isCeylonNothing(type)
+                && (let (definiteType = ceylonTypes.definiteType(type))
+                   // union types that are booleans are denotable, as bool/Boolean
+                   (ceylonTypes.isCeylonBoolean(definiteType)
+                        || (!definiteType.union && !definiteType.intersection)));
 
     "True if [[type]] is not a type parameter and has a corresponding Dart native type
      such as `dart.core.int`."
