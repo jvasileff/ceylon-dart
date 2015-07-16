@@ -576,10 +576,11 @@ class BaseTransformer<Result>
     }
 
     shared
-    DartArgumentList generateArgumentListFromArguments(Arguments that) {
+    DartArgumentList generateArgumentListFromArguments
+            (Arguments that, TypeModel callableType) {
         switch (that)
         case (is PositionalArguments) {
-            return generateArgumentListFromArgumentList(that.argumentList);
+            return generateArgumentListFromArgumentList(that.argumentList, callableType);
         }
         case (is NamedArguments) {
             throw CompilerBug(that, "NamedArguments not supported");
@@ -587,30 +588,32 @@ class BaseTransformer<Result>
     }
 
     shared
-    DartArgumentList generateArgumentListFromArgumentList(ArgumentList that) {
+    DartArgumentList generateArgumentListFromArgumentList
+            (ArgumentList that, TypeModel callableType) {
+
         "spread arguments not supported"
         assert(that.sequenceArgument is Null);
 
         value info = ArgumentListInfo(that);
+        value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
-        // use the passed in `formal` parameters, not the parameter models
-        // available from the argument list.
         value args = that.listedArguments.indexed.collect((e) {
             value i -> expression = e;
+
             assert (is ParameterModel? parameterModel =
                     info.listedArgumentModels.getFromFirst(i)?.get(1));
-
-            // FIXME we need the caller to pass in the Callable we are invoking,
-            //       which would allow us to use unit.getCallableArgumentTypes
-            //       for a "good" lhsType
-            // For now, hack into old system.
 
             TypeModel? lhsType;
             FunctionOrValueModel? lhsDeclaration;
 
             if (exists parameterModel) {
                 // Invoking a real function (not a callable value)
-                lhsType = null; // see fixme; use a better type
+
+                // Use the argument type, even though the parameter type should be
+                // sufficient until we add support for generics
+                assert (exists argumentType = argumentTypes[i]);
+
+                lhsType = argumentType;
                 lhsDeclaration = parameterModel.model;
             }
             else {

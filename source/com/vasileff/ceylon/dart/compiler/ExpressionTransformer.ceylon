@@ -361,11 +361,12 @@ class ExpressionTransformer(CompilationContext ctx)
         // the subtypes of FunctionOrValueModel
         assert (is FunctionModel|ValueModel|SetterModel|Null invokedDeclaration);
 
-        value argumentList = generateArgumentListFromArguments(that.arguments);
-        DartExpression invocation;
+        value argumentList = generateArgumentListFromArguments(
+                that.arguments, ExpressionInfo(that.invoked).typeModel);
 
         TypeModel rhsType;
         FunctionOrValueModel? rhsDeclaration;
+        DartExpression invocation;
 
         switch (invokedDeclaration)
         case (is FunctionModel) {
