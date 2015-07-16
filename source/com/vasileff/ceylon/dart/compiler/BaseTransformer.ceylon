@@ -153,6 +153,84 @@ class BaseTransformer<Result>
                 DartTypeName(DartSimpleIdentifier("void"));
 
     shared
+    DartExpression generateInvocation(
+            Node scope,
+            ExpressionInfo receiver,
+            String memberName,
+            [ExpressionInfo*] arguments) {
+
+        // 1. Get a TypedDeclaration for the member
+        // 2. Get a TypeDeclaration for the member's container
+        // 3. Get a TypedReference for the member, to get the return and arg types
+        // 4. Cast the receiver to a Dart denotable type for the member's container
+        // 5. Invoke with each argument boxed as necessary
+        // 6. Box and return
+
+        // TODO translate toString() => string, etc.
+
+        assert (is FunctionOrValueModel memberDeclaration =
+                    receiver.typeModel.declaration.getMember(memberName, null, false));
+
+        assert (is ClassOrInterfaceModel container = memberDeclaration.container);
+
+        value typedReference = receiver.typeModel
+                .getTypedReference(memberDeclaration, null);
+
+        value rhsType = typedReference.type;
+
+        value rhsDeclaration =
+                if (is FunctionModel memberDeclaration,
+                        memberDeclaration.parameterLists.size() > 1)
+                // The function actually returns a Callable, not the
+                // ultimate return type advertised by the declaration.
+                then null
+                else memberDeclaration;
+
+        value boxedReceiver = withLhsDenotable {
+            receiver.typeModel;
+            container;
+            () => receiver.node.transform(expressionTransformer);
+        };
+
+        DartExpression unboxed;
+        if (is FunctionModel memberDeclaration) {
+            value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(
+                typedReference.fullType));
+
+            value parameterDeclarations = CeylonList(
+                    memberDeclaration.firstParameterList.parameters)
+                    .collect(ParameterModel.model);
+            unboxed =
+            DartMethodInvocation {
+                boxedReceiver;
+                DartSimpleIdentifier {
+                    ctx.dartTypes.getName(memberDeclaration);
+                };
+                DartArgumentList {
+                    [for (i -> argument in arguments.indexed)
+                        withLhs {
+                            argumentTypes[i];
+                            parameterDeclarations[i];
+                            () => argument.node.transform(expressionTransformer);
+                        }
+                    ];
+                };
+            };
+        }
+        else {
+            unboxed =
+            DartPropertyAccess {
+                boxedReceiver;
+                DartSimpleIdentifier {
+                    ctx.dartTypes.getName(memberDeclaration);
+                };
+            };
+        }
+
+        return withBoxing(scope, rhsType, rhsDeclaration, unboxed);
+    }
+
+    shared
     DartFunctionExpression generateFunctionExpression(
             FunctionExpression
                 | FunctionDefinition
@@ -595,6 +673,9 @@ class BaseTransformer<Result>
 
         value info = ArgumentListInfo(that);
         value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
+
+        // TODO do we already have the argument type from listedArgumentModels, without
+        //      needing callableType???
 
         value args = that.listedArguments.indexed.collect((e) {
             value i -> expression = e;

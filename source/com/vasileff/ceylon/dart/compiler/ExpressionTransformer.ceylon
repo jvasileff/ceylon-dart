@@ -575,49 +575,18 @@ class ExpressionTransformer(CompilationContext ctx)
                 that, "minus");
 
     shared actual
-    DartExpression transformExponentiationOperation
-            (ExponentiationOperation that)
+    DartExpression transformExponentiationOperation(ExponentiationOperation that)
         =>  generateInvocationForBinaryOperation(
                 that, "power");
 
     DartExpression generateInvocationForBinaryOperation(
-            BinaryOperation that,
-            String methodName) {
-
-        value leftType = ExpressionInfo(that.leftOperand).typeModel;
-
-        // FIXME shouldn't be calling `leftType.declaration`
-        assert (is FunctionModel method =
-                leftType.declaration.getMember(methodName, null, false));
-        assert (is ClassOrInterfaceModel container = method.container);
-
-        value parameterModel = method.firstParameterList.parameters.get(0).model;
-
-        value leftOperandBoxed = withLhsDenotable {
-            leftType;
-            container;
-            () => that.leftOperand.transform(this);
-        };
-
-        value rightOperandBoxed = withLhs {
-// FIXME WIP
-// TODO should be using a better type
-            parameterModel.type;
-            parameterModel;
-            () => that.rightOperand.transform(this);
-        };
-
-        return withBoxing {
-            that;
-            ExpressionInfo(that).typeModel;
-            method;
-            DartMethodInvocation {
-                leftOperandBoxed;
-                DartSimpleIdentifier { ctx.dartTypes.getName(method); };
-                DartArgumentList { [rightOperandBoxed]; };
+            BinaryOperation that, String methodName)
+        =>  generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.leftOperand);
+                memberName = methodName;
+                arguments = [ExpressionInfo(that.rightOperand)];
             };
-        };
-    }
 
     shared actual
     DartExpression transformIdenticalOperation(IdenticalOperation that)
