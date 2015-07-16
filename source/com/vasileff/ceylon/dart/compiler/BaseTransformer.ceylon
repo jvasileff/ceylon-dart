@@ -674,8 +674,10 @@ class BaseTransformer<Result>
         value info = ArgumentListInfo(that);
         value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
-        // TODO do we already have the argument type from listedArgumentModels, without
-        //      needing callableType???
+        // NOTE info.listedArgumentModels[x][0] is the argument type model for argument x.
+        //      But, this is actually the type of the expression for the callsite value.
+        //      So, for the `lhs` type, we are instead using argument types obtained from
+        //      callableType, which is what the function actually requires.
 
         value args = that.listedArguments.indexed.collect((e) {
             value i -> expression = e;
@@ -688,7 +690,6 @@ class BaseTransformer<Result>
 
             if (exists parameterModel) {
                 // Invoking a real function (not a callable value)
-
                 // Use the argument type, even though the parameter type should be
                 // sufficient until we add support for generics
                 assert (exists argumentType = argumentTypes[i]);
