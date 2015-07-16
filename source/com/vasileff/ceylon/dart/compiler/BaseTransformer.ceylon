@@ -3,7 +3,6 @@ import ceylon.ast.core {
     WideningTransformer,
     FunctionShortcutDefinition,
     FunctionDefinition,
-    AnyFunction,
     Parameters,
     Arguments,
     PositionalArguments,
@@ -140,7 +139,7 @@ class BaseTransformer<Result>
     }
 
     shared
-    DartTypeName generateFunctionReturnType(AnyFunctionInfo<AnyFunction> info)
+    DartTypeName generateFunctionReturnType(AnyFunctionInfo info)
         =>  let (functionModel = info.declarationModel)
             if (functionModel.parameterLists.size() > 1) then
                 // return type is a `Callable`; we're not get generic, so the Callable's
