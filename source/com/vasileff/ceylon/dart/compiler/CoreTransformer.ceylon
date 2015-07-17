@@ -69,20 +69,22 @@ class CoreTransformer<Result>(CompilationContext ctx)
     shared
     DartExpression withBoxing(
             Node|ElementModel|ScopeModel scope,
-            TypeModel? rhsType,
-            "The declaration that produces the value. For `Function`s, the declaration
-             is used for its return type."
+            TypeModel rhsType,
+            "The declaration that produces the value.
+
+             For `Function`s, the declaration is used for its return type.
+
+             If a declaration is not provided, boxing will erase to native if possible,
+             and casting will *not* assume erased to Object (except for non-denotable
+             [[rhsType]]s, as always.)"
             FunctionOrValueModel? rhsDeclaration,
             DartExpression dartExpression)
-        =>  let (type = rhsType
-                    else rhsDeclaration?.type
-                    else ctx.ceylonTypes.anythingType)
-            withBoxingForType {
+        =>  withBoxingForType {
                 scope;
-                type;
+                rhsType;
                 if (exists rhsDeclaration)
                     then ctx.dartTypes.erasedToNative(rhsDeclaration)
-                    else ctx.dartTypes.native(type);
+                    else ctx.dartTypes.native(rhsType);
                 if (exists rhsDeclaration)
                     then ctx.dartTypes.erasedToObject(rhsDeclaration)
                     else false;

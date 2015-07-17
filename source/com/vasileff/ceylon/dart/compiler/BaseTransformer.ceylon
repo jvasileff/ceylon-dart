@@ -127,6 +127,50 @@ class BaseTransformer<Result>(CompilationContext ctx)
             Node scope,
             ExpressionInfo receiver,
             String memberName,
+            [ExpressionInfo*] arguments)
+        =>  generateInvocationGenerator(scope, receiver, memberName, arguments)[2]();
+
+    """Returns a Tuple holding:
+
+       - The `Type` of the result of the invocation
+       - The `FunctionOrValueModel` of the member, or `null` when invoking a function with
+         multiple parameter lists, in which case the `Type` will be a `Callable`.
+       - A function that will build and box an expression for the invocation. Callers
+         should call the generator function within a [[withLhs]] context.
+
+       The purpose of this method is to allow callers to calculate (and therefore have
+       access to) the desired lhs type (often a denotable type) for use when making
+       synthetic declarations to hold the result of the invocation.
+    """
+    shared
+    [TypeModel, FunctionOrValueModel?, DartExpression()]
+    generateInvocationGenerator(
+            Node scope,
+            ExpressionInfo receiver,
+            String memberName,
+            [ExpressionInfo*] arguments) {
+
+        return
+        generateInvocationSynthetic {
+            scope;
+            receiver.typeModel;
+            () => receiver.node.transform(expressionTransformer);
+            memberName;
+            arguments;
+        };
+    }
+
+    """The same as [[generateInvocation]], but with parameters that are more fundamental
+       (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
+    """
+    see(`function generateInvocationGenerator`)
+    shared
+    [TypeModel, FunctionOrValueModel?, DartExpression()]
+    generateInvocationSynthetic(
+            Node scope,
+            TypeModel receiverType,
+            DartExpression generateReceiver(),
+            String memberName,
             [ExpressionInfo*] arguments) {
 
         // 1. Get a TypedDeclaration for the member
@@ -139,11 +183,11 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // TODO translate toString() => string, etc.
 
         assert (is FunctionOrValueModel memberDeclaration =
-                    receiver.typeModel.declaration.getMember(memberName, null, false));
+                    receiverType.declaration.getMember(memberName, null, false));
 
         assert (is ClassOrInterfaceModel container = memberDeclaration.container);
 
-        value typedReference = receiver.typeModel
+        value typedReference = receiverType
                 .getTypedReference(memberDeclaration, null);
 
         value rhsType = typedReference.type;
@@ -158,45 +202,55 @@ class BaseTransformer<Result>(CompilationContext ctx)
 
         value boxedReceiver = withLhsDenotable {
             container;
-            () => receiver.node.transform(expressionTransformer);
+            generateReceiver;
         };
 
-        DartExpression unboxed;
-        if (is FunctionModel memberDeclaration) {
-            value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(
-                typedReference.fullType));
+        function expressionGenerator() {
+            DartExpression unboxed;
+            if (is FunctionModel memberDeclaration) {
+                value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(
+                    typedReference.fullType));
 
-            value parameterDeclarations = CeylonList(
-                    memberDeclaration.firstParameterList.parameters)
-                    .collect(ParameterModel.model);
-            unboxed =
-            DartMethodInvocation {
-                boxedReceiver;
-                DartSimpleIdentifier {
-                    ctx.dartTypes.getName(memberDeclaration);
+                value parameterDeclarations = CeylonList(
+                        memberDeclaration.firstParameterList.parameters)
+                        .collect(ParameterModel.model);
+                unboxed =
+                DartMethodInvocation {
+                    boxedReceiver;
+                    DartSimpleIdentifier {
+                        ctx.dartTypes.getName(memberDeclaration);
+                    };
+                    DartArgumentList {
+                        [for (i -> argument in arguments.indexed)
+                            withLhs {
+                                argumentTypes[i];
+                                parameterDeclarations[i];
+                                () => argument.node.transform(expressionTransformer);
+                            }
+                        ];
+                    };
                 };
-                DartArgumentList {
-                    [for (i -> argument in arguments.indexed)
-                        withLhs {
-                            argumentTypes[i];
-                            parameterDeclarations[i];
-                            () => argument.node.transform(expressionTransformer);
-                        }
-                    ];
+            }
+            else {
+                unboxed =
+                DartPropertyAccess {
+                    boxedReceiver;
+                    DartSimpleIdentifier {
+                        ctx.dartTypes.getName(memberDeclaration);
+                    };
                 };
+            }
+
+            return
+            withBoxing {
+                scope;
+                rhsType;
+                rhsDeclaration;
+                unboxed;
             };
         }
-        else {
-            unboxed =
-            DartPropertyAccess {
-                boxedReceiver;
-                DartSimpleIdentifier {
-                    ctx.dartTypes.getName(memberDeclaration);
-                };
-            };
-        }
 
-        return withBoxing(scope, rhsType, rhsDeclaration, unboxed);
+        return [rhsType, rhsDeclaration, expressionGenerator];
     }
 
     shared
