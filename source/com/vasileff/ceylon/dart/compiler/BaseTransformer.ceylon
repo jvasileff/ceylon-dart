@@ -157,7 +157,6 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 else memberDeclaration;
 
         value boxedReceiver = withLhsDenotable {
-            receiver.typeModel;
             container;
             () => receiver.node.transform(expressionTransformer);
         };

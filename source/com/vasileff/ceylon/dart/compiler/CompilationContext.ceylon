@@ -1,6 +1,7 @@
 import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
-    FunctionModel=Function
+    FunctionModel=Function,
+    ClassOrInterfaceModel=ClassOrInterface
 }
 
 import org.antlr.runtime {
@@ -20,6 +21,10 @@ class CompilationContext(unit, tokens) {
 
     shared
     DartTypes dartTypes = DartTypes(ceylonTypes);
+
+    "Boxing should calculate a denotable type. Trumps other `lhs` values."
+    shared variable
+    ClassOrInterfaceModel? lhsDenotableTop = null;
 
     shared variable
     TypeOrNoType? lhsTypeTop = null;

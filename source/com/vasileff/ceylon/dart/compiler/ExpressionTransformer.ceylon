@@ -364,12 +364,11 @@ class ExpressionTransformer(CompilationContext ctx)
         value argumentList = generateArgumentListFromArguments(
                 that.arguments, ExpressionInfo(that.invoked).typeModel);
 
-        TypeModel rhsType;
-        FunctionOrValueModel? rhsDeclaration;
-        DartExpression invocation;
-
         switch (invokedDeclaration)
         case (is FunctionModel) {
+            TypeModel rhsType;
+            FunctionOrValueModel? rhsDeclaration;
+            DartExpression invocation;
 
             if (invokedDeclaration.parameterLists.size() > 1) {
                 // The function actually returns a Callable, not the ultimate return type
@@ -437,26 +436,36 @@ class ExpressionTransformer(CompilationContext ctx)
                     argumentList;
                 };
             }
+
+            return withBoxing {
+                that;
+                rhsType;
+                rhsDeclaration;
+                invocation;
+            };
         }
         case (is ValueModel?) {
-            // callables (being generic) always return `core.Object`
-            rhsType = ctx.ceylonTypes.anythingType;
-            rhsDeclaration = null;
-
-            invocation =
-            DartFunctionExpressionInvocation {
-                // resolve the $delegate$ property of the Callable
-                DartPropertyAccess {
-                    // use a denotable `Callable` type. Although, for non-generic Dart,
-                    // any Callable would work, so this is a bit over engineered
-                    withLhsDenotable {
-                        ExpressionInfo(that.invoked).typeModel;
-                        ctx.ceylonTypes.callableDeclaration;
-                        () => that.invoked.transform(this);
+            // Callables (being generic) always erase to `core.Object`.
+            // We don't have a declaration to to use, so explicitly
+            // specify erasure:
+            return withBoxingCustom {
+                that;
+                InvocationInfo(that).typeModel;
+                rhsErasedToNative = false;
+                rhsErasedToObject = true;
+                DartFunctionExpressionInvocation {
+                    // resolve the $delegate$ property of the Callable
+                    DartPropertyAccess {
+                        // use a denotable `Callable` type. Although, for non-generic Dart,
+                        // any Callable would work, so this is a bit over engineered
+                        withLhsDenotable {
+                            ctx.ceylonTypes.callableDeclaration;
+                            () => that.invoked.transform(this);
+                        };
+                        DartSimpleIdentifier("$delegate$");
                     };
-                    DartSimpleIdentifier("$delegate$");
+                    argumentList;
                 };
-                argumentList;
             };
         }
         case (is SetterModel) {
@@ -464,13 +473,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 "The invoked expression's declaration type is not supported: \
                  '``className(invokedDeclaration)``'");
         }
-
-        return withBoxing {
-            that;
-            rhsType;
-            rhsDeclaration;
-            invocation;
-        };
     }
 
     shared actual

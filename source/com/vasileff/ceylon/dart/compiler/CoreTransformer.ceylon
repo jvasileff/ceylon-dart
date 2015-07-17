@@ -142,13 +142,31 @@ class CoreTransformer<Result>(CompilationContext ctx)
                 };
             };
 
+    shared
+    DartExpression withBoxingCustom(
+            Node|ElementModel|ScopeModel scope,
+            TypeModel rhsType,
+            Boolean rhsErasedToNative,
+            Boolean rhsErasedToObject,
+            DartExpression dartExpression)
+        =>  withBoxingForType {
+                scope;
+                rhsType;
+                rhsErasedToNative;
+                rhsErasedToObject;
+                dartExpression;
+            };
+
     DartExpression withBoxingForType(
             Node|ElementModel|ScopeModel scope,
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
             DartExpression dartExpression)
-        =>  let (lhsType = ctx.assertedLhsTypeTop)
+        =>  let (lhsType =
+                    if (exists denotable = ctx.lhsDenotableTop)
+                    then ctx.ceylonTypes.denotableType(rhsType, denotable)
+                    else ctx.assertedLhsTypeTop)
             if (is NoType lhsType) then
                 dartExpression
             else
@@ -273,15 +291,9 @@ class CoreTransformer<Result>(CompilationContext ctx)
 
     shared
     Result withLhsDenotable<Result>(
-            TypeModel expressionType,
             ClassOrInterfaceModel container,
             Result fun())
-        =>  withLhsValues {
-                ctx.ceylonTypes.denotableType(expressionType, container);
-                false;
-                false;
-                fun;
-            };
+        =>  withLhsValues(null, false, false, fun, container);
 
     "Erase to native if possible"
     shared
@@ -308,23 +320,27 @@ class CoreTransformer<Result>(CompilationContext ctx)
         =>  withLhsValues(type, false, false, fun);
 
     Result withLhsValues<Result>(
-            TypeOrNoType lhsType,
-            Boolean lhsErasedToNative,
-            Boolean lhsErasedToObject,
-            Result fun()) {
+            TypeOrNoType? lhsType,
+            Boolean? lhsErasedToNative,
+            Boolean? lhsErasedToObject,
+            Result fun(),
+            ClassOrInterfaceModel? lhsDenotable = null) {
         value saveLhsType = ctx.lhsTypeTop;
         value saveLhsErasedToNative = ctx.lhsErasedToNativeTop;
         value saveLhsErasedToObject = ctx.lhsErasedToObjectTop;
+        value saveLhsDenotable = ctx.lhsDenotableTop;
         try {
             ctx.lhsTypeTop = lhsType;
             ctx.lhsErasedToNativeTop = lhsErasedToNative;
             ctx.lhsErasedToObjectTop = lhsErasedToObject;
+            ctx.lhsDenotableTop = lhsDenotable;
             return fun();
         }
         finally {
             ctx.lhsTypeTop = saveLhsType;
             ctx.lhsErasedToNativeTop = saveLhsErasedToNative;
             ctx.lhsErasedToObjectTop = saveLhsErasedToObject;
+            ctx.lhsDenotableTop = saveLhsDenotable;
         }
     }
 
