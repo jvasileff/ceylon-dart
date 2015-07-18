@@ -28,7 +28,8 @@ import ceylon.ast.core {
     ElseOperation,
     ThenOperation,
     SafeMemberOperator,
-    SpreadMemberOperator
+    SpreadMemberOperator,
+    NotOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -534,6 +535,16 @@ class ExpressionTransformer(CompilationContext ctx)
                 maybeNullExpression = that.leftOperand.transform(this);
                 ifNullExpression = that.rightOperand.transform(this);
                 ifNotNullExpression = parameterIdentifier;
+            };
+
+    shared actual
+    DartExpression transformNotOperation(NotOperation that)
+        =>  DartPrefixExpression {
+                "!";
+                withLhsNative {
+                    ctx.ceylonTypes.booleanType;
+                    () => that.operand.transform(this);
+                };
             };
 
     shared actual

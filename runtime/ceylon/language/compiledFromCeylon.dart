@@ -68,3 +68,20 @@ void printAll([Iterable values, $dart$core.Object separator = dart$default]) => 
 $dart$core.String $package$stringify([$dart$core.Object val]) => (($lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($r$) => $r$ == null ? null : $r$.string)(val));
 
 $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
+
+// every.ceylon
+
+$dart$core.bool $package$every([Iterable values]) {{
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            Boolean val = element$1 as Boolean;
+            if (!Boolean.nativeValue(val)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+$dart$core.bool every([Iterable values]) => $package$every(values);

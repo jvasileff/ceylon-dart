@@ -549,5 +549,5 @@ void run() {
             }
          """;
 
-    compile { true; sort };
+    compile { true; every };
 }
