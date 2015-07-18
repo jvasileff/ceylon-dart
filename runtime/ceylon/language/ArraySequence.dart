@@ -35,8 +35,8 @@ class ArraySequence implements Sequence {
     =>  array.getFromLast(index);
 
   @$dart$core.override
-  Iterator get iterator
-    =>  array.iterator;
+  Iterator iterator()
+    =>  array.iterator();
 
   @$dart$core.override
   $dart$core.int get size

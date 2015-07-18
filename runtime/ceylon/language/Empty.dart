@@ -13,7 +13,7 @@ class Empty implements Sequential {
   $dart$core.bool contains($dart$core.Object element) => false;
 
   @$dart$core.override
-  Iterator get iterator => emptyIterator;
+  Iterator iterator() => emptyIterator;
 
   @$dart$core.override
   getFromFirst(index) => null;

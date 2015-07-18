@@ -37,8 +37,8 @@ abstract class List implements Collection, Correspondence {
     =>  $this.lastIndex == null;
 
   @$dart$core.override
-  Iterator get iterator;
-  static Iterator $get$iterator(List $this) {
+  Iterator iterator();
+  static Iterator $iterator(List $this) {
     // capture a variable (very unoptimized!)
     dart$VariableBoxInt index = new dart$VariableBoxInt(0);
     // simulate anonymous class

@@ -49,8 +49,8 @@ class Tuple implements List, Sequence, Iterable {
     =>  List.$getFromLast(this, index);
 
   @$dart$core.override
-  Iterator get iterator
-    =>  List.$get$iterator(this);
+  Iterator iterator()
+    =>  List.$iterator(this);
 
   @$dart$core.override
   $dart$core.int get size

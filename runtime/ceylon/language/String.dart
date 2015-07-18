@@ -32,8 +32,8 @@ class String implements List {
     => List.$get(this, index);
 
   @$dart$core.override
-  Iterator get iterator
-    => List.$get$iterator(this);
+  Iterator iterator()
+    => List.$iterator(this);
 
   @$dart$core.override
   getFromLast(index)

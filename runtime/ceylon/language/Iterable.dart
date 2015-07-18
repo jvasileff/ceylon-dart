@@ -1,7 +1,7 @@
 part of ceylon.language;
 
 abstract class Iterable {
-  Iterator get iterator;
+  Iterator iterator();
 
   $dart$core.int get size;
   static $dart$core.int $get$size(Iterable $this) {
@@ -12,13 +12,13 @@ abstract class Iterable {
 
   $dart$core.bool get empty;
   static $dart$core.bool $empty(Iterable $this)
-    =>  $dart$core.identical($this.iterator.next(), finished);
+    =>  $dart$core.identical($this.iterator().next(), finished);
 
   void each(Callable step);
   static void $each(
       Collection $this,
       Callable step) {
-    var it = $this.iterator;
+    var it = $this.iterator();
     for (var item = it.next(); item != finished;
           item = it.next()) {
       step.$delegate$(item);
