@@ -33,15 +33,12 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    ControlBlockModel=ControlBlock,
     FunctionOrValueModel=FunctionOrValue,
     SetterModel=Setter,
-    ConstructorModel=Constructor,
     DeclarationModel=Declaration,
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
-    PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface
 }
 
@@ -91,62 +88,30 @@ class ExpressionTransformer(CompilationContext ctx)
             case (is ValueModel) {
                 rhsDeclaration = targetDeclaration;
 
-                switch (container = containerOfDeclaration(targetDeclaration))
-                case (is PackageModel) {
-                    if (sameModule(ctx.unit, targetDeclaration)) {
-                        // qualify toplevel in same module with '$package.'
-                        unboxed = DartSimpleIdentifier(
-                            "$package$" +
-                            ctx.dartTypes.identifierPackagePrefix(targetDeclaration)
-                                + ctx.dartTypes.getName(targetDeclaration));
-                    }
-                    else {
-                        // qualify toplevel with Dart import prefix
-                        unboxed = DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier(
-                                ctx.dartTypes.moduleImportPrefix(targetDeclaration));
-                            identifier = DartSimpleIdentifier(
-                                ctx.dartTypes.identifierPackagePrefix(targetDeclaration)
-                                    + ctx.dartTypes.getName(targetDeclaration));
-                        };
-                    }
-                }
-                case (is ClassOrInterfaceModel
-                            | FunctionOrValueModel
-                            | ControlBlockModel
-                            | ConstructorModel) {
-                    if (useGetterSetterMethods(targetDeclaration)) {
-                        // invoke the getter
-                        unboxed = DartFunctionExpressionInvocation {
-                            func = DartSimpleIdentifier(
-                                ctx.dartTypes.getName(targetDeclaration) + "$get");
-                            argumentList = DartArgumentList();
-                        };
-                    }
-                    else {
-                        // identifier for the variable
-                        unboxed = DartSimpleIdentifier(
-                                ctx.dartTypes.getName(targetDeclaration));
-                    }
-                }
-                else {
-                    throw CompilerBug(that,
-                        "Unexpected container for base expression: \
-                         declaration type '``className(targetDeclaration)``' \
-                         container type '``className(container)``'");
-                }
+                value [dartIdentifier, dartIdentifierIsFunction] =
+                        ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                            that, targetDeclaration, false);
+
+                unboxed =
+                    if (dartIdentifierIsFunction) then
+                        DartFunctionExpressionInvocation {
+                            dartIdentifier;
+                            DartArgumentList();
+                        }
+                    else
+                        dartIdentifier;
             }
             case (is FunctionModel) {
                 // will be newly created Callable<...>, which is not erased
                 rhsDeclaration = null;
 
-                value qualified = ctx.dartTypes.qualifyIdentifier(
-                        ctx.unit, targetDeclaration);
+                value dartIdentifier = ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                        that, targetDeclaration, false)[0];
 
                 switch (ctx.assertedLhsTypeTop)
                 case (noType) {
                     // must be an invocation, do not wrap in a callable
-                    unboxed = qualified;
+                    unboxed = dartIdentifier;
                 }
                 else {
                     // probably `Anything` or `Callable`; doesn't really
@@ -154,7 +119,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     unboxed = generateNewCallable {
                         that;
                         functionModel = targetDeclaration;
-                        delegateFunction = qualified;
+                        delegateFunction = dartIdentifier;
                     };
                 }
             }
@@ -210,10 +175,6 @@ class ExpressionTransformer(CompilationContext ctx)
             () => that.receiverExpression.transform(this);
         };
 
-        value target = DartSimpleIdentifier {
-            ctx.dartTypes.getName(targetDeclaration);
-        };
-
         DartExpression unboxed;
 
         switch (targetDeclaration)
@@ -223,9 +184,14 @@ class ExpressionTransformer(CompilationContext ctx)
             // Should be easy; don't worry about getters/setters
             // being methods since that doesn't happen in locations
             // that can be qualified.
+
+            assert (is DartSimpleIdentifier memberIdentifier =
+                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                        that, targetDeclaration, false)[0]);
+
             unboxed =
                 if (!safeOperator) then
-                    DartPropertyAccess(receiver, target)
+                    DartPropertyAccess(receiver, memberIdentifier)
                 else
                     let (parameterIdentifier = DartSimpleIdentifier("$r$"))
                     createNullSafeExpression {
@@ -235,13 +201,17 @@ class ExpressionTransformer(CompilationContext ctx)
                         ifNullExpression = DartNullLiteral();
                         ifNotNullExpression = DartPropertyAccess {
                             parameterIdentifier;
-                            target;
+                            memberIdentifier;
                         };
                     };
         }
         case (is FunctionModel) {
             // will be newly created Callable<...>, which is not erased
             rhsDeclaration = null;
+
+            assert (is DartSimpleIdentifier memberIdentifier =
+                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                        that, targetDeclaration, false)[0]);
 
             switch (ctx.assertedLhsTypeTop)
             case (noType) {
@@ -253,7 +223,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 // see transformInvocation
 
                 // boxing and casting must be handled by outer node
-                return DartPropertyAccess(receiver, target);
+                return DartPropertyAccess(receiver, memberIdentifier);
             }
             else {
                 // The core.Function result of the qualified expression must be
@@ -280,7 +250,8 @@ class ExpressionTransformer(CompilationContext ctx)
                                                 "$capturedDelegate$";
                                             };
                                             if (!safeOperator)
-                                            then DartPropertyAccess(receiver, target)
+                                            then DartPropertyAccess(
+                                                    receiver, memberIdentifier)
                                             else createNullSafeExpression {
                                                 DartSimpleIdentifier("$r$");
                                                 receiverDartType;
@@ -288,7 +259,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                                 DartNullLiteral();
                                                 DartPropertyAccess {
                                                     DartSimpleIdentifier("$r$");
-                                                    target;
+                                                    memberIdentifier;
                                                 };
                                             };
 
@@ -493,11 +464,11 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  if (native) then
                 DartBooleanLiteral(boolean)
             else if (boolean) then
-                ctx.dartTypes.qualifyIdentifier(scope,ctx.ceylonTypes
-                    .booleanTrueValueDeclaration)
+                ctx.dartTypes.dartIdentifierForFunctionOrValue(scope,
+                    ctx.ceylonTypes.booleanTrueValueDeclaration)[0]
             else
-                ctx.dartTypes.qualifyIdentifier(scope, ctx.ceylonTypes
-                    .booleanFalseValueDeclaration);
+                ctx.dartTypes.dartIdentifierForFunctionOrValue(scope,
+                    ctx.ceylonTypes.booleanFalseValueDeclaration)[0];
 
     shared actual
     DartExpression transformComparisonOperation(ComparisonOperation that)

@@ -24,13 +24,13 @@ class TopLevelTransformer(CompilationContext ctx)
     shared actual
     [DartFunctionDeclaration+] transformFunctionDefinition
             (FunctionDefinition that)
-        =>  [generateFunctionDefinition(that, true),
+        =>  [generateFunctionDefinition(that),
              generateForwardingFunction(that)];
 
     shared actual
     [DartFunctionDeclaration+] transformFunctionShortcutDefinition
                 (FunctionShortcutDefinition that)
-        =>  [generateFunctionDefinition(that, true),
+        =>  [generateFunctionDefinition(that),
              generateForwardingFunction(that)];
 
     shared actual

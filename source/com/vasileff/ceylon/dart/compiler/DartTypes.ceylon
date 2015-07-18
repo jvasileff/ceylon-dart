@@ -41,8 +41,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     String getName(DeclarationModel|ParameterModel declaration) {
+        // TODO it might make sense to make this private, and have callers
+        //      use `dartIdentifierForX()` methods that can also handle
+        //      function <-> value mappings.
+
         if (is SetterModel declaration) {
-            getName(declaration.getter);
+            return getName(declaration.getter);
         }
 
         if (is TypedDeclarationModel declaration) {
@@ -399,27 +403,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 || ceylonTypes.isCeylonString(definiteType));
 
     shared
-    DartIdentifier qualifyIdentifier(
-            Node|ElementModel|UnitModel|ScopeModel scope,
-            DeclarationModel declaration) {
+    DartIdentifier dartIdentifierForClassOrInterface(
+            Node|ElementModel|ScopeModel scope,
+            ClassOrInterfaceModel declaration) {
 
         switch (container = containerOfDeclaration(declaration))
         case (is PackageModel) {
             if (sameModule(scope, declaration)) {
-                // qualify toplevel in same module with '$package.'
+                // don't qualify with module
                 return DartSimpleIdentifier(
-                    "$package$" +
                     identifierPackagePrefix(declaration) +
                     getName(declaration));
             }
             else {
                 // qualify toplevel with Dart import prefix
                 return DartPrefixedIdentifier {
-                    prefix = DartSimpleIdentifier(
-                        moduleImportPrefix(declaration));
-                    identifier = DartSimpleIdentifier(
-                        identifierPackagePrefix(declaration) +
-                        getName(declaration));
+                    DartSimpleIdentifier(moduleImportPrefix(declaration));
+                    DartSimpleIdentifier(
+                        identifierPackagePrefix(declaration)
+                        + getName(declaration));
                 };
             }
         }
@@ -427,11 +429,84 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | FunctionOrValueModel
                     | ControlBlockModel
                     | ConstructorModel) {
-            // TODO should be in scope? consider capture, etc.
-            return DartSimpleIdentifier(getName(declaration));
+            // FIXME this needs to be a CompilerBug exception
+            throw Exception(
+                "Unsupported container for base expression: \
+                 declaration type '``className(declaration)``' \
+                 container type '``className(container)``'");
         }
         else {
             // FIXME this needs to be a CompilerBug exception
+            throw Exception(
+                "Unexpected container for base expression: \
+                 declaration type '``className(declaration)``' \
+                 container type '``className(container)``'");
+        }
+    }
+
+    "Returns a tuple containing:
+
+     - The Dart identifier for a Ceylon FunctionOrValue
+     - A boolean value that is true if the target is a dart function, or false if the
+       target is a dart value. Note: this will be true for Ceylon values that must be
+       mapped to Dart functions."
+    shared
+    [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
+            Node|ElementModel|ScopeModel scope,
+            FunctionOrValueModel declaration,
+            Boolean setter = false) {
+
+        value isCeylonValue = !(declaration is FunctionModel);
+
+        switch (container = containerOfDeclaration(declaration))
+        case (is PackageModel) {
+            if (sameModule(scope, declaration)) {
+                // qualify toplevel in same module with '$package.'
+                return
+                [DartSimpleIdentifier {
+                    "$package$"
+                    + identifierPackagePrefix(declaration)
+                    + getName(declaration);
+                }, !isCeylonValue];
+            }
+            else {
+                // qualify toplevel with Dart import prefix
+                return
+                [DartPrefixedIdentifier {
+                    DartSimpleIdentifier {
+                        moduleImportPrefix(declaration);
+                    };
+                    DartSimpleIdentifier {
+                        identifierPackagePrefix(declaration)
+                        + getName(declaration);
+                    };
+                }, !isCeylonValue];
+            }
+        }
+        case (is ClassOrInterfaceModel
+                    | FunctionOrValueModel
+                    | ControlBlockModel
+                    | ConstructorModel) {
+
+            if (is ValueModel|SetterModel declaration,
+                    useGetterSetterMethods(declaration)) {
+                // identifier for the getter or setter method
+                return
+                [DartSimpleIdentifier {
+                    getName(declaration)
+                    + (if (setter) then "$set" else "$get");
+                 }, true];
+            }
+            else {
+                // identifier for the value or function
+                return
+                [DartSimpleIdentifier {
+                    getName(declaration);
+                }, !isCeylonValue];
+            }
+        }
+        else {
+            // TODO should be a compiler bug, but we don't have a Node
             throw Exception(
                 "Unexpected container for base expression: \
                  declaration type '``className(declaration)``' \

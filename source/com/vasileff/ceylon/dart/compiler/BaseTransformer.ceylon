@@ -12,7 +12,6 @@ import ceylon.ast.core {
     Block,
     LazySpecifier,
     DefaultedParameter,
-    Expression,
     Conditions,
     BooleanCondition
 }
@@ -88,22 +87,22 @@ class BaseTransformer<Result>(CompilationContext ctx)
             };
 
     shared
-    DartFunctionDeclaration generateFunctionDefinition(
-            FunctionShortcutDefinition | FunctionDefinition that,
-            "The function name of toplevels is prefixed with `$package$`"
-            Boolean topLevel = false) {
+    DartFunctionDeclaration generateFunctionDefinition
+            (FunctionShortcutDefinition | FunctionDefinition that) {
 
         value info = AnyFunctionInfo(that);
         value functionModel = info.declarationModel;
-        value functionPrefix = if (topLevel) then "$package$" else "";
-        value functionName = functionPrefix + ctx.dartTypes.getName(functionModel);
+
+        assert (is DartSimpleIdentifier functionIdentifier =
+                ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                    that, functionModel, false)[0]);
 
         return
         DartFunctionDeclaration {
             external = false;
             returnType = generateFunctionReturnType(info);
             propertyKeyword = null;
-            name = DartSimpleIdentifier(functionName);
+            name = functionIdentifier;
             functionExpression = generateFunctionExpression(that);
         };
     }
@@ -198,10 +197,13 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // 5. Invoke with each argument boxed as necessary
         // 6. Box and return
 
-        // TODO translate toString() => string, etc.
-
         assert (is FunctionOrValueModel memberDeclaration =
                     receiverType.declaration.getMember(memberName, null, false));
+
+        // TODO translate toString() => string, etc.
+        assert (is DartSimpleIdentifier memberIdentifier =
+                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                        scope, memberDeclaration, false)[0]);
 
         assert (is ClassOrInterfaceModel container = memberDeclaration.container);
 
@@ -235,9 +237,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 unboxed =
                 DartMethodInvocation {
                     boxedReceiver;
-                    DartSimpleIdentifier {
-                        ctx.dartTypes.getName(memberDeclaration);
-                    };
+                    memberIdentifier;
                     DartArgumentList {
                         [for (i -> argument in arguments.indexed)
                             withLhs {
@@ -253,9 +253,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 unboxed =
                 DartPropertyAccess {
                     boxedReceiver;
-                    DartSimpleIdentifier {
-                        ctx.dartTypes.getName(memberDeclaration);
-                    };
+                    memberIdentifier;
                 };
             }
 
@@ -760,66 +758,27 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 ValueModel targetDeclaration,
                 Expression rhsExpression) {
 
+        // TODO support receivers
         // TODO make sure setters return the new value, or do somthing here
-        DartIdentifier targetOrSetter;
-        Boolean isMethod;
 
-        switch (container = containerOfDeclaration(targetDeclaration))
-        case (is PackageModel) {
-            isMethod = false;
-            if (sameModule(ctx.unit, targetDeclaration)) {
-                // qualify toplevel in same module with '$package$'
-                targetOrSetter = DartSimpleIdentifier(
-                    "$package$" +
-                    ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
-                    ctx.dartTypes.getName(targetDeclaration));
-            }
-            else {
-                // qualify toplevel with Dart import prefix
-                targetOrSetter = DartPrefixedIdentifier(
-                    DartSimpleIdentifier(
-                        ctx.dartTypes.moduleImportPrefix(targetDeclaration)),
-                    DartSimpleIdentifier(
-                        ctx.dartTypes.identifierPackagePrefix(targetDeclaration) +
-                        ctx.dartTypes.getName(targetDeclaration)));
-            }
-        }
-        case (is ClassOrInterfaceModel
-                    | FunctionOrValueModel
-                    | ControlBlockModel
-                    | ConstructorModel) {
-            isMethod = useGetterSetterMethods(targetDeclaration);
-            targetOrSetter =
-                if (!isMethod) then
-                    // regular variable; no lazy or block getter
-                    DartSimpleIdentifier(
-                        ctx.dartTypes.getName(targetDeclaration))
-                else
-                    // setter method
-                    DartSimpleIdentifier(
-                        ctx.dartTypes.getName(targetDeclaration) + "$set");
-        }
-        else {
-            throw CompilerBug(that,
-                "Unexpected container for base expression: \
-                 declaration type '``className(targetDeclaration)``' \
-                 container type '``className(container)``'");
-        }
+        value [targetIdentifier, targetIsFunction] =
+                ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                    that, targetDeclaration, false);
 
         DartExpression rhs = withLhs(
                 null,
                 targetDeclaration,
                 () => rhsExpression.transform(expressionTransformer));
 
-        if (isMethod) {
+        if (targetIsFunction) {
             return DartFunctionExpressionInvocation {
-                func = targetOrSetter;
+                func = targetIdentifier;
                 argumentList = DartArgumentList([rhs]);
             };
         }
         else {
             return DartAssignmentExpression {
-                targetOrSetter;
+                targetIdentifier;
                 DartAssignmentOperator.equal;
                 rhs;
             };

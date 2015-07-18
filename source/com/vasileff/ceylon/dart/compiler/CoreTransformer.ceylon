@@ -115,7 +115,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
                 case (nativeToCeylonString)  [ctx.ceylonTypes.stringDeclaration, false])
             DartFunctionExpressionInvocation {
                 DartPropertyAccess {
-                    ctx.dartTypes.qualifyIdentifier {
+                    ctx.dartTypes.dartIdentifierForClassOrInterface {
                         scope;
                         boxTypeDeclaration;
                     };
