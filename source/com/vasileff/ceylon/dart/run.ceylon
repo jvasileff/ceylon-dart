@@ -459,5 +459,95 @@ void run() {
             }
         """;
 
-    compile { true; forLoop };
+    value count =
+         """see (`function Iterable.count`)
+            shared Integer count({Boolean*} values) {
+                variable value count=0;
+                for (val in values) {
+                    if (val) {
+                        count++;
+                    }
+                }
+                return count;
+            }
+         """;
+
+    value every =
+         """
+            shared Boolean every({Boolean*} values) {
+                for (val in values) {
+                    if (!val) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+         """;
+
+    value max =
+         """
+            shared Absent|Value max<Value,Absent>
+                    (Iterable<Value,Absent> values)
+                    given Value satisfies Comparable<Value>
+                    given Absent satisfies Null {
+                value it = values.iterator();
+                if (!is Finished first = it.next()) {
+                    variable value max = first;
+                    while (!is Finished val = it.next()) {
+                        if (val>max) {
+                            max = val;
+                        }
+                    }
+                    return max;
+                }
+                else {
+                    "iterable must be empty"
+                    assert (is Absent null);
+                    return null;
+                }
+            }
+         """;
+
+    value product =
+         """
+            shared Value product<Value>({Value+} values)
+                    given Value satisfies Numeric<Value> {
+                variable value product = values.first;
+                for (val in values.rest) {
+                    product *= val;
+                }
+                return product;
+            }
+         """;
+
+    value sort =
+         """
+            shared Element[] sort<Element>({Element*} elements)
+                    given Element satisfies Comparable<Element> {
+                value array = Array(elements);
+                if (array.empty) {
+                    return [];
+                }
+                else {
+                    array.sortInPlace(byIncreasing(identity<Element>));
+                    return ArraySequence(array);
+                }
+            }
+         """;
+
+    value sum =
+         """
+            shared Value sum<Value>({Value+} values)
+                    given Value satisfies Summable<Value> {
+                value it = values.iterator();
+                assert (!is Finished first = it.next());
+                variable value sum = first;
+                while (!is Finished val = it.next()) {
+                    sum += val;
+                }
+                return sum;
+            }
+         """;
+
+    compile { true; sort };
 }
