@@ -1,11 +1,16 @@
 import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
     FunctionModel=Function,
-    ClassOrInterfaceModel=ClassOrInterface
+    ClassOrInterfaceModel=ClassOrInterface,
+    FunctionOrValueModel=FunctionOrValue,
+    InterfaceModel=Interface
 }
 
 import org.antlr.runtime {
     Token
+}
+import ceylon.collection {
+    HashSet
 }
 
 class CompilationContext(unit, tokens) {
@@ -20,7 +25,8 @@ class CompilationContext(unit, tokens) {
     CeylonTypes ceylonTypes = CeylonTypes(unit);
 
     shared
-    DartTypes dartTypes = DartTypes(ceylonTypes);
+    HashSet<FunctionOrValueModel> disableErasureToNative
+        =   HashSet<FunctionOrValueModel>();
 
     "Boxing should calculate a denotable type. Trumps other `lhs` values."
     shared variable
@@ -39,6 +45,9 @@ class CompilationContext(unit, tokens) {
     FunctionModel? returnDeclarationTop = null;
 
     variable
+    DartTypes? dartTypesMemo = null;
+
+    variable
     ClassMemberTransformer? cmtMemo = null;
 
     variable
@@ -52,6 +61,10 @@ class CompilationContext(unit, tokens) {
 
     variable
     TopLevelTransformer? tltMemo = null;
+
+    shared
+    DartTypes dartTypes
+        =>  dartTypesMemo else (dartTypesMemo = DartTypes(ceylonTypes, this));
 
     shared
     ClassMemberTransformer classMemberTransformer

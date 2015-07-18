@@ -401,5 +401,63 @@ void run() {
             }
          """;
 
-    compile { true; printFunctions };
+    value scratchStatements3 =
+         """
+            T echo<T>(String s, T t) => t;
+            void run() {
+                value identString = echo<String>;
+                value identInteger = echo<Integer>;
+            }
+         """;
+
+    value argumentTypes =
+         """
+            //shared void takesString(String s) {}
+
+            interface Foo {
+                shared default Anything something() => "";
+            }
+            interface Bar satisfies Foo {
+                shared actual String something() => "";
+            }
+
+            shared void run() {
+                value t = 1 + 1;
+
+                //Resource & Usable su = nothing;
+                ////takesString(su);
+                //identity<Usable>(su); // Try to make cast to Usable
+            }
+         """;
+
+    value forLoop =
+         """
+            {String*} | {Integer*} myIterable = nothing;
+            //{Integer*} myIterable = nothing;
+            //{Null*} myIterable = nothing;
+
+            shared void run() {
+                for (x in myIterable) {
+                    print(x);
+                }
+            }
+         """;
+
+    value forLoop2 =
+         """
+            shared interface MyIterable satisfies Iterable<String | Integer> {
+                shared actual formal Iterator<String> | Iterator<Integer> iterator();
+            }
+
+            shared void myTest(MyIterable it) {
+                value x = it.iterator();
+                value y = x.next();
+
+                for (i in it) {
+                    print(i);
+                }
+            }
+        """;
+
+    compile { true; forLoop };
 }

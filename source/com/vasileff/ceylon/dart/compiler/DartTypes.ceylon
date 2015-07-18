@@ -33,7 +33,7 @@ import ceylon.ast.core {
     Node
 }
 
-class DartTypes(CeylonTypes ceylonTypes) {
+class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     variable value counter = 0;
 
@@ -108,6 +108,11 @@ class DartTypes(CeylonTypes ceylonTypes) {
     shared
     String createTempName(TypedDeclarationModel declaration) {
         return declaration.name + "$" + (counter++).string;
+    }
+
+    shared
+    String createTempNameCustom(String prefix) {
+        return prefix + "$" + (counter++).string;
     }
 
     "The Dart library prefix for the Ceylon module."
@@ -500,7 +505,8 @@ class DartTypes(CeylonTypes ceylonTypes) {
     "For the Value, or the return type of the Function"
     shared
     Boolean erasedToNative(FunctionOrValueModel declaration)
-        =>  native(formalType(declaration));
+        =>  !ctx.disableErasureToNative.contains(declaration)
+            && native(formalType(declaration));
 
     "For the Value, or the return type of the Function"
     shared

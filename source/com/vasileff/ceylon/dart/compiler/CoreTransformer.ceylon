@@ -207,6 +207,19 @@ class CoreTransformer<Result>(CompilationContext ctx)
                         // if the lhsActual is native, so must be the rhsActual
                         lhsErasedToNative, dartExpression);
 
+    shared
+    DartExpression withBoxingNonNative(
+            Node|ElementModel|ScopeModel scope,
+            TypeModel rhsType,
+            DartExpression dartExpression)
+        =>  withBoxingForType {
+                scope;
+                rhsType;
+                false;
+                false;
+                dartExpression;
+            };
+
     DartExpression withCastingLhsRhs(
             Node|ElementModel|ScopeModel scope,
             TypeModel|NoType lhsType,

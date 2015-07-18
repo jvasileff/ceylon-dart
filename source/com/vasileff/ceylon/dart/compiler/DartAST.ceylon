@@ -850,7 +850,7 @@ class DartIsExpression
 
     shared actual
     void write(CodeWriter writer) {
-        expression.write(writer);
+        parenthesizeNonPrimary(expression).write(writer);
         writer.write(" is ");
         if (notOperator) {
             writer.write("!");
@@ -1117,6 +1117,23 @@ class DartMethodDeclaration(
         else {
             writer.write(";");
         }
+    }
+}
+
+class DartWhileStatement(expression, statement)
+        extends DartStatement() {
+
+    shared DartExpression expression;
+    shared DartStatement statement;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("while (");
+        expression.write(writer);
+        writer.write(") ");
+        statement.write(writer);
     }
 }
 

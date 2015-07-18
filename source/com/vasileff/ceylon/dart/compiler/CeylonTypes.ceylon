@@ -27,6 +27,9 @@ class CeylonTypes(Unit unit) {
     Type anythingType => unit.anythingType;
 
     shared
+    Type finishedType => finishedDeclaration.type;
+
+    shared
     Type nullType => unit.nullType;
 
     shared
@@ -128,6 +131,12 @@ class CeylonTypes(Unit unit) {
         return declaration;
     }
 
+    suppressWarnings("unusedDeclaration")
+    Interface assertInterface(Declaration declaration) {
+        assert (is Interface declaration);
+        return declaration;
+    }
+
     Value assertValue(Declaration declaration) {
         assert (is Value declaration);
         return declaration;
@@ -174,6 +183,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.exponentiableDeclaration;
 
     shared
+    Class finishedDeclaration
+        =>  assertClass(getLanguageModuleDeclaration("Finished"));
+
+    shared
     Class floatDeclaration
         =>  assertClass(unit.floatDeclaration);
 
@@ -188,6 +201,14 @@ class CeylonTypes(Unit unit) {
     shared
     Interface invertibleDeclaration
         =>  unit.invertableDeclaration;
+
+    shared
+    Interface iterableDeclaration
+        =>  unit.iterableDeclaration;
+
+    shared
+    Interface iteratorDeclaration
+        =>  unit.iteratorDeclaration;
 
     shared
     Class nullDeclaration
@@ -307,5 +328,6 @@ class CeylonTypes(Unit unit) {
      type, such as `Object`, on the target platform."
     shared
     Type denotableType(Type expressionType, ClassOrInterface required)
+        // FIXME this returns null when Type is Nothing
         =>  definiteType(expressionType).getSupertype(required);
 }

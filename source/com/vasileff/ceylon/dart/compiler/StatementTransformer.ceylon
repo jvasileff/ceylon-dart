@@ -9,10 +9,15 @@ import ceylon.ast.core {
     IsCondition,
     ValueSpecification,
     ValueDeclaration,
-    IfElse
+    IfElse,
+    ForFail,
+    VariablePattern
 }
 import ceylon.collection {
     LinkedList
+}
+import ceylon.language.meta {
+    type
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -77,6 +82,162 @@ class StatementTransformer(CompilationContext ctx)
                     rhsExpression = that.specifier.expression;
                 };
             }];
+
+    shared actual
+    DartStatement[] transformForFail(ForFail that) {
+        value pattern = that.forClause.iterator.pattern;
+        if (that.failClause exists) {
+            throw CompilerBug(that, "FailClause not yet supported");
+        }
+        if (!pattern is VariablePattern) {
+            throw CompilerBug(that,
+                "For pattern type not yet supported: " + type(pattern).string);
+        }
+        assert (is VariablePattern pattern);
+
+        value variableInfo = UnspecifiedVariableInfo(pattern.variable);
+
+        value variableDeclaration = variableInfo.declarationModel;
+
+        // Don't erase to native for the loop variable; avoid premature unboxing
+        ctx.disableErasureToNative.add(variableDeclaration);
+
+        // The iterator
+        value dartIteratorVariable = DartSimpleIdentifier {
+            ctx.dartTypes.createTempNameCustom("iterator");
+        };
+
+        // Temp variable for result of `next()`
+        value dartLoopVariable = DartSimpleIdentifier {
+            ctx.dartTypes.createTempNameCustom("element");
+        };
+
+        // Discover the type of the iterator and obtain a function that
+        // will create an expression that yields the iterator
+        value [iteratorType, _, iteratorGenerator]
+            =   generateInvocationGenerator {
+                    that;
+                    ExpressionInfo(that.forClause.iterator.iterated);
+                    "iterator";
+                    [];
+                };
+
+        // Simplify iteratorType to a denotable supertype in case it
+        // is a union, intersection, or other non-denotable
+        // Note: we don't have to do this; we could just use `iteratorType`.
+        // But 1) we can, and 2) on occasion it removes a cast from the while
+        // loop expession, which of course doesn't matter.
+        value iteratorDenotableType = ctx.ceylonTypes.denotableType {
+            iteratorType;
+            ctx.ceylonTypes.iteratorDeclaration;
+        };
+
+        // Discover the type of the loop variable and obtain a function that
+        // will create an expression that calls `next` on the iterator
+        value [loopVariableType, __, nextInvocationGenerator]
+            =   generateInvocationGeneratorSynthetic {
+                    that;
+                    iteratorDenotableType;
+                    // NonNative since that's how we created
+                    // `iteratorDenotable` (`withLhsNonNative`)
+                    () => withBoxingNonNative {
+                        that;
+                        iteratorDenotableType;
+                        dartIteratorVariable;
+                    };
+                    "next";
+                    [];
+                };
+
+        return
+        [DartBlock {
+            // Declare the loop variable
+            [DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    ctx.dartTypes.dartTypeName {
+                        that;
+                        loopVariableType;
+                        false; false;
+                    };
+                    [DartVariableDeclaration {
+                        dartLoopVariable;
+                        null;
+                    }];
+                };
+            },
+            // Declare and create the iterator
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    ctx.dartTypes.dartTypeName {
+                        that;
+                        iteratorDenotableType;
+                        eraseToNative = false;
+                        eraseToObject = false;
+                    };
+                    [DartVariableDeclaration {
+                        dartIteratorVariable;
+                        withLhsNonNative {
+                            iteratorDenotableType;
+                            iteratorGenerator;
+                        };
+                    }];
+                };
+            },
+            DartWhileStatement {
+                // Invoke next() and test for Finished
+                DartIsExpression {
+                    DartAssignmentExpression {
+                        dartLoopVariable;
+                        DartAssignmentOperator.equal;
+                        withLhs {
+                            loopVariableType;
+                            null;
+                            nextInvocationGenerator;
+                        };
+                    };
+                    ctx.dartTypes.dartTypeName {
+                        that;
+                        ctx.ceylonTypes.finishedType;
+                        false; false;
+                    };
+                    true;
+                };
+                // The forClause block
+                DartBlock {
+                    // Define the "real" loop variable
+                    [DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            null;
+                            ctx.dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                variableDeclaration;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier {
+                                    ctx.dartTypes.getName(variableDeclaration);
+                                };
+                                withLhs {
+                                    variableInfo.declarationModel.type;
+                                    variableDeclaration;
+                                    () => withBoxing {
+                                        that;
+                                        loopVariableType;
+                                        null;
+                                        dartLoopVariable;
+                                    };
+                                };
+                            }];
+                        };
+                    },
+                    // Statements
+                    *expand(that.forClause.block.transformChildren(
+                            statementTransformer))];
+                };
+            }];
+        }];
+    }
 
     shared actual
     [DartFunctionDeclarationStatement] transformFunctionDefinition

@@ -151,7 +151,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             [ExpressionInfo*] arguments) {
 
         return
-        generateInvocationSynthetic {
+        generateInvocationGeneratorSynthetic {
             scope;
             receiver.typeModel;
             () => receiver.node.transform(expressionTransformer);
@@ -160,13 +160,31 @@ class BaseTransformer<Result>(CompilationContext ctx)
         };
     }
 
+    see(`function generateInvocationGeneratorSynthetic`)
+    shared
+    DartExpression
+    generateInvocationSynthetic(
+            Node scope,
+            TypeModel receiverType,
+            DartExpression generateReceiver(),
+            String memberName,
+            [ExpressionInfo*] arguments)
+        =>  generateInvocationGeneratorSynthetic {
+                scope;
+                receiverType;
+                generateReceiver;
+                memberName;
+                arguments;
+            }[2]();
+
+
     """The same as [[generateInvocation]], but with parameters that are more fundamental
        (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
     """
     see(`function generateInvocationGenerator`)
     shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
-    generateInvocationSynthetic(
+    generateInvocationGeneratorSynthetic(
             Node scope,
             TypeModel receiverType,
             DartExpression generateReceiver(),
