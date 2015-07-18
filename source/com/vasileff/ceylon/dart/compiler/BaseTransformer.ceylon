@@ -13,7 +13,9 @@ import ceylon.ast.core {
     LazySpecifier,
     DefaultedParameter,
     Conditions,
-    BooleanCondition
+    BooleanCondition,
+    QualifiedExpression,
+    BaseExpression
 }
 import ceylon.collection {
     LinkedList
@@ -26,12 +28,11 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
-    ControlBlockModel=ControlBlock,
-    ConstructorModel=Constructor,
     ValueModel=Value,
-    PackageModel=Package,
     ClassOrInterfaceModel=ClassOrInterface,
-    ParameterModel=Parameter
+    ParameterModel=Parameter,
+    DeclarationModel=Declaration,
+    Reference
 }
 
 abstract
@@ -752,36 +753,86 @@ class BaseTransformer<Result>(CompilationContext ctx)
     }
 
     shared
-    DartFunctionExpressionInvocation | DartAssignmentExpression
+    DartExpression
     generateAssignmentExpression(
                 Node that,
-                ValueModel targetDeclaration,
-                Expression rhsExpression) {
+                ValueModel | BaseExpression | QualifiedExpression target,
+                DartExpression() rhsExpression) {
 
-        // TODO support receivers
+        // TODO test with receivers (not even tried yet...)
         // TODO make sure setters return the new value, or do somthing here
+        // TODO consider merging with generateInvocation()
+
+        DeclarationModel targetDeclaration;
+        DartExpression? dartTarget;
+        Reference typedReference;
+
+        switch (target)
+        case (is ValueModel) {
+            targetDeclaration = target;
+            dartTarget = null;
+            typedReference = target.typedReference;
+        }
+        case (is BaseExpression) {
+            value info = BaseExpressionInfo(target);
+            targetDeclaration = info.declaration;
+            dartTarget = null;
+            assert (is FunctionOrValueModel targetDeclaration);
+            typedReference = targetDeclaration.typedReference;
+        }
+        case (is QualifiedExpression) {
+            value info = QualifiedExpressionInfo(target);
+            targetDeclaration = info.declaration;
+            typedReference = info.typeModel.getTypedReference(targetDeclaration, null);
+
+            assert (is ClassOrInterfaceModel container = targetDeclaration.container);
+            dartTarget = withLhsDenotable {
+                container;
+                () => target.receiverExpression.transform(expressionTransformer);
+            };
+        }
+        assert (is FunctionOrValueModel targetDeclaration);
 
         value [targetIdentifier, targetIsFunction] =
                 ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                    that, targetDeclaration, false);
+                    that, targetDeclaration, true);
 
-        DartExpression rhs = withLhs(
-                null,
-                targetDeclaration,
-                () => rhsExpression.transform(expressionTransformer));
-
-        if (targetIsFunction) {
-            return DartFunctionExpressionInvocation {
-                func = targetIdentifier;
-                argumentList = DartArgumentList([rhs]);
+        // create the possibly qualified (by module or value) target
+        DartExpression targetExpression;
+        if (exists dartTarget) {
+            assert (is DartSimpleIdentifier targetIdentifier);
+            targetExpression = DartPropertyAccess {
+                dartTarget;
+                targetIdentifier;
             };
         }
         else {
-            return DartAssignmentExpression {
-                targetIdentifier;
-                DartAssignmentOperator.equal;
-                rhs;
-            };
+            targetExpression = targetIdentifier;
         }
+
+        DartExpression rhs = withLhs(
+                typedReference.type,
+                targetDeclaration,
+                rhsExpression);
+
+        value unboxed =
+            if (targetIsFunction) then
+                DartFunctionExpressionInvocation {
+                    targetExpression;
+                    DartArgumentList([rhs]);
+                }
+            else
+                DartAssignmentExpression {
+                    targetExpression;
+                    DartAssignmentOperator.equal;
+                    rhs;
+                };
+
+        return withBoxing {
+            that;
+            typedReference.type;
+            targetDeclaration;
+            unboxed;
+        };
     }
 }

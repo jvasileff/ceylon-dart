@@ -77,9 +77,9 @@ class StatementTransformer(CompilationContext ctx)
     [DartStatement] transformValueSpecification(ValueSpecification that)
         =>  [DartExpressionStatement {
                 expression = generateAssignmentExpression {
-                    that = that;
-                    targetDeclaration = ValueSpecificationInfo(that).declaration;
-                    rhsExpression = that.specifier.expression;
+                    that;
+                    ValueSpecificationInfo(that).declaration;
+                    () => that.specifier.expression.transform(expressionTransformer);
                 };
             }];
 
