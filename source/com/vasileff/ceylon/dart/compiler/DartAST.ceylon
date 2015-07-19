@@ -971,7 +971,7 @@ class DartAsExpression(expression, type)
 
     shared actual
     void write(CodeWriter writer) {
-        expression.write(writer);
+        parenthesizeNonPrimary(expression).write(writer);
         writer.write(" as ");
         type.write(writer);
     }

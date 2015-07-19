@@ -76,10 +76,12 @@ class StatementTransformer(CompilationContext ctx)
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that)
         =>  [DartExpressionStatement {
-                expression = generateAssignmentExpression {
-                    that;
-                    ValueSpecificationInfo(that).declaration;
-                    () => that.specifier.expression.transform(expressionTransformer);
+                withLhsNoType {
+                    () => generateAssignmentExpression {
+                        that;
+                        ValueSpecificationInfo(that).declaration;
+                        () => that.specifier.expression.transform(expressionTransformer);
+                    };
                 };
             }];
 

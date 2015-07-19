@@ -29,7 +29,8 @@ import ceylon.ast.core {
     ThenOperation,
     SafeMemberOperator,
     SpreadMemberOperator,
-    NotOperation
+    NotOperation,
+    AssignOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -44,6 +45,18 @@ import com.redhat.ceylon.model.typechecker.model {
 
 class ExpressionTransformer(CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {
+
+    shared actual
+    DartExpression transformAssignOperation(AssignOperation that) {
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => that.rightOperand.transform(expressionTransformer);
+        };
+    }
 
     """
        A base expression can be:

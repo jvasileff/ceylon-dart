@@ -828,6 +828,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     rhs;
                 };
 
+        // FIXME use the rhs type, since that's what Dart uses for the expression type
+        //       (and so does Ceylon). So we'll need 1) the rhs type!, and 2) to calculate
+        //       erasure on our own (pita). The only symptom is unnecessary casts.
         return withBoxing {
             that;
             typedReference.type;
