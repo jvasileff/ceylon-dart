@@ -566,6 +566,8 @@ void run() {
                 value d = --si.i;
                 ++si.i;
                 --si.i;
+
+                si.i = 25;
             }
          """;
 

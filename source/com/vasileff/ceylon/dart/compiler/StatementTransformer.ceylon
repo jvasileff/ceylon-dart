@@ -12,7 +12,8 @@ import ceylon.ast.core {
     IfElse,
     ForFail,
     VariablePattern,
-    PrefixPostfixStatement
+    PrefixPostfixStatement,
+    AssignmentStatement
 }
 import ceylon.collection {
     LinkedList
@@ -31,6 +32,11 @@ import org.antlr.runtime {
 
 class StatementTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartStatement*]>(ctx) {
+
+    shared actual [DartStatement] transformAssignmentStatement(AssignmentStatement that)
+        =>  [DartExpressionStatement {
+                withLhsNoType(() => that.expression.transform(expressionTransformer));
+            }];
 
     "Parents must set `returnTypeTop`"
     see(`function generateFunctionExpression`)
