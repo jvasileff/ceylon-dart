@@ -191,6 +191,10 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(unit.floatDeclaration);
 
     shared
+    Interface identifiableDeclaration
+        =>  unit.identifiableDeclaration;
+
+    shared
     Class integerDeclaration
         =>  assertClass(unit.integerDeclaration);
 

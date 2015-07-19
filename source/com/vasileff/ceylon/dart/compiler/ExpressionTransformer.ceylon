@@ -50,7 +50,19 @@ import ceylon.ast.core {
     LogicalAssignmentOperation,
     AndAssignmentOperation,
     OrAssignmentOperation,
-    ArithmeticOperation
+    ArithmeticOperation,
+    SetOperation,
+    IntersectionOperation,
+    UnionOperation,
+    ComplementOperation,
+    ScaleOperation,
+    SpanOperation,
+    MeasureOperation,
+    EntryOperation,
+    InOperation,
+    LogicalOperation,
+    AndOperation,
+    OrOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -101,10 +113,8 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformSetAssignmentOperation
-            (SetAssignmentOperation that) {
-
-        // FIXME untested!
+    DartExpression transformSetAssignmentOperation(SetAssignmentOperation that) {
+        // TODO test
         value methodName
             =   switch(that)
                 case (is IntersectAssignmentOperation) "intersection"
@@ -122,10 +132,8 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformLogicalAssignmentOperation
-            (LogicalAssignmentOperation that) {
-
-        // FIXME untested!
+    DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
+        // TODO test
         value methodName
             =   switch(that)
                 case (is AndAssignmentOperation) "and"
@@ -567,44 +575,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     ctx.ceylonTypes.booleanFalseValueDeclaration)[0];
 
     shared actual
-    DartExpression transformComparisonOperation(ComparisonOperation that)
-        =>  let (method =
-                    switch (that)
-                    case (is LargerOperation) "largerThan"
-                    case (is SmallerOperation) "smallerThan"
-                    case (is LargeAsOperation) "notSmallerThan"
-                    case (is SmallAsOperation) "notLargerThan")
-            generateInvocationForBinaryOperation(that, method);
-
-    shared actual
-    DartExpression transformThenOperation(ThenOperation that)
-        =>  DartConditionalExpression {
-                withLhsNative {
-                    ctx.ceylonTypes.booleanType;
-                    () => that.leftOperand.transform(this);
-                };
-                that.result.transform(this);
-                DartNullLiteral();
-            };
-
-    shared actual
-    DartExpression transformElseOperation(ElseOperation that)
-        =>  let (parameterIdentifier = DartSimpleIdentifier("$lhs$"))
-            createNullSafeExpression {
-                parameterIdentifier;
-                // the result of the leftOperand transformation should be this:
-                ctx.dartTypes.dartTypeName {
-                    that;
-                    ctx.assertedLhsTypeTop;
-                    ctx.assertedLhsErasedToNativeTop;
-                    ctx.assertedLhsErasedToObjectTop;
-                };
-                maybeNullExpression = that.leftOperand.transform(this);
-                ifNullExpression = that.rightOperand.transform(this);
-                ifNotNullExpression = parameterIdentifier;
-            };
-
-    shared actual
     DartExpression transformNotOperation(NotOperation that)
         =>  DartPrefixExpression {
                 "!";
@@ -719,21 +689,6 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformCompareOperation(CompareOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "compare");
-
-    shared actual
-    DartExpression transformEqualOperation(EqualOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "equals");
-
-    shared actual
-    DartExpression transformNotEqualOperation(NotEqualOperation that)
-        =>  DartPrefixExpression("!", generateInvocationForBinaryOperation(
-                that, "equals"));
-
-    shared actual
     DartExpression transformArithmeticOperation(ArithmeticOperation that)
         =>  generateInvocationForBinaryOperation(that,
                 switch(that)
@@ -744,8 +699,61 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is SumOperation) "plus"
                 case (is DifferenceOperation) "minus");
 
-    DartExpression generateInvocationForBinaryOperation(
-            BinaryOperation that, String methodName)
+    shared actual
+    DartExpression transformSetOperation(SetOperation that)
+        // TODO test
+        =>  generateInvocationForBinaryOperation(that,
+                switch(that)
+                case (is IntersectionOperation) "intersection"
+                case (is UnionOperation) "union"
+                case (is ComplementOperation) "complement");
+
+    shared actual
+    DartExpression transformScaleOperation(ScaleOperation that)
+        // TODO test
+        =>  generateInvocationForBinaryOperation(that, "scale");
+
+    shared actual
+    DartExpression transformSpanOperation(SpanOperation that)
+        // FIXME implement this; span is a toplevel function
+        =>  super.transformSpanOperation(that);
+
+    shared actual
+    DartExpression transformMeasureOperation(MeasureOperation that)
+        // FIXME implement this; measure is a toplevel function
+        =>  super.transformMeasureOperation(that);
+
+    shared actual
+    DartExpression transformEntryOperation(EntryOperation that)
+        // FIXME implement this; Entry is a constructor
+        =>  super.transformEntryOperation(that);
+
+    shared actual
+    DartExpression transformInOperation(InOperation that)
+        // TODO test
+        // Note: the *right* operand is the receiver
+        =>  generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.rightOperand);
+                memberName = "contains";
+                arguments = [ExpressionInfo(that.leftOperand)];
+            };
+
+    shared actual
+    DartExpression transformComparisonOperation(ComparisonOperation that)
+        =>  generateInvocationForBinaryOperation(that,
+                switch (that)
+                case (is LargerOperation) "largerThan"
+                case (is SmallerOperation) "smallerThan"
+                case (is LargeAsOperation) "notSmallerThan"
+                case (is SmallAsOperation) "notLargerThan");
+
+    shared actual
+    DartExpression transformCompareOperation(CompareOperation that)
+        =>  generateInvocationForBinaryOperation(that, "compare");
+
+    DartExpression generateInvocationForBinaryOperation
+            (BinaryOperation that, String methodName)
         =>  generateInvocation {
                 scope = that;
                 receiver = ExpressionInfo(that.leftOperand);
@@ -754,15 +762,23 @@ class ExpressionTransformer(CompilationContext ctx)
             };
 
     shared actual
+    DartExpression transformEqualOperation(EqualOperation that)
+        =>  generateInvocationForBinaryOperation(that, "equals");
+
+    shared actual
+    DartExpression transformNotEqualOperation(NotEqualOperation that)
+        =>  DartPrefixExpression("!",
+                generateInvocationForBinaryOperation(that, "equals"));
+
+    shared actual
     DartExpression transformIdenticalOperation(IdenticalOperation that)
         =>  withBoxing {
                 that;
                 rhsType = ctx.ceylonTypes.booleanType;
                 rhsDeclaration = null;
-                withLhsNonNative {
-                    // both operands should be "Identifiable", which isn't generic, so
-                    // using the denotable type isn't necessary
-                    ctx.ceylonTypes.identifiableType;
+                withLhsDenotable {
+                    // this withLhs wraps transformations of both operands
+                    ctx.ceylonTypes.identifiableDeclaration;
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");
@@ -776,6 +792,41 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                     };
                 };
+            };
+
+    shared actual
+    DartExpression transformLogicalOperation(LogicalOperation that)
+        =>  generateInvocationForBinaryOperation(that,
+                switch (that)
+                case (is AndOperation) "and"
+                case (is OrOperation) "or");
+
+    shared actual
+    DartExpression transformThenOperation(ThenOperation that)
+        =>  DartConditionalExpression {
+                withLhsNative {
+                    ctx.ceylonTypes.booleanType;
+                    () => that.leftOperand.transform(this);
+                };
+                that.result.transform(this);
+                DartNullLiteral();
+            };
+
+    shared actual
+    DartExpression transformElseOperation(ElseOperation that)
+        =>  let (parameterIdentifier = DartSimpleIdentifier("$lhs$"))
+            createNullSafeExpression {
+                parameterIdentifier;
+                // the result of the leftOperand transformation should be this:
+                ctx.dartTypes.dartTypeName {
+                    that;
+                    ctx.assertedLhsTypeTop;
+                    ctx.assertedLhsErasedToNativeTop;
+                    ctx.assertedLhsErasedToObjectTop;
+                };
+                maybeNullExpression = that.leftOperand.transform(this);
+                ifNullExpression = that.rightOperand.transform(this);
+                ifNotNullExpression = parameterIdentifier;
             };
 
     shared actual
