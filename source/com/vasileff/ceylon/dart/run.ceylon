@@ -549,5 +549,25 @@ void run() {
             }
          """;
 
-    compile { true; every };
+    value scratchNew =
+         """
+            interface SomeInt {
+                shared formal variable Integer i;
+                shared formal variable String someString;
+                shared formal variable Object someObject;
+            }
+
+            void run(SomeInt si) {
+                value x = si.someString = "abcde";
+                value y = si.someObject = "";
+                value a = si.i++;
+                value b = si.i--;
+                value c = ++si.i;
+                value d = --si.i;
+                ++si.i;
+                --si.i;
+            }
+         """;
+
+    compile { true; scratchNew };
 }

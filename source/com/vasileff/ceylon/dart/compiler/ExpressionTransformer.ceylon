@@ -30,7 +30,13 @@ import ceylon.ast.core {
     SafeMemberOperator,
     SpreadMemberOperator,
     NotOperation,
-    AssignOperation
+    AssignOperation,
+    PostfixIncrementOperation,
+    PostfixOperation,
+    PostfixDecrementOperation,
+    PrefixOperation,
+    PrefixIncrementOperation,
+    PrefixDecrementOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -530,6 +536,110 @@ class ExpressionTransformer(CompilationContext ctx)
                     () => that.operand.transform(this);
                 };
             };
+
+    shared actual
+    DartExpression transformPrefixOperation(PrefixOperation that) {
+        String method = switch (that)
+                case (is PrefixIncrementOperation) "successor"
+                case (is PrefixDecrementOperation) "predecessor";
+
+        value operandInfo = ExpressionInfo(that.operand);
+        assert (is BaseExpression | QualifiedExpression operand = that.operand);
+
+        return
+        generateAssignmentExpression {
+            that;
+            operand;
+            () => generateInvocation {
+                that;
+                operandInfo;
+                method;
+                [];
+            };
+        };
+    }
+
+    shared actual
+    DartExpression transformPostfixOperation(PostfixOperation that) {
+        String method = switch (that)
+                case (is PostfixIncrementOperation) "successor"
+                case (is PostfixDecrementOperation) "predecessor";
+
+        value operandInfo = ExpressionInfo(that.operand);
+        assert (is BaseExpression | QualifiedExpression operand = that.operand);
+
+        // the expected type after boxing
+        TypeModel tempVarType;
+
+        switch (lhsTypeTop = ctx.lhsTypeTop)
+        case (is NoType) {
+            // no need to save and return original value
+            return
+            generateAssignmentExpression {
+                that;
+                operand;
+                () => generateInvocation {
+                    that;
+                    operandInfo;
+                    method;
+                    [];
+                };
+            };
+        }
+        case (is TypeModel) {
+            tempVarType = lhsTypeTop;
+        }
+        case (is Null) {
+            assert (exists lhsDenotable = ctx.lhsDenotableTop);
+            tempVarType = ctx.ceylonTypes.denotableType {
+                ExpressionInfo(that).typeModel;
+                lhsDenotable;
+            };
+        }
+
+        value tempVar =
+            DartSimpleIdentifier {
+                ctx.dartTypes.createTempNameCustom();
+            };
+
+        return
+        createInlineDartStatements {
+            // save the original value
+            [DartVariableDeclarationStatement {
+                generateVariableDeclarationSynthetic {
+                    that;
+                    tempVar;
+                    tempVarType;
+                    ctx.assertedLhsErasedToNativeTop;
+                    ctx.assertedLhsErasedToObjectTop;
+                    () => operand.transform(this);
+                };
+            },
+            // perform the postfix operation
+            DartExpressionStatement {
+                generateAssignmentExpression {
+                    that;
+                    operand;
+                    () => generateInvocation {
+                        that;
+                        operandInfo;
+                        method;
+                        [];
+                    };
+                };
+            },
+            // return the saved value
+            DartReturnStatement {
+                withBoxingCustom {
+                    that;
+                    tempVarType;
+                    ctx.assertedLhsErasedToNativeTop;
+                    ctx.assertedLhsErasedToObjectTop;
+                    tempVar;
+                };
+            }];
+        };
+    }
 
     shared actual
     DartExpression transformCompareOperation(CompareOperation that)

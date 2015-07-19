@@ -11,7 +11,8 @@ import ceylon.ast.core {
     ValueDeclaration,
     IfElse,
     ForFail,
-    VariablePattern
+    VariablePattern,
+    PrefixPostfixStatement
 }
 import ceylon.collection {
     LinkedList
@@ -68,8 +69,7 @@ class StatementTransformer(CompilationContext ctx)
             =>  expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
-    [DartVariableDeclarationStatement] transformValueDefinition
-            (ValueDefinition that)
+    [DartVariableDeclarationStatement] transformValueDefinition(ValueDefinition that)
         =>  [DartVariableDeclarationStatement(miscTransformer
                 .transformValueDefinition(that))];
 
@@ -83,6 +83,12 @@ class StatementTransformer(CompilationContext ctx)
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
                 };
+            }];
+
+    shared actual
+    DartStatement[] transformPrefixPostfixStatement(PrefixPostfixStatement that)
+        =>  [DartExpressionStatement {
+                withLhsNoType(() => that.expression.transform(expressionTransformer));
             }];
 
     shared actual

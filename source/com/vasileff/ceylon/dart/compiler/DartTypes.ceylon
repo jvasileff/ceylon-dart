@@ -115,7 +115,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     }
 
     shared
-    String createTempNameCustom(String prefix) {
+    String createTempNameCustom(String prefix="tmp") {
         return prefix + "$" + (counter++).string;
     }
 

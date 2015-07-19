@@ -305,6 +305,17 @@ class CoreTransformer<Result>(CompilationContext ctx)
     }
 
     shared
+    Result withLhsCustom<Result>(
+            TypeModel lhsType, Boolean lhsErasedToNative,
+            Boolean lhsErasedToObject, Result fun())
+        =>  withLhsValues {
+                lhsType;
+                lhsErasedToNative;
+                lhsErasedToObject;
+                fun;
+            };
+
+    shared
     Result withLhsDenotable<Result>(
             ClassOrInterfaceModel container,
             Result fun())

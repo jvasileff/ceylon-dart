@@ -40,6 +40,21 @@ class BaseTransformer<Result>(CompilationContext ctx)
         extends CoreTransformer<Result>(ctx)
         satisfies WideningTransformer<Result> {
 
+    shared
+    DartFunctionExpressionInvocation createInlineDartStatements(
+            "Zero or more statements, followed by a Return"
+            [DartStatement*] statements)
+        =>  DartFunctionExpressionInvocation {
+                DartFunctionExpression {
+                    dartFormalParameterListEmpty;
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock(statements);
+                    };
+                };
+                DartArgumentList([]);
+            };
+
     "Note: technically callers should cast the returned DartExpression to the desired
      lhs type, since Dart appears to treat the result of anonymous function invocations
      as `var`. So type information is lost. But lets not get too pedantic."
@@ -838,4 +853,35 @@ class BaseTransformer<Result>(CompilationContext ctx)
             unboxed;
         };
     }
+
+    shared
+    DartVariableDeclarationList generateVariableDeclarationSynthetic(
+            Node scope,
+            DartSimpleIdentifier identifier,
+            TypeModel lhsType,
+            Boolean lhsErasedToNative,
+            Boolean lhsErasedToObject,
+            DartExpression() rhsDartExpression) {
+
+        return
+        DartVariableDeclarationList {
+            null;
+            ctx.dartTypes.dartTypeName {
+                scope;
+                lhsType;
+                lhsErasedToNative;
+                lhsErasedToObject;
+            };
+            [DartVariableDeclaration {
+                identifier;
+                withLhsCustom {
+                    lhsType;
+                    lhsErasedToNative;
+                    lhsErasedToObject;
+                    rhsDartExpression;
+                };
+            }];
+        };
+    }
+
 }

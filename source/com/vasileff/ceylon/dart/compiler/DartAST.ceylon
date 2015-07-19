@@ -714,6 +714,10 @@ class DartFormalParameterList(
     }
 }
 
+shared
+DartFormalParameterList dartFormalParameterListEmpty
+    =   DartFormalParameterList(false, false, []);
+
 "A node representing a parameter to a function."
 shared abstract
 class DartFormalParameter()
