@@ -36,7 +36,13 @@ import ceylon.ast.core {
     PostfixDecrementOperation,
     PrefixOperation,
     PrefixIncrementOperation,
-    PrefixDecrementOperation
+    PrefixDecrementOperation,
+    AddAssignmentOperation,
+    ArithmeticAssignmentOperation,
+    SubtractAssignmentOperation,
+    MultiplyAssignmentOperation,
+    DivideAssignmentOperation,
+    RemainderAssignmentOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -61,6 +67,33 @@ class ExpressionTransformer(CompilationContext ctx)
             that;
             leftOperand;
             () => that.rightOperand.transform(expressionTransformer);
+        };
+    }
+
+    shared actual
+    DartExpression transformArithmeticAssignmentOperation
+            (ArithmeticAssignmentOperation that) {
+
+        value methodName
+            =   switch(that)
+                case (is AddAssignmentOperation) "plus"
+                case (is SubtractAssignmentOperation) "minus"
+                case (is MultiplyAssignmentOperation) "times"
+                case (is DivideAssignmentOperation) "divided"
+                case (is RemainderAssignmentOperation) "remainder";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.leftOperand);
+                methodName;
+                arguments = [ExpressionInfo(that.rightOperand)];
+            };
         };
     }
 
