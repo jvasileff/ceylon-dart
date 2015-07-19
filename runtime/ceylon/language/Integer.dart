@@ -28,6 +28,11 @@ class Integer implements Integral, Exponentiable { // Binary
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
 
+  // Ordinal
+
+  Integer get predecessor => new Integer(this._value - 1);
+  Integer get successor => new Integer(this._value + 1);
+
   // Comparable
 
   //Comparison compare(Integer other);

@@ -1,6 +1,6 @@
 part of ceylon.language;
 
-abstract class Integral implements Number { // Enumerable
+abstract class Integral implements Number, Enumerable {
   $dart$core.bool get unit;
   $dart$core.bool get zero;
 

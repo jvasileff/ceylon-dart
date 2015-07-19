@@ -48,3 +48,10 @@ class operatingSystem_ {
 }
 
 const operatingSystem = const operatingSystem_.$value$();
+
+abstract class Enumerable implements Ordinal {}
+
+abstract class Ordinal {
+  $dart$core.Object get predecessor;
+  $dart$core.Object get successor;
+}
