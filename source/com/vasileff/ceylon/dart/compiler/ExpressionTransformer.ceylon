@@ -72,7 +72,9 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
-    ClassOrInterfaceModel=ClassOrInterface
+    ClassOrInterfaceModel=ClassOrInterface,
+    ClassModel=Class,
+    ConstructorModel=Constructor
 }
 
 class ExpressionTransformer(CompilationContext ctx)
@@ -363,8 +365,9 @@ class ExpressionTransformer(CompilationContext ctx)
             invokedDeclaration = null;
         }
 
-        // the subtypes of FunctionOrValueModel
-        assert (is FunctionModel|ValueModel|SetterModel|Null invokedDeclaration);
+        // the subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel
+        assert (is FunctionModel | ValueModel | SetterModel
+                | ClassModel | ConstructorModel | Null invokedDeclaration);
 
         value argumentList = generateArgumentListFromArguments(
                 that.arguments, ExpressionInfo(that.invoked).typeModel);
@@ -461,8 +464,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartFunctionExpressionInvocation {
                     // resolve the $delegate$ property of the Callable
                     DartPropertyAccess {
-                        // use a denotable `Callable` type. Although, for non-generic Dart,
-                        // any Callable would work, so this is a bit over engineered
                         withLhsDenotable {
                             ctx.ceylonTypes.callableDeclaration;
                             () => that.invoked.transform(this);
@@ -473,7 +474,31 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             };
         }
-        case (is SetterModel) {
+        case (is ClassModel) {
+            if (!withinPackage(invokedDeclaration)) {
+                throw CompilerBug(that,
+                    "Invocations of member classes not yet supported.");
+            }
+
+            // since we only handle topelevel classes for now
+            assert (is BaseExpression invoked = that.invoked);
+
+            return
+            withBoxingNonNative {
+                that;
+                InvocationInfo(that).typeModel;
+                DartInstanceCreationExpression {
+                    false;
+                    // no need to transform the base expression:
+                    ctx.dartTypes.dartConstructorName {
+                        that;
+                        invokedDeclaration;
+                    };
+                    argumentList;
+                };
+            };
+        }
+        case (is ConstructorModel | SetterModel) {
             throw CompilerBug(that,
                 "The invoked expression's declaration type is not supported: \
                  '``className(invokedDeclaration)``'");

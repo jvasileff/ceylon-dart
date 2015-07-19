@@ -227,6 +227,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =   DartTypeModel("$dart$core", "String");
 
     shared
+    DartConstructorName dartConstructorName(
+            Node|ElementModel|ScopeModel scope,
+            ClassModel declaration) {
+        // TODO should take type arguments too
+
+        "Only toplevel classes supported for now"
+        assert(withinPackage(declaration));
+
+        return DartConstructorName {
+            dartTypeName(scope, declaration.type, false, false);
+            null;
+        };
+    }
+
+    shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
             TypeOrNoType type,

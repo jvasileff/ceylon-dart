@@ -115,6 +115,10 @@ Boolean withinInterface
         (ElementModel declaration)
     =>  declaration.container is InterfaceModel;
 
+Boolean withinPackage
+        (ElementModel declaration)
+    =>  declaration.container is PackageModel;
+
 """Use getter and setter methods instead of regular
    Dart variables for non-toplevel or class attributes
    that require programatic getter or setters, due to:
