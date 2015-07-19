@@ -78,6 +78,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is ClassModel) {
             return declaration.name;
         }
+        case (is ConstructorModel) {
+            return declaration.name;
+        }
         case (is InterfaceModel) {
             return declaration.name;
         }
@@ -229,16 +232,31 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartConstructorName dartConstructorName(
             Node|ElementModel|ScopeModel scope,
-            ClassModel declaration) {
+            ClassModel|ConstructorModel declaration) {
         // TODO should take type arguments too
 
-        "Only toplevel classes supported for now"
-        assert(withinPackage(declaration));
 
-        return DartConstructorName {
-            dartTypeName(scope, declaration.type, false, false);
-            null;
-        };
+
+        switch (declaration)
+        case (is ClassModel) {
+            "Only toplevel classes supported for now"
+            assert(withinPackage(declaration));
+
+            return DartConstructorName {
+                dartTypeName(scope, declaration.type, false, false);
+                null;
+            };
+        }
+        case (is ConstructorModel) {
+            assert (is ClassModel container = declaration.container);
+            "Only toplevel classes supported for now"
+            assert(withinPackage(container));
+
+            return DartConstructorName {
+                dartTypeName(scope, container.type, false, false);
+                DartSimpleIdentifier(getName(declaration));
+            };
+        }
     }
 
     shared

@@ -352,18 +352,22 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-        DeclarationModel? invokedDeclaration;
-        switch (invoked = that.invoked)
-        case (is BaseExpression) {
-            invokedDeclaration = BaseExpressionInfo(invoked).declaration;
-        }
-        case (is QualifiedExpression) {
-            invokedDeclaration = QualifiedExpressionInfo(invoked).declaration;
-        }
-        else {
-            // an Invocation or some other expression that yields a Callable
-            invokedDeclaration = null;
-        }
+        DeclarationModel? invokedDeclaration
+            =   let (d = switch (invoked = that.invoked)
+                           case (is BaseExpression)
+                                BaseExpressionInfo(invoked).declaration
+                           case (is QualifiedExpression)
+                                QualifiedExpressionInfo(invoked).declaration
+                           else
+                                // some other expression that yields a Callable
+                                null)
+                if (is FunctionModel d,
+                    is ConstructorModel constructor = d.type.declaration) then
+                    // Constructor invocations present the invoked as a Function,
+                    // but let's use the Constructor declaration.
+                    constructor
+                else
+                    d;
 
         // the subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel
         assert (is FunctionModel | ValueModel | SetterModel
@@ -498,7 +502,35 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             };
         }
-        case (is ConstructorModel | SetterModel) {
+        case (is ConstructorModel) {
+            assert (is ClassModel clazzModel = invokedDeclaration.container);
+            if (!withinPackage(clazzModel)) {
+                throw CompilerBug(that,
+                    "Invocations of constructors of member classes not yet supported.");
+            }
+
+            // that.invoked is a QualifiedExpression, even for
+            // constructors of topelevel classes
+            assert (is QualifiedExpression invoked = that.invoked);
+
+            // since we only handle topelevel classes for now
+            assert (invoked.receiverExpression is BaseExpression);
+
+            return
+            withBoxingNonNative {
+                that;
+                InvocationInfo(that).typeModel;
+                DartInstanceCreationExpression {
+                    false;
+                    ctx.dartTypes.dartConstructorName {
+                        that;
+                        invokedDeclaration;
+                    };
+                    argumentList;
+                };
+            };
+        }
+        case (is SetterModel) {
             throw CompilerBug(that,
                 "The invoked expression's declaration type is not supported: \
                  '``className(invokedDeclaration)``'");

@@ -333,5 +333,6 @@ class CeylonTypes(Unit unit) {
     shared
     Type denotableType(Type expressionType, ClassOrInterface required)
         // FIXME this returns null when Type is Nothing
+        //       or when no suitable type exists
         =>  definiteType(expressionType).getSupertype(required);
 }
