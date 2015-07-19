@@ -42,7 +42,14 @@ import ceylon.ast.core {
     SubtractAssignmentOperation,
     MultiplyAssignmentOperation,
     DivideAssignmentOperation,
-    RemainderAssignmentOperation
+    RemainderAssignmentOperation,
+    SetAssignmentOperation,
+    IntersectAssignmentOperation,
+    UnionAssignmentOperation,
+    ComplementAssignmentOperation,
+    LogicalAssignmentOperation,
+    AndAssignmentOperation,
+    OrAssignmentOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -81,6 +88,57 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is MultiplyAssignmentOperation) "times"
                 case (is DivideAssignmentOperation) "divided"
                 case (is RemainderAssignmentOperation) "remainder";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.leftOperand);
+                methodName;
+                arguments = [ExpressionInfo(that.rightOperand)];
+            };
+        };
+    }
+
+    shared actual
+    DartExpression transformSetAssignmentOperation
+            (SetAssignmentOperation that) {
+
+        // FIXME untested!
+        value methodName
+            =   switch(that)
+                case (is IntersectAssignmentOperation) "intersection"
+                case (is UnionAssignmentOperation) "union"
+                case (is ComplementAssignmentOperation) "complement";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.leftOperand);
+                methodName;
+                arguments = [ExpressionInfo(that.rightOperand)];
+            };
+        };
+    }
+
+    shared actual
+    DartExpression transformLogicalAssignmentOperation
+            (LogicalAssignmentOperation that) {
+
+        // FIXME untested!
+        value methodName
+            =   switch(that)
+                case (is AndAssignmentOperation) "and"
+                case (is OrAssignmentOperation) "or";
 
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
