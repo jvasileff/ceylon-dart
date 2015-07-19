@@ -49,7 +49,8 @@ import ceylon.ast.core {
     ComplementAssignmentOperation,
     LogicalAssignmentOperation,
     AndAssignmentOperation,
-    OrAssignmentOperation
+    OrAssignmentOperation,
+    ArithmeticOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -95,12 +96,7 @@ class ExpressionTransformer(CompilationContext ctx)
         return generateAssignmentExpression {
             that;
             leftOperand;
-            () => generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.leftOperand);
-                methodName;
-                arguments = [ExpressionInfo(that.rightOperand)];
-            };
+            () => generateInvocationForBinaryOperation(that, methodName);
         };
     }
 
@@ -121,12 +117,7 @@ class ExpressionTransformer(CompilationContext ctx)
         return generateAssignmentExpression {
             that;
             leftOperand;
-            () => generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.leftOperand);
-                methodName;
-                arguments = [ExpressionInfo(that.rightOperand)];
-            };
+            () => generateInvocationForBinaryOperation(that, methodName);
         };
     }
 
@@ -146,12 +137,7 @@ class ExpressionTransformer(CompilationContext ctx)
         return generateAssignmentExpression {
             that;
             leftOperand;
-            () => generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.leftOperand);
-                methodName;
-                arguments = [ExpressionInfo(that.rightOperand)];
-            };
+            () => generateInvocationForBinaryOperation(that, methodName);
         };
     }
 
@@ -748,34 +734,15 @@ class ExpressionTransformer(CompilationContext ctx)
                 that, "equals"));
 
     shared actual
-    DartExpression transformProductOperation(ProductOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "times");
-
-    shared actual
-    DartExpression transformQuotientOperation(QuotientOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "divided");
-
-    shared actual
-    DartExpression transformRemainderOperation(RemainderOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "remainder");
-
-    shared actual
-    DartExpression transformSumOperation(SumOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "plus");
-
-    shared actual
-    DartExpression transformDifferenceOperation(DifferenceOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "minus");
-
-    shared actual
-    DartExpression transformExponentiationOperation(ExponentiationOperation that)
-        =>  generateInvocationForBinaryOperation(
-                that, "power");
+    DartExpression transformArithmeticOperation(ArithmeticOperation that)
+        =>  generateInvocationForBinaryOperation(that,
+                switch(that)
+                case (is ExponentiationOperation) "power"
+                case (is ProductOperation) "times"
+                case (is QuotientOperation) "divided"
+                case (is RemainderOperation) "remainder"
+                case (is SumOperation) "plus"
+                case (is DifferenceOperation) "minus");
 
     DartExpression generateInvocationForBinaryOperation(
             BinaryOperation that, String methodName)
