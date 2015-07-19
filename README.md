@@ -44,7 +44,6 @@ functionality.
 - [x] Multiple parameter lists
 - [x] Null safe member operator
 - [ ] Remaining parameter types (variadic, callable)
-- [ ] Base expressions for objects
 - [ ] `of` operation
 - [ ] More work on `assert`
 - [ ] `is` narrowing for `if`, attempt at generalization
@@ -54,11 +53,11 @@ functionality.
   Ceylon types. (We can't compile the language module using the prefixed
   `$dart$core.int` for example.)
 - [ ] Map members like `toString()`, `hash`, etc.
-- [ ] Statements: for, ~~if~~, while
+- [ ] Statements: ~~for~~, ~~if~~, while
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
-- [ ] Use compiler for language module functions: `corresponding`, `count`,
-  `every`, ~~identity~~, `noop`, ~~identical~~, ~~largest~~, `max`, `nothing`,
-  ~~plus~~, ~~print~~, ~~printAll~~, `product`, ~~smallest~~, `sort`, `sum`,
+- [ ] Use compiler for language module functions: `corresponding`, ~~count~~,
+  ~~every~~, ~~identity~~, `noop`, ~~identical~~, ~~largest~~, `max`, `nothing`,
+  ~~plus~~, ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, `sort`, ~~sum~~,
   ~~times~~.
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations

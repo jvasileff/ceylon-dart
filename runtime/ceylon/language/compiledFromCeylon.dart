@@ -85,3 +85,38 @@ $dart$core.bool $package$every([Iterable values]) {{
 }
 
 $dart$core.bool every([Iterable values]) => $package$every(values);
+
+// count
+
+$dart$core.int $package$count([Iterable values]) {
+    $dart$core.int count = 0;{
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            Boolean val = element$1 as Boolean;
+            if (Boolean.nativeValue(val)) {
+                count = Integer.nativeValue(Integer.instance(count).successor);
+            }
+        }
+    }
+    return count;
+}
+
+$dart$core.int count([Iterable values]) => $package$count(values);
+
+// product
+
+$dart$core.Object $package$product([Iterable values]) {
+    $dart$core.Object product = values.first;{
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.rest.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            $dart$core.Object val = element$1;
+            product = (product as Numeric).times(val);
+        }
+    }
+    return product;
+}
+
+$dart$core.Object product([Iterable values]) => $package$product(values);
+
