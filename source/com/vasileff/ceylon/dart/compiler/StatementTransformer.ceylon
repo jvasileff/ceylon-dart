@@ -13,7 +13,8 @@ import ceylon.ast.core {
     ForFail,
     VariablePattern,
     PrefixPostfixStatement,
-    AssignmentStatement
+    AssignmentStatement,
+    While
 }
 import ceylon.collection {
     LinkedList
@@ -68,6 +69,13 @@ class StatementTransformer(CompilationContext ctx)
             elseStatement;
         }];
     }
+
+    shared actual
+    [DartWhileStatement] transformWhile(While that)
+        =>  [DartWhileStatement {
+                generateBooleanDartCondition(that.conditions);
+                statementTransformer.transformBlock(that.block).first;
+            }];
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
