@@ -8,7 +8,7 @@ class Array implements List {
     elements.each(new dart$Callable((e) => _list.add(e)));
   }
 
-  Array.OfSize($dart$core.int size, $dart$core.Object element) {
+  Array.ofSize($dart$core.int size, $dart$core.Object element) {
     _list = new $dart$core.List.filled(size, element);
   }
 
