@@ -78,77 +78,6 @@ import com.redhat.ceylon.model.typechecker.model {
 class ExpressionTransformer(CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {
 
-    shared actual
-    DartExpression transformAssignOperation(AssignOperation that) {
-        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
-        return generateAssignmentExpression {
-            that;
-            leftOperand;
-            () => that.rightOperand.transform(expressionTransformer);
-        };
-    }
-
-    shared actual
-    DartExpression transformArithmeticAssignmentOperation
-            (ArithmeticAssignmentOperation that) {
-
-        value methodName
-            =   switch(that)
-                case (is AddAssignmentOperation) "plus"
-                case (is SubtractAssignmentOperation) "minus"
-                case (is MultiplyAssignmentOperation) "times"
-                case (is DivideAssignmentOperation) "divided"
-                case (is RemainderAssignmentOperation) "remainder";
-
-        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
-        return generateAssignmentExpression {
-            that;
-            leftOperand;
-            () => generateInvocationForBinaryOperation(that, methodName);
-        };
-    }
-
-    shared actual
-    DartExpression transformSetAssignmentOperation(SetAssignmentOperation that) {
-        // TODO test
-        value methodName
-            =   switch(that)
-                case (is IntersectAssignmentOperation) "intersection"
-                case (is UnionAssignmentOperation) "union"
-                case (is ComplementAssignmentOperation) "complement";
-
-        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
-        return generateAssignmentExpression {
-            that;
-            leftOperand;
-            () => generateInvocationForBinaryOperation(that, methodName);
-        };
-    }
-
-    shared actual
-    DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
-        // TODO test
-        value methodName
-            =   switch(that)
-                case (is AndAssignmentOperation) "and"
-                case (is OrAssignmentOperation) "or";
-
-        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
-        return generateAssignmentExpression {
-            that;
-            leftOperand;
-            () => generateInvocationForBinaryOperation(that, methodName);
-        };
-    }
-
     """
        A base expression can be:
 
@@ -688,6 +617,15 @@ class ExpressionTransformer(CompilationContext ctx)
         };
     }
 
+    DartExpression generateInvocationForBinaryOperation
+            (BinaryOperation that, String methodName)
+        =>  generateInvocation {
+                scope = that;
+                receiver = ExpressionInfo(that.leftOperand);
+                memberName = methodName;
+                arguments = [ExpressionInfo(that.rightOperand)];
+            };
+
     shared actual
     DartExpression transformArithmeticOperation(ArithmeticOperation that)
         =>  generateInvocationForBinaryOperation(that,
@@ -751,15 +689,6 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformCompareOperation(CompareOperation that)
         =>  generateInvocationForBinaryOperation(that, "compare");
-
-    DartExpression generateInvocationForBinaryOperation
-            (BinaryOperation that, String methodName)
-        =>  generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.leftOperand);
-                memberName = methodName;
-                arguments = [ExpressionInfo(that.rightOperand)];
-            };
 
     shared actual
     DartExpression transformEqualOperation(EqualOperation that)
@@ -828,6 +757,77 @@ class ExpressionTransformer(CompilationContext ctx)
                 ifNullExpression = that.rightOperand.transform(this);
                 ifNotNullExpression = parameterIdentifier;
             };
+
+    shared actual
+    DartExpression transformAssignOperation(AssignOperation that) {
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => that.rightOperand.transform(expressionTransformer);
+        };
+    }
+
+    shared actual
+    DartExpression transformArithmeticAssignmentOperation
+            (ArithmeticAssignmentOperation that) {
+
+        value methodName
+            =   switch(that)
+                case (is AddAssignmentOperation) "plus"
+                case (is SubtractAssignmentOperation) "minus"
+                case (is MultiplyAssignmentOperation) "times"
+                case (is DivideAssignmentOperation) "divided"
+                case (is RemainderAssignmentOperation) "remainder";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocationForBinaryOperation(that, methodName);
+        };
+    }
+
+    shared actual
+    DartExpression transformSetAssignmentOperation(SetAssignmentOperation that) {
+        // TODO test
+        value methodName
+            =   switch(that)
+                case (is IntersectAssignmentOperation) "intersection"
+                case (is UnionAssignmentOperation) "union"
+                case (is ComplementAssignmentOperation) "complement";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocationForBinaryOperation(that, methodName);
+        };
+    }
+
+    shared actual
+    DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
+        // TODO test
+        value methodName
+            =   switch(that)
+                case (is AndAssignmentOperation) "and"
+                case (is OrAssignmentOperation) "or";
+
+        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+
+        // passthrough; no new lhs
+        return generateAssignmentExpression {
+            that;
+            leftOperand;
+            () => generateInvocationForBinaryOperation(that, methodName);
+        };
+    }
 
     shared actual
     see(`function StatementTransformer.transformIfElse`)
