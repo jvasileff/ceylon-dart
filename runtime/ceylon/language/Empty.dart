@@ -34,19 +34,31 @@ class Empty implements Sequential {
   $dart$core.bool get empty => true;
 
   @$dart$core.override
-  Sequential sequence() => $toplevel$empty;
+  Sequential sequence() => $package$empty;
 
   @$dart$core.override
   Sequence withTrailing($dart$core.Object other)
-    =>  new Tuple(other, $toplevel$empty);
+    =>  new Tuple(other, $package$empty);
 
   @$dart$core.override
   Sequence withLeading($dart$core.Object other)
-    =>  new Tuple(other, $toplevel$empty);
+    =>  new Tuple(other, $package$empty);
+
+  @$dart$core.override
+  $dart$core.Object follow($dart$core.Object head)
+    =>  new Tuple(head, $package$empty);
+
+  @$dart$core.override
+  $dart$core.Object get first
+    =>  null;
+
+  @$dart$core.override
+  Iterable get rest
+    =>  this;
 }
 
 final Empty empty = new Empty();
-final $toplevel$empty = empty; // FIXME?
+final $package$empty = empty;
 
 class $EmptyIterator implements Iterator {
   const $EmptyIterator();

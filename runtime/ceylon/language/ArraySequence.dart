@@ -9,6 +9,10 @@ class ArraySequence implements Sequence {
     }
   }
 
+  @$dart$core.override
+  Iterable follow($dart$core.Object head)
+    =>  withLeading(head);
+
   // delegate
   @$dart$core.override
   $dart$core.int get lastIndex
@@ -45,6 +49,14 @@ class ArraySequence implements Sequence {
   @$dart$core.override
   void each(Callable step)
     =>  array.each(step);
+
+  @$dart$core.override
+  $dart$core.Object get first
+    =>  Iterable.$first(this);
+
+  @$dart$core.override
+  Iterable get rest
+    =>  Iterable.$rest(this);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)

@@ -46,7 +46,7 @@ void $package$printAll([Iterable values, $dart$core.Object separator = dart$defa
 
 void printAll([Iterable values, $dart$core.Object separator = dart$default]) => $package$printAll(values, separator);
 
-$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.string)(val));
+$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.toString())(val));
 
 $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
 

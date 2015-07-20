@@ -31,6 +31,10 @@ class Tuple implements List, Sequence, Iterable {
   Sequence withLeading($dart$core.Object other)
     =>  new Tuple(other, this);
 
+  @$dart$core.override
+  Iterable follow($dart$core.Object head)
+    =>  withLeading(head);
+
   // bridge methods
   @$dart$core.override
   $dart$core.bool defines($dart$core.Object index)
@@ -55,6 +59,14 @@ class Tuple implements List, Sequence, Iterable {
   @$dart$core.override
   $dart$core.int get size
     =>  List.$get$size(this);
+
+  @$dart$core.override
+  $dart$core.Object get first
+    =>  Iterable.$first(this);
+
+  @$dart$core.override
+  Iterable get rest
+    =>  Iterable.$rest(this);
 
   @$dart$core.override
   void each(Callable step)

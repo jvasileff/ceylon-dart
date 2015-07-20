@@ -326,7 +326,12 @@ class StatementTransformer(CompilationContext ctx)
             // a parameter reference
             return [];
         }
-        return super.transformValueDeclaration(that);
+
+        // Seems like this should be fine... Dart supports forward declarations
+        return
+        [DartVariableDeclarationStatement {
+            miscTransformer.transformValueDeclaration(that);
+        }];
     }
 
     shared actual

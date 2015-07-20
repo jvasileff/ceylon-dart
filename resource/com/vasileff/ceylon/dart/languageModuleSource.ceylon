@@ -3,6 +3,9 @@
 // add functions.ceylon/identity
 shared Value identity<Value>(Value argument) => argument;
 
+// TODO any.ceylon, arrayOfSize.ceylon, formatInteger, infinity.ceylon
+// Soon byIncreasing.ceylon, byDecreasing.ceylon, byItem, byKey, forItem, forKey
+
 // identical.ceylon
 "Determine if the arguments are [[identical]]. Equivalent to
  `x===y`. Only instances of [[Identifiable]] have 

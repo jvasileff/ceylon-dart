@@ -7,7 +7,7 @@ class Character {
     _value = character._value;
   }
 
-  Character._fromInt($dart$core.int this._value);
+  Character.$fromInt($dart$core.int this._value);
 
   $dart$core.int get integer => _value;
 

@@ -9,7 +9,8 @@ class Integer implements Integral, Exponentiable { // Binary
   $dart$core.bool get zero => _value == 0;
 
   $dart$core.bool divides(Integer other) => other._value % _value == 0;
-  Integer remainder(Integer other) => new Integer(other._value % _value);
+  Integer remainder(Integer other)
+    => new Integer(_value - other._value * (_value ~/ other._value));
 
   Integer plusInteger($dart$core.int integer) => new Integer(_value + integer);
   Integer powerOfInteger($dart$core.int integer) => new Integer($dart$math.pow(_value, integer));
@@ -27,6 +28,15 @@ class Integer implements Integral, Exponentiable { // Binary
 
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
+
+  Character get character => new Character.$fromInt(_value);
+
+  $dart$core.bool equals($dart$core.Object other) {
+    if (other is Integer) {
+      return _value == other._value;
+    }
+    return false;
+  }
 
   // Ordinal
 

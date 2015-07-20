@@ -63,7 +63,13 @@ import ceylon.ast.core {
     LogicalOperation,
     AndOperation,
     OrOperation,
-    GroupedExpression
+    GroupedExpression,
+    CharacterLiteral,
+    NegationOperation,
+    IdentityOperation,
+    WithinOperation,
+    OpenBound,
+    ClosedBound
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -352,6 +358,26 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartSimpleStringLiteral(that.text));
 
     shared actual
+    DartExpression transformCharacterLiteral(CharacterLiteral that)
+        =>  withBoxing(that,
+                ctx.ceylonTypes.characterType, null,
+                DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        ctx.dartTypes.dartTypeName {
+                            that;
+                            ctx.ceylonTypes.characterType;
+                            false; false;
+                        };
+                        DartSimpleIdentifier("$fromInt");
+                    };
+                    DartArgumentList {
+                        // FIXME text may be an escape sequence
+                        [DartIntegerLiteral(that.text.first?.integer else 0)];
+                    };
+                });
+
+    shared actual
     DartExpression transformInvocation(Invocation that) {
         DeclarationModel? invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
@@ -570,6 +596,19 @@ class ExpressionTransformer(CompilationContext ctx)
                     () => that.operand.transform(this);
                 };
             };
+
+    shared actual
+    DartExpression transformNegationOperation(NegationOperation that)
+        =>  generateInvocation {
+                that;
+                ExpressionInfo(that.operand);
+                "negated";
+                [];
+            };
+
+    shared actual
+    DartExpression transformIdentityOperation(IdentityOperation that)
+        =>  that.operand.transform(this);
 
     shared actual
     DartExpression transformPrefixOperation(PrefixOperation that) {
@@ -896,6 +935,42 @@ class ExpressionTransformer(CompilationContext ctx)
             that;
             leftOperand;
             () => generateInvocationForBinaryOperation(that, methodName);
+        };
+    }
+
+    shared actual
+    DartExpression transformWithinOperation(WithinOperation that) {
+        value operandInfo = ExpressionInfo(that.operand);
+
+        value lowerMethodName =
+            switch (lb = that.lowerBound)
+            case (is OpenBound) "largerThan"
+            case (is ClosedBound) "notSmallerThan";
+
+        value upperMethodName =
+            switch (ub = that.upperBound)
+            case (is OpenBound) "smallerThan"
+            case (is ClosedBound) "notLargerThan";
+
+        return
+        withLhsNative {
+            // lhs boolean for both generateInvocations
+            ctx.ceylonTypes.booleanType;
+            () => DartBinaryExpression {
+                generateInvocation {
+                    that;
+                    operandInfo;
+                    lowerMethodName;
+                    [ExpressionInfo(that.lowerBound.endpoint)];
+                };
+                "&&";
+                generateInvocation {
+                    that;
+                    operandInfo;
+                    upperMethodName;
+                    [ExpressionInfo(that.upperBound.endpoint)];
+                };
+            };
         };
     }
 

@@ -25,19 +25,41 @@ abstract class Iterable {
     }
   }
 
+  $dart$core.Object get first;
+  static $dart$core.Object $first(Iterable $this) {
+    $dart$core.Object result = $this.iterator().next();
+    if (result is Finished) {
+      return null;
+    }
+    return result;
+  }
+
+  Iterable get rest;
+  static $dart$core.Object $rest(Iterable $this) {
+    // FIXME this is a terrible, non-lazy hack
+    var list = [];
+    Iterator it = $this.iterator();
+    var e = it.next();
+    while ((e = it.next()) is !Finished) {
+      list.add(e);
+    }
+    return new Array._withList(list);
+  }
+
   Sequential sequence();
   static Sequential $sequence(Iterable $this) {
     Array array = new Array($this);
     if (array.empty) {
-      return $toplevel$empty;
+      return $package$empty;
     }
     return new ArraySequence(array);
   }
-
 
   $dart$core.bool contains($dart$core.Object element);
   static $dart$core.bool $contains(Iterable $this, $dart$core.Object element) {
     // TODO
     throw new AssertionError("not yet implemented");
   }
+
+  Iterable follow($dart$core.Object element);
 }

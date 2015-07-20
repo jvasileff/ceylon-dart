@@ -551,28 +551,53 @@ void run() {
 
     value scratchNew =
          """
-            interface SomeInt {
-                shared formal variable Integer i;
-                shared formal variable String someString;
-                shared formal variable Object someObject;
+            Integer minRadix = 2;
+            Integer maxRadix = 36;
+            Integer aIntLower = 'a'.integer;
+            Integer aIntUpper = 'A'.integer;
+            Integer zeroInt = '0'.integer;
+
+            shared String formatInteger(
+                        "The integer value to format."
+                        Integer integer,
+                        "The base, between [[minRadix]] and [[maxRadix]]
+                         inclusive."
+                        Integer radix = 10) {
+                assert (minRadix <= radix <= maxRadix);
+                if (integer == 0) {
+                    return "0";
+                }
+                variable {Character*} digits = "";
+                variable Integer i = integer < 0
+                                     then integer
+                                     else -integer;
+                while (i != 0) {
+                    Integer d = -(i % radix);
+                    Character c;
+                    if (0<=d<10) {
+                        c = (d+zeroInt).character;
+                    }
+                    else if (10<=d<36) {
+                        c = (d-10+aIntLower).character;
+                    }
+                    else {
+                        assert (false);
+                    }
+                    digits = digits.follow(c);
+                    i = (i + d) / radix;
+                }
+                if (integer < 0) {
+                    digits = digits.follow('-');
+                }
+                return String(digits);
             }
 
-            void run(SomeInt si) {
-                value x = si.someString = "abcde";
-                value y = si.someObject = "";
-                value a = si.i++;
-                value b = si.i--;
-                value c = ++si.i;
-                value d = --si.i;
-                ++si.i;
-                --si.i;
-
-                si.i = 25;
-                si.i += 50;
-                si.i -= 50;
-                si.i *= 50;
-                si.i /= 50;
-                si.i %= 50;
+            shared void run() {
+                print(10 % 7);
+                print(-10 % 7);
+                print(10 % -7);
+                print(-10 % -7);
+                print(formatInteger(939, 16));
             }
          """;
 
@@ -611,5 +636,5 @@ void run() {
     assert (exists languageModuleSource = `module`.resourceByPath(
             "languageModuleSource.ceylon")?.textContent());
 
-    compile { true; languageModuleSource };
+    compile { true; scratchNew };
 }

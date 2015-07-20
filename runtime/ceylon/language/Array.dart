@@ -31,6 +31,10 @@ class Array implements List {
             ? _list[index]
             : null;
 
+  @$dart$core.override
+  Iterable follow($dart$core.Object head)
+    =>  new Tuple(head, this);
+
   // bridge methods
   @$dart$core.override
   $dart$core.bool defines($dart$core.Object index)
@@ -55,6 +59,14 @@ class Array implements List {
   @$dart$core.override
   $dart$core.int get size
     =>  List.$get$size(this);
+
+  @$dart$core.override
+  $dart$core.Object get first
+    =>  Iterable.$first(this);
+
+  @$dart$core.override
+  Iterable get rest
+    =>  Iterable.$rest(this);
 
   @$dart$core.override
   void each(Callable step)
