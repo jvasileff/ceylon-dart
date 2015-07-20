@@ -14,10 +14,8 @@ import ceylon.ast.core {
     VariablePattern,
     PrefixPostfixStatement,
     AssignmentStatement,
-    While
-}
-import ceylon.collection {
-    LinkedList
+    While,
+    Condition
 }
 import ceylon.language.meta {
     type
@@ -283,21 +281,6 @@ class StatementTransformer(CompilationContext ctx)
         =>  [DartBlock([*expand(that.transformChildren(this))])];
 
     shared actual
-    [DartStatement*] transformAssertion(Assertion that) {
-        // children are 'Annotations' and 'Conditions'
-        // 'Conditions' has 'Condition's.
-
-        // TODO Annotations
-        // TODO Don't visit conditions individually?
-        // annotations, especially 'doc', need to apply to
-        // each condition. Any other annotations matter?
-
-        // won't be empty
-        return [*that.conditions.children.flatMap((c)
-            =>  c.transform(this))];
-    }
-
-    shared actual
     [DartStatement*] transformValueDeclaration(ValueDeclaration that) {
         value info = ValueDeclarationInfo(that);
         if (info.declarationModel.parameter) {
@@ -309,7 +292,87 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartStatement+] transformIsCondition(IsCondition that) {
+    [DartStatement*] transformAssertion(Assertion that) {
+        // children are 'Annotations' and 'Conditions'
+        // 'Conditions' has 'Condition's.
+
+        // TODO Annotations
+        // TODO Don't visit conditions individually?
+        // annotations, especially 'doc', need to apply to
+        // each condition. Any other annotations matter?
+
+        // won't be empty
+        return [*that.conditions.conditions.flatMap(generateConditionAssertion)];
+    }
+
+    [DartStatement+] generateConditionAssertion(Condition that) {
+        "Only IsConditions supported"
+        assert (is IsCondition that);
+
+        return generateIsConditionAssertion(that);
+    }
+
+    [DartStatement+] generateIsConditionAssertion(IsCondition that) {
+        value info = IsConditionInfo(that);
+
+        "The Ceylon source code for the condition"
+        value errorMessage =
+                ctx.tokens[info.token.tokenIndex..
+                           info.endToken.tokenIndex]
+                .map(Token.text)
+                .reduce(plus) else "";
+
+        value [replacementDeclaration,
+                tempDefinition,
+                conditionExpression,
+                replacementDefinition] = generateIsCheck(that);
+
+        variable [DartStatement?*] statements = [
+            replacementDeclaration,
+            tempDefinition,
+            // if (x is !y) then throw new AssertionError(...)
+            DartIfStatement {
+                conditionExpression;
+                DartExpressionStatement {
+                    DartThrowExpression {
+                        DartInstanceCreationExpression {
+                            const = false;
+                            DartConstructorName {
+                                DartTypeName {
+                                    DartPrefixedIdentifier {
+                                        DartSimpleIdentifier("$ceylon$language");
+                                        DartSimpleIdentifier(ctx.dartTypes.getName(
+                                            ctx.ceylonTypes.assertionErrorDeclaration));
+                                    };
+                                };
+                            };
+                            DartArgumentList {
+                                [DartSimpleStringLiteral {
+                                    "Violated: ``errorMessage``";
+                                }];
+                            };
+                        };
+                    };
+                };
+            },
+            replacementDefinition
+        ];
+
+        if (tempDefinition exists) {
+            // scope the temp variable in a block
+            statements = [
+                replacementDeclaration,
+                DartBlock(statements[1:3].coalesced.sequence())];
+        }
+
+        assert (nonempty result = statements.coalesced.sequence());
+        return result;
+    }
+
+    shared
+    [DartStatement?, DartStatement?, DartExpression, DartStatement?]
+    generateIsCheck(IsCondition that) {
+
         // IsCondition holds a TypedVariable that may
         // or may not include a specifier to define a new variable
 
@@ -341,14 +404,10 @@ class StatementTransformer(CompilationContext ctx)
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
-        "The Ceylon source code for the condition"
-        value errorMessage =
-                ctx.tokens[info.token.tokenIndex..
-                           info.endToken.tokenIndex]
-                .map(Token.text)
-                .reduce(plus) else "";
-
-        value statements = LinkedList<DartStatement>();
+        DartStatement? replacementDeclaration;
+        DartStatement? tempDefinition;
+        DartExpression conditionExpression;
+        DartStatement? replacementDefinition;
 
         // new variable, or narrowing existing?
         if (exists expression) {
@@ -360,81 +419,81 @@ class StatementTransformer(CompilationContext ctx)
 
             value variableIdentifier = DartSimpleIdentifier(
                     ctx.dartTypes.getName(variableDeclaration));
+
             value expressionType = ExpressionInfo(expression).typeModel;
 
+            value tempIdentifier = DartSimpleIdentifier(
+                    ctx.dartTypes.createTempName(variableDeclaration));
+
             // 1. declare the new variable
-            statements.add {
-                DartVariableDeclarationStatement {
-                    DartVariableDeclarationList {
-                        keyword = null;
-                        ctx.dartTypes.dartTypeNameForDeclaration {
-                            that;
-                            variableDeclaration;
-                        };
-                        [DartVariableDeclaration {
-                            variableIdentifier;
-                        }];
+            replacementDeclaration =
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    ctx.dartTypes.dartTypeNameForDeclaration {
+                        that;
+                        variableDeclaration;
                     };
+                    [DartVariableDeclaration {
+                        variableIdentifier;
+                    }];
                 };
             };
 
-            value tmpVariable = DartSimpleIdentifier(
-                    ctx.dartTypes.createTempName(variableDeclaration));
-
-            statements.add {
-                DartBlock {[
-                    // 2. evaluate to tmp variable
-                    DartVariableDeclarationStatement {
-                        DartVariableDeclarationList {
-                            keyword = null;
-                            ctx.dartTypes.dartTypeName(that, expressionType, true);
-                            [DartVariableDeclaration {
-                                tmpVariable;
-                                // possibly erase to a native type!
-                                withLhsNative {
-                                    expressionType;
-                                    () => expression.transform(expressionTransformer);
-                                };
-                            }];
-                        };
-                    },
-
-                    // 3. perform is check on tmp variable
-                    generateIsAssertion(tmpVariable, that.negated, errorMessage),
-
-                    // 4. set variable
-                    DartExpressionStatement {
-                        DartAssignmentExpression {
-                            variableIdentifier;
-                            DartAssignmentOperator.equal;
-                            withLhs {
-                                null;
-                                variableDeclaration;
-                                () => withBoxing {
-                                    that;
-                                    // as noted above, tmpVariable may be erased. Maybe
-                                    // when narrowing optionals like String?.
-                                    expressionType;
-                                    null;
-                                    tmpVariable;
-                                };
-                            };
+            // 2. evaluate to tmp variable
+            tempDefinition =
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    ctx.dartTypes.dartTypeName(that, expressionType, true);
+                    [DartVariableDeclaration {
+                        tempIdentifier;
+                        // possibly erase to a native type!
+                        withLhsNative {
+                            expressionType;
+                            () => expression.transform(expressionTransformer);
                         };
                     }];
                 };
             };
+
+            // 3. perform is check on tmp variable
+            conditionExpression = generateIsExpression(tempIdentifier, that.negated);
+
+            // 4. set replacement variable
+            replacementDefinition =
+            DartExpressionStatement {
+                DartAssignmentExpression {
+                    variableIdentifier;
+                    DartAssignmentOperator.equal;
+                    withLhs {
+                        null;
+                        variableDeclaration;
+                        () => withBoxing {
+                            that;
+                            // as noted above, tmpVariable may be erased. Maybe
+                            // when narrowing optionals like String?.
+                            expressionType;
+                            null;
+                            tempIdentifier;
+                        };
+                    };
+                };
+            };
         }
         else {
+            tempDefinition = null;
+            replacementDeclaration = null;
+
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
             assert(is FunctionOrValueModel originalDeclaration =
                     variableDeclaration.originalDeclaration);
 
-            value originalDartVariable = DartSimpleIdentifier(
+            value originalIdentifier = DartSimpleIdentifier(
                     ctx.dartTypes.getName(originalDeclaration));
 
-            statements.add(generateIsAssertion(
-                    originalDartVariable, that.negated, errorMessage));
+            conditionExpression = generateIsExpression(originalIdentifier, that.negated);
 
             // erasure to native may have changed
             // erasure to object may have changed
@@ -443,11 +502,10 @@ class StatementTransformer(CompilationContext ctx)
                 ctx.dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
                 ctx.dartTypes.dartTypeModelForDeclaration(variableDeclaration);
 
-            if (dartTypeChanged) {
-                value replacementVar = DartSimpleIdentifier(
-                        ctx.dartTypes.createReplacementName(variableDeclaration));
-
-                statements.add {
+            replacementDefinition =
+                if (!dartTypeChanged)
+                then null
+                else
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
@@ -456,7 +514,11 @@ class StatementTransformer(CompilationContext ctx)
                                 variableDeclaration;
                             };
                             [DartVariableDeclaration {
-                                replacementVar;
+                                DartSimpleIdentifier {
+                                    ctx.dartTypes.createReplacementName{
+                                        variableDeclaration;
+                                    };
+                                };
                                 withLhs {
                                     null;
                                     variableDeclaration;
@@ -475,48 +537,26 @@ class StatementTransformer(CompilationContext ctx)
                             }];
                         };
                     };
-                };
-            }
         }
 
-        assert(nonempty result = statements.sequence());
-        return result;
+        return [replacementDeclaration,
+                tempDefinition,
+                conditionExpression,
+                replacementDefinition];
     }
 
-    DartStatement generateIsAssertion(
+    DartExpression generateIsExpression(
             DartExpression expressionToCheck,
-            Boolean not,
-            String errorMessage)
-        // if (x is !y) then throw new AssertionError(...)
-        =>  DartIfStatement {
-                DartIsExpression {
-                    expressionToCheck;
-                    // TODO actual type!
-                    ctx.dartTypes.dartObject;
-                    notOperator = !not;
-                };
-                DartExpressionStatement {
-                    DartThrowExpression {
-                        DartInstanceCreationExpression {
-                            const = false;
-                            DartConstructorName {
-                                DartTypeName {
-                                    DartPrefixedIdentifier {
-                                        DartSimpleIdentifier("$ceylon$language");
-                                        DartSimpleIdentifier(ctx.dartTypes.getName(
-                                            ctx.ceylonTypes.assertionErrorDeclaration));
-                                    };
-                                };
-                            };
-                            DartArgumentList {
-                                [DartSimpleStringLiteral {
-                                    "Violated: ``errorMessage``";
-                                }];
-                            };
-                        };
-                    };
-                };
-            };
+            Boolean not) {
+
+        return
+        DartIsExpression {
+            expressionToCheck;
+            // TODO actual type!
+            ctx.dartTypes.dartObject;
+            notOperator = !not;
+        };
+    }
 
     suppressWarnings("unusedDeclaration")
     DartStatement? singleStatementOrNull([DartStatement*] statements) {
