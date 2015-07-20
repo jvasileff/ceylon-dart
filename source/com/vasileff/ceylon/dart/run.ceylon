@@ -636,5 +636,5 @@ void run() {
     assert (exists languageModuleSource = `module`.resourceByPath(
             "languageModuleSource.ceylon")?.textContent());
 
-    compile { true; scratchNew };
+    compile { true; languageModuleSource };
 }

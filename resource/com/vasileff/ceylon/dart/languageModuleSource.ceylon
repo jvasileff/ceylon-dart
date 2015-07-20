@@ -1,10 +1,21 @@
-// for i in identical.ceylon largest.ceylon plus.ceylon smallest.ceylon times.ceylon print.ceylon every.ceylon count.ceylon product.ceylon sum.ceylon; do echo // $i ; cat $i ; echo ; done
+// for i in identical.ceylon largest.ceylon plus.ceylon smallest.ceylon times.ceylon \
+//          print.ceylon every.ceylon count.ceylon product.ceylon sum.ceylon \
+//          any.ceylon, arrayOfSize.ceylon, formatInteger.ceylon, infinity.ceylon;
+//    do echo // $i ; cat $i ; echo ; done
+
+// TODO max, byIncreasing, byDecreasing, byItem, byKey, forItem, forKey, not, nothing, or, sort
+
+// Fixups/hacks: replace `{}` with `""` in formatInteger
 
 // add functions.ceylon/identity
 shared Value identity<Value>(Value argument) => argument;
 
-// TODO any.ceylon, arrayOfSize.ceylon, formatInteger, infinity.ceylon
-// Soon byIncreasing.ceylon, byDecreasing.ceylon, byItem, byKey, forItem, forKey
+// for parseInteger
+Integer minRadix = 2;
+Integer maxRadix = 36;
+Integer aIntLower = 'a'.integer;
+Integer aIntUpper = 'A'.integer;
+Integer zeroInt = '0'.integer;
 
 // identical.ceylon
 "Determine if the arguments are [[identical]]. Equivalent to
@@ -148,3 +159,106 @@ shared Value sum<Value>({Value+} values)
     return sum;
 }
 
+// any.ceylon
+"Determines if any one of the given boolean values 
+ (usually a comprehension) is `true`.
+ 
+     Boolean anyNegative = any { for (x in xs) x<0.0 };
+ 
+ If there are no boolean values, return `false`."
+see (`function every`, 
+     `function Iterable.any`)
+shared Boolean any({Boolean*} values) {
+    for (val in values) {
+        if (val) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// arrayOfSize.ceylon
+"Create an array of the specified [[size]], populating every 
+ index with the given [[element]]. The specified `size` must 
+ be no larger than [[runtime.maxArraySize]]. If `size<=0`, 
+ the new array will have no elements."
+throws (`class AssertionError`, 
+        "if `size>runtime.maxArraySize`")
+see (`value runtime.maxArraySize`)
+deprecated ("Use [[Array.ofSize]]")
+shared Array<Element> arrayOfSize<Element>(
+        "The size of the resulting array. If the size is 
+         non-positive, an empty array will be created."
+        Integer size,
+        "The element value with which to populate the array.
+         All elements of the resulting array will have the 
+         same value." 
+        Element element) 
+        => Array.ofSize(size, element);
+
+// formatInteger.ceylon
+"The string representation of the given [[integer]] in the 
+ base given by [[radix]]. If the given integer is negative, 
+ the string representation will begin with `-`. Digits 
+ consist of decimal digits `0` to `9`, together with and 
+ lowercase letters `a` to `z` for bases greater than 10.
+ 
+ For example:
+ 
+ - `formatInteger(-46)` is `\"-46\"`
+ - `formatInteger(9,2)` is `\"1001\"`
+ - `formatInteger(10,8)` is `\"12\"`
+ - `formatInteger(511,16)` is `\"1ff\"`
+ - `formatInteger(512,32)` is `\"g0\"`"
+throws (`class AssertionError`, 
+        "if [[radix]] is not between [[minRadix]] and 
+         [[maxRadix]]")
+see (`function parseInteger`)
+shared String formatInteger(
+            "The integer value to format."
+            Integer integer,
+            "The base, between [[minRadix]] and [[maxRadix]] 
+             inclusive."
+            Integer radix = 10) {
+    assert (minRadix <= radix <= maxRadix);
+    if (integer == 0) {
+        return "0";
+    }
+    variable {Character*} digits = "";
+    variable Integer i = integer < 0 
+                         then integer 
+                         else -integer;
+    while (i != 0) {
+        Integer d = -(i % radix);
+        Character c;
+        if (0<=d<10) {
+            c = (d+zeroInt).character;
+        }
+        else if (10<=d<36) {
+            c = (d-10+aIntLower).character;
+        }
+        else {
+            assert (false);
+        }
+        digits = digits.follow(c);
+        i = (i + d) / radix;
+    }
+    if (integer < 0) {
+        digits = digits.follow('-');
+    }
+    return String(digits);
+}
+
+// infinity.ceylon
+"An instance of [[Float]] representing positive infinity, 
+ \{#221E}, the result of dividing a positive number by zero. 
+ Negative infinity, -\{#221E}, the result of dividing a
+ negative number by zero, is the additive inverse `-infinity`.
+ 
+ Note that any floating-point computation that results in a
+ positive value too large to be represented as a `Float` is 
+ \"rounded up\" to `infinity`. Likewise, any floating-point 
+ computation that yields a negative value whose magnitude is
+ too large to be represented as a `Float` is \"rounded down\" 
+ to `-infinity`."
+shared Float infinity = 1.0/0.0;

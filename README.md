@@ -58,7 +58,7 @@ functionality.
 - [ ] Use compiler for language module functions: `corresponding`, ~~count~~,
   ~~every~~, ~~identity~~, `noop`, ~~identical~~, ~~largest~~, `max`, `nothing`,
   ~~plus~~, ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, `sort`, ~~sum~~,
-  ~~times~~.
+  ~~times~~, ~~any~~, ~~arrayOfSize~~, ~~formatInteger~~, ~~infinity~~
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations
 

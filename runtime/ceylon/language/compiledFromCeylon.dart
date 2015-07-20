@@ -4,6 +4,26 @@ $dart$core.Object $package$identity([$dart$core.Object argument]) => argument;
 
 $dart$core.Object identity([$dart$core.Object argument]) => $package$identity(argument);
 
+$dart$core.int $package$minRadix = 2;
+
+$dart$core.int get minRadix => $package$minRadix;
+
+$dart$core.int $package$maxRadix = 36;
+
+$dart$core.int get maxRadix => $package$maxRadix;
+
+$dart$core.int $package$aIntLower = (new Character.$fromInt(97)).integer;
+
+$dart$core.int get aIntLower => $package$aIntLower;
+
+$dart$core.int $package$aIntUpper = (new Character.$fromInt(65)).integer;
+
+$dart$core.int get aIntUpper => $package$aIntUpper;
+
+$dart$core.int $package$zeroInt = (new Character.$fromInt(48)).integer;
+
+$dart$core.int get zeroInt => $package$zeroInt;
+
 $dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$core.identical(x, y);
 
 $dart$core.bool identical([Identifiable x, Identifiable y]) => $package$identical(x, y);
@@ -118,3 +138,61 @@ $dart$core.Object $package$sum([Iterable values]) {
 }
 
 $dart$core.Object sum([Iterable values]) => $package$sum(values);
+
+$dart$core.bool $package$any([Iterable values]) {{
+        $dart$core.Object element$9;
+        Iterator iterator$8 = values.iterator();
+        while ((element$9 = iterator$8.next()) is !Finished) {
+            Boolean val = element$9 as Boolean;
+            if (Boolean.nativeValue(val)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+$dart$core.bool any([Iterable values]) => $package$any(values);
+
+Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => new Array.ofSize(size, element);
+
+Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
+
+$dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Object radix = dart$default]) {
+    if ($dart$core.identical(radix, dart$default)) {
+        radix = 10;
+    }
+    if (!(Integer.instance(radix as $dart$core.int).notSmallerThan(Integer.instance($package$minRadix)) && Integer.instance(radix as $dart$core.int).notLargerThan(Integer.instance($package$maxRadix)))) {
+        throw new AssertionError("Violated: minRadix <= radix <= maxRadix");
+    }
+    if (Integer.instance(integer).equals(Integer.instance(0))) {
+        return "0";
+    }
+    Iterable digits = String.instance("");
+    $dart$core.int i = (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance(integer).negated) : $lhs$)(Integer.instance(integer).smallerThan(Integer.instance(0)) ? integer : null);
+    while (!Integer.instance(i).equals(Integer.instance(0))) {
+        $dart$core.int d = Integer.nativeValue(Integer.instance(i).remainder(Integer.instance(radix as $dart$core.int)).negated);
+        Character c;
+        if (Integer.instance(d).notSmallerThan(Integer.instance(0)) && Integer.instance(d).smallerThan(Integer.instance(10))) {
+            c = Integer.instance(d).plus(Integer.instance($package$zeroInt)).character;
+        } else if (Integer.instance(d).notSmallerThan(Integer.instance(10)) && Integer.instance(d).smallerThan(Integer.instance(36))) {
+            c = Integer.instance(d).minus(Integer.instance(10)).plus(Integer.instance($package$aIntLower)).character;
+        } else {
+            if (!false) {
+                throw new AssertionError("Violated: false");
+            }
+        }
+        digits = digits.follow(c);
+        i = Integer.nativeValue(Integer.instance(i).plus(Integer.instance(d)).divided(Integer.instance(radix as $dart$core.int)));
+    }
+    if (Integer.instance(integer).smallerThan(Integer.instance(0))) {
+        digits = digits.follow(new Character.$fromInt(45));
+    }
+    return String.nativeValue(new String(digits));
+}
+
+$dart$core.String formatInteger([$dart$core.int integer, $dart$core.Object radix = dart$default]) => $package$formatInteger(integer, radix);
+
+$dart$core.double $package$infinity = Float.nativeValue(Float.instance(1.0).divided(Float.instance(0.0)));
+
+$dart$core.double get infinity => $package$infinity;
