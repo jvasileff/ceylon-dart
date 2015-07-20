@@ -120,3 +120,28 @@ $dart$core.Object $package$product([Iterable values]) {
 
 $dart$core.Object product([Iterable values]) => $package$product(values);
 
+// sum
+
+$dart$core.Object $package$sum([Iterable values]) {
+    Iterator it = values.iterator();
+    $dart$core.Object first;{
+        $dart$core.Object first$0 = it.next();
+        if (first$0 is Finished) {
+            throw new AssertionError("Violated: !is Finished first = it.next()");
+        }
+        first = first$0;
+    }
+    $dart$core.Object sum = first;
+    while (true) {
+        $dart$core.Object val;
+        $dart$core.Object val$1 = it.next();
+        if (val$1 is Finished) {
+            break;
+        }
+        val = val$1;
+        sum = (sum as Summable).plus(val);
+    }
+    return sum;
+}
+
+$dart$core.Object sum([Iterable values]) => $package$sum(values);
