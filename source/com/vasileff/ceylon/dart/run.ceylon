@@ -576,5 +576,40 @@ void run() {
             }
          """;
 
-    compile { true; scratchNew };
+    value whileStatement =
+         """
+            void run() {
+                variable Integer i = 0;
+                while (i < 10) {
+                    print(++i);
+                }
+            }
+         """;
+
+    value constructor =
+         """
+            void run() {
+                value array = Array.ofSize(10, "");
+            }
+         """;
+
+    value assertWork =
+         """
+            void run() {
+                Object a = "";
+                Object b = 1;
+
+                //assert ((false || true) && false);
+                //assert (b == 2 && a == "asdf", b == 3);
+                //assert (b == 2, a == "asdf", b == 3);
+
+                //assert (is String a, is Integer b);
+                assert (is <String & Usable>|Integer? a, is Integer b);
+            }
+         """;
+
+    assert (exists languageModuleSource = `module`.resourceByPath(
+            "languageModuleSource.ceylon")?.textContent());
+
+    compile { true; languageModuleSource };
 }
