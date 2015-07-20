@@ -1,7 +1,8 @@
-// for i in identical.ceylon largest.ceylon plus.ceylon smallest.ceylon times.ceylon \
-//          print.ceylon every.ceylon count.ceylon product.ceylon sum.ceylon \
-//          any.ceylon, arrayOfSize.ceylon, formatInteger.ceylon, infinity.ceylon;
-//    do echo // $i ; cat $i ; echo ; done
+// for i in \
+//    any.ceylon arrayOfSize.ceylon count.ceylon every.ceylon formatInteger.ceylon identical.ceylon \
+//    infinity.ceylon largest.ceylon plus.ceylon print.ceylon product.ceylon smallest.ceylon \
+//    sum.ceylon times.ceylon; d \
+// echo // $i ; cat $i ; echo ; done
 
 // TODO max, byIncreasing, byDecreasing, byItem, byKey, forItem, forKey, not, nothing, or, sort
 
@@ -16,148 +17,6 @@ Integer maxRadix = 36;
 Integer aIntLower = 'a'.integer;
 Integer aIntUpper = 'A'.integer;
 Integer zeroInt = '0'.integer;
-
-// identical.ceylon
-"Determine if the arguments are [[identical]]. Equivalent to
- `x===y`. Only instances of [[Identifiable]] have 
- well-defined identity."
-see (`function identityHash`)
-shared Boolean identical(
-        "An object with well-defined identity."
-        Identifiable x, 
-        "A second object with well-defined identity."
-        Identifiable y) 
-                => x===y;
-// largest.ceylon
-"Given two [[Comparable]] values, return largest of the two."
-see (`interface Comparable`, 
-     `function smallest`, 
-     `function max`)
-shared Element largest<Element>(Element x, Element y) 
-        given Element satisfies Comparable<Element> 
-        => x>y then x else y;
-// plus.ceylon
-"Add the given [[Summable]] values.
- 
-     (1..100).by(2).fold(0)(plus<Integer>)"
-see (`function times`, `function sum`)
-shared Value plus<Value>(Value x, Value y)
-        given Value satisfies Summable<Value>
-        => x+y;
-// smallest.ceylon
-"Given two [[Comparable]] values, return smallest of the two."
-see (`interface Comparable`, 
-     `function largest`, 
-     `function min`)
-shared Element smallest<Element>(Element x, Element y) 
-        given Element satisfies Comparable<Element> 
-        => x<y then x else y;
-// times.ceylon
-"Multiply the given [[Numeric]] values.
- 
-     (1..100).by(2).fold(1)(times<Integer>)"
-see (`function plus`, `function product`)
-shared Value times<Value>(Value x, Value y)
-        given Value satisfies Numeric<Value>
-        => x*y;
-// print.ceylon
-"Print a line to the standard output of the virtual machine 
- process, printing the given value\'s `string`, or `<null>` 
- if the value is `null`.
- 
- This function is a shortcut for:
- 
-     process.writeLine(line?.string else \"<null>\")
- 
- and is intended mainly for debugging purposes."
-see (`function process.writeLine`)
-by ("Gavin")
-shared void print(Anything val) 
-        => process.writeLine(stringify(val));
-
-"Print multiple values to the standard output of the virtual 
- machine process as a single line of text, separated by a
- given character sequence."
-by ("Gavin")
-see (`function process.write`)
-shared void printAll({Anything*} values,
-        "A character sequence to use to separate the values"
-        String separator=", ") {
-    variable value first = true;
-    values.each(void (element) {
-        if (first) {
-            first = false;
-        }
-        else {
-            process.write(separator);
-        }
-        process.write(stringify(element));
-    });
-    process.write(operatingSystem.newline);
-}
-
-String stringify(Anything val) => val?.string else "<null>";
-
-// every.ceylon
-"Determines if every one of the given boolean values 
- (usually a comprehension) is `true`.
- 
-     Boolean allPositive = every { for (x in xs) x>0.0 };
- 
- If there are no boolean values, return `true`."
-see (`function any`, 
-     `function Iterable.every`)
-shared Boolean every({Boolean*} values) {
-    for (val in values) {
-        if (!val) {
-            return false;
-        }
-    }
-    return true;
-}
-
-// count.ceylon
-"A count of the number of `true` items in the given values.
- 
-     Integer negatives = count { for (x in xs) x<0.0 };"
-see (`function Iterable.count`)
-shared Integer count({Boolean*} values) {
-    variable value count=0;
-    for (val in values) {
-        if (val) {
-            count++;
-        }
-    }
-    return count;
-}
-
-// product.ceylon
-"Given a nonempty stream of [[Numeric]] values, return the 
- product of the values."
-see (`function sum`)
-shared Value product<Value>({Value+} values) 
-        given Value satisfies Numeric<Value> {
-    variable value product = values.first;
-    for (val in values.rest) {
-        product *= val;
-    }
-    return product;
-}
-
-// sum.ceylon
-"Given a nonempty stream of [[Summable]] values, return the 
- sum of the values."
-see (`function product`)
-shared Value sum<Value>({Value+} values) 
-        given Value satisfies Summable<Value> {
-    value it = values.iterator();
-    assert (!is Finished first = it.next());
-    variable value sum = first;
-    while (!is Finished val = it.next()) {
-        sum += val;
-    }
-    return sum;
-}
 
 // any.ceylon
 "Determines if any one of the given boolean values 
@@ -195,6 +54,39 @@ shared Array<Element> arrayOfSize<Element>(
          same value." 
         Element element) 
         => Array.ofSize(size, element);
+
+// count.ceylon
+"A count of the number of `true` items in the given values.
+ 
+     Integer negatives = count { for (x in xs) x<0.0 };"
+see (`function Iterable.count`)
+shared Integer count({Boolean*} values) {
+    variable value count=0;
+    for (val in values) {
+        if (val) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// every.ceylon
+"Determines if every one of the given boolean values 
+ (usually a comprehension) is `true`.
+ 
+     Boolean allPositive = every { for (x in xs) x>0.0 };
+ 
+ If there are no boolean values, return `true`."
+see (`function any`, 
+     `function Iterable.every`)
+shared Boolean every({Boolean*} values) {
+    for (val in values) {
+        if (!val) {
+            return false;
+        }
+    }
+    return true;
+}
 
 // formatInteger.ceylon
 "The string representation of the given [[integer]] in the 
@@ -249,6 +141,17 @@ shared String formatInteger(
     return String(digits);
 }
 
+// identical.ceylon
+"Determine if the arguments are [[identical]]. Equivalent to
+ `x===y`. Only instances of [[Identifiable]] have 
+ well-defined identity."
+see (`function identityHash`)
+shared Boolean identical(
+        "An object with well-defined identity."
+        Identifiable x, 
+        "A second object with well-defined identity."
+        Identifiable y) 
+                => x===y;
 // infinity.ceylon
 "An instance of [[Float]] representing positive infinity, 
  \{#221E}, the result of dividing a positive number by zero. 
@@ -262,3 +165,102 @@ shared String formatInteger(
  too large to be represented as a `Float` is \"rounded down\" 
  to `-infinity`."
 shared Float infinity = 1.0/0.0;
+
+// largest.ceylon
+"Given two [[Comparable]] values, return largest of the two."
+see (`interface Comparable`, 
+     `function smallest`, 
+     `function max`)
+shared Element largest<Element>(Element x, Element y) 
+        given Element satisfies Comparable<Element> 
+        => x>y then x else y;
+// plus.ceylon
+"Add the given [[Summable]] values.
+ 
+     (1..100).by(2).fold(0)(plus<Integer>)"
+see (`function times`, `function sum`)
+shared Value plus<Value>(Value x, Value y)
+        given Value satisfies Summable<Value>
+        => x+y;
+// print.ceylon
+"Print a line to the standard output of the virtual machine 
+ process, printing the given value\'s `string`, or `<null>` 
+ if the value is `null`.
+ 
+ This function is a shortcut for:
+ 
+     process.writeLine(line?.string else \"<null>\")
+ 
+ and is intended mainly for debugging purposes."
+see (`function process.writeLine`)
+by ("Gavin")
+shared void print(Anything val) 
+        => process.writeLine(stringify(val));
+
+"Print multiple values to the standard output of the virtual 
+ machine process as a single line of text, separated by a
+ given character sequence."
+by ("Gavin")
+see (`function process.write`)
+shared void printAll({Anything*} values,
+        "A character sequence to use to separate the values"
+        String separator=", ") {
+    variable value first = true;
+    values.each(void (element) {
+        if (first) {
+            first = false;
+        }
+        else {
+            process.write(separator);
+        }
+        process.write(stringify(element));
+    });
+    process.write(operatingSystem.newline);
+}
+
+String stringify(Anything val) => val?.string else "<null>";
+
+// product.ceylon
+"Given a nonempty stream of [[Numeric]] values, return the 
+ product of the values."
+see (`function sum`)
+shared Value product<Value>({Value+} values) 
+        given Value satisfies Numeric<Value> {
+    variable value product = values.first;
+    for (val in values.rest) {
+        product *= val;
+    }
+    return product;
+}
+
+// smallest.ceylon
+"Given two [[Comparable]] values, return smallest of the two."
+see (`interface Comparable`, 
+     `function largest`, 
+     `function min`)
+shared Element smallest<Element>(Element x, Element y) 
+        given Element satisfies Comparable<Element> 
+        => x<y then x else y;
+// sum.ceylon
+"Given a nonempty stream of [[Summable]] values, return the 
+ sum of the values."
+see (`function product`)
+shared Value sum<Value>({Value+} values) 
+        given Value satisfies Summable<Value> {
+    value it = values.iterator();
+    assert (!is Finished first = it.next());
+    variable value sum = first;
+    while (!is Finished val = it.next()) {
+        sum += val;
+    }
+    return sum;
+}
+
+// times.ceylon
+"Multiply the given [[Numeric]] values.
+ 
+     (1..100).by(2).fold(1)(times<Integer>)"
+see (`function plus`, `function product`)
+shared Value times<Value>(Value x, Value y)
+        given Value satisfies Numeric<Value>
+        => x*y;
