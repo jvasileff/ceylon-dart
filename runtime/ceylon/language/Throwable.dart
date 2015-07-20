@@ -14,7 +14,7 @@ part of ceylon.language;
 
   Throwable([
       $dart$core.String message = dart$default,
-      Throwable cause = dart$default]) : this.$(
+      $dart$core.Object cause = dart$default]) : this.$(
           $dart$core.identical(message, dart$default) ? null : message,
           $dart$core.identical(cause, dart$default) ? null : cause);
 
