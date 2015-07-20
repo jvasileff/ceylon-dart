@@ -15,7 +15,8 @@ import ceylon.ast.core {
     PrefixPostfixStatement,
     AssignmentStatement,
     While,
-    Condition
+    Condition,
+    BooleanCondition
 }
 import ceylon.language.meta {
     type
@@ -303,9 +304,52 @@ class StatementTransformer(CompilationContext ctx)
 
     [DartStatement+] generateConditionAssertion(Condition that) {
         "Only IsConditions supported"
-        assert (is IsCondition that);
+        assert (is IsCondition|BooleanCondition that);
 
-        return generateIsConditionAssertion(that);
+        return switch (that)
+            case (is IsCondition) generateIsConditionAssertion(that)
+            case (is BooleanCondition) [generateBooleanConditionAssertion(that)];
+    }
+
+    DartStatement generateBooleanConditionAssertion(BooleanCondition that) {
+        value info = NodeInfo(that);
+
+        "The Ceylon source code for the condition"
+        value errorMessage =
+                ctx.tokens[info.token.tokenIndex..
+                           info.endToken.tokenIndex]
+                .map(Token.text)
+                .reduce(plus) else "";
+
+        // if (!condition) then throw new AssertionError(...)
+        return
+        DartIfStatement {
+            DartPrefixExpression {
+                "!";
+                generateBooleanConditionExpression(that);
+            };
+            DartExpressionStatement {
+                DartThrowExpression {
+                    DartInstanceCreationExpression {
+                        const = false;
+                        DartConstructorName {
+                            DartTypeName {
+                                DartPrefixedIdentifier {
+                                    DartSimpleIdentifier("$ceylon$language");
+                                    DartSimpleIdentifier(ctx.dartTypes.getName(
+                                        ctx.ceylonTypes.assertionErrorDeclaration));
+                                };
+                            };
+                        };
+                        DartArgumentList {
+                            [DartSimpleStringLiteral {
+                                "Violated: ``errorMessage``";
+                            }];
+                        };
+                    };
+                };
+            };
+        };
     }
 
     [DartStatement+] generateIsConditionAssertion(IsCondition that) {

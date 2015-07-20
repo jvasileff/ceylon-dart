@@ -286,6 +286,17 @@ class BaseTransformer<Result>(CompilationContext ctx)
         return [rhsType, rhsDeclaration, expressionGenerator];
     }
 
+    "Generates a DartExpression that produces a native boolean.
+
+     NOTE: This function unconventionally wraps the transformation in
+     `withLhsNative`, relieving callers of that duty."
+    shared
+    DartExpression generateBooleanConditionExpression(BooleanCondition that)
+        =>  withLhsNative {
+                ctx.ceylonTypes.booleanType;
+                () => that.condition.transform(expressionTransformer);
+            };
+
     shared
     [DartStatement?, DartStatement?, DartExpression, DartStatement?]
     generateIsConditionExpression(IsCondition that) {
@@ -887,8 +898,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             () => that.conditions
                     .reversed
                     .narrow<BooleanCondition>()
-                    .map((c)
-                        =>  c.condition.transform(expressionTransformer))
+                    .map(generateBooleanConditionExpression)
                     .reduce((DartExpression partial, c)
                         =>  DartBinaryExpression(c, "&&", partial));
         };
