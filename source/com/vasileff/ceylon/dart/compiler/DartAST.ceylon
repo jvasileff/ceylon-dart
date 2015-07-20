@@ -26,6 +26,46 @@ class DartDirective() extends DartAnnotatedNode() {
     // List<DartAnnotation> metadata
 }
 
+"A break statement."
+shared
+class DartBreakStatement(label = null)
+        extends DartStatement() {
+
+    shared DartSimpleIdentifier? label;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("break");
+        if (exists label) {
+            writer.write(" ");
+            label.write(writer);
+        }
+        writer.write(";");
+    }
+}
+
+"A continue statement."
+shared
+class DartContinueStatement(label = null)
+        extends DartStatement() {
+
+    shared DartSimpleIdentifier? label;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("continue");
+        if (exists label) {
+            writer.write(" ");
+            label.write(writer);
+        }
+        writer.write(";");
+    }
+}
+
 "A directive that references a URI."
 shared abstract
 class DartUriBasedDirective(uri)

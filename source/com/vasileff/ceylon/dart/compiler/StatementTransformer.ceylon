@@ -16,7 +16,8 @@ import ceylon.ast.core {
     AssignmentStatement,
     While,
     Condition,
-    BooleanCondition
+    BooleanCondition,
+    ExistsOrNonemptyCondition
 }
 import ceylon.language.meta {
     type
@@ -66,11 +67,54 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartWhileStatement] transformWhile(While that)
-        =>  [DartWhileStatement {
+    [DartWhileStatement] transformWhile(While that) {
+        if (that.conditions.conditions.every((c) => c is BooleanCondition)) {
+            // simple case, no variable declarations
+            return
+            [DartWhileStatement {
                 generateBooleanDartCondition(that.conditions);
                 statementTransformer.transformBlock(that.block).first;
             }];
+        }
+
+        value tests = that.conditions.conditions.flatMap((condition) {
+            switch (condition)
+            case (is BooleanCondition) {
+                return
+                [DartIfStatement {
+                    generateBooleanConditionExpression(condition, true);
+                    DartBreakStatement();
+                }];
+            }
+            case (is IsCondition) {
+                value [replacementDeclaration, tempDefinition,
+                            conditionExpression, replacementDefinition]
+                        = generateIsConditionExpression(condition, true);
+                return
+                {replacementDeclaration, tempDefinition,
+                DartIfStatement {
+                    conditionExpression;
+                    DartBreakStatement();
+                },
+                replacementDefinition
+                }.coalesced;
+            }
+            case (is ExistsOrNonemptyCondition) {
+                throw CompilerBug(that,
+                    "ExistsOrNonemptyCondition in while not yet supported.");
+            }
+        });
+
+        return
+        [DartWhileStatement {
+            DartBooleanLiteral(true);
+            DartBlock {
+                tests.chain {
+                    statementTransformer.transformBlock(that.block).first.statements;
+                }.sequence();
+            };
+        }];
+    }
 
     shared actual
     [DartStatement] transformInvocationStatement(InvocationStatement that)
@@ -364,17 +408,14 @@ class StatementTransformer(CompilationContext ctx)
 
         value [replacementDeclaration, tempDefinition,
                 conditionExpression, replacementDefinition]
-            = generateIsConditionExpression(that);
+            = generateIsConditionExpression(that, true);
 
         variable [DartStatement?*] statements = [
             replacementDeclaration,
             tempDefinition,
-            // if (x is !y) then throw new AssertionError(...)
+            // if (!(x is T)) then throw new AssertionError(...)
             DartIfStatement {
-                DartPrefixExpression {
-                    "!";
-                    conditionExpression;
-                };
+                conditionExpression; // negated above
                 DartExpressionStatement {
                     DartThrowExpression {
                         DartInstanceCreationExpression {

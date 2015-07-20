@@ -291,15 +291,19 @@ class BaseTransformer<Result>(CompilationContext ctx)
      NOTE: This function unconventionally wraps the transformation in
      `withLhsNative`, relieving callers of that duty."
     shared
-    DartExpression generateBooleanConditionExpression(BooleanCondition that)
-        =>  withLhsNative {
+    DartExpression generateBooleanConditionExpression
+            (BooleanCondition that, Boolean negate = false)
+        =>  let (e = withLhsNative {
                 ctx.ceylonTypes.booleanType;
                 () => that.condition.transform(expressionTransformer);
-            };
+            })
+            if (negate)
+            then DartPrefixExpression("!", e)
+            else e;
 
     shared
     [DartStatement?, DartStatement?, DartExpression, DartStatement?]
-    generateIsConditionExpression(IsCondition that) {
+    generateIsConditionExpression(IsCondition that, Boolean negate = false) {
 
         // IsCondition holds a TypedVariable that may
         // or may not include a specifier to define a new variable
@@ -470,7 +474,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
 
         return [replacementDeclaration,
                 tempDefinition,
-                conditionExpression,
+                if (that.negated && (!negate) || (!that.negated) && negate)
+                    then DartPrefixExpression("!", conditionExpression)
+                    else conditionExpression,
                 replacementDefinition];
     }
 
