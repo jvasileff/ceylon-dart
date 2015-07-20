@@ -5,8 +5,6 @@ import ceylon.test {
 shared
 class AssertIsNarrowingTests() {
 
-    // TODO the dart is expression is not yet complete (always uses Object)
-
     shared test
     void narrowObjectToString() {
         compileAndCompare {
@@ -21,7 +19,7 @@ class AssertIsNarrowingTests() {
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.String.instance("x");
-                    if (obj is !$dart$core.Object) {
+                    if (!(obj is $ceylon$language.String)) {
                         throw new $ceylon$language.AssertionError("Violated: is String obj");
                     }
                     $dart$core.String obj$0 = $ceylon$language.String.nativeValue(obj as $ceylon$language.String);
@@ -48,7 +46,7 @@ class AssertIsNarrowingTests() {
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.String.instance("x");
-                    if (obj is $dart$core.Object) {
+                    if (obj is $ceylon$language.String) {
                         throw new $ceylon$language.AssertionError("Violated: !is String obj");
                     }
                 }
@@ -73,7 +71,7 @@ class AssertIsNarrowingTests() {
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.$true;
-                    if (obj is !$dart$core.Object) {
+                    if (!(obj is $ceylon$language.Boolean)) {
                         throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
                     }
                     $dart$core.bool obj$0 = $ceylon$language.Boolean.nativeValue(obj as $ceylon$language.Boolean);
@@ -102,7 +100,7 @@ class AssertIsNarrowingTests() {
                     $dart$core.Object obj = $ceylon$language.Float.instance(1.0);
                     $dart$core.double f;{
                         $dart$core.Object f$0 = obj;
-                        if (f$0 is !$dart$core.Object) {
+                        if (!(f$0 is $ceylon$language.Float)) {
                             throw new $ceylon$language.AssertionError("Violated: is Float f = obj");
                         }
                         f = $ceylon$language.Float.nativeValue(f$0 as $ceylon$language.Float);
@@ -117,6 +115,9 @@ class AssertIsNarrowingTests() {
 
     shared test
     void narrowToGenericTypeWithErasure() {
+        // FIXME the (!true) test isn't great.
+        //       When we find a type parameter, should we replace it with its
+        //       constraints at least?
         compileAndCompare {
              """shared T echoString<T>(T t) given T satisfies String {
                     String s = t;
@@ -134,7 +135,7 @@ class AssertIsNarrowingTests() {
 
                 $dart$core.Object $package$echoString([$dart$core.Object t]) {
                     $dart$core.String s = $ceylon$language.String.nativeValue(t as $ceylon$language.String);
-                    if (s is !$dart$core.Object) {
+                    if (!true) {
                         throw new $ceylon$language.AssertionError("Violated: is T s");
                     }
                     $dart$core.Object s$0 = $ceylon$language.String.instance(s);
@@ -149,6 +150,6 @@ class AssertIsNarrowingTests() {
 
                 void run() => $package$run();
              """;
-         };
+        };
     }
 }
