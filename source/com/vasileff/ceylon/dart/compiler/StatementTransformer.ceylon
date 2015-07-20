@@ -52,17 +52,14 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartIfStatement] transformIfElse(IfElse that) {
-        // workaround https://github.com/ceylon/ceylon-compiler/issues/2219
-        value elseStatement =
-                    (switch (c = that.elseClause?.child)
-                    case (is Block) transformBlock(c).first
-                    case (is IfElse) transformIfElse(c).first
-                    case (is Null) null);
-
-        return [DartIfStatement {
+        return
+        [DartIfStatement {
             generateBooleanDartCondition(that.ifClause.conditions);
             statementTransformer.transformBlock(that.ifClause.block).first;
-            elseStatement;
+            switch (c = that.elseClause?.child)
+                    case (is Block) transformBlock(c).first
+                    case (is IfElse) transformIfElse(c).first
+                    case (is Null) null;
         }];
     }
 
