@@ -412,7 +412,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     getName(definiteType.declaration));
     }
 
-    "True if [[type]] is denotable in Dart (not a type parameter, union type, or
+    "True if [[type]] is denotable in Dart (not Nothing, a type parameter, union type, or
      intersection type.) Note: generic types such as `List<String>` and `List<T>` are
      considered denotable by this method, whereas type parameters, like `T`, are not."
     shared

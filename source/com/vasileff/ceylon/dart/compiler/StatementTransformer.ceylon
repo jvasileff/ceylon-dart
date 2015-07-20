@@ -371,7 +371,10 @@ class StatementTransformer(CompilationContext ctx)
             tempDefinition,
             // if (x is !y) then throw new AssertionError(...)
             DartIfStatement {
-                conditionExpression;
+                DartPrefixExpression {
+                    "!";
+                    conditionExpression;
+                };
                 DartExpressionStatement {
                     DartThrowExpression {
                         DartInstanceCreationExpression {

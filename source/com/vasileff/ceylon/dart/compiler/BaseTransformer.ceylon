@@ -317,11 +317,10 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // TODO consider null issues for negated checks
         // TODO consider erased types, like `Integer? i = 1; assert (is Integer i);`
 
-        //value typeInfo = TypeInfo(that.variable.type);
         value info = IsConditionInfo(that);
 
-        //"The type we are testing for"
-        //value isType = typeInfo.typeModel;
+        "The type we are testing for"
+        value isType = TypeInfo(that.variable.type).typeModel;
 
         "The declaration model for the new variable"
         value variableDeclaration = info.variableDeclarationModel;
@@ -386,7 +385,8 @@ class BaseTransformer<Result>(CompilationContext ctx)
             };
 
             // 3. perform is check on tmp variable
-            conditionExpression = generateIsExpression(tempIdentifier, that.negated);
+            conditionExpression = generateIsExpression(
+                    that, tempIdentifier, isType);
 
             // 4. set replacement variable
             replacementDefinition =
@@ -421,7 +421,8 @@ class BaseTransformer<Result>(CompilationContext ctx)
             value originalIdentifier = DartSimpleIdentifier(
                     ctx.dartTypes.getName(originalDeclaration));
 
-            conditionExpression = generateIsExpression(originalIdentifier, that.negated);
+            conditionExpression = generateIsExpression(
+                    that, originalIdentifier, isType);
 
             // erasure to native may have changed
             // erasure to object may have changed
@@ -473,17 +474,63 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 replacementDefinition];
     }
 
+    shared
     DartExpression generateIsExpression(
+            Node scope,
             DartExpression expressionToCheck,
-            Boolean not) {
+            TypeModel isType) {
 
-        return
-        DartIsExpression {
-            expressionToCheck;
-            // TODO actual type!
-            ctx.dartTypes.dartObject;
-            notOperator = !not;
-        };
+        // TODO warn if non-denotable (for which we are currently returning true!)
+        //      - take the type we are narrowing, and warn if non-reified checks are not
+        //        sufficient
+        //      - and reified generics...
+
+        if (isType.union) {
+            value result = CeylonList(isType.caseTypes).reversed
+                .map((t)
+                    => generateIsExpression(scope, expressionToCheck, t))
+                .reduce((DartExpression partial, c)
+                    =>  DartBinaryExpression(c, "||", partial));
+
+            assert (exists result);
+            return result;
+        }
+        else if (isType.intersection) {
+            value result = CeylonList(isType.satisfiedTypes).reversed
+                .map((t)
+                    => generateIsExpression(scope, expressionToCheck, t))
+                .reduce((DartExpression partial, c)
+                    =>  DartBinaryExpression(c, "&&", partial));
+
+            assert (exists result);
+            return result;
+        }
+        else if (ctx.ceylonTypes.isCeylonNothing(isType)) {
+            return DartBooleanLiteral(false);
+        }
+        else if (!ctx.dartTypes.denotable(isType)) {
+            // This isn't good! But no alternative w/o reified generics
+            return DartBooleanLiteral(true);
+        }
+        else if (ctx.ceylonTypes.isCeylonNull(isType)) {
+            return
+            DartBinaryExpression {
+                expressionToCheck;
+                "==";
+                DartNullLiteral();
+            };
+        }
+        else {
+            // we'll assume eraseToNative is false; otherwise, test should not compile
+            value dartType = ctx.dartTypes.dartTypeName(scope, isType, false);
+            print(ctx.dartTypes.denotable(isType));
+
+            return
+            DartIsExpression {
+                expressionToCheck;
+                dartType;
+            };
+        }
     }
 
     shared
@@ -1083,5 +1130,4 @@ class BaseTransformer<Result>(CompilationContext ctx)
             }];
         };
     }
-
 }
