@@ -62,7 +62,8 @@ import ceylon.ast.core {
     InOperation,
     LogicalOperation,
     AndOperation,
-    OrOperation
+    OrOperation,
+    GroupedExpression
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -674,6 +675,10 @@ class ExpressionTransformer(CompilationContext ctx)
         };
     }
 
+    shared actual
+    DartExpression transformGroupedExpression(GroupedExpression that)
+        =>  that.innerExpression.transform(this);
+
     DartExpression generateInvocationForBinaryOperation
             (BinaryOperation that, String methodName)
         =>  generateInvocation {
@@ -782,10 +787,18 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLogicalOperation(LogicalOperation that)
-        =>  generateInvocationForBinaryOperation(that,
-                switch (that)
-                case (is AndOperation) "and"
-                case (is OrOperation) "or");
+        =>  let (dartOperator =
+                    switch (that)
+                    case (is AndOperation) "&&"
+                    case (is OrOperation) "||")
+            withLhsNative {
+                ctx.ceylonTypes.booleanType;
+                () => DartBinaryExpression {
+                    that.leftOperand.transform(this);
+                    dartOperator;
+                    that.rightOperand.transform(this);
+                };
+            };
 
     shared actual
     DartExpression transformThenOperation(ThenOperation that)
