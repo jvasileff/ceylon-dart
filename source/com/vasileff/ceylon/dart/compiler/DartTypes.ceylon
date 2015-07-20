@@ -354,8 +354,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             Boolean eraseToNative,
             "Treat all generic types as `core.Object`.
 
-             *NOTE:* the default value does not account for erasure to object for
-             defaulted parameters!"
+             NOTE: callers should set eraseToObject to true for defaulted parameters."
             Boolean eraseToObject = type.typeParameter) {
 
         if (eraseToObject) {
@@ -363,6 +362,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
 
         value definiteType = ceylonTypes.definiteType(type);
+
+        // Tricky: Element|Absent is not caught in the first type.typeParameter test
+        if (definiteType.typeParameter) {
+            return dartObjectModel;
+        }
 
         // handle well known types first, before giving up
         // on unions and intersections
@@ -422,7 +426,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 && (let (definiteType = ceylonTypes.definiteType(type))
                    // union types that are booleans are denotable, as bool/Boolean
                    (ceylonTypes.isCeylonBoolean(definiteType)
-                        || (!definiteType.union && !definiteType.intersection)));
+                        || (!definiteType.union
+                                && !definiteType.intersection
+                                && !definiteType.typeParameter)));
 
     "True if [[type]] is not a type parameter and has a corresponding Dart native type
      such as `dart.core.int`."

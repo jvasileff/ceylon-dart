@@ -529,7 +529,6 @@ class BaseTransformer<Result>(CompilationContext ctx)
         else {
             // we'll assume eraseToNative is false; otherwise, test should not compile
             value dartType = ctx.dartTypes.dartTypeName(scope, isType, false);
-            print(ctx.dartTypes.denotable(isType));
 
             return
             DartIsExpression {
