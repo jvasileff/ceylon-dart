@@ -15,7 +15,8 @@ import ceylon.ast.core {
     Conditions,
     BooleanCondition,
     QualifiedExpression,
-    BaseExpression
+    BaseExpression,
+    IsCondition
 }
 import ceylon.collection {
     LinkedList
@@ -283,6 +284,195 @@ class BaseTransformer<Result>(CompilationContext ctx)
         }
 
         return [rhsType, rhsDeclaration, expressionGenerator];
+    }
+
+    shared
+    [DartStatement?, DartStatement?, DartExpression, DartStatement?]
+    generateIsConditionExpression(IsCondition that) {
+
+        // IsCondition holds a TypedVariable that may
+        // or may not include a specifier to define a new variable
+
+        // NOTE: There is no ast node for the typechecker's
+        // Tree.IsCondition.Variable (we just get the specifier
+        // and identifier from that node, but not the model info).
+        // Instead, use ConditionInfo.variableDeclarationModel.
+
+        // TODO don't hardcode AssertionError
+        // TODO string escaping
+        // TODO types! (including union and intersection, but not reified yet)
+        // TODO check not null for Objects
+        // TODO check null for Null
+        // TODO consider null issues for negated checks
+        // TODO consider erased types, like `Integer? i = 1; assert (is Integer i);`
+
+        //value typeInfo = TypeInfo(that.variable.type);
+        value info = IsConditionInfo(that);
+
+        //"The type we are testing for"
+        //value isType = typeInfo.typeModel;
+
+        "The declaration model for the new variable"
+        value variableDeclaration = info.variableDeclarationModel;
+
+        //"The type of the new variable (intersection of isType and expression/old type)"
+        //value variableType = variableDeclaration.type;
+
+        "The expression node if defining a new variable"
+        value expression = that.variable.specifier?.expression;
+
+        DartStatement? replacementDeclaration;
+        DartStatement? tempDefinition;
+        DartExpression conditionExpression;
+        DartStatement? replacementDefinition;
+
+        // new variable, or narrowing existing?
+        if (exists expression) {
+            // 1. declare the new variable
+            // 2. evaluate expression to temp variable of type of expression
+            // 3. check type of the temp variable
+            // 4. set the new variable, with appropriate boxing
+            // (perform 2-4 in a new block to scope the temp var)
+
+            value variableIdentifier = DartSimpleIdentifier(
+                    ctx.dartTypes.getName(variableDeclaration));
+
+            value expressionType = ExpressionInfo(expression).typeModel;
+
+            value tempIdentifier = DartSimpleIdentifier(
+                    ctx.dartTypes.createTempName(variableDeclaration));
+
+            // 1. declare the new variable
+            replacementDeclaration =
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    ctx.dartTypes.dartTypeNameForDeclaration {
+                        that;
+                        variableDeclaration;
+                    };
+                    [DartVariableDeclaration {
+                        variableIdentifier;
+                    }];
+                };
+            };
+
+            // 2. evaluate to tmp variable
+            tempDefinition =
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    ctx.dartTypes.dartTypeName(that, expressionType, true);
+                    [DartVariableDeclaration {
+                        tempIdentifier;
+                        // possibly erase to a native type!
+                        withLhsNative {
+                            expressionType;
+                            () => expression.transform(expressionTransformer);
+                        };
+                    }];
+                };
+            };
+
+            // 3. perform is check on tmp variable
+            conditionExpression = generateIsExpression(tempIdentifier, that.negated);
+
+            // 4. set replacement variable
+            replacementDefinition =
+            DartExpressionStatement {
+                DartAssignmentExpression {
+                    variableIdentifier;
+                    DartAssignmentOperator.equal;
+                    withLhs {
+                        null;
+                        variableDeclaration;
+                        () => withBoxing {
+                            that;
+                            // as noted above, tmpVariable may be erased. Maybe
+                            // when narrowing optionals like String?.
+                            expressionType;
+                            null;
+                            tempIdentifier;
+                        };
+                    };
+                };
+            };
+        }
+        else {
+            tempDefinition = null;
+            replacementDeclaration = null;
+
+            // check type of the original variable,
+            // possibly declare new variable with a narrowed type
+            assert(is FunctionOrValueModel originalDeclaration =
+                    variableDeclaration.originalDeclaration);
+
+            value originalIdentifier = DartSimpleIdentifier(
+                    ctx.dartTypes.getName(originalDeclaration));
+
+            conditionExpression = generateIsExpression(originalIdentifier, that.negated);
+
+            // erasure to native may have changed
+            // erasure to object may have changed
+            // type may have narrowed
+            value dartTypeChanged =
+                ctx.dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
+                ctx.dartTypes.dartTypeModelForDeclaration(variableDeclaration);
+
+            replacementDefinition =
+                if (!dartTypeChanged)
+                then null
+                else
+                    DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            ctx.dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                variableDeclaration;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier {
+                                    ctx.dartTypes.createReplacementName{
+                                        variableDeclaration;
+                                    };
+                                };
+                                withLhs {
+                                    null;
+                                    variableDeclaration;
+                                    () => withBoxing {
+                                        that;
+                                        originalDeclaration.type; // good enough???
+                                        // FIXME possibly false assumption that refined
+                                        // will be null for non-initial declarations
+                                        // (is refinedDeclaration propagated?)
+                                        originalDeclaration;
+                                        DartSimpleIdentifier {
+                                            ctx.dartTypes.getName(originalDeclaration);
+                                        };
+                                    };
+                                };
+                            }];
+                        };
+                    };
+        }
+
+        return [replacementDeclaration,
+                tempDefinition,
+                conditionExpression,
+                replacementDefinition];
+    }
+
+    DartExpression generateIsExpression(
+            DartExpression expressionToCheck,
+            Boolean not) {
+
+        return
+        DartIsExpression {
+            expressionToCheck;
+            // TODO actual type!
+            ctx.dartTypes.dartObject;
+            notOperator = !not;
+        };
     }
 
     shared
