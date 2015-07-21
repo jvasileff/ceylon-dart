@@ -91,7 +91,6 @@ shared
                 augmentNode);
 
         if (verbose) {
-            printNodeAsCode(unit);
             print("========================");
             print("== TC-AST");
             print("========================");
@@ -106,9 +105,7 @@ shared
         }
 
         if (hasError(unit)) {
-            if (verbose) {
-                process.writeError("Typechecker errors exist; skipping Dart backend");
-            }
+            process.writeError("Typechecker errors exist; skipping Dart backend");
         }
         else {
             try {
@@ -136,11 +133,6 @@ shared
                     };
 
                 dartCompilationUnits.add(dartCompilationUnit);
-
-                if (verbose) {
-                    value codeWriter = CodeWriter(process.write);
-                    dartCompilationUnit.write(codeWriter);
-                }
             } catch (CompilerBug b) {
                 process.writeError("Compiler bug:\n" + b.message);
             }
