@@ -975,8 +975,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
     DartArgumentList generateArgumentListFromArgumentList
             (ArgumentList that, TypeModel callableType) {
 
-        "spread arguments not supported"
-        assert(that.sequenceArgument is Null);
+        if(!that.sequenceArgument is Null) {
+            throw unimplementedError(that, "spread arguments not supported");
+        }
 
         value info = ArgumentListInfo(that);
         value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));

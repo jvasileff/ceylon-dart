@@ -55,17 +55,17 @@ class CoreTransformer<Result>(CompilationContext ctx)
     shared actual default
     Result transformNode(Node that) {
         throw CompilerBug(that,
-            "Unhandled node '``className(that)``'");
+            "Unhandled node: '``className(that)``'");
     }
 
     shared
-    void unimplementedError(Node that, String? message=null)
-        =>  error(that,
-                "compiler bug: unhandled node \
-                 '``className(that)``'" +
-                (if (exists message)
+    CompilerBug unimplementedError(Node that, String? message=null) {
+        throw CompilerBug(that,
+            "Unimplemented" + (
+                if (exists message)
                 then ": " + message
                 else ""));
+    }
 
     shared
     DartExpression withBoxing(

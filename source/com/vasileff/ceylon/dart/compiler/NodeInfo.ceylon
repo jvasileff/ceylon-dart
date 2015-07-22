@@ -83,8 +83,11 @@ class NodeInfo(Node astNode) {
     shared Token token => tcNode.token;
     shared Token endToken => tcNode.endToken;
 
+    // FIXME location and filename doesn't work for ArgumentListInfo
+    // https://github.com/ceylon/ceylon-spec/issues/1385
     shared String location => tcNode.location;
-    shared String filename => tcNode.unit.filename;
+    shared String filename => tcNode.unit?.filename else "<null>";
+
     shared ScopeModel scope => tcNode.scope;
     shared {Message*} errors => CeylonList(tcNode.errors);
     shared void addError(String string) => tcNode.addError(string);
