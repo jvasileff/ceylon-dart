@@ -53,7 +53,8 @@ import java.io {
     ByteArrayInputStream
 }
 import java.lang {
-    JString=String
+    JString=String,
+    System
 }
 import java.util {
     JList=List
@@ -95,6 +96,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
 
     shared actual
     void run() {
+        try {
+            doRun();
+        }
+        catch (CompilerBug e) {
+            process.writeErrorLine("Compiler Bug: " + e.message);
+            System.exit(1);
+        }
+    }
+
+    void doRun() {
         value roots = DefaultToolOptions.compilerSourceDirs;
         value resources = DefaultToolOptions.compilerResourceDirs;
         value resolver = SourceArgumentsResolver(roots, resources, ".ceylon");
