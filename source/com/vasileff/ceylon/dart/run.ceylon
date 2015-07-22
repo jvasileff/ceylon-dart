@@ -14,6 +14,10 @@ void run() {
             void run() {
                 print("dart");
             }
+
+            native void someNative();
+
+            native String someString;
          """;
 
     value result = compile { false; program };

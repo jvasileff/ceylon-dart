@@ -17,7 +17,9 @@ import ceylon.ast.core {
     While,
     Condition,
     BooleanCondition,
-    ExistsOrNonemptyCondition
+    ExistsOrNonemptyCondition,
+    ClassDefinition,
+    InterfaceDefinition
 }
 import ceylon.language.meta {
     type
@@ -295,6 +297,23 @@ class StatementTransformer(CompilationContext ctx)
                 };
             }];
         }];
+    }
+
+    shared actual DartStatement[] transformClassDefinition(ClassDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+        return super.transformClassDefinition(that);
+    }
+
+    shared actual
+    DartStatement[] transformInterfaceDefinition(InterfaceDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+        return super.transformInterfaceDefinition(that);
     }
 
     shared actual
