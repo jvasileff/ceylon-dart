@@ -7,5 +7,6 @@ shared
 class CompilerBug(
         shared Node node, String description,
         Throwable? cause = null)
-        extends Exception(description + " at "
-                    + NodeInfo(node).location, cause) {}
+        extends Exception(
+            let (NodeInfo info = NodeInfo(node))
+            description + " at '``info.filename``: ``info.location``'") {}

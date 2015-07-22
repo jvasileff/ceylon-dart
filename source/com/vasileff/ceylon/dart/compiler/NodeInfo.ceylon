@@ -84,6 +84,7 @@ class NodeInfo(Node astNode) {
     shared Token endToken => tcNode.endToken;
 
     shared String location => tcNode.location;
+    shared String filename => tcNode.unit.filename;
     shared ScopeModel scope => tcNode.scope;
     shared {Message*} errors => CeylonList(tcNode.errors);
     shared void addError(String string) => tcNode.addError(string);

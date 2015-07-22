@@ -54,7 +54,8 @@ class CoreTransformer<Result>(CompilationContext ctx)
 
     shared actual default
     Result transformNode(Node that) {
-        throw CompilerBug(that, "Unhandled node '``className(that)``'");
+        throw CompilerBug(that,
+            "Unhandled node '``className(that)``'");
     }
 
     shared
