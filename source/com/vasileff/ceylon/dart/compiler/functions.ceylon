@@ -115,8 +115,10 @@ String? getNative(Declaration|DeclarationInfo|DeclarationModel that)
                 case (is DeclarationInfo) that
                         .declarationModel
                 case (is DeclarationModel) that)
-
-        model.nativeBackend;
+        // workaround https://github.com/ceylon/ceylon-compiler/issues/2244
+        if (exists result=model.nativeBackend)
+        then result
+        else null;
 
 "Returns true if the declaration is not marked `native`, or if it is marked `native`
  with a Ceylon implementation for the Dart backend."
