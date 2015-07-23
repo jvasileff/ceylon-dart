@@ -1019,9 +1019,3 @@ DartIdentifier dartDCIdentical
             prefix = DartSimpleIdentifier("$dart$core");
             identifier = DartSimpleIdentifier("identical");
         };
-
-DartIdentifier dartCLDDefaulted
-    =   DartPrefixedIdentifier {
-            prefix = DartSimpleIdentifier("$ceylon$language");
-            identifier = DartSimpleIdentifier("dart$default");
-        };

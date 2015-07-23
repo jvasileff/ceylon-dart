@@ -206,12 +206,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     shared
+    DartIdentifier dartDefault(Node scope)
+        =>  if (getModule(scope).nameAsString == "ceylon.language") then
+                DartSimpleIdentifier("$package$dart$default")
+            else
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$ceylon$language");
+                    DartSimpleIdentifier("dart$default");
+                };
+
+    shared
     DartTypeModel dartObjectModel
         =   DartTypeModel("$dart$core", "Object");
 
     shared
     DartTypeModel dartBoolModel
         =   DartTypeModel("$dart$core", "bool");
+
+
+    shared
+    DartTypeModel dartCallableModel
+        =>  DartTypeModel("ceylon$language", "dart$Callable");
 
     shared
     DartTypeModel dartIntModel

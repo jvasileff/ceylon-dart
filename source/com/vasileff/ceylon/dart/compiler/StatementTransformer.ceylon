@@ -398,12 +398,10 @@ class StatementTransformer(CompilationContext ctx)
                     DartInstanceCreationExpression {
                         const = false;
                         DartConstructorName {
-                            DartTypeName {
-                                DartPrefixedIdentifier {
-                                    DartSimpleIdentifier("$ceylon$language");
-                                    DartSimpleIdentifier(ctx.dartTypes.getName(
-                                        ctx.ceylonTypes.assertionErrorDeclaration));
-                                };
+                            ctx.dartTypes.dartTypeName {
+                                that;
+                                ctx.ceylonTypes.assertionErrorType;
+                                false; false;
                             };
                         };
                         DartArgumentList {
@@ -442,12 +440,10 @@ class StatementTransformer(CompilationContext ctx)
                         DartInstanceCreationExpression {
                             const = false;
                             DartConstructorName {
-                                DartTypeName {
-                                    DartPrefixedIdentifier {
-                                        DartSimpleIdentifier("$ceylon$language");
-                                        DartSimpleIdentifier(ctx.dartTypes.getName(
-                                            ctx.ceylonTypes.assertionErrorDeclaration));
-                                    };
+                                ctx.dartTypes.dartTypeName {
+                                    that;
+                                    ctx.ceylonTypes.assertionErrorType;
+                                    false; false;
                                 };
                             };
                             DartArgumentList {

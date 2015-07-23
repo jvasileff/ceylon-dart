@@ -313,7 +313,6 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // and identifier from that node, but not the model info).
         // Instead, use ConditionInfo.variableDeclarationModel.
 
-        // TODO don't hardcode AssertionError
         // TODO string escaping
         // TODO types! (including union and intersection, but not reified yet)
         // TODO check not null for Objects
@@ -629,10 +628,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                                 };
                                 DartArgumentList {
                                     [paramName,
-                                     DartPrefixedIdentifier {
-                                        DartSimpleIdentifier("$ceylon$language");
-                                        DartSimpleIdentifier("dart$default");
-                                    }];
+                                     ctx.dartTypes.dartDefault(that)];
                                 };
                             };
                             // then set to default expression
@@ -732,10 +728,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier("$ceylon$language");
-                            identifier = DartSimpleIdentifier("dart$default");
-                        };
+                        ctx.dartTypes.dartDefault(that);
                     };
                 }
                 else {
@@ -809,10 +802,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        DartPrefixedIdentifier {
-                            prefix = DartSimpleIdentifier("$ceylon$language");
-                            identifier = DartSimpleIdentifier("dart$default");
-                        };
+                        ctx.dartTypes.dartDefault(that);
                     };
                 }
                 else {
@@ -845,14 +835,13 @@ class BaseTransformer<Result>(CompilationContext ctx)
                             dartDCIdentical;
                             DartArgumentList {
                                 [parameterIdentifier,
-                                 dartCLDDefaulted];
+                                 ctx.dartTypes.dartDefault(that)];
                             };
                         };
                         // propagate defaulted
-                        dartCLDDefaulted;
+                        ctx.dartTypes.dartDefault(that);
                         // not default, unbox as necessary
                         unboxed;
-
                     };
                 }
                 else {
@@ -919,17 +908,16 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // create the Callable!
         return
         DartInstanceCreationExpression {
-            const = false;
+            false;
             DartConstructorName {
-                type = DartTypeName {
-                    DartPrefixedIdentifier {
-                        DartSimpleIdentifier("$ceylon$language");
-                        DartSimpleIdentifier("dart$Callable");
-                    };
+                ctx.dartTypes.dartTypeName {
+                    that;
+                    ctx.ceylonTypes.callableDeclaration.type;
+                    false; false;
                 };
-                name = null;
+                null;
             };
-            argumentList = DartArgumentList {
+            DartArgumentList {
                 [outerFunction];
             };
         };

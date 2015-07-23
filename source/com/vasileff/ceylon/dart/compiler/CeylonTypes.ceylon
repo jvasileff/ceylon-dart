@@ -24,6 +24,9 @@ class CeylonTypes(Unit unit) {
     /////////////////////////////////////////////
 
     shared
+    Type assertionErrorType => assertionErrorDeclaration.type;
+
+    shared
     Type anythingType => unit.anythingType;
 
     shared
