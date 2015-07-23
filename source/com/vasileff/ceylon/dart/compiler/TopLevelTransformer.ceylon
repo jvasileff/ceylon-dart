@@ -32,6 +32,7 @@ import com.vasileff.ceylon.dart.ast {
 
 "For Dart TopLevel declarations, which are distinct from
  declarations made within blocks."
+shared
 class TopLevelTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartCompilationUnitMember*]>(ctx) {
 

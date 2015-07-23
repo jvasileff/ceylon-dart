@@ -113,6 +113,7 @@ import com.vasileff.ceylon.dart.ast {
     DartConditionalExpression
 }
 
+shared
 class ExpressionTransformer(CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {
 

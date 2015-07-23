@@ -64,6 +64,7 @@ class CeylonRunDartTool() extends RepoUsingTool(null) {
 
         // TODO handle default modules
         // TODO handle version lookup
+        suppressWarnings("unusedDeclaration")
         value moduleIsDefault = ModuleUtil.isDefaultModule(moduleString);
         String moduleVersion = ModuleUtil.moduleVersion(moduleString);
         String moduleName = ModuleUtil.moduleName(moduleString);

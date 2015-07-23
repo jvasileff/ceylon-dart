@@ -17,6 +17,7 @@ import com.vasileff.jl4c.guava.collect {
     javaList
 }
 
+shared
 class CeylonTypes(Unit unit) {
 
     /////////////////////////////////////////////

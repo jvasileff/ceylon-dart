@@ -15,6 +15,7 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList
 }
 
+shared
 class MiscTransformer(CompilationContext ctx)
         extends BaseTransformer<Anything>(ctx) {
 

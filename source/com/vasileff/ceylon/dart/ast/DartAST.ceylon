@@ -1,6 +1,4 @@
-import com.vasileff.ceylon.dart.compiler {
-    CodeWriter
-}
+
 shared abstract
 class DartNode() {
     shared formal

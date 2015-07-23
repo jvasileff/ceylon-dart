@@ -40,6 +40,7 @@ import com.vasileff.ceylon.dart.ast {
     DartIdentifier
 }
 
+shared
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     variable value counter = 0;

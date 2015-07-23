@@ -13,6 +13,7 @@ import ceylon.collection {
     HashSet
 }
 
+shared
 class CompilationContext(unit, tokens) {
 
     shared

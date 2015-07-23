@@ -1,4 +1,4 @@
-abstract
+shared abstract
 class BoxingConversion()
         of ceylonBooleanToNative | ceylonFloatToNative |
             ceylonIntegerToNative | ceylonStringToNative |

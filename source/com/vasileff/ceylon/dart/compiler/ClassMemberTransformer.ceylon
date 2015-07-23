@@ -10,6 +10,7 @@ import com.vasileff.ceylon.dart.ast {
     DartClassMember
 }
 
+shared
 class ClassMemberTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartClassMember*]>(ctx) {
 

@@ -43,7 +43,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module
 }
 import com.vasileff.ceylon.dart.compiler {
-    augmentNode
+    augmentNode,
+    CompilationContext,
+    CompilerBug
 }
 import com.vasileff.jl4c.guava.collect {
     javaList

@@ -32,6 +32,7 @@ import com.vasileff.ceylon.dart.ast {
    Shared code generation methods should be placed in [[BaseTransformer]].
 """
 abstract
+shared
 class CoreTransformer<Result>(CompilationContext ctx)
         satisfies WideningTransformer<Result> {
 

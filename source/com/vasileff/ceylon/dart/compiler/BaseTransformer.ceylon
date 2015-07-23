@@ -73,7 +73,7 @@ import com.vasileff.ceylon.dart.ast {
     DartStatement
 }
 
-abstract
+shared abstract
 class BaseTransformer<Result>(CompilationContext ctx)
         extends CoreTransformer<Result>(ctx)
         satisfies WideningTransformer<Result> {

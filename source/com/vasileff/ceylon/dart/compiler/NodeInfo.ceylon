@@ -72,6 +72,7 @@ import org.antlr.runtime {
     Token
 }
 
+shared
 class NodeInfo(Node astNode) {
 
     shared default Node node => astNode;
@@ -95,6 +96,7 @@ class NodeInfo(Node astNode) {
     shared void addUnsupportedError(String string) => tcNode.addUnsupportedError(string);
 }
 
+shared
 class ExpressionInfo(Expression astNode)
         extends NodeInfo(astNode) {
 
@@ -105,6 +107,7 @@ class ExpressionInfo(Expression astNode)
     shared TypeModel typeModel => tcNode.typeModel;
 }
 
+shared
 class BaseExpressionInfo(BaseExpression astNode)
         extends ExpressionInfo(astNode) {
 
@@ -132,6 +135,7 @@ class BaseExpressionInfo(BaseExpression astNode)
     shared TypeModel? parameterType => tcNode.parameterType;
 }
 
+shared
 class QualifiedExpressionInfo(QualifiedExpression astNode)
         extends ExpressionInfo(astNode) {
 
@@ -166,6 +170,7 @@ class QualifiedExpressionInfo(QualifiedExpression astNode)
     shared TypeModel? parameterType => tcNode.parameterType;
 }
 
+shared
 class DeclarationInfo(Declaration astNode)
         extends NodeInfo(astNode) {
 
@@ -174,6 +179,7 @@ class DeclarationInfo(Declaration astNode)
     shared default DeclarationModel declarationModel => tcNode.declarationModel;
 }
 
+shared
 class TypedDeclarationInfo(TypedDeclaration astNode)
         extends DeclarationInfo(astNode) {
 
@@ -186,6 +192,7 @@ class TypedDeclarationInfo(TypedDeclaration astNode)
     }
 }
 
+shared
 class AnyValueInfo(AnyValue astNode)
         extends TypedDeclarationInfo(astNode) {
 
@@ -196,24 +203,28 @@ class AnyValueInfo(AnyValue astNode)
     ValueModel declarationModel => tcNode.declarationModel;
 }
 
+shared
 class ValueDefinitionInfo(ValueDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDefinition node => astNode;
 }
 
+shared
 class ValueDeclarationInfo(ValueDeclaration astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDeclaration node => astNode;
 }
 
+shared
 class ValueGetterDefinitionInfo(ValueGetterDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueGetterDefinition node => astNode;
 }
 
+shared
 class ArgumentListInfo(ArgumentList astNode)
         extends NodeInfo(astNode) {
 
@@ -232,6 +243,7 @@ class ArgumentListInfo(ArgumentList astNode)
                 =>  [arg.typeModel, arg.parameter else null]);
 }
 
+shared
 class FunctionExpressionInfo(FunctionExpression astNode)
         extends ExpressionInfo(astNode) {
 
@@ -240,6 +252,7 @@ class FunctionExpressionInfo(FunctionExpression astNode)
     shared FunctionModel declarationModel => tcNode.declarationModel;
 }
 
+shared
 class AnyFunctionInfo(AnyFunction astNode)
         extends TypedDeclarationInfo(astNode) {
 
@@ -249,18 +262,21 @@ class AnyFunctionInfo(AnyFunction astNode)
 }
 
 "Tree.ExecutableStatement"
+shared
 class StatementInfo(Statement astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Statement node => astNode;
 }
 
+shared
 class VariableInfo(Variable astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Variable node => astNode;
 }
 
+shared
 class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
         extends VariableInfo(astNode) {
 
@@ -274,18 +290,21 @@ class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
     shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
+shared
 class ForFailInfo(ForFail astNode)
         extends StatementInfo(astNode) {
 
     shared actual default ForFail node => astNode;
 }
 
+shared
 class ForClauseInfo(ForClause astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ForClause node => astNode;
 }
 
+shared
 class ForIteratorInfo(ForIterator astNode)
         extends NodeInfo(astNode) {
 
@@ -300,21 +319,25 @@ class ForIteratorInfo(ForIterator astNode)
     // | Tree.ValueIterator -> Tree.Variable
 }
 
+shared
 class FunctionDeclarationInfo(FunctionDeclaration astNode)
         extends AnyFunctionInfo(astNode) {
 
     shared actual default AnyFunction node => astNode;
 }
 
+shared
 class FunctionDefinitionInfo(FunctionDefinition astNode)
         extends AnyFunctionInfo(astNode) {
 
     shared actual default FunctionDefinition node => astNode;
 }
 
+shared
 class FunctionShortcutDefinitionInfo(FunctionShortcutDefinition astNode)
         extends AnyFunctionInfo(astNode) {}
 
+shared
 class ParameterInfo(Parameter astNode)
         extends NodeInfo(astNode) {
 
@@ -324,6 +347,7 @@ class ParameterInfo(Parameter astNode)
     shared ParameterModel parameterModel => tcNode.parameterModel;
 }
 
+shared
 class TypeInfo(Type astNode)
         extends NodeInfo(astNode) {
 
@@ -333,6 +357,7 @@ class TypeInfo(Type astNode)
     shared TypeModel typeModel => tcNode.typeModel;
 }
 
+shared
 class IsConditionInfo(IsCondition astNode)
         extends NodeInfo(astNode) {
 
@@ -342,10 +367,12 @@ class IsConditionInfo(IsCondition astNode)
     shared ValueModel variableDeclarationModel => tcNode.variable.declarationModel;
 }
 
+shared
 alias ControlClauseNodeType => CaseClause | CatchClause | ComprehensionClause |
         DynamicBlock | ElseClause | FinallyClause | ForClause |
         IfClause | LetExpression | TryClause | While;
 
+shared
 class ControlClauseInfo(ControlClauseNodeType astNode)
         extends NodeInfo(astNode) {
 
@@ -355,6 +382,7 @@ class ControlClauseInfo(ControlClauseNodeType astNode)
     shared ControlBlockModel controlBlock => tcNode.controlBlock;
 }
 
+shared
 class ComprehensionClauseInfo(ComprehensionClause astNode)
         extends ControlClauseInfo(astNode) {
 
@@ -365,6 +393,7 @@ class ComprehensionClauseInfo(ComprehensionClause astNode)
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
 }
 
+shared
 class ValueSpecificationInfo(ValueSpecification astNode)
         extends NodeInfo(astNode) {
 
@@ -377,6 +406,7 @@ class ValueSpecificationInfo(ValueSpecification astNode)
     //shared TypedDeclarationModel? refined => tcNode.refined;
 }
 
+shared
 class InvocationInfo(Invocation astNode)
         extends ExpressionInfo(astNode) {
 
@@ -384,6 +414,7 @@ class InvocationInfo(Invocation astNode)
     //value tcNode = assertedTcNode<Tree.InvocationExpression>(node);
 }
 
+shared
 class TypeDeclarationInfo(TypeDeclaration astNode)
         extends DeclarationInfo(astNode) {
 
@@ -396,6 +427,7 @@ class TypeDeclarationInfo(TypeDeclaration astNode)
     }
 }
 
+shared
 class ClassOrInterfaceDefinitionInfo(ClassOrInterface astNode)
         extends TypeDeclarationInfo(astNode) {
 
@@ -408,6 +440,7 @@ class ClassOrInterfaceDefinitionInfo(ClassOrInterface astNode)
     }
 }
 
+shared
 class AnyInterfaceInfo(AnyInterface astNode)
         extends TypeDeclarationInfo(astNode) {
 
@@ -420,6 +453,7 @@ class AnyInterfaceInfo(AnyInterface astNode)
     }
 }
 
+shared
 class AnyClassInfo(AnyClass astNode)
         extends TypeDeclarationInfo(astNode) {
 

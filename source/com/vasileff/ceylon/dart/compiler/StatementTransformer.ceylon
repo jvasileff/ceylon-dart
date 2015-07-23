@@ -53,6 +53,7 @@ import com.vasileff.ceylon.dart.ast {
     DartStatement
 }
 
+shared
 class StatementTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartStatement*]>(ctx) {
 

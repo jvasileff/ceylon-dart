@@ -3,7 +3,9 @@ import ceylon.test {
 }
 
 import com.vasileff.ceylon.dart.compiler {
-    compile,
+    compile
+}
+import com.vasileff.ceylon.dart.ast {
     CodeWriter
 }
 
