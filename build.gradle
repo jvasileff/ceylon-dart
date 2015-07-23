@@ -1,44 +1,80 @@
-apply plugin: 'base'
-apply plugin: 'ceylon'
+description = "Ceylon Dart Backend"
 
-defaultTasks 'compileCeylon'
+allprojects {
+    group = 'com.vasileff.ceylon.dart'
+    version = '0.0.1'
+}
+
+// root project
+
+apply plugin: 'base'
 
 ext.ceylonRepoDir = System.getProperty("user.home") + "/.ceylon/repo"
+ext.ceylonBinDir = System.getProperty("user.home") + "/.ceylon/bin"
 
-compileCeylon {
-    module "com.vasileff.ceylon.dart"
-    sourceDir file("source")
+task build(dependsOn: assemble) {
+    group = 'Build'
+    description = 'Assembles and tests this project.'
 }
 
-ceylonDoc {
-    includeSource = true
-    includeNonShared = true
-    ignoreMissingDoc = true
-    ignoreMissingThrows = true
-}
+// ceylon-dart-compiler
 
-task ceylonTest(type: CeylonTestTask) {
-    dependsOn compileCeylon
+project('ceylon-dart-compiler') {
+    description = "Ceylon Dart Backend Compiler"
+    apply plugin: 'ceylon'
 
-    report = true
-    module "com.vasileff.ceylon.dart"
-    test "com.vasileff.ceylon.dart.test"
-}
+    defaultTasks 'compileCeylon'
 
-task publish(type: Copy) {
-    description 'Copies the compiled modules to the user\'s repository'
+    compileCeylon {
+        // standard is src/main/ceylon
+        sourceDir file("source")
+    }
 
-    dependsOn "ceylonDoc"
-    dependsOn "compileCeylon"
+    ceylonDoc {
+        includeSource true
+        includeNonShared true
+        ignoreMissingDoc true
+        ignoreMissingThrows true
+    }
 
-    from ceylonDoc.destinationDir
-    from compileCeylon.destinationDir
+    task ceylonTest(type: CeylonTestTask) {
+        dependsOn compileCeylon
 
-    into ceylonRepoDir
-}
+        report = true
+        module "com.vasileff.ceylon.dart"
+        test "com.vasileff.ceylon.dart.test"
+    }
 
-task test {
-  dependsOn ceylonTest;
+    task install(type: Copy) {
+        dependsOn "publish"
+        from(projectDir) {
+          include "ceylon-compile-dart.plugin"
+          include "ceylon-run-dart.plugin"
+        }
+        into ceylonBinDir
+    }
+
+    task publish(type: Copy) {
+        description 'Copies the compiled modules to the user\'s repository'
+
+        dependsOn "ceylonDoc"
+        dependsOn "compileCeylon"
+
+        from ceylonDoc.destinationDir
+        from compileCeylon.destinationDir
+
+        into ceylonRepoDir
+    }
+
+    task test {
+        dependsOn ceylonTest;
+    }
+
+    task build(dependsOn: assemble) {
+        dependsOn test;
+        group = 'Build'
+        description = 'Assembles and tests this project.'
+    }
 }
 
 wrapper {
