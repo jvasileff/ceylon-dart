@@ -17,6 +17,14 @@ ceylonDoc {
     ignoreMissingThrows = true
 }
 
+task ceylonTest(type: CeylonTestTask) {
+    dependsOn compileCeylon
+
+    report = true
+    module "com.vasileff.ceylon.dart"
+    test "com.vasileff.ceylon.dart.test"
+}
+
 task publish(type: Copy) {
     description 'Copies the compiled modules to the user\'s repository'
 
@@ -27,6 +35,10 @@ task publish(type: Copy) {
     from compileCeylon.destinationDir
 
     into ceylonRepoDir
+}
+
+task test {
+  dependsOn ceylonTest;
 }
 
 wrapper {

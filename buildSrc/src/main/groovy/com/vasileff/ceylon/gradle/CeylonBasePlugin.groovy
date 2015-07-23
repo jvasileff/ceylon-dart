@@ -45,6 +45,7 @@ class CeylonBasePlugin implements Plugin<Project> {
     project.ext.CompileCeylonTask = CompileCeylonTask
     project.ext.CompileCeylonJSTask = CompileCeylonJSTask
     project.ext.CeylonDocTask = CeylonDocTask
+    project.ext.CeylonTestTask = CeylonTestTask
 
     // http://ceylon-lang.org/documentation/1.1/reference/tool/ant/
     project.ant.taskdef(resource: 'com/redhat/ceylon/ant/antlib.xml',

@@ -16,6 +16,52 @@ import org.apache.tools.ant.types.Path
 
 abstract class AbstractCeylonTask extends DefaultTask {
   protected Set<String> modules = new HashSet()
+  private List<String> repos = new ArrayList<String>()
+
+  protected Path getAntSourcePath() {
+    ant.path {
+      getSourceDirs().each {
+        pathelement(location: it)
+      }
+    }
+  }
+
+  void module(String module) {
+    modules.add(module)
+  }
+
+  void modules(List<String> modules) {
+    modules.each {
+      module(it)
+    }
+  }
+
+  protected Set<String> additionalRepositories() {
+    return new HashSet<String>()
+  }
+
+  void repository(Object repository) {
+    // may be a String or File
+    repos.add(repository.toString())
+  }
+
+  void repositories(List<String> repositories) {
+    repositories.each {
+      repository(it)
+    }
+  }
+
+  Set<String> getRepositories() {
+    Set<String> repositories = new LinkedHashSet<String>()
+    repos.each {
+      repositories.add(it)
+    }
+    repositories.addAll(additionalRepositories())
+    repositories
+  }
+}
+
+abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   private List<Object> source = new ArrayList<Object>();
 
   String encoding = 'UTF-8'
@@ -25,14 +71,6 @@ abstract class AbstractCeylonTask extends DefaultTask {
   protected FileCollection getInputFiles() {
     // https://issues.gradle.org/browse/GRADLE-3051
     project.files(getSourceDirs());
-  }
-
-  protected Path getAntSourcePath() {
-    ant.path {
-      getSourceDirs().each {
-        pathelement(location: it)
-      }
-    }
   }
 
   protected Set<File> additionalSourceDirs() {
@@ -70,19 +108,9 @@ abstract class AbstractCeylonTask extends DefaultTask {
   File getDestination() {
     project.file(destinationDir)
   }
-
-  void module(String module) {
-    modules.add(module)
-  }
-
-  void modules(List<String> modules) {
-    modules.each {
-      module(it)
-    }
-  }
 }
 
-class CompileCeylonTask extends AbstractCeylonTask {
+class CompileCeylonTask extends AbstractOutputtingCeylonTask {
   @TaskAction
   def compile() {
     def sources = getSourceDirs();
@@ -108,7 +136,7 @@ class CompileCeylonTask extends AbstractCeylonTask {
   }
 }
 
-class CompileCeylonJSTask extends AbstractCeylonTask {
+class CompileCeylonJSTask extends AbstractOutputtingCeylonTask {
   @TaskAction
   def compile() {
     def sources = getSourceDirs();
@@ -134,7 +162,7 @@ class CompileCeylonJSTask extends AbstractCeylonTask {
   }
 }
 
-class CeylonDocTask extends AbstractCeylonTask {
+class CeylonDocTask extends AbstractOutputtingCeylonTask {
   Boolean includeSource = false
   Boolean includeNonShared = false
   Boolean ignoreBrokenLink = false;
@@ -144,7 +172,7 @@ class CeylonDocTask extends AbstractCeylonTask {
   Set<File> additionalSourceDirs() {
     Set<File> dirs = new HashSet<File>()
     dependsOn.each {
-      if (it instanceof AbstractCeylonTask) {
+      if (it instanceof AbstractOutputtingCeylonTask) {
         dirs.addAll(it.getSourceDirs())
       }
     }
@@ -174,6 +202,60 @@ class CeylonDocTask extends AbstractCeylonTask {
             sources.each {
               sourcemodules(dir: it)
             }
+          }
+        }
+      }
+    }
+  }
+}
+
+class CeylonTestTask extends AbstractCeylonTask {
+  String group = "Verification"
+  String description = "Run Ceylon unit tests."
+
+  Boolean report = false
+
+  protected Set<String> tests = new HashSet()
+  void test(String test) {
+    tests.add(test)
+  }
+
+  void tests(List<String> tests) {
+    tests.each {
+      test(it)
+    }
+  }
+
+  Set<File> additionalRepositories() {
+    List<String> dirs = new ArrayList<String>()
+
+    // FIXME this doesn't work if dependencies are configured using Strings.
+    dependsOn.each {
+      if (it instanceof AbstractOutputtingCeylonTask) {
+        dirs.add(it.destinationDir.toString())
+      }
+    }
+    return dirs
+  }
+
+  @TaskAction
+  def compile() {
+    ant."ceylon-test"(
+            report: report) {
+      tests.each {
+        test(test: it);
+      }
+      moduleset {
+        if (!modules.empty) {
+          modules.each {
+            module(name: it)
+          }
+        }
+      }
+      if (!getRepositories().empty) {
+        reposet {
+          getRepositories().each {
+            repo(url: it)
           }
         }
       }
