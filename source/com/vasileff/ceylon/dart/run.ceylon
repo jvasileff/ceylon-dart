@@ -6,9 +6,6 @@ import com.vasileff.ceylon.dart.compiler {
 shared suppressWarnings("unusedDeclaration", "suppressesNothing")
 void run() {
 
-    assert (exists languageModuleSource = `module`.resourceByPath(
-            "languageModuleSource.ceylon")?.textContent());
-
     value program =
          """
             void run() {
