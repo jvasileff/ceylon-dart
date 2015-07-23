@@ -1,4 +1,8 @@
 /.ceylon/config.old
 /.exploded/
+/.gradle/
 /classes/
 /modules/
+/build/
+/buildSrc/.gradle/
+/buildSrc/build/

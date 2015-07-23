@@ -1,0 +1,32 @@
+apply plugin: 'base'
+apply plugin: 'ceylon'
+
+defaultTasks 'compileCeylon'
+
+ext.ceylonRepoDir = System.getProperty("user.home") + "/.ceylon/repo"
+
+compileCeylon {
+    module "com.vasileff.ceylon.dart"
+    sourceDir file("source")
+}
+
+ceylonDoc {
+    includeSource = true
+}
+
+task publish(type: Copy) {
+    description 'Copies the compiled modules to the user\'s repository'
+
+    dependsOn "ceylonDoc"
+    dependsOn "compileCeylon"
+
+    from ceylonDoc.destinationDir
+    from compileCeylon.destinationDir
+
+    into ceylonRepoDir
+}
+
+wrapper {
+    jarFile 'buildSrc/wrapper/gradle-wrapper.jar'
+}
+
