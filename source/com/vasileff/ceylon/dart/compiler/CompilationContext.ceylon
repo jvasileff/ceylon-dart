@@ -2,8 +2,7 @@ import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
     FunctionModel=Function,
     ClassOrInterfaceModel=ClassOrInterface,
-    FunctionOrValueModel=FunctionOrValue,
-    InterfaceModel=Interface
+    FunctionOrValueModel=FunctionOrValue
 }
 
 import org.antlr.runtime {
