@@ -1092,6 +1092,8 @@ class dart$Default {
 
 const dart$default = const dart$Default();
 
+const $package$dart$default = dart$Default;
+
 ///////////////////////////////////////
 //
 // Misc
@@ -1220,13 +1222,13 @@ $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
-Callable $package$not([Callable p]) => new Callable(([$dart$core.Object val]) {
+Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) {
     return Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val));
 });
 
 Callable not([Callable p]) => $package$not(p);
 
-Callable $package$or([Callable p, Callable q]) => new Callable(([$dart$core.Object val]) {
+Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) {
     return Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) || Boolean.nativeValue(q.$delegate$(val) as Boolean))(val));
 });
 
@@ -1265,7 +1267,7 @@ void $package$printAll([Iterable values, $dart$core.Object separator = $package$
         separator = ", ";
     }
     $dart$core.bool first = true;
-    values.each(new Callable(([$dart$core.Object element]) {
+    values.each(new dart$Callable(([$dart$core.Object element]) {
         if (first) {
             first = false;
         } else {

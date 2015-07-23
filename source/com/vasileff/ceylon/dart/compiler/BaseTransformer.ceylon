@@ -910,10 +910,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
         DartInstanceCreationExpression {
             false;
             DartConstructorName {
-                ctx.dartTypes.dartTypeName {
+                ctx.dartTypes.dartTypeNameForDartModel {
                     that;
-                    ctx.ceylonTypes.callableDeclaration.type;
-                    false; false;
+                    ctx.dartTypes.dartCallableModel;
                 };
                 null;
             };

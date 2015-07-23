@@ -226,7 +226,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeModel dartCallableModel
-        =>  DartTypeModel("ceylon$language", "dart$Callable");
+        =>  DartTypeModel("$ceylon$language", "dart$Callable");
 
     shared
     DartTypeModel dartIntModel
