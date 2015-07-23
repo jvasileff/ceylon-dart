@@ -56,8 +56,9 @@ functionality.
 - [ ] Statements: ~~for~~, ~~if~~, while
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
 - [ ] Use compiler for language module functions: `corresponding`, ~~count~~,
-  ~~every~~, ~~identity~~, `noop`, ~~identical~~, ~~largest~~, `max`, `nothing`,
-  ~~plus~~, ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, `sort`, ~~sum~~,
+  ~~decreasing~~, ~~every~~, ~~identity~~, `noop`, ~~increasing~~,
+  ~~identical~~, ~~largest~~, `max`, ~~not~~, `nothing`, ~~or~~, ~~plus~~,
+  ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, `sort`, ~~sum~~,
   ~~times~~, ~~any~~, ~~arrayOfSize~~, ~~formatInteger~~, ~~infinity~~
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations

@@ -27,6 +27,6 @@ see (`function increasing`,
      `function byDecreasing`,
      `function Iterable.max`,
      `function Iterable.sort`)
-native shared Comparison decreasing<Element>(Element x, Element y)
+shared Comparison decreasing<Element>(Element x, Element y)
         given Element satisfies Comparable<Element> 
         => y<=>x;

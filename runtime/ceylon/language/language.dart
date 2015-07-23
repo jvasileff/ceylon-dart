@@ -1130,6 +1130,14 @@ Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => 
 
 Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
 
+Comparison $package$decreasing([$dart$core.Object x, $dart$core.Object y]) => (y as Comparable).compare(x);
+
+Comparison decreasing([$dart$core.Object x, $dart$core.Object y]) => $package$decreasing(x, y);
+
+Comparison $package$increasing([$dart$core.Object x, $dart$core.Object y]) => (x as Comparable).compare(y);
+
+Comparison increasing([$dart$core.Object x, $dart$core.Object y]) => $package$increasing(x, y);
+
 $dart$core.int $package$count([Iterable values]) {
     $dart$core.int count = 0;{
         $dart$core.Object element$1;
@@ -1211,6 +1219,18 @@ $dart$core.double get infinity => $package$infinity;
 $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $lhs$ == null ? y : $lhs$)((x as Comparable).largerThan(y) ? x : null);
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
+
+Callable $package$not([Callable p]) => new Callable(([$dart$core.Object val]) {
+    return Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val));
+});
+
+Callable not([Callable p]) => $package$not(p);
+
+Callable $package$or([Callable p, Callable q]) => new Callable(([$dart$core.Object val]) {
+    return Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) || Boolean.nativeValue(q.$delegate$(val) as Boolean))(val));
+});
+
+Callable or([Callable p, Callable q]) => $package$or(p, q);
 
 $dart$core.int $package$minRadix = 2;
 
@@ -1309,4 +1329,3 @@ $dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => 
 $dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);
 
 void main() => run();
-
