@@ -83,6 +83,35 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     ConstructorModel=Constructor
 }
+import com.vasileff.ceylon.dart.ast {
+    DartVariableDeclarationStatement,
+    DartExpression,
+    DartSimpleIdentifier,
+    DartDoubleLiteral,
+    DartFunctionExpression,
+    DartFormalParameterList,
+    DartVariableDeclarationList,
+    DartPrefixExpression,
+    DartIdentifier,
+    DartNullLiteral,
+    DartArgumentList,
+    DartReturnStatement,
+    DartIntegerLiteral,
+    DartPropertyAccess,
+    DartFunctionExpressionInvocation,
+    DartIfStatement,
+    DartSimpleStringLiteral,
+    DartVariableDeclaration,
+    DartBinaryExpression,
+    DartInstanceCreationExpression,
+    DartConstructorName,
+    DartBlock,
+    DartPrefixedIdentifier,
+    DartBlockFunctionBody,
+    DartBooleanLiteral,
+    DartExpressionStatement,
+    DartConditionalExpression
+}
 
 class ExpressionTransformer(CompilationContext ctx)
         extends BaseTransformer<DartExpression>(ctx) {

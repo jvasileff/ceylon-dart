@@ -1,3 +1,6 @@
+import com.vasileff.ceylon.dart.compiler {
+    CodeWriter
+}
 shared abstract
 class DartNode() {
     shared formal
@@ -777,6 +780,7 @@ class DartNormalFormalParameter()
 }
 
 "A simple formal parameter."
+shared
 class DartSimpleFormalParameter
         (final, var, type, identifier)
         extends DartNormalFormalParameter() {
@@ -812,6 +816,7 @@ class DartSimpleFormalParameter
 "A formal parameter with a default value. There are two kinds
  of parameters that are both represented by this class: named
  formal parameters and positional formal parameters."
+shared
 class DartDefaultFormalParameter
         (parameter, defaultValue)
         extends DartFormalParameter() {
@@ -830,6 +835,7 @@ class DartDefaultFormalParameter
 }
 
 "A function body consisting of a single expression."
+shared
 class DartExpressionFunctionBody(async, expression)
         extends DartFunctionBody() {
 
@@ -1120,6 +1126,7 @@ class DartFieldDeclaration(static, fieldList)
     }
 }
 
+shared
 class DartMethodDeclaration(
         external, modifierKeyword, returnType,
         propertyKeyword, name, parameters, body)
@@ -1164,6 +1171,7 @@ class DartMethodDeclaration(
     }
 }
 
+shared
 class DartWhileStatement(expression, statement)
         extends DartStatement() {
 

@@ -3,6 +3,12 @@ import ceylon.ast.core {
     ValueDefinition,
     FunctionDeclaration
 }
+import com.vasileff.ceylon.dart.ast {
+    DartFieldDeclaration,
+    DartSimpleIdentifier,
+    DartMethodDeclaration,
+    DartClassMember
+}
 
 class ClassMemberTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartClassMember*]>(ctx) {

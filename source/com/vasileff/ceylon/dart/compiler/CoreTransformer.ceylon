@@ -14,6 +14,14 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
 }
+import com.vasileff.ceylon.dart.ast {
+    DartArgumentList,
+    DartExpression,
+    DartPropertyAccess,
+    DartFunctionExpressionInvocation,
+    DartSimpleIdentifier,
+    DartAsExpression
+}
 
 """Provides:
 

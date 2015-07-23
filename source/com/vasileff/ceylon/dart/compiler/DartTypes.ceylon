@@ -32,6 +32,13 @@ import com.vasileff.ceylon.dart.model {
 import ceylon.ast.core {
     Node
 }
+import com.vasileff.ceylon.dart.ast {
+    DartConstructorName,
+    DartPrefixedIdentifier,
+    DartTypeName,
+    DartSimpleIdentifier,
+    DartIdentifier
+}
 
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 

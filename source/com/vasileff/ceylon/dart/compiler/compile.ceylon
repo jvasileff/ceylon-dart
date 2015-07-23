@@ -30,6 +30,12 @@ import java.io {
 import java.util {
     List
 }
+import com.vasileff.ceylon.dart.ast {
+    DartImportDirective,
+    DartSimpleIdentifier,
+    DartCompilationUnit,
+    DartSimpleStringLiteral
+}
 
 shared
 [DartCompilationUnit*] compile(Boolean verbose=false, {String*} listings = {}) {

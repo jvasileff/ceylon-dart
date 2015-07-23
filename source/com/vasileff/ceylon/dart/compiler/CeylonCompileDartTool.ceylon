@@ -59,6 +59,20 @@ import java.lang {
 import java.util {
     JList=List
 }
+import com.vasileff.ceylon.dart.ast {
+    DartArgumentList,
+    DartImportDirective,
+    dartFormalParameterListEmpty,
+    DartFunctionExpression,
+    DartExpressionFunctionBody,
+    DartCompilationUnitMember,
+    DartTypeName,
+    DartSimpleIdentifier,
+    DartMethodInvocation,
+    DartCompilationUnit,
+    DartFunctionDeclaration,
+    DartSimpleStringLiteral
+}
 
 shared
 class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {

@@ -8,6 +8,12 @@ import ceylon.ast.core {
 import com.redhat.ceylon.model.typechecker.model {
     PackageModel=Package
 }
+import com.vasileff.ceylon.dart.ast {
+    DartVariableDeclaration,
+    DartCompilationUnitMember,
+    DartSimpleIdentifier,
+    DartVariableDeclarationList
+}
 
 class MiscTransformer(CompilationContext ctx)
         extends BaseTransformer<Anything>(ctx) {

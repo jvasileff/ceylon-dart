@@ -35,6 +35,43 @@ import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
     Reference
 }
+import com.vasileff.ceylon.dart.ast {
+    DartVariableDeclarationStatement,
+    DartExpression,
+    DartSimpleIdentifier,
+    DartMethodInvocation,
+    DartSimpleFormalParameter,
+    DartIsExpression,
+    DartFunctionExpression,
+    DartFormalParameterList,
+    DartVariableDeclarationList,
+    DartPrefixExpression,
+    DartFunctionDeclaration,
+    DartNullLiteral,
+    DartArgumentList,
+    DartReturnStatement,
+    DartPropertyAccess,
+    DartFunctionExpressionInvocation,
+    DartTypeName,
+    DartIfStatement,
+    DartAssignmentExpression,
+    DartAssignmentOperator,
+    DartBinaryExpression,
+    DartVariableDeclaration,
+    DartInstanceCreationExpression,
+    DartConstructorName,
+    dartFormalParameterListEmpty,
+    DartBlock,
+    DartDefaultFormalParameter,
+    DartExpressionFunctionBody,
+    DartPrefixedIdentifier,
+    DartBlockFunctionBody,
+    DartBooleanLiteral,
+    DartExpressionStatement,
+    DartConditionalExpression,
+    DartFunctionBody,
+    DartStatement
+}
 
 abstract
 class BaseTransformer<Result>(CompilationContext ctx)

@@ -13,6 +13,22 @@ import ceylon.ast.core {
 import ceylon.interop.java {
     CeylonList
 }
+import com.vasileff.ceylon.dart.ast {
+    DartArgumentList,
+    DartClassDeclaration,
+    DartSimpleIdentifier,
+    DartMethodInvocation,
+    DartSimpleFormalParameter,
+    DartTopLevelVariableDeclaration,
+    DartAssignmentExpression,
+    DartAssignmentOperator,
+    DartImplementsClause,
+    DartFunctionExpression,
+    DartExpressionFunctionBody,
+    DartCompilationUnitMember,
+    DartFormalParameterList,
+    DartFunctionDeclaration
+}
 
 "For Dart TopLevel declarations, which are distinct from
  declarations made within blocks."

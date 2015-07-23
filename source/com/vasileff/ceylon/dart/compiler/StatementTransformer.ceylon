@@ -28,6 +28,30 @@ import ceylon.language.meta {
 import org.antlr.runtime {
     Token
 }
+import com.vasileff.ceylon.dart.ast {
+    DartArgumentList,
+    DartReturnStatement,
+    DartVariableDeclarationStatement,
+    DartSimpleIdentifier,
+    DartWhileStatement,
+    DartIfStatement,
+    DartIsExpression,
+    DartAssignmentExpression,
+    DartSimpleStringLiteral,
+    DartBreakStatement,
+    DartAssignmentOperator,
+    DartThrowExpression,
+    DartVariableDeclaration,
+    DartInstanceCreationExpression,
+    DartConstructorName,
+    DartBlock,
+    DartBooleanLiteral,
+    DartFunctionDeclarationStatement,
+    DartExpressionStatement,
+    DartVariableDeclarationList,
+    DartPrefixExpression,
+    DartStatement
+}
 
 class StatementTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartStatement*]>(ctx) {
