@@ -2,6 +2,6 @@
 see (`interface Comparable`, 
      `function smallest`, 
      `function max`)
-native shared Element largest<Element>(Element x, Element y) 
+shared Element largest<Element>(Element x, Element y) 
         given Element satisfies Comparable<Element> 
         => x>y then x else y;

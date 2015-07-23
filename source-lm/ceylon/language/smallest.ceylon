@@ -2,6 +2,6 @@
 see (`interface Comparable`, 
      `function largest`, 
      `function min`)
-native shared Element smallest<Element>(Element x, Element y) 
+shared Element smallest<Element>(Element x, Element y) 
         given Element satisfies Comparable<Element> 
         => x<y then x else y;

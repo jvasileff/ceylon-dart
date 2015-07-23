@@ -6,7 +6,7 @@
  If there are no boolean values, return `true`."
 see (`function any`, 
      `function Iterable.every`)
-native shared Boolean every({Boolean*} values) {
+shared Boolean every({Boolean*} values) {
     for (val in values) {
         if (!val) {
             return false;

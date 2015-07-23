@@ -1,7 +1,7 @@
 "Given a nonempty stream of [[Numeric]] values, return the 
  product of the values."
 see (`function sum`)
-native shared Value product<Value>({Value+} values) 
+shared Value product<Value>({Value+} values) 
         given Value satisfies Numeric<Value> {
     variable value product = values.first;
     for (val in values.rest) {

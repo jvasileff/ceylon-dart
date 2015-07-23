@@ -15,7 +15,7 @@ throws (`class AssertionError`,
         "if [[radix]] is not between [[minRadix]] and 
          [[maxRadix]]")
 see (`function parseInteger`)
-native shared String formatInteger(
+shared String formatInteger(
             "The integer value to format."
             Integer integer,
             "The base, between [[minRadix]] and [[maxRadix]] 
@@ -25,7 +25,7 @@ native shared String formatInteger(
     if (integer == 0) {
         return "0";
     }
-    variable {Character*} digits = {};
+    variable {Character*} digits = "";
     variable Integer i = integer < 0 
                          then integer 
                          else -integer;

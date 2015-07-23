@@ -1,5 +1,5 @@
-native Integer minRadix = 2;
-native Integer maxRadix = 36;
+Integer minRadix = 2;
+Integer maxRadix = 36;
 
 "The [[Integer]] value of the given 
  [[string representation|string]] of an integer value in the 
@@ -145,9 +145,9 @@ native Integer? parseIntegerExponent(Character char) {
     }
 }
 
-native Integer aIntLower = 'a'.integer;
-native Integer aIntUpper = 'A'.integer;
-native Integer zeroInt = '0'.integer;
+Integer aIntLower = 'a'.integer;
+Integer aIntUpper = 'A'.integer;
+Integer zeroInt = '0'.integer;
 
 native Integer? parseDigit(Character digit, Integer radix) {
     Integer figure;

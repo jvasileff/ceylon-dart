@@ -9,7 +9,7 @@
  and is intended mainly for debugging purposes."
 see (`function process.writeLine`)
 by ("Gavin")
-native shared void print(Anything val) 
+shared void print(Anything val) 
         => process.writeLine(stringify(val));
 
 "Print multiple values to the standard output of the virtual 
@@ -17,7 +17,7 @@ native shared void print(Anything val)
  given character sequence."
 by ("Gavin")
 see (`function process.write`)
-native shared void printAll({Anything*} values,
+shared void printAll({Anything*} values,
         "A character sequence to use to separate the values"
         String separator=", ") {
     variable value first = true;
@@ -33,4 +33,4 @@ native shared void printAll({Anything*} values,
     process.write(operatingSystem.newline);
 }
 
-native String stringify(Anything val) => val?.string else "<null>";
+String stringify(Anything val) => val?.string else "<null>";

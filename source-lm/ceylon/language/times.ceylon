@@ -2,6 +2,6 @@
  
      (1..100).by(2).fold(1)(times<Integer>)"
 see (`function plus`, `function product`)
-native shared Value times<Value>(Value x, Value y)
+shared Value times<Value>(Value x, Value y)
         given Value satisfies Numeric<Value>
         => x*y;

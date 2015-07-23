@@ -1,7 +1,7 @@
 "Given a nonempty stream of [[Summable]] values, return the 
  sum of the values."
 see (`function product`)
-native shared Value sum<Value>({Value+} values) 
+shared Value sum<Value>({Value+} values) 
         given Value satisfies Summable<Value> {
     value it = values.iterator();
     assert (!is Finished first = it.next());
