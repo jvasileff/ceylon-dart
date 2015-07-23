@@ -1017,6 +1017,8 @@ class process_ {
 
 const process = const process_.$value$();
 
+const $package$process = process;
+
 // operatingSystem
 
 class operatingSystem_ {
@@ -1026,6 +1028,8 @@ class operatingSystem_ {
 }
 
 const operatingSystem = const operatingSystem_.$value$();
+
+const $package$operatingSystem = operatingSystem;
 
 abstract class Enumerable implements Ordinal {}
 
@@ -1107,30 +1111,6 @@ class dart$Callable implements Callable {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-$dart$core.Object $package$identity([$dart$core.Object argument]) => argument;
-
-$dart$core.Object identity([$dart$core.Object argument]) => $package$identity(argument);
-
-$dart$core.int $package$minRadix = 2;
-
-$dart$core.int get minRadix => $package$minRadix;
-
-$dart$core.int $package$maxRadix = 36;
-
-$dart$core.int get maxRadix => $package$maxRadix;
-
-$dart$core.int $package$aIntLower = (new Character.$fromInt(97)).integer;
-
-$dart$core.int get aIntLower => $package$aIntLower;
-
-$dart$core.int $package$aIntUpper = (new Character.$fromInt(65)).integer;
-
-$dart$core.int get aIntUpper => $package$aIntUpper;
-
-$dart$core.int $package$zeroInt = (new Character.$fromInt(48)).integer;
-
-$dart$core.int get zeroInt => $package$zeroInt;
-
 $dart$core.bool $package$any([Iterable values]) {{
         $dart$core.Object element$1;
         Iterator iterator$0 = values.iterator();
@@ -1152,10 +1132,10 @@ Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$
 
 $dart$core.int $package$count([Iterable values]) {
     $dart$core.int count = 0;{
-        $dart$core.Object element$3;
-        Iterator iterator$2 = values.iterator();
-        while ((element$3 = iterator$2.next()) is !Finished) {
-            Boolean val = element$3 as Boolean;
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            Boolean val = element$1 as Boolean;
             if (Boolean.nativeValue(val)) {
                 count = Integer.nativeValue(Integer.instance(count).successor);
             }
@@ -1167,10 +1147,10 @@ $dart$core.int $package$count([Iterable values]) {
 $dart$core.int count([Iterable values]) => $package$count(values);
 
 $dart$core.bool $package$every([Iterable values]) {{
-        $dart$core.Object element$5;
-        Iterator iterator$4 = values.iterator();
-        while ((element$5 = iterator$4.next()) is !Finished) {
-            Boolean val = element$5 as Boolean;
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            Boolean val = element$1 as Boolean;
             if (!Boolean.nativeValue(val)) {
                 return false;
             }
@@ -1181,8 +1161,8 @@ $dart$core.bool $package$every([Iterable values]) {{
 
 $dart$core.bool every([Iterable values]) => $package$every(values);
 
-$dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Object radix = dart$default]) {
-    if ($dart$core.identical(radix, dart$default)) {
+$dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Object radix = $package$dart$default]) {
+    if ($dart$core.identical(radix, $package$dart$default)) {
         radix = 10;
     }
     if (!(Integer.instance(radix as $dart$core.int).notSmallerThan(Integer.instance($package$minRadix)) && Integer.instance(radix as $dart$core.int).notLargerThan(Integer.instance($package$maxRadix)))) {
@@ -1214,7 +1194,11 @@ $dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Obj
     return String.nativeValue(new String(digits));
 }
 
-$dart$core.String formatInteger([$dart$core.int integer, $dart$core.Object radix = dart$default]) => $package$formatInteger(integer, radix);
+$dart$core.String formatInteger([$dart$core.int integer, $dart$core.Object radix = $package$dart$default]) => $package$formatInteger(integer, radix);
+
+$dart$core.Object $package$identity([$dart$core.Object argument]) => argument;
+
+$dart$core.Object identity([$dart$core.Object argument]) => $package$identity(argument);
 
 $dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$core.identical(x, y);
 
@@ -1228,31 +1212,51 @@ $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
+$dart$core.int $package$minRadix = 2;
+
+$dart$core.int get minRadix => $package$minRadix;
+
+$dart$core.int $package$maxRadix = 36;
+
+$dart$core.int get maxRadix => $package$maxRadix;
+
+$dart$core.int $package$aIntLower = (new Character.$fromInt(97)).integer;
+
+$dart$core.int get aIntLower => $package$aIntLower;
+
+$dart$core.int $package$aIntUpper = (new Character.$fromInt(65)).integer;
+
+$dart$core.int get aIntUpper => $package$aIntUpper;
+
+$dart$core.int $package$zeroInt = (new Character.$fromInt(48)).integer;
+
+$dart$core.int get zeroInt => $package$zeroInt;
+
 $dart$core.Object $package$plus([$dart$core.Object x, $dart$core.Object y]) => (x as Summable).plus(y);
 
 $dart$core.Object plus([$dart$core.Object x, $dart$core.Object y]) => $package$plus(x, y);
 
-void $package$print([$dart$core.Object val]) => process.writeLine($package$stringify(val));
+void $package$print([$dart$core.Object val]) => $package$process.writeLine($package$stringify(val));
 
 void print([$dart$core.Object val]) => $package$print(val);
 
-void $package$printAll([Iterable values, $dart$core.Object separator = dart$default]) {
-    if ($dart$core.identical(separator, dart$default)) {
+void $package$printAll([Iterable values, $dart$core.Object separator = $package$dart$default]) {
+    if ($dart$core.identical(separator, $package$dart$default)) {
         separator = ", ";
     }
     $dart$core.bool first = true;
-    values.each(new dart$Callable(([$dart$core.Object element]) {
+    values.each(new Callable(([$dart$core.Object element]) {
         if (first) {
             first = false;
         } else {
-            process.write(separator as $dart$core.String);
+            $package$process.write(separator as $dart$core.String);
         }
-        process.write($package$stringify(element));
+        $package$process.write($package$stringify(element));
     }));
-    process.write(operatingSystem.newline);
+    $package$process.write($package$operatingSystem.newline);
 }
 
-void printAll([Iterable values, $dart$core.Object separator = dart$default]) => $package$printAll(values, separator);
+void printAll([Iterable values, $dart$core.Object separator = $package$dart$default]) => $package$printAll(values, separator);
 
 $dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.toString())(val));
 
@@ -1260,10 +1264,10 @@ $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
 
 $dart$core.Object $package$product([Iterable values]) {
     $dart$core.Object product = values.first;{
-        $dart$core.Object element$7;
-        Iterator iterator$6 = values.rest.iterator();
-        while ((element$7 = iterator$6.next()) is !Finished) {
-            $dart$core.Object val = element$7;
+        $dart$core.Object element$1;
+        Iterator iterator$0 = values.rest.iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            $dart$core.Object val = element$1;
             product = (product as Numeric).times(val);
         }
     }
@@ -1279,20 +1283,20 @@ $dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $packa
 $dart$core.Object $package$sum([Iterable values]) {
     Iterator it = values.iterator();
     $dart$core.Object first;{
-        $dart$core.Object first$8 = it.next();
-        if (first$8 is Finished) {
+        $dart$core.Object first$0 = it.next();
+        if (first$0 is Finished) {
             throw new AssertionError("Violated: !is Finished first = it.next()");
         }
-        first = first$8;
+        first = first$0;
     }
     $dart$core.Object sum = first;
     while (true) {
         $dart$core.Object val;
-        $dart$core.Object val$9 = it.next();
-        if (val$9 is Finished) {
+        $dart$core.Object val$1 = it.next();
+        if (val$1 is Finished) {
             break;
         }
-        val = val$9;
+        val = val$1;
         sum = (sum as Summable).plus(val);
     }
     return sum;
@@ -1303,4 +1307,6 @@ $dart$core.Object sum([Iterable values]) => $package$sum(values);
 $dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => (x as Numeric).times(y);
 
 $dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);
+
+void main() => run();
 
