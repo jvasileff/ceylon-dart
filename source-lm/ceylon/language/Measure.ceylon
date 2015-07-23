@@ -4,7 +4,7 @@
  non-negative and less than the `size`."
 see (`class Span`,
     `interface Enumerable`)
-final serializable
+native final serializable
 class Measure<Element>(first, size)
         extends Range<Element>()
         given Element satisfies Enumerable<Element> {
@@ -236,7 +236,7 @@ class Measure<Element>(first, size)
      0:0     // []
      5:0     // []
      0:-5    // []"
-shared Range<Element>|[] measure<Element>
+native shared Range<Element>|[] measure<Element>
         (Element first, Integer size)
         given Element satisfies Enumerable<Element>
         => size <= 0 then [] else Measure(first, size);

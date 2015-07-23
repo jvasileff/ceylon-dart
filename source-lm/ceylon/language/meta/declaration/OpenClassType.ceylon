@@ -1,5 +1,5 @@
 "An open class type."
-shared sealed interface OpenClassType
+native shared sealed interface OpenClassType
     satisfies OpenClassOrInterfaceType {
     
     "This class declaration."

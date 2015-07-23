@@ -10,7 +10,7 @@
  Elements are compared for equality using [[Object.equals]] 
  or [[Comparable.compare]]. An element may occur at most 
  once in a set."
-shared interface Set<out Element=Object>
+native shared interface Set<out Element=Object>
         satisfies Collection<Element>
         given Element satisfies Object {
     
@@ -109,7 +109,7 @@ shared interface Set<out Element=Object>
 }
 
 "An immutable [[Set]] with no elements."
-shared object emptySet 
+native shared object emptySet 
         extends Object() 
         satisfies Set<Nothing> {
     

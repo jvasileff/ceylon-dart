@@ -128,7 +128,7 @@
        Boolean same = corresponding(xs, ys);"""
 see (`interface Collection`, `function corresponding`)
 by ("Gavin")
-shared interface Iterable<out Element=Anything, 
+native shared interface Iterable<out Element=Anything, 
                           out Absent=Null>
         satisfies Category<>
         given Absent satisfies Null {
@@ -1411,5 +1411,5 @@ shared interface Iterable<out Element=Anything,
     
 }
 
-String commaList({Anything*} elements)
+native String commaList({Anything*} elements)
         => ", ".join { for (e in elements) stringify(e) };

@@ -12,7 +12,7 @@
  results in the stream 
  `{ 1, '-', 2, '+', 3, '-', 4, '+', 5, '-' }`."
 see (`function Iterable.interpose`)
-shared Iterable<Element,Absent>
+native shared Iterable<Element,Absent>
         interleave<Element,Absent>
         (Iterable<Element,Absent>+ iterables) 
         given Absent satisfies Null 

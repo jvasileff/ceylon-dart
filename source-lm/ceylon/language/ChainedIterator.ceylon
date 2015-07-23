@@ -2,7 +2,7 @@
  [[Iterable]]s, as if they were chained together."
 see (`function Iterable.chain`)
 by ("Enrique Zamudio")
-class ChainedIterator<out Element,out Other>
+native class ChainedIterator<out Element,out Other>
 		        ({Element*} first, {Other*} second) 
         satisfies Iterator<Element|Other> {
     

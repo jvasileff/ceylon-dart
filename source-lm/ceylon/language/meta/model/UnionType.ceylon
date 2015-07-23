@@ -1,5 +1,5 @@
 "A closed union type."
-shared sealed interface UnionType<out Union=Anything>
+native shared sealed interface UnionType<out Union=Anything>
         satisfies Type<Union> {
     
     "The list of closed case types of this union."

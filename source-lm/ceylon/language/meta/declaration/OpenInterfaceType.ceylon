@@ -1,5 +1,5 @@
 "An open interface type."
-shared sealed interface OpenInterfaceType
+native shared sealed interface OpenInterfaceType
     satisfies OpenClassOrInterfaceType {
     
     "This declaration's package container."

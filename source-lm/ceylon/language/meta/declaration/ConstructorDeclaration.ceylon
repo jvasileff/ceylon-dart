@@ -1,5 +1,5 @@
 "A constructor declaration."
-shared sealed interface ConstructorDeclaration 
+native shared sealed interface ConstructorDeclaration 
         satisfies FunctionalDeclaration & AnnotatedDeclaration & TypedDeclaration & Contained{
     
     "Whether this constructor declaration is the default constructor"

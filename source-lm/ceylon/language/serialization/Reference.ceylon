@@ -4,7 +4,7 @@ import ceylon.language.meta.model {
 
 "A reference to an instance of a class, with a certain 
  [[identifer|id]]."
-shared sealed
+native shared sealed
 interface Reference<out Instance> {
         //of SerializableReference<Instance> | RealizableReference<Instance> | DeserializableReference<Instance> {
     

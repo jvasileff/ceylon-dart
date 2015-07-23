@@ -40,7 +40,7 @@ import ceylon.language.meta.declaration {
        print(resource.textContent());"""
 by("Enrique Zamudio")
 see (`function Module.resourceByPath`)
-shared interface Resource {
+native shared interface Resource {
     
     "The name of the resource; usually the filename."
     shared default String name {

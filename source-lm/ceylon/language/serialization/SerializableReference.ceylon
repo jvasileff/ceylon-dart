@@ -3,7 +3,7 @@ import ceylon.language.meta.model {
 }
 
 "A reference with sufficient state to realize an instance."
-shared sealed
+native shared sealed
 interface SerializableReference<out Instance> satisfies Reference<Instance> {
     
     "Records the state of the instance in a deconstructor obtained 

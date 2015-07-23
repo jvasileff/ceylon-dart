@@ -12,7 +12,7 @@
 see (`function Iterable.flatMap`,
     `function concatenate`, 
     `function Iterable.chain`)
-shared Iterable<Element,OuterAbsent|InnerAbsent>
+native shared Iterable<Element,OuterAbsent|InnerAbsent>
         expand<Element,OuterAbsent,InnerAbsent>
         (Iterable<Iterable<Element,InnerAbsent>,OuterAbsent> iterables)
         given OuterAbsent satisfies Null

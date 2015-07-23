@@ -19,7 +19,7 @@
  - `x - y == x + -y`"
 see (`class Integer`, `class Float`)
 by ("Gavin")
-shared interface Invertible<Other> of Other
+native shared interface Invertible<Other> of Other
         satisfies Summable<Other>
     given Other satisfies Invertible<Other> {
     

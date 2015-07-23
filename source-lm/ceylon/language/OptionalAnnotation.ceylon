@@ -14,7 +14,7 @@
  certain type using [[ceylon.language.meta::annotations]] or 
  [[ceylon.language.meta::optionalAnnotation]]."
 see(`interface Annotation`)
-shared interface OptionalAnnotation<out Value, 
+native shared interface OptionalAnnotation<out Value, 
             in ProgramElement=Annotated,
             out Type=Anything>
         of Value

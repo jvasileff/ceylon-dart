@@ -43,7 +43,7 @@
    and `x in string` evaluates to `false` for every `x` that
    is not a `String` or `Character`."""
 by ("Gavin")
-shared interface Category<in Element=Object>
+native shared interface Category<in Element=Object>
         given Element satisfies Object {
     
     "Returns `true` if the given value belongs to this

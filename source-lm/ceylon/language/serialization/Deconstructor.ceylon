@@ -11,7 +11,7 @@ import ceylon.language.meta.declaration {
  instance is being serialized.
   
  This interface is implemented by a serialization library."
-shared interface Deconstructor {
+native shared interface Deconstructor {
     
     "Add the given `outer` instance (for an instance of a member class) 
      to the flattened state."

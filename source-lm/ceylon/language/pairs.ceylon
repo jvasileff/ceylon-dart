@@ -18,7 +18,7 @@
              {1.0, 2.0, 1.0}, {1.0, 1.0, 2.0})
      
  evaluates to the stream `{ 1.0, 3.0, 3.0 }`."
-shared Iterable<Result,FirstAbsent|SecondAbsent> 
+native shared Iterable<Result,FirstAbsent|SecondAbsent> 
 mapPairs<Result,First,Second,FirstAbsent,SecondAbsent>(
     "The mapping function to apply to the pair of elements."
     Result collecting(First first, Second second),
@@ -62,7 +62,7 @@ mapPairs<Result,First,Second,FirstAbsent,SecondAbsent>(
  [[Iterable.find]], [[zipPairs]], and [[unflatten]]:
  
      findPair(p, xs, ys) == zipPairs(xs, ys).find(unflatten(p))"
-shared [First,Second]? findPair<First,Second>(
+native shared [First,Second]? findPair<First,Second>(
     "The binary predicate function to apply to each pair of 
      elements."
     Boolean selecting(First first, Second second),
@@ -92,7 +92,7 @@ shared [First,Second]? findPair<First,Second>(
      everyPair(p, xs, ys) == zipPairs(xs, ys).every(unflatten(p))"
 see (`function corresponding`,
      `function anyPair`)
-shared Boolean everyPair<First,Second>(
+native shared Boolean everyPair<First,Second>(
     "The binary predicate function to apply to each pair of 
      elements."
     Boolean selecting(First first, Second second),
@@ -121,7 +121,7 @@ shared Boolean everyPair<First,Second>(
  
      anyPair(p, xs, ys) == zipPairs(xs, ys).any(unflatten(p))"
 see (`function everyPair`)
-shared Boolean anyPair<First,Second>(
+native shared Boolean anyPair<First,Second>(
     "The binary predicate function to apply to each pair of 
      elements."
     Boolean selecting(First first, Second second),
@@ -149,7 +149,7 @@ shared Boolean anyPair<First,Second>(
  terms of [[Iterable.fold]], [[zipPairs]], and [[unflatten]]:
  
      foldPairs(z, f, xs, ys) == zipPairs(xs, ys).fold(z)(unflatten(f))"
-shared Result foldPairs<Result,First,Second>(
+native shared Result foldPairs<Result,First,Second>(
     Result initial,
     "The accumulating function to apply to each pair of 
      elements."

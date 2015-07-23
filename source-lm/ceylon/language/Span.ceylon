@@ -6,7 +6,7 @@ by ("Gavin")
 see (`class Measure`,
     `interface Enumerable`)
 final serializable
-class Span<Element>(first, last)
+native class Span<Element>(first, last)
         extends Range<Element>()
         given Element satisfies Enumerable<Element> {
     
@@ -434,7 +434,7 @@ class Span<Element>(first, last)
  
      5..0    // [5, 4, 3, 2, 1, 0]
      0..-5   // [0, -1, -2, -3, -4, -5]"
-shared Range<Element> span<Element>
+native shared Range<Element> span<Element>
         (Element first, Element last)
         given Element satisfies Enumerable<Element>
         => Span(first, last);

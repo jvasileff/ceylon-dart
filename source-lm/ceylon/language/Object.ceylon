@@ -28,7 +28,7 @@
    unequal."""
 see (`class Basic`, `class Null`)
 by ("Gavin")
-shared abstract class Object() 
+native shared abstract class Object() 
         extends Anything() {
     
     "Determine if two values are equal. Implementations

@@ -16,7 +16,7 @@
            print(boundAttribute.get());
        }
  """
-shared sealed interface Attribute<in Container=Nothing, out Get=Anything, in Set=Nothing>
+native shared sealed interface Attribute<in Container=Nothing, out Get=Anything, in Set=Nothing>
         satisfies ValueModel<Get,Set> & Member<Container, Value<Get,Set>> {
     "Binds this attribute to the given container instance. The instance type is checked at runtime."
     throws(`class StorageException`,

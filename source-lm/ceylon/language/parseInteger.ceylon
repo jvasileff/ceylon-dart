@@ -1,5 +1,5 @@
-Integer minRadix = 2;
-Integer maxRadix = 36;
+native Integer minRadix = 2;
+native Integer maxRadix = 36;
 
 "The [[Integer]] value of the given 
  [[string representation|string]] of an integer value in the 
@@ -26,7 +26,7 @@ throws (`class AssertionError`,
          [[maxRadix]]")
 see (`function formatInteger`,
      `function parseFloat`)
-shared Integer? parseInteger(
+native shared Integer? parseInteger(
             "The string representation to parse."
             String string,
             "The base, between [[minRadix]] and [[maxRadix]] 
@@ -123,7 +123,7 @@ shared Integer? parseInteger(
     }
 }
 
-Integer? parseIntegerExponent(Character char) {
+native Integer? parseIntegerExponent(Character char) {
     switch (char)
     case ('P') {
         return 15;
@@ -145,11 +145,11 @@ Integer? parseIntegerExponent(Character char) {
     }
 }
 
-Integer aIntLower = 'a'.integer;
-Integer aIntUpper = 'A'.integer;
-Integer zeroInt = '0'.integer;
+native Integer aIntLower = 'a'.integer;
+native Integer aIntUpper = 'A'.integer;
+native Integer zeroInt = '0'.integer;
 
-Integer? parseDigit(Character digit, Integer radix) {
+native Integer? parseDigit(Character digit, Integer radix) {
     Integer figure;
     Integer digitInt = digit.integer;
     if (0<=digitInt-zeroInt<10) {

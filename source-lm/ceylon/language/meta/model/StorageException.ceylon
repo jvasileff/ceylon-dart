@@ -10,4 +10,4 @@
  This will not work because `x` is neither shared nor captured and so it is just not
  retained in the runtime instances of `Foo`.
  "
-shared class StorageException(String message) extends Exception(message){}
+native shared class StorageException(String message) extends Exception(message){}

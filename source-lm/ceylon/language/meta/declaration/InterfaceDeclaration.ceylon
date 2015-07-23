@@ -48,7 +48,7 @@ import ceylon.language.meta.model {
        }
    """
 
-shared sealed interface InterfaceDeclaration
+native shared sealed interface InterfaceDeclaration
         satisfies ClassOrInterfaceDeclaration {
     
     "Applies the given closed type arguments to this toplevel interface declaration in order to obtain an interface model. 

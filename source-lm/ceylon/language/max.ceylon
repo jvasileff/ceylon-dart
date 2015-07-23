@@ -12,7 +12,7 @@ see (`interface Comparable`,
      `function min`, 
      `function largest`,
      `function Iterable.max`)
-shared Absent|Value max<Value,Absent>
+native shared Absent|Value max<Value,Absent>
         (Iterable<Value,Absent> values) 
         given Value satisfies Comparable<Value>
         given Absent satisfies Null {

@@ -6,7 +6,7 @@
  
      String->Person entry = person.name->person;"
 by ("Gavin")
-shared final serializable
+native shared final serializable
 class Entry<out Key,out Item>(key, item)
         extends Object()
         given Key satisfies Object {

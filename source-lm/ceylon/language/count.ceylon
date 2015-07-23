@@ -2,7 +2,7 @@
  
      Integer negatives = count { for (x in xs) x<0.0 };"
 see (`function Iterable.count`)
-shared Integer count({Boolean*} values) {
+native shared Integer count({Boolean*} values) {
     variable value count=0;
     for (val in values) {
         if (val) {

@@ -1,6 +1,6 @@
 "A stateless reference to an instance that can be deserialized to 
  produce a [[RealizableReference]]."
-shared sealed
+native shared sealed
 interface DeserializableReference<out Instance> satisfies Reference<Instance> {
     
     "Associate the given [[state|deconstructed]] with the instance, 

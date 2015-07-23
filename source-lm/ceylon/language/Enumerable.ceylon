@@ -50,7 +50,7 @@
  - the _segment operator_, written `first:length`."
 see (`class Range`, 
      `function span`, `function measure`)
-shared interface Enumerable<Other> of Other
+native shared interface Enumerable<Other> of Other
         satisfies Ordinal<Other>
         given Other satisfies Enumerable<Other> {
     

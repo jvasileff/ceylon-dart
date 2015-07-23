@@ -21,7 +21,7 @@ see (`function byDecreasing`,
      `function byIncreasing`,
      `function Iterable.max`,
      `function Iterable.sort`)
-shared Comparison comparing<in Value>(Comparison(Value,Value)* comparators)
+native shared Comparison comparing<in Value>(Comparison(Value,Value)* comparators)
             (Value x, Value y) {
     for (compare in comparators) {
         value comparison = compare(x, y);

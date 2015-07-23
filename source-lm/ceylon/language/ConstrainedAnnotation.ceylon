@@ -25,7 +25,7 @@
 see (`interface Annotation`,
      `interface OptionalAnnotation`,
      `interface SequencedAnnotation`)
-shared interface ConstrainedAnnotation<out Value=Annotation, 
+native shared interface ConstrainedAnnotation<out Value=Annotation, 
             out Values=Anything, in ProgramElement=Nothing,
             out Type=Anything> 
         of Value

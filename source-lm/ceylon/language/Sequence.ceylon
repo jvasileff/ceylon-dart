@@ -32,7 +32,7 @@ see (`interface Empty`,
 	 `class Tuple`, 
 	 `class Singleton`)
 by ("Gavin")
-shared sealed interface Sequence<out Element=Anything>
+native shared sealed interface Sequence<out Element=Anything>
         satisfies Element[] & 
                   {Element+} {
     
@@ -284,7 +284,7 @@ shared sealed interface Sequence<out Element=Anything>
      [Element*] sequenceOfElements = sequence(elements) else [];"
 by ("Gavin")
 see (`function Iterable.sequence`)
-shared [Element+]|Absent sequence<Element,Absent=Null>
+native shared [Element+]|Absent sequence<Element,Absent=Null>
         (Iterable<Element, Absent> elements)
         given Absent satisfies Null {
     if (nonempty sequence = elements.sequence()) {
@@ -296,7 +296,7 @@ shared [Element+]|Absent sequence<Element,Absent=Null>
     }
 }
 
-class JoinedSequence<Element>
+native class JoinedSequence<Element>
         ([Element+] firstSeq, [Element+] secondSeq)
         extends Object()
         satisfies [Element+] {

@@ -10,7 +10,7 @@
  [[deconstructed states|Deconstructed]] to the output 
  stream.
  "
-shared sealed
+native shared sealed
 interface SerializationContext
         satisfies {SerializableReference<Anything>*} {
     "Create a reference to the given [[instance]], assigning it 

@@ -1,5 +1,5 @@
 "The singleton closed type for [[Nothing|ceylon.language::nothing]]."
-shared object nothingType satisfies Type<Nothing> {
+native shared object nothingType satisfies Type<Nothing> {
     
     string => "Nothing";
     

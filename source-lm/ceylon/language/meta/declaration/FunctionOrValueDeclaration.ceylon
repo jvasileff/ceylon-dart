@@ -1,5 +1,5 @@
 "A function or value declaration."
-shared sealed interface FunctionOrValueDeclaration
+native shared sealed interface FunctionOrValueDeclaration
     of FunctionDeclaration
      | ValueDeclaration
     satisfies NestableDeclaration {

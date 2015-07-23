@@ -10,7 +10,7 @@ import ceylon.language { e=empty }
  (Whether the syntax `[]` refers to the type or the value 
  depends upon how it occurs grammatically.)"
 see (`interface Sequence`)
-shared interface Empty of e
+native shared interface Empty of e
            satisfies Nothing[] &
                      Ranged<Integer,Nothing,[]> {
     
@@ -254,12 +254,12 @@ shared interface Empty of e
 "A sequence with no elements, abbreviated `[]`. The unique 
  instance of the type `[]`."
 by ("Tako Schotanus")
-shared object empty 
+native shared object empty 
 		extends Object() 
 		satisfies [] {}
 
 "An iterator that returns no elements."
-shared object emptyIterator 
+native shared object emptyIterator 
 		satisfies Iterator<Nothing> {
     next() => finished;
     string => "empty.iterator()";

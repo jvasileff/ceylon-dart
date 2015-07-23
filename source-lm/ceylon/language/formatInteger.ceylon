@@ -15,7 +15,7 @@ throws (`class AssertionError`,
         "if [[radix]] is not between [[minRadix]] and 
          [[maxRadix]]")
 see (`function parseInteger`)
-shared String formatInteger(
+native shared String formatInteger(
             "The integer value to format."
             Integer integer,
             "The base, between [[minRadix]] and [[maxRadix]] 

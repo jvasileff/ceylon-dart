@@ -10,7 +10,7 @@ import ceylon.language.meta.declaration {
 "The flattened state of an instance of a class used during deserialization.
  
  This interface is implemented by a serialization library."
-shared interface Deconstructed
+native shared interface Deconstructed
         satisfies {[Integer|ValueDeclaration, Anything]*} {
     
     "The outer instance if the class of the instance is a 

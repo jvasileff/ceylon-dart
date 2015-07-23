@@ -25,7 +25,7 @@
 see (`class Entry`, 
      `function forKey`, `function forItem`, 
      `function byItem`, `function byKey`)
-shared interface Map<out Key=Object, out Item=Anything>
+native shared interface Map<out Key=Object, out Item=Anything>
         satisfies Collection<Key->Item> &
                   Correspondence<Object,Item>
         given Key satisfies Object {
@@ -278,7 +278,7 @@ shared interface Map<out Key=Object, out Item=Anything>
 }
 
 "An immutable [[Map]] with no entries."
-shared object emptyMap 
+native shared object emptyMap 
         extends Object() 
         satisfies Map<Nothing, Nothing> {
     

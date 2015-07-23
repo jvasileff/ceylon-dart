@@ -23,7 +23,7 @@
  different kinds of collection are never equal&mdash;for
  example, a `Map` is never equal to a `List`."
 see (`interface List`, `interface Map`, `interface Set`)
-shared interface Collection<out Element=Anything>
+native shared interface Collection<out Element=Anything>
         satisfies {Element*} {
     
     "A shallow copy of this collection, that is, a 

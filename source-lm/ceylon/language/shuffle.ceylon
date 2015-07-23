@@ -7,7 +7,7 @@
  
  This function is often used in conjunction with `curry()`."
 see (`function curry`)
-shared Result(*FirstArgs)(*SecondArgs)
+native shared Result(*FirstArgs)(*SecondArgs)
 shuffle<Result,FirstArgs,SecondArgs>(
             Result(*SecondArgs)(*FirstArgs) f)
         given FirstArgs satisfies Anything[]

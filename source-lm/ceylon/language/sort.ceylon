@@ -6,7 +6,7 @@
  according to a given comparator function."
 see (`interface Comparable`,
      `function Iterable.sort`)
-shared Element[] sort<Element>({Element*} elements) 
+native shared Element[] sort<Element>({Element*} elements) 
         given Element satisfies Comparable<Element> {
     value array = Array(elements);
     if (array.empty) {

@@ -24,7 +24,7 @@
  
      string.split(Character.whitespace, true, false)"
 see (`function unflatten`)
-shared Return apply<Return,Args>
+native shared Return apply<Return,Args>
             (Callable<Return,Args> f, Args args)
         given Args satisfies Anything[]
         => unflatten(f)(args);

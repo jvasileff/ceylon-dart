@@ -8,7 +8,7 @@
  identity. Of course, subtypes are encouraged to refine this 
  implementation."
 by ("Gavin")
-shared interface Identifiable {
+native shared interface Identifiable {
     
     "Identity equality comparing the identity of the two 
      values. May be refined by subtypes for which value 

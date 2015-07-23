@@ -9,4 +9,4 @@
  computation that yields a negative value whose magnitude is
  too large to be represented as a `Float` is \"rounded down\" 
  to `-infinity`."
-shared Float infinity = 1.0/0.0;
+native shared Float infinity = 1.0/0.0;

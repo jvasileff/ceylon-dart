@@ -2,7 +2,7 @@ import ceylon.language { AnnotationType = Annotation }
 
 "A `module` declaration
  from a `module.ceylon` compilation unit"
-shared sealed interface Module 
+native shared sealed interface Module 
         satisfies Identifiable & AnnotatedDeclaration {
     
     "The module version."
@@ -27,7 +27,7 @@ shared sealed interface Module
 
 "Model of an `import` declaration 
  within a module declaration."
-shared sealed interface Import 
+native shared sealed interface Import 
         satisfies Identifiable & Annotated {
     
     "The name of the imported module."
@@ -48,7 +48,7 @@ shared sealed interface Import
 
 "Model of a `package` declaration 
  from a `package.ceylon` compilation unit"
-shared sealed interface Package 
+native shared sealed interface Package 
         satisfies Identifiable & AnnotatedDeclaration {
     
     "The module this package belongs to."

@@ -17,7 +17,7 @@ import ceylon.language.meta.model {
  [[instance|ceylon.language.serialization::RealizableReference.instance]], can be obtained 
  and returned to the client.
  "
-shared sealed
+native shared sealed
 interface DeserializationContext
         satisfies {Reference<Anything>*} {
     

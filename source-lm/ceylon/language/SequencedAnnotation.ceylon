@@ -18,7 +18,7 @@
    a certain type using [[ceylon.language.meta::annotations]] 
    or [[ceylon.language.meta::sequencedAnnotations]]."""
 see(`interface Annotation`)
-shared interface SequencedAnnotation<out Value, 
+native shared interface SequencedAnnotation<out Value, 
             in ProgramElement=Annotated,
             out Type=Anything>
         of Value
