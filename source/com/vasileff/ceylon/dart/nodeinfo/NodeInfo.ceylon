@@ -72,6 +72,7 @@ import org.antlr.runtime {
     Token
 }
 
+
 shared
 class NodeInfo(Node astNode) {
 

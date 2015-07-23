@@ -5,6 +5,9 @@ import ceylon.ast.core {
 import com.redhat.ceylon.compiler.typechecker.tree {
     TcNode=Node
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    keys
+}
 
 shared
 void augmentNode(TcNode tcNode, Node node) {

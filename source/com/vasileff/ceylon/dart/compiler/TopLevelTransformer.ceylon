@@ -29,6 +29,12 @@ import com.vasileff.ceylon.dart.ast {
     DartFormalParameterList,
     DartFunctionDeclaration
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    AnyInterfaceInfo,
+    ValueDefinitionInfo,
+    AnyFunctionInfo,
+    AnyClassInfo
+}
 
 "For Dart TopLevel declarations, which are distinct from
  declarations made within blocks."

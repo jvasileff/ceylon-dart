@@ -11,6 +11,10 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
 import com.redhat.ceylon.compiler.typechecker.tree {
     Message
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    NodeInfo,
+    keys
+}
 
 Key<Boolean> hasErrorKey = ScopedKey<Boolean>
         (`value hasErrorTransformer`, "hasError");

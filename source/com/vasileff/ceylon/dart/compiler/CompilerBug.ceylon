@@ -1,6 +1,9 @@
 import ceylon.ast.core {
     Node
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    NodeInfo
+}
 
 // TODO better location info
 shared

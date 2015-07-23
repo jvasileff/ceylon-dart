@@ -14,6 +14,10 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier,
     DartVariableDeclarationList
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    ValueDefinitionInfo,
+    ValueDeclarationInfo
+}
 
 shared
 class MiscTransformer(CompilationContext ctx)

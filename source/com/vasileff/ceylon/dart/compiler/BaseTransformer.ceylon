@@ -72,6 +72,19 @@ import com.vasileff.ceylon.dart.ast {
     DartFunctionBody,
     DartStatement
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    FunctionExpressionInfo,
+    BaseExpressionInfo,
+    FunctionShortcutDefinitionInfo,
+    QualifiedExpressionInfo,
+    ParameterInfo,
+    ArgumentListInfo,
+    ExpressionInfo,
+    FunctionDefinitionInfo,
+    AnyFunctionInfo,
+    IsConditionInfo,
+    TypeInfo
+}
 
 shared abstract
 class BaseTransformer<Result>(CompilationContext ctx)

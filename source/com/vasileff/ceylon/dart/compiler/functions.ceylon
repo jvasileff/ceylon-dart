@@ -32,6 +32,11 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     ValueModel=Value
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    NodeInfo,
+    DeclarationInfo,
+    keys
+}
 
 void printNodeAsCode(Node node) {
     TCNode tcNode(Node node)

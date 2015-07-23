@@ -112,6 +112,13 @@ import com.vasileff.ceylon.dart.ast {
     DartExpressionStatement,
     DartConditionalExpression
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    BaseExpressionInfo,
+    FunctionExpressionInfo,
+    QualifiedExpressionInfo,
+    InvocationInfo,
+    ExpressionInfo
+}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)

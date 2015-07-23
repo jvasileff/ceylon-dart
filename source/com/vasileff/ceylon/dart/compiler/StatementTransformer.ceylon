@@ -52,6 +52,14 @@ import com.vasileff.ceylon.dart.ast {
     DartPrefixExpression,
     DartStatement
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    NodeInfo,
+    ValueSpecificationInfo,
+    UnspecifiedVariableInfo,
+    ValueDeclarationInfo,
+    ExpressionInfo,
+    IsConditionInfo
+}
 
 shared
 class StatementTransformer(CompilationContext ctx)

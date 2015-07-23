@@ -9,6 +9,9 @@ import com.vasileff.ceylon.dart.ast {
     DartMethodDeclaration,
     DartClassMember
 }
+import com.vasileff.ceylon.dart.nodeinfo {
+    FunctionDeclarationInfo
+}
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)
