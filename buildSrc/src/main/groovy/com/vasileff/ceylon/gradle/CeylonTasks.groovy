@@ -136,6 +136,10 @@ class CompileCeylonJSTask extends AbstractCeylonTask {
 
 class CeylonDocTask extends AbstractCeylonTask {
   Boolean includeSource = false
+  Boolean includeNonShared = false
+  Boolean ignoreBrokenLink = false;
+  Boolean ignoreMissingDoc = false;
+  Boolean ignoreMissingThrows = false;
 
   Set<File> additionalSourceDirs() {
     Set<File> dirs = new HashSet<File>()
@@ -156,6 +160,10 @@ class CeylonDocTask extends AbstractCeylonTask {
             out: getDestination(),
             encoding: encoding,
             includeSourceCode: includeSource,
+            includeNonShared: includeNonShared,
+            ignoreMissingDoc: ignoreMissingDoc,
+            ignoreMissingThrows: ignoreMissingThrows,
+            ignoreBrokenLink: ignoreBrokenLink,
             nomtimecheck: false) {
         moduleset {
           if (!modules.empty) {

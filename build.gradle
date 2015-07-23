@@ -12,6 +12,9 @@ compileCeylon {
 
 ceylonDoc {
     includeSource = true
+    includeNonShared = true
+    ignoreMissingDoc = true
+    ignoreMissingThrows = true
 }
 
 task publish(type: Copy) {
