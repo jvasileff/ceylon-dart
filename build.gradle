@@ -129,8 +129,10 @@ project('ceylon-dart-language') {
         // TODO depend on the project artifacts, not the task
         dependsOn project(":ceylon-dart-compiler").compileCeylon
 
+        File outDir = file("build/modules-dart/main")
+
         inputs.dir file("source")
-        outputs.dir file("modules")
+        outputs.dir outDir
 
         String repository = project(':ceylon-dart-compiler')
                 .compileCeylon.destinationDir.toString();
@@ -139,6 +141,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart::runCompileDartTool',
+                "--out=${outDir.toString()}",
                 'com.vasileff.ceylon.dart'
     }
 

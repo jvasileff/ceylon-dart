@@ -48,6 +48,20 @@ import com.redhat.ceylon.compiler.typechecker {
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module
 }
+import com.vasileff.ceylon.dart.ast {
+    DartArgumentList,
+    DartImportDirective,
+    dartFormalParameterListEmpty,
+    DartFunctionExpression,
+    DartExpressionFunctionBody,
+    DartCompilationUnitMember,
+    DartTypeName,
+    DartSimpleIdentifier,
+    DartMethodInvocation,
+    DartCompilationUnit,
+    DartFunctionDeclaration,
+    DartSimpleStringLiteral
+}
 import com.vasileff.ceylon.dart.compiler {
     augmentNode,
     CompilationContext,
@@ -66,20 +80,6 @@ import java.lang {
 }
 import java.util {
     JList=List
-}
-import com.vasileff.ceylon.dart.ast {
-    DartArgumentList,
-    DartImportDirective,
-    dartFormalParameterListEmpty,
-    DartFunctionExpression,
-    DartExpressionFunctionBody,
-    DartCompilationUnitMember,
-    DartTypeName,
-    DartSimpleIdentifier,
-    DartMethodInvocation,
-    DartCompilationUnit,
-    DartFunctionDeclaration,
-    DartSimpleStringLiteral
 }
 
 shared
@@ -203,10 +203,6 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 bais);
         }
     }
-
-    shared actual
-    void setOut(String? string)
-        =>  super.setOut(string);
 }
 
 "Run the CeylonCompileDartTool, using arguments from [[process.arguments]]."

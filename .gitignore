@@ -1,11 +1,8 @@
 .exploded/
 .gradle/
-.gradle/
 build/
 classes/
-classes/
 config.old
-modules/
 modules/
 reports/
 
