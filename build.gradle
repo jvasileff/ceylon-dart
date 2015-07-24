@@ -113,6 +113,30 @@ project('ceylon-dart-ant') {
     }
 }
 
+project('ceylon-dart-language') {
+    task compile(type:Exec) {
+        // compile with the regular tool, but make sure to use *our* version.
+        // So, use "ceylon run", and specify the repository ("--rep"). The
+        // function "runCompileDartTool" simply delegates to the
+        // CeylonCompileDartTool.
+
+        // TODO depend on the project artifacts, not the task
+        dependsOn project(":ceylon-dart-compiler").compileCeylon
+
+        inputs.dir file("source")
+        outputs.dir file("modules")
+
+        String repository = project(':ceylon-dart-compiler')
+                .compileCeylon.destinationDir.toString();
+
+        workingDir projectDir
+        commandLine 'ceylon', 'run',
+                '--rep', repository,
+                '--run', 'com.vasileff.ceylon.dart::runCompileDartTool',
+                'com.vasileff.ceylon.dart'
+    }
+}
+
 wrapper {
     jarFile 'buildSrc/wrapper/gradle-wrapper.jar'
 }

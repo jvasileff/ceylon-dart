@@ -11,7 +11,10 @@ import ceylon.collection {
 import ceylon.interop.java {
     CeylonIterable,
     CeylonList,
-    createJavaByteArray
+    createJavaByteArray,
+    javaClass,
+    JavaIterable,
+    javaString
 }
 import ceylon.io.charset {
     utf8
@@ -30,11 +33,14 @@ import com.redhat.ceylon.common.config {
     DefaultToolOptions
 }
 import com.redhat.ceylon.common.tool {
-    argument=argument__SETTER
+    argument=argument__SETTER,
+    AnnotatedToolModel,
+    ToolFactory
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool,
-    SourceArgumentsResolver
+    SourceArgumentsResolver,
+    CeylonToolLoader
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -201,4 +207,18 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     shared actual
     void setOut(String? string)
         =>  super.setOut(string);
+}
+
+"Run the CeylonCompileDartTool, using arguments from [[process.arguments]]."
+shared
+void runCompileDartTool() {
+    value args = JavaIterable(process.arguments.map(javaString));
+    value tool = CeylonCompileDartTool();
+    value toolLoader = CeylonToolLoader();
+    value toolFactory = ToolFactory();
+    value toolModel = AnnotatedToolModel<CeylonCompileDartTool>("compile-dart");
+    toolModel.toolLoader = toolLoader;
+    toolModel.toolClass = javaClass<CeylonCompileDartTool>();
+    toolFactory.bindArguments(toolModel, tool, CeylonTool(), args);
+    tool.run();
 }
