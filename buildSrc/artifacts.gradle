@@ -1,0 +1,19 @@
+// -----------------------------------------------------------------------------
+// source and javadoc JAR tasks
+// -----------------------------------------------------------------------------
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+    group 'Documentation'
+    description 'Assembles a jar archive containing the sources.'
+
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+    group 'Documentation'
+    description 'Assembles a jar archive containing the Javadoc API documentation.'
+
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}

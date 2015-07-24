@@ -1,0 +1,97 @@
+// -----------------------------------------------------------------------------
+// Eclipse
+// -----------------------------------------------------------------------------
+
+// delay processing until all plugins have been loaded
+project.afterEvaluate {
+  // eclipse compiler warning preferences
+  if(project.hasProperty('eclipseJdt')) {
+    eclipseJdt.inputFile = file("$rootDir/buildSrc/eclipse/base.jdt.core.prefs")
+  }
+
+  // disable select eclipse validators
+  if(project.hasProperty('eclipseWtp')) {
+    task eclipseValidationPrefs(type: Copy) {
+      from file("$rootDir/buildSrc/eclipse/org.eclipse.wst.validation.prefs")
+      into file('.settings')
+    }
+    tasks.eclipse.dependsOn eclipseValidationPrefs
+    tasks.cleanEclipse.dependsOn cleanEclipseValidationPrefs
+  }
+
+  // http://stackoverflow.com/questions/12836089
+  // https://issuetracker.springsource.com/browse/STS-3742
+  if(project.hasProperty('eclipseWtp') && project.hasProperty('war')) {
+    eclipse.classpath.file {
+      // classpath entry for Eclipse which changes the order of
+      // classpathentries; otherwise no sources for 3rd party jars are shown
+      withXml { xml ->
+        def node = xml.asNode()
+        node.remove(node.find {
+            it.@path == 'org.eclipse.jst.j2ee.internal.web.container'})
+        node.appendNode( 'classpathentry',
+            [ kind: 'con',
+              path: 'org.eclipse.jst.j2ee.internal.web.container',
+              exported: 'true'])
+      }
+    }
+  }
+
+  // quiet eclipse warnings like:
+  //
+  //    Classpath entry /another-subproject will not be exported or published.
+  //    Runtime ClassNotFoundExceptions may result.
+  //
+  // This is related to http://issues.gradle.org/browse/GRADLE-1134, but
+  // apparently the fix did not go far enough - the "nondependency" flag was
+  // not added to @kind="src" && @exporeted="true" items in .classpath which
+  // happens when the subproject in question has a gradle dependency on another
+  // subproject.
+  if(project.hasProperty('eclipseWtp')) {
+    eclipse.classpath.file.withXml { xml ->
+      xml.asNode().classpathentry.findAll {
+        it.@kind == 'src' && it.@exported
+      }.each {
+        if (project.hasProperty('war')) {
+          // as of gradle 1.11, war project deps are specified in
+          // .settings/org.eclipse.wst.common.component
+          it.appendNode('attributes').appendNode(
+              'attribute', [name: 'org.eclipse.jst.component.nondependency', value: ''])
+        } else {
+          // as of gradle 1.11, non-war project deps are specified in .classpath
+          it.appendNode('attributes').appendNode(
+              'attribute', [name: 'org.eclipse.jst.component.dependency', value: '../'])
+        }
+      }
+    }
+  }
+
+  // use jre lib matching version used by project, not the workspace default
+  if (project.sourceCompatibility != null) {
+    def target = project.sourceCompatibility.toString()
+    def containerPrefix = "org.eclipse.jdt.launching.JRE_CONTAINER"
+    def containerSuffix
+    if (target =~ /1.[4-5]/) {
+      containerSuffix = '/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-' + target
+    } else if (target =~ /1.[6-8]/) {
+      containerSuffix = '/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + target
+    }
+    if (containerSuffix != null) {
+      project.eclipse.classpath {
+        containers.removeAll { it.startsWith(containerPrefix) }
+        containers.add(containerPrefix + containerSuffix)
+      }
+    }
+  }
+}
+
+ext.ignoreEclipseWarnings = { File sourcePath ->
+  def path = sourcePath.absolutePath.substring(project.projectDir.absolutePath.length() + 1)
+  eclipse.classpath.file.withXml { xml ->
+    xml.asNode().find {
+      it.@kind == 'src' && it.@path == path
+    }
+      .appendNode('attributes')
+      .appendNode('attribute', [ name: "ignore_optional_problems", value: "true"])
+  }
+}

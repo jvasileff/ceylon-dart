@@ -8,3 +8,9 @@ config.old
 modules/
 modules/
 reports/
+
+ceylon-dart-ant/.classpath
+ceylon-dart-ant/.project
+ceylon-dart-ant/.settings/
+ceylon-dart-ant/bin/
+ceylon-dart-ant/target/

@@ -3,6 +3,11 @@ description = "Ceylon Dart Backend"
 allprojects {
     group = 'com.vasileff.ceylon.dart'
     version = '0.0.1'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
 }
 
 // root project
@@ -15,6 +20,17 @@ ext.ceylonBinDir = System.getProperty("user.home") + "/.ceylon/bin"
 task build(dependsOn: assemble) {
     group = 'Build'
     description = 'Assembles and tests this project.'
+}
+
+task cleanAll(dependsOn: [
+    "ceylon-dart-ant:clean",
+    "ceylon-dart-ant:cleanEclipse",
+    "ceylon-dart-compiler:clean"
+])
+
+task reset(dependsOn: ["cleanAll", "ceylon-dart-ant:eclipse"]) {
+    group = 'Housekeeping'
+    description = 'Clean and rebuild eclipse and project settings; useful after switching git branches.'
 }
 
 // ceylon-dart-compiler
@@ -74,6 +90,26 @@ project('ceylon-dart-compiler') {
         dependsOn test;
         group = 'Build'
         description = 'Assembles and tests this project.'
+    }
+}
+
+project('ceylon-dart-ant') {
+    apply plugin: 'java'
+    apply plugin: 'eclipse-wtp'
+
+    apply from: "$rootDir/buildSrc/eclipse.gradle"   // customize eclipse plugin
+    apply from: "$rootDir/buildSrc/artifacts.gradle" // sourcesJar and javadocJar
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    dependencies {
+        compile "org.apache.ant:ant:1.9.6"
+    }
+
+    task refresh {
+        group = 'Housekeeping'
+        description = 'Create directories, update genenerated files, etc; useful when working with IDEs.'
     }
 }
 

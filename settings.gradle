@@ -1,5 +1,5 @@
 rootProject.name = 'ceylon-dart'
 
-//include 'ceylon-dart-ant'
+include 'ceylon-dart-ant'
 include 'ceylon-dart-compiler'
 //include 'ceylon-dart-language'
