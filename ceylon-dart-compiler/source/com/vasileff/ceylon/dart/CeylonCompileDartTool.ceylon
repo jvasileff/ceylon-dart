@@ -8,6 +8,12 @@ import ceylon.collection {
     HashMap,
     LinkedList
 }
+import ceylon.file {
+    Directory,
+    File,
+    lines,
+    parsePath
+}
 import ceylon.interop.java {
     CeylonIterable,
     CeylonList,
@@ -178,30 +184,70 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         }
 
         for (m -> ds in moduleMembers) {
+
+            value languageModule = m.nameAsString == "ceylon.language";
+
             ds.add(mainFunctionHack);
             value dcu = DartCompilationUnit {
-                [DartImportDirective {
-                    DartSimpleStringLiteral(
-                        "dart:core");
-                    DartSimpleIdentifier(
-                        "$dart$core");
+                {DartImportDirective {
+                    DartSimpleStringLiteral("dart:core");
+                    DartSimpleIdentifier("$dart$core");
                 },
                 DartImportDirective {
-                    DartSimpleStringLiteral(
-                        "package:ceylon/language/language.dart");
-                    DartSimpleIdentifier(
-                        "$ceylon$language");
-                }];
+                    DartSimpleStringLiteral("dart:io");
+                    DartSimpleIdentifier("$dart$io");
+                },
+                DartImportDirective {
+                    DartSimpleStringLiteral("dart:math");
+                    DartSimpleIdentifier("$dart$math");
+                },
+                DartImportDirective {
+                    DartSimpleStringLiteral("dart:mirrors");
+                    DartSimpleIdentifier("$dart$mirrors");
+                },
+                !languageModule then
+                DartImportDirective {
+                    DartSimpleStringLiteral("package:ceylon/language/language.dart");
+                    DartSimpleIdentifier("$ceylon$language");
+                }}.coalesced.sequence();
                 ds.sequence();
             };
 
+            assert (is Directory directory = parsePath(m.unit.fullPath).parent.resource);
+            value native = nativeCode(directory);
             value bais = ByteArrayInputStream(
-                    createJavaByteArray(utf8.encode(dcu.string)));
+                    createJavaByteArray(utf8.encode(
+                            dcu.string + native)));
 
             outputRepositoryManager.putArtifact(
                 ArtifactContext(m.nameAsString, m.version, ".dart"),
                 bais);
         }
+    }
+
+    String nativeCode(Directory directory) {
+        // Concatinate *.dart files. Filter import and library directives. Return.
+        value sb = StringBuilder();
+
+        for (file in directory
+                .children("*.dart")
+                .narrow<File>() // TODO support Links
+                .filter(File.readable)) {
+
+            sb.append("\n");
+            sb.append("/".repeat(70) + "\n");
+            sb.append("//\n");
+            sb.append("// Stitched file: ``file.name``\n");
+            sb.append("//\n");
+            sb.append("/".repeat(70) + "\n");
+
+            lines(file)
+                .filter((line)
+                    => !line.startsWith("import") && !line.startsWith("library"))
+                .interpose("\n")
+                .each(sb.append);
+        }
+        return sb.string;
     }
 }
 
