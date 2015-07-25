@@ -74,7 +74,7 @@ class CeylonRunDartTool() extends RepoUsingTool(null) {
             ArtifactContext(moduleName, moduleVersion, ".dart"));
 
         value languageModuleFile = repositoryManager.getArtifact(
-            ArtifactContext("ceylon.language", "0.0.1", ".dart"));
+            ArtifactContext("ceylon.language", "1.1.1", ".dart"));
 
         value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
             [moduleName -> programModuleFile,

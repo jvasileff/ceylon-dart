@@ -130,10 +130,10 @@ project('ceylon-dart-language') {
         dependsOn project(":ceylon-dart-compiler").compileCeylon
         inputs.dir project(":ceylon-dart-compiler").compileCeylon.destinationDir
 
-        File outDir = file("build/modules-dart/main")
+        ext.destinationDir = file("build/modules-dart/main")
 
         inputs.dir file("source")
-        outputs.dir outDir
+        outputs.dir destinationDir
 
         String repository = project(':ceylon-dart-compiler')
                 .compileCeylon.destinationDir.toString();
@@ -142,7 +142,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart::runCompileDartTool',
-                "--out=${outDir.toString()}",
+                "--out=${destinationDir.toString()}",
                 'com.vasileff.ceylon.dart'
     }
 
@@ -151,6 +151,22 @@ project('ceylon-dart-language') {
     task build(dependsOn: assemble) {
         group = 'Build'
         description = 'Assembles and tests this project.'
+    }
+
+    task install(type: Copy) {
+        group "Deployment"
+        description "Install plugins and copy the compiled modules to the user's repository"
+        dependsOn "publish"
+    }
+
+    task publish(type: Copy) {
+        group "Deployment"
+        description "Copy the compiled modules to the user's repository"
+
+        dependsOn "compileCeylonDart"
+
+        from compileCeylonDart.destinationDir
+        into ceylonRepoDir
     }
 }
 
