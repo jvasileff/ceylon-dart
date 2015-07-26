@@ -25,9 +25,6 @@ import ceylon.language.meta {
     type
 }
 
-import org.antlr.runtime {
-    Token
-}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartReturnStatement,
@@ -57,8 +54,11 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueSpecificationInfo,
     UnspecifiedVariableInfo,
     ValueDeclarationInfo,
-    ExpressionInfo,
     IsConditionInfo
+}
+
+import org.antlr.runtime {
+    Token
 }
 
 shared
@@ -208,9 +208,9 @@ class StatementTransformer(CompilationContext ctx)
         // Discover the type of the iterator and obtain a function that
         // will create an expression that yields the iterator
         value [iteratorType, _, iteratorGenerator]
-            =   generateInvocationGenerator {
+            =   generateInvocationDetailsFromName {
                     that;
-                    ExpressionInfo(that.forClause.iterator.iterated);
+                    that.forClause.iterator.iterated;
                     "iterator";
                     [];
                 };
@@ -228,7 +228,7 @@ class StatementTransformer(CompilationContext ctx)
         // Discover the type of the loop variable and obtain a function that
         // will create an expression that calls `next` on the iterator
         value [loopVariableType, __, nextInvocationGenerator]
-            =   generateInvocationGeneratorSynthetic {
+            =   generateInvocationDetailsSynthetic {
                     that;
                     iteratorDenotableType;
                     // NonNative since that's how we created

@@ -16,7 +16,8 @@ import ceylon.ast.core {
     BooleanCondition,
     QualifiedExpression,
     BaseExpression,
-    IsCondition
+    IsCondition,
+    Expression
 }
 import ceylon.collection {
     LinkedList
@@ -188,13 +189,162 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 // TODO seems like a hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
 
+    "Generate an invocation or propery access expression."
     shared
     DartExpression generateInvocation(
             Node scope,
-            ExpressionInfo receiver,
+            TypeModel resultType,
+            TypeModel receiverType,
+            DartExpression() generateReceiver,
+            FunctionOrValueModel memberDeclaration,
+            [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null,
+            Boolean safeMemberOperator = false) {
+
+        value [callableType, a] = callableTypeAndArguments else [null, []];
+
+        [Expression*] arguments;
+        switch (a)
+        case (is [Expression*]) {
+            arguments = a;
+        }
+        case (is PositionalArguments) {
+            arguments = a.argumentList.listedArguments;
+        }
+        case (is NamedArguments) {
+            throw CompilerBug(scope, "NamedArguments not supported");
+        }
+
+        value [memberIdentifier, isFunction] = ctx.dartTypes
+                    .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
+
+        "Qualified expressions aren't toplevels, and dartIdentifierForFunctionOrValue()
+         only qualifies toplevels."
+        assert (is DartSimpleIdentifier memberIdentifier);
+
+        value resultDeclaration =
+                if (is FunctionModel memberDeclaration,
+                        memberDeclaration.parameterLists.size() > 1)
+                // The function actually returns a Callable, not the
+                // ultimate return type advertised by the declaration.
+                then null
+                else memberDeclaration;
+
+        // Determine usable receiver type. `withLhsDenotable` would be simpler, but we
+        // may need the type below.
+        assert (is ClassOrInterfaceModel container = memberDeclaration.container);
+        value receiverDenotableType = ctx.ceylonTypes.denotableType {
+            receiverType;
+            container;
+        };
+
+        value receiverDartType = ctx.dartTypes.dartTypeName {
+            scope;
+            receiverDenotableType;
+            eraseToNative = false;
+        };
+
+        value boxedReceiver = withLhsCustom {
+            receiverDenotableType;
+            false; false;
+            generateReceiver;
+        };
+
+        DartExpression invocation;
+        if (arguments nonempty) {
+            "If there are arguments, the member is surely a FunctionModel and must
+             translate to a Dart function"
+            assert (is FunctionModel memberDeclaration, isFunction);
+
+            "If we have arguments, we'll have a callableType."
+            assert (exists callableType);
+
+            value argumentList {
+                value argumentTypes = CeylonList(ctx.unit
+                        .getCallableArgumentTypes(callableType.fullType));
+
+                value parameterDeclarations = CeylonList(
+                        memberDeclaration.firstParameterList.parameters)
+                        .collect(ParameterModel.model);
+
+                return
+                DartArgumentList {
+                    [for (i -> argument in arguments.indexed)
+                        withLhs {
+                            argumentTypes[i];
+                            parameterDeclarations[i];
+                            () => argument.transform(expressionTransformer);
+                        }
+                    ];
+                };
+            }
+
+            if (safeMemberOperator) {
+                invocation = createNullSafeExpression {
+                    parameterIdentifier = DartSimpleIdentifier("$r$");
+                    parameterType = receiverDartType;
+                    maybeNullExpression = boxedReceiver;
+                    ifNullExpression = DartNullLiteral();
+                    ifNotNullExpression = DartFunctionExpressionInvocation {
+                        DartPropertyAccess {
+                            DartSimpleIdentifier("$r$");
+                            memberIdentifier;
+                        };
+                        argumentList;
+                    };
+                };
+            }
+            else {
+                invocation =
+                DartMethodInvocation {
+                    boxedReceiver;
+                    memberIdentifier;
+                    argumentList;
+                };
+            }
+        }
+        else {
+            function valueAccess(DartExpression receiver)
+                =>  if (!isFunction)
+                    then DartPropertyAccess(receiver, memberIdentifier)
+                    else DartMethodInvocation {
+                        receiver;
+                        memberIdentifier;
+                        DartArgumentList();
+                    };
+
+            if (safeMemberOperator) {
+                invocation = createNullSafeExpression {
+                    parameterIdentifier = DartSimpleIdentifier("$r$");
+                    parameterType = receiverDartType;
+                    maybeNullExpression = boxedReceiver;
+                    ifNullExpression = DartNullLiteral();
+                    ifNotNullExpression = valueAccess {
+                        DartSimpleIdentifier("$r$");
+                    };
+                };
+            }
+            else {
+                invocation = valueAccess(boxedReceiver);
+            }
+        }
+
+        return
+        withBoxing {
+            scope;
+            resultType;
+            resultDeclaration;
+            invocation;
+        };
+    }
+
+    shared
+    DartExpression generateInvocationFromName(
+            Node scope,
+            Expression receiver,
             String memberName,
-            [ExpressionInfo*] arguments)
-        =>  generateInvocationGenerator(scope, receiver, memberName, arguments)[2]();
+            [Expression*] arguments)
+        =>  generateInvocationDetailsFromName(
+                scope, receiver, memberName, arguments)[2]();
 
     """Returns a Tuple holding:
 
@@ -210,130 +360,71 @@ class BaseTransformer<Result>(CompilationContext ctx)
     """
     shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
-    generateInvocationGenerator(
+    generateInvocationDetailsFromName(
             Node scope,
-            ExpressionInfo receiver,
+            Expression receiver,
             String memberName,
-            [ExpressionInfo*] arguments) {
+            [Expression*] arguments) {
 
         return
-        generateInvocationGeneratorSynthetic {
+        generateInvocationDetailsSynthetic {
             scope;
-            receiver.typeModel;
-            () => receiver.node.transform(expressionTransformer);
+            ExpressionInfo(receiver).typeModel;
+            () => receiver.transform(expressionTransformer);
             memberName;
             arguments;
         };
     }
 
-    see(`function generateInvocationGeneratorSynthetic`)
-    shared
-    DartExpression
-    generateInvocationSynthetic(
-            Node scope,
-            TypeModel receiverType,
-            DartExpression generateReceiver(),
-            String memberName,
-            [ExpressionInfo*] arguments)
-        =>  generateInvocationGeneratorSynthetic {
-                scope;
-                receiverType;
-                generateReceiver;
-                memberName;
-                arguments;
-            }[2]();
-
-
-    """The same as [[generateInvocation]], but with parameters that are more fundamental
-       (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
+    """The same as [[generateInvocationFromName]], but with parameters that are more
+       fundamental (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
     """
-    see(`function generateInvocationGenerator`)
     shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
-    generateInvocationGeneratorSynthetic(
+    generateInvocationDetailsSynthetic(
             Node scope,
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
-            [ExpressionInfo*] arguments) {
+            [Expression*] arguments) {
 
         // 1. Get a TypedDeclaration for the member
         // 2. Get a TypeDeclaration for the member's container
         // 3. Get a TypedReference for the member, to get the return and arg types
-        // 4. Cast the receiver to a Dart denotable type for the member's container
-        // 5. Invoke with each argument boxed as necessary
-        // 6. Box and return
+        // 4. Delegate to function that will that will:
+        //      - Cast the receiver to a Dart denotable type for the member's container
+        //      - Invoke with each argument boxed as necessary
+        //      - Box and return
 
         assert (is FunctionOrValueModel memberDeclaration =
                     receiverType.declaration.getMember(memberName, null, false));
 
-        // TODO translate toString() => string, etc.
-        assert (is DartSimpleIdentifier memberIdentifier =
-                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                        scope, memberDeclaration, false)[0]);
-
-        assert (is ClassOrInterfaceModel container = memberDeclaration.container);
-
-        value typedReference = receiverType
-                .getTypedReference(memberDeclaration, null);
+        value typedReference = receiverType.getTypedMember(memberDeclaration, null);
 
         value rhsType = typedReference.type;
 
         value rhsDeclaration =
                 if (is FunctionModel memberDeclaration,
-                        memberDeclaration.parameterLists.size() > 1)
+                    memberDeclaration.parameterLists.size() > 1)
                 // The function actually returns a Callable, not the
                 // ultimate return type advertised by the declaration.
                 then null
                 else memberDeclaration;
 
-        value boxedReceiver = withLhsDenotable {
-            container;
-            generateReceiver;
-        };
-
-        function expressionGenerator() {
-            DartExpression unboxed;
-            if (is FunctionModel memberDeclaration) {
-                value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(
-                    typedReference.fullType));
-
-                value parameterDeclarations = CeylonList(
-                        memberDeclaration.firstParameterList.parameters)
-                        .collect(ParameterModel.model);
-                unboxed =
-                DartMethodInvocation {
-                    boxedReceiver;
-                    memberIdentifier;
-                    DartArgumentList {
-                        [for (i -> argument in arguments.indexed)
-                            withLhs {
-                                argumentTypes[i];
-                                parameterDeclarations[i];
-                                () => argument.node.transform(expressionTransformer);
-                            }
-                        ];
-                    };
-                };
-            }
-            else {
-                unboxed =
-                DartPropertyAccess {
-                    boxedReceiver;
-                    memberIdentifier;
-                };
-            }
-
-            return
-            withBoxing {
+        return [
+            rhsType,
+            rhsDeclaration,
+            () => generateInvocation {
                 scope;
                 rhsType;
-                rhsDeclaration;
-                unboxed;
-            };
-        }
-
-        return [rhsType, rhsDeclaration, expressionGenerator];
+                receiverType;
+                generateReceiver;
+                memberDeclaration;
+                (arguments nonempty) then
+                    [typedReference.fullType, arguments];
+                false;
+            }
+        ];
     }
 
     "Generates a DartExpression that produces a native boolean.

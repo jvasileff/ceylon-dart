@@ -73,7 +73,6 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    FunctionOrValueModel=FunctionOrValue,
     SetterModel=Setter,
     DeclarationModel=Declaration,
     FunctionModel=Function,
@@ -137,7 +136,6 @@ class ExpressionTransformer(CompilationContext ctx)
     """
     shared actual
     DartExpression transformBaseExpression(BaseExpression that) {
-
         if (!is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs) {
             throw CompilerBug(that,
                     "BaseExpression nameAndArgs type not yet supported: \
@@ -147,8 +145,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
         value info = BaseExpressionInfo(that);
         value targetDeclaration = info.declaration;
-
-        FunctionOrValueModel? rhsDeclaration;
 
         if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
             return generateBooleanExpression(
@@ -162,16 +158,19 @@ class ExpressionTransformer(CompilationContext ctx)
             return DartNullLiteral();
         }
         else {
-            DartExpression unboxed;
             switch (targetDeclaration)
             case (is ValueModel) {
-                rhsDeclaration = targetDeclaration;
-
                 value [dartIdentifier, dartIdentifierIsFunction] =
-                        ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                            that, targetDeclaration, false);
+                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                    that;
+                    targetDeclaration;
+                    false;
+                };
 
-                unboxed =
+                return withBoxing {
+                    that;
+                    info.typeModel;
+                    targetDeclaration;
                     if (dartIdentifierIsFunction) then
                         DartFunctionExpressionInvocation {
                             dartIdentifier;
@@ -179,47 +178,33 @@ class ExpressionTransformer(CompilationContext ctx)
                         }
                     else
                         dartIdentifier;
+                };
             }
             case (is FunctionModel) {
-                // will be newly created Callable<...>, which is not erased
-                rhsDeclaration = null;
-
-                value dartIdentifier = ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                        that, targetDeclaration, false)[0];
-
-                switch (ctx.assertedLhsTypeTop)
-                case (noType) {
-                    // must be an invocation, do not wrap in a callable
-                    unboxed = dartIdentifier;
-                }
-                else {
-                    // probably `Anything` or `Callable`; doesn't really
-                    // matter. Take a reference to the function:
-                    unboxed = generateNewCallable {
+                // a newly created Callable, which is not erased
+                return withBoxingNonNative {
+                    that;
+                    info.typeModel;
+                    generateNewCallable {
                         that;
                         functionModel = targetDeclaration;
-                        delegateFunction = dartIdentifier;
+                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                            scope = that;
+                            targetDeclaration;
+                        }[0];
                     };
-                }
+                };
             }
             else {
                 throw CompilerBug(that,
                         "Unexpected declaration type for base expression: \
                          ``className(targetDeclaration)``");
             }
-
-            return withBoxing {
-                that;
-                info.typeModel;
-                rhsDeclaration;
-                unboxed;
-            };
         }
     }
 
     shared actual
     DartExpression transformQualifiedExpression(QualifiedExpression that) {
-
         if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
                     "Member operator not yet supported: \
@@ -227,153 +212,129 @@ class ExpressionTransformer(CompilationContext ctx)
         }
 
         value info = QualifiedExpressionInfo(that);
-        value safeOperator = that.memberOperator is SafeMemberOperator;
         value receiverInfo = ExpressionInfo(that.receiverExpression);
-        value receiverType = receiverInfo.typeModel; // is optional w/nullsafe operator!
-        value targetDeclaration = info.target.declaration;
-        value targetContainer = targetDeclaration.container;
-
-        FunctionOrValueModel? rhsDeclaration;
+        value memberDeclaration = info.target.declaration;
+        value memberContainer = memberDeclaration.container;
+        value safeMemberOperator = that.memberOperator is SafeMemberOperator;
 
         "Maybe this is a type alias?"
-        assert (is ClassOrInterfaceModel targetContainer);
+        assert (is ClassOrInterfaceModel memberContainer);
 
-        value denotableReceiverType = ctx.ceylonTypes.denotableType {
-            receiverType;
-            targetContainer;
-        };
-
-        value receiverDartType = ctx.dartTypes.dartTypeName {
-            that;
-            denotableReceiverType;
-            eraseToNative = false;
-        };
-
-        value receiver = withLhsNonNative {
-            denotableReceiverType;
-            () => that.receiverExpression.transform(this);
-        };
-
-        DartExpression unboxed;
-
-        switch (targetDeclaration)
+        switch (memberDeclaration)
         case (is ValueModel) {
-            rhsDeclaration = targetDeclaration;
-
-            // Should be easy; don't worry about getters/setters
-            // being methods since that doesn't happen in locations
-            // that can be qualified.
-
-            assert (is DartSimpleIdentifier memberIdentifier =
-                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                        that, targetDeclaration, false)[0]);
-
-            unboxed =
-                if (!safeOperator) then
-                    DartPropertyAccess(receiver, memberIdentifier)
-                else
-                    let (parameterIdentifier = DartSimpleIdentifier("$r$"))
-                    createNullSafeExpression {
-                        parameterIdentifier;
-                        receiverDartType;
-                        maybeNullExpression = receiver;
-                        ifNullExpression = DartNullLiteral();
-                        ifNotNullExpression = DartPropertyAccess {
-                            parameterIdentifier;
-                            memberIdentifier;
-                        };
-                    };
+            // Return an expression that will yield the value
+            return generateInvocation {
+                that;
+                info.typeModel;
+                receiverInfo.typeModel;
+                () => that.receiverExpression.transform(this);
+                memberDeclaration;
+                null;
+                safeMemberOperator;
+            };
         }
         case (is FunctionModel) {
-            // will be newly created Callable<...>, which is not erased
-            rhsDeclaration = null;
+            // Return a new Callable
+            value receiverDenotableType = ctx.ceylonTypes.denotableType {
+                receiverInfo.typeModel;
+                memberContainer;
+            };
 
-            assert (is DartSimpleIdentifier memberIdentifier =
-                    ctx.dartTypes.dartIdentifierForFunctionOrValue(
-                        that, targetDeclaration, false)[0]);
+            value receiverDartType = ctx.dartTypes.dartTypeName {
+                that;
+                receiverDenotableType;
+                eraseToNative = false;
+            };
 
-            switch (ctx.assertedLhsTypeTop)
-            case (noType) {
-                // An invocation; do not wrap in a callable
-                //
-                // IMPORTANT NOTE: we will completely disregard possible use of the
-                // SafeMemberOperator, and let the outer invocation node rewrite the
-                // expression (we can't; we don't have the args)
-                // see transformInvocation
+            value receiver = withLhsNonNative {
+                receiverDenotableType;
+                () => that.receiverExpression.transform(this);
+            };
 
-                // boxing and casting must be handled by outer node
-                return DartPropertyAccess(receiver, memberIdentifier);
-            }
-            else {
-                // The core.Function result of the qualified expression must be
-                // captured to avoid re-evaluating the receiver expression
-                // each time Callable is invoked.
-                // So...
-                //   - create a closure that
-                //     - declares a variable holding the evaluated qe (1)
-                //     - returns a new Callable that holds the saved function (2)
-                //   - invoke the closure to obtain the Callable (3)
-                unboxed =
-                DartFunctionExpressionInvocation { // (3)
-                    DartFunctionExpression {
-                        DartFormalParameterList();
-                        DartBlockFunctionBody {
-                            null; false;
-                            DartBlock {
-                                [DartVariableDeclarationStatement {
-                                    DartVariableDeclarationList {
-                                        keyword = null;
-                                        type = ctx.dartTypes.dartFunction;
-                                        [DartVariableDeclaration { // (1)
-                                            DartSimpleIdentifier {
-                                                "$capturedDelegate$";
-                                            };
-                                            if (!safeOperator)
-                                            then DartPropertyAccess(
-                                                    receiver, memberIdentifier)
-                                            else createNullSafeExpression {
-                                                DartSimpleIdentifier("$r$");
-                                                receiverDartType;
-                                                receiver;
-                                                DartNullLiteral();
-                                                DartPropertyAccess {
-                                                    DartSimpleIdentifier("$r$");
-                                                    memberIdentifier;
-                                                };
-                                            };
+            value [memberIdentifier, isFunction] = ctx.dartTypes
+                    .dartIdentifierForFunctionOrValue {
+                that;
+                memberDeclaration;
+                false;
+            };
 
-                                        }];
-                                    };
-                                },
-                                DartReturnStatement { // (2)
-                                    generateNewCallable {
-                                        that;
-                                        targetDeclaration;
+            "Qualified expressions aren't toplevels, and only toplevels
+             are qualified by dartIdentifierForFunctionOrValue()"
+            assert (is DartSimpleIdentifier memberIdentifier);
+
+            "Ignore the possibility that a Ceylon function is a Dart
+             property, for which there are no known cases."
+            assert (isFunction);
+
+            // The core.Function result of the qualified expression must be
+            // captured to avoid re-evaluating the receiver expression
+            // each time Callable is invoked.
+            //
+            // So...
+            //   - create a closure that
+            //     - declares a variable holding the evaluated qe (1)
+            //     - returns a new Callable that holds the saved function (2)
+            //   - invoke the closure to obtain the Callable (3)
+            value unboxed =
+            DartFunctionExpressionInvocation { // (3)
+                DartFunctionExpression {
+                    DartFormalParameterList();
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            [DartVariableDeclarationStatement {
+                                DartVariableDeclarationList {
+                                    keyword = null;
+                                    type = ctx.dartTypes.dartFunction;
+                                    [DartVariableDeclaration { // (1)
                                         DartSimpleIdentifier {
                                             "$capturedDelegate$";
                                         };
-                                        delegateMayBeNull = safeOperator;
+                                        if (!safeMemberOperator)
+                                        then DartPropertyAccess(
+                                                receiver, memberIdentifier)
+                                        else createNullSafeExpression {
+                                            DartSimpleIdentifier("$r$");
+                                            receiverDartType;
+                                            receiver;
+                                            DartNullLiteral();
+                                            DartPropertyAccess {
+                                                DartSimpleIdentifier("$r$");
+                                                memberIdentifier;
+                                            };
+                                        };
+
+                                    }];
+                                };
+                            },
+                            DartReturnStatement { // (2)
+                                generateNewCallable {
+                                    that;
+                                    memberDeclaration;
+                                    DartSimpleIdentifier {
+                                        "$capturedDelegate$";
                                     };
-                                }];
-                            };
+                                    delegateMayBeNull = safeMemberOperator;
+                                };
+                            }];
                         };
                     };
-                    DartArgumentList(); // (3)
                 };
-            }
+                DartArgumentList(); // (3)
+            };
+            // a new Callable, so never erased to native
+            return withBoxingNonNative {
+                that;
+                info.typeModel;
+                unboxed;
+            };
+
         }
         else {
             throw CompilerBug(that,
                 "Unexpected declaration type for qualified expression: \
-                 ``className(targetDeclaration)``");
+                 ``className(memberDeclaration)``");
         }
-
-        return withBoxing {
-            that;
-            info.typeModel;
-            rhsDeclaration;
-            unboxed;
-        };
     }
 
     shared actual
@@ -416,6 +377,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
+        value info = InvocationInfo(that);
+        value invokedInfo = ExpressionInfo(that.invoked);
+
         DeclarationModel? invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
                            case (is BaseExpression)
@@ -423,8 +387,8 @@ class ExpressionTransformer(CompilationContext ctx)
                            case (is QualifiedExpression)
                                 QualifiedExpressionInfo(invoked).declaration
                            else
-                                // some other expression that yields a Callable
-                                null)
+                                null) // some other expression that yields a Callable
+
                 if (is FunctionModel d,
                     is ConstructorModel constructor = d.type.declaration) then
                     // Constructor invocations present the invoked as a Function,
@@ -437,88 +401,52 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is FunctionModel | ValueModel | SetterModel
                 | ClassModel | ConstructorModel | Null invokedDeclaration);
 
-        value argumentList = generateArgumentListFromArguments(
-                that.arguments, ExpressionInfo(that.invoked).typeModel);
-
         switch (invokedDeclaration)
         case (is FunctionModel) {
-            TypeModel rhsType;
-            FunctionOrValueModel? rhsDeclaration;
-            DartExpression invocation;
+            // invoke a Dart function (not a Callable value)
 
-            if (invokedDeclaration.parameterLists.size() > 1) {
-                // The function actually returns a Callable, not the ultimate return type
-                // as advertised by the declaration.
-                rhsType = InvocationInfo(that).typeModel;
-                rhsDeclaration = null;
-            }
-            else {
-                rhsType = InvocationInfo(that).typeModel;
-                rhsDeclaration = invokedDeclaration;
-            }
+            "If the declaration is FunctionModel, the expression must be a base
+             expression or a qualified expression"
+            assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
-            // use `noType` to disable boxing; we want to invoke the function directly,
-            // not a newly created Callable!
-            value func = withLhsNoType(() => that.invoked.transform(this));
+            switch (invoked)
+            case (is QualifiedExpression) {
+                value receiverInfo = ExpressionInfo(invoked.receiverExpression);
 
-            // special case where we need to handle SafeMemberOperator
-            // see transformQualifiedExpression
-            if (is QualifiedExpression invoked = that.invoked,
-                    invoked.memberOperator is SafeMemberOperator) {
-
-                // rewrite the expression with null safety
-                assert (is DartPropertyAccess func);
-
-                // determine receiverDartType; same as in transformQualifiedExpression
-                value receiverType = ExpressionInfo(invoked.receiverExpression).typeModel;
-
-                "Maybe this is a type alias?"
-                assert (is ClassOrInterfaceModel targetContainer =
-                        QualifiedExpressionInfo(invoked).declaration.container);
-
-                value denotableReceiverType = ctx.ceylonTypes.denotableType {
-                    receiverType;
-                    targetContainer;
-                };
-
-                value receiverDartType = ctx.dartTypes.dartTypeName {
+                return generateInvocation {
                     that;
-                    denotableReceiverType;
-                    eraseToNative = false;
+                    info.typeModel;
+                    receiverInfo.typeModel;
+                    () => receiverInfo.node.transform(this);
+                    invokedDeclaration;
+                    callableTypeAndArguments = [
+                        invokedInfo.typeModel,
+                        that.arguments
+                    ];
+                    invoked.memberOperator is SafeMemberOperator;
                 };
-
-                value receiverParameter = DartSimpleIdentifier("$r$");
-
-                invocation = createNullSafeExpression {
-                    parameterIdentifier = receiverParameter;
-                    receiverDartType;
-                    // func.target (the receiver) has alread been cast correctly by
-                    // transformQualifiedExpression
-                    maybeNullExpression = func.target;
-                    DartNullLiteral();
+            }
+            case (is BaseExpression) {
+                return withBoxing {
+                    that;
+                    info.typeModel;
+                    // If there are multiple parameter lists, the function returns a
+                    // Callable, not the ultimate return type as advertised by the
+                    // declaration.
+                    invokedDeclaration.parameterLists.size() == 1
+                        then invokedDeclaration;
                     DartFunctionExpressionInvocation {
-                        DartPropertyAccess {
-                            receiverParameter;
-                            func.propertyName;
+                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                            scope = that;
+                            invokedDeclaration;
+                        }[0];
+                        generateArgumentListFromArguments {
+                            that.arguments;
+                            invokedInfo.typeModel;
                         };
-                        argumentList;
                     };
                 };
             }
-            else {
-                invocation =
-                DartFunctionExpressionInvocation {
-                    func;
-                    argumentList;
-                };
-            }
-
-            return withBoxing {
-                that;
-                rhsType;
-                rhsDeclaration;
-                invocation;
-            };
         }
         case (is ValueModel?) {
             // Callables (being generic) always erase to `core.Object`.
@@ -526,7 +454,7 @@ class ExpressionTransformer(CompilationContext ctx)
             // specify erasure:
             return withBoxingCustom {
                 that;
-                InvocationInfo(that).typeModel;
+                info.typeModel;
                 rhsErasedToNative = false;
                 rhsErasedToObject = true;
                 DartFunctionExpressionInvocation {
@@ -538,7 +466,10 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                         DartSimpleIdentifier("$delegate$");
                     };
-                    argumentList;
+                    generateArgumentListFromArguments {
+                        that.arguments;
+                        invokedInfo.typeModel;
+                    };
                 };
             };
         }
@@ -548,13 +479,13 @@ class ExpressionTransformer(CompilationContext ctx)
                     "Invocations of member classes not yet supported.");
             }
 
-            // since we only handle topelevel classes for now
+            "We only handle topelevel classes for now"
             assert (is BaseExpression invoked = that.invoked);
 
             return
             withBoxingNonNative {
                 that;
-                InvocationInfo(that).typeModel;
+                info.typeModel;
                 DartInstanceCreationExpression {
                     false;
                     // no need to transform the base expression:
@@ -562,7 +493,10 @@ class ExpressionTransformer(CompilationContext ctx)
                         that;
                         invokedDeclaration;
                     };
-                    argumentList;
+                    generateArgumentListFromArguments {
+                        that.arguments;
+                        invokedInfo.typeModel;
+                    };
                 };
             };
         }
@@ -573,24 +507,27 @@ class ExpressionTransformer(CompilationContext ctx)
                     "Invocations of constructors of member classes not yet supported.");
             }
 
-            // that.invoked is a QualifiedExpression, even for
-            // constructors of topelevel classes
+            "that.invoked is a QualifiedExpression, even for constructors of
+             topelevel classes"
             assert (is QualifiedExpression invoked = that.invoked);
 
-            // since we only handle topelevel classes for now
+            "We only handle topelevel classes for now"
             assert (invoked.receiverExpression is BaseExpression);
 
             return
             withBoxingNonNative {
                 that;
-                InvocationInfo(that).typeModel;
+                info.typeModel;
                 DartInstanceCreationExpression {
                     false;
                     ctx.dartTypes.dartConstructorName {
                         that;
                         invokedDeclaration;
                     };
-                    argumentList;
+                    generateArgumentListFromArguments {
+                        that.arguments;
+                        invokedInfo.typeModel;
+                    };
                 };
             };
         }
@@ -636,9 +573,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformNegationOperation(NegationOperation that)
-        =>  generateInvocation {
+        =>  generateInvocationFromName {
                 that;
-                ExpressionInfo(that.operand);
+                that.operand;
                 "negated";
                 [];
             };
@@ -653,16 +590,15 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is PrefixIncrementOperation) "successor"
                 case (is PrefixDecrementOperation) "predecessor";
 
-        value operandInfo = ExpressionInfo(that.operand);
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
         return
         generateAssignmentExpression {
             that;
             operand;
-            () => generateInvocation {
+            () => generateInvocationFromName {
                 that;
-                operandInfo;
+                that.operand;
                 method;
                 [];
             };
@@ -675,7 +611,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is PostfixIncrementOperation) "successor"
                 case (is PostfixDecrementOperation) "predecessor";
 
-        value operandInfo = ExpressionInfo(that.operand);
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
         // the expected type after boxing
@@ -688,9 +623,9 @@ class ExpressionTransformer(CompilationContext ctx)
             generateAssignmentExpression {
                 that;
                 operand;
-                () => generateInvocation {
+                () => generateInvocationFromName {
                     that;
-                    operandInfo;
+                    that.operand;
                     method;
                     [];
                 };
@@ -730,9 +665,9 @@ class ExpressionTransformer(CompilationContext ctx)
                 generateAssignmentExpression {
                     that;
                     operand;
-                    () => generateInvocation {
+                    () => generateInvocationFromName {
                         that;
-                        operandInfo;
+                        that.operand;
                         method;
                         [];
                     };
@@ -757,11 +692,11 @@ class ExpressionTransformer(CompilationContext ctx)
 
     DartExpression generateInvocationForBinaryOperation
             (BinaryOperation that, String methodName)
-        =>  generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.leftOperand);
-                memberName = methodName;
-                arguments = [ExpressionInfo(that.rightOperand)];
+        =>  generateInvocationFromName {
+                that;
+                that.leftOperand;
+                methodName;
+                [that.rightOperand];
             };
 
     shared actual
@@ -808,11 +743,11 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformInOperation(InOperation that)
         // TODO test
         // Note: the *right* operand is the receiver
-        =>  generateInvocation {
-                scope = that;
-                receiver = ExpressionInfo(that.rightOperand);
-                memberName = "contains";
-                arguments = [ExpressionInfo(that.leftOperand)];
+        =>  generateInvocationFromName {
+                that;
+                that.rightOperand;
+                "contains";
+                [that.leftOperand];
             };
 
     shared actual
@@ -977,8 +912,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformWithinOperation(WithinOperation that) {
-        value operandInfo = ExpressionInfo(that.operand);
-
         value lowerMethodName =
             switch (lb = that.lowerBound)
             case (is OpenBound) "largerThan"
@@ -994,18 +927,18 @@ class ExpressionTransformer(CompilationContext ctx)
             // lhs boolean for both generateInvocations
             ctx.ceylonTypes.booleanType;
             () => DartBinaryExpression {
-                generateInvocation {
+                generateInvocationFromName {
                     that;
-                    operandInfo;
+                    that.operand;
                     lowerMethodName;
-                    [ExpressionInfo(that.lowerBound.endpoint)];
+                    [that.lowerBound.endpoint];
                 };
                 "&&";
-                generateInvocation {
+                generateInvocationFromName {
                     that;
-                    operandInfo;
+                    that.operand;
                     upperMethodName;
-                    [ExpressionInfo(that.upperBound.endpoint)];
+                    [that.upperBound.endpoint];
                 };
             };
         };

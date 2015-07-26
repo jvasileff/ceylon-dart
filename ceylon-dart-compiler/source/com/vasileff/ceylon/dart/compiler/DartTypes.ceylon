@@ -39,6 +39,9 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier,
     DartIdentifier
 }
+import com.vasileff.jl4c.guava.collect {
+    ImmutableMap
+}
 
 shared
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
@@ -46,6 +49,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     variable value counter = 0;
 
     value nameCache = HashMap<TypedDeclarationModel, String>();
+
+    [String, Boolean]?(DeclarationModel) mappedFunctionOrValue = (() {
+        return ImmutableMap {
+            ceylonTypes.objectDeclaration.getMember("string", null, false)
+                -> ["toString", true],
+            ceylonTypes.objectDeclaration.getMember("hash", null, false)
+                -> ["hashCode", false]
+        }.get;
+    })();
 
     shared
     String getName(DeclarationModel|ParameterModel declaration) {
@@ -518,7 +530,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             FunctionOrValueModel declaration,
             Boolean setter = false) {
 
-        value isCeylonValue = !(declaration is FunctionModel);
+        value mapped = mappedFunctionOrValue(declaration.refinedDeclaration);
+        String name;
+        Boolean isDartFunction;
+
+        if (exists mapped) {
+            name = mapped[0];
+            isDartFunction = mapped[1];
+        }
+        else {
+            name = getName(declaration);
+            isDartFunction = declaration is FunctionModel;
+        }
 
         switch (container = containerOfDeclaration(declaration))
         case (is PackageModel) {
@@ -528,8 +551,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 [DartSimpleIdentifier {
                     "$package$"
                     + identifierPackagePrefix(declaration)
-                    + getName(declaration);
-                }, !isCeylonValue];
+                    + name;
+                }, isDartFunction];
             }
             else {
                 // qualify toplevel with Dart import prefix
@@ -540,9 +563,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     DartSimpleIdentifier {
                         identifierPackagePrefix(declaration)
-                        + getName(declaration);
+                        + name;
                     };
-                }, !isCeylonValue];
+                }, isDartFunction];
             }
         }
         case (is ClassOrInterfaceModel
@@ -555,7 +578,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // identifier for the getter or setter method
                 return
                 [DartSimpleIdentifier {
-                    getName(declaration)
+                    name
                     + (if (setter) then "$set" else "$get");
                  }, true];
             }
@@ -563,8 +586,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // identifier for the value or function
                 return
                 [DartSimpleIdentifier {
-                    getName(declaration);
-                }, !isCeylonValue];
+                    name;
+                }, isDartFunction];
             }
         }
         else {
