@@ -214,6 +214,30 @@ class BaseTransformer<Result>(CompilationContext ctx)
             throw CompilerBug(scope, "NamedArguments not supported");
         }
 
+        // TODO WIP native optimizations
+        if (memberDeclaration == ctx.ceylonTypes.integerDeclaration
+                    .getMember("plus", null, false)) {
+
+            assert (exists rightOperandExpression = arguments[0]);
+
+            return withBoxingCustom {
+                scope;
+                ctx.ceylonTypes.integerType;
+                true; false;
+                DartBinaryExpression {
+                    leftOperand = withLhsNative {
+                        ctx.ceylonTypes.integerType;
+                        generateReceiver;
+                    };
+                    operator = "+";
+                    rightOperand = withLhsNative {
+                        ctx.ceylonTypes.integerType;
+                        () => rightOperandExpression.transform(expressionTransformer);
+                    };
+                };
+            };
+        }
+
         value [memberIdentifier, isFunction] = ctx.dartTypes
                     .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
 

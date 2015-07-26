@@ -12,6 +12,12 @@ void run() {
          """
             void run() {
                 print("dart");
+                print(1+2+3);
+                Integer ten = 10;
+                print(ten + ten + identity(1));
+                value twenty = ten + ten;
+
+                print(1.plus(2).plus(3));
             }
 
             native void someNative();
