@@ -86,11 +86,92 @@ import com.vasileff.ceylon.dart.nodeinfo {
     IsConditionInfo,
     TypeInfo
 }
+import com.vasileff.jl4c.guava.collect {
+    ImmutableMap
+}
 
 shared abstract
 class BaseTransformer<Result>(CompilationContext ctx)
         extends CoreTransformer<Result>(ctx)
         satisfies WideningTransformer<Result> {
+
+    [TypeModel, TypeModel, String, TypeModel]?(DeclarationModel)
+    nativeBinaryFunctions = (() {
+        return ImmutableMap {
+            ctx.ceylonTypes.integerDeclaration.getMember("plus", null, false)
+                -> [ctx.ceylonTypes.integerType,
+                    ctx.ceylonTypes.integerType, "+",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("plusInteger", null, false)
+                -> [ctx.ceylonTypes.integerType,
+                    ctx.ceylonTypes.integerType, "+",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("minus", null, false)
+                -> [ctx.ceylonTypes.integerType,
+                    ctx.ceylonTypes.integerType, "-",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("times", null, false)
+                -> [ctx.ceylonTypes.integerType,
+                    ctx.ceylonTypes.integerType, "*",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("divided", null, false)
+                -> [ctx.ceylonTypes.integerType,
+                    ctx.ceylonTypes.integerType, "~/",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("largerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.integerType, ">",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("smallerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.integerType, "<",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("notLargerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.integerType, "<=",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.integerDeclaration.getMember("notSmallerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.integerType, ">=",
+                    ctx.ceylonTypes.integerType],
+            ctx.ceylonTypes.floatDeclaration.getMember("plus", null, false)
+                -> [ctx.ceylonTypes.floatType,
+                    ctx.ceylonTypes.floatType, "+",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("plusInteger", null, false)
+                -> [ctx.ceylonTypes.floatType,
+                    ctx.ceylonTypes.floatType, "+",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("minus", null, false)
+                -> [ctx.ceylonTypes.floatType,
+                    ctx.ceylonTypes.floatType, "-",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("times", null, false)
+                -> [ctx.ceylonTypes.floatType,
+                    ctx.ceylonTypes.floatType, "*",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("divided", null, false)
+                -> [ctx.ceylonTypes.floatType,
+                    ctx.ceylonTypes.floatType, "/",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("largerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.floatType, ">",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("smallerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.floatType, "<",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("notLargerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.floatType, "<=",
+                    ctx.ceylonTypes.floatType],
+            ctx.ceylonTypes.floatDeclaration.getMember("notSmallerThan", null, false)
+                -> [ctx.ceylonTypes.booleanType,
+                    ctx.ceylonTypes.floatType, ">=",
+                    ctx.ceylonTypes.floatType]
+        }.get;
+    })();
 
     shared
     DartFunctionExpressionInvocation createInlineDartStatements(
@@ -215,23 +296,23 @@ class BaseTransformer<Result>(CompilationContext ctx)
         }
 
         // TODO WIP native optimizations
-        if (memberDeclaration == ctx.ceylonTypes.integerDeclaration
-                    .getMember("plus", null, false)) {
-
+        if (exists optimization = nativeBinaryFunctions(memberDeclaration)) {
             assert (exists rightOperandExpression = arguments[0]);
+
+            value [type, leftOperandType, operand, rightOperandType] = optimization;
 
             return withBoxingCustom {
                 scope;
-                ctx.ceylonTypes.integerType;
+                type;
                 true; false;
                 DartBinaryExpression {
                     leftOperand = withLhsNative {
-                        ctx.ceylonTypes.integerType;
+                        leftOperandType;
                         generateReceiver;
                     };
-                    operator = "+";
+                    operator = operand;
                     rightOperand = withLhsNative {
-                        ctx.ceylonTypes.integerType;
+                        rightOperandType;
                         () => rightOperandExpression.transform(expressionTransformer);
                     };
                 };
