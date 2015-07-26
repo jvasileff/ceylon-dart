@@ -45,8 +45,8 @@ class ExpressionTests() {
 
                 void $package$run() {
                     $dart$core.int i = 1;
-                    $dart$core.int j = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
-                    $dart$core.Object k = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1));
+                    $dart$core.int j = (i + 1) + 1;
+                    $dart$core.Object k = $ceylon$language.Integer.instance((i + 1) + 1);
                 }
 
                 void run() => $package$run();
@@ -76,28 +76,28 @@ class ExpressionTests() {
                     $dart$core.int x = 1;
                     $dart$core.int y = 1;
                     $dart$core.int z = (() {
-                        if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        if (x > y) {
                             return x;
                         } else {
                             return y;
                         }
                     })();
                     $dart$core.Object o = (() {
-                        if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        if (x > y) {
                             return $ceylon$language.Integer.instance(x);
                         } else {
                             return $ceylon$language.Integer.instance(y);
                         }
                     })();
                     $dart$core.Object p = (() {
-                        if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        if (x > y) {
                             return $ceylon$language.Integer.instance(x);
                         } else {
                             return $ceylon$language.String.instance("");
                         }
                     })();
                     $dart$core.Object q = (() {
-                        if ($ceylon$language.Integer.instance(x).largerThan($ceylon$language.Integer.instance(y))) {
+                        if (x > y) {
                             return $ceylon$language.Integer.instance(x);
                         } else {
                             return o;

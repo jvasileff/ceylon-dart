@@ -23,7 +23,7 @@ class WhileTests() {
 
                 void $package$run() {
                     $dart$core.int i = 0;
-                    while ($ceylon$language.Integer.instance(i).smallerThan($ceylon$language.Integer.instance(10))) {
+                    while (i < 10) {
                         $ceylon$language.print($ceylon$language.Integer.instance(i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).successor)));
                     }
                 }

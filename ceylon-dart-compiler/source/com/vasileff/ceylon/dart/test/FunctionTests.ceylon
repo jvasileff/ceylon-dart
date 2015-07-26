@@ -192,7 +192,7 @@ class FunctionTests() {
                         x = 1;
                     }
                     if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-                        y = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(x as $dart$core.int).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
+                        y = ((x as $dart$core.int) + 1) + 1;
                     }
                     return y as $dart$core.int;
                 }

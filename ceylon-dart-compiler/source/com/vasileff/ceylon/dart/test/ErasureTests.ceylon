@@ -412,11 +412,11 @@ class ErasureTests() {
 
                 void $package$run() {
                     $dart$core.int i = 1;
-                    $dart$core.int j = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(1)));
-                    $dart$core.int k = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(2)).plus($ceylon$language.Integer.instance(3)));
-                    $dart$core.Object l = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(4));
-                    $dart$core.Object m = $ceylon$language.Integer.instance(i).plus($ceylon$language.Integer.instance(5)).plus($ceylon$language.Integer.instance(6));
-                    $dart$core.int n = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(1).plus($ceylon$language.Integer.instance(1)).plus($ceylon$language.Integer.instance(1)));
+                    $dart$core.int j = i + 1;
+                    $dart$core.int k = (i + 2) + 3;
+                    $dart$core.Object l = $ceylon$language.Integer.instance(i + 4);
+                    $dart$core.Object m = $ceylon$language.Integer.instance((i + 5) + 6);
+                    $dart$core.int n = (1 + 1) + 1;
                 }
 
                 void run() => $package$run();
