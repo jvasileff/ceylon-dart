@@ -97,7 +97,7 @@ class DartSwitchCase(labels, expression, statements)
         }
         writer.write("case ");
         expression.write(writer);
-        writer.write(" : ");
+        writer.write(" :");
         for (statement in statements) {
             statement.write(writer);
         }
