@@ -19,7 +19,8 @@ import ceylon.ast.core {
     BooleanCondition,
     ExistsOrNonemptyCondition,
     ClassDefinition,
-    InterfaceDefinition
+    InterfaceDefinition,
+    TypeAliasDefinition
 }
 import ceylon.language.meta {
     type
@@ -369,6 +370,10 @@ class StatementTransformer(CompilationContext ctx)
         //
         // TODO classes and interfaces need jump back to toplevel w/captures
         =>  [DartBlock([*expand(that.transformChildren(this))])];
+
+    shared actual
+    [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
 
     shared actual
     [DartStatement*] transformValueDeclaration(ValueDeclaration that) {

@@ -8,7 +8,8 @@ import ceylon.ast.core {
     ValueDeclaration,
     ClassDefinition,
     ObjectDefinition,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    TypeAliasDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -165,6 +166,10 @@ class TopLevelTransformer(CompilationContext ctx)
 
         return super.transformObjectDefinition(that);
     }
+
+    shared actual
+    [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
             (ValueDefinition that) {

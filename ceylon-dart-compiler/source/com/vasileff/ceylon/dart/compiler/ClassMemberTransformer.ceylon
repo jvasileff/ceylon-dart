@@ -1,8 +1,10 @@
 import ceylon.ast.core {
     ValueDeclaration,
     ValueDefinition,
-    FunctionDeclaration
+    FunctionDeclaration,
+    TypeAliasDefinition
 }
+
 import com.vasileff.ceylon.dart.ast {
     DartFieldDeclaration,
     DartSimpleIdentifier,
@@ -59,4 +61,8 @@ class ClassMemberTransformer(CompilationContext ctx)
             }
         ];
     }
+
+    shared actual
+    [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
 }

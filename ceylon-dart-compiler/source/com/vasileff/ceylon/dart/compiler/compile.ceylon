@@ -92,15 +92,16 @@ shared
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
 
     for (phasedUnit in phasedUnits) {
-        value unit = compilationUnitToCeylon(
-                phasedUnit.compilationUnit,
-                augmentNode);
-
         if (verbose) {
             print("========================");
             print("== TC-AST");
             print("========================");
             print(phasedUnit.compilationUnit);
+        }
+        value unit = compilationUnitToCeylon(
+                phasedUnit.compilationUnit,
+                augmentNode);
+        if (verbose) {
             print("========================");
             print("== AST");
             print("========================");
