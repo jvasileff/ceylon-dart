@@ -25,7 +25,7 @@ shared String formatInteger(
     if (integer == 0) {
         return "0";
     }
-    variable {Character*} digits = "";
+    variable {Character*} digits = {};
     variable Integer i = integer < 0 
                          then integer 
                          else -integer;
