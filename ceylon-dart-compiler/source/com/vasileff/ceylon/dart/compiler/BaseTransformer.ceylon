@@ -95,85 +95,88 @@ class BaseTransformer<Result>(CompilationContext ctx)
         extends CoreTransformer<Result>(ctx)
         satisfies WideningTransformer<Result> {
 
+    // hack to avoid error using the inherited member ceylonTypes in the initializer
+    value ceylonTypes = ctx.ceylonTypes;
+
     [TypeModel, TypeModel, String, TypeModel]?(DeclarationModel)
     nativeBinaryFunctions = (() {
         return ImmutableMap {
-            ctx.ceylonTypes.stringDeclaration.getMember("plus", null, false)
-                -> [ctx.ceylonTypes.stringType,
-                    ctx.ceylonTypes.stringType, "+",
-                    ctx.ceylonTypes.stringType],
-            ctx.ceylonTypes.integerDeclaration.getMember("plus", null, false)
-                -> [ctx.ceylonTypes.integerType,
-                    ctx.ceylonTypes.integerType, "+",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("plusInteger", null, false)
-                -> [ctx.ceylonTypes.integerType,
-                    ctx.ceylonTypes.integerType, "+",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("minus", null, false)
-                -> [ctx.ceylonTypes.integerType,
-                    ctx.ceylonTypes.integerType, "-",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("times", null, false)
-                -> [ctx.ceylonTypes.integerType,
-                    ctx.ceylonTypes.integerType, "*",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("divided", null, false)
-                -> [ctx.ceylonTypes.integerType,
-                    ctx.ceylonTypes.integerType, "~/",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("largerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.integerType, ">",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("smallerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.integerType, "<",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("notLargerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.integerType, "<=",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.integerDeclaration.getMember("notSmallerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.integerType, ">=",
-                    ctx.ceylonTypes.integerType],
-            ctx.ceylonTypes.floatDeclaration.getMember("plus", null, false)
-                -> [ctx.ceylonTypes.floatType,
-                    ctx.ceylonTypes.floatType, "+",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("plusInteger", null, false)
-                -> [ctx.ceylonTypes.floatType,
-                    ctx.ceylonTypes.floatType, "+",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("minus", null, false)
-                -> [ctx.ceylonTypes.floatType,
-                    ctx.ceylonTypes.floatType, "-",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("times", null, false)
-                -> [ctx.ceylonTypes.floatType,
-                    ctx.ceylonTypes.floatType, "*",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("divided", null, false)
-                -> [ctx.ceylonTypes.floatType,
-                    ctx.ceylonTypes.floatType, "/",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("largerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.floatType, ">",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("smallerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.floatType, "<",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("notLargerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.floatType, "<=",
-                    ctx.ceylonTypes.floatType],
-            ctx.ceylonTypes.floatDeclaration.getMember("notSmallerThan", null, false)
-                -> [ctx.ceylonTypes.booleanType,
-                    ctx.ceylonTypes.floatType, ">=",
-                    ctx.ceylonTypes.floatType]
+            ceylonTypes.stringDeclaration.getMember("plus", null, false)
+                -> [ceylonTypes.stringType,
+                    ceylonTypes.stringType, "+",
+                    ceylonTypes.stringType],
+            ceylonTypes.integerDeclaration.getMember("plus", null, false)
+                -> [ceylonTypes.integerType,
+                    ceylonTypes.integerType, "+",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("plusInteger", null, false)
+                -> [ceylonTypes.integerType,
+                    ceylonTypes.integerType, "+",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("minus", null, false)
+                -> [ceylonTypes.integerType,
+                    ceylonTypes.integerType, "-",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("times", null, false)
+                -> [ceylonTypes.integerType,
+                    ceylonTypes.integerType, "*",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("divided", null, false)
+                -> [ceylonTypes.integerType,
+                    ceylonTypes.integerType, "~/",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("largerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.integerType, ">",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("smallerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.integerType, "<",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("notLargerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.integerType, "<=",
+                    ceylonTypes.integerType],
+            ceylonTypes.integerDeclaration.getMember("notSmallerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.integerType, ">=",
+                    ceylonTypes.integerType],
+            ceylonTypes.floatDeclaration.getMember("plus", null, false)
+                -> [ceylonTypes.floatType,
+                    ceylonTypes.floatType, "+",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("plusInteger", null, false)
+                -> [ceylonTypes.floatType,
+                    ceylonTypes.floatType, "+",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("minus", null, false)
+                -> [ceylonTypes.floatType,
+                    ceylonTypes.floatType, "-",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("times", null, false)
+                -> [ceylonTypes.floatType,
+                    ceylonTypes.floatType, "*",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("divided", null, false)
+                -> [ceylonTypes.floatType,
+                    ceylonTypes.floatType, "/",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("largerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.floatType, ">",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("smallerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.floatType, "<",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("notLargerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.floatType, "<=",
+                    ceylonTypes.floatType],
+            ceylonTypes.floatDeclaration.getMember("notSmallerThan", null, false)
+                -> [ceylonTypes.booleanType,
+                    ceylonTypes.floatType, ">=",
+                    ceylonTypes.floatType]
         }.get;
     })();
 
@@ -247,7 +250,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         value functionModel = info.declarationModel;
 
         assert (is DartSimpleIdentifier functionIdentifier =
-                ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                dartTypes.dartIdentifierForFunctionOrValue(
                     that, functionModel, false)[0]);
 
         return
@@ -266,10 +269,10 @@ class BaseTransformer<Result>(CompilationContext ctx)
             if (functionModel.parameterLists.size() > 1) then
                 // return type is a `Callable`; we're not get generic, so the Callable's
                 // return is erased. Even on the Java backend, the arguments are erased.
-                ctx.dartTypes.dartTypeName(info.node,
-                    ctx.ceylonTypes.callableDeclaration.type, false)
+                dartTypes.dartTypeName(info.node,
+                    ceylonTypes.callableDeclaration.type, false)
             else if (!functionModel.declaredVoid) then
-                ctx.dartTypes.dartTypeNameForDeclaration(info.node, functionModel)
+                dartTypes.dartTypeNameForDeclaration(info.node, functionModel)
             else
                 // TODO seems like a hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
@@ -323,7 +326,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             };
         }
 
-        value [memberIdentifier, isFunction] = ctx.dartTypes
+        value [memberIdentifier, isFunction] = dartTypes
                     .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
 
         "Qualified expressions aren't toplevels, and dartIdentifierForFunctionOrValue()
@@ -341,12 +344,12 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // Determine usable receiver type. `withLhsDenotable` would be simpler, but we
         // may need the type below.
         assert (is ClassOrInterfaceModel container = memberDeclaration.container);
-        value receiverDenotableType = ctx.ceylonTypes.denotableType {
+        value receiverDenotableType = ceylonTypes.denotableType {
             receiverType;
             container;
         };
 
-        value receiverDartType = ctx.dartTypes.dartTypeName {
+        value receiverDartType = dartTypes.dartTypeName {
             scope;
             receiverDenotableType;
             eraseToNative = false;
@@ -544,7 +547,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
     DartExpression generateBooleanConditionExpression
             (BooleanCondition that, Boolean negate = false)
         =>  let (e = withLhsNative {
-                ctx.ceylonTypes.booleanType;
+                ceylonTypes.booleanType;
                 () => that.condition.transform(expressionTransformer);
             })
             if (negate)
@@ -598,19 +601,19 @@ class BaseTransformer<Result>(CompilationContext ctx)
             // (perform 2-4 in a new block to scope the temp var)
 
             value variableIdentifier = DartSimpleIdentifier(
-                    ctx.dartTypes.getName(variableDeclaration));
+                    dartTypes.getName(variableDeclaration));
 
             value expressionType = ExpressionInfo(expression).typeModel;
 
             value tempIdentifier = DartSimpleIdentifier(
-                    ctx.dartTypes.createTempName(variableDeclaration));
+                    dartTypes.createTempName(variableDeclaration));
 
             // 1. declare the new variable
             replacementDeclaration =
             DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     keyword = null;
-                    ctx.dartTypes.dartTypeNameForDeclaration {
+                    dartTypes.dartTypeNameForDeclaration {
                         that;
                         variableDeclaration;
                     };
@@ -625,7 +628,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     keyword = null;
-                    ctx.dartTypes.dartTypeName(that, expressionType, true);
+                    dartTypes.dartTypeName(that, expressionType, true);
                     [DartVariableDeclaration {
                         tempIdentifier;
                         // possibly erase to a native type!
@@ -672,7 +675,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     variableDeclaration.originalDeclaration);
 
             value originalIdentifier = DartSimpleIdentifier(
-                    ctx.dartTypes.getName(originalDeclaration));
+                    dartTypes.getName(originalDeclaration));
 
             conditionExpression = generateIsExpression(
                     that, originalIdentifier, isType);
@@ -681,8 +684,8 @@ class BaseTransformer<Result>(CompilationContext ctx)
             // erasure to object may have changed
             // type may have narrowed
             value dartTypeChanged =
-                ctx.dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
-                ctx.dartTypes.dartTypeModelForDeclaration(variableDeclaration);
+                dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
+                dartTypes.dartTypeModelForDeclaration(variableDeclaration);
 
             replacementDefinition =
                 if (!dartTypeChanged)
@@ -691,13 +694,13 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            ctx.dartTypes.dartTypeNameForDeclaration {
+                            dartTypes.dartTypeNameForDeclaration {
                                 that;
                                 variableDeclaration;
                             };
                             [DartVariableDeclaration {
                                 DartSimpleIdentifier {
-                                    ctx.dartTypes.createReplacementName{
+                                    dartTypes.createReplacementName{
                                         variableDeclaration;
                                     };
                                 };
@@ -712,7 +715,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                                         // (is refinedDeclaration propagated?)
                                         originalDeclaration;
                                         DartSimpleIdentifier {
-                                            ctx.dartTypes.getName(originalDeclaration);
+                                            dartTypes.getName(originalDeclaration);
                                         };
                                     };
                                 };
@@ -760,14 +763,14 @@ class BaseTransformer<Result>(CompilationContext ctx)
             assert (exists result);
             return result;
         }
-        else if (ctx.ceylonTypes.isCeylonNothing(isType)) {
+        else if (ceylonTypes.isCeylonNothing(isType)) {
             return DartBooleanLiteral(false);
         }
-        else if (!ctx.dartTypes.denotable(isType)) {
+        else if (!dartTypes.denotable(isType)) {
             // This isn't good! But no alternative w/o reified generics
             return DartBooleanLiteral(true);
         }
-        else if (ctx.ceylonTypes.isCeylonNull(isType)) {
+        else if (ceylonTypes.isCeylonNull(isType)) {
             return
             DartBinaryExpression {
                 expressionToCheck;
@@ -777,7 +780,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         }
         else {
             // we'll assume eraseToNative is false; otherwise, test should not compile
-            value dartType = ctx.dartTypes.dartTypeName(scope, isType, false);
+            value dartType = dartTypes.dartTypeName(scope, isType, false);
 
             return
             DartIsExpression {
@@ -811,14 +814,14 @@ class BaseTransformer<Result>(CompilationContext ctx)
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = ctx.dartTypes.getName(functionModel);
+            functionName = dartTypes.getName(functionModel);
         }
         case (is FunctionShortcutDefinition) {
             value info = FunctionShortcutDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = ctx.dartTypes.getName(functionModel);
+            functionName = dartTypes.getName(functionModel);
         }
 
         variable DartExpression? result = null;
@@ -867,7 +870,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 for (param in defaultedParameters) {
                     value parameterInfo = ParameterInfo(param);
                     value paramName = DartSimpleIdentifier(
-                            ctx.dartTypes.getName(parameterInfo.parameterModel));
+                            dartTypes.getName(parameterInfo.parameterModel));
                     statements.add {
                         DartIfStatement {
                             // if (parm === default)
@@ -878,7 +881,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                                 };
                                 DartArgumentList {
                                     [paramName,
-                                     ctx.dartTypes.dartDefault(that)];
+                                     dartTypes.dartDefault(that)];
                                 };
                             };
                             // then set to default expression
@@ -961,8 +964,8 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 // initialize with `dart$default`
                 value dartParameterType =
                     if (defaulted)
-                    then ctx.dartTypes.dartObject
-                    else ctx.dartTypes.dartTypeNameForDeclaration(
+                    then dartTypes.dartObject
+                    else dartTypes.dartTypeNameForDeclaration(
                             that, parameterModel.model);
 
                 value dartSimpleParameter =
@@ -970,7 +973,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     false; false;
                     dartParameterType;
                     DartSimpleIdentifier {
-                        ctx.dartTypes.getName(parameterModel);
+                        dartTypes.getName(parameterModel);
                     };
                 };
 
@@ -978,7 +981,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        ctx.dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(that);
                     };
                 }
                 else {
@@ -1013,7 +1016,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         TypeModel returnType;
         FunctionOrValueModel? returnDeclaration;
         if (delegateReturnsCallable) {
-            returnType = ctx.ceylonTypes.callableDeclaration.type;
+            returnType = ceylonTypes.callableDeclaration.type;
             returnDeclaration = null;
         }
         else {
@@ -1027,9 +1030,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
         // determine if return or arguments need boxing
         value boxingRequired =
                 (!delegateReturnsCallable
-                    && ctx.dartTypes.erasedToNative(functionModel))
+                    && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
-                    =>  ctx.dartTypes.erasedToNative(parameterModel.model));
+                    =>  dartTypes.erasedToNative(parameterModel.model));
 
         // generate outerFunction to handle boxing
         if (!boxingRequired) {
@@ -1042,9 +1045,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
                             false; false;
                             // core.Object for the type of all parameters since
                             // `Callable` is generic
-                            ctx.dartTypes.dartObject;
+                            dartTypes.dartObject;
                             DartSimpleIdentifier {
-                                ctx.dartTypes.getName(parameterModel);
+                                dartTypes.getName(parameterModel);
                             };
                         };
 
@@ -1052,7 +1055,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        ctx.dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(that);
                     };
                 }
                 else {
@@ -1061,7 +1064,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             });
 
             value innerArguments = parameters.collect((parameterModel) {
-                value parameterName = ctx.dartTypes.getName(parameterModel);
+                value parameterName = dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
 
                 value unboxed = withLhs {
@@ -1071,7 +1074,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                     () => withBoxing {
                         that;
                         // Parameters for Callables are always `core.Object`
-                        rhsType = ctx.ceylonTypes.anythingType;
+                        rhsType = ceylonTypes.anythingType;
                         rhsDeclaration = null;
                         parameterIdentifier;
                     };
@@ -1085,11 +1088,11 @@ class BaseTransformer<Result>(CompilationContext ctx)
                             dartDCIdentical;
                             DartArgumentList {
                                 [parameterIdentifier,
-                                 ctx.dartTypes.dartDefault(that)];
+                                 dartTypes.dartDefault(that)];
                             };
                         };
                         // propagate defaulted
-                        ctx.dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(that);
                         // not default, unbox as necessary
                         unboxed;
                     };
@@ -1160,9 +1163,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
         DartInstanceCreationExpression {
             false;
             DartConstructorName {
-                ctx.dartTypes.dartTypeNameForDartModel {
+                dartTypes.dartTypeNameForDartModel {
                     that;
-                    ctx.dartTypes.dartCallableModel;
+                    dartTypes.dartCallableModel;
                 };
                 null;
             };
@@ -1183,7 +1186,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         }
 
         value dartCondition = withLhsNative {
-            ctx.ceylonTypes.booleanType;
+            ceylonTypes.booleanType;
             () => that.conditions
                     .reversed
                     .narrow<BooleanCondition>()
@@ -1244,7 +1247,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
             }
             else {
                 // Invoking a generic callable; all parameters take `core.Object`
-                lhsType = ctx.ceylonTypes.anythingType;
+                lhsType = ceylonTypes.anythingType;
                 lhsDeclaration = null;
             }
 
@@ -1299,7 +1302,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         assert (is FunctionOrValueModel targetDeclaration);
 
         value [targetIdentifier, targetIsFunction] =
-                ctx.dartTypes.dartIdentifierForFunctionOrValue(
+                dartTypes.dartIdentifierForFunctionOrValue(
                     that, targetDeclaration, true);
 
         // create the possibly qualified (by module or value) target
@@ -1356,7 +1359,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.dartTypes.dartTypeName {
+            dartTypes.dartTypeName {
                 scope;
                 lhsType;
                 lhsErasedToNative;

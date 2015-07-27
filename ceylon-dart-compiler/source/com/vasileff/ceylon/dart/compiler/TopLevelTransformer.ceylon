@@ -134,11 +134,11 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        value name = DartSimpleIdentifier(ctx.dartTypes.getName(info.declarationModel));
+        value name = DartSimpleIdentifier(dartTypes.getName(info.declarationModel));
 
         value implementsTypes = sequence(CeylonList(
                     info.declarationModel.satisfiedTypes).map((satisfiedType)
-            =>  ctx.dartTypes.dartTypeName(that, satisfiedType, false)
+            =>  dartTypes.dartTypeName(that, satisfiedType, false)
         ));
 
         value members = expand(that.body.transformChildren(
@@ -179,18 +179,18 @@ class TopLevelTransformer(CompilationContext ctx)
         value getter =
         DartFunctionDeclaration {
             external = false;
-            returnType = ctx.dartTypes.dartTypeNameForDeclaration(
+            returnType = dartTypes.dartTypeNameForDeclaration(
                 that, info.declarationModel);
             propertyKeyword = "get";
             DartSimpleIdentifier {
-                ctx.dartTypes.getName(info.declarationModel);
+                dartTypes.getName(info.declarationModel);
             };
             DartFunctionExpression {
                 null;
                 DartExpressionFunctionBody {
                     async = false;
                     DartSimpleIdentifier {
-                        "$package$" + ctx.dartTypes.getName(info.declarationModel);
+                        "$package$" + dartTypes.getName(info.declarationModel);
                     };
                 };
             };
@@ -202,7 +202,7 @@ class TopLevelTransformer(CompilationContext ctx)
                 returnType = null;
                 propertyKeyword = "set";
                 DartSimpleIdentifier {
-                    ctx.dartTypes.getName(info.declarationModel);
+                    dartTypes.getName(info.declarationModel);
                 };
                 DartFunctionExpression {
                     DartFormalParameterList {
@@ -211,7 +211,7 @@ class TopLevelTransformer(CompilationContext ctx)
                         [DartSimpleFormalParameter {
                             final = false;
                             var = false;
-                            type = ctx.dartTypes.dartTypeNameForDeclaration(
+                            type = dartTypes.dartTypeNameForDeclaration(
                                 that, info.declarationModel);
                             identifier = DartSimpleIdentifier("value");
                         }];
@@ -221,7 +221,7 @@ class TopLevelTransformer(CompilationContext ctx)
                         DartAssignmentExpression {
                             DartSimpleIdentifier {
                                 "$package$"
-                                    + ctx.dartTypes.getName(info.declarationModel);
+                                    + dartTypes.getName(info.declarationModel);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier("value");
@@ -238,7 +238,7 @@ class TopLevelTransformer(CompilationContext ctx)
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
         =>  let (info = AnyFunctionInfo(that),
-                functionName = ctx.dartTypes.getName(info.declarationModel),
+                functionName = dartTypes.getName(info.declarationModel),
                 parameterModels = CeylonList(
                         info.declarationModel.firstParameterList.parameters))
             DartFunctionDeclaration {
@@ -259,7 +259,7 @@ class TopLevelTransformer(CompilationContext ctx)
                             DartArgumentList {
                                 parameterModels.collect { (parameterModel) =>
                                     DartSimpleIdentifier {
-                                        ctx.dartTypes.getName(parameterModel);
+                                        dartTypes.getName(parameterModel);
                                     };
                                 };
                             };

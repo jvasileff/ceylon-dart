@@ -37,13 +37,13 @@ class MiscTransformer(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.dartTypes.dartTypeNameForDeclaration {
+            dartTypes.dartTypeNameForDeclaration {
                 that;
                 info.declarationModel;
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + ctx.dartTypes.getName(info.declarationModel);
+                    packagePrefix + dartTypes.getName(info.declarationModel);
                 };
                 initializer = null;
             }];
@@ -66,13 +66,13 @@ class MiscTransformer(CompilationContext ctx)
         return
         DartVariableDeclarationList {
             null;
-            ctx.dartTypes.dartTypeNameForDeclaration {
+            dartTypes.dartTypeNameForDeclaration {
                 that;
                 info.declarationModel;
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + ctx.dartTypes.getName(info.declarationModel);
+                    packagePrefix + dartTypes.getName(info.declarationModel);
                 };
                 withLhs {
                     null;

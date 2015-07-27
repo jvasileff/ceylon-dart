@@ -153,22 +153,22 @@ class ExpressionTransformer(CompilationContext ctx)
         value info = BaseExpressionInfo(that);
         value targetDeclaration = info.declaration;
 
-        if (ctx.ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
+        if (ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
             return generateBooleanExpression(
                     that, ctx.assertedLhsErasedToNativeTop, true);
         }
-        else if (ctx.ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
+        else if (ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
             return generateBooleanExpression(
                     that, ctx.assertedLhsErasedToNativeTop, false);
         }
-        else if (ctx.ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
+        else if (ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
             return DartNullLiteral();
         }
         else {
             switch (targetDeclaration)
             case (is ValueModel) {
                 value [dartIdentifier, dartIdentifierIsFunction] =
-                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.dartIdentifierForFunctionOrValue {
                     that;
                     targetDeclaration;
                     false;
@@ -195,7 +195,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     generateNewCallable {
                         that;
                         functionModel = targetDeclaration;
-                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.dartIdentifierForFunctionOrValue {
                             scope = that;
                             targetDeclaration;
                         }[0];
@@ -242,12 +242,12 @@ class ExpressionTransformer(CompilationContext ctx)
         }
         case (is FunctionModel) {
             // Return a new Callable
-            value receiverDenotableType = ctx.ceylonTypes.denotableType {
+            value receiverDenotableType = ceylonTypes.denotableType {
                 receiverInfo.typeModel;
                 memberContainer;
             };
 
-            value receiverDartType = ctx.dartTypes.dartTypeName {
+            value receiverDartType = dartTypes.dartTypeName {
                 that;
                 receiverDenotableType;
                 eraseToNative = false;
@@ -258,7 +258,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 () => that.receiverExpression.transform(this);
             };
 
-            value [memberIdentifier, isFunction] = ctx.dartTypes
+            value [memberIdentifier, isFunction] = dartTypes
                     .dartIdentifierForFunctionOrValue {
                 that;
                 memberDeclaration;
@@ -292,7 +292,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             [DartVariableDeclarationStatement {
                                 DartVariableDeclarationList {
                                     keyword = null;
-                                    type = ctx.dartTypes.dartFunction;
+                                    type = dartTypes.dartFunction;
                                     [DartVariableDeclaration { // (1)
                                         DartSimpleIdentifier {
                                             "$capturedDelegate$";
@@ -347,31 +347,31 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformFloatLiteral(FloatLiteral that)
         =>  withBoxing(that,
-                ctx.ceylonTypes.floatType, null,
+                ceylonTypes.floatType, null,
                 DartDoubleLiteral(that.float));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(that,
-                ctx.ceylonTypes.integerType, null,
+                ceylonTypes.integerType, null,
                 DartIntegerLiteral(that.integer));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
         =>  withBoxing(that,
-                ctx.ceylonTypes.stringType, null,
+                ceylonTypes.stringType, null,
                 DartSimpleStringLiteral(that.text));
 
     shared actual
     DartExpression transformCharacterLiteral(CharacterLiteral that)
         =>  withBoxing(that,
-                ctx.ceylonTypes.characterType, null,
+                ceylonTypes.characterType, null,
                 DartInstanceCreationExpression {
                     false;
                     DartConstructorName {
-                        ctx.dartTypes.dartTypeName {
+                        dartTypes.dartTypeName {
                             that;
-                            ctx.ceylonTypes.characterType;
+                            ceylonTypes.characterType;
                             false; false;
                         };
                         DartSimpleIdentifier("$fromInt");
@@ -387,13 +387,13 @@ class ExpressionTransformer(CompilationContext ctx)
         value info = ExpressionInfo(that);
 
         // We know statically if it's empty
-        if (ctx.ceylonTypes.isCeylonEmpty(info.typeModel)) {
+        if (ceylonTypes.isCeylonEmpty(info.typeModel)) {
             return withBoxingNonNative {
                 that;
                 info.typeModel;
-                ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                dartTypes.dartIdentifierForFunctionOrValue {
                     that;
-                    ctx.ceylonTypes.emptyValueDeclaration;
+                    ceylonTypes.emptyValueDeclaration;
                     false;
                 }[0];
             };
@@ -411,7 +411,7 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (exists sequenceArgument);
 
             value argumentInfo = ExpressionInfo(sequenceArgument.argument);
-            if (ctx.ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) {
+            if (ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) {
                 // Basically a noop; `x[*y] === y` if `y is Sequential`.
                 // Result may be a Sequential, Sequence, or Tuple
                 return sequenceArgument.argument.transform(this);
@@ -438,9 +438,9 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartInstanceCreationExpression {
                     false;
                     DartConstructorName {
-                        ctx.dartTypes.dartTypeName {
+                        dartTypes.dartTypeName {
                             scope = that;
-                            ctx.ceylonTypes.tupleDeclaration.type;
+                            ceylonTypes.tupleDeclaration.type;
                             false; false;
                         };
                         DartSimpleIdentifier {
@@ -462,7 +462,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         if (!exists sequenceArgument)
                             then DartNullLiteral()
                             else withLhsDenotable {
-                                ctx.ceylonTypes.iterableDeclaration;
+                                ceylonTypes.iterableDeclaration;
                                 () => sequenceArgument.argument.transform(this);
                             }
                         ];
@@ -488,9 +488,9 @@ class ExpressionTransformer(CompilationContext ctx)
             return withBoxingNonNative {
                 that;
                 info.typeModel;
-                ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                dartTypes.dartIdentifierForFunctionOrValue {
                     that;
-                    ctx.ceylonTypes.emptyValueDeclaration;
+                    ceylonTypes.emptyValueDeclaration;
                     false;
                 }[0];
             };
@@ -511,9 +511,9 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartInstanceCreationExpression {
                     false;
                     DartConstructorName {
-                        ctx.dartTypes.dartTypeNameForDartModel {
+                        dartTypes.dartTypeNameForDartModel {
                             scope = that;
-                            ctx.dartTypes.dartLazyIterable;
+                            dartTypes.dartLazyIterable;
                         };
                     };
                     DartArgumentList {
@@ -524,7 +524,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 [DartSimpleFormalParameter {
                                     true;
                                     false;
-                                    ctx.dartTypes.dartInt;
+                                    dartTypes.dartInt;
                                     indexIdentifier;
                                 }];
                             };
@@ -554,7 +554,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         },
                         if (exists sequenceArgument) then
                             withLhsDenotable {
-                                ctx.ceylonTypes.iterableDeclaration;
+                                ceylonTypes.iterableDeclaration;
                                 () => sequenceArgument.argument.transform(this);
                             }
                         else
@@ -627,7 +627,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     invokedDeclaration.parameterLists.size() == 1
                         then invokedDeclaration;
                     DartFunctionExpressionInvocation {
-                        ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.dartIdentifierForFunctionOrValue {
                             scope = that;
                             invokedDeclaration;
                         }[0];
@@ -652,7 +652,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     // resolve the $delegate$ property of the Callable
                     DartPropertyAccess {
                         withLhsDenotable {
-                            ctx.ceylonTypes.callableDeclaration;
+                            ceylonTypes.callableDeclaration;
                             () => that.invoked.transform(this);
                         };
                         DartSimpleIdentifier("$delegate$");
@@ -680,7 +680,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartInstanceCreationExpression {
                     false;
                     // no need to transform the base expression:
-                    ctx.dartTypes.dartConstructorName {
+                    dartTypes.dartConstructorName {
                         that;
                         invokedDeclaration;
                     };
@@ -711,7 +711,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info.typeModel;
                 DartInstanceCreationExpression {
                     false;
-                    ctx.dartTypes.dartConstructorName {
+                    dartTypes.dartConstructorName {
                         that;
                         invokedDeclaration;
                     };
@@ -746,18 +746,18 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  if (native) then
                 DartBooleanLiteral(boolean)
             else if (boolean) then
-                ctx.dartTypes.dartIdentifierForFunctionOrValue(scope,
-                    ctx.ceylonTypes.booleanTrueValueDeclaration)[0]
+                dartTypes.dartIdentifierForFunctionOrValue(scope,
+                    ceylonTypes.booleanTrueValueDeclaration)[0]
             else
-                ctx.dartTypes.dartIdentifierForFunctionOrValue(scope,
-                    ctx.ceylonTypes.booleanFalseValueDeclaration)[0];
+                dartTypes.dartIdentifierForFunctionOrValue(scope,
+                    ceylonTypes.booleanFalseValueDeclaration)[0];
 
     shared actual
     DartExpression transformNotOperation(NotOperation that)
         =>  DartPrefixExpression {
                 "!";
                 withLhsNative {
-                    ctx.ceylonTypes.booleanType;
+                    ceylonTypes.booleanType;
                     () => that.operand.transform(this);
                 };
             };
@@ -827,7 +827,7 @@ class ExpressionTransformer(CompilationContext ctx)
         }
         case (is Null) {
             assert (exists lhsDenotable = ctx.lhsDenotableTop);
-            tempVarType = ctx.ceylonTypes.denotableType {
+            tempVarType = ceylonTypes.denotableType {
                 ExpressionInfo(that).typeModel;
                 lhsDenotable;
             };
@@ -835,7 +835,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         value tempVar =
             DartSimpleIdentifier {
-                ctx.dartTypes.createTempNameCustom();
+                dartTypes.createTempNameCustom();
             };
 
         return
@@ -967,11 +967,11 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformIdenticalOperation(IdenticalOperation that)
         =>  withBoxing {
                 that;
-                rhsType = ctx.ceylonTypes.booleanType;
+                rhsType = ceylonTypes.booleanType;
                 rhsDeclaration = null;
                 withLhsDenotable {
                     // this withLhs wraps transformations of both operands
-                    ctx.ceylonTypes.identifiableDeclaration;
+                    ceylonTypes.identifiableDeclaration;
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");
@@ -994,7 +994,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     case (is AndOperation) "&&"
                     case (is OrOperation) "||")
             withLhsNative {
-                ctx.ceylonTypes.booleanType;
+                ceylonTypes.booleanType;
                 () => DartBinaryExpression {
                     that.leftOperand.transform(this);
                     dartOperator;
@@ -1006,7 +1006,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformThenOperation(ThenOperation that)
         =>  DartConditionalExpression {
                 withLhsNative {
-                    ctx.ceylonTypes.booleanType;
+                    ceylonTypes.booleanType;
                     () => that.leftOperand.transform(this);
                 };
                 that.result.transform(this);
@@ -1019,7 +1019,7 @@ class ExpressionTransformer(CompilationContext ctx)
             createNullSafeExpression {
                 parameterIdentifier;
                 // the result of the leftOperand transformation should be this:
-                ctx.dartTypes.dartTypeName {
+                dartTypes.dartTypeName {
                     that;
                     ctx.assertedLhsTypeTop;
                     ctx.assertedLhsErasedToNativeTop;
@@ -1116,7 +1116,7 @@ class ExpressionTransformer(CompilationContext ctx)
         return
         withLhsNative {
             // lhs boolean for both generateInvocations
-            ctx.ceylonTypes.booleanType;
+            ceylonTypes.booleanType;
             () => DartBinaryExpression {
                 generateInvocationFromName {
                     that;

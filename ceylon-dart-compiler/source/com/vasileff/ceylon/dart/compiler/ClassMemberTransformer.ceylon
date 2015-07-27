@@ -45,7 +45,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             (FunctionDeclaration that) {
 
         value info = FunctionDeclarationInfo(that);
-        value functionName = ctx.dartTypes.getName(info.declarationModel);
+        value functionName = dartTypes.getName(info.declarationModel);
 
         // TODO where do we put the parameter default values?
         return [

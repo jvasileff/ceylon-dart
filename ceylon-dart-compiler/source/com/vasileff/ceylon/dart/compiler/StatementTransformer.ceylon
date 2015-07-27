@@ -198,12 +198,12 @@ class StatementTransformer(CompilationContext ctx)
 
         // The iterator
         value dartIteratorVariable = DartSimpleIdentifier {
-            ctx.dartTypes.createTempNameCustom("iterator");
+            dartTypes.createTempNameCustom("iterator");
         };
 
         // Temp variable for result of `next()`
         value dartLoopVariable = DartSimpleIdentifier {
-            ctx.dartTypes.createTempNameCustom("element");
+            dartTypes.createTempNameCustom("element");
         };
 
         // Discover the type of the iterator and obtain a function that
@@ -221,9 +221,9 @@ class StatementTransformer(CompilationContext ctx)
         // Note: we don't have to do this; we could just use `iteratorType`.
         // But 1) we can, and 2) on occasion it removes a cast from the while
         // loop expession, which of course doesn't matter.
-        value iteratorDenotableType = ctx.ceylonTypes.denotableType {
+        value iteratorDenotableType = ceylonTypes.denotableType {
             iteratorType;
-            ctx.ceylonTypes.iteratorDeclaration;
+            ceylonTypes.iteratorDeclaration;
         };
 
         // Discover the type of the loop variable and obtain a function that
@@ -249,7 +249,7 @@ class StatementTransformer(CompilationContext ctx)
             [DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     null;
-                    ctx.dartTypes.dartTypeName {
+                    dartTypes.dartTypeName {
                         that;
                         loopVariableType;
                         false; false;
@@ -264,7 +264,7 @@ class StatementTransformer(CompilationContext ctx)
             DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     null;
-                    ctx.dartTypes.dartTypeName {
+                    dartTypes.dartTypeName {
                         that;
                         iteratorDenotableType;
                         eraseToNative = false;
@@ -291,9 +291,9 @@ class StatementTransformer(CompilationContext ctx)
                             nextInvocationGenerator;
                         };
                     };
-                    ctx.dartTypes.dartTypeName {
+                    dartTypes.dartTypeName {
                         that;
-                        ctx.ceylonTypes.finishedType;
+                        ceylonTypes.finishedType;
                         false; false;
                     };
                     true;
@@ -304,13 +304,13 @@ class StatementTransformer(CompilationContext ctx)
                     [DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             null;
-                            ctx.dartTypes.dartTypeNameForDeclaration {
+                            dartTypes.dartTypeNameForDeclaration {
                                 that;
                                 variableDeclaration;
                             };
                             [DartVariableDeclaration {
                                 DartSimpleIdentifier {
-                                    ctx.dartTypes.getName(variableDeclaration);
+                                    dartTypes.getName(variableDeclaration);
                                 };
                                 withLhs {
                                     variableInfo.declarationModel.type;
@@ -436,9 +436,9 @@ class StatementTransformer(CompilationContext ctx)
                     DartInstanceCreationExpression {
                         const = false;
                         DartConstructorName {
-                            ctx.dartTypes.dartTypeName {
+                            dartTypes.dartTypeName {
                                 that;
-                                ctx.ceylonTypes.assertionErrorType;
+                                ceylonTypes.assertionErrorType;
                                 false; false;
                             };
                         };
@@ -478,9 +478,9 @@ class StatementTransformer(CompilationContext ctx)
                         DartInstanceCreationExpression {
                             const = false;
                             DartConstructorName {
-                                ctx.dartTypes.dartTypeName {
+                                dartTypes.dartTypeName {
                                     that;
-                                    ctx.ceylonTypes.assertionErrorType;
+                                    ceylonTypes.assertionErrorType;
                                     false; false;
                                 };
                             };

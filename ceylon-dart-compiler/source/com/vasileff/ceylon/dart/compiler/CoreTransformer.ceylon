@@ -37,6 +37,14 @@ class CoreTransformer<Result>(CompilationContext ctx)
         satisfies WideningTransformer<Result> {
 
     shared
+    CeylonTypes ceylonTypes
+        =>  ctx.ceylonTypes;
+
+    shared
+    DartTypes dartTypes
+        =>  ctx.dartTypes;
+
+    shared
     ClassMemberTransformer classMemberTransformer
         =>  ctx.classMemberTransformer;
 
@@ -93,10 +101,10 @@ class CoreTransformer<Result>(CompilationContext ctx)
                 scope;
                 rhsType;
                 if (exists rhsDeclaration)
-                    then ctx.dartTypes.erasedToNative(rhsDeclaration)
-                    else ctx.dartTypes.native(rhsType);
+                    then dartTypes.erasedToNative(rhsDeclaration)
+                    else dartTypes.native(rhsType);
                 if (exists rhsDeclaration)
-                    then ctx.dartTypes.erasedToObject(rhsDeclaration)
+                    then dartTypes.erasedToObject(rhsDeclaration)
                     else false;
                 dartExpression;
             };
@@ -115,17 +123,17 @@ class CoreTransformer<Result>(CompilationContext ctx)
             BoxingConversion conversion)
         =>  let ([boxTypeDeclaration, toNative] =
                 switch (conversion)
-                case (ceylonBooleanToNative) [ctx.ceylonTypes.booleanDeclaration, true]
-                case (ceylonFloatToNative)   [ctx.ceylonTypes.floatDeclaration, true]
-                case (ceylonIntegerToNative) [ctx.ceylonTypes.integerDeclaration, true]
-                case (ceylonStringToNative)  [ctx.ceylonTypes.stringDeclaration, true]
-                case (nativeToCeylonBoolean) [ctx.ceylonTypes.booleanDeclaration, false]
-                case (nativeToCeylonFloat)   [ctx.ceylonTypes.floatDeclaration, false]
-                case (nativeToCeylonInteger) [ctx.ceylonTypes.integerDeclaration, false]
-                case (nativeToCeylonString)  [ctx.ceylonTypes.stringDeclaration, false])
+                case (ceylonBooleanToNative) [ceylonTypes.booleanDeclaration, true]
+                case (ceylonFloatToNative)   [ceylonTypes.floatDeclaration, true]
+                case (ceylonIntegerToNative) [ceylonTypes.integerDeclaration, true]
+                case (ceylonStringToNative)  [ceylonTypes.stringDeclaration, true]
+                case (nativeToCeylonBoolean) [ceylonTypes.booleanDeclaration, false]
+                case (nativeToCeylonFloat)   [ceylonTypes.floatDeclaration, false]
+                case (nativeToCeylonInteger) [ceylonTypes.integerDeclaration, false]
+                case (nativeToCeylonString)  [ceylonTypes.stringDeclaration, false])
             DartFunctionExpressionInvocation {
                 DartPropertyAccess {
-                    ctx.dartTypes.dartIdentifierForClassOrInterface {
+                    dartTypes.dartIdentifierForClassOrInterface {
                         scope;
                         boxTypeDeclaration;
                     };
@@ -177,7 +185,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
             DartExpression dartExpression)
         =>  let (lhsType =
                     if (exists denotable = ctx.lhsDenotableTop)
-                    then ctx.ceylonTypes.denotableType(rhsType, denotable)
+                    then ceylonTypes.denotableType(rhsType, denotable)
                     else ctx.assertedLhsTypeTop)
             if (is NoType lhsType) then
                 dartExpression
@@ -202,7 +210,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
             DartExpression dartExpression)
-        =>  let (conversion = ctx.dartTypes.boxingConversionFor(
+        =>  let (conversion = dartTypes.boxingConversionFor(
                     lhsType, lhsErasedToNative,
                     rhsType, rhsErasedToNative))
             if (exists conversion) then
@@ -248,12 +256,12 @@ class CoreTransformer<Result>(CompilationContext ctx)
 
         value effectiveLhs =
                 if(lhsErasedToObject)
-                then ctx.ceylonTypes.anythingType
+                then ceylonTypes.anythingType
                 else lhsType;
 
         value effectiveRhs =
                 if(rhsErasedToObject)
-                then ctx.ceylonTypes.anythingType
+                then ceylonTypes.anythingType
                 else rhsType;
 
         if (is NoType effectiveLhs) {
@@ -262,11 +270,11 @@ class CoreTransformer<Result>(CompilationContext ctx)
         else if (effectiveLhs.isSubtypeOf(effectiveRhs)
                     && !effectiveLhs.isExactly(effectiveRhs)) {
             // lhs is the result of a narrowing operation
-            castType = ctx.dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
+            castType = dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
         }
-        else if (!ctx.dartTypes.denotable(effectiveRhs)) {
+        else if (!dartTypes.denotable(effectiveRhs)) {
             // may be narrowing the Dart static type
-            castType = ctx.dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
+            castType = dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
         }
         else {
             // narrowing neither the Ceylon type nor the Dart type; avoid unnecessary
@@ -275,7 +283,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
         }
 
         // the rhs may still have the same Dart type
-        if (castType == ctx.dartTypes.dartTypeModel(effectiveRhs, erasedToNative)) {
+        if (castType == dartTypes.dartTypeModel(effectiveRhs, erasedToNative)) {
             return dartExpression;
         }
 
@@ -283,7 +291,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
         return
         DartAsExpression {
             dartExpression;
-            ctx.dartTypes.dartTypeNameForDartModel(scope, castType);
+            dartTypes.dartTypeNameForDartModel(scope, castType);
         };
     }
 
@@ -296,15 +304,15 @@ class CoreTransformer<Result>(CompilationContext ctx)
         if (exists lhsDeclaration) {
             return withLhsValues {
                 lhsType = lhsType else lhsDeclaration.type;
-                ctx.dartTypes.erasedToNative(lhsDeclaration);
-                ctx.dartTypes.erasedToObject(lhsDeclaration);
+                dartTypes.erasedToNative(lhsDeclaration);
+                dartTypes.erasedToObject(lhsDeclaration);
                 fun;
             };
         }
         else if (exists lhsType) {
             return withLhsValues {
                 lhsType = lhsType;
-                ctx.dartTypes.native(lhsType);
+                dartTypes.native(lhsType);
                 false;
                 fun;
             };
