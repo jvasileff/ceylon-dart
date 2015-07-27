@@ -98,6 +98,10 @@ class BaseTransformer<Result>(CompilationContext ctx)
     [TypeModel, TypeModel, String, TypeModel]?(DeclarationModel)
     nativeBinaryFunctions = (() {
         return ImmutableMap {
+            ctx.ceylonTypes.stringDeclaration.getMember("plus", null, false)
+                -> [ctx.ceylonTypes.stringType,
+                    ctx.ceylonTypes.stringType, "+",
+                    ctx.ceylonTypes.stringType],
             ctx.ceylonTypes.integerDeclaration.getMember("plus", null, false)
                 -> [ctx.ceylonTypes.integerType,
                     ctx.ceylonTypes.integerType, "+",

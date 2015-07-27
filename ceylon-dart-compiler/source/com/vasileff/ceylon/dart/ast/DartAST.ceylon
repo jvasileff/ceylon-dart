@@ -47,6 +47,86 @@ class DartBreakStatement(label = null)
     }
 }
 
+"A switch statement."
+shared
+class DartSwitchStatement(expression, cases, default=null)
+        extends DartStatement() {
+
+    shared DartExpression expression;
+    shared [DartSwitchCase+] cases;
+    shared DartSwitchDefault? default;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("switch (");
+        expression.write(writer);
+        writer.write(") {");
+        for (c in cases) {
+            c.write(writer);
+        }
+        if (exists default) {
+            default.write(writer);
+        }
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("}");
+    }
+}
+
+"An element within a switch statement"
+shared abstract
+class DartSwitchMember() extends DartNode() {}
+
+"A case in a switch statement."
+shared
+class DartSwitchCase(labels, expression, statements)
+        extends DartSwitchMember() {
+
+    shared [DartSimpleIdentifier*] labels;
+    shared DartExpression expression;
+    shared [DartStatement+] statements;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        for (label in labels) {
+            label.write(writer);
+        }
+        writer.write("case ");
+        expression.write(writer);
+        writer.write(" : ");
+        for (statement in statements) {
+            statement.write(writer);
+        }
+    }
+}
+
+"The default case in a switch statement."
+shared
+class DartSwitchDefault(labels, statements)
+        extends DartSwitchMember() {
+
+    shared [DartSimpleIdentifier*] labels;
+    shared [DartStatement+] statements;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        for (label in labels) {
+            label.write(writer);
+        }
+        writer.write("default ");
+        writer.write(" : ");
+        for (statement in statements) {
+            statement.write(writer);
+        }
+    }
+}
+
 "A continue statement."
 shared
 class DartContinueStatement(label = null)
@@ -267,6 +347,37 @@ class DartNullLiteral()
     shared actual
     void write(CodeWriter writer) {
         writer.write("null");
+    }
+}
+
+"A literal that has a type associated with it"
+shared abstract
+class DartTypedLiteral() extends DartLiteral() {}
+
+"A list literal."
+shared
+class DartListLiteral(const, elements)
+        extends DartTypedLiteral() {
+
+    Boolean const;
+    //DartTypeArgumentList? typeArguments = null;
+    [DartExpression*] elements;
+
+    shared actual
+    void write(CodeWriter writer) {
+        if (const) {
+           writer.write("const ");
+        }
+        writer.write("[");
+        for (e in elements.interpose(", ")) {
+            if (is DartExpression e) {
+                e.write(writer);
+            }
+            else {
+                writer.write(e);
+            }
+        }
+        writer.write("]");
     }
 }
 

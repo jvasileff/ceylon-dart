@@ -52,6 +52,9 @@ class CeylonTypes(Unit unit) {
     Type characterType => unit.characterType;
 
     shared
+    Type emptyType => unit.emptyType;
+
+    shared
     Type floatType => unit.floatType;
 
     shared
@@ -111,6 +114,10 @@ class CeylonTypes(Unit unit) {
         =>  type.isExactly(characterType);
 
     shared
+    Boolean isCeylonEmpty(Type type)
+        =>  type.isExactly(emptyType) || type.emptyValue;
+
+    shared
     Boolean isCeylonFloat(Type type)
         =>  type.isExactly(floatType);
 
@@ -118,9 +125,23 @@ class CeylonTypes(Unit unit) {
     Boolean isCeylonInteger(Type type)
         =>  type.isExactly(integerType);
 
+    "True if [[type]] is a subtype of Sequential<Anything>"
+    shared
+    Boolean isCeylonSequential(Type type)
+        =>  unit.isSequentialType(type);
+
+    "True if [[type]] is a subtype of Sequence<Anything>"
+    shared
+    Boolean isCeylonSequence(Type type)
+        =>  unit.isSequenceType(type);
+
     shared
     Boolean isCeylonString(Type type)
         =>  type.isExactly(stringType);
+
+    shared
+    Boolean isCeylonTuple(Type type)
+        =>  unit.isTupleType(type);
 
     shared
     Boolean isCeylonNothing(Type type)
@@ -183,6 +204,14 @@ class CeylonTypes(Unit unit) {
         =>  unit.comparableDeclaration;
 
     shared
+    Value emptyValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("empty"));
+
+    shared
+    Value emptyIteratorValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("emptyIterator"));
+
+    shared
     Interface exponentiableDeclaration
         =>  unit.exponentiableDeclaration;
 
@@ -235,8 +264,20 @@ class CeylonTypes(Unit unit) {
         =>  unit.numericDeclaration;
 
     shared
+    Class tupleDeclaration
+        =>  unit.tupleDeclaration;
+
+    shared
     Class objectDeclaration
         =>  unit.objectDeclaration;
+
+    shared
+    Interface sequenceDeclaration
+        =>  unit.sequenceDeclaration;
+
+    shared
+    Interface sequentialDeclaration
+        =>  unit.sequentialDeclaration;
 
     shared
     Class stringDeclaration

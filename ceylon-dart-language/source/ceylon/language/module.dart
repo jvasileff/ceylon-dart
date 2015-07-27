@@ -5,6 +5,88 @@ import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import 'dart:mirrors' as $dart$mirrors;
 
+class LazyIterable implements Iterable {
+  $dart$core.int count;
+  $dart$core.Function generate; // Object(Integer)
+  Iterable spread;
+
+  LazyIterable(this.count, this.generate, this.spread) {}
+
+  @$dart$core.override
+  Iterator iterator()
+    =>  new LazyIterator(count, generate, spread);
+
+  @$dart$core.override
+  Iterable follow($dart$core.Object head)
+    // FIXME this is a terrible, non-lazy hack
+    =>  new Tuple(head, this);
+
+  // bridge methods
+
+  @$dart$core.override
+  $dart$core.int get size
+    =>  Iterable.$get$size(this);
+
+  @$dart$core.override
+  $dart$core.bool get empty
+    =>  Iterable.$empty(this);
+
+  @$dart$core.override
+  $dart$core.Object get first
+    =>  Iterable.$first(this);
+
+  @$dart$core.override
+  Iterable map(Callable collecting)
+    =>  Iterable.$map(this, collecting);
+
+  @$dart$core.override
+  Iterable get rest
+    =>  Iterable.$rest(this);
+
+  @$dart$core.override
+  $dart$core.String toString()
+    =>  Iterable.$toString(this);
+
+  @$dart$core.override
+  void each(Callable step)
+    =>  Iterable.$each(this, step);
+
+  @$dart$core.override
+  $dart$core.bool contains($dart$core.Object element)
+    =>  Iterable.$contains(this, element);
+
+  @$dart$core.override
+  Sequential sequence()
+    =>  Iterable.$sequence(this);
+}
+
+class LazyIterator implements Iterator {
+  final $dart$core.int count;
+  final $dart$core.Function generate;
+  final Iterable spread;
+
+  $dart$core.int index = 0;
+  Iterator rest;
+
+  LazyIterator(this.count, this.generate, this.spread) {}
+
+  $dart$core.Object next() {
+    if (rest != null) {
+      return rest.next();
+    }
+    else if (index >= count) {
+      return $package$finished;
+    }
+    else {
+      $dart$core.Object result = generate(index++);
+      if (index == count && spread != null) {
+        rest = spread.iterator();
+      }
+      return result;
+    }
+  }
+}
+
 //
 // Array.dart
 //
@@ -74,8 +156,16 @@ class Array implements List {
     =>  Iterable.$first(this);
 
   @$dart$core.override
+  Iterable map(Callable collecting)
+    =>  Iterable.$map(this, collecting);
+
+  @$dart$core.override
   Iterable get rest
     =>  Iterable.$rest(this);
+
+  @$dart$core.override
+  $dart$core.String toString()
+    =>  Iterable.$toString(this);
 
   @$dart$core.override
   void each(Callable step)
@@ -145,6 +235,10 @@ class ArraySequence implements Sequence {
     =>  array.each(step);
 
   @$dart$core.override
+  Iterable map(Callable collecting)
+    =>  array.map(collecting);
+
+  @$dart$core.override
   $dart$core.Object get first
     =>  Iterable.$first(this);
 
@@ -155,6 +249,10 @@ class ArraySequence implements Sequence {
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)
     =>  Iterable.$contains(this, element);
+
+  @$dart$core.override
+  $dart$core.String toString()
+    =>  Iterable.$toString(this);
 
   @$dart$core.override
   Sequence sequence()
@@ -299,7 +397,13 @@ class Empty implements Sequential {
   $dart$core.bool get empty => true;
 
   @$dart$core.override
+  Iterable map(Callable collecting) => this;
+
+  @$dart$core.override
   Sequential sequence() => $package$empty;
+
+  @$dart$core.override
+  $dart$core.String toString() => "{}";
 
   @$dart$core.override
   Sequence withTrailing($dart$core.Object other)
@@ -367,6 +471,7 @@ class Finished {
 }
 
 const finished = const Finished();
+const $package$finished = finished;
 
 //
 // Float.dart
@@ -532,7 +637,7 @@ abstract class Iterable {
 
   void each(Callable step);
   static void $each(
-      Collection $this,
+      Iterable $this,
       Callable step) {
     var it = $this.iterator();
     for (var item = it.next(); item != finished;
@@ -548,6 +653,14 @@ abstract class Iterable {
       return null;
     }
     return result;
+  }
+
+  Iterable map(Callable collecting);
+  static $dart$core.Object $map(Iterable $this, Callable collecting) {
+    // FIXME this is a terrible, non-lazy hack
+    var list = [];
+    $this.each(new dart$Callable((e) => list.add(e)));
+    return new Array._withList(list.map(collecting.$delegate$).toList());
   }
 
   Iterable get rest;
@@ -578,6 +691,19 @@ abstract class Iterable {
   }
 
   Iterable follow($dart$core.Object element);
+
+  static $dart$core.String $toString(Iterable $this) {
+    //Sequential elements = $this.take(31).sequence();
+    Sequential elements = $this.sequence();
+    if (elements.empty) {
+      return "{}";
+    } else if (Integer.instance(elements.size).equals(Integer.instance(31))) {
+      //return ("{ " + commaList(elements.take(30))) + ", ... }";
+      return ("{ " + commaList(elements)) + ", ... }";
+    } else {
+      return ("{ " + commaList(elements)) + " }";
+    }
+  }
 }
 
 //
@@ -748,6 +874,9 @@ class String implements List {
           ? _value.length - 1
           : null;
 
+  $dart$core.String join(Iterable objects)
+    => dartJoin(this._value, objects);
+
   // Iterable
 
   @$dart$core.override
@@ -791,6 +920,10 @@ class String implements List {
   @$dart$core.override
   void each(Callable step)
     => Iterable.$each(this, step);
+
+  @$dart$core.override
+  Iterable map(Callable collecting)
+    =>  Iterable.$map(this, collecting);
 
   @$dart$core.override
   $dart$core.bool contains($dart$core.Object element)
@@ -883,16 +1016,32 @@ class Throwable extends $dart$core.Error {
 //
 
 class Tuple implements List, Sequence, Iterable {
-  final $dart$core.List _list = [];
+  final $dart$core.List _list;
 
-  Tuple($dart$core.Object first, Iterable rest) {
+  Tuple($dart$core.Object first, Iterable rest) : _list = [] {
     _list.add(first);
     rest.each(new dart$Callable((e) => _list.add(e)));
   }
 
-  Tuple._trailing(Iterable initial, $dart$core.Object element) {
+  Tuple._trailing(Iterable initial, $dart$core.Object element) : _list = [] {
     initial.each(new dart$Callable((e) => _list.add(e)));
     _list.add(element);
+  }
+
+  Tuple.$ofElements(Iterable rest) : _list = [] {
+    rest.each(new dart$Callable((e) => _list.add(e)));
+    if (_list.length == 0) {
+      throw new AssertionError("list must not be empty");
+    }
+  }
+
+  Tuple.$withList([$dart$core.List this._list, Iterable rest = null]) {
+    if (_list.length == 0) {
+      throw new AssertionError("list must not be empty");
+    }
+    if (rest != null) {
+      rest.each(new dart$Callable((e) => _list.add(e)));
+    }
   }
 
   @$dart$core.override
@@ -947,8 +1096,16 @@ class Tuple implements List, Sequence, Iterable {
     =>  Iterable.$first(this);
 
   @$dart$core.override
+  Iterable map(Callable collecting)
+    =>  Iterable.$map(this, collecting);
+
+  @$dart$core.override
   Iterable get rest
     =>  Iterable.$rest(this);
+
+  @$dart$core.override
+  $dart$core.String toString()
+    =>  Iterable.$toString(this);
 
   @$dart$core.override
   void each(Callable step)

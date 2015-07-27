@@ -69,7 +69,10 @@ import ceylon.ast.core {
     IdentityOperation,
     WithinOperation,
     OpenBound,
-    ClosedBound
+    ClosedBound,
+    Tuple,
+    Comprehension,
+    Iterable
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -109,7 +112,11 @@ import com.vasileff.ceylon.dart.ast {
     DartBlockFunctionBody,
     DartBooleanLiteral,
     DartExpressionStatement,
-    DartConditionalExpression
+    DartConditionalExpression,
+    DartListLiteral,
+    DartSwitchStatement,
+    DartSwitchCase,
+    DartSimpleFormalParameter
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo,
@@ -374,6 +381,190 @@ class ExpressionTransformer(CompilationContext ctx)
                         [DartIntegerLiteral(that.text.first?.integer else 0)];
                     };
                 });
+
+    shared actual
+    DartExpression transformTuple(Tuple that) {
+        value info = ExpressionInfo(that);
+
+        // We know statically if it's empty
+        if (ctx.ceylonTypes.isCeylonEmpty(info.typeModel)) {
+            return withBoxingNonNative {
+                that;
+                info.typeModel;
+                ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                    that;
+                    ctx.ceylonTypes.emptyValueDeclaration;
+                    false;
+                }[0];
+            };
+        }
+
+        // Ok, not empty, create a Sequential or a Tuple
+        value sequenceArgument = that.argumentList.sequenceArgument;
+        if (sequenceArgument is Comprehension) {
+            throw CompilerBug(that, "Comprehension for Tuple not suported");
+        }
+        assert (!is Comprehension sequenceArgument);
+
+        if (that.argumentList.listedArguments.empty) {
+            "Not Empty and no listed arguments; a sequence argument must exist."
+            assert (exists sequenceArgument);
+
+            value argumentInfo = ExpressionInfo(sequenceArgument.argument);
+            if (ctx.ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) {
+                // Basically a noop; `x[*y] === y` if `y is Sequential`.
+                // Result may be a Sequential, Sequence, or Tuple
+                return sequenceArgument.argument.transform(this);
+            }
+            else {
+                // The argument is an Iterable; result may be a Sequential or Sequence.
+                // Would it be more correct to create the sequential from the iterator
+                // rather than trusting `arg.sequence()` to produce the same result?
+                return generateInvocationFromName {
+                    that;
+                    sequenceArgument.argument;
+                    "sequence";
+                    [];
+                };
+            }
+        }
+        else {
+            // Listed arguments, and possibly a spread argument.
+            // If we ever wire up internal methods and constructors to the metamodel,
+            // we can use generateInvocation() instead.
+            return withBoxingNonNative {
+                that;
+                info.typeModel;
+                DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        ctx.dartTypes.dartTypeName {
+                            scope = that;
+                            ctx.ceylonTypes.tupleDeclaration.type;
+                            false; false;
+                        };
+                        DartSimpleIdentifier {
+                            "$withList";
+                        };
+                    };
+                    DartArgumentList {
+                        [DartListLiteral {
+                            false;
+                            // Sequences are generic, so elements must
+                            // not be erased to native.
+                            withLhsNonNative {
+                                ctx.unit.getIteratedType(info.typeModel);
+                                () => that.argumentList.listedArguments.collect {
+                                    (element) => element.transform(this);
+                                };
+                            };
+                        },
+                        if (!exists sequenceArgument)
+                            then DartNullLiteral()
+                            else withLhsDenotable {
+                                ctx.ceylonTypes.iterableDeclaration;
+                                () => sequenceArgument.argument.transform(this);
+                            }
+                        ];
+                    };
+                };
+            };
+        }
+    }
+
+    shared actual
+    DartExpression transformIterable(Iterable that) {
+        value info = ExpressionInfo(that);
+        value arguments = that.argumentList.listedArguments;
+        value sequenceArgument = that.argumentList.sequenceArgument;
+
+        if (sequenceArgument is Comprehension) {
+            throw CompilerBug(that, "Comprehension for Iterable not suported");
+        }
+        assert(!is Comprehension sequenceArgument);
+
+        if (arguments.empty && !sequenceArgument exists) {
+            // Easy; there are no elements.
+            return withBoxingNonNative {
+                that;
+                info.typeModel;
+                ctx.dartTypes.dartIdentifierForFunctionOrValue {
+                    that;
+                    ctx.ceylonTypes.emptyValueDeclaration;
+                    false;
+                }[0];
+            };
+        }
+        else if (!nonempty arguments) {
+            // Just evaluate and return the spread expression
+            assert (exists sequenceArgument);
+            return sequenceArgument.argument.transform(this);
+        }
+        else {
+            // Return a LazyIterable, which takes as an argument a function that lazily
+            // evaluates expressions by index.
+            value indexIdentifier = DartSimpleIdentifier("$i$");
+
+            return withBoxingNonNative {
+                that;
+                info.typeModel;
+                DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        ctx.dartTypes.dartTypeNameForDartModel {
+                            scope = that;
+                            ctx.dartTypes.dartLazyIterable;
+                        };
+                    };
+                    DartArgumentList {
+                        [DartIntegerLiteral(arguments.size),
+                        DartFunctionExpression {
+                            DartFormalParameterList {
+                                false; false;
+                                [DartSimpleFormalParameter {
+                                    true;
+                                    false;
+                                    ctx.dartTypes.dartInt;
+                                    indexIdentifier;
+                                }];
+                            };
+                            DartBlockFunctionBody {
+                                null; false;
+                                DartBlock {
+                                    [DartSwitchStatement {
+                                        indexIdentifier;
+                                        // Sequences are generic, so elements must
+                                        // not be erased to native.
+                                        withLhsNonNative {
+                                            ctx.unit.getIteratedType(info.typeModel);
+                                            () => [for (i -> argument
+                                                        in arguments.indexed)
+                                                DartSwitchCase {
+                                                    [];
+                                                    DartIntegerLiteral(i);
+                                                    [DartReturnStatement {
+                                                        argument.transform(this);
+                                                    }];
+                                                }
+                                            ];
+                                        };
+                                    }];
+                                };
+                            };
+                        },
+                        if (exists sequenceArgument) then
+                            withLhsDenotable {
+                                ctx.ceylonTypes.iterableDeclaration;
+                                () => sequenceArgument.argument.transform(this);
+                            }
+                        else
+                            DartNullLiteral()
+                        ];
+                    };
+                };
+            };
+        }
+    }
 
     shared actual
     DartExpression transformInvocation(Invocation that) {

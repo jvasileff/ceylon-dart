@@ -1411,5 +1411,10 @@ native shared interface Iterable<out Element=Anything,
     
 }
 
-native String commaList({Anything*} elements)
-        => ", ".join { for (e in elements) stringify(e) };
+//native String commaList({Anything*} elements)
+        //=> ", ".join { for (e in elements) stringify(e) };
+
+// TODO revert back to comprehension version
+String commaList({Anything*} elements)
+    =>  ", ".join(elements.map(stringify));
+

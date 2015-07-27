@@ -236,6 +236,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
 
     shared
+    DartTypeModel dartLazyIterable
+        =>  DartTypeModel("$ceylon$language", "LazyIterable");
+
+    shared
     DartTypeModel dartObjectModel
         =   DartTypeModel("$dart$core", "Object");
 
@@ -243,7 +247,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartTypeModel dartBoolModel
         =   DartTypeModel("$dart$core", "bool");
 
-
+// FIXME shouldn't have hardcoded package!
     shared
     DartTypeModel dartCallableModel
         =>  DartTypeModel("$ceylon$language", "dart$Callable");
