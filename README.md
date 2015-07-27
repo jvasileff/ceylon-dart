@@ -45,23 +45,26 @@ functionality.
 - [x] Null safe member operator
 - [ ] Remaining parameter types (variadic, callable)
 - [ ] `of` operation
-- [ ] More work on `assert`
+- [x] More work on `assert`
 - [ ] `is` narrowing for `if`, attempt at generalization
 - [x] Erasure for covariant returns (use the `formal` return type for erasure/boxing)
 - [ ] Named argument invocations (and... transition to Dart named parameters, ugh)
-- [ ] Remove hard-coded `DartTypeName`s. Calculate them instead, as we do for
+- [x] Remove hard-coded `DartTypeName`s. Calculate them instead, as we do for
   Ceylon types. (We can't compile the language module using the prefixed
   `$dart$core.int` for example.)
-- [ ] Map members like `toString()`, `hash`, etc.
+- [x] Map members like `toString()`, `hash`, etc.
 - [ ] Statements: ~~for~~, ~~if~~, while
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
 - [ ] Use compiler for language module functions: `corresponding`, ~~count~~,
   ~~decreasing~~, ~~every~~, ~~identity~~, `noop`, ~~increasing~~,
   ~~identical~~, ~~largest~~, `max`, ~~not~~, `nothing`, ~~or~~, ~~plus~~,
-  ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, `sort`, ~~sum~~,
+  ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, ~~sort~~, ~~sum~~,
   ~~times~~, ~~any~~, ~~arrayOfSize~~, ~~formatInteger~~, ~~infinity~~
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations
+- [x] Tuple and Iterable expressions
+- [x] Optimizations for invocations on native Integer, Float, and String
+- [ ] More optimizations for native values
 
 A few recently completed items:
 
