@@ -335,13 +335,51 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    "For the Value, or the return type of the Function"
+    "For the `Value`, or a `Callable` if the declaration is a `Function`."
     shared
     DartTypeName dartTypeNameForDeclaration(
             Node|ElementModel|ScopeModel scope,
             FunctionOrValueModel declaration) {
 
-        value dartModel = dartTypeModelForDeclaration(declaration);
+        value dartModel =
+            switch (declaration)
+            case (is FunctionModel)
+                // code path for Callable parameters, other?
+                dartTypeModel {
+                    declaration.typedReference.fullType;
+                    false; false;
+                }
+            else //case (is ValueModel | SetterModel)
+                dartTypeModelForDeclaration(declaration);
+        value fromDartPrefix = moduleImportPrefix(scope);
+        if (dartModel.dartModule == fromDartPrefix) {
+            return
+            DartTypeName {
+                DartSimpleIdentifier(dartModel.name);
+            };
+        }
+        else {
+            return
+            DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier(dartModel.dartModule);
+                    DartSimpleIdentifier(dartModel.name);
+                };
+            };
+        }
+    }
+
+    "For the Value, or the return type of the Function"
+    shared
+    DartTypeName dartReturnTypeNameForDeclaration(
+            Node|ElementModel|ScopeModel scope,
+            FunctionModel declaration) {
+
+        value dartModel = dartTypeModel {
+            declaration.type;
+            erasedToNative(declaration);
+            erasedToObject(declaration);
+        };
         value fromDartPrefix = moduleImportPrefix(scope);
         if (dartModel.dartModule == fromDartPrefix) {
             return
@@ -672,9 +710,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  !ctx.disableErasureToNative.contains(declaration)
             && native(formalType(declaration));
 
-    "For the Value, or the return type of the Function"
+    "For the Value, or the return type of the Function."
     shared
     Boolean erasedToObject(FunctionOrValueModel declaration)
-        =>  (declaration.initializerParameter?.defaulted else false)
-                || !denotable(declaration.type);
+        // Ignore "defaulted" for FunctionModel parameters, which are Callable
+        // parameters that may be defaulted, where the erasure of the parameter
+        // itself has no bearing on the erasure of the actual function return type
+        =>  ((!declaration is FunctionModel)
+                && (declaration.initializerParameter?.defaulted else false))
+            || !denotable(declaration.type);
 }

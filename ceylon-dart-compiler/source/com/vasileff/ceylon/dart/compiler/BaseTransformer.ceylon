@@ -17,7 +17,8 @@ import ceylon.ast.core {
     QualifiedExpression,
     BaseExpression,
     IsCondition,
-    Expression
+    Expression,
+    DefaultedCallableParameter
 }
 import ceylon.collection {
     LinkedList
@@ -272,7 +273,7 @@ class BaseTransformer<Result>(CompilationContext ctx)
                 dartTypes.dartTypeName(info.node,
                     ceylonTypes.callableDeclaration.type, false)
             else if (!functionModel.declaredVoid) then
-                dartTypes.dartTypeNameForDeclaration(info.node, functionModel)
+                dartTypes.dartReturnTypeNameForDeclaration(info.node, functionModel)
             else
                 // TODO seems like a hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
@@ -794,7 +795,8 @@ class BaseTransformer<Result>(CompilationContext ctx)
     DartFunctionExpression generateFunctionExpression(
             FunctionExpression
                 | FunctionDefinition
-                | FunctionShortcutDefinition that) {
+                | FunctionShortcutDefinition
+                | DefaultedCallableParameter that) {
 
         FunctionModel functionModel;
         [Parameters+] parameterLists;
@@ -822,6 +824,14 @@ class BaseTransformer<Result>(CompilationContext ctx)
             definition = that.definition;
             functionModel = info.declarationModel;
             functionName = dartTypes.getName(functionModel);
+        }
+        case (is DefaultedCallableParameter) {
+            value info = ParameterInfo(that);
+            parameterLists = that.parameter.parameterLists;
+            definition = that.specifier;
+            assert (is FunctionModel m = info.parameterModel.model);
+            functionModel = m;
+            functionName = null;
         }
 
         variable DartExpression? result = null;
@@ -869,8 +879,10 @@ class BaseTransformer<Result>(CompilationContext ctx)
 
                 for (param in defaultedParameters) {
                     value parameterInfo = ParameterInfo(param);
+                    value parameterModelModel = parameterInfo.parameterModel.model;
                     value paramName = DartSimpleIdentifier(
                             dartTypes.getName(parameterInfo.parameterModel));
+
                     statements.add {
                         DartIfStatement {
                             // if (parm === default)
@@ -889,12 +901,30 @@ class BaseTransformer<Result>(CompilationContext ctx)
                                 DartAssignmentExpression {
                                     paramName;
                                     DartAssignmentOperator.equal;
-                                    withLhs {
-                                        null;
-                                        parameterInfo.parameterModel.model;
-                                        () => param.specifier.expression
-                                                .transform(expressionTransformer);
-                                    };
+                                    if (is DefaultedCallableParameter param,
+                                        is FunctionModel parameterModelModel) then
+                                        // Generate a Callable for the default function
+                                        // value
+
+                                        // withLhs() doesn't know about Callable
+                                        // parameters.
+                                        withLhsNonNative {
+                                            parameterModelModel.typedReference.fullType;
+                                            () => generateNewCallable {
+                                                that;
+                                                parameterModelModel;
+                                                generateFunctionExpression(param);
+                                                0; false; false;
+                                            };
+                                        }
+                                    else
+                                        // Simple ValueModel default value
+                                        withLhs {
+                                            null;
+                                            parameterModelModel;
+                                            () => param.specifier.expression
+                                                    .transform(expressionTransformer);
+                                        };
                                 };
                             };
                         };
@@ -950,13 +980,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
             value parameterModel = parameterInfo.parameterModel;
 
             value defaulted = parameterModel.defaulted;
-            value callable = parameterModel.model is FunctionModel;
             value variadic = parameterModel.sequenced;
 
-            if (callable) {
-                throw CompilerBug(that, "Callable parameters not yet supported");
-            }
-            else if (variadic) {
+            if (variadic) {
                 throw CompilerBug(that, "Variadic parameters not yet supported");
             }
             else {
@@ -1200,11 +1226,16 @@ class BaseTransformer<Result>(CompilationContext ctx)
     }
 
     shared
-    DartArgumentList generateArgumentListFromArguments
-            (Arguments that, TypeModel callableType) {
+    DartArgumentList generateArgumentListFromArguments(
+            Arguments that,
+            TypeModel callableType,
+            "True if the ArgumentList is for a Callable, even though ParameterModels
+             are available. This is used for invocations on Callable Parameters"
+            Boolean overrideNonCallable = false) {
         switch (that)
         case (is PositionalArguments) {
-            return generateArgumentListFromArgumentList(that.argumentList, callableType);
+            return generateArgumentListFromArgumentList(
+                    that.argumentList, callableType, overrideNonCallable);
         }
         case (is NamedArguments) {
             throw CompilerBug(that, "NamedArguments not supported");
@@ -1212,8 +1243,12 @@ class BaseTransformer<Result>(CompilationContext ctx)
     }
 
     shared
-    DartArgumentList generateArgumentListFromArgumentList
-            (ArgumentList that, TypeModel callableType) {
+    DartArgumentList generateArgumentListFromArgumentList(
+            ArgumentList that,
+            TypeModel callableType,
+            "True if the ArgumentList is for a Callable, even though ParameterModels
+             are available. This is used for invocations on Callable Parameters"
+            Boolean overrideNonCallable = false) {
 
         if(!that.sequenceArgument is Null) {
             throw unimplementedError(that, "spread arguments not supported");
@@ -1231,7 +1266,9 @@ class BaseTransformer<Result>(CompilationContext ctx)
             value i -> expression = e;
 
             assert (is ParameterModel? parameterModel =
-                    info.listedArgumentModels.getFromFirst(i)?.get(1));
+                        if (!overrideNonCallable)
+                        then info.listedArgumentModels.getFromFirst(i)?.get(1)
+                        else null);
 
             TypeModel? lhsType;
             FunctionOrValueModel? lhsDeclaration;

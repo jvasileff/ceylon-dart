@@ -90,7 +90,7 @@ class CoreTransformer<Result>(CompilationContext ctx)
             TypeModel rhsType,
             "The declaration that produces the value.
 
-             For `Function`s, the declaration is used for its return type.
+             Note: for `Function`s, the declaration is used for its return type.
 
              If a declaration is not provided, boxing will erase to native if possible,
              and casting will *not* assume erased to Object (except for non-denotable

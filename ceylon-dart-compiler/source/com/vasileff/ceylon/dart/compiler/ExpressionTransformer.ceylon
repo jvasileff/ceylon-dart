@@ -188,19 +188,40 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
             case (is FunctionModel) {
-                // a newly created Callable, which is not erased
-                return withBoxingNonNative {
-                    that;
-                    info.typeModel;
-                    generateNewCallable {
+                if (targetDeclaration.parameter) {
+                    // The Callable parameter, which is not erased
+                    // For now, we are calculating erased-to-Object with the defaulted
+                    // check.
+                    // TODO consider teaching  `withBoxing()`, `erasedToNative()`, and
+                    //      `erasedToObject()` about Callable parameters, and then
+                    //      use `withBoxing()`.
+                    return withBoxingCustom {
                         that;
-                        functionModel = targetDeclaration;
+                        info.typeModel;
+                        false;
+                        targetDeclaration.initializerParameter.defaulted;
                         dartTypes.dartIdentifierForFunctionOrValue {
-                            scope = that;
+                            that;
                             targetDeclaration;
+                            false;
                         }[0];
                     };
-                };
+                }
+                else {
+                    // A newly created Callable, which is not erased
+                    return withBoxingNonNative {
+                        that;
+                        info.typeModel;
+                        generateNewCallable {
+                            that;
+                            functionModel = targetDeclaration;
+                            dartTypes.dartIdentifierForFunctionOrValue {
+                                scope = that;
+                                targetDeclaration;
+                            }[0];
+                        };
+                    };
+                }
             }
             else {
                 throw CompilerBug(that,
@@ -588,13 +609,44 @@ class ExpressionTransformer(CompilationContext ctx)
                 else
                     d;
 
+        "Generate an invocation on `ValueModel`s, or `FunctionModel`s for Callable
+         parameters, which are implemented as Callable values. This function is called
+         in two locations in the main `switch` statement below."
+        function invocationForCallable() {
+            // Callables (being generic) always erase to `core.Object`.
+            // We don't have a declaration to to use, so explicitly
+            // specify erasure:
+            return
+            withBoxingCustom {
+                that;
+                info.typeModel;
+                rhsErasedToNative = false;
+                rhsErasedToObject = true;
+                DartFunctionExpressionInvocation {
+                    // resolve the $delegate$ property of the Callable
+                    DartPropertyAccess {
+                        withLhsDenotable {
+                            ceylonTypes.callableDeclaration;
+                            () => that.invoked.transform(this);
+                        };
+                        DartSimpleIdentifier("$delegate$");
+                    };
+                    generateArgumentListFromArguments {
+                        that.arguments;
+                        invokedInfo.typeModel;
+                        true;
+                    };
+                };
+            };
+        }
+
         // the subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel
         assert (is FunctionModel | ValueModel | SetterModel
                 | ClassModel | ConstructorModel | Null invokedDeclaration);
 
         switch (invokedDeclaration)
         case (is FunctionModel) {
-            // invoke a Dart function (not a Callable value)
+            // Invoke a Dart function (*probably* not a Callable value)
 
             "If the declaration is FunctionModel, the expression must be a base
              expression or a qualified expression"
@@ -618,51 +670,35 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
             case (is BaseExpression) {
-                return withBoxing {
-                    that;
-                    info.typeModel;
-                    // If there are multiple parameter lists, the function returns a
-                    // Callable, not the ultimate return type as advertised by the
-                    // declaration.
-                    invokedDeclaration.parameterLists.size() == 1
-                        then invokedDeclaration;
-                    DartFunctionExpressionInvocation {
-                        dartTypes.dartIdentifierForFunctionOrValue {
-                            scope = that;
-                            invokedDeclaration;
-                        }[0];
-                        generateArgumentListFromArguments {
-                            that.arguments;
-                            invokedInfo.typeModel;
+                if (invokedDeclaration.parameter) {
+                    // Invoking a Callable parameter
+                    return invocationForCallable();
+                }
+                else {
+                    return withBoxing {
+                        that;
+                        info.typeModel;
+                        // If there are multiple parameter lists, the function returns a
+                        // Callable, not the ultimate return type as advertised by the
+                        // declaration.
+                        invokedDeclaration.parameterLists.size() == 1
+                            then invokedDeclaration;
+                        DartFunctionExpressionInvocation {
+                            dartTypes.dartIdentifierForFunctionOrValue {
+                                scope = that;
+                                invokedDeclaration;
+                            }[0];
+                            generateArgumentListFromArguments {
+                                that.arguments;
+                                invokedInfo.typeModel;
+                            };
                         };
                     };
-                };
+                }
             }
         }
         case (is ValueModel?) {
-            // Callables (being generic) always erase to `core.Object`.
-            // We don't have a declaration to to use, so explicitly
-            // specify erasure:
-            return withBoxingCustom {
-                that;
-                info.typeModel;
-                rhsErasedToNative = false;
-                rhsErasedToObject = true;
-                DartFunctionExpressionInvocation {
-                    // resolve the $delegate$ property of the Callable
-                    DartPropertyAccess {
-                        withLhsDenotable {
-                            ceylonTypes.callableDeclaration;
-                            () => that.invoked.transform(this);
-                        };
-                        DartSimpleIdentifier("$delegate$");
-                    };
-                    generateArgumentListFromArguments {
-                        that.arguments;
-                        invokedInfo.typeModel;
-                    };
-                };
-            };
+            return invocationForCallable();
         }
         case (is ClassModel) {
             if (!withinPackage(invokedDeclaration)) {
