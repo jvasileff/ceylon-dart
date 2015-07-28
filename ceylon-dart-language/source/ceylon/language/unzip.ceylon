@@ -7,7 +7,7 @@
  
      tuples[i] == [unzip(tuples)[0][i], 
                   *unzip(tuples)[1][i]]"
-native shared [Iterable<Head,Absent>, Iterable<Tail,Absent>] 
+shared [Iterable<Head,Absent>, Iterable<Tail,Absent>] 
 unzip<Element,Head,Tail,Absent>
         (Iterable<Tuple<Element|Head,Head,Tail>,Absent> tuples)
         given Tail satisfies Element[]

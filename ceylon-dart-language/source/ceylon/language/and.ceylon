@@ -1,6 +1,6 @@
 "Returns a function which is the logical conjunction of the 
  given predicate functions."
-native shared Boolean and<in Value>(
+shared Boolean and<in Value>(
     "The first predicate function"
     Boolean(Value) p,
     "The second predicate function" 

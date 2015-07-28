@@ -5,7 +5,7 @@
      Map<String,List<Item>> map = ... ;
      {String*} uppercaseKeys = map.map(forKey(String.uppercased));"
 see (`function forItem`)
-native shared Result forKey<Key,Result>(Result resulting(Key key))
+shared Result forKey<Key,Result>(Result resulting(Key key))
             (Key->Anything entry)
         given Key satisfies Object 
         => resulting(entry.key);

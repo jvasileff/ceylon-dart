@@ -5,6 +5,6 @@
      Map<String,List<Item>> map = ... ;
      {Item?*} topItems = map.map(forItem(List<Item>.first));"
 see (`function forKey`)
-native shared Result forItem<Item,Result>(Result resulting(Item item))
+shared Result forItem<Item,Result>(Result resulting(Item item))
             (Object->Item entry)
         => resulting(entry.item);

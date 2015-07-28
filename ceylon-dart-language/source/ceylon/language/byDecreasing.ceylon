@@ -10,7 +10,7 @@ see (`function byIncreasing`,
      `function decreasing`,
      `function Iterable.max`,
      `function Iterable.sort`)
-native shared Comparison byDecreasing<Element,Value>
+shared Comparison byDecreasing<Element,Value>
             (Value comparable(Element e))
             (Element x, Element y)
         given Value satisfies Comparable<Value>

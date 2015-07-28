@@ -149,7 +149,7 @@ Integer aIntLower = 'a'.integer;
 Integer aIntUpper = 'A'.integer;
 Integer zeroInt = '0'.integer;
 
-native Integer? parseDigit(Character digit, Integer radix) {
+Integer? parseDigit(Character digit, Integer radix) {
     Integer figure;
     Integer digitInt = digit.integer;
     if (0<=digitInt-zeroInt<10) {

@@ -104,7 +104,7 @@ native shared Float? parseFloat(String string) {
 }
 
 //TODO: replace with a native implementation
-native Integer maximumIntegerExponent 
+Integer maximumIntegerExponent 
         = smallest(runtime.maxIntegerValue.string.size,
                    runtime.minIntegerValue.string.size-1);
 

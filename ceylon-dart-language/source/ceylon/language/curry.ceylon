@@ -7,7 +7,7 @@
  That is, if `fun` has type `W(X,Y,Z)` then 
  `curry(fun)` has type `W(Y,Z)(X)`."
 see (`function uncurry`, `function compose`)
-native shared Return(*Rest) curry<Return,Argument,First,Rest>
+shared Return(*Rest) curry<Return,Argument,First,Rest>
             (Return(*Tuple<Argument,First,Rest>) f)
             (First first)
         given First satisfies Argument 
@@ -26,7 +26,7 @@ native shared Return(*Rest) curry<Return,Argument,First,Rest>
  That is, if `fun` has type `W(Y,Z)(X)` then `uncurry(fun)` 
  has type `W(X,Y,Z)`."
 see (`function curry`, `function compose`)
-native shared Return(*Tuple<Argument,First,Rest>) 
+shared Return(*Tuple<Argument,First,Rest>) 
         uncurry<Return,Argument,First,Rest>
             (Return(*Rest) f(First first))
         given First satisfies Argument 

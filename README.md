@@ -55,11 +55,18 @@ functionality.
 - [x] Map members like `toString()`, `hash`, etc.
 - [ ] Statements: ~~for~~, ~~if~~, while
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
-- [ ] Use compiler for language module functions: `corresponding`, ~~count~~,
-  ~~decreasing~~, ~~every~~, ~~identity~~, `noop`, ~~increasing~~,
-  ~~identical~~, ~~largest~~, `max`, ~~not~~, `nothing`, ~~or~~, ~~plus~~,
-  ~~print~~, ~~printAll~~, ~~product~~, ~~smallest~~, ~~sort~~, ~~sum~~,
-  ~~times~~, ~~any~~, ~~arrayOfSize~~, ~~formatInteger~~, ~~infinity~~
+- [x] Use compiler for language module functions: ~~and~~, ~~anyPair~~,
+  ~~any~~, ~~apply~~, ~~arrayOfSize~~, ~~byDecreasing~~, ~~byIncreasing~~,
+  ~~byItem~~, ~~byKey~~, ~~count~~, ~~curry~~, ~~decreasing~~, ~~everyPair~~,
+  ~~every~~, ~~findPair~~, ~~foldPairs~~, ~~forItem~~, ~~forKey~~,
+  ~~formatInteger~~, ~~identical~~, ~~identity~~, ~~increasing~~, ~~infinity~~,
+  ~~largest~~, ~~maximumIntegerExponent~~, ~~not~~, ~~or~~, ~~plus~~,
+  ~~printAll~~, ~~print~~, ~~product~~, ~~shuffle~~, ~~smallest~~, ~~sort~~,
+  ~~sum~~, ~~times~~, ~~uncurry~~, ~~unzip~~, ~~zipPairs~~
+- [ ] Use compiler for more language module functions: annotations, apply,
+  comparing, compose, concatenate, corresponding, emptyOrSingleton, expand,
+  noop, interleave, max, min, nothing, mapPairs, unzipPairs, unzipEntries,
+  digitOrSign
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations
 - [x] Tuple and Iterable expressions

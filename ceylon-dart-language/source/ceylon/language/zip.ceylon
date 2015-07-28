@@ -35,7 +35,7 @@ zipEntries<Key,Item,KeyAbsent,ItemAbsent>
      zipPairs(xs, ys)[i] == [xs[i], ys[i]]
  
  for every `0<=i<smallest(xs.size,ys.size)`."
-native shared Iterable<[First,Second],FirstAbsent|SecondAbsent> 
+shared Iterable<[First,Second],FirstAbsent|SecondAbsent> 
 zipPairs<First,Second,FirstAbsent,SecondAbsent>
         (Iterable<First,FirstAbsent> firstElements, 
          Iterable<Second,SecondAbsent> secondElements)
