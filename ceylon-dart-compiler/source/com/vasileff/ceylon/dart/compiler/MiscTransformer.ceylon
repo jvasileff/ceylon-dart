@@ -1,7 +1,9 @@
 import ceylon.ast.core {
     ValueDefinition,
     Specifier,
-    ValueDeclaration
+    ValueDeclaration,
+    WideningTransformer,
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -19,7 +21,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class MiscTransformer(CompilationContext ctx)
-        extends BaseTransformer<Anything>(ctx) {
+        extends BaseTransformer(ctx)
+        satisfies WideningTransformer<Anything> {
 
     shared actual
     DartVariableDeclarationList transformValueDeclaration
@@ -79,5 +82,11 @@ class MiscTransformer(CompilationContext ctx)
                 };
             }];
         };
+    }
+
+    shared actual default
+    Anything transformNode(Node that) {
+        throw CompilerBug(that,
+            "Unhandled node: '``className(that)``'");
     }
 }

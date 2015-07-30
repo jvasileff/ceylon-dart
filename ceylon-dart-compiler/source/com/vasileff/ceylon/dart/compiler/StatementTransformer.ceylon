@@ -20,7 +20,9 @@ import ceylon.ast.core {
     ExistsOrNonemptyCondition,
     ClassDefinition,
     InterfaceDefinition,
-    TypeAliasDefinition
+    TypeAliasDefinition,
+    Node,
+    WideningTransformer
 }
 import ceylon.language.meta {
     type
@@ -64,7 +66,8 @@ import org.antlr.runtime {
 
 shared
 class StatementTransformer(CompilationContext ctx)
-        extends BaseTransformer<[DartStatement*]>(ctx) {
+        extends BaseTransformer(ctx)
+        satisfies WideningTransformer<[DartStatement*]> {
 
     shared actual [DartStatement] transformAssignmentStatement(AssignmentStatement that)
         =>  [DartExpressionStatement {
@@ -505,5 +508,11 @@ class StatementTransformer(CompilationContext ctx)
 
         assert (nonempty result = statements.coalesced.sequence());
         return result;
+    }
+
+    shared actual default
+    [] transformNode(Node that) {
+        throw CompilerBug(that,
+            "Unhandled node: '``className(that)``'");
     }
 }

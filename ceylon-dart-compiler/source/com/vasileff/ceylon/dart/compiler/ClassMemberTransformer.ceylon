@@ -2,7 +2,9 @@ import ceylon.ast.core {
     ValueDeclaration,
     ValueDefinition,
     FunctionDeclaration,
-    TypeAliasDefinition
+    TypeAliasDefinition,
+    WideningTransformer,
+    Node
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -17,7 +19,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)
-        extends BaseTransformer<[DartClassMember*]>(ctx) {
+        extends BaseTransformer(ctx)
+        satisfies WideningTransformer<[DartClassMember*]> {
 
     shared actual
     [DartClassMember*] transformValueDeclaration(ValueDeclaration that) {
@@ -65,4 +68,10 @@ class ClassMemberTransformer(CompilationContext ctx)
     shared actual
     [] transformTypeAliasDefinition(TypeAliasDefinition that)
         =>  [];
+
+    shared actual default
+    [] transformNode(Node that) {
+        throw CompilerBug(that,
+            "Unhandled node: '``className(that)``'");
+    }
 }

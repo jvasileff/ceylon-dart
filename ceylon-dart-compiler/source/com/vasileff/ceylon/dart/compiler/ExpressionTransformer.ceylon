@@ -72,7 +72,8 @@ import ceylon.ast.core {
     ClosedBound,
     Tuple,
     Comprehension,
-    Iterable
+    Iterable,
+    WideningTransformer
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -128,7 +129,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
-        extends BaseTransformer<DartExpression>(ctx) {
+        extends BaseTransformer(ctx)
+        satisfies WideningTransformer<DartExpression> {
 
     """
        A base expression can be:
@@ -1204,6 +1206,12 @@ class ExpressionTransformer(CompilationContext ctx)
             };
             DartArgumentList { []; };
         };
+    }
+
+    shared actual default
+    DartExpression transformNode(Node that) {
+        throw CompilerBug(that,
+            "Unhandled node: '``className(that)``'");
     }
 }
 

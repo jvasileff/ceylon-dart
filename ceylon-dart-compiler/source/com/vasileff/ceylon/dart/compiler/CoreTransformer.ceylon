@@ -1,6 +1,5 @@
 import ceylon.ast.core {
-    Node,
-    WideningTransformer
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -11,9 +10,6 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     ClassOrInterfaceModel=ClassOrInterface
 }
-import com.vasileff.ceylon.dart.model {
-    DartTypeModel
-}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartExpression,
@@ -21,6 +17,9 @@ import com.vasileff.ceylon.dart.ast {
     DartFunctionExpressionInvocation,
     DartSimpleIdentifier,
     DartAsExpression
+}
+import com.vasileff.ceylon.dart.model {
+    DartTypeModel
 }
 
 """Provides:
@@ -33,8 +32,7 @@ import com.vasileff.ceylon.dart.ast {
 """
 abstract
 shared
-class CoreTransformer<Result>(CompilationContext ctx)
-        satisfies WideningTransformer<Result> {
+class CoreTransformer(CompilationContext ctx) {
 
     shared
     CeylonTypes ceylonTypes
@@ -68,12 +66,6 @@ class CoreTransformer<Result>(CompilationContext ctx)
     void error(Node that, Anything message)
         =>  process.writeErrorLine(
                 message?.string else "<null>");
-
-    shared actual default
-    Result transformNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node: '``className(that)``'");
-    }
 
     shared
     CompilerBug unimplementedError(Node that, String? message=null) {

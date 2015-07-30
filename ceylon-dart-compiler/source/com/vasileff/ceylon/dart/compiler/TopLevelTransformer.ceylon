@@ -10,7 +10,8 @@ import ceylon.ast.core {
     ObjectDefinition,
     ValueGetterDefinition,
     TypeAliasDefinition,
-    CompilationUnit
+    CompilationUnit,
+    Visitor
 }
 import ceylon.interop.java {
     CeylonList
@@ -42,32 +43,31 @@ import com.vasileff.ceylon.dart.nodeinfo {
  declarations made within blocks."
 shared
 class TopLevelTransformer(CompilationContext ctx)
-        extends BaseTransformer<[DartCompilationUnitMember*]>(ctx) {
+        extends BaseTransformer(ctx)
+        satisfies Visitor {
 
     void add(DartCompilationUnitMember member)
-            => ctx.compilationUnitMembers.add(member);
+        =>  ctx.compilationUnitMembers.add(member);
 
     void addAll({DartCompilationUnitMember*} members)
-            => ctx.compilationUnitMembers.addAll(members);
+        =>  ctx.compilationUnitMembers.addAll(members);
 
     shared actual
-    [DartCompilationUnitMember*]
-    transformValueDeclaration(ValueDeclaration that) {
+    void visitValueDeclaration(ValueDeclaration that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
-        super.transformValueDeclaration(that);
-        return [];
+        super.visitValueDeclaration(that);
     }
 
     shared actual
-    [] transformValueDefinition
+    void visitValueDefinition
             (ValueDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         addAll {
@@ -76,87 +76,77 @@ class TopLevelTransformer(CompilationContext ctx)
             },
             *generateForwardingGetterSetter(that)
         };
-
-        return [];
     }
 
     shared actual
-    [DartCompilationUnitMember*] transformValueGetterDefinition
+    void visitValueGetterDefinition
             (ValueGetterDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         super.transformValueGetterDefinition(that);
-        return [];
     }
 
     shared actual
-    [DartCompilationUnitMember*]
-    transformFunctionDeclaration(FunctionDeclaration that) {
+    void visitFunctionDeclaration(FunctionDeclaration that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         super.transformFunctionDeclaration(that);
-        return [];
     }
 
     shared actual
-    [DartCompilationUnitMember*] transformClassDefinition(ClassDefinition that) {
+    void visitClassDefinition(ClassDefinition that) {
         value info = AnyClassInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {
-            return [];
+            return;
         }
 
         super.transformClassDefinition(that);
-        return [];
     }
 
     shared actual
-    [] transformFunctionDefinition(FunctionDefinition that) {
+    void visitFunctionDefinition(FunctionDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         addAll {
             generateFunctionDefinition(that),
             generateForwardingFunction(that)
         };
-
-        return [];
     }
 
     shared actual
-    [DartFunctionDeclaration+]|[] transformFunctionShortcutDefinition
+    void visitFunctionShortcutDefinition
             (FunctionShortcutDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         addAll {
             generateFunctionDefinition(that),
             generateForwardingFunction(that)
         };
-
-        return [];
     }
 
     shared actual
-    [DartClassDeclaration]|[] transformInterfaceDefinition
+    void visitInterfaceDefinition
             (InterfaceDefinition that) {
 
         value info = AnyInterfaceInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {
-            return [];
+            return;
         }
 
         value name = DartSimpleIdentifier(dartTypes.getName(info.declarationModel));
@@ -181,24 +171,20 @@ class TopLevelTransformer(CompilationContext ctx)
                 members = members;
             };
         };
-
-        return [];
     }
 
     shared actual
-    DartCompilationUnitMember[] transformObjectDefinition(ObjectDefinition that) {
+    void visitObjectDefinition(ObjectDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
-            return [];
+            return;
         }
 
         super.transformObjectDefinition(that);
-        return [];
     }
 
     shared actual
-    [] transformTypeAliasDefinition(TypeAliasDefinition that)
-        =>  [];
+    void visitTypeAliasDefinition(TypeAliasDefinition that) {}
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
             (ValueDefinition that) {
@@ -273,12 +259,8 @@ class TopLevelTransformer(CompilationContext ctx)
     "Transforms the declarations of the [[CompilationUnit]]. **Note:**
      imports are ignored."
     shared actual
-    [DartCompilationUnitMember*] transformCompilationUnit(CompilationUnit that) {
-        addAll(that.declarations.flatMap((d)
-            =>  d.transform(topLevelTransformer)).sequence());
-
-        return [];
-    }
+    void visitCompilationUnit(CompilationUnit that)
+        =>  that.declarations.each((d) => d.visit(this));
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
         =>  let (info = AnyFunctionInfo(that),

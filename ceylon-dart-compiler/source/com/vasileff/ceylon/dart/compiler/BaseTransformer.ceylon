@@ -1,6 +1,5 @@
 import ceylon.ast.core {
     Node,
-    WideningTransformer,
     FunctionShortcutDefinition,
     FunctionDefinition,
     Parameters,
@@ -92,9 +91,8 @@ import com.vasileff.jl4c.guava.collect {
 }
 
 shared abstract
-class BaseTransformer<Result>(CompilationContext ctx)
-        extends CoreTransformer<Result>(ctx)
-        satisfies WideningTransformer<Result> {
+class BaseTransformer(CompilationContext ctx)
+        extends CoreTransformer(ctx) {
 
     // hack to avoid error using the inherited member ceylonTypes in the initializer
     value ceylonTypes = ctx.ceylonTypes;
