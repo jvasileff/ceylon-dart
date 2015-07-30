@@ -16,7 +16,6 @@ import ceylon.file {
 }
 import ceylon.interop.java {
     CeylonIterable,
-    CeylonList,
     createJavaByteArray,
     javaClass,
     JavaIterable,
@@ -157,12 +156,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 HashMap<ModuleModel, LinkedList<DartCompilationUnitMember>>();
 
         for (phasedUnit in phasedUnits) {
-            value ctx = CompilationContext {
-                phasedUnit.unit;
-                CeylonList {
-                    phasedUnit.tokens;
-                };
-            };
+            value ctx = CompilationContext(phasedUnit);
 
             value unit = anyCompilationUnitToCeylon {
                 phasedUnit.compilationUnit;
@@ -179,7 +173,9 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                     declarations = LinkedList<DartCompilationUnitMember>();
                     moduleMembers.put(phasedUnit.\ipackage.\imodule, declarations);
                 }
-                declarations.addAll(ctx.miscTransformer.transformCompilationUnit(unit));
+
+                ctx.topLevelTransformer.transformCompilationUnit(unit);
+                declarations.addAll(ctx.compilationUnitMembers.sequence());
             }
         }
 

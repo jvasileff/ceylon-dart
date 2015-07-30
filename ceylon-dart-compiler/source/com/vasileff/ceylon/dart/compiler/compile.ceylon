@@ -6,8 +6,7 @@ import ceylon.collection {
 }
 import ceylon.interop.java {
     createJavaByteArray,
-    CeylonIterable,
-    CeylonList
+    CeylonIterable
 }
 import ceylon.io.charset {
     utf8
@@ -19,6 +18,12 @@ import com.redhat.ceylon.compiler.typechecker {
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
 }
+import com.vasileff.ceylon.dart.ast {
+    DartImportDirective,
+    DartSimpleIdentifier,
+    DartCompilationUnit,
+    DartSimpleStringLiteral
+}
 import com.vasileff.jl4c.guava.collect {
     javaList
 }
@@ -29,12 +34,6 @@ import java.io {
 }
 import java.util {
     List
-}
-import com.vasileff.ceylon.dart.ast {
-    DartImportDirective,
-    DartSimpleIdentifier,
-    DartCompilationUnit,
-    DartSimpleStringLiteral
 }
 
 shared
@@ -116,10 +115,9 @@ shared
         }
         else {
             try {
-                value ctx = CompilationContext(
-                        phasedUnit.unit, CeylonList(phasedUnit.tokens));
-                value dartDeclarations = ctx.miscTransformer
-                        .transformCompilationUnit(unit);
+                value ctx = CompilationContext(phasedUnit);
+
+                ctx.topLevelTransformer.transformCompilationUnit(unit);
 
                 value dartCompilationUnit =
                     DartCompilationUnit {
@@ -136,7 +134,7 @@ shared
                             DartSimpleIdentifier(
                                 "$ceylon$language");
                         }];
-                        dartDeclarations;
+                        ctx.compilationUnitMembers.sequence();
                     };
 
                 dartCompilationUnits.add(dartCompilationUnit);

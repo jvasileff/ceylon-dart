@@ -1,7 +1,6 @@
 import ceylon.ast.core {
     ValueDefinition,
     Specifier,
-    CompilationUnit,
     ValueDeclaration
 }
 
@@ -10,7 +9,6 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.ceylon.dart.ast {
     DartVariableDeclaration,
-    DartCompilationUnitMember,
     DartSimpleIdentifier,
     DartVariableDeclarationList
 }
@@ -82,11 +80,4 @@ class MiscTransformer(CompilationContext ctx)
             }];
         };
     }
-
-    "Transforms the declarations of the [[CompilationUnit]]. **Note:**
-     imports are ignored."
-    shared actual
-    [DartCompilationUnitMember*] transformCompilationUnit(CompilationUnit that)
-        =>  that.declarations.flatMap((d)
-            => d.transform(topLevelTransformer)).sequence();
 }

@@ -9,7 +9,8 @@ import ceylon.ast.core {
     ClassDefinition,
     ObjectDefinition,
     ValueGetterDefinition,
-    TypeAliasDefinition
+    TypeAliasDefinition,
+    CompilationUnit
 }
 import ceylon.interop.java {
     CeylonList
@@ -43,6 +44,12 @@ shared
 class TopLevelTransformer(CompilationContext ctx)
         extends BaseTransformer<[DartCompilationUnitMember*]>(ctx) {
 
+    void add(DartCompilationUnitMember member)
+            => ctx.compilationUnitMembers.add(member);
+
+    void addAll({DartCompilationUnitMember*} members)
+            => ctx.compilationUnitMembers.addAll(members);
+
     shared actual
     [DartCompilationUnitMember*]
     transformValueDeclaration(ValueDeclaration that) {
@@ -51,20 +58,26 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        return super.transformValueDeclaration(that);
+        super.transformValueDeclaration(that);
+        return [];
     }
 
     shared actual
-    [DartTopLevelVariableDeclaration|DartFunctionDeclaration+]|[] transformValueDefinition
+    [] transformValueDefinition
             (ValueDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
 
-        return [DartTopLevelVariableDeclaration(
-                    miscTransformer.transformValueDefinition(that)),
-                *generateForwardingGetterSetter(that)];
+        addAll {
+            DartTopLevelVariableDeclaration {
+                miscTransformer.transformValueDefinition(that);
+            },
+            *generateForwardingGetterSetter(that)
+        };
+
+        return [];
     }
 
     shared actual
@@ -74,7 +87,9 @@ class TopLevelTransformer(CompilationContext ctx)
         if (!isForDartBackend(that)) {
             return [];
         }
-        return super.transformValueGetterDefinition(that);
+
+        super.transformValueGetterDefinition(that);
+        return [];
     }
 
     shared actual
@@ -85,7 +100,8 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        return super.transformFunctionDeclaration(that);
+        super.transformFunctionDeclaration(that);
+        return [];
     }
 
     shared actual
@@ -97,17 +113,23 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        return super.transformClassDefinition(that);
+        super.transformClassDefinition(that);
+        return [];
     }
 
     shared actual
-    [DartFunctionDeclaration+]|[] transformFunctionDefinition(FunctionDefinition that) {
+    [] transformFunctionDefinition(FunctionDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
-        return [generateFunctionDefinition(that),
-                generateForwardingFunction(that)];
+
+        addAll {
+            generateFunctionDefinition(that),
+            generateForwardingFunction(that)
+        };
+
+        return [];
     }
 
     shared actual
@@ -118,8 +140,12 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        return [generateFunctionDefinition(that),
-                generateForwardingFunction(that)];
+        addAll {
+            generateFunctionDefinition(that),
+            generateForwardingFunction(that)
+        };
+
+        return [];
     }
 
     shared actual
@@ -143,17 +169,20 @@ class TopLevelTransformer(CompilationContext ctx)
         value members = expand(that.body.transformChildren(
                 ctx.classMemberTransformer)).sequence();
 
-        return
-        [DartClassDeclaration {
-            abstract = true;
-            name = name;
-            extendsClause = null;
-            implementsClause =
-                if (exists implementsTypes)
-                then DartImplementsClause(implementsTypes)
-                else null;
-            members = members;
-        }];
+        add {
+            DartClassDeclaration {
+                abstract = true;
+                name = name;
+                extendsClause = null;
+                implementsClause =
+                    if (exists implementsTypes)
+                    then DartImplementsClause(implementsTypes)
+                    else null;
+                members = members;
+            };
+        };
+
+        return [];
     }
 
     shared actual
@@ -163,7 +192,8 @@ class TopLevelTransformer(CompilationContext ctx)
             return [];
         }
 
-        return super.transformObjectDefinition(that);
+        super.transformObjectDefinition(that);
+        return [];
     }
 
     shared actual
@@ -229,10 +259,25 @@ class TopLevelTransformer(CompilationContext ctx)
                 };
             };
 
-        return
+
+        addAll {
             if (exists setter)
             then [getter, setter]
             else [getter];
+        };
+
+        return [];
+    }
+
+
+    "Transforms the declarations of the [[CompilationUnit]]. **Note:**
+     imports are ignored."
+    shared actual
+    [DartCompilationUnitMember*] transformCompilationUnit(CompilationUnit that) {
+        addAll(that.declarations.flatMap((d)
+            =>  d.transform(topLevelTransformer)).sequence());
+
+        return [];
     }
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)

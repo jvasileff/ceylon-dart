@@ -9,20 +9,32 @@ import org.antlr.runtime {
     Token
 }
 import ceylon.collection {
-    HashSet
+    HashSet,
+    LinkedList
+}
+import com.vasileff.ceylon.dart.ast {
+    DartCompilationUnitMember
+}
+import com.redhat.ceylon.compiler.typechecker.context {
+    PhasedUnit
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 shared
-class CompilationContext(unit, tokens) {
+class CompilationContext(PhasedUnit phasedUnit) {
 
     shared
-    UnitModel unit;
+    UnitModel unit = phasedUnit.unit;
 
     shared
-    List<Token> tokens;
+    List<Token> tokens = CeylonList(phasedUnit.tokens);
 
+    "The output."
     shared
-    CeylonTypes ceylonTypes = CeylonTypes(unit);
+    LinkedList<DartCompilationUnitMember> compilationUnitMembers
+        =   LinkedList<DartCompilationUnitMember>();
 
     shared
     HashSet<FunctionOrValueModel> disableErasureToNative
@@ -43,6 +55,9 @@ class CompilationContext(unit, tokens) {
 
     shared variable
     FunctionModel? returnDeclarationTop = null;
+
+    shared
+    CeylonTypes ceylonTypes = CeylonTypes(unit);
 
     variable
     DartTypes? dartTypesMemo = null;
