@@ -75,7 +75,7 @@ class CompilationContext(PhasedUnit phasedUnit) {
     StatementTransformer? stMemo = null;
 
     variable
-    TopLevelTransformer? tltMemo = null;
+    TopLevelVisitor? tltMemo = null;
 
     shared
     DartTypes dartTypes
@@ -98,8 +98,8 @@ class CompilationContext(PhasedUnit phasedUnit) {
         =>  stMemo else (stMemo = StatementTransformer(this));
 
     shared
-    TopLevelTransformer topLevelTransformer
-        =>  tltMemo else (tltMemo = TopLevelTransformer(this));
+    TopLevelVisitor topLevelTransformer
+        =>  tltMemo else (tltMemo = TopLevelVisitor(this));
 
     shared
     TypeOrNoType assertedLhsTypeTop {

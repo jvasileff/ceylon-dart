@@ -91,8 +91,8 @@ import com.vasileff.jl4c.guava.collect {
 }
 
 shared abstract
-class BaseTransformer(CompilationContext ctx)
-        extends CoreTransformer(ctx) {
+class BaseGenerator(CompilationContext ctx)
+        extends CoreGenerator(ctx) {
 
     // hack to avoid error using the inherited member ceylonTypes in the initializer
     value ceylonTypes = ctx.ceylonTypes;

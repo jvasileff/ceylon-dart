@@ -11,7 +11,8 @@ import ceylon.ast.core {
     ValueGetterDefinition,
     TypeAliasDefinition,
     CompilationUnit,
-    Visitor
+    Visitor,
+    Node
 }
 import ceylon.interop.java {
     CeylonList
@@ -39,11 +40,10 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyClassInfo
 }
 
-"For Dart TopLevel declarations, which are distinct from
- declarations made within blocks."
+"For Dart TopLevel declarations."
 shared
-class TopLevelTransformer(CompilationContext ctx)
-        extends BaseTransformer(ctx)
+class TopLevelVisitor(CompilationContext ctx)
+        extends BaseGenerator(ctx)
         satisfies Visitor {
 
     void add(DartCompilationUnitMember member)
@@ -255,12 +255,17 @@ class TopLevelTransformer(CompilationContext ctx)
         return [];
     }
 
-
     "Transforms the declarations of the [[CompilationUnit]]. **Note:**
      imports are ignored."
     shared actual
     void visitCompilationUnit(CompilationUnit that)
         =>  that.declarations.each((d) => d.visit(this));
+
+    shared actual default
+    void visitNode(Node that) {
+        throw CompilerBug(that,
+            "Unhandled node: '``className(that)``'");
+    }
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
         =>  let (info = AnyFunctionInfo(that),

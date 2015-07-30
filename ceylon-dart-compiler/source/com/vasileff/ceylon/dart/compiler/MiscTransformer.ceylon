@@ -21,7 +21,7 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class MiscTransformer(CompilationContext ctx)
-        extends BaseTransformer(ctx)
+        extends BaseGenerator(ctx)
         satisfies WideningTransformer<Anything> {
 
     shared actual

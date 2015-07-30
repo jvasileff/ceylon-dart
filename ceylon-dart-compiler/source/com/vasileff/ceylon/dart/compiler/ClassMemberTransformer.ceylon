@@ -19,7 +19,7 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)
-        extends BaseTransformer(ctx)
+        extends BaseGenerator(ctx)
         satisfies WideningTransformer<[DartClassMember*]> {
 
     shared actual

@@ -28,11 +28,11 @@ import com.vasileff.ceylon.dart.model {
    - Fallback and error handling methods
    - Boxing, casting, and other type utility methods
 
-   Shared code generation methods should be placed in [[BaseTransformer]].
+   Shared code generation methods should be placed in [[BaseGenerator]].
 """
 abstract
 shared
-class CoreTransformer(CompilationContext ctx) {
+class CoreGenerator(CompilationContext ctx) {
 
     shared
     CeylonTypes ceylonTypes
@@ -59,7 +59,7 @@ class CoreTransformer(CompilationContext ctx) {
         =>  ctx.statementTransformer;
 
     shared
-    TopLevelTransformer topLevelTransformer
+    TopLevelVisitor topLevelVisitor
         =>  ctx.topLevelTransformer;
 
     shared

@@ -66,7 +66,7 @@ import org.antlr.runtime {
 
 shared
 class StatementTransformer(CompilationContext ctx)
-        extends BaseTransformer(ctx)
+        extends BaseGenerator(ctx)
         satisfies WideningTransformer<[DartStatement*]> {
 
     shared actual [DartStatement] transformAssignmentStatement(AssignmentStatement that)

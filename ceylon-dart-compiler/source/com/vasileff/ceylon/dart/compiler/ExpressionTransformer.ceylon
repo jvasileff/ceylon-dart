@@ -129,7 +129,7 @@ import com.vasileff.ceylon.dart.nodeinfo {
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
-        extends BaseTransformer(ctx)
+        extends BaseGenerator(ctx)
         satisfies WideningTransformer<DartExpression> {
 
     """
