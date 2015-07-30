@@ -7,6 +7,10 @@ import ceylon.file {
     Directory,
     File
 }
+import ceylon.interop.java {
+    createJavaObjectArray,
+    createJavaStringArray
+}
 import ceylon.process {
     createProcess,
     currentOutput,
@@ -15,7 +19,8 @@ import ceylon.process {
 }
 
 import com.redhat.ceylon.cmr.api {
-    ArtifactContext
+    ArtifactContext,
+    ModuleQuery
 }
 import com.redhat.ceylon.cmr.ceylon {
     RepoUsingTool
@@ -24,7 +29,8 @@ import com.redhat.ceylon.common {
     ModuleUtil
 }
 import com.redhat.ceylon.common.tool {
-    argument=argument__SETTER
+    argument=argument__SETTER,
+    ToolError
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool
@@ -33,13 +39,19 @@ import com.redhat.ceylon.common.tools {
 import java.io {
     JFile=File
 }
+import java.lang {
+    ObjectArray
+}
 import java.nio.file {
     JFiles=Files,
     JPath=Path
 }
+import java.util {
+    ListResourceBundle
+}
 
 shared
-class CeylonRunDartTool() extends RepoUsingTool(null) {
+class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 
     shared variable
     argument {
@@ -63,18 +75,23 @@ class CeylonRunDartTool() extends RepoUsingTool(null) {
         assert (exists dartPath);
 
         // TODO handle default modules
-        // TODO handle version lookup
         suppressWarnings("unusedDeclaration")
         value moduleIsDefault = ModuleUtil.isDefaultModule(moduleString);
-        String moduleVersion = ModuleUtil.moduleVersion(moduleString);
         String moduleName = ModuleUtil.moduleName(moduleString);
+        String? moduleVersion = checkModuleVersionsOrShowSuggestions(
+                repositoryManager,
+                moduleName,
+                ModuleUtil.moduleVersion(moduleString),
+                ModuleQuery.Type.\iDART,
+                null, null);
 
         // collect required artifacts, generate temporary dart package root
         value programModuleFile = repositoryManager.getArtifact(
-            ArtifactContext(moduleName, moduleVersion, ".dart"));
+            ArtifactContext(moduleName, moduleVersion, ArtifactContext.\iDART));
 
+        // TODO separate method for finding module files; proper not found error reporting
         value languageModuleFile = repositoryManager.getArtifact(
-            ArtifactContext("ceylon.language", "1.1.1", ".dart"));
+            ArtifactContext("ceylon.language", "1.1.1", ArtifactContext.\iDART));
 
         value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
             [moduleName -> programModuleFile,
@@ -134,4 +151,21 @@ File? findDartInPath(String? path) {
             ?.flatMap((d) => d.files("dart"))
             ?.filter(File.executable)
             ?.first;
+}
+
+shared
+class CeylonRunDartToolError(String message) extends ToolError(message) {}
+
+// TODO gradle build support for resource directories...
+object resourceBundle extends ListResourceBundle() {
+    shared actual ObjectArray<ObjectArray<Object>> contents
+        =>  createJavaObjectArray([
+                ["module.not.found", "Module {0} not found in the following repositories:"],
+                ["missing.version.suggestion", "Not all repositories could be searched for matching modules/versions, try again using a specific version"],
+                ["version.not.found", "Version {0} not found for module {1}"],
+                ["missing.version", "Missing required version number for module {0}"],
+                ["try.versions", "Try one of the following versions: "],
+                ["compiling", "Source found for module {0}, compiling..."],
+                ["compilation.failed", "Failed to compile sources"]
+            ].map((e) => createJavaStringArray(e)));
 }
