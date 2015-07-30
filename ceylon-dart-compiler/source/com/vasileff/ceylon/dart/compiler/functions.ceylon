@@ -59,51 +59,74 @@ Boolean hasError(Node that)
     =>  that.transform(hasErrorTransformer);
 
 UnitModel getUnit
-        (ElementModel|UnitModel|ScopeModel declaration)
-    =>  if (is UnitModel declaration)
+        (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
+    // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
+    =>  if (is Node declaration)
+            then getUnit(toScopeModel(declaration))
+        else if (is UnitModel declaration)
             then declaration
+        else if (is ModuleModel declaration)
+            then declaration.unit
         else if (is ElementModel declaration)
             then declaration.unit
         else
             getUnit(declaration.container);
 
 PackageModel getPackage
-        (ElementModel|UnitModel|ScopeModel declaration)
+        (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     =>  getUnit(declaration).\ipackage;
 
 ModuleModel getModule
-        (Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
-    =>  if (is PackageModel declaration) then
-            declaration.\imodule
-        else if (is Node declaration) then
+        (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
+    // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
+    =>  if (is Node declaration) then
             getModule(NodeInfo(declaration).scope)
-        else if (!is ModuleModel declaration) then
-            getUnit(declaration).\ipackage.\imodule
+        else if (is PackageModel declaration) then
+            declaration.\imodule
+        else if (is ModuleModel declaration) then
+            declaration
         else
-            declaration;
+            getPackage(declaration).\imodule;
 
 Boolean sameModule(
-        Node|ElementModel|UnitModel|ScopeModel first,
-        Node|ElementModel|UnitModel|ScopeModel second)
+        Node|ScopeModel|ElementModel|ModuleModel|UnitModel first,
+        Node|ScopeModel|ElementModel|ModuleModel|UnitModel second)
     =>  getModule(first) == getModule(second);
 
-//not allowing `ScopeModel` arguments since they have `null` containers
-ScopeModel containerOfDeclaration
-        (DeclarationModel declaration)
+"Shortcut for `(declaration of Declaration).container`, to make Ceylon happy.
+ Not allowing `ScopeModel` arguments since they have `null` containers."
+ScopeModel containerOfDeclaration(DeclarationModel declaration)
     =>  declaration.container;
 
-ScopeModel? containerOfScope
-        (ScopeModel scope)
+"Shortcut for `(scope of ScopeModel).container`,"
+ScopeModel? containerOfScope(ScopeModel scope)
     =>  scope.container;
 
+"Returns the `ScopeModel` for the argument, extracting from the `Node` or casting
+ `ElementModel` to `ScopeModel` as necessary."
+ScopeModel toScopeModel(Node|ScopeModel|ElementModel scope) {
+    // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
+    if (is Node scope) {
+        return NodeInfo(scope).scope;
+    }
+    else if (is ScopeModel scope) {
+        return scope;
+    }
+    else {
+        "Shouldn't happen; aren't all concrete `Element`s `Scope`s?"
+        assert (false);
+    }
+}
+
 ClassOrInterfaceModel? getContainingClassOrInterface
-        (variable ScopeModel scope) {
-    while (!is PackageModel s = scope) {
+        (Node|ScopeModel|ElementModel scope) {
+    variable ScopeModel scopeModel = toScopeModel(scope);
+    while (!is PackageModel s = scopeModel) {
         if (is ClassOrInterfaceModel s) {
             return s;
         }
         else {
-            scope = s.container;
+            scopeModel = s.container;
         }
     }
     return null;
@@ -132,29 +155,24 @@ Boolean isForDartBackend(Declaration|DeclarationInfo|DeclarationModel that)
         then native.equals("dart")
         else true;
 
-Boolean withinClassOrInterface
-        (ElementModel declaration)
-    =>  declaration.container is ClassOrInterfaceModel;
+Boolean withinClassOrInterface(Node|ScopeModel|ElementModel scope)
+    =>  toScopeModel(scope).container is ClassOrInterfaceModel;
 
-Boolean withinClass
-        (ElementModel declaration)
-    =>  declaration.container is ClassModel;
+Boolean withinClass(Node|ScopeModel|ElementModel scope)
+    =>  toScopeModel(scope).container is ClassModel;
 
-Boolean withinInterface
-        (ElementModel declaration)
-    =>  declaration.container is InterfaceModel;
+Boolean withinInterface(Node|ScopeModel|ElementModel scope)
+    =>  toScopeModel(scope).container is InterfaceModel;
 
-Boolean withinPackage
-        (ElementModel declaration)
-    =>  declaration.container is PackageModel;
+Boolean withinPackage(Node|ScopeModel|ElementModel scope)
+    =>  toScopeModel(scope).container is PackageModel;
 
 """Use getter and setter methods instead of regular
    Dart variables for non-toplevel or class attributes
    that require programatic getter or setters, due to:
    > "Getters cannot be defined within methods or functions"
 """
-Boolean useGetterSetterMethods
-        (ValueModel | SetterModel declaration)
+Boolean useGetterSetterMethods(ValueModel | SetterModel declaration)
     =>  if (!containerOfDeclaration(declaration) is
                 PackageModel | ClassOrInterfaceModel)
         then (
