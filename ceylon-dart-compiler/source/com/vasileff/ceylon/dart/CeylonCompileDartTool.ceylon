@@ -174,7 +174,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                     moduleMembers.put(phasedUnit.\ipackage.\imodule, declarations);
                 }
 
-                ctx.topLevelTransformer.transformCompilationUnit(unit);
+                ctx.topLevelVisitor.transformCompilationUnit(unit);
                 declarations.addAll(ctx.compilationUnitMembers.sequence());
             }
         }

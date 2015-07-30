@@ -51,16 +51,12 @@ class CoreGenerator(CompilationContext ctx) {
         =>  ctx.expressionTransformer;
 
     shared
-    MiscTransformer miscTransformer
-        =>  ctx.miscTransformer;
-
-    shared
     StatementTransformer statementTransformer
         =>  ctx.statementTransformer;
 
     shared
     TopLevelVisitor topLevelVisitor
-        =>  ctx.topLevelTransformer;
+        =>  ctx.topLevelVisitor;
 
     shared
     void error(Node that, Anything message)

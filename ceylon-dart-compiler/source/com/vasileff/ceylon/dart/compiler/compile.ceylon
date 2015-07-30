@@ -117,7 +117,7 @@ shared
             try {
                 value ctx = CompilationContext(phasedUnit);
 
-                ctx.topLevelTransformer.transformCompilationUnit(unit);
+                ctx.topLevelVisitor.transformCompilationUnit(unit);
 
                 value dartCompilationUnit =
                     DartCompilationUnit {

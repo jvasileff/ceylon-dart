@@ -159,8 +159,7 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartVariableDeclarationStatement] transformValueDefinition(ValueDefinition that)
-        =>  [DartVariableDeclarationStatement(miscTransformer
-                .transformValueDefinition(that))];
+        =>  [DartVariableDeclarationStatement(generateForValueDefinition(that))];
 
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that)
@@ -390,7 +389,7 @@ class StatementTransformer(CompilationContext ctx)
         // Seems like this should be fine... Dart supports forward declarations
         return
         [DartVariableDeclarationStatement {
-            miscTransformer.transformValueDeclaration(that);
+            generateForValueDeclaration(that);
         }];
     }
 

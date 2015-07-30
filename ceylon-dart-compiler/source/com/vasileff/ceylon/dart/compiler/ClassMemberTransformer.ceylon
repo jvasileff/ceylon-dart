@@ -27,7 +27,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         return
         [DartFieldDeclaration {
             static = false;
-            fieldList = ctx.miscTransformer.transformValueDeclaration(that);
+            fieldList = generateForValueDeclaration(that);
         }];
     }
 
@@ -40,7 +40,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         return
         [DartFieldDeclaration {
             static = false;
-            fieldList = ctx.miscTransformer.transformValueDefinition(that);
+            fieldList = generateForValueDefinition(that);
         }];
     }
 

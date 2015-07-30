@@ -72,7 +72,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         addAll {
             DartTopLevelVariableDeclaration {
-                miscTransformer.transformValueDefinition(that);
+                generateForValueDefinition(that);
             },
             *generateForwardingGetterSetter(that)
         };

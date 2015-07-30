@@ -17,7 +17,10 @@ import ceylon.ast.core {
     BaseExpression,
     IsCondition,
     Expression,
-    DefaultedCallableParameter
+    DefaultedCallableParameter,
+    ValueDeclaration,
+    ValueDefinition,
+    Specifier
 }
 import ceylon.collection {
     LinkedList
@@ -27,6 +30,7 @@ import ceylon.interop.java {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
+    PackageModel=Package,
     FunctionModel=Function,
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
@@ -84,7 +88,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     FunctionDefinitionInfo,
     AnyFunctionInfo,
     IsConditionInfo,
-    TypeInfo
+    TypeInfo,
+    ValueDeclarationInfo,
+    ValueDefinitionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -787,6 +793,64 @@ class BaseGenerator(CompilationContext ctx)
                 dartType;
             };
         }
+    }
+
+    shared
+    DartVariableDeclarationList generateForValueDeclaration(ValueDeclaration that) {
+        value info = ValueDeclarationInfo(that);
+
+        value packagePrefix =
+                if (info.declarationModel.container is PackageModel)
+                then "$package$"
+                else "";
+
+        return
+        DartVariableDeclarationList {
+            null;
+            dartTypes.dartTypeNameForDeclaration {
+                that;
+                info.declarationModel;
+            };
+            [DartVariableDeclaration {
+                DartSimpleIdentifier {
+                    packagePrefix + dartTypes.getName(info.declarationModel);
+                };
+                initializer = null;
+            }];
+        };
+    }
+
+    shared
+    DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {
+        if (!that.definition is Specifier) {
+            throw CompilerBug(that, "LazySpecifier not supported");
+        }
+
+        value info = ValueDefinitionInfo(that);
+
+        value packagePrefix =
+                if (info.declarationModel.container is PackageModel)
+                then "$package$"
+                else "";
+
+        return
+        DartVariableDeclarationList {
+            null;
+            dartTypes.dartTypeNameForDeclaration {
+                that;
+                info.declarationModel;
+            };
+            [DartVariableDeclaration {
+                DartSimpleIdentifier {
+                    packagePrefix + dartTypes.getName(info.declarationModel);
+                };
+                withLhs {
+                    null;
+                    info.declarationModel;
+                    () => that.definition.expression.transform(expressionTransformer);
+                };
+            }];
+        };
     }
 
     shared

@@ -69,9 +69,6 @@ class CompilationContext(PhasedUnit phasedUnit) {
     ExpressionTransformer? etMemo = null;
 
     variable
-    MiscTransformer? mtMemo = null;
-
-    variable
     StatementTransformer? stMemo = null;
 
     variable
@@ -90,15 +87,11 @@ class CompilationContext(PhasedUnit phasedUnit) {
         =>  etMemo else (etMemo = ExpressionTransformer(this));
 
     shared
-    MiscTransformer miscTransformer
-        =>  mtMemo else (mtMemo = MiscTransformer(this));
-
-    shared
     StatementTransformer statementTransformer
         =>  stMemo else (stMemo = StatementTransformer(this));
 
     shared
-    TopLevelVisitor topLevelTransformer
+    TopLevelVisitor topLevelVisitor
         =>  tltMemo else (tltMemo = TopLevelVisitor(this));
 
     shared
