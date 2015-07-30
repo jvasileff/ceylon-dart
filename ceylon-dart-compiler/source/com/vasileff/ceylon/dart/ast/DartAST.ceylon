@@ -1158,6 +1158,7 @@ class DartClassDeclaration(
         }
         writer.write("class ");
         name.write(writer);
+        writer.write(" ");
         if (exists extendsClause) {
             extendsClause.write(writer);
             writer.write(" ");
@@ -1195,7 +1196,7 @@ class DartImplementsClause(interfaces)
 
     shared actual
     void write(CodeWriter writer) {
-        writer.write(" implements ");
+        writer.write("implements ");
         variable value first = true;
         for (iface in interfaces) {
             if (first) {

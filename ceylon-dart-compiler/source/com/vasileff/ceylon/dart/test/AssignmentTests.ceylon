@@ -22,7 +22,7 @@ class AssignmentTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class SomeInt{
+                abstract class SomeInt {
                     $dart$core.String someString;
                 }
                 void $package$run([SomeInt si]) {
@@ -52,7 +52,7 @@ class AssignmentTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class SomeInt{
+                abstract class SomeInt {
                     $dart$core.Object someObject;
                 }
                 void $package$run([SomeInt si]) {

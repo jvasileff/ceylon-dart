@@ -88,7 +88,6 @@ class TopLevelTransformer(CompilationContext ctx)
         return super.transformFunctionDeclaration(that);
     }
 
-
     shared actual
     [DartCompilationUnitMember*] transformClassDefinition(ClassDefinition that) {
         value info = AnyClassInfo(that);
