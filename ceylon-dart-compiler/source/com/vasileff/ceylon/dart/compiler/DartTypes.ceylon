@@ -44,6 +44,9 @@ import com.vasileff.ceylon.dart.ast {
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
 }
+import com.redhat.ceylon.model.loader {
+    JvmBackendUtil
+}
 
 shared
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
@@ -413,6 +416,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
+    function refinedParameter(FunctionOrValueModel declaration) {
+        // FIXME This is a bit sloppy and trusting, and needs review
+        //       Before, we were using the parameter name as a key. But... parameter
+        //       names may change on refinement.
+
+        "Only use this for parmaeters!!!"
+        assert(declaration.parameter);
+        assert (is FunctionOrValueModel result = JvmBackendUtil
+                .getTopmostRefinedDeclaration(declaration));
+        return result;
+    }
+
     "Determine the *formal* type, which indicates Dart erasure/boxing"
     shared
     TypeModel formalType(FunctionOrValueModel declaration)
@@ -421,7 +436,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     is FunctionModel r = c.refinedDeclaration) then
                 // for parameters of method refinements, use the type of the parameter
                 // of the refined method
-                r.getParameter(declaration.name).type
+                refinedParameter(declaration).type
             else if (is FunctionOrValueModel r =
                     declaration.refinedDeclaration) then
                 r.type
