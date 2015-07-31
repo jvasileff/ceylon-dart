@@ -341,6 +341,34 @@ class Character {
 abstract class Collection implements Iterable {}
 
 //
+// Comparison.dart
+//
+
+class Comparison {
+  const Comparison();
+}
+
+class $Larger extends Comparison {
+  const $Larger.value();
+}
+
+class $Smaller extends Comparison {
+  const $Smaller.value();
+}
+
+class $Equal extends Comparison {
+  const $Equal.value();
+}
+
+const larger = const $Larger.value();
+const smaller = const $Smaller.value();
+const equal = const $Equal.value();
+
+const $package$larger = larger;
+const $package$smaller = smaller;
+const $package$equal = equal;
+
+//
 // Correspondence.dart
 //
 
@@ -472,13 +500,15 @@ class Float implements Number, Exponentiable {
   Float times([Float other]) => new Float(this._value * other._value);
 
   Float get negated => new Float(-this._value);
-  Float minus(Float other) => new Float(this._value - other._value);
+  Float minus([Float other]) => new Float(this._value - other._value);
 
-  Float plus(Float other) => new Float(this._value + other._value);
+  Float plus([Float other]) => new Float(this._value + other._value);
 
   Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
 
   // Comparable
+  Comparison compare([Float other])
+      =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
 
   //Comparison compare(Integer other);
 
@@ -529,7 +559,7 @@ class Integer implements Integral, Exponentiable, Binary {
   Integer get negated => new Integer(-this._value);
   Integer minus(Integer other) => new Integer(this._value - other._value);
 
-  Integer plus(Integer other) => new Integer(this._value + other._value);
+  Integer plus([Integer other]) => new Integer(this._value + other._value);
 
   Integer power([Integer other]) => new Integer($dart$math.pow(this._value, other._value));
 
@@ -551,6 +581,8 @@ class Integer implements Integral, Exponentiable, Binary {
   Integer get successor => new Integer(this._value + 1);
 
   // Comparable
+  Comparison compare([Float other])
+      =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
 
   //Comparison compare(Integer other);
 
