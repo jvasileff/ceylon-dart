@@ -1273,7 +1273,11 @@ class DartMethodDeclaration(
         name.write(writer);
         parameters.write(writer);
         if (exists body) {
+            writer.write(" ");
             body.write(writer);
+            if (body is DartExpressionFunctionBody) {
+                writer.write(";");
+            }
         }
         else {
             writer.write(";");

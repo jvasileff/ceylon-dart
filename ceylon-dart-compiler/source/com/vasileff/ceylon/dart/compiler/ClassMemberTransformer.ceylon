@@ -6,7 +6,8 @@ import ceylon.ast.core {
     WideningTransformer,
     Node,
     FunctionDefinition,
-    InterfaceDefinition
+    InterfaceDefinition,
+    FunctionShortcutDefinition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -23,7 +24,7 @@ import com.vasileff.ceylon.dart.ast {
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionDeclarationInfo,
-    FunctionDefinitionInfo
+    AnyFunctionInfo
 }
 
 shared
@@ -75,8 +76,34 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
+    [DartMethodDeclaration*] transformFunctionShortcutDefinition
+            (FunctionShortcutDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+        return generateInterfaceFunctionDefinition(that);
+    }
+
+    shared actual
     [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that) {
-        value info = FunctionDefinitionInfo(that);
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+        return generateInterfaceFunctionDefinition(that);
+    }
+
+    [DartMethodDeclaration*] generateInterfaceFunctionDefinition
+            (FunctionDefinition | FunctionShortcutDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+        value info = AnyFunctionInfo(that);
 
         "The container of a class or interface member is surely a ClassOrInterface"
         assert (is ClassOrInterfaceModel container = info.declarationModel.container);
