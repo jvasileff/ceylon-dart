@@ -3,6 +3,7 @@ import "dart:core" as $dart$core;
 import "dart:io" as $dart$io;
 import "dart:math" as $dart$math;
 import "dart:mirrors" as $dart$mirrors;
+import "source/ceylon/language/module.dart";
 
 Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) {
     return Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) && Boolean.nativeValue(q.$delegate$(val) as Boolean))(val));
