@@ -575,6 +575,57 @@ class Integer implements Integral, Exponentiable, Binary {
     return false;
   }
 
+  // Binary
+
+  // FIXME fix bugs and simulate 64bits using `toSigned`
+
+  Integer rightLogicalShift([$dart$core.int shift]) => new Integer(this._value >> shift);
+  Integer leftLogicalShift([$dart$core.int shift]) => new Integer(this._value << shift);
+
+  Integer rightArithmeticShift([$dart$core.int shift]) => new Integer(this._value >> shift);
+  Integer leftArithmeticShift([$dart$core.int shift]) => new Integer(this._value << shift);
+
+  $dart$core.bool get([$dart$core.int index]) {
+    if (index < 0 || index > 63) {
+      return false;
+    }
+    return _value.toSigned(64) & (1<<index) == 0;
+  }
+
+  Integer set([$dart$core.int index, $dart$core.bool bit]) {
+    if (index < 0 || index > 63) {
+      return new Integer(_value.toSigned(64));
+    }
+    $dart$core.int mask = (1 << index).toSigned(64);
+    if (bit) {
+      return new Integer(_value.toSigned(64) | mask);
+    }
+    else {
+      return new Integer(_value.toSigned(64) & ~mask);
+    }
+  }
+
+  Integer flip([$dart$core.int index, $dart$core.bool bit]) {
+    if (index < 0 || index > 63) {
+      return new Integer(_value.toSigned(64));
+    }
+    $dart$core.int mask = (1 << index).toSigned(64);
+    return new Integer(_value.toSigned(64) ^ mask);
+  }
+
+  Integer clear([$dart$core.int index]) => set(index, false);
+
+  Integer or([Integer other])
+    =>  new Integer(_value.toSigned(64) | other._value.toSigned(64));
+
+  Integer and([Integer other])
+    =>  new Integer(_value.toSigned(64) & other._value.toSigned(64));
+
+  Integer xor([Integer other])
+    =>  new Integer(_value.toSigned(64) ^ other._value.toSigned(64));
+
+  Integer get not => new Integer(~_value.toSigned(64));
+
   // Ordinal
 
   Integer get predecessor => new Integer(this._value - 1);
