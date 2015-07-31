@@ -43,7 +43,7 @@
    and `x in string` evaluates to `false` for every `x` that
    is not a `String` or `Character`."""
 by ("Gavin")
-native shared interface Category<in Element=Object>
+shared interface Category<in Element=Object>
         given Element satisfies Object {
     
     "Returns `true` if the given value belongs to this
@@ -72,9 +72,10 @@ native shared interface Category<in Element=Object>
                 return false;
             }
         }
-        else {
+        // FIXME uncomment once `fail` support is added
+        //else {
             return true;
-        }
+        //}
     }
 
     "Returns `true` if any one of the given values belongs 
@@ -87,9 +88,10 @@ native shared interface Category<in Element=Object>
                 return true;
             }
         }
-        else {
+        // FIXME uncomment once `fail` support is added
+        //else {
             return false;
-        }
+        //}
     }
 
 }

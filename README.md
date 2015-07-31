@@ -41,6 +41,19 @@ as a transpiler target.
 Checked items are complete in the sense that they at least offer basic
 functionality.
 
+- [x] Use compiler for language module Interfaces: ~~Category~~
+- [x] Use compiler for language module functions: ~~and~~, ~~anyPair~~,
+  ~~any~~, ~~apply~~, ~~arrayOfSize~~, ~~byDecreasing~~, ~~byIncreasing~~,
+  ~~byItem~~, ~~byKey~~, ~~count~~, ~~curry~~, ~~decreasing~~, ~~everyPair~~,
+  ~~every~~, ~~findPair~~, ~~foldPairs~~, ~~forItem~~, ~~forKey~~,
+  ~~formatInteger~~, ~~identical~~, ~~identity~~, ~~increasing~~, ~~infinity~~,
+  ~~largest~~, ~~maximumIntegerExponent~~, ~~not~~, ~~or~~, ~~plus~~,
+  ~~printAll~~, ~~print~~, ~~product~~, ~~shuffle~~, ~~smallest~~, ~~sort~~,
+  ~~sum~~, ~~times~~, ~~uncurry~~, ~~unzip~~, ~~zipPairs~~
+- [ ] Use compiler for more language module functions: annotations, apply,
+  comparing, compose, concatenate, corresponding, emptyOrSingleton, expand,
+  noop, interleave, max, min, nothing, mapPairs, unzipPairs, unzipEntries,
+  digitOrSign
 - [x] Multiple parameter lists
 - [x] Null safe member operator
 - [ ] Remaining parameter types (variadic, callable)
@@ -55,18 +68,6 @@ functionality.
 - [x] Map members like `toString()`, `hash`, etc.
 - [ ] Statements: ~~for~~, ~~if~~, while
 - [x] Expressions: ~~if~~, ~~then~~, ~~else~~
-- [x] Use compiler for language module functions: ~~and~~, ~~anyPair~~,
-  ~~any~~, ~~apply~~, ~~arrayOfSize~~, ~~byDecreasing~~, ~~byIncreasing~~,
-  ~~byItem~~, ~~byKey~~, ~~count~~, ~~curry~~, ~~decreasing~~, ~~everyPair~~,
-  ~~every~~, ~~findPair~~, ~~foldPairs~~, ~~forItem~~, ~~forKey~~,
-  ~~formatInteger~~, ~~identical~~, ~~identity~~, ~~increasing~~, ~~infinity~~,
-  ~~largest~~, ~~maximumIntegerExponent~~, ~~not~~, ~~or~~, ~~plus~~,
-  ~~printAll~~, ~~print~~, ~~product~~, ~~shuffle~~, ~~smallest~~, ~~sort~~,
-  ~~sum~~, ~~times~~, ~~uncurry~~, ~~unzip~~, ~~zipPairs~~
-- [ ] Use compiler for more language module functions: annotations, apply,
-  comparing, compose, concatenate, corresponding, emptyOrSingleton, expand,
-  noop, interleave, max, min, nothing, mapPairs, unzipPairs, unzipEntries,
-  digitOrSign
 - [ ] Integer -> Float conversion issues?
 - [ ] Standalone declarations
 - [x] Tuple and Iterable expressions
