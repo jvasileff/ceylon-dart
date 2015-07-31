@@ -48,7 +48,7 @@
  total order also satisfy [[Number]]."
 see (`interface Number`)
 by ("Gavin")
-native shared interface Numeric<Other> of Other
+shared interface Numeric<Other> of Other
         satisfies Invertible<Other>
         given Other satisfies Numeric<Other> {
     

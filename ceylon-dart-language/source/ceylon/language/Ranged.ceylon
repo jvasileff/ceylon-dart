@@ -77,7 +77,7 @@
 see (`interface List`, 
      `interface Sequence`, 
      `class String`)
-native shared interface Ranged<in Index, out Element, out Subrange> 
+shared interface Ranged<in Index, out Element, out Subrange> 
         of Subrange
         satisfies {Element*}
         given Subrange satisfies Ranged<Index,Element,Subrange> {

@@ -41,7 +41,11 @@ as a transpiler target.
 Checked items are complete in the sense that they at least offer basic
 functionality.
 
-- [x] Use compiler for language module Interfaces: ~~Category~~
+- [x] Use compiler for language module Interfaces: ~~Annotated~~,
+  ~~Annotation~~, ~~Binary~~, ~~Category~~, ~~Comparable~~,
+  ~~ConstrainedAnnotation~~, ~~Destroyable~~, ~~Exponentiable~~, ~~Iterator~~,
+  ~~Numeric~~, ~~Obtainable~~, ~~OptionalAnnotation~~, ~~Ordinal~~, ~~Ranged~~,
+  ~~Scalable~~, ~~SequencedAnnotation~~, ~~Summable~~, ~~Usable~~
 - [x] Use compiler for language module functions: ~~and~~, ~~anyPair~~,
   ~~any~~, ~~apply~~, ~~arrayOfSize~~, ~~byDecreasing~~, ~~byIncreasing~~,
   ~~byItem~~, ~~byKey~~, ~~count~~, ~~curry~~, ~~decreasing~~, ~~everyPair~~,

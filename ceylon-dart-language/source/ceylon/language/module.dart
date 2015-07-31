@@ -4,6 +4,7 @@ import 'dart:core' as $dart$core;
 import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import 'dart:mirrors' as $dart$mirrors;
+import '../../../ceylon.language-1.1.1.dart';
 
 class LazyIterable implements Iterable {
   $dart$core.int count;
@@ -340,17 +341,6 @@ class Character {
 abstract class Collection implements Iterable {}
 
 //
-// Comparable.dart
-//
-
-abstract class Comparable {
-  $dart$core.bool largerThan($dart$core.Object other);
-  $dart$core.bool smallerThan($dart$core.Object other);
-  $dart$core.bool notLargerThan($dart$core.Object other);
-  $dart$core.bool notSmallerThan($dart$core.Object other);
-}
-
-//
 // Correspondence.dart
 //
 
@@ -455,14 +445,6 @@ class Exception extends Throwable {
 }
 
 //
-// Exponentiable.dart
-//
-
-abstract class Exponentiable implements Numeric {
-  $dart$core.Object power($dart$core.Object other);
-}
-
-//
 // Finished.dart
 //
 
@@ -486,31 +468,31 @@ class Float implements Number, Exponentiable {
   Float powerOfInteger($dart$core.int integer) => new Float($dart$math.pow(_value, integer));
   Float timesInteger($dart$core.int integer) => new Float(_value * integer);
 
-  Float divided(Float other) => new Float(this._value / other._value);
-  Float times(Float other) => new Float(this._value * other._value);
+  Float divided([Float other]) => new Float(this._value / other._value);
+  Float times([Float other]) => new Float(this._value * other._value);
 
   Float get negated => new Float(-this._value);
   Float minus(Float other) => new Float(this._value - other._value);
 
   Float plus(Float other) => new Float(this._value + other._value);
 
-  Float power(Float other) => new Float($dart$math.pow(this._value, other._value));
+  Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
 
   // Comparable
 
   //Comparison compare(Integer other);
 
   @$dart$core.override
-  $dart$core.bool largerThan(Float other) => _value > other._value;
+  $dart$core.bool largerThan([Float other]) => _value > other._value;
 
   @$dart$core.override
-  $dart$core.bool smallerThan(Float other) => _value < other._value;
+  $dart$core.bool smallerThan([Float other]) => _value < other._value;
 
   @$dart$core.override
-  $dart$core.bool notLargerThan(Float other) => _value <= other._value;
+  $dart$core.bool notLargerThan([Float other]) => _value <= other._value;
 
   @$dart$core.override
-  $dart$core.bool notSmallerThan(Float other) => _value >= other._value;
+  $dart$core.bool notSmallerThan([Float other]) => _value >= other._value;
 
   // Dart runtime
 
@@ -525,7 +507,7 @@ class Float implements Number, Exponentiable {
 // Integer.dart
 //
 
-class Integer implements Integral, Exponentiable { // Binary
+class Integer implements Integral, Exponentiable, Binary {
   final $dart$core.int _value;
 
   Integer($dart$core.int this._value);
@@ -541,15 +523,15 @@ class Integer implements Integral, Exponentiable { // Binary
   Integer powerOfInteger($dart$core.int integer) => new Integer($dart$math.pow(_value, integer));
   Integer timesInteger($dart$core.int integer) => new Integer(_value * integer);
 
-  Integer divided(Integer other) => new Integer(this._value ~/ other._value);
-  Integer times(Integer other) => new Integer(this._value * other._value);
+  Integer divided([Integer other]) => new Integer(this._value ~/ other._value);
+  Integer times([Integer other]) => new Integer(this._value * other._value);
 
   Integer get negated => new Integer(-this._value);
   Integer minus(Integer other) => new Integer(this._value - other._value);
 
   Integer plus(Integer other) => new Integer(this._value + other._value);
 
-  Integer power(Integer other) => new Integer($dart$math.pow(this._value, other._value));
+  Integer power([Integer other]) => new Integer($dart$math.pow(this._value, other._value));
 
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
@@ -573,16 +555,16 @@ class Integer implements Integral, Exponentiable { // Binary
   //Comparison compare(Integer other);
 
   @$dart$core.override
-  $dart$core.bool largerThan(Integer other) => _value > other._value;
+  $dart$core.bool largerThan([Integer other]) => _value > other._value;
 
   @$dart$core.override
-  $dart$core.bool smallerThan(Integer other) => _value < other._value;
+  $dart$core.bool smallerThan([Integer other]) => _value < other._value;
 
   @$dart$core.override
-  $dart$core.bool notLargerThan(Integer other) => _value <= other._value;
+  $dart$core.bool notLargerThan([Integer other]) => _value <= other._value;
 
   @$dart$core.override
-  $dart$core.bool notSmallerThan(Integer other) => _value >= other._value;
+  $dart$core.bool notSmallerThan([Integer other]) => _value >= other._value;
 
   // Dart runtime
 
@@ -707,14 +689,6 @@ abstract class Iterable {
 }
 
 //
-// Iterator.dart
-//
-
-abstract class Iterator {
-  $dart$core.Object next();
-}
-
-//
 // List.dart
 //
 
@@ -798,15 +772,6 @@ abstract class Number implements Numeric, Comparable {
   $dart$core.Object plusInteger($dart$core.int integer);
   $dart$core.Object powerOfInteger($dart$core.int integer);
   $dart$core.Object timesInteger($dart$core.int integer);
-}
-
-//
-// Numeric.dart
-//
-
-abstract class Numeric implements Invertible {
-  $dart$core.Object divided($dart$core.Object other);
-  $dart$core.Object times($dart$core.Object other);
 }
 
 //
@@ -952,14 +917,6 @@ class String implements List {
   $dart$core.String get string => toString();
 
   $dart$core.String toString() => _value;
-}
-
-//
-// Summable.dart
-//
-
-abstract class Summable {
-  $dart$core.Object plus($dart$core.Object other);
 }
 
 //
@@ -1190,11 +1147,6 @@ const $package$operatingSystem = operatingSystem;
 
 abstract class Enumerable implements Ordinal {}
 
-abstract class Ordinal {
-  $dart$core.Object get predecessor;
-  $dart$core.Object get successor;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Runtime Package (ceylon.language.dart)
@@ -1263,3 +1215,7 @@ class dart$Callable implements Callable {
 
   dart$Callable($dart$core.Function this.$delegate$);
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////
+

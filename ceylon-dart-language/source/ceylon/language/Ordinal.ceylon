@@ -39,7 +39,7 @@ see (`class Character`,
      `interface Comparable`,
      `interface Enumerable`)
 by ("Gavin")
-native shared interface Ordinal<out Other> of Other
+shared interface Ordinal<out Other> of Other
         given Other satisfies Ordinal<Other> {
     
     "The successor of this value."

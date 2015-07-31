@@ -54,7 +54,7 @@ see (`class Comparison`,
      `function max`, `function min`,
      `function largest`, `function smallest`)
 by ("Gavin")
-native shared interface Comparable<in Other> of Other 
+shared interface Comparable<in Other> of Other 
         given Other satisfies Comparable<Other> {
     
     "Compares this value with the given value. 

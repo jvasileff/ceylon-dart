@@ -25,7 +25,7 @@
    - `x + 0 == x`"""
 see (`class String`, `interface Numeric`)
 by ("Gavin")
-native shared interface Summable<Other> of Other
+shared interface Summable<Other> of Other
         given Other satisfies Summable<Other> {
 
     "The result of adding the given value to this value. 

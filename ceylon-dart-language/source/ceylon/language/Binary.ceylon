@@ -4,7 +4,7 @@
  left, where `0` is the index of the least significant bit."
 see (`class Integer`)
 by ("Stef")
-native shared interface Binary<Other> of Other 
+shared interface Binary<Other> of Other 
     given Other satisfies Binary<Other> {
 
     "The binary complement of this sequence of bits."

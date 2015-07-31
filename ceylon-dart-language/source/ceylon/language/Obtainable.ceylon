@@ -23,7 +23,7 @@
  methods should produce an [[AssertionError]] when any such 
  constraint is violated."
 see (`interface Destroyable`)
-native shared interface Obtainable satisfies Usable {
+shared interface Obtainable satisfies Usable {
     
     "Obtain this resource. Called before the body of a `try` 
      statement is executed.
