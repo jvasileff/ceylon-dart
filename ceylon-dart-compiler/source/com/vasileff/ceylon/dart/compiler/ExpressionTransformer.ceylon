@@ -170,7 +170,7 @@ class ExpressionTransformer(CompilationContext ctx)
             switch (targetDeclaration)
             case (is ValueModel) {
                 value [dartIdentifier, dartIdentifierIsFunction] =
-                        dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.expressionForBaseExpression {
                     that;
                     targetDeclaration;
                     false;
@@ -686,7 +686,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         invokedDeclaration.parameterLists.size() == 1
                             then invokedDeclaration;
                         DartFunctionExpressionInvocation {
-                            dartTypes.dartIdentifierForFunctionOrValue {
+                            dartTypes.expressionForBaseExpression {
                                 scope = that;
                                 invokedDeclaration;
                             }[0];

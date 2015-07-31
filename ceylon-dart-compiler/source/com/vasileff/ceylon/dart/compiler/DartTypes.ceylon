@@ -37,7 +37,9 @@ import com.vasileff.ceylon.dart.ast {
     DartPrefixedIdentifier,
     DartTypeName,
     DartSimpleIdentifier,
-    DartIdentifier
+    DartIdentifier,
+    DartExpression,
+    DartPropertyAccess
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -64,6 +66,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // TODO it might make sense to make this private, and have callers
         //      use `dartIdentifierForX()` methods that can also handle
         //      function <-> value mappings.
+
+        function classOrInterfacePrefix(ClassOrInterfaceModel member)
+            // for member classes/interfaces, prepend with outer type names
+            =>  if (exists container =
+                        getContainingClassOrInterface(member.container))
+                then getName(container) + "$"
+                else "";
 
         if (is SetterModel declaration) {
             return getName(declaration.getter);
@@ -96,13 +105,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return declaration.name;
         }
         case (is ClassModel) {
-            return declaration.name;
+            return classOrInterfacePrefix(declaration) + declaration.name;
         }
         case (is ConstructorModel) {
             return declaration.name;
         }
         case (is InterfaceModel) {
-            return declaration.name;
+            return classOrInterfacePrefix(declaration) + declaration.name;
         }
         case (is ParameterModel) {
             return declaration.name;
@@ -112,6 +121,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                              for ``className(declaration)``");
         }
     }
+
+    "The name of the static method used for the implementation of
+     non-formal interface methods."
+    shared
+    String getStaticInterfaceMethodName(FunctionModel declaration)
+        =>  "$" + getName(declaration);
 
     shared
     String createReplacementName(TypedDeclarationModel declaration) {
@@ -518,6 +533,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 || ceylonTypes.isCeylonFloat(definiteType)
                 || ceylonTypes.isCeylonString(definiteType));
 
+    "If the declaration is a member class or interface, return a Tuple holding:
+
+     1. the containing ClassOrInterface, and
+     2. the `$outer$...` field name for the containing ClassOrInterface
+
+     The field name must be unique globally unique, and therefore encodes the fully
+     qualified name of the declaration."
+    shared
+    [ClassOrInterfaceModel, String]? outerDeclarationAndFieldName
+            (ClassOrInterfaceModel declaration) {
+
+        if (is ClassOrInterfaceModel container =
+                getContainingClassOrInterface(declaration.container)) {
+
+            return [container,
+                    "$outer"
+                        + moduleImportPrefix(declaration) + "$"
+                        + getName(declaration)];
+        }
+        return null;
+    }
+
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
             Node|ElementModel|ScopeModel scope,
@@ -562,13 +599,78 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "Returns a tuple containing:
 
+     - A Dart expression for the Ceylon FunctionOrValue
+     - A boolean value that is true if the target is a dart function, or false if the
+       target is a dart value. Note: this will be true for Ceylon values that must be
+       mapped to Dart functions."
+    shared
+    [DartExpression, Boolean] expressionForBaseExpression(
+            Node|ScopeModel scope,
+            FunctionOrValueModel declaration,
+            Boolean setter = false) {
+
+        value [identifier, isFunction] = dartIdentifierForFunctionOrValue {
+            scope;
+            declaration;
+            setter;
+        };
+
+        // TODO support classes
+        if (is InterfaceModel container = getContainingClassOrInterface(scope),
+            is ClassOrInterfaceModel dc = declaration.container) {
+
+            "Identifiers for members will always be simple identifiers (not prefixed
+             as toplevels may be.)"
+            assert (is DartSimpleIdentifier identifier);
+
+            if (container.inherits(dc)) {
+                // The declaration belongs to the container or something it satisfies
+                return
+                [DartPropertyAccess {
+                    DartSimpleIdentifier {
+                        "$this";
+                    };
+                    identifier;
+                }, isFunction];
+            }
+
+            // declaration must belong to an outer container. Find it.
+            variable ClassOrInterfaceModel c = container;
+            variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
+            while (true) {
+                assert(exists [outerDeclaration, outerField] =
+                            outerDeclarationAndFieldName(c));
+                fields = fields.follow(DartSimpleIdentifier(outerField));
+                if (outerDeclaration.inherits(dc)) {
+                    break; // found it.
+                }
+                c = outerDeclaration;
+            }
+
+            fields = sequence(fields.follow(identifier)).reversed;
+            value expression = fields.reduce<DartExpression>(
+                    (expression, field)
+                =>  DartPropertyAccess {
+                        expression;
+                        field;
+                    });
+
+            return [expression, isFunction];
+        }
+        else {
+            return [identifier, isFunction];
+        }
+    }
+
+    "Returns a tuple containing:
+
      - The Dart identifier for a Ceylon FunctionOrValue
      - A boolean value that is true if the target is a dart function, or false if the
        target is a dart value. Note: this will be true for Ceylon values that must be
        mapped to Dart functions."
     shared
     [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
-            Node|ElementModel|ScopeModel scope,
+            Node|ScopeModel scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
 
@@ -620,9 +722,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // identifier for the getter or setter method
                 return
                 [DartSimpleIdentifier {
-                    name
-                    + (if (setter) then "$set" else "$get");
-                 }, true];
+                    name + (if (setter) then "$set" else "$get");
+                },true];
             }
             else {
                 // identifier for the value or function

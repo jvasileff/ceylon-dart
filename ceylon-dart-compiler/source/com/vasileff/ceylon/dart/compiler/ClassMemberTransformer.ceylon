@@ -4,17 +4,26 @@ import ceylon.ast.core {
     FunctionDeclaration,
     TypeAliasDefinition,
     WideningTransformer,
-    Node
+    Node,
+    FunctionDefinition,
+    InterfaceDefinition
 }
 
+import com.redhat.ceylon.model.typechecker.model {
+    ClassOrInterfaceModel=ClassOrInterface,
+    InterfaceModel=Interface
+}
 import com.vasileff.ceylon.dart.ast {
     DartFieldDeclaration,
     DartSimpleIdentifier,
     DartMethodDeclaration,
-    DartClassMember
+    DartClassMember,
+    DartFormalParameterList,
+    DartSimpleFormalParameter
 }
 import com.vasileff.ceylon.dart.nodeinfo {
-    FunctionDeclarationInfo
+    FunctionDeclarationInfo,
+    FunctionDefinitionInfo
 }
 
 shared
@@ -44,8 +53,8 @@ class ClassMemberTransformer(CompilationContext ctx)
         }];
     }
 
-    shared actual [DartMethodDeclaration] transformFunctionDeclaration
-            (FunctionDeclaration that) {
+    shared actual
+    [DartMethodDeclaration] transformFunctionDeclaration(FunctionDeclaration that) {
 
         value info = FunctionDeclarationInfo(that);
         value functionName = dartTypes.getName(info.declarationModel);
@@ -66,8 +75,89 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
+    [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that) {
+        value info = FunctionDefinitionInfo(that);
+
+        "The container of a class or interface member is surely a ClassOrInterface"
+        assert (is ClassOrInterfaceModel container = info.declarationModel.container);
+
+        if (!container is InterfaceModel) {
+            // TODO support classes; assuming interface code below
+            throw CompilerBug(that, "classes not yet supported");
+        }
+
+        // Member functions of interfaces need a $this parameter.
+        DartSimpleFormalParameter? thisParameter;
+        if (is InterfaceModel container) {
+            thisParameter = DartSimpleFormalParameter {
+                true; false;
+                dartTypes.dartTypeName {
+                    that;
+                    container.type;
+                    false; false;
+                };
+                DartSimpleIdentifier("$this");
+            };
+        }
+        else {
+            thisParameter = null;
+        }
+
+        // Generate a DartFunctionExpression, then scrap it for parts
+        value functionExpression = generateFunctionExpression(that);
+        assert (exists standardParameters = functionExpression.parameters);
+
+        // TODO defaulted parameters! (see also transformFunctionDefinition)
+
+        // generate the abstract interface declaration and
+        // a static method definition for the actual implementation
+        return [
+            DartMethodDeclaration {
+                false; null;
+                generateFunctionReturnType(info);
+                null;
+                DartSimpleIdentifier {
+                    dartTypes.getName {
+                        info.declarationModel;
+                    };
+                };
+                DartFormalParameterList {
+                    true; false;
+                    standardParameters.parameters;
+                };
+                body = null;
+            },
+            DartMethodDeclaration {
+                false;
+                "static";
+                generateFunctionReturnType(info);
+                null;
+                DartSimpleIdentifier {
+                    dartTypes.getStaticInterfaceMethodName {
+                        info.declarationModel;
+                    };
+                };
+                DartFormalParameterList {
+                    true; false;
+                    [
+                        thisParameter,
+                        *standardParameters.parameters
+                    ].coalesced.sequence();
+                };
+                functionExpression.body;
+            }
+        ];
+    }
+
+    shared actual
     [] transformTypeAliasDefinition(TypeAliasDefinition that)
         =>  [];
+
+    shared actual
+    [] transformInterfaceDefinition(InterfaceDefinition that) {
+        that.visit(topLevelVisitor);
+        return [];
+    }
 
     shared actual default
     [] transformNode(Node that) {

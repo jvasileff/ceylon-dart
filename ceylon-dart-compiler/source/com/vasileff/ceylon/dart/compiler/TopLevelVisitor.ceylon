@@ -17,6 +17,7 @@ import ceylon.ast.core {
 import ceylon.interop.java {
     CeylonList
 }
+
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartClassDeclaration,
@@ -31,7 +32,10 @@ import com.vasileff.ceylon.dart.ast {
     DartExpressionFunctionBody,
     DartCompilationUnitMember,
     DartFormalParameterList,
-    DartFunctionDeclaration
+    DartFunctionDeclaration,
+    DartVariableDeclarationList,
+    DartVariableDeclaration,
+    DartFieldDeclaration
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -139,8 +143,7 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     shared actual
-    void visitInterfaceDefinition
-            (InterfaceDefinition that) {
+    void visitInterfaceDefinition(InterfaceDefinition that) {
 
         value info = AnyInterfaceInfo(that);
 
@@ -149,26 +152,51 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        value name = DartSimpleIdentifier(dartTypes.getName(info.declarationModel));
+        value name = dartTypes.getName(info.declarationModel);
+        value identifier = DartSimpleIdentifier(name);
 
         value implementsTypes = sequence(CeylonList(
                     info.declarationModel.satisfiedTypes).map((satisfiedType)
             =>  dartTypes.dartTypeName(that, satisfiedType, false)
         ));
 
-        value members = expand(that.body.transformChildren(
-                ctx.classMemberTransformer)).sequence();
+        // If this is a member interface, in needs an $outer property
+        DartFieldDeclaration? outerField =
+            if (exists [container, outerName] =
+                    dartTypes.outerDeclarationAndFieldName(info.declarationModel)) then
+                DartFieldDeclaration {
+                    false;
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeName {
+                            that;
+                            container.type;
+                            false; false;
+                        };
+                        [DartVariableDeclaration {
+                            DartSimpleIdentifier(outerName);
+                            null;
+                        }];
+                    };
+                }
+            else
+                null;
+
+        value members = {
+            outerField,
+            *expand(that.body.transformChildren(ctx.classMemberTransformer))
+        }.coalesced.sequence();
 
         add {
             DartClassDeclaration {
                 abstract = true;
-                name = name;
+                name = identifier;
                 extendsClause = null;
                 implementsClause =
                     if (exists implementsTypes)
                     then DartImplementsClause(implementsTypes)
                     else null;
-                members = members;
+                members;
             };
         };
     }
