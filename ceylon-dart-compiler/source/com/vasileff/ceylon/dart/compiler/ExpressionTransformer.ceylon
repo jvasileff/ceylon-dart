@@ -73,7 +73,9 @@ import ceylon.ast.core {
     Tuple,
     Comprehension,
     Iterable,
-    WideningTransformer
+    WideningTransformer,
+    This,
+    Outer
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -84,6 +86,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
+    InterfaceModel=Interface,
     ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.ast {
@@ -124,7 +127,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,
     QualifiedExpressionInfo,
     InvocationInfo,
-    ExpressionInfo
+    ExpressionInfo,
+    ThisInfo,
+    OuterInfo
 }
 
 shared
@@ -1205,6 +1210,48 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             };
             DartArgumentList { []; };
+        };
+    }
+
+    shared actual
+    DartExpression transformThis(This that) {
+        value info = ThisInfo(that);
+        DartSimpleIdentifier identifier;
+        if (getContainingClassOrInterface(info.scope) is InterfaceModel) {
+            identifier = DartSimpleIdentifier("$this");
+        }
+        else {
+            identifier = DartSimpleIdentifier("this");
+        }
+        return withBoxing {
+            that;
+            info.typeModel;
+            rhsDeclaration = null; // no declaration for `this`
+            identifier;
+        };
+    }
+
+    shared actual
+    DartExpression transformOuter(Outer that) {
+        value info = OuterInfo(that);
+        assert (is ClassOrInterfaceModel ci = getContainingClassOrInterface(info.scope));
+        assert (exists [d, fieldName] = dartTypes.outerDeclarationAndFieldName(ci));
+
+        // Qualify outer field with `this`. Required within interfaces,
+        // doesn't hurt within classes.
+        value thisIdentifier =
+                if (d is InterfaceModel)
+                then DartSimpleIdentifier("$this")
+                else DartSimpleIdentifier("this");
+
+        return withBoxing {
+            that;
+            info.typeModel;
+            rhsDeclaration = null; // the field is synthetic
+            DartPrefixedIdentifier {
+                thisIdentifier;
+                DartSimpleIdentifier(fieldName);
+            };
         };
     }
 

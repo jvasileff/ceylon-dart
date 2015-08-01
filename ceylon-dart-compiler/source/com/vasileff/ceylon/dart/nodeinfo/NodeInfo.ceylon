@@ -39,7 +39,10 @@ import ceylon.ast.core {
     Statement,
     ForIterator,
     UnspecifiedVariable,
-    Variable
+    Variable,
+    This,
+    Super,
+    Outer
 }
 import ceylon.interop.java {
     CeylonList,
@@ -465,6 +468,36 @@ class AnyClassInfo(AnyClass astNode)
         assert (is ClassModel result = super.declarationModel);
         return result;
     }
+}
+
+shared
+class OuterInfo(Outer astNode)
+        extends ExpressionInfo(astNode) {
+
+    shared actual default Outer node => astNode;
+
+    value tcNode = assertedTcNode<Tree.Outer>(astNode);
+    shared default DeclarationModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class SuperInfo(Super astNode)
+        extends ExpressionInfo(astNode) {
+
+    shared actual default Super node => astNode;
+
+    value tcNode = assertedTcNode<Tree.Super>(astNode);
+    shared default DeclarationModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class ThisInfo(This astNode)
+        extends ExpressionInfo(astNode) {
+
+    shared actual default This node => astNode;
+
+    value tcNode = assertedTcNode<Tree.This>(astNode);
+    shared default DeclarationModel declarationModel => tcNode.declarationModel;
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node astNode)
