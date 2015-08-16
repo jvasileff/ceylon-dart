@@ -75,7 +75,9 @@ import ceylon.ast.core {
     Iterable,
     WideningTransformer,
     This,
-    Outer
+    Outer,
+    StringTemplate,
+    Expression
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -409,6 +411,41 @@ class ExpressionTransformer(CompilationContext ctx)
                         [DartIntegerLiteral(that.text.first?.integer else 0)];
                     };
                 });
+
+    shared actual
+    DartExpression transformStringTemplate(StringTemplate that) {
+        variable DartExpression unboxed = withLhsNative {
+            ceylonTypes.stringType;
+            () => that.literals.first.transform(this);
+        };
+
+        "Caller must properly set `withLhs`."
+        DartExpression asString(Expression e) {
+            value info = ExpressionInfo(e);
+            if (ceylonTypes.isCeylonString(info.typeModel)) {
+                return e.transform(this);
+            } else {
+                return generateInvocationFromName(that, e, "string", []);
+            }
+        }
+
+        for (child in that.children.rest) {
+            unboxed = DartBinaryExpression {
+                unboxed;
+                "+";
+                withLhsNative {
+                    ceylonTypes.stringType;
+                    () => asString(child);
+                };
+            };
+        }
+        return withBoxing {
+            that;
+            ceylonTypes.stringType;
+            null;
+            unboxed;
+        };
+    }
 
     shared actual
     DartExpression transformTuple(Tuple that) {
