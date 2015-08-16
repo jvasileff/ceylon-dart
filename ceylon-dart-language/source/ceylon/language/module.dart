@@ -1051,6 +1051,38 @@ class Throwable extends $dart$core.Error {
   }
 }
 
+// Entry
+
+class Entry {
+  final $dart$core.Object key;
+  final $dart$core.Object item;
+
+  Entry(this.key, this.item) {}
+
+  @$dart$core.override
+  $dart$core.bool operator ==($dart$core.Object that) {
+    if (that is Entry) {
+      if (this.key != that.key) {
+        return false;
+      }
+      if (this.item != null && that.item != null) {
+        return this.item == that.item;
+      }
+      else {
+        return !(this.item != null || that.item != null);
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  @$dart$core.override
+  $dart$core.String toString() {
+    return key.toString() + "->" + stringify(item);
+  }
+}
+
 //
 // Tuple.dart
 //
