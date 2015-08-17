@@ -83,7 +83,13 @@ import ceylon.ast.core {
     ExistsOperation,
     IsOperation,
     NonemptyOperation,
-    OfOperation
+    OfOperation,
+    ElementOrSubrangeExpression,
+    KeySubscript,
+    SpanSubscript,
+    MeasureSubscript,
+    SpanFromSubscript,
+    SpanToSubscript
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -842,6 +848,58 @@ class ExpressionTransformer(CompilationContext ctx)
             throw CompilerBug(that,
                 "The invoked expression's declaration type is not supported: \
                  '``className(invokedDeclaration)``'");
+        }
+    }
+
+    shared actual
+    DartExpression transformElementOrSubrangeExpression
+            (ElementOrSubrangeExpression that) {
+
+        switch (subscript = that.subscript)
+        case (is KeySubscript) {
+            return
+            generateInvocationFromName {
+                that;
+                that.primary;
+                "get";
+                [subscript.key];
+            };
+        }
+        case (is SpanSubscript) {
+            return
+            generateInvocationFromName {
+                that;
+                that.primary;
+                "span";
+                [subscript.from, subscript.to];
+            };
+        }
+        case (is MeasureSubscript) {
+            return
+            generateInvocationFromName {
+                that;
+                that.primary;
+                "measure";
+                [subscript.from, subscript.length];
+            };
+        }
+        case (is SpanFromSubscript) {
+            return
+            generateInvocationFromName {
+                that;
+                that.primary;
+                "spanFrom";
+                [subscript.from];
+            };
+        }
+        case (is SpanToSubscript) {
+            return
+            generateInvocationFromName {
+                that;
+                that.primary;
+                "spanTo";
+                [subscript.to];
+            };
         }
     }
 
