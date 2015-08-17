@@ -77,7 +77,9 @@ import ceylon.ast.core {
     This,
     Outer,
     StringTemplate,
-    Expression
+    Expression,
+    Package,
+    NameWithTypeArguments
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -154,16 +156,29 @@ class ExpressionTransformer(CompilationContext ctx)
        instance of that class. Otherwise, there is no receiving instance.
     """
     shared actual
-    DartExpression transformBaseExpression(BaseExpression that) {
-        if (!is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs) {
+    DartExpression transformBaseExpression(BaseExpression that)
+        =>  generateForBaseExpression {
+                that;
+                that.nameAndArgs;
+                BaseExpressionInfo(that).declaration;
+            };
+
+    DartExpression generateForBaseExpression(
+            Expression that,
+            NameWithTypeArguments nameAndArgs,
+            DeclarationModel targetDeclaration) {
+
+        // TODO Consider consolidating/refactoring all base expression
+        //      and qualified expression functions.
+
+        if (!is MemberNameWithTypeArguments nameAndArgs) {
             throw CompilerBug(that,
                     "BaseExpression nameAndArgs type not yet supported: \
-                     '``className(that.nameAndArgs)``'");
+                     '``className(nameAndArgs)``'");
         }
-        assert (is MemberNameWithTypeArguments nameAndArgs = that.nameAndArgs);
+        assert (is MemberNameWithTypeArguments nameAndArgs);
 
-        value info = BaseExpressionInfo(that);
-        value targetDeclaration = info.declaration;
+        value info = ExpressionInfo(that);
 
         if (ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
             return generateBooleanExpression(
@@ -245,6 +260,16 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformQualifiedExpression(QualifiedExpression that) {
+        if (that.receiverExpression is Package) {
+            // treat Package qualified expressions as base expressions
+            return
+            generateForBaseExpression {
+                that;
+                that.nameAndArgs;
+                QualifiedExpressionInfo(that).declaration;
+            };
+        }
+
         if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
                     "Member operator not yet supported: \
@@ -699,8 +724,11 @@ class ExpressionTransformer(CompilationContext ctx)
              expression or a qualified expression"
             assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
-            switch (invoked)
-            case (is QualifiedExpression) {
+            // treat QualifiedExpressions w/Package "receivers"
+            // the same as BaseExpressions
+            if (is QualifiedExpression invoked,
+                    !invoked.receiverExpression is Package) {
+
                 value receiverInfo = ExpressionInfo(invoked.receiverExpression);
 
                 return generateInvocation {
@@ -716,7 +744,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     invoked.memberOperator is SafeMemberOperator;
                 };
             }
-            case (is BaseExpression) {
+            else {
                 if (invokedDeclaration.parameter) {
                     // Invoking a Callable parameter
                     return invocationForCallable();
@@ -1319,6 +1347,12 @@ class ExpressionTransformer(CompilationContext ctx)
             DartArgumentList { []; };
         };
     }
+
+    shared actual
+    DartExpression transformPackage(Package that)
+        // Should never be called; handled by transformQualifiedExpression
+        // and transformInvocation.
+        =>  super.transformPackage(that);
 
     shared actual
     DartExpression transformThis(This that) {
