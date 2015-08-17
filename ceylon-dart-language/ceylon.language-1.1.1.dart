@@ -252,6 +252,10 @@ $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
+$dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size]) => (($dart$core.Object $lhs$) => $lhs$ == null ? new Measure(first, size) : $lhs$)(size <= 0 ? $package$empty : null);
+
+$dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
+
 Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) {
     return Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val));
 });
@@ -492,6 +496,10 @@ Sequential $package$sort([Iterable elements]) {
 }
 
 Sequential sort([Iterable elements]) => $package$sort(elements);
+
+Range $package$span([$dart$core.Object first, $dart$core.Object last]) => new Span(first, last);
+
+Range span([$dart$core.Object first, $dart$core.Object last]) => $package$span(first, last);
 
 $dart$core.Object $package$sum([Iterable values]) {
     Iterator it = values.iterator();

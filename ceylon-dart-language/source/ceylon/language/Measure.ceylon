@@ -236,7 +236,7 @@ class Measure<Element>(first, size)
      0:0     // []
      5:0     // []
      0:-5    // []"
-native shared Range<Element>|[] measure<Element>
+shared Range<Element>|[] measure<Element>
         (Element first, Integer size)
         given Element satisfies Enumerable<Element>
         => size <= 0 then [] else Measure(first, size);
