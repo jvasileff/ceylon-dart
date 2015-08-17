@@ -1007,8 +1007,27 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformEntryOperation(EntryOperation that)
-        // FIXME implement this; Entry is a constructor
-        =>  super.transformEntryOperation(that);
+        =>  withBoxingNonNative {
+                that;
+                ExpressionInfo(that).typeModel;
+                DartInstanceCreationExpression {
+                    false;
+                    dartTypes.dartConstructorName {
+                        that;
+                        ceylonTypes.entryDeclaration;
+                    };
+                    DartArgumentList {
+                        [withLhsNonNative {
+                            ceylonTypes.objectType;
+                            () => that.key.transform(this);
+                        },
+                        withLhsNonNative {
+                            ceylonTypes.objectType;
+                            () => that.item.transform(this);
+                        }];
+                    };
+                };
+            };
 
     shared actual
     DartExpression transformInOperation(InOperation that)

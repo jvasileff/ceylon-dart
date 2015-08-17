@@ -204,6 +204,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.comparableDeclaration;
 
     shared
+    Class entryDeclaration
+        =>  unit.entryDeclaration;
+
+    shared
     Value emptyValueDeclaration
         =>  assertValue(getLanguageModuleDeclaration("empty"));
 
