@@ -79,7 +79,10 @@ import ceylon.ast.core {
     StringTemplate,
     Expression,
     Package,
-    NameWithTypeArguments
+    NameWithTypeArguments,
+    ExistsOperation,
+    IsOperation,
+    NonemptyOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -133,7 +136,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     InvocationInfo,
     ExpressionInfo,
     ThisInfo,
-    OuterInfo
+    OuterInfo,
+    TypeInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -862,6 +866,53 @@ class ExpressionTransformer(CompilationContext ctx)
             else
                 dartTypes.dartIdentifierForFunctionOrValue(scope,
                     ceylonTypes.booleanFalseValueDeclaration)[0];
+
+    shared actual
+    DartExpression transformExistsOperation(ExistsOperation that)
+        =>  withBoxing {
+                that;
+                ceylonTypes.booleanType;
+                null;
+                DartBinaryExpression {
+                    withLhsNoType {
+                        () => that.operand.transform(this);
+                    };
+                    "!=";
+                    DartNullLiteral();
+                };
+            };
+
+    shared actual
+    DartExpression transformIsOperation(IsOperation that)
+        =>  withBoxing {
+                that;
+                ceylonTypes.booleanType;
+                null;
+                generateIsExpression {
+                    that;
+                    withLhsNoType {
+                        () => that.operand.transform(this);
+                    };
+                    TypeInfo(that.type).typeModel;
+                };
+            };
+
+    shared actual
+    DartExpression transformNonemptyOperation(NonemptyOperation that)
+        =>  withBoxing {
+                that;
+                ceylonTypes.booleanType;
+                null;
+                generateIsExpression {
+                    that;
+                    withLhsNoType {
+                        () => that.operand.transform(this);
+                    };
+                    ceylonTypes.sequenceDeclaration.appliedType(
+                        null, javaList { ceylonTypes.anythingType }
+                    );
+                };
+            };
 
     shared actual
     DartExpression transformNotOperation(NotOperation that)
