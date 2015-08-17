@@ -26,7 +26,7 @@ unzip<Element,Head,Tail,Absent>
  
      pairs[i] == [unzipPairs(pairs)[0][i], 
                   unzipPairs(pairs)[1][i]]"
-native shared [Iterable<First,Absent>, Iterable<Second,Absent>] 
+shared [Iterable<First,Absent>, Iterable<Second,Absent>] 
 unzipPairs<First,Second,Absent>
         (Iterable<[First,Second],Absent> pairs)
         given Absent satisfies Null
