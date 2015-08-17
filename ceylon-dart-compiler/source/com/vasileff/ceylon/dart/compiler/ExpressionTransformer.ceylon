@@ -82,7 +82,8 @@ import ceylon.ast.core {
     NameWithTypeArguments,
     ExistsOperation,
     IsOperation,
-    NonemptyOperation
+    NonemptyOperation,
+    OfOperation
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -913,6 +914,12 @@ class ExpressionTransformer(CompilationContext ctx)
                     );
                 };
             };
+
+    shared actual
+    DartExpression transformOfOperation(OfOperation that)
+        // noop; dart casting is always performed based
+        // on the model and lhs, rhs types
+        =>  that.operand.transform(this);
 
     shared actual
     DartExpression transformNotOperation(NotOperation that)
