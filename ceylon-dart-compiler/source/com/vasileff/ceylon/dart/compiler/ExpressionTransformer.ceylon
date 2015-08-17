@@ -1130,7 +1130,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformSetOperation(SetOperation that)
-        // TODO test
         =>  generateInvocationForBinaryOperation(that,
                 switch(that)
                 case (is IntersectionOperation) "intersection"
@@ -1139,7 +1138,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformScaleOperation(ScaleOperation that)
-        // TODO test
         =>  generateInvocationForBinaryOperation(that, "scale");
 
     shared actual
@@ -1226,10 +1224,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformInOperation(InOperation that)
-        // TODO test
-        // Note: the *right* operand is the receiver
         =>  generateInvocationFromName {
                 that;
+                // Note: the *right* operand is the receiver
                 that.rightOperand;
                 "contains";
                 [that.leftOperand];
@@ -1360,7 +1357,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformSetAssignmentOperation(SetAssignmentOperation that) {
-        // TODO test
         value methodName
             =   switch(that)
                 case (is IntersectAssignmentOperation) "intersection"
@@ -1379,7 +1375,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
-        // TODO test
         value methodName
             =   switch(that)
                 case (is AndAssignmentOperation) "and"
