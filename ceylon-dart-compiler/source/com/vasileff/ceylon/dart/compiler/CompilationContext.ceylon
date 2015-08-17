@@ -13,7 +13,8 @@ import ceylon.collection {
     LinkedList
 }
 import com.vasileff.ceylon.dart.ast {
-    DartCompilationUnitMember
+    DartCompilationUnitMember,
+    DartSimpleIdentifier
 }
 import com.redhat.ceylon.compiler.typechecker.context {
     PhasedUnit
@@ -39,6 +40,9 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared
     HashSet<FunctionOrValueModel> disableErasureToNative
         =   HashSet<FunctionOrValueModel>();
+
+    shared variable
+    DartSimpleIdentifier? doFailVariableTop = null;
 
     "Boxing should calculate a denotable type. Trumps other `lhs` values."
     shared variable

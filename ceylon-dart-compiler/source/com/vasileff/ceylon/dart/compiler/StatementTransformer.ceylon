@@ -22,7 +22,8 @@ import ceylon.ast.core {
     InterfaceDefinition,
     TypeAliasDefinition,
     Node,
-    WideningTransformer
+    WideningTransformer,
+    Break
 }
 import ceylon.language.meta {
     type
@@ -57,7 +58,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueSpecificationInfo,
     UnspecifiedVariableInfo,
     ValueDeclarationInfo,
-    IsConditionInfo
+    IsConditionInfo,
+    ForFailInfo
 }
 
 import org.antlr.runtime {
@@ -180,20 +182,36 @@ class StatementTransformer(CompilationContext ctx)
             }];
 
     shared actual
+    [DartStatement*] transformBreak(Break that)
+        =>  if (exists var = ctx.doFailVariableTop) then
+                [DartExpressionStatement {
+                    DartAssignmentExpression {
+                        var;
+                        DartAssignmentOperator.equal;
+                        DartBooleanLiteral(false);
+                    };
+                },
+                DartBreakStatement()]
+            else
+                [DartBreakStatement()];
+
+    shared actual
     DartStatement[] transformForFail(ForFail that) {
         value pattern = that.forClause.iterator.pattern;
-        if (that.failClause exists) {
-            throw CompilerBug(that, "FailClause not yet supported");
-        }
+
         if (!pattern is VariablePattern) {
             throw CompilerBug(that,
                 "For pattern type not yet supported: " + type(pattern).string);
         }
         assert (is VariablePattern pattern);
 
+        value info = ForFailInfo(that);
         value variableInfo = UnspecifiedVariableInfo(pattern.variable);
-
         value variableDeclaration = variableInfo.declarationModel;
+
+        // Only track doFail if there is a fail clause and a break statement
+        value doFailVariable = that.failClause exists && info.exits
+                then DartSimpleIdentifier(dartTypes.createTempNameCustom("doFail"));
 
         // Don't erase to native for the loop variable; avoid premature unboxing
         ctx.disableErasureToNative.add(variableDeclaration);
@@ -247,8 +265,21 @@ class StatementTransformer(CompilationContext ctx)
 
         return
         [DartBlock {
+            // Declare the forFail boolean
+            [if (exists doFailVariable)
+            then DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartBool;
+                        [DartVariableDeclaration {
+                            doFailVariable;
+                            DartBooleanLiteral(true);
+                        }];
+                    };
+                }
+            else null,
             // Declare the loop variable
-            [DartVariableDeclarationStatement {
+            DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     null;
                     dartTypes.dartTypeName {
@@ -328,10 +359,24 @@ class StatementTransformer(CompilationContext ctx)
                         };
                     },
                     // Statements
-                    *expand(that.forClause.block.transformChildren(
-                            statementTransformer))];
+                    *withDoFailVariable {
+                        doFailVariable;
+                        () => expand(that.forClause.block.transformChildren(
+                            statementTransformer));
+                    }];
                 };
-            }];
+            },
+            // Conditional Fail Block
+            if (exists doFailVariable, exists failClause = that.failClause) then
+                DartIfStatement {
+                    doFailVariable;
+                    transformBlock(failClause.block).first;
+                }
+            // Unconditional Fail Block
+            else if (exists failClause = that.failClause) then
+                transformBlock(failClause.block).first
+            else null
+            ].coalesced.sequence();
         }];
     }
 

@@ -299,6 +299,9 @@ class ForFailInfo(ForFail astNode)
         extends StatementInfo(astNode) {
 
     shared actual default ForFail node => astNode;
+    value tcNode = assertedTcNode<Tree.ForStatement>(astNode);
+
+    shared Boolean exits => tcNode.exits;
 }
 
 shared

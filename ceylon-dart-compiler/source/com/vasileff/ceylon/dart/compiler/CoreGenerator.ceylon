@@ -284,6 +284,21 @@ class CoreGenerator(CompilationContext ctx) {
     }
 
     shared
+    Result withDoFailVariable<Result>(
+            DartSimpleIdentifier? doFailVariable,
+            Result fun()) {
+
+        value saveTop = ctx.doFailVariableTop;
+        ctx.doFailVariableTop = doFailVariable;
+        try {
+            return fun();
+        }
+        finally {
+            ctx.doFailVariableTop = saveTop;
+        }
+    }
+
+    shared
     Result withLhs<Result>(
             TypeModel? lhsType,
             FunctionOrValueModel? lhsDeclaration,
