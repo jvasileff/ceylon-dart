@@ -93,11 +93,6 @@ Boolean sameModule(
         Node|ScopeModel|ElementModel|ModuleModel|UnitModel second)
     =>  getModule(first) == getModule(second);
 
-"Shortcut for `(declaration of Declaration).container`, to make Ceylon happy.
- Not allowing `ScopeModel` arguments since they have `null` containers."
-ScopeModel containerOfDeclaration(DeclarationModel declaration)
-    =>  declaration.container;
-
 "Shortcut for `(scope of ScopeModel).container`,"
 ScopeModel? containerOfScope(ScopeModel scope)
     =>  scope.container;
@@ -173,7 +168,7 @@ Boolean withinPackage(Node|ScopeModel|ElementModel scope)
    > "Getters cannot be defined within methods or functions"
 """
 Boolean useGetterSetterMethods(ValueModel | SetterModel declaration)
-    =>  if (!containerOfDeclaration(declaration) is
+    =>  if (!(declaration of DeclarationModel).container is
                 PackageModel | ClassOrInterfaceModel)
         then (
             switch(declaration)

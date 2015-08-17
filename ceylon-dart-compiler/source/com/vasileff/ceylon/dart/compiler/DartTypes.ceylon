@@ -575,7 +575,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             Node|ElementModel|ScopeModel scope,
             ClassOrInterfaceModel declaration) {
 
-        switch (container = containerOfDeclaration(declaration))
+        switch (container = declaration.container)
         case (is PackageModel) {
             if (sameModule(scope, declaration)) {
                 // don't qualify with module
@@ -702,7 +702,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             isDartFunction = declaration is FunctionModel;
         }
 
-        switch (container = containerOfDeclaration(declaration))
+        switch (container = declaration.container)
         case (is PackageModel) {
             if (sameModule(scope, declaration)) {
                 // qualify toplevel in same module with '$package.'
