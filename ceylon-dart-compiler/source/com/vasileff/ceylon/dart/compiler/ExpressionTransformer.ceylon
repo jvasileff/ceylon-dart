@@ -133,6 +133,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ThisInfo,
     OuterInfo
 }
+import com.vasileff.jl4c.guava.collect {
+    javaList
+}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
@@ -996,14 +999,62 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  generateInvocationForBinaryOperation(that, "scale");
 
     shared actual
-    DartExpression transformSpanOperation(SpanOperation that)
-        // FIXME implement this; span is a toplevel function
-        =>  super.transformSpanOperation(that);
+    DartExpression transformSpanOperation(SpanOperation that) {
+        value info = ExpressionInfo(that);
+        value firstInfo = ExpressionInfo(that.first);
+        value lastInfo = ExpressionInfo(that.last);
+
+        // Determine Enumerable type (Enumerable<T>)
+        value enumerableType =
+            ceylonTypes.union(
+                firstInfo.typeModel,
+                lastInfo.typeModel
+            ).getSupertype(ceylonTypes.enumerableDeclaration);
+
+        // Determine element type (the `T`)
+        assert(exists elementType = ceylonTypes.typeArgument(enumerableType));
+
+        // Callable type for `span<T>`
+        value callableType = ceylonTypes
+                .spanFunctionDeclaration
+                .appliedTypedReference(null,
+                    javaList { elementType })
+                .fullType;
+
+        return generateTopLevelInvocation {
+            that;
+            info.typeModel;
+            ceylonTypes.spanFunctionDeclaration;
+            [callableType, [that.first, that.last]];
+        };
+    }
 
     shared actual
-    DartExpression transformMeasureOperation(MeasureOperation that)
-        // FIXME implement this; measure is a toplevel function
-        =>  super.transformMeasureOperation(that);
+    DartExpression transformMeasureOperation(MeasureOperation that) {
+        value info = ExpressionInfo(that);
+        value firstInfo = ExpressionInfo(that.first);
+
+        // Determine Enumerable type (Enumerable<T>)
+        value enumerableType = firstInfo.typeModel.getSupertype(
+                ceylonTypes.enumerableDeclaration);
+
+        // Determine element type (the `T`)
+        assert(exists elementType = ceylonTypes.typeArgument(enumerableType));
+
+        // Callable type for `measure<T>`
+        value callableType = ceylonTypes
+                .measureFunctionDeclaration
+                .appliedTypedReference(null,
+                    javaList { elementType })
+                .fullType;
+
+        return generateTopLevelInvocation {
+            that;
+            info.typeModel;
+            ceylonTypes.measureFunctionDeclaration;
+            [callableType, [that.first, that.size]];
+        };
+    }
 
     shared actual
     DartExpression transformEntryOperation(EntryOperation that)

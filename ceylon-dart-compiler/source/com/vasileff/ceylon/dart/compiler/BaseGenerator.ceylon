@@ -282,6 +282,94 @@ class BaseGenerator(CompilationContext ctx)
                 // TODO seems like a hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
 
+    "Generate an invocation or propery access expression for a toplevel."
+    shared
+    DartExpression generateTopLevelInvocation(
+            Node scope,
+            TypeModel resultType,
+            FunctionOrValueModel memberDeclaration,
+            [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null) {
+
+        "Only toplevels are supported; declaration's container must be a package."
+        assert (memberDeclaration.container is PackageModel);
+
+        // TODO use this in transformInvocation, transformBaseExpression, etc.
+        // NOTE not yet used for values
+
+        value [callableType, a] = callableTypeAndArguments else [null, []];
+
+        [Expression*] arguments;
+        switch (a)
+        case (is [Expression*]) {
+            arguments = a;
+        }
+        case (is PositionalArguments) {
+            arguments = a.argumentList.listedArguments;
+        }
+        case (is NamedArguments) {
+            throw CompilerBug(scope, "NamedArguments not supported");
+        }
+
+        value [functionOrValueIdentifier, isFunction] = dartTypes
+                    .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
+
+        value resultDeclaration =
+                if (is FunctionModel memberDeclaration,
+                        memberDeclaration.parameterLists.size() > 1)
+                // The function actually returns a Callable, not the
+                // ultimate return type advertised by the declaration.
+                then null
+                else memberDeclaration;
+
+        DartExpression invocation;
+        if (arguments nonempty) {
+            "If there are arguments, the member is surely a FunctionModel and must
+             translate to a Dart function"
+            assert (is FunctionModel memberDeclaration, isFunction);
+
+            "If we have arguments, we'll have a callableType."
+            assert (exists callableType);
+
+            value argumentTypes = CeylonList(ctx.unit
+                    .getCallableArgumentTypes(callableType.fullType));
+
+            value parameterDeclarations = CeylonList(
+                    memberDeclaration.firstParameterList.parameters)
+                    .collect(ParameterModel.model);
+
+            invocation =
+            DartFunctionExpressionInvocation {
+                functionOrValueIdentifier;
+                DartArgumentList {
+                    [for (i -> argument in arguments.indexed)
+                        withLhs {
+                            argumentTypes[i];
+                            parameterDeclarations[i];
+                            () => argument.transform(expressionTransformer);
+                        }
+                    ];
+                };
+            };
+        }
+        else {
+            invocation =
+                if (!isFunction)
+                then functionOrValueIdentifier
+                else DartFunctionExpressionInvocation {
+                    functionOrValueIdentifier;
+                    DartArgumentList();
+                };
+        }
+
+        return
+        withBoxing {
+            scope;
+            resultType;
+            resultDeclaration;
+            invocation;
+        };
+    }
+
     "Generate an invocation or propery access expression."
     shared
     DartExpression generateInvocation(

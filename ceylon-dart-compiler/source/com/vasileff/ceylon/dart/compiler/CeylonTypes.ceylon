@@ -11,7 +11,8 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeDeclaration,
     Value,
     Class,
-    ClassOrInterface
+    ClassOrInterface,
+    Function
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -167,6 +168,11 @@ class CeylonTypes(Unit unit) {
         return declaration;
     }
 
+    Function assertFunction(Declaration declaration) {
+        assert (is Function declaration);
+        return declaration;
+    }
+
     shared
     Declaration getLanguageModuleDeclaration(String name)
         =>  unit.getLanguageModuleDeclaration(name);
@@ -216,6 +222,10 @@ class CeylonTypes(Unit unit) {
         =>  assertValue(getLanguageModuleDeclaration("emptyIterator"));
 
     shared
+    Interface enumerableDeclaration
+        =>  unit.enumerableDeclaration;
+
+    shared
     Interface exponentiableDeclaration
         =>  unit.exponentiableDeclaration;
 
@@ -252,6 +262,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.iteratorDeclaration;
 
     shared
+    Function measureFunctionDeclaration
+        =>  assertFunction(getLanguageModuleDeclaration("measure"));
+
+    shared
     Class nullDeclaration
         =>  unit.nullDeclaration;
 
@@ -282,6 +296,10 @@ class CeylonTypes(Unit unit) {
     shared
     Interface sequentialDeclaration
         =>  unit.sequentialDeclaration;
+
+    shared
+    Function spanFunctionDeclaration
+        =>  assertFunction(getLanguageModuleDeclaration("span"));
 
     shared
     Class stringDeclaration
@@ -384,4 +402,9 @@ class CeylonTypes(Unit unit) {
         // FIXME this returns null when Type is Nothing
         //       or when no suitable type exists
         =>  definiteType(expressionType).getSupertype(required);
+
+    "Return the first type argument, or null if the type does not have type arguments."
+    shared
+    Type? typeArgument(Type t)
+        =>  t.typeArgumentList.get(0);
 }
