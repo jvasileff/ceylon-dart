@@ -20,7 +20,8 @@ import ceylon.ast.core {
     DefaultedCallableParameter,
     ValueDeclaration,
     ValueDefinition,
-    Specifier
+    Specifier,
+    ValueGetterDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -90,7 +91,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     IsConditionInfo,
     TypeInfo,
     ValueDeclarationInfo,
-    ValueDefinitionInfo
+    ValueDefinitionInfo,
+    ValueGetterDefinitionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -938,6 +940,72 @@ class BaseGenerator(CompilationContext ctx)
                     () => that.definition.expression.transform(expressionTransformer);
                 };
             }];
+        };
+    }
+
+    shared
+    DartFunctionDeclaration generateForValueDefinitionGetter(
+            ValueDefinition|ValueGetterDefinition that) {
+
+        // NOTE toplevels are getters (no parameter list)
+        //      within functions, not getters (empty parameter list)
+        //      within classes and interfaces, getters, but MethodDeclaration instead
+
+        value definition = that.definition;
+        if (definition is Specifier) {
+            throw CompilerBug(that, "Specifier not supported");
+        }
+        assert (is LazySpecifier|Block definition);
+
+        value declarationModel =
+            switch (that)
+            case (is ValueDefinition)
+                ValueDefinitionInfo(that).declarationModel
+            case (is ValueGetterDefinition)
+                ValueGetterDefinitionInfo(that).declarationModel;
+
+        value [identifier, isFunction] = dartTypes.dartIdentifierForFunctionOrValue {
+            that;
+            declarationModel;
+        };
+
+        // TODO split dartIdentifierForFunctionOrValue into two functions, one that
+        //      provides just "getName()" type functionality, the other also qualifies
+        assert (is DartSimpleIdentifier identifier);
+
+        return
+        DartFunctionDeclaration {
+            false;
+            dartTypes.dartTypeNameForDeclaration {
+                that;
+                declarationModel;
+            };
+            !isFunction then "get";
+            identifier;
+            DartFunctionExpression {
+                isFunction then dartFormalParameterListEmpty;
+                switch (definition)
+                case (is LazySpecifier)
+                    DartExpressionFunctionBody {
+                        false;
+                        withLhs {
+                            null;
+                            declarationModel;
+                            () => definition.expression.transform(expressionTransformer);
+                        };
+                    }
+                case (is Block)
+                    DartBlockFunctionBody {
+                        null;
+                        false;
+                        withReturn {
+                            declarationModel;
+                            () => statementTransformer.transformBlock {
+                                definition;
+                            }.first;
+                        };
+                    };
+            };
         };
     }
 

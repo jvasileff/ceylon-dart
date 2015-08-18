@@ -58,7 +58,7 @@ class CompilationContext(PhasedUnit phasedUnit) {
     Boolean? lhsErasedToObjectTop = null;
 
     shared variable
-    FunctionModel? returnDeclarationTop = null;
+    FunctionOrValueModel? returnDeclarationTop = null;
 
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
@@ -117,7 +117,7 @@ class CompilationContext(PhasedUnit phasedUnit) {
     }
 
     shared
-    FunctionModel assertedReturnDeclaration {
+    FunctionOrValueModel assertedReturnDeclaration {
         assert(exists top = returnDeclarationTop);
         return top;
     }

@@ -24,7 +24,10 @@ import ceylon.ast.core {
     Node,
     WideningTransformer,
     Break,
-    Continue
+    Continue,
+    LazySpecifier,
+    Specifier,
+    ValueGetterDefinition
 }
 import ceylon.language.meta {
     type
@@ -162,8 +165,19 @@ class StatementTransformer(CompilationContext ctx)
             =>  expressionTransformer.transformInvocation(that.expression)))];
 
     shared actual
-    [DartVariableDeclarationStatement] transformValueDefinition(ValueDefinition that)
-        =>  [DartVariableDeclarationStatement(generateForValueDefinition(that))];
+    [DartVariableDeclarationStatement|DartFunctionDeclarationStatement]
+    transformValueDefinition(ValueDefinition that)
+        =>  switch(specifier = that.definition)
+            case (is Specifier)
+                [DartVariableDeclarationStatement(generateForValueDefinition(that))]
+            case (is LazySpecifier)
+                [DartFunctionDeclarationStatement(
+                    generateForValueDefinitionGetter(that))];
+
+    shared actual
+    [DartFunctionDeclarationStatement] transformValueGetterDefinition
+            (ValueGetterDefinition that)
+        =>  [DartFunctionDeclarationStatement(generateForValueDefinitionGetter(that))];
 
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that)

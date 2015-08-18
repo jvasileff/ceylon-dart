@@ -12,7 +12,9 @@ import ceylon.ast.core {
     TypeAliasDefinition,
     CompilationUnit,
     Visitor,
-    Node
+    Node,
+    Specifier,
+    LazySpecifier
 }
 import ceylon.interop.java {
     CeylonList
@@ -41,7 +43,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
     ValueDefinitionInfo,
     AnyFunctionInfo,
-    AnyClassInfo
+    AnyClassInfo,
+    ValueGetterDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -67,19 +70,27 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     shared actual
-    void visitValueDefinition
-            (ValueDefinition that) {
+    void visitValueDefinition(ValueDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return;
         }
 
-        addAll {
-            DartTopLevelVariableDeclaration {
-                generateForValueDefinition(that);
-            },
-            *generateForwardingGetterSetter(that)
-        };
+        switch(specifier = that.definition)
+        case (is LazySpecifier) {
+            addAll {
+                generateForValueDefinitionGetter(that),
+                *generateForwardingGetterSetter(that)
+            };
+        }
+        case (is Specifier) {
+            addAll {
+                DartTopLevelVariableDeclaration {
+                    generateForValueDefinition(that);
+                },
+                *generateForwardingGetterSetter(that)
+            };
+        }
     }
 
     shared actual
@@ -90,7 +101,10 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.transformValueGetterDefinition(that);
+        addAll {
+            generateForValueDefinitionGetter(that),
+            *generateForwardingGetterSetter(that)
+        };
     }
 
     shared actual
@@ -215,37 +229,42 @@ class TopLevelVisitor(CompilationContext ctx)
     void visitTypeAliasDefinition(TypeAliasDefinition that) {}
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
-            (ValueDefinition that) {
+            (ValueDefinition | ValueGetterDefinition that) {
 
-        value info = ValueDefinitionInfo(that);
+        value declarationModel =
+            switch (that)
+            case (is ValueDefinition)
+                ValueDefinitionInfo(that).declarationModel
+            case (is ValueGetterDefinition)
+                ValueGetterDefinitionInfo(that).declarationModel;
 
         value getter =
         DartFunctionDeclaration {
             external = false;
             returnType = dartTypes.dartTypeNameForDeclaration(
-                that, info.declarationModel);
+                that, declarationModel);
             propertyKeyword = "get";
             DartSimpleIdentifier {
-                dartTypes.getName(info.declarationModel);
+                dartTypes.getName(declarationModel);
             };
             DartFunctionExpression {
                 null;
                 DartExpressionFunctionBody {
                     async = false;
                     DartSimpleIdentifier {
-                        "$package$" + dartTypes.getName(info.declarationModel);
+                        "$package$" + dartTypes.getName(declarationModel);
                     };
                 };
             };
         };
 
-        value setter = info.declarationModel.variable then
+        value setter = declarationModel.variable then
             DartFunctionDeclaration {
                 external = false;
                 returnType = null;
                 propertyKeyword = "set";
                 DartSimpleIdentifier {
-                    dartTypes.getName(info.declarationModel);
+                    dartTypes.getName(declarationModel);
                 };
                 DartFunctionExpression {
                     DartFormalParameterList {
@@ -255,7 +274,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             final = false;
                             var = false;
                             type = dartTypes.dartTypeNameForDeclaration(
-                                that, info.declarationModel);
+                                that, declarationModel);
                             identifier = DartSimpleIdentifier("value");
                         }];
                     };
@@ -264,7 +283,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartAssignmentExpression {
                             DartSimpleIdentifier {
                                 "$package$"
-                                    + dartTypes.getName(info.declarationModel);
+                                    + dartTypes.getName(declarationModel);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier("value");

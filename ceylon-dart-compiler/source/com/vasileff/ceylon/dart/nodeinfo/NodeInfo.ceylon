@@ -201,10 +201,6 @@ class AnyValueInfo(AnyValue astNode)
         extends TypedDeclarationInfo(astNode) {
 
     shared actual default AnyValue node => astNode;
-    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(astNode);
-
-    shared actual default
-    ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared
@@ -212,6 +208,10 @@ class ValueDefinitionInfo(ValueDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDefinition node => astNode;
+    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(astNode);
+
+    shared actual default
+    ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared
@@ -219,6 +219,10 @@ class ValueDeclarationInfo(ValueDeclaration astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDeclaration node => astNode;
+    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(astNode);
+
+    shared actual default
+    ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared
@@ -226,6 +230,10 @@ class ValueGetterDefinitionInfo(ValueGetterDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueGetterDefinition node => astNode;
+    value tcNode = assertedTcNode<Tree.AttributeGetterDefinition>(astNode);
+
+    shared actual default
+    ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared

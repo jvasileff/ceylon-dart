@@ -393,7 +393,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     Result withReturn<Result>(
-            FunctionModel functionDeclaration,
+            FunctionOrValueModel functionDeclaration,
             Result fun()) {
         value save = ctx.returnDeclarationTop;
         try {
