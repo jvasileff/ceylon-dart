@@ -23,7 +23,8 @@ import ceylon.ast.core {
     TypeAliasDefinition,
     Node,
     WideningTransformer,
-    Break
+    Break,
+    Continue
 }
 import ceylon.language.meta {
     type
@@ -51,7 +52,8 @@ import com.vasileff.ceylon.dart.ast {
     DartExpressionStatement,
     DartVariableDeclarationList,
     DartPrefixExpression,
-    DartStatement
+    DartStatement,
+    DartContinueStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
@@ -194,6 +196,10 @@ class StatementTransformer(CompilationContext ctx)
                 DartBreakStatement()]
             else
                 [DartBreakStatement()];
+
+    shared actual
+    [DartContinueStatement] transformContinue(Continue that)
+        =>  [DartContinueStatement()];
 
     shared actual
     DartStatement[] transformForFail(ForFail that) {
