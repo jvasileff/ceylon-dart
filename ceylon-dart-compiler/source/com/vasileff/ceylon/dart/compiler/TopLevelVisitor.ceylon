@@ -114,7 +114,7 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.transformFunctionDeclaration(that);
+        super.visitFunctionDeclaration(that);
     }
 
     shared actual
@@ -126,7 +126,7 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.transformClassDefinition(that);
+        super.visitClassDefinition(that);
     }
 
     shared actual
@@ -222,7 +222,7 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.transformObjectDefinition(that);
+        super.visitObjectDefinition(that);
     }
 
     shared actual
