@@ -3,7 +3,6 @@ import ceylon.ast.core {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    FunctionModel=Function,
     TypeModel=Type,
     ScopeModel=Scope,
     ElementModel=Element,

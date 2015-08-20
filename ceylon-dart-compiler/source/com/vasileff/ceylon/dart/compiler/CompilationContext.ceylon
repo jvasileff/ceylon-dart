@@ -1,26 +1,26 @@
-import com.redhat.ceylon.model.typechecker.model {
-    UnitModel=Unit,
-    FunctionModel=Function,
-    ClassOrInterfaceModel=ClassOrInterface,
-    FunctionOrValueModel=FunctionOrValue
-}
-
-import org.antlr.runtime {
-    Token
-}
 import ceylon.collection {
     HashSet,
     LinkedList
+}
+import ceylon.interop.java {
+    CeylonList
+}
+
+import com.redhat.ceylon.compiler.typechecker.context {
+    PhasedUnit
+}
+import com.redhat.ceylon.model.typechecker.model {
+    UnitModel=Unit,
+    ClassOrInterfaceModel=ClassOrInterface,
+    FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.ast {
     DartCompilationUnitMember,
     DartSimpleIdentifier
 }
-import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit
-}
-import ceylon.interop.java {
-    CeylonList
+
+import org.antlr.runtime {
+    Token
 }
 
 shared
