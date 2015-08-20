@@ -10,7 +10,7 @@ import ceylon.language { e=empty }
  (Whether the syntax `[]` refers to the type or the value 
  depends upon how it occurs grammatically.)"
 see (`interface Sequence`)
-native shared interface Empty of e
+shared interface Empty of e
            satisfies Nothing[] &
                      Ranged<Integer,Nothing,[]> {
     

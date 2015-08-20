@@ -380,71 +380,203 @@ abstract class Correspondence {
 //
 // Empty.dart
 //
+class $empty implements Empty {
+  const $empty();
 
-class Empty implements Sequential {
-  const Empty();
+  $dart$core.Object getFromLast([$dart$core.int index])
+      => Empty.$getFromLast(this, index);
 
-  @$dart$core.override
-  get size => 0;
+  $dart$core.Object getFromFirst([$dart$core.int index])
+      => Empty.$getFromFirst(this, index);
 
-  @$dart$core.override
-  each(Callable step) {}
+  $dart$core.bool contains([$dart$core.Object element])
+      =>  Empty.$contains(this, element);
 
-  @$dart$core.override
-  $dart$core.bool contains($dart$core.Object element) => false;
+  $dart$core.bool defines([Integer index])
+      =>  Empty.$defines(this, index);
 
-  @$dart$core.override
-  Iterator iterator() => emptyIterator;
+  Empty get keys
+      =>  Empty.$get$keys(this);
 
-  @$dart$core.override
-  getFromFirst(index) => null;
+  $dart$core.bool get empty
+      =>  Empty.$get$empty(this);
 
-  @$dart$core.override
-  getFromLast(index) => null;
+  $dart$core.int get size
+      =>  Empty.$get$size(this);
 
-  @$dart$core.override
-  get($dart$core.Object index) => null;
+  Empty get reversed
+      =>  Empty.$get$reversed(this);
 
-  @$dart$core.override
-  $dart$core.bool defines($dart$core.Object el) => false;
+  Empty sequence()
+      =>  Empty.$sequence(this);
 
-  @$dart$core.override
-  $dart$core.int get lastIndex => null;
+  $dart$core.String get string
+      =>  Empty.$get$string(this);
 
-  @$dart$core.override
-  $dart$core.bool get empty => true;
+  $dart$core.Object get lastIndex
+      =>  Empty.$get$lastIndex(this);
 
-  @$dart$core.override
-  Iterable map(Callable collecting) => this;
-
-  @$dart$core.override
-  Sequential sequence() => $package$empty;
-
-  @$dart$core.override
-  $dart$core.String toString() => "{}";
-
-  @$dart$core.override
-  Sequence withTrailing($dart$core.Object other)
-    =>  new Tuple(other, $package$empty);
-
-  @$dart$core.override
-  Sequence withLeading($dart$core.Object other)
-    =>  new Tuple(other, $package$empty);
-
-  @$dart$core.override
-  $dart$core.Object follow($dart$core.Object head)
-    =>  new Tuple(head, $package$empty);
-
-  @$dart$core.override
   $dart$core.Object get first
-    =>  null;
+      =>  Empty.$get$first(this);
 
-  @$dart$core.override
-  Iterable get rest
-    =>  this;
+  $dart$core.Object get last
+      =>  Empty.$get$last(this);
+
+  Empty get rest
+      =>  Empty.$get$rest(this);
+
+  Empty clone()
+      =>  Empty.$clone(this);
+
+  Empty get coalesced
+      =>  Empty.$get$coalesced(this);
+
+  Empty get indexed
+      =>  Empty.$get$indexed(this);
+
+  Empty repeat([$dart$core.int times])
+      =>  Empty.$repeat(this, times);
+
+  Empty get cycled
+      =>  Empty.$get$cycled(this);
+
+  Empty get paired
+      =>  Empty.$get$paired(this);
+
+  Iterator iterator()
+      =>  Empty.$iterator(this);
+
+  Empty measure([Integer from, $dart$core.int length])
+      =>  Empty.$measure(this, from, length);
+
+  Empty span([Integer from, Integer to])
+      =>  Empty.$span(this, from, to);
+
+  Empty spanTo([Integer to])
+      =>  Empty.$spanTo(this, to);
+
+  Empty spanFrom([Integer from])
+      =>  Empty.$spanFrom(this, from);
+
+  Iterable chain([Iterable other])
+      =>  Empty.$chain(this, other);
+
+  Empty defaultNullElements([$dart$core.Object defaultValue])
+      =>  Empty.$defaultNullElements(this, defaultValue);
+
+  $dart$core.int count([Callable selecting])
+      =>  Empty.$count(this, selecting);
+
+  Empty map([Callable collecting])
+      =>  Empty.$map(this, collecting);
+
+  Empty flatMap([Callable collecting])
+      =>  Empty.$flatMap(this, collecting);
+
+  Callable spread([Callable method])
+      =>  Empty.$spread(this, method);
+
+  Empty filter([Callable selecting])
+      =>  Empty.$filter(this, selecting);
+
+  Callable fold([$dart$core.Object initial])
+      =>  Empty.$fold(this, initial);
+
+  $dart$core.Object reduce([Callable accumulating])
+      =>  Empty.$reduce(this, accumulating);
+
+  $dart$core.Object find([Callable selecting])
+      =>  Empty.$find(this, selecting);
+
+  Empty sort([Callable comparing])
+      =>  Empty.$sort(this, comparing);
+
+  Empty collect([Callable collecting])
+      =>  Empty.$collect(this, collecting);
+
+  Empty select([Callable selecting])
+      =>  Empty.$select(this, selecting);
+
+  $dart$core.bool any([Callable selecting])
+      =>  Empty.$any(this, selecting);
+
+  $dart$core.bool every([Callable selecting])
+      =>  Empty.$every(this, selecting);
+
+  Empty skip([$dart$core.int skipping])
+      =>  Empty.$skip(this, skipping);
+
+  Empty take([$dart$core.int taking])
+      =>  Empty.$take(this, taking);
+
+  Empty skipWhile([Callable skipping])
+      =>  Empty.$skipWhile(this, skipping);
+
+  Empty takeWhile([Callable taking])
+      =>  Empty.$takeWhile(this, taking);
+
+  Empty by([$dart$core.int step])
+      =>  Empty.$by(this, step);
+
+  Tuple withLeading([$dart$core.Object element])
+      =>  Empty.$withLeading(this, element);
+
+  Tuple withTrailing([$dart$core.Object element])
+      =>  Empty.$withTrailing(this, element);
+
+  Sequential append([Sequential elements])
+      =>  Empty.$append(this, elements);
+
+  Sequential prepend([Sequential elements])
+      =>  Empty.$prepend(this, elements);
+
+  Empty sublist([$dart$core.int from, $dart$core.int to])
+      =>  Empty.$sublist(this, from, to);
+
+  Empty sublistFrom([$dart$core.int from])
+      =>  Empty.$sublistFrom(this, from);
+
+  Empty sublistTo([$dart$core.int to])
+      =>  Empty.$sublistTo(this, to);
+
+  Empty initial([$dart$core.int length])
+      =>  Empty.$initial(this, length);
+
+  Empty terminal([$dart$core.int length])
+      =>  Empty.$terminal(this, length);
+
+  Empty indexesWhere([Callable selecting])
+      =>  Empty.$indexesWhere(this, selecting);
+
+  $dart$core.Object firstIndexWhere([Callable selecting])
+      =>  Empty.$firstIndexWhere(this, selecting);
+
+  $dart$core.Object lastIndexWhere([Callable selecting])
+      =>  Empty.$lastIndexWhere(this, selecting);
+
+  $dart$core.bool includes([List sublist])
+      =>  Empty.$includes(this, sublist);
+
+  Empty trim([Callable trimming])
+      =>  Empty.$trim(this, trimming);
+
+  Empty trimLeading([Callable trimming])
+      =>  Empty.$trimLeading(this, trimming);
+
+  Empty trimTrailing([Callable trimming])
+      =>  Empty.$trimTrailing(this, trimming);
+
+  Tuple slice([$dart$core.int index])
+      =>  Empty.$slice(this, index);
+
+  void each([Callable step])
+      =>  Empty.$each(this, step);
+
+  Iterable follow([$dart$core.Object head])
+      =>  Empty.$follow(this, head);
 }
 
-final Empty empty = new Empty();
+const empty = const $empty();
 final $package$empty = empty;
 
 class $EmptyIterator implements Iterator {
@@ -492,9 +624,9 @@ class Float implements Number, Exponentiable {
 
   Float($dart$core.double this._value);
 
-  Float plusInteger($dart$core.int integer) => new Float(_value * integer);
-  Float powerOfInteger($dart$core.int integer) => new Float($dart$math.pow(_value, integer));
-  Float timesInteger($dart$core.int integer) => new Float(_value * integer);
+  Float plusInteger([$dart$core.int integer]) => new Float(_value * integer);
+  Float powerOfInteger([$dart$core.int integer]) => new Float($dart$math.pow(_value, integer));
+  Float timesInteger([$dart$core.int integer]) => new Float(_value * integer);
 
   Float divided([Float other]) => new Float(this._value / other._value);
   Float times([Float other]) => new Float(this._value * other._value);
@@ -545,19 +677,19 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.bool get unit => _value == 1;
   $dart$core.bool get zero => _value == 0;
 
-  $dart$core.bool divides(Integer other) => other._value % _value == 0;
-  Integer remainder(Integer other)
+  $dart$core.bool divides([Integer other]) => other._value % _value == 0;
+  Integer remainder([Integer other])
     => new Integer(_value - other._value * (_value ~/ other._value));
 
-  Integer plusInteger($dart$core.int integer) => new Integer(_value + integer);
-  Integer powerOfInteger($dart$core.int integer) => new Integer($dart$math.pow(_value, integer));
-  Integer timesInteger($dart$core.int integer) => new Integer(_value * integer);
+  Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
+  Integer powerOfInteger([$dart$core.int integer]) => new Integer($dart$math.pow(_value, integer));
+  Integer timesInteger([$dart$core.int integer]) => new Integer(_value * integer);
 
   Integer divided([Integer other]) => new Integer(this._value ~/ other._value);
   Integer times([Integer other]) => new Integer(this._value * other._value);
 
   Integer get negated => new Integer(-this._value);
-  Integer minus(Integer other) => new Integer(this._value - other._value);
+  Integer minus([Integer other]) => new Integer(this._value - other._value);
 
   Integer plus([Integer other]) => new Integer(this._value + other._value);
 
@@ -659,27 +791,6 @@ class Integer implements Integral, Exponentiable, Binary {
 
   // TODO remove this hack (compiler needs to translate)
   $dart$core.String get string => toString();
-}
-
-//
-// Integral.dart
-//
-
-abstract class Integral implements Number, Enumerable {
-  $dart$core.bool get unit;
-  $dart$core.bool get zero;
-
-  $dart$core.bool divides($dart$core.Object other);
-  $dart$core.Object remainder($dart$core.Object other);
-}
-
-//
-// Invertible.dart
-//
-
-abstract class Invertible implements Summable {
-  $dart$core.Object get negated;
-  $dart$core.Object minus($dart$core.Object other);
 }
 
 //
@@ -846,16 +957,6 @@ class _$ListIterator_anon implements Iterator {
 
 $dart$core.Object get nothing
   =>  throw new AssertionError("nothing may not be evaluated");
-
-//
-// Number.dart
-//
-
-abstract class Number implements Numeric, Comparable {
-  $dart$core.Object plusInteger($dart$core.int integer);
-  $dart$core.Object powerOfInteger($dart$core.int integer);
-  $dart$core.Object timesInteger($dart$core.int integer);
-}
 
 //
 // Sequence.dart
@@ -1259,8 +1360,6 @@ class operatingSystem_ {
 const operatingSystem = const operatingSystem_.$value$();
 
 const $package$operatingSystem = operatingSystem;
-
-abstract class Enumerable implements Ordinal {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //

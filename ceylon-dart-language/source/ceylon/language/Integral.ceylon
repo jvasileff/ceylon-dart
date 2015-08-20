@@ -33,7 +33,7 @@
        }"""
 see (`class Integer`)
 by ("Gavin")
-native shared interface Integral<Other> of Other
+shared interface Integral<Other> of Other
         satisfies Number<Other> & 
                   Enumerable<Other>
         given Other satisfies Integral<Other> {

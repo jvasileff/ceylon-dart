@@ -17,7 +17,7 @@
  since they don't have a total order."
 see (`class Integer`, `class Float`)
 by ("Gavin")
-native shared interface Number<Other> of Other
+shared interface Number<Other> of Other
         satisfies Numeric<Other> & 
                   Comparable<Other>
         given Other satisfies Number<Other> {
