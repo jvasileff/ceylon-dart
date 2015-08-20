@@ -272,16 +272,21 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartTypeName generateFunctionReturnType(AnyFunctionInfo info)
-        =>  let (functionModel = info.declarationModel)
-            if (functionModel.parameterLists.size() > 1) then
+        =>  if (info.declarationModel.parameterLists.size() > 1) then
                 // return type is a `Callable`; we're not get generic, so the Callable's
                 // return is erased. Even on the Java backend, the arguments are erased.
-                dartTypes.dartTypeName(info.node,
-                    ceylonTypes.callableDeclaration.type, false)
-            else if (!functionModel.declaredVoid) then
-                dartTypes.dartReturnTypeNameForDeclaration(info.node, functionModel)
+                dartTypes.dartTypeName {
+                    info.node;
+                    ceylonTypes.callableDeclaration.type;
+                    false;
+                }
+            else if (!info.declarationModel.declaredVoid) then
+                dartTypes.dartReturnTypeNameForDeclaration {
+                    info.node;
+                    info.declarationModel;
+                }
             else
-                // TODO seems like a hacky way to create a void keyword
+                // hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
 
     "Generate an invocation or propery access expression for a toplevel."

@@ -1248,7 +1248,7 @@ class DartMethodDeclaration(
     shared String? propertyKeyword; // get | set
     // shared String operatorKeyword
     shared DartSimpleIdentifier name;
-    shared DartFormalParameterList parameters;
+    shared DartFormalParameterList? parameters;
     shared DartFunctionBody? body;
 
     shared actual
@@ -1271,7 +1271,9 @@ class DartMethodDeclaration(
             writer.write(" ");
         }
         name.write(writer);
-        parameters.write(writer);
+        if (exists parameters) {
+            parameters.write(writer);
+        }
         if (exists body) {
             writer.write(" ");
             body.write(writer);

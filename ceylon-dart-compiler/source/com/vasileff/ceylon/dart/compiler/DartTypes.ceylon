@@ -128,8 +128,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "The name of the static method used for the implementation of
      non-formal interface methods."
     shared
-    String getStaticInterfaceMethodName(FunctionModel declaration)
-        =>  "$" + getName(declaration);
+    String getStaticInterfaceMethodName(
+            FunctionModel|ValueModel declaration,
+            Boolean isSetter = false)
+        =>  if (declaration is FunctionModel) then
+                "$" + getName(declaration)
+            else if (isSetter) then
+                "$set$" + getName(declaration)
+            else
+                "$get$" + getName(declaration);
 
     shared
     String createReplacementName(TypedDeclarationModel declaration) {
@@ -391,7 +398,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeName dartReturnTypeNameForDeclaration(
             Node|ElementModel|ScopeModel scope,
-            FunctionModel declaration) {
+            FunctionModel|ValueModel declaration) {
 
         value dartModel = dartTypeModel {
             declaration.type;

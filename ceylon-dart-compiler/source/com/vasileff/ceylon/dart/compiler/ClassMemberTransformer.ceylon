@@ -7,7 +7,9 @@ import ceylon.ast.core {
     Node,
     FunctionDefinition,
     InterfaceDefinition,
-    FunctionShortcutDefinition
+    FunctionShortcutDefinition,
+    ValueGetterDefinition,
+    LazySpecifier
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -20,11 +22,14 @@ import com.vasileff.ceylon.dart.ast {
     DartMethodDeclaration,
     DartClassMember,
     DartFormalParameterList,
-    DartSimpleFormalParameter
+    DartSimpleFormalParameter,
+    dartFormalParameterListEmpty
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionDeclarationInfo,
-    AnyFunctionInfo
+    AnyFunctionInfo,
+    ValueDefinitionInfo,
+    ValueGetterDefinitionInfo
 }
 
 shared
@@ -43,15 +48,31 @@ class ClassMemberTransformer(CompilationContext ctx)
 
     shared actual
     [DartClassMember*] transformValueDefinition(ValueDefinition that) {
-        // TODO for interfaces, need to output a declaration plus
-        //      a static getter method. Need support for lazy specifiers
-        //      and getters.
+        value info = ValueDefinitionInfo(that);
 
-        return
-        [DartFieldDeclaration {
-            static = false;
-            fieldList = generateForValueDefinition(that);
-        }];
+        "The container of a class or interface member is surely a ClassOrInterface"
+        assert (is ClassOrInterfaceModel container = info.declarationModel.container);
+
+        if (!container is InterfaceModel) {
+            // TODO support classes; assuming interface code below
+            throw CompilerBug(that, "classes not yet supported");
+        }
+
+        value specifier = that.definition;
+
+        "Interfaces don't have fields"
+        assert(is LazySpecifier specifier);
+
+        return generateGetter(that);
+    }
+
+    shared actual
+    [DartClassMember*] transformValueGetterDefinition(ValueGetterDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+        return generateGetter(that);
     }
 
     shared actual
@@ -94,6 +115,95 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
 
         return generateInterfaceFunctionDefinition(that);
+    }
+
+    [DartMethodDeclaration*] generateGetter
+            (ValueDefinition | ValueGetterDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+        value declarationModel =
+            switch (that)
+            case (is ValueDefinition)
+                ValueDefinitionInfo(that).declarationModel
+            case (is ValueGetterDefinition)
+                ValueGetterDefinitionInfo(that).declarationModel;
+
+        "The container of a class or interface member is surely a ClassOrInterface"
+        assert (is ClassOrInterfaceModel container = declarationModel.container);
+
+        if (!container is InterfaceModel) {
+            // TODO support classes; assuming interface code below
+            throw CompilerBug(that, "classes not yet supported");
+        }
+
+        // Member functions of interfaces need a $this parameter.
+        DartSimpleFormalParameter? thisParameter;
+        if (is InterfaceModel container) {
+            thisParameter = DartSimpleFormalParameter {
+                true; false;
+                dartTypes.dartTypeName {
+                    that;
+                    container.type;
+                    false; false;
+                };
+                DartSimpleIdentifier("$this");
+            };
+        }
+        else {
+            thisParameter = null;
+        }
+
+        // Generate a DartFunctionExpression, then scrap it for parts
+        value functionExpression =
+                generateForValueDefinitionGetter(that).functionExpression;
+
+        DartFormalParameterList standardParameters = dartFormalParameterListEmpty;
+
+        // generate the abstract interface declaration and
+        // a static method definition for the actual implementation
+        return [
+            DartMethodDeclaration {
+                false;
+                null;
+                dartTypes.dartReturnTypeNameForDeclaration {
+                    that;
+                    declarationModel;
+                };
+                "get";
+                DartSimpleIdentifier {
+                    dartTypes.getName {
+                        declarationModel;
+                    };
+                };
+                parameters = null;
+                body = null;
+            },
+            DartMethodDeclaration {
+                false;
+                "static";
+                dartTypes.dartReturnTypeNameForDeclaration {
+                    that;
+                    declarationModel;
+                };
+                null;
+                DartSimpleIdentifier {
+                    dartTypes.getStaticInterfaceMethodName {
+                        declarationModel;
+                    };
+                };
+                DartFormalParameterList {
+                    true; false;
+                    [
+                        thisParameter,
+                        *standardParameters.parameters
+                    ].coalesced.sequence();
+                };
+                functionExpression.body;
+            }
+        ];
     }
 
     [DartMethodDeclaration*] generateInterfaceFunctionDefinition

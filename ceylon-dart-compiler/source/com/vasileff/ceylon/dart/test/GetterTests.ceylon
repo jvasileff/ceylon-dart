@@ -1,6 +1,5 @@
 import ceylon.test {
-    test,
-    ignore
+    test
 }
 
 shared
@@ -54,9 +53,8 @@ class GetterTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void interfaceGetterLazy() {
-        // TODO
         compileAndCompare {
              """
                 interface I {
@@ -65,14 +63,19 @@ class GetterTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                abstract class I {
+                    $dart$core.String get a;
+                    static $dart$core.String $get$a([final I $this]) => "";
+                }
              """;
         };
     }
 
-    shared test ignore
+    shared test
     void interfaceGetterBlock() {
-        // TODO
         compileAndCompare {
              """
                 interface I {
@@ -81,7 +84,15 @@ class GetterTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                abstract class I {
+                    $dart$core.String get a;
+                    static $dart$core.String $get$a([final I $this]) {
+                        return "";
+                    }
+                }
              """;
         };
     }
