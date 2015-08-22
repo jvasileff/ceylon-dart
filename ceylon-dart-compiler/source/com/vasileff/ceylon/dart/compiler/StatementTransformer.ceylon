@@ -27,12 +27,20 @@ import ceylon.ast.core {
     Continue,
     LazySpecifier,
     Specifier,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    ExistsCondition,
+    NonemptyCondition
+}
+import ceylon.collection {
+    LinkedList
 }
 import ceylon.language.meta {
     type
 }
 
+import com.redhat.ceylon.model.typechecker.model {
+    ValueModel=Value
+}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartReturnStatement,
@@ -56,7 +64,9 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList,
     DartPrefixExpression,
     DartStatement,
-    DartContinueStatement
+    DartContinueStatement,
+    DartNullLiteral,
+    DartExpression
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
@@ -64,7 +74,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     UnspecifiedVariableInfo,
     ValueDeclarationInfo,
     IsConditionInfo,
-    ForFailInfo
+    ForFailInfo,
+    ElseClauseInfo
 }
 
 import org.antlr.runtime {
@@ -96,17 +107,218 @@ class StatementTransformer(CompilationContext ctx)
             else
                 [DartReturnStatement()];
 
+    DartStatement toSingleStatementOrBlock([DartStatement+] statements)
+        =>  if (statements.size > 1)
+            then DartBlock(statements)
+            else statements.first;
+
     shared actual
-    [DartIfStatement] transformIfElse(IfElse that) {
-        return
-        [DartIfStatement {
-            generateBooleanDartCondition(that.ifClause.conditions);
-            statementTransformer.transformBlock(that.ifClause.block).first;
-            switch (c = that.elseClause?.child)
-                    case (is Block) transformBlock(c).first
-                    case (is IfElse) transformIfElse(c).first
-                    case (is Null) null;
-        }];
+    [DartStatement*] transformIfElse(IfElse that) {
+        if (that.ifClause.conditions.conditions.every((c) => c is BooleanCondition)) {
+            // simple case, no variable declarations
+            return
+            [DartIfStatement {
+                generateBooleanDartCondition(that.ifClause.conditions);
+                transformBlock(that.ifClause.block).first;
+                if (exists c = that.elseClause?.child,
+                    nonempty s = c.transform(this))
+                then toSingleStatementOrBlock(s)
+                else null;
+            }];
+        }
+
+        // Idea is:
+        //  1. temp boolean to track need to execute "else" block
+        //  2. nested if's, one for each condition
+        //  3. execute then block in innermost if (after setting temp boolean to 'false'
+        //  4. after unwinding all if's, if there's an else, wrap it in an 'if (temp)'
+
+        // TODO don't use a doElseVariable if there is only one condition
+        value doElseVariable =  that.elseClause exists then
+                DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));
+
+        // Narrowed variable for else block, if any
+        DartStatement? elseReplacementVariable;
+        if (exists elseClause = that.elseClause,
+            exists variableDeclaration = ElseClauseInfo(elseClause)
+                        .variableDeclarationModel) {
+
+            // TODO consolidate w/same code in generateIsConditionExpression
+            assert(is ValueModel originalDeclaration =
+                    variableDeclaration.originalDeclaration);
+
+            // erasure to native may have changed
+            // erasure to object may have changed
+            // type may have narrowed
+            value dartTypeChanged =
+                dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
+                dartTypes.dartTypeModelForDeclaration(variableDeclaration);
+
+            elseReplacementVariable = dartTypeChanged then
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        that;
+                        variableDeclaration;
+                    };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.createReplacementName{
+                                variableDeclaration;
+                            };
+                        };
+                        withLhs {
+                            null;
+                            variableDeclaration;
+                            () => withBoxing {
+                                that;
+                                originalDeclaration.type; // good enough???
+                                // FIXME possibly false assumption that refined
+                                // will be null for non-initial declarations
+                                // (is refinedDeclaration propagated?)
+                                originalDeclaration;
+                                DartSimpleIdentifier {
+                                    dartTypes.getName(originalDeclaration);
+                                };
+                            };
+                        };
+                    }];
+                };
+            };
+        }
+        else {
+            elseReplacementVariable = null;
+        }
+
+        value statements = LinkedList<DartStatement?>();
+
+        // declare doElse variable, if any
+        if (exists doElseVariable) {
+            statements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartBool;
+                        [DartVariableDeclaration {
+                            doElseVariable;
+                            DartBooleanLiteral(true);
+                        }];
+                    };
+                };
+            };
+        }
+
+        alias ConditionCodeTuple =>
+                [DartVariableDeclarationStatement?,
+                 DartVariableDeclarationStatement?,
+                 DartExpression,
+                 DartStatement?];
+
+        "Tuple containing
+            - replacementDeclaration
+            - tempDefinition
+            - conditionExpression
+            - replacementDefinition]"
+        ConditionCodeTuple conditionCodeTuple(Condition condition) {
+            switch (condition)
+            case (is BooleanCondition) {
+                value conditionExpression=withLhsNative {
+                    ceylonTypes.booleanType;
+                    () => condition.transform(expressionTransformer);
+                };
+                return [null, null, conditionExpression, null];
+            }
+            case (is IsCondition) {
+                return generateIsConditionExpression(condition);
+            }
+            case (is ExistsCondition) {
+                throw CompilerBug(condition,
+                    "ExistsConditions not yet supported in if statements");
+            }
+            case (is NonemptyCondition) {
+                throw CompilerBug(condition,
+                    "NonemptyConditions not yet supported in if statements");
+            }
+        }
+
+        "Recursive function to generate nested if statements, one if per condition."
+        [DartStatement+] generateIf(
+                [Condition+] conditions,
+                Boolean outermost = false) {
+
+            value [replacementDeclaration, tempDefinition,
+                    conditionExpression, replacementDefinition]
+                    = conditionCodeTuple(conditions.first);
+
+            value result = [
+                tempDefinition,
+                DartIfStatement {
+                    conditionExpression;
+                    DartBlock {
+                        [
+                            // declare and define new variables, if any
+                            replacementDeclaration,
+                            replacementDefinition,
+
+                            *(if (nonempty rest = conditions.rest) then
+                                // nest if statement for next condition, if any
+                                generateIf(rest)
+                            else [
+                                // last condition; output if block statements
+                                if (exists doElseVariable) then
+                                    DartExpressionStatement {
+                                        DartAssignmentExpression {
+                                            doElseVariable;
+                                            DartAssignmentOperator.equal;
+                                            DartBooleanLiteral(false);
+                                        };
+                                    }
+                                else null,
+                                *transformBlock {
+                                    that.ifClause.block;
+                                }.first.statements
+                            ])
+                         ].coalesced.sequence();
+                    };
+                    // TODO if outermost, and there is only one condition, optimize away
+                    //      the doElseVariable and put "else" block here.
+                }
+            ].coalesced.sequence();
+            assert(nonempty result);
+
+            // wrap in a block to scope temp variable, if exists
+            return if (exists tempDefinition)
+                then [DartBlock(result)]
+                else result;
+        }
+
+        statements.addAll(generateIf(that.ifClause.conditions.conditions));
+
+        if (exists doElseVariable) {
+            assert (exists elseChild = that.elseClause?.child);
+            statements.add {
+                DartIfStatement {
+                    doElseVariable;
+                    DartBlock {
+                        [elseReplacementVariable,
+                         *( switch (elseChild)
+                            case (is Block)
+                                transformBlock(elseChild).first.statements
+                            case (is IfElse)
+                                elseChild.transform(this))
+                        ].coalesced.sequence();
+                    };
+                };
+            };
+        }
+
+        value result = statements.coalesced.sequence();
+
+        // wrap in a block to scope doElseVariable, if exists
+        return if (exists doElseVariable)
+            then [DartBlock(result)]
+            else result;
     }
 
     shared actual

@@ -43,7 +43,8 @@ import ceylon.ast.core {
     This,
     Super,
     Outer,
-    ExistsOrNonemptyCondition
+    ExistsOrNonemptyCondition,
+    TypedVariable
 }
 import ceylon.interop.java {
     CeylonList,
@@ -74,6 +75,10 @@ import com.redhat.ceylon.model.typechecker.model {
 
 import org.antlr.runtime {
     Token
+}
+import ceylon.ast.redhat {
+    lIdentifierToCeylon,
+    typeToCeylon
 }
 
 
@@ -415,6 +420,16 @@ class ComprehensionClauseInfo(ComprehensionClause astNode)
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
+}
+
+shared
+class ElseClauseInfo(ElseClause astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default ElseClause node => astNode;
+    value tcNode = assertedTcNode<Tree.ElseClause>(astNode);
+
+    shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
 }
 
 shared

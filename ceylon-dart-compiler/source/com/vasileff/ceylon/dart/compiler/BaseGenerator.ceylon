@@ -655,7 +655,8 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [DartStatement?, DartStatement?, DartExpression, DartStatement?]
+    [DartVariableDeclarationStatement?, DartVariableDeclarationStatement?,
+     DartExpression, DartStatement?]
     generateIsConditionExpression(IsCondition that, Boolean negate = false) {
 
         // IsCondition holds a TypedVariable that may
@@ -687,8 +688,8 @@ class BaseGenerator(CompilationContext ctx)
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
-        DartStatement? replacementDeclaration;
-        DartStatement? tempDefinition;
+        DartVariableDeclarationStatement? replacementDeclaration;
+        DartVariableDeclarationStatement? tempDefinition;
         DartExpression conditionExpression;
         DartStatement? replacementDefinition;
 
