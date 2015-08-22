@@ -65,6 +65,10 @@ class CeylonTypes(Unit unit) {
     Type identifiableType => unit.identifiableType;
 
     shared
+    Type sequenceAnythingType => ModelUtil.appliedType(
+            sequenceDeclaration, anythingType);
+
+    shared
     Type stringType => unit.stringType;
 
     shared

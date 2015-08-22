@@ -42,7 +42,8 @@ import ceylon.ast.core {
     Variable,
     This,
     Super,
-    Outer
+    Outer,
+    ExistsOrNonemptyCondition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -380,6 +381,14 @@ class IsConditionInfo(IsCondition astNode)
     value tcNode = assertedTcNode<Tree.IsCondition>(astNode);
 
     shared ValueModel variableDeclarationModel => tcNode.variable.declarationModel;
+}
+
+shared
+class ExistsOrNonemptyConditionInfo(ExistsOrNonemptyCondition astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default ExistsOrNonemptyCondition node => astNode;
+    //value tcNode = assertedTcNode<Tree.ExistsOrNonemptyCondition>(astNode);
 }
 
 shared

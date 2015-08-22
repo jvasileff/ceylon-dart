@@ -932,12 +932,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 that;
                 ceylonTypes.booleanType;
                 null;
-                DartBinaryExpression {
+                generateExistsExpression {
+                    that;
                     withLhsNoType {
                         () => that.operand.transform(this);
                     };
-                    "!=";
-                    DartNullLiteral();
                 };
             };
 
@@ -962,14 +961,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 that;
                 ceylonTypes.booleanType;
                 null;
-                generateIsExpression {
+                generateNonemptyExpression {
                     that;
                     withLhsNoType {
                         () => that.operand.transform(this);
                     };
-                    ceylonTypes.sequenceDeclaration.appliedType(
-                        null, javaList { ceylonTypes.anythingType }
-                    );
                 };
             };
 

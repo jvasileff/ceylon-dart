@@ -833,6 +833,29 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
+    DartExpression generateExistsExpression(
+            Node scope,
+            DartExpression expressionToCheck)
+        =>  DartPrefixExpression {
+                "!";
+                generateIsExpression {
+                    scope;
+                    expressionToCheck;
+                    ctx.ceylonTypes.nullType;
+                };
+            };
+
+    shared
+    DartExpression generateNonemptyExpression(
+            Node scope,
+            DartExpression expressionToCheck)
+        =>  generateIsExpression {
+                scope;
+                expressionToCheck;
+                ctx.ceylonTypes.sequenceAnythingType;
+            };
+
+    shared
     DartExpression generateIsExpression(
             Node scope,
             DartExpression expressionToCheck,
@@ -841,7 +864,7 @@ class BaseGenerator(CompilationContext ctx)
         // TODO warn if non-denotable (for which we are currently returning true!)
         //      - take the type we are narrowing, and warn if non-reified checks are not
         //        sufficient
-        //      - and reified generics...
+        //      - reified generics...
 
         if (isType.union) {
             value result = CeylonList(isType.caseTypes).reversed
