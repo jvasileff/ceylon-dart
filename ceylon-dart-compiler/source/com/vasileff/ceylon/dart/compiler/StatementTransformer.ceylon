@@ -36,9 +36,6 @@ import ceylon.language.meta {
     type
 }
 
-import com.redhat.ceylon.model.typechecker.model {
-    ValueModel=Value
-}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartReturnStatement,
@@ -129,63 +126,17 @@ class StatementTransformer(CompilationContext ctx)
         //  3. execute then block in innermost if (after setting temp boolean to 'false'
         //  4. after unwinding all if's, if there's an else, wrap it in an 'if (temp)'
 
-        // TODO don't use a doElseVariable if there is only one condition
-        value doElseVariable =  that.elseClause exists then
-                DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));
+        value doElseVariable
+            =   that.elseClause exists
+                then DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));
 
-        // Narrowed variable for else block, if any
-        DartStatement? elseReplacementVariable;
-        if (exists elseClause = that.elseClause,
-            exists variableDeclaration = ElseClauseInfo(elseClause)
-                        .variableDeclarationModel) {
-
-            // TODO consolidate w/same code in generateIsConditionExpression
-            assert(is ValueModel originalDeclaration =
-                    variableDeclaration.originalDeclaration);
-
-            // erasure to native may have changed
-            // erasure to object may have changed
-            // type may have narrowed
-            value dartTypeChanged =
-                dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
-                dartTypes.dartTypeModelForDeclaration(variableDeclaration);
-
-            elseReplacementVariable = dartTypeChanged then
-            DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    keyword = null;
-                    dartTypes.dartTypeNameForDeclaration {
-                        that;
-                        variableDeclaration;
-                    };
-                    [DartVariableDeclaration {
-                        DartSimpleIdentifier {
-                            dartTypes.createReplacementName{
-                                variableDeclaration;
-                            };
-                        };
-                        withLhs {
-                            null;
-                            variableDeclaration;
-                            () => withBoxing {
-                                that;
-                                originalDeclaration.type; // good enough???
-                                // FIXME possibly false assumption that refined
-                                // will be null for non-initial declarations
-                                // (is refinedDeclaration propagated?)
-                                originalDeclaration;
-                                DartSimpleIdentifier {
-                                    dartTypes.getName(originalDeclaration);
-                                };
-                            };
-                        };
-                    }];
-                };
-            };
-        }
-        else {
-            elseReplacementVariable = null;
-        }
+        "Narrowed variable for else block, if any."
+        value elseReplacementVariable
+            =   if (exists elseClause = that.elseClause,
+                    exists variableDeclaration =
+                        ElseClauseInfo(elseClause).variableDeclarationModel)
+                then generateReplacementVariableDefinition(that, variableDeclaration)
+                else null;
 
         value statements = LinkedList<DartStatement?>();
 
@@ -206,9 +157,7 @@ class StatementTransformer(CompilationContext ctx)
         }
 
         "Recursive function to generate nested if statements, one if per condition."
-        [DartStatement+] generateIf(
-                [Condition+] conditions,
-                Boolean outermost = false) {
+        [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
             value [replacementDeclaration, tempDefinition,
                     conditionExpression, replacementDefinition]
