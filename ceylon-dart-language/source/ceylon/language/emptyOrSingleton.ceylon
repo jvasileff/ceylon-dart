@@ -16,6 +16,6 @@
   
      { 1.23, 5.67, -1.0 }"
 see (`class Tuple`, `interface Empty`)
-native shared []|[Element&Object] emptyOrSingleton<Element>
+shared []|[Element&Object] emptyOrSingleton<Element>
         (Element element)
         => if (exists element) then [element] else [];

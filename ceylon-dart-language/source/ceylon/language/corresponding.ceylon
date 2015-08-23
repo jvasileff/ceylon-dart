@@ -22,7 +22,7 @@
  
  both evaluate to `true`."
 see (`function everyPair`)
-native shared Boolean corresponding<First,Second>(
+shared Boolean corresponding<First,Second>(
     {First*} firstIterable, {Second*} secondIterable,
     "The predicate function that compares an element of the
      [[first stream|firstIterable]] with the corresponding 

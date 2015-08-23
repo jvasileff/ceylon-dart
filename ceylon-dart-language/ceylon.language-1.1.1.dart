@@ -142,6 +142,46 @@ abstract class Comparable {
 }
 abstract class ConstrainedAnnotation implements Annotation {
 }
+$dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) {
+    if ($dart$core.identical(comparing, $package$dart$default)) {
+        comparing = new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) {
+            return Boolean.instance((([$dart$core.Object first, $dart$core.Object second]) => (() {
+                $dart$core.bool doElse$0 = true;
+                if (!(first == null)) {
+                    if (!(second == null)) {
+                        doElse$0 = false;
+                        return first.equals(second);
+                    }
+                }
+                if (doElse$0) {
+                    return (!(!(first == null))) && (!(!(second == null)));
+                }
+            })())(first, second));
+        });
+    }
+    Iterator firstIter = firstIterable.iterator();
+    Iterator secondIter = secondIterable.iterator();
+    while (true) {
+        $dart$core.Object first = firstIter.next();
+        $dart$core.Object second = secondIter.next();{
+            $dart$core.bool doElse$1 = true;
+            if (!(first is Finished)) {
+                if (!(second is Finished)) {
+                    doElse$1 = false;
+                    if (!Boolean.nativeValue((comparing as Callable).$delegate$(first, second) as Boolean)) {
+                        return false;
+                    }
+                }
+            }
+            if (doElse$1) {
+                return (first is Finished) && (second is Finished);
+            }
+        }
+    }
+}
+
+$dart$core.bool corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) => $package$corresponding(firstIterable, secondIterable, comparing);
+
 $dart$core.int $package$count([Iterable values]) {
     $dart$core.int count = 0;{
         $dart$core.Object element$1;
@@ -324,6 +364,19 @@ abstract class Empty implements Sequential, Ranged {
     void each([Callable step]);
     static void $each([final Empty $this, Callable step]) {}
 }
+$dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() {
+    $dart$core.bool doElse$0 = true;
+    if (!(element == null)) {
+        doElse$0 = false;
+        return new Tuple.$withList([element], null);
+    }
+    if (doElse$0) {
+        return $package$empty;
+    }
+})();
+
+$dart$core.Object emptyOrSingleton([$dart$core.Object element]) => $package$emptyOrSingleton(element);
+
 abstract class Enumerable implements Ordinal {
     $dart$core.Object neighbour([$dart$core.int offset]);
     $dart$core.Object get successor;
@@ -448,9 +501,77 @@ $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
+$dart$core.Object $package$max([Iterable values]) {
+    Iterator it = values.iterator();{
+        $dart$core.bool doElse$0 = true;{
+            $dart$core.Object first$1 = it.next();
+            if (!(first$1 is Finished)) {
+                $dart$core.Object first;
+                first = first$1;
+                doElse$0 = false;
+                $dart$core.Object max = first;
+                while (true) {
+                    $dart$core.Object val;
+                    $dart$core.Object val$2 = it.next();
+                    if (val$2 is Finished) {
+                        break;
+                    }
+                    val = val$2;
+                    if ((val as Comparable).largerThan(max)) {
+                        max = val;
+                    }
+                }
+                return max;
+            }
+        }
+        if (doElse$0) {
+            if (!true) {
+                throw new AssertionError("Violated: is Absent null");
+            }
+            return null;
+        }
+    }
+}
+
+$dart$core.Object max([Iterable values]) => $package$max(values);
+
 $dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size]) => (($dart$core.Object $lhs$) => $lhs$ == null ? new Measure(first, size) : $lhs$)(size <= 0 ? $package$empty : null);
 
 $dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
+
+$dart$core.Object $package$min([Iterable values]) {
+    Iterator it = values.iterator();{
+        $dart$core.bool doElse$0 = true;{
+            $dart$core.Object first$1 = it.next();
+            if (!(first$1 is Finished)) {
+                $dart$core.Object first;
+                first = first$1;
+                doElse$0 = false;
+                $dart$core.Object min = first;
+                while (true) {
+                    $dart$core.Object val;
+                    $dart$core.Object val$2 = it.next();
+                    if (val$2 is Finished) {
+                        break;
+                    }
+                    val = val$2;
+                    if ((val as Comparable).smallerThan(min)) {
+                        min = val;
+                    }
+                }
+                return min;
+            }
+        }
+        if (doElse$0) {
+            if (!true) {
+                throw new AssertionError("Violated: is Absent null");
+            }
+            return null;
+        }
+    }
+}
+
+$dart$core.Object min([Iterable values]) => $package$min(values);
 
 Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) {
     return Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val));

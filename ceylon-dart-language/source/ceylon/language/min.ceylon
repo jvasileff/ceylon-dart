@@ -8,7 +8,7 @@
 see (`interface Comparable`, 
      `function max`,
      `function smallest`)
-native shared Absent|Value min<Value,Absent>
+shared Absent|Value min<Value,Absent>
         (Iterable<Value,Absent> values) 
         given Value satisfies Comparable<Value>
         given Absent satisfies Null {
