@@ -663,8 +663,8 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [DartVariableDeclarationStatement?, DartVariableDeclarationStatement?,
-     DartExpression, DartStatement?]
+    [[]|[DartVariableDeclarationStatement], DartVariableDeclarationStatement?,
+     DartExpression, []|[DartStatement]]
     generateIsConditionExpression(IsCondition that, Boolean negate = false) {
 
         // IsCondition holds a TypedVariable that may
@@ -696,10 +696,10 @@ class BaseGenerator(CompilationContext ctx)
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
-        DartVariableDeclarationStatement? replacementDeclaration;
+        []|[DartVariableDeclarationStatement] replacementDeclaration;
         DartVariableDeclarationStatement? tempDefinition;
         DartExpression conditionExpression;
-        DartStatement? replacementDefinition;
+        []|[DartStatement] replacementDefinition;
 
         // new variable, or narrowing existing?
         if (exists expression) {
@@ -719,7 +719,7 @@ class BaseGenerator(CompilationContext ctx)
 
             // 1. declare the new variable
             replacementDeclaration =
-            DartVariableDeclarationStatement {
+            [DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     keyword = null;
                     dartTypes.dartTypeNameForDeclaration {
@@ -730,7 +730,7 @@ class BaseGenerator(CompilationContext ctx)
                         variableIdentifier;
                     }];
                 };
-            };
+            }];
 
             // 2. evaluate to tmp variable
             tempDefinition =
@@ -755,7 +755,7 @@ class BaseGenerator(CompilationContext ctx)
 
             // 4. set replacement variable
             replacementDefinition =
-            DartExpressionStatement {
+            [DartExpressionStatement {
                 DartAssignmentExpression {
                     variableIdentifier;
                     DartAssignmentOperator.equal;
@@ -772,11 +772,11 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
                 };
-            };
+            }];
         }
         else {
             tempDefinition = null;
-            replacementDeclaration = null;
+            replacementDeclaration = [];
 
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
@@ -790,7 +790,10 @@ class BaseGenerator(CompilationContext ctx)
                 =   generateIsExpression(that, originalIdentifier, isType);
 
             replacementDefinition
-                =   generateReplacementVariableDefinition(that, variableDeclaration);
+                =   if (exists r = generateReplacementVariableDefinition(
+                            that, variableDeclaration))
+                    then [r]
+                    else [];
         }
 
         return [replacementDeclaration,
@@ -860,7 +863,7 @@ class BaseGenerator(CompilationContext ctx)
                 ceylonTypes.booleanType;
                 () => condition.transform(expressionTransformer);
             };
-            return [null, null, conditionExpression, null];
+            return [[], null, conditionExpression, []];
         }
         case (is IsCondition) {
             return generateIsConditionExpression(condition);
@@ -959,10 +962,10 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
 
-                return [replacementDeclaration,
+                return [[replacementDeclaration],
                         tempVariableDeclaration,
                         conditionExpression,
-                        replacementDefinition];
+                        [replacementDefinition]];
             }
             else {
                 throw CompilerBug(that, "destructure not yet supported");
@@ -975,7 +978,7 @@ class BaseGenerator(CompilationContext ctx)
 
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
-            assert(is FunctionOrValueModel originalDeclaration
+            assert (is FunctionOrValueModel originalDeclaration
                 =   variableDeclaration.originalDeclaration);
 
             value originalIdentifier
@@ -1000,9 +1003,12 @@ class BaseGenerator(CompilationContext ctx)
             // with Object never changes the type since numbers, etc. can be null.
             // But... the type *does* change on `!exists`, since null erases to object!
             value replacementDefinition
-                =   generateReplacementVariableDefinition(that, variableDeclaration);
+                =   if (exists r = generateReplacementVariableDefinition(
+                            that, variableDeclaration))
+                    then [r]
+                    else [];
 
-            return [null,
+            return [[],
                     null,
                     conditionExpression,
                     replacementDefinition];
@@ -1843,14 +1849,14 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     "Tuple containing
-        - replacementDeclaration
+        - replacementDeclaration(s)
         - tempDefinition
         - conditionExpression
-        - replacementDefinition]"
+        - replacementDefinition(s)]"
     shared
     alias ConditionCodeTuple =>
-            [DartVariableDeclarationStatement?,
+            [[DartVariableDeclarationStatement*],
              DartVariableDeclarationStatement?,
              DartExpression,
-             DartStatement?];
+             [DartStatement*]];
 }

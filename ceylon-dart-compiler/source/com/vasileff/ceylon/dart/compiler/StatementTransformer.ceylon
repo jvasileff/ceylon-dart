@@ -168,30 +168,31 @@ class StatementTransformer(CompilationContext ctx)
                 DartIfStatement {
                     conditionExpression;
                     DartBlock {
-                        [
+                        expand {
                             // declare and define new variables, if any
                             replacementDeclaration,
                             replacementDefinition,
 
-                            *(if (nonempty rest = conditions.rest) then
-                                // nest if statement for next condition, if any
+                            // nest if statement for next condition, if any
+                            if (nonempty rest = conditions.rest) then
                                 generateIf(rest)
                             else [
                                 // last condition; output if block statements
-                                if (exists doElseVariable) then
-                                    DartExpressionStatement {
+                                if (exists doElseVariable)
+                                    then DartExpressionStatement {
                                         DartAssignmentExpression {
                                             doElseVariable;
                                             DartAssignmentOperator.equal;
                                             DartBooleanLiteral(false);
                                         };
                                     }
-                                else null,
-                                *transformBlock {
-                                    that.ifClause.block;
-                                }.first.statements
-                            ])
-                         ].coalesced.sequence();
+                                else
+                                    null
+                            ],
+                            transformBlock {
+                                that.ifClause.block;
+                            }.first.statements
+                        }.coalesced.sequence();
                     };
                     // TODO if outermost, and there is only one condition, optimize away
                     //      the doElseVariable and put "else" block here.
@@ -257,13 +258,14 @@ class StatementTransformer(CompilationContext ctx)
                 value [replacementDeclaration, tempDefinition,
                             conditionExpression, replacementDefinition]
                         = generateIsConditionExpression(condition, true);
-                return
-                {replacementDeclaration, tempDefinition,
-                DartIfStatement {
-                    conditionExpression;
-                    DartBreakStatement();
-                },
-                replacementDefinition
+                return expand {
+                    replacementDeclaration,
+                    [tempDefinition],
+                    [DartIfStatement {
+                        conditionExpression;
+                        DartBreakStatement();
+                    }],
+                    replacementDefinition
                 }.coalesced;
             }
             case (is ExistsOrNonemptyCondition) {
@@ -659,7 +661,7 @@ class StatementTransformer(CompilationContext ctx)
             = generateIsConditionExpression(that, true);
 
         variable [DartStatement?*] statements = [
-            replacementDeclaration,
+            replacementDeclaration.first,
             tempDefinition,
             // if (!(x is T)) then throw new AssertionError(...)
             DartIfStatement {
@@ -684,13 +686,13 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 };
             },
-            replacementDefinition
+            replacementDefinition.first
         ];
 
         if (tempDefinition exists) {
             // scope the temp variable in a block
             statements = [
-                replacementDeclaration,
+                replacementDeclaration.first,
                 DartBlock(statements[1:3].coalesced.sequence())];
         }
 
