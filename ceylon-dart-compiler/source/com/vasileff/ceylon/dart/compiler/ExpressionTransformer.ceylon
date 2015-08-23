@@ -1523,11 +1523,11 @@ class ExpressionTransformer(CompilationContext ctx)
                                         DartAssignmentOperator.equal;
                                         DartBooleanLiteral(false);
                                     };
+                                },
+                                DartReturnStatement {
+                                    that.thenExpression.transform(this);
                                 }
-                            ],
-                            [DartReturnStatement {
-                                that.thenExpression.transform(this);
-                            }]
+                            ]
                         }.coalesced.sequence();
                     };
                     // TODO if outermost, and there is only one condition, optimize away

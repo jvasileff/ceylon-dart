@@ -187,11 +187,11 @@ class StatementTransformer(CompilationContext ctx)
                                         };
                                     }
                                 else
-                                    null
-                            ],
-                            transformBlock {
-                                that.ifClause.block;
-                            }.first.statements
+                                    null,
+                                *transformBlock {
+                                    that.ifClause.block;
+                                }.first.statements
+                            ]
                         }.coalesced.sequence();
                     };
                     // TODO if outermost, and there is only one condition, optimize away
