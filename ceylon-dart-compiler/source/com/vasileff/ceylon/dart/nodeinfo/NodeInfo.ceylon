@@ -205,6 +205,13 @@ class AnyValueInfo(AnyValue astNode)
         extends TypedDeclarationInfo(astNode) {
 
     shared actual default AnyValue node => astNode;
+    value tcNode = assertedTcNode<Tree.TypedDeclaration>(astNode);
+
+    shared actual default
+    ValueModel declarationModel {
+        assert (is ValueModel result = tcNode.declarationModel);
+        return result;
+    }
 }
 
 shared

@@ -46,7 +46,7 @@ class InterfaceTests() {
                     void f1();
                     $dart$core.String f2();
                     $dart$core.String f3([$dart$core.String a, $dart$core.String b]);
-                    $dart$core.String v1;
+                    $dart$core.String get v1;
                 }
              """;
         };
@@ -332,7 +332,7 @@ class InterfaceTests() {
 
                 abstract class Outer$Inner$Innest {
                     Outer$Inner $outer$default$Outer$Inner$Innest;
-                    $dart$core.String innestValue;
+                    $dart$core.String get innestValue;
                     $dart$core.String innestFn();
                     static $dart$core.String $innestFn([final Outer$Inner$Innest $this]) {
                         return "innestFn";
@@ -350,7 +350,7 @@ class InterfaceTests() {
                 }
                 abstract class Outer$Inner {
                     Outer $outer$default$Outer$Inner;
-                    $dart$core.String innerValue;
+                    $dart$core.String get innerValue;
                     $dart$core.String innerFn();
                     static $dart$core.String $innerFn([final Outer$Inner $this]) {
                         return "innerFn";
@@ -364,7 +364,7 @@ class InterfaceTests() {
                     }
                 }
                 abstract class Outer {
-                    $dart$core.String outerValue;
+                    $dart$core.String get outerValue;
                     $dart$core.String outerFn();
                     static $dart$core.String $outerFn([final Outer $this]) {
                         return "outerFn";
@@ -469,8 +469,8 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I {
-                    $dart$core.String v1;
-                    $dart$core.String v2;
+                    $dart$core.String get v1;
+                    $dart$core.String get v2;
                 }
                 abstract class J implements I {
                     $dart$core.String get v1;

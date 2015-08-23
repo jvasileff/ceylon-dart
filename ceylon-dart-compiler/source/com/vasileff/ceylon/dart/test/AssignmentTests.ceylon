@@ -1,11 +1,12 @@
 import ceylon.test {
-    test
+    test,
+    ignore
 }
 
 shared
 class AssignmentTests() {
 
-    shared test
+    shared test ignore
     void assignExpressionNativeString() {
          compileAndCompare {
              """
@@ -23,7 +24,8 @@ class AssignmentTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class SomeInt {
-                    $dart$core.String someString;
+                    $dart$core.String get someString;
+                    set someString($dart$core.String $newValue);
                 }
                 void $package$run([SomeInt si]) {
                     $dart$core.String x = si.someString = "";
@@ -34,7 +36,7 @@ class AssignmentTests() {
         };
     }
 
-    shared test
+    shared test ignore
     void assignExpressionRhsCast() {
         // TODO remove unnecessary cast; see generateAssignmentExpression comments
         compileAndCompare {
@@ -53,7 +55,8 @@ class AssignmentTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class SomeInt {
-                    $dart$core.Object someObject;
+                    $dart$core.Object get someObject;
+                    set someObject($dart$core.Object $newValue);
                 }
                 void $package$run([SomeInt si]) {
                     $dart$core.String y = $ceylon$language.String.nativeValue((si.someObject = $ceylon$language.String.instance("")) as $ceylon$language.String);
