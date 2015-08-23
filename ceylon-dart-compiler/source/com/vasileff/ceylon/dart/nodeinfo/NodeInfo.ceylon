@@ -44,7 +44,8 @@ import ceylon.ast.core {
     Super,
     Outer,
     ExistsOrNonemptyCondition,
-    TypedVariable
+    ExistsCondition,
+    NonemptyCondition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -75,10 +76,6 @@ import com.redhat.ceylon.model.typechecker.model {
 
 import org.antlr.runtime {
     Token
-}
-import ceylon.ast.redhat {
-    lIdentifierToCeylon,
-    typeToCeylon
 }
 
 
@@ -305,6 +302,7 @@ class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
 
     shared actual default UnspecifiedVariable node => astNode;
     value tcNode = assertedTcNode<Tree.Variable>(astNode);
+
     shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
@@ -393,7 +391,48 @@ class ExistsOrNonemptyConditionInfo(ExistsOrNonemptyCondition astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ExistsOrNonemptyCondition node => astNode;
-    //value tcNode = assertedTcNode<Tree.ExistsOrNonemptyCondition>(astNode);
+    value tcNode = assertedTcNode<Tree.ExistsOrNonemptyCondition>(astNode);
+
+    /*
+        tcNode.variable is one of:
+
+        1. a `Tree.Variable` with type `Tree.SyntheticVariable`, or
+        2. a `Tree.Variable` with type `Tree.StaticType|Tree.ValueModifier`, or
+        3. a `Tree.Destructure`
+
+        For 1, we are testing an existing variable, and will have astNode.tested is
+            LIdentifier
+
+        For 2, we are testing and defining a new variable, and will have
+            astNode.tested is SpecifiedPattern w/ VariablePattern
+
+        For 3, we are destructuring, and will have
+            astNode.tested is SpecifiedPattern w/ TuplePattern | EntryPattern
+    */
+
+    "The type of the replacement variable for this [[ExistsOrNonemptyCondition]],
+     or [[Null]] if this condition defines a new variable or involves a destructure."
+    shared ValueModel? variableDeclarationModel
+        // We could leave off the Tree.SyntheticVariable test if we wanted to return
+        // declarations for case 2 as well.
+        =>  if (is Tree.Variable v = tcNode.variable,
+                v.type is Tree.SyntheticVariable)
+            then v.declarationModel
+            else null;
+}
+
+shared
+class ExistsConditionInfo(ExistsCondition astNode)
+        extends ExistsOrNonemptyConditionInfo(astNode) {
+
+    shared actual default ExistsCondition node => astNode;
+}
+
+shared
+class NonemptyConditionInfo(NonemptyCondition astNode)
+        extends ExistsOrNonemptyConditionInfo(astNode) {
+
+    shared actual default NonemptyCondition node => astNode;
 }
 
 shared

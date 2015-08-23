@@ -21,7 +21,13 @@ import ceylon.ast.core {
     ValueDeclaration,
     ValueDefinition,
     Specifier,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    SpecifiedPattern,
+    VariablePattern,
+    ExistsOrNonemptyCondition,
+    ExistsCondition,
+    NonemptyCondition,
+    Condition
 }
 import ceylon.collection {
     LinkedList
@@ -92,7 +98,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     TypeInfo,
     ValueDeclarationInfo,
     ValueDefinitionInfo,
-    ValueGetterDefinitionInfo
+    ValueGetterDefinitionInfo,
+    UnspecifiedVariableInfo,
+    ExistsOrNonemptyConditionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -827,34 +835,237 @@ class BaseGenerator(CompilationContext ctx)
 
         return [replacementDeclaration,
                 tempDefinition,
-                if (that.negated && (!negate) || (!that.negated) && negate)
+                if (that.negated != negate)
                     then DartPrefixExpression("!", conditionExpression)
                     else conditionExpression,
                 replacementDefinition];
     }
 
     shared
+    ConditionCodeTuple generateConditionExpression(Condition condition) {
+        switch (condition)
+        case (is BooleanCondition) {
+            value conditionExpression=withLhsNative {
+                ceylonTypes.booleanType;
+                () => condition.transform(expressionTransformer);
+            };
+            return [null, null, conditionExpression, null];
+        }
+        case (is IsCondition) {
+            return generateIsConditionExpression(condition);
+        }
+        case (is ExistsOrNonemptyCondition) {
+            return generateExistsOrNonemptyConditionExpression(condition);
+        }
+    }
+
+    shared
+    ConditionCodeTuple generateExistsOrNonemptyConditionExpression(
+            ExistsOrNonemptyCondition that, Boolean negate = false) {
+
+        // ExistsCondition holds
+        //  - a MemberName to test existing values, or
+        //  - a SpecifiedPattern for new declarations and destructures
+
+        if (is SpecifiedPattern sp = that.tested) {
+            // New variable or destructure. We'll treat new variables as
+            // degenerate destructures, as ceylon.ast does.
+            value tempIdentifier = DartSimpleIdentifier {
+                dartTypes.createTempNameCustom();
+            };
+
+            value expression = sp.specifier.expression;
+            value expressionType = ExpressionInfo(expression).typeModel;
+
+            value tempVariableDeclaration
+                =   DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            dartTypes.dartTypeName(that, expressionType, true);
+                            [DartVariableDeclaration {
+                                tempIdentifier;
+                                // possibly erase to a native type (although not really
+                                // for exists and nonempty tests
+                                withLhsNative {
+                                    expressionType;
+                                    () => expression.transform(expressionTransformer);
+                                };
+                            }];
+                        };
+                    };
+
+            value conditionExpression
+                =   switch (that)
+                    case (is ExistsCondition)
+                        generateExistsExpression {
+                            that;
+                            tempIdentifier;
+                            that.negated != negate;
+                        }
+                    case (is NonemptyCondition)
+                        generateNonemptyExpression {
+                            that;
+                            tempIdentifier;
+                            that.negated != negate;
+                        };
+
+            if (is VariablePattern p = sp.pattern) {
+                value variableDeclaration
+                    =   UnspecifiedVariableInfo(p.variable).declarationModel;
+
+                value variableIdentifier
+                    =   DartSimpleIdentifier(dartTypes.getName(variableDeclaration));
+
+                value replacementDeclaration
+                    =   DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                keyword = null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    that;
+                                    variableDeclaration;
+                                };
+                                [DartVariableDeclaration {
+                                    variableIdentifier;
+                                }];
+                            };
+                        };
+
+                value replacementDefinition
+                    =   DartExpressionStatement {
+                            DartAssignmentExpression {
+                                variableIdentifier;
+                                DartAssignmentOperator.equal;
+                                withLhs {
+                                    null;
+                                    variableDeclaration;
+                                    () => withBoxing {
+                                        that;
+                                        expressionType;
+                                        null;
+                                        tempIdentifier;
+                                    };
+                                };
+                            };
+                        };
+
+                return [replacementDeclaration,
+                        tempVariableDeclaration,
+                        conditionExpression,
+                        replacementDefinition];
+            }
+            else {
+                throw CompilerBug(that, "destructure not yet supported");
+            }
+        }
+        else {
+            value info = ExistsOrNonemptyConditionInfo(that);
+
+            assert (exists variableDeclaration = info.variableDeclarationModel);
+
+            // check type of the original variable,
+            // possibly declare new variable with a narrowed type
+            assert(is FunctionOrValueModel originalDeclaration
+                =   variableDeclaration.originalDeclaration);
+
+            value originalIdentifier
+                =   DartSimpleIdentifier(dartTypes.getName(originalDeclaration));
+
+            value conditionExpression
+                =   switch (that)
+                    case (is ExistsCondition)
+                        generateExistsExpression {
+                            that;
+                            originalIdentifier;
+                            that.negated != negate;
+                        }
+                    case (is NonemptyCondition)
+                        generateNonemptyExpression {
+                            that;
+                            originalIdentifier;
+                            that.negated != negate;
+                        };
+
+            // erasure to native may have changed
+            // erasure to object may have changed
+            // type may have narrowed
+            value dartTypeChanged
+                =   dartTypes.dartTypeModelForDeclaration(originalDeclaration) !=
+                    dartTypes.dartTypeModelForDeclaration(variableDeclaration);
+
+            // We could *almost* just delete this for "exists"? On dart, intersecting
+            // with Object never changes the type since numbers, etc. can be null.
+            // But... the type *does* change on `!exists`, since null erases to object!
+            value replacementDefinition
+                =   if (!dartTypeChanged)
+                    then null
+                    else
+                        DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                keyword = null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    that;
+                                    variableDeclaration;
+                                };
+                                [DartVariableDeclaration {
+                                    DartSimpleIdentifier {
+                                        dartTypes.createReplacementName{
+                                            variableDeclaration;
+                                        };
+                                    };
+                                    withLhs {
+                                        null;
+                                        variableDeclaration;
+                                        () => withBoxing {
+                                            that;
+                                            originalDeclaration.type; // good enough???
+                                            // FIXME possibly false assumption that
+                                            //       refined will be null for non-initial
+                                            //       declarations (is refinedDeclaration
+                                            //       propagated?)
+                                            originalDeclaration;
+                                            DartSimpleIdentifier {
+                                                dartTypes.getName(originalDeclaration);
+                                            };
+                                        };
+                                    };
+                                }];
+                            };
+                        };
+
+            return [null,
+                    null,
+                    conditionExpression,
+                    replacementDefinition];
+        }
+    }
+
+    shared
     DartExpression generateExistsExpression(
             Node scope,
-            DartExpression expressionToCheck)
-        =>  DartPrefixExpression {
-                "!";
-                generateIsExpression {
+            DartExpression expressionToCheck,
+            Boolean negated = false)
+        =>  let (expression = generateIsExpression {
                     scope;
                     expressionToCheck;
                     ctx.ceylonTypes.nullType;
-                };
-            };
+                })
+            if (!negated)
+            then DartPrefixExpression("!", expression)
+            else expression;
 
     shared
     DartExpression generateNonemptyExpression(
             Node scope,
-            DartExpression expressionToCheck)
-        =>  generateIsExpression {
-                scope;
-                expressionToCheck;
-                ctx.ceylonTypes.sequenceAnythingType;
-            };
+            DartExpression expressionToCheck,
+            Boolean negated = false)
+        =>  let (expression = generateIsExpression {
+                    scope;
+                    expressionToCheck;
+                    ctx.ceylonTypes.sequenceAnythingType;
+                })
+            if (negated)
+            then DartPrefixExpression("!", expression)
+            else expression;
 
     shared
     DartExpression generateIsExpression(
@@ -1660,4 +1871,16 @@ class BaseGenerator(CompilationContext ctx)
             }];
         };
     }
+
+    "Tuple containing
+        - replacementDeclaration
+        - tempDefinition
+        - conditionExpression
+        - replacementDefinition]"
+    shared
+    alias ConditionCodeTuple =>
+            [DartVariableDeclarationStatement?,
+             DartVariableDeclarationStatement?,
+             DartExpression,
+             DartStatement?];
 }

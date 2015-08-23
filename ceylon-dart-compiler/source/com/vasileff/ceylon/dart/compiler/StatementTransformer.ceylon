@@ -27,9 +27,7 @@ import ceylon.ast.core {
     Continue,
     LazySpecifier,
     Specifier,
-    ValueGetterDefinition,
-    ExistsCondition,
-    NonemptyCondition
+    ValueGetterDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -64,9 +62,7 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList,
     DartPrefixExpression,
     DartStatement,
-    DartContinueStatement,
-    DartNullLiteral,
-    DartExpression
+    DartContinueStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
@@ -209,39 +205,6 @@ class StatementTransformer(CompilationContext ctx)
             };
         }
 
-        alias ConditionCodeTuple =>
-                [DartVariableDeclarationStatement?,
-                 DartVariableDeclarationStatement?,
-                 DartExpression,
-                 DartStatement?];
-
-        "Tuple containing
-            - replacementDeclaration
-            - tempDefinition
-            - conditionExpression
-            - replacementDefinition]"
-        ConditionCodeTuple conditionCodeTuple(Condition condition) {
-            switch (condition)
-            case (is BooleanCondition) {
-                value conditionExpression=withLhsNative {
-                    ceylonTypes.booleanType;
-                    () => condition.transform(expressionTransformer);
-                };
-                return [null, null, conditionExpression, null];
-            }
-            case (is IsCondition) {
-                return generateIsConditionExpression(condition);
-            }
-            case (is ExistsCondition) {
-                throw CompilerBug(condition,
-                    "ExistsConditions not yet supported in if statements");
-            }
-            case (is NonemptyCondition) {
-                throw CompilerBug(condition,
-                    "NonemptyConditions not yet supported in if statements");
-            }
-        }
-
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf(
                 [Condition+] conditions,
@@ -249,7 +212,7 @@ class StatementTransformer(CompilationContext ctx)
 
             value [replacementDeclaration, tempDefinition,
                     conditionExpression, replacementDefinition]
-                    = conditionCodeTuple(conditions.first);
+                    = generateConditionExpression(conditions.first);
 
             value result = [
                 tempDefinition,
