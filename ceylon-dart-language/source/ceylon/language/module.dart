@@ -41,6 +41,10 @@ class LazyIterable implements Iterable {
     =>  Iterable.$map(this, collecting);
 
   @$dart$core.override
+  Iterable flatMap(Callable collecting)
+    =>  Iterable.$flatMap(this, collecting);
+
+  @$dart$core.override
   Iterable get rest
     =>  Iterable.$rest(this);
 
@@ -161,6 +165,10 @@ class Array implements List {
     =>  Iterable.$map(this, collecting);
 
   @$dart$core.override
+  Iterable flatMap(Callable collecting)
+    =>  Iterable.$flatMap(this, collecting);
+
+  @$dart$core.override
   Iterable get rest
     =>  Iterable.$rest(this);
 
@@ -173,7 +181,7 @@ class Array implements List {
     =>  Iterable.$each(this, step);
 
   @$dart$core.override
-  $dart$core.bool contains($dart$core.Object element)
+  $dart$core.bool contains([$dart$core.Object element])
     =>  Iterable.$contains(this, element);
 
   @$dart$core.override
@@ -238,6 +246,10 @@ class ArraySequence implements Sequence {
   @$dart$core.override
   Iterable map(Callable collecting)
     =>  array.map(collecting);
+
+  @$dart$core.override
+  Iterable flatMap(Callable collecting)
+    =>  array.flatMap(collecting);
 
   @$dart$core.override
   $dart$core.Object get first
@@ -632,6 +644,9 @@ class Float implements Number, Exponentiable {
 
   Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
 
+  @$dart$core.override
+  $dart$core.String toString() => _value.toString();
+
   // Comparable
   Comparison compare([Float other])
       =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
@@ -700,6 +715,8 @@ class Integer implements Integral, Exponentiable, Binary {
     }
     return false;
   }
+
+  $dart$core.double get float => _value.toDouble();
 
   // Binary
 
@@ -828,6 +845,14 @@ abstract class Iterable {
   Iterable map(Callable collecting);
   static $dart$core.Object $map(Iterable $this, Callable collecting) {
     // FIXME this is a terrible, non-lazy hack
+    var list = [];
+    $this.each(new dart$Callable((e) => list.add(e)));
+    return new Array._withList(list.map(collecting.$delegate$).toList());
+  }
+
+  Iterable flatMap(Callable collecting);
+  static $dart$core.Object $flatMap(Iterable $this, Callable collecting) {
+    // FIXME this is map, not flatMap!
     var list = [];
     $this.each(new dart$Callable((e) => list.add(e)));
     return new Array._withList(list.map(collecting.$delegate$).toList());
@@ -1069,6 +1094,10 @@ class String implements List {
     =>  Iterable.$map(this, collecting);
 
   @$dart$core.override
+  Iterable flatMap(Callable collecting)
+    =>  Iterable.$flatMap(this, collecting);
+
+  @$dart$core.override
   $dart$core.bool contains([$dart$core.Object element])
     =>  Collection.$contains(this, element);
 
@@ -1265,6 +1294,10 @@ class Tuple implements List, Sequence, Iterable {
   @$dart$core.override
   Iterable map(Callable collecting)
     =>  Iterable.$map(this, collecting);
+
+  @$dart$core.override
+  Iterable flatMap(Callable collecting)
+    =>  Iterable.$flatMap(this, collecting);
 
   @$dart$core.override
   Iterable get rest
