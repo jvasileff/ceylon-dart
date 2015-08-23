@@ -861,7 +861,7 @@ class BaseGenerator(CompilationContext ctx)
         case (is BooleanCondition) {
             value conditionExpression=withLhsNative {
                 ceylonTypes.booleanType;
-                () => condition.transform(expressionTransformer);
+                () => condition.condition.transform(expressionTransformer);
             };
             return [[], null, conditionExpression, []];
         }
