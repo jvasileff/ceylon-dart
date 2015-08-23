@@ -263,10 +263,8 @@ class BaseGenerator(CompilationContext ctx)
 
         value info = AnyFunctionInfo(that);
         value functionModel = info.declarationModel;
-
-        assert (is DartSimpleIdentifier functionIdentifier =
-                dartTypes.dartIdentifierForFunctionOrValue(
-                    that, functionModel, false)[0]);
+        value functionIdentifier = dartTypes.dartIdentifierForFunctionOrValueDeclaration(
+                    that, functionModel, false)[0];
 
         return
         DartFunctionDeclaration {
@@ -434,12 +432,9 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        value [memberIdentifier, isFunction] = dartTypes
-                    .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
-
-        "Qualified expressions aren't toplevels, and dartIdentifierForFunctionOrValue()
-         only qualifies toplevels."
-        assert (is DartSimpleIdentifier memberIdentifier);
+        value [memberIdentifier, isFunction] =
+                dartTypes.dartIdentifierForFunctionOrValueDeclaration(
+                        scope, memberDeclaration, false);
 
         value resultDeclaration =
                 if (is FunctionModel memberDeclaration,
@@ -1180,14 +1175,11 @@ class BaseGenerator(CompilationContext ctx)
             case (is ValueGetterDefinition)
                 ValueGetterDefinitionInfo(that).declarationModel;
 
-        value [identifier, isFunction] = dartTypes.dartIdentifierForFunctionOrValue {
-            that;
-            declarationModel;
-        };
-
-        // TODO split dartIdentifierForFunctionOrValue into two functions, one that
-        //      provides just "getName()" type functionality, the other also qualifies
-        assert (is DartSimpleIdentifier identifier);
+        value [identifier, isFunction]
+            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    that;
+                    declarationModel;
+                };
 
         return
         DartFunctionDeclaration {

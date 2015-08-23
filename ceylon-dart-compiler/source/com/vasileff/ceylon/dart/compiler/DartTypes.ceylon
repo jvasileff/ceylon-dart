@@ -686,12 +686,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "Returns a tuple containing:
 
-     - The Dart identifier for a Ceylon FunctionOrValue
+     - The *unqualified* DartSimpleIdentifier for a Ceylon FunctionOrValue
      - A boolean value that is true if the target is a dart function, or false if the
-       target is a dart value. Note: this will be true for Ceylon values that must be
-       mapped to Dart functions."
+       target is a dart value. This will be true for Ceylon values that must be mapped
+       to Dart functions."
     shared
-    [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
+    see(`function dartIdentifierForFunctionOrValue`)
+    [DartSimpleIdentifier, Boolean] dartIdentifierForFunctionOrValueDeclaration(
             Node|ScopeModel scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
@@ -711,28 +712,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         switch (container = declaration.container)
         case (is PackageModel) {
-            if (sameModule(scope, declaration)) {
-                // qualify toplevel in same module with '$package.'
-                return
-                [DartSimpleIdentifier {
-                    "$package$"
-                    + identifierPackagePrefix(declaration)
-                    + name;
-                }, isDartFunction];
-            }
-            else {
-                // qualify toplevel with Dart import prefix
-                return
-                [DartPrefixedIdentifier {
-                    DartSimpleIdentifier {
-                        moduleImportPrefix(declaration);
-                    };
-                    DartSimpleIdentifier {
-                        identifierPackagePrefix(declaration)
-                        + name;
-                    };
-                }, isDartFunction];
-            }
+            // qualify toplevel in same module with '$package.'
+            return
+            [DartSimpleIdentifier {
+                "$package$"
+                + identifierPackagePrefix(declaration)
+                + name;
+            }, isDartFunction];
         }
         case (is ClassOrInterfaceModel
                     | FunctionOrValueModel
@@ -763,6 +749,38 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                  container type '``className(container)``'");
         }
     }
+
+    "Returns a tuple containing:
+
+     - The Dart identifier for a Ceylon FunctionOrValue
+     - A boolean value that is true if the target is a dart function, or false if the
+       target is a dart value. This will be true for Ceylon values that must be mapped
+       to Dart functions."
+    shared
+    see(`function dartIdentifierForFunctionOrValueDeclaration`)
+    [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
+            Node|ScopeModel scope,
+            FunctionOrValueModel declaration,
+            Boolean setter = false)
+        =>  let ([identifier, isDartFunction]
+                    = dartIdentifierForFunctionOrValueDeclaration(
+                            scope, declaration, setter))
+            if (declaration.container is PackageModel
+                && !sameModule(scope, declaration)) then
+                [
+                    DartPrefixedIdentifier {
+                        DartSimpleIdentifier {
+                            moduleImportPrefix(declaration);
+                        };
+                        DartSimpleIdentifier {
+                            // trim leading "$package."
+                            identifier.identifier[9...];
+                        };
+                    },
+                    isDartFunction
+                ]
+            else
+                [identifier, isDartFunction];
 
     shared
     BoxingConversion? boxingConversionFor(
