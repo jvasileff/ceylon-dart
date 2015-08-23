@@ -106,6 +106,29 @@ abstract class Category {
         return false;
     }
 }
+abstract class Collection implements Iterable {
+    Collection clone();
+    $dart$core.bool get empty;
+    static $dart$core.bool $get$empty([final Collection $this]) => Integer.instance($this.size).equals(Integer.instance(0));
+    $dart$core.bool contains([$dart$core.Object element]);
+    static $dart$core.bool $contains([final Collection $this, $dart$core.Object element]) {{
+            $dart$core.Object element$1;
+            Iterator iterator$0 = $this.iterator();
+            while ((element$1 = iterator$0.next()) is !Finished) {
+                $dart$core.Object elem = element$1;
+                if (!(elem == null)) {
+                    if (elem.equals(element)) {
+                        return true;
+                    }
+                }
+            }{
+                return false;
+            }
+        }
+    }
+    $dart$core.String get string;
+    static $dart$core.String $get$string([final Collection $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("{ " + $package$commaList($this)) + " }" : $lhs$)($this.empty ? "{}" : null);
+}
 abstract class Comparable {
     Comparison compare([$dart$core.Object other]);
     $dart$core.bool largerThan([$dart$core.Object other]);
@@ -380,6 +403,22 @@ $dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$co
 
 $dart$core.bool identical([Identifiable x, Identifiable y]) => $package$identical(x, y);
 
+abstract class Identifiable {
+    $dart$core.bool equals([$dart$core.Object that]);
+    static $dart$core.bool $equals([final Identifiable $this, $dart$core.Object that]) => (() {
+        $dart$core.bool doElse$0 = true;
+        if (that is Identifiable) {
+            Identifiable that$1 = that as Identifiable;
+            doElse$0 = false;
+            return $dart$core.identical($this, that$1);
+        }
+        if (doElse$0) {
+            return false;
+        }
+    })();
+    $dart$core.int get hash;
+    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this);
+}
 $dart$core.double $package$infinity = 1.0 / 0.0;
 
 $dart$core.double get infinity => $package$infinity;
@@ -649,6 +688,21 @@ abstract class Ranged implements Iterable {
     $dart$core.Object spanFrom([$dart$core.Object from]);
     $dart$core.Object spanTo([$dart$core.Object to]);
     $dart$core.Object measure([$dart$core.Object from, $dart$core.int length]);
+}
+abstract class Resource {
+    $dart$core.String get name;
+    static $dart$core.String $get$name([final Resource $this]) {
+        $dart$core.int pos = String.instance($this.uri).lastOccurrence(new Character.$fromInt(47));
+        if (!(pos == null)) {
+            return String.nativeValue(String.instance($this.uri).spanFrom(Integer.instance(pos + 1)));
+        }
+        return $this.uri;
+    }
+    $dart$core.int size;
+    $dart$core.String uri;
+    $dart$core.String textContent([$dart$core.Object encoding = $package$dart$default]);
+    $dart$core.String get string;
+    static $dart$core.String $get$string([final Resource $this]) => ((("" + $package$className($this)) + "[") + $this.uri) + "]";
 }
 abstract class Scalable {
     $dart$core.Object scale([$dart$core.Object scalar]);

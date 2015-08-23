@@ -248,7 +248,7 @@ class ArraySequence implements Sequence {
     =>  Iterable.$rest(this);
 
   @$dart$core.override
-  $dart$core.bool contains($dart$core.Object element)
+  $dart$core.bool contains([$dart$core.Object element])
     =>  Iterable.$contains(this, element);
 
   @$dart$core.override
@@ -333,12 +333,6 @@ class Character {
   // TODO remove this hack (compiler needs to translate)
   $dart$core.String get string => toString();
 }
-
-//
-// Collection.dart
-//
-
-abstract class Collection implements Iterable {}
 
 //
 // Comparison.dart
@@ -1075,8 +1069,8 @@ class String implements List {
     =>  Iterable.$map(this, collecting);
 
   @$dart$core.override
-  $dart$core.bool contains($dart$core.Object element)
-    =>  Iterable.$contains(this, element);
+  $dart$core.bool contains([$dart$core.Object element])
+    =>  Collection.$contains(this, element);
 
   @$dart$core.override
   Sequential sequence()
@@ -1285,8 +1279,8 @@ class Tuple implements List, Sequence, Iterable {
     =>  Iterable.$each(this, step);
 
   @$dart$core.override
-  $dart$core.bool contains($dart$core.Object element)
-    =>  Iterable.$contains(this, element);
+  $dart$core.bool contains([$dart$core.Object element])
+    =>  Collection.$contains(this, element);
 
   @$dart$core.override
   Sequence sequence()
@@ -1302,19 +1296,6 @@ $dart$core.String className($dart$core.Object obj) {
   // removing dependency on `dart:mirrors` would be nice
   $dart$mirrors.ClassMirror mirror = $dart$mirrors.reflectClass(obj.runtimeType);
   return $dart$mirrors.MirrorSystem.getName(mirror.qualifiedName);
-}
-
-//
-// newStuff.dart
-//
-
-abstract class Identifiable {
-  $dart$core.bool equals($dart$core.Object that);
-  static $dart$core.bool $equals
-        (Identifiable $this, $dart$core.Object that) {
-    return (that is Identifiable) &&
-        $dart$core.identical($this,  that);
-  }
 }
 
 // process
