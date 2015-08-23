@@ -45,7 +45,8 @@ import ceylon.ast.core {
     Outer,
     ExistsOrNonemptyCondition,
     ExistsCondition,
-    NonemptyCondition
+    NonemptyCondition,
+    IfElseExpression
 }
 import ceylon.interop.java {
     CeylonList,
@@ -469,6 +470,17 @@ class ElseClauseInfo(ElseClause astNode)
     value tcNode = assertedTcNode<Tree.ElseClause>(astNode);
 
     shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
+}
+
+shared
+class IfElseExpressionInfo(IfElseExpression astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default IfElseExpression node => astNode;
+    value tcNode = assertedTcNode<Tree.IfExpression>(astNode);
+
+    shared ValueModel? elseVariableDeclarationModel
+        =>  tcNode.elseClause.variable?.declarationModel;
 }
 
 shared
