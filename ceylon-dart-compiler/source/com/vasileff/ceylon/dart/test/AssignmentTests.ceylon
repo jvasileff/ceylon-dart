@@ -1,12 +1,11 @@
 import ceylon.test {
-    test,
-    ignore
+    test
 }
 
 shared
 class AssignmentTests() {
 
-    shared test ignore
+    shared test
     void assignExpressionNativeString() {
          compileAndCompare {
              """
@@ -36,7 +35,7 @@ class AssignmentTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void assignExpressionRhsCast() {
         // TODO remove unnecessary cast; see generateAssignmentExpression comments
         compileAndCompare {

@@ -25,13 +25,15 @@ import com.vasileff.ceylon.dart.ast {
     DartClassMember,
     DartFormalParameterList,
     DartSimpleFormalParameter,
-    dartFormalParameterListEmpty
+    dartFormalParameterListEmpty,
+    DartTypeName
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
     ValueDefinitionInfo,
     ValueGetterDefinitionInfo,
-    AnyValueInfo
+    AnyValueInfo,
+    ValueDeclarationInfo
 }
 
 shared
@@ -45,7 +47,14 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (!isForDartBackend(that)) {
             return [];
         }
-        return [generateMethodOrGetterDeclaration(that)];
+
+        if (ValueDeclarationInfo(that).declarationModel.variable) {
+            return [generateMethodOrGetterDeclaration(that),
+                    generateSetterDeclaration(that)];
+        }
+        else {
+            return [generateMethodOrGetterDeclaration(that)];
+        }
     }
 
     shared actual
@@ -70,6 +79,8 @@ class ClassMemberTransformer(CompilationContext ctx)
         "Interfaces don't have fields"
         assert(is LazySpecifier specifier);
 
+        // NOTE "getters" cannot be variable, so not worrying about setter
+        //      declarations which are handled by ValueSetterDefinition
         return [generateMethodOrGetterDeclaration(that),
                 generateStaticGetterMethod(that)];
     }
@@ -158,6 +169,53 @@ class ClassMemberTransformer(CompilationContext ctx)
                     dartFormalParameterListEmpty
                 else
                     null;
+            body = null;
+        };
+    }
+
+    DartMethodDeclaration generateSetterDeclaration
+            (ValueDeclaration|ValueDefinition that) {
+
+        value declarationModel = AnyValueInfo(that).declarationModel;
+
+        "The container of a class or interface member is surely a ClassOrInterface"
+        assert (is ClassOrInterfaceModel container
+            =   (declarationModel of TypedDeclarationModel).container);
+
+        value [identifier, isFunction]
+            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    that;
+                    declarationModel;
+                    true;
+                };
+
+        return
+        DartMethodDeclaration {
+            false;
+            null;
+            isFunction then
+                DartTypeName {
+                    DartSimpleIdentifier {
+                        "void";
+                    };
+                };
+            !isFunction then "set";
+            identifier;
+            DartFormalParameterList {
+                false; false;
+                [
+                    DartSimpleFormalParameter {
+                        false; false;
+                        dartTypes.dartReturnTypeNameForDeclaration {
+                            that;
+                            declarationModel;
+                        };
+                        DartSimpleIdentifier {
+                            "$newValue";
+                        };
+                    }
+                ];
+            };
             body = null;
         };
     }
