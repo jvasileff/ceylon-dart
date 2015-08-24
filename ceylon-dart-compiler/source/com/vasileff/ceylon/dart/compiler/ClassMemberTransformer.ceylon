@@ -31,9 +31,9 @@ import com.vasileff.ceylon.dart.ast {
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
     ValueDefinitionInfo,
-    ValueGetterDefinitionInfo,
     AnyValueInfo,
-    ValueDeclarationInfo
+    ValueDeclarationInfo,
+    typedDeclarationInfo
 }
 
 shared
@@ -82,8 +82,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         // NOTE "getters" cannot be variable, so not worrying about setter
         //      declarations which are handled by ValueSetterDefinition
         return [generateMethodOrGetterDeclaration(that),
-                generateStaticGetterMethod(that)];
+                generateStaticInterfaceMethod(that)];
     }
+
+    // TODO ValueSetterDefinition
 
     shared actual
     [DartClassMember*] transformValueGetterDefinition(ValueGetterDefinition that) {
@@ -92,7 +94,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
         return [generateMethodOrGetterDeclaration(that),
-                generateStaticGetterMethod(that)];
+                generateStaticInterfaceMethod(that)];
     }
 
     shared actual
@@ -113,7 +115,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
 
         return [generateMethodOrGetterDeclaration(that),
-                generateInterfaceFunctionDefinition(that)];
+                generateStaticInterfaceMethod(that)];
     }
 
     shared actual
@@ -124,7 +126,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
 
         return [generateMethodOrGetterDeclaration(that),
-                generateInterfaceFunctionDefinition(that)];
+                generateStaticInterfaceMethod(that)];
     }
 
     "Generates a method or getter declaration (not to be confused with *definition*).
@@ -220,78 +222,19 @@ class ClassMemberTransformer(CompilationContext ctx)
         };
     }
 
-    DartMethodDeclaration generateStaticGetterMethod
-            (ValueDefinition | ValueGetterDefinition that) {
+    DartMethodDeclaration generateStaticInterfaceMethod(
+            FunctionDefinition
+            | FunctionShortcutDefinition
+            | ValueDefinition
+            | ValueGetterDefinition that) {
 
-        value declarationModel =
-            switch (that)
-            case (is ValueDefinition)
-                ValueDefinitionInfo(that).declarationModel
-            case (is ValueGetterDefinition)
-                ValueGetterDefinitionInfo(that).declarationModel;
+        value info
+            =   typedDeclarationInfo(that);
 
-        "The container of a class or interface member is surely a ClassOrInterface"
-        assert (is ClassOrInterfaceModel container = declarationModel.container);
-
-        if (!container is InterfaceModel) {
-            // TODO support classes; assuming interface code below
-            throw CompilerBug(that, "classes not yet supported");
-        }
-
-        // Member functions of interfaces need a $this parameter.
-        DartSimpleFormalParameter? thisParameter;
-        if (is InterfaceModel container) {
-            thisParameter = DartSimpleFormalParameter {
-                true; false;
-                dartTypes.dartTypeName {
-                    that;
-                    container.type;
-                    false; false;
-                };
-                DartSimpleIdentifier("$this");
-            };
-        }
-        else {
-            thisParameter = null;
-        }
-
-        // Generate a DartFunctionExpression, then scrap it for parts
-        value functionExpression =
-                generateForValueDefinitionGetter(that).functionExpression;
-
-        DartFormalParameterList standardParameters = dartFormalParameterListEmpty;
-
-        // a static method definition for the actual implementation
-        return
-        DartMethodDeclaration {
-            false;
-            "static";
-            dartTypes.dartReturnTypeNameForDeclaration {
-                that;
-                declarationModel;
-            };
-            null;
-            DartSimpleIdentifier {
-                dartTypes.getStaticInterfaceMethodName {
-                    declarationModel;
-                };
-            };
-            DartFormalParameterList {
-                true; false;
-                [
-                    thisParameter,
-                    *standardParameters.parameters
-                ].coalesced.sequence();
-            };
-            functionExpression.body;
-        };
-    }
-
-    // TODO consolidate w/getters
-    DartMethodDeclaration generateInterfaceFunctionDefinition
-            (FunctionDefinition | FunctionShortcutDefinition that) {
-
-        value info = AnyFunctionInfo(that);
+        value declarationModel
+            =   switch(info)
+                case (is AnyFunctionInfo) info.declarationModel
+                case (is AnyValueInfo) info.declarationModel;
 
         "The container of a class or interface member is surely a ClassOrInterface"
         assert (is ClassOrInterfaceModel container = info.declarationModel.container);
@@ -319,8 +262,14 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
 
         // Generate a DartFunctionExpression, then scrap it for parts
-        value functionExpression = generateFunctionExpression(that);
-        assert (exists standardParameters = functionExpression.parameters);
+        value functionExpression
+            =   if (is AnyFunction that)
+                then generateFunctionExpression(that)
+                else generateForValueDefinitionGetter(that).functionExpression;
+
+        value standardParameters
+            =   functionExpression.parameters
+                else dartFormalParameterListEmpty;
 
         // TODO defaulted parameters! (see also transformFunctionDefinition)
 
@@ -333,7 +282,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             null;
             DartSimpleIdentifier {
                 dartTypes.getStaticInterfaceMethodName {
-                    info.declarationModel;
+                    declarationModel;
                 };
             };
             DartFormalParameterList {

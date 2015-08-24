@@ -100,7 +100,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueDefinitionInfo,
     ValueGetterDefinitionInfo,
     UnspecifiedVariableInfo,
-    ExistsOrNonemptyConditionInfo
+    ExistsOrNonemptyConditionInfo,
+    AnyValueInfo,
+    TypedDeclarationInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -276,24 +278,33 @@ class BaseGenerator(CompilationContext ctx)
         };
     }
 
+    "For the Value, or the return type of the Function"
     shared
-    DartTypeName generateFunctionReturnType(AnyFunctionInfo info)
-        =>  if (info.declarationModel.parameterLists.size() > 1) then
-                // return type is a `Callable`; we're not get generic, so the Callable's
-                // return is erased. Even on the Java backend, the arguments are erased.
-                dartTypes.dartTypeName {
-                    info.node;
-                    ceylonTypes.callableDeclaration.type;
-                    false;
-                }
-            else if (!info.declarationModel.declaredVoid) then
+    DartTypeName generateFunctionReturnType(TypedDeclarationInfo info)
+        =>  switch (info)
+            case (is AnyFunctionInfo)
+                if (info.declarationModel.parameterLists.size() > 1) then
+                    // return type is a `Callable`; we're not get generic, so the
+                    // Callable's return is erased. Even on the Java backend, the
+                    // arguments are erased.
+                    dartTypes.dartTypeName {
+                        info.node;
+                        ceylonTypes.callableDeclaration.type;
+                        false;
+                    }
+                else if (!info.declarationModel.declaredVoid) then
+                    dartTypes.dartReturnTypeNameForDeclaration {
+                        info.node;
+                        info.declarationModel;
+                    }
+                else
+                    // hacky way to create a void keyword
+                    DartTypeName(DartSimpleIdentifier("void"))
+            case (is AnyValueInfo)
                 dartTypes.dartReturnTypeNameForDeclaration {
-                    info.node;
-                    info.declarationModel;
-                }
-            else
-                // hacky way to create a void keyword
-                DartTypeName(DartSimpleIdentifier("void"));
+                        info.node;
+                        info.declarationModel;
+                };
 
     "Generate an invocation or propery access expression for a toplevel."
     shared

@@ -46,7 +46,8 @@ import ceylon.ast.core {
     ExistsOrNonemptyCondition,
     ExistsCondition,
     NonemptyCondition,
-    IfElseExpression
+    IfElseExpression,
+    ValueSetterDefinition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -70,6 +71,7 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ParameterModel=Parameter,
     ValueModel=Value,
+    SetterModel=Setter,
     TypedReferenceModel=TypedReference,
     ControlBlockModel=ControlBlock,
     ScopeModel=Scope
@@ -187,8 +189,9 @@ class DeclarationInfo(Declaration astNode)
     shared default DeclarationModel declarationModel => tcNode.declarationModel;
 }
 
-shared
+abstract shared
 class TypedDeclarationInfo(TypedDeclaration astNode)
+        of AnyValueInfo | AnyFunctionInfo
         extends DeclarationInfo(astNode) {
 
     shared actual default TypedDeclaration node => astNode;
@@ -199,6 +202,12 @@ class TypedDeclarationInfo(TypedDeclaration astNode)
         return result;
     }
 }
+
+shared
+TypedDeclarationInfo typedDeclarationInfo(TypedDeclaration astNode)
+    =>  switch (astNode)
+        case (is AnyValue) AnyValueInfo(astNode)
+        case (is AnyFunction) AnyFunctionInfo(astNode);
 
 shared
 class AnyValueInfo(AnyValue astNode)
@@ -245,6 +254,17 @@ class ValueGetterDefinitionInfo(ValueGetterDefinition astNode)
 
     shared actual default
     ValueModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class ValueSetterDefinitionInfo(ValueSetterDefinition astNode)
+        extends DeclarationInfo(astNode) {
+
+    shared actual default ValueSetterDefinition node => astNode;
+    value tcNode = assertedTcNode<Tree.AttributeSetterDefinition>(astNode);
+
+    shared actual default
+    SetterModel declarationModel => tcNode.declarationModel;
 }
 
 shared
