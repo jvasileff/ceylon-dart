@@ -490,6 +490,44 @@ class InterfaceTests() {
         };
     }
 
+    shared test
+    void outerWhenMemberSatisfiesContainer() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared default String f() => "C.f()";
+                    shared interface J satisfies I {
+                        shared actual default String f() => "D.f()";
+                        shared void testResolution() {
+                            print(f());
+                            print(outer.f());
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I$J implements I {
+                    I $outer$default$I$J;
+                    $dart$core.String f();
+                    static $dart$core.String $f([final I$J $this]) => "D.f()";
+                    void testResolution();
+                    static void $testResolution([final I$J $this]) {
+                        $ceylon$language.print($ceylon$language.String.instance($this.f()));
+                        $ceylon$language.print($ceylon$language.String.instance($this.$outer$default$I$J.f()));
+                    }
+                }
+                abstract class I {
+                    $dart$core.String f();
+                    static $dart$core.String $f([final I $this]) => "C.f()";
+                }
+             """;
+        };
+    }
+
     shared test ignore
     void superDisambiguation() {
         // NOTE based on the JVM compiler, (super of Right2).fun should

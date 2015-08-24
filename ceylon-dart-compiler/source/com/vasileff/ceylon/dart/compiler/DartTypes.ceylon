@@ -646,6 +646,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             assert (is DartSimpleIdentifier identifier);
 
             if (container.inherits(dc)) {
+                // Note: If a member type implements its containing type, and wants
+                //       to call it a method on it's containing instance, it will
+                //       use `outer.f()`. Here, we can assume `this.f()`.
+
                 // The declaration belongs to the container or something it satisfies
                 return
                 [DartPropertyAccess {
@@ -656,7 +660,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 }, isFunction];
             }
 
-            // declaration must belong to an outer container. Find it.
+            // The declaration must belong to an outer container. Find it.
             variable ClassOrInterfaceModel c = container;
             variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
             while (true) {
