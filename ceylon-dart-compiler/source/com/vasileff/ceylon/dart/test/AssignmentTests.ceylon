@@ -24,7 +24,7 @@ class AssignmentTests() {
 
                 abstract class SomeInt {
                     $dart$core.String get someString;
-                    set someString($dart$core.String $newValue);
+                    set someString($dart$core.String someString);
                 }
                 void $package$run([SomeInt si]) {
                     $dart$core.String x = si.someString = "";
@@ -55,7 +55,7 @@ class AssignmentTests() {
 
                 abstract class SomeInt {
                     $dart$core.Object get someObject;
-                    set someObject($dart$core.Object $newValue);
+                    set someObject($dart$core.Object someObject);
                 }
                 void $package$run([SomeInt si]) {
                     $dart$core.String y = $ceylon$language.String.nativeValue((si.someObject = $ceylon$language.String.instance("")) as $ceylon$language.String);
