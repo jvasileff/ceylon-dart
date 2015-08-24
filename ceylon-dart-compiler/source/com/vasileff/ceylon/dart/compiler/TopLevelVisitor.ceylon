@@ -14,7 +14,8 @@ import ceylon.ast.core {
     Visitor,
     Node,
     Specifier,
-    LazySpecifier
+    LazySpecifier,
+    ValueSetterDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -94,8 +95,7 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     shared actual
-    void visitValueGetterDefinition
-            (ValueGetterDefinition that) {
+    void visitValueGetterDefinition(ValueGetterDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return;
@@ -105,6 +105,17 @@ class TopLevelVisitor(CompilationContext ctx)
             generateForValueDefinitionGetter(that),
             *generateForwardingGetterSetter(that)
         };
+    }
+
+    shared actual
+    void visitValueSetterDefinition(ValueSetterDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return;
+        }
+
+        // Forwarding setter was added by visitValue*()
+        add(generateForValueSetterDefinition(that));
     }
 
     shared actual
@@ -291,7 +302,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
             };
-
 
         addAll {
             if (exists setter)
