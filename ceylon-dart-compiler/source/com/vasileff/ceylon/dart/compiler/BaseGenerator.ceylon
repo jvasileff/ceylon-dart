@@ -102,7 +102,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     UnspecifiedVariableInfo,
     ExistsOrNonemptyConditionInfo,
     AnyValueInfo,
-    TypedDeclarationInfo
+    TypedDeclarationInfo,
+    ValueSetterDefinitionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -280,7 +281,8 @@ class BaseGenerator(CompilationContext ctx)
 
     "For the Value, or the return type of the Function"
     shared
-    DartTypeName generateFunctionReturnType(TypedDeclarationInfo info)
+    DartTypeName generateFunctionReturnType
+            (TypedDeclarationInfo|ValueSetterDefinitionInfo info)
         =>  switch (info)
             case (is AnyFunctionInfo)
                 if (info.declarationModel.parameterLists.size() > 1) then
@@ -304,7 +306,10 @@ class BaseGenerator(CompilationContext ctx)
                 dartTypes.dartReturnTypeNameForDeclaration {
                         info.node;
                         info.declarationModel;
-                };
+                }
+            case (is ValueSetterDefinitionInfo)
+                // hacky way to create a void keyword
+                DartTypeName(DartSimpleIdentifier("void"));
 
     "Generate an invocation or propery access expression for a toplevel."
     shared
