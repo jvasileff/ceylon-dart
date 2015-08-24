@@ -27,7 +27,8 @@ import ceylon.ast.core {
     Continue,
     LazySpecifier,
     Specifier,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    ValueSetterDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -304,6 +305,11 @@ class StatementTransformer(CompilationContext ctx)
     [DartFunctionDeclarationStatement] transformValueGetterDefinition
             (ValueGetterDefinition that)
         =>  [DartFunctionDeclarationStatement(generateForValueDefinitionGetter(that))];
+
+    shared actual
+    [DartFunctionDeclarationStatement] transformValueSetterDefinition
+            (ValueSetterDefinition that)
+        =>  [DartFunctionDeclarationStatement(generateForValueSetterDefinition(that))];
 
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that)

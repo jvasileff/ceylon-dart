@@ -1259,9 +1259,10 @@ class BaseGenerator(CompilationContext ctx)
         return
         DartFunctionDeclaration {
             false;
-            dartTypes.dartTypeNameForDeclaration {
-                that;
-                declarationModel;
+            DartTypeName {
+                DartSimpleIdentifier {
+                    "void";
+                };
             };
             !isFunction then "set";
             identifier;
