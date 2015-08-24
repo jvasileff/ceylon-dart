@@ -19,7 +19,6 @@ import ceylon.ast.core {
 import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     InterfaceModel=Interface,
-    ValueModel=Value,
     SetterModel=Setter,
     TypedDeclarationModel=TypedDeclaration
 }
@@ -96,8 +95,9 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (!isForDartBackend(that)) {
             return [];
         }
-        // TODO ValueSetterDefinition
-        return [generateMethodGetterOrSetterDeclaration(that)];
+
+        return [generateMethodGetterOrSetterDeclaration(that),
+                generateStaticInterfaceMethod(that)];
     }
 
     shared actual
@@ -197,7 +197,8 @@ class ClassMemberTransformer(CompilationContext ctx)
                                     declarationModel.getter;
                                 };
                                 DartSimpleIdentifier {
-                                    "$newValue";
+                                    // use the attribute's name as the parameter name
+                                    dartTypes.getName(declarationModel);
                                 };
                             }
                         ];
@@ -244,7 +245,8 @@ class ClassMemberTransformer(CompilationContext ctx)
                             declarationModel;
                         };
                         DartSimpleIdentifier {
-                            "$newValue";
+                            // use the attribute's name as the parameter name
+                            dartTypes.getName(declarationModel);
                         };
                     }
                 ];
@@ -257,15 +259,19 @@ class ClassMemberTransformer(CompilationContext ctx)
             FunctionDefinition
             | FunctionShortcutDefinition
             | ValueDefinition
-            | ValueGetterDefinition that) {
+            | ValueGetterDefinition
+            | ValueSetterDefinition that) {
 
         value info
-            =   typedDeclarationInfo(that);
+            =   switch (that)
+                case (is TypedDeclaration) typedDeclarationInfo(that)
+                case (is ValueSetterDefinition) ValueSetterDefinitionInfo(that);
 
         value declarationModel
             =   switch(info)
                 case (is AnyFunctionInfo) info.declarationModel
-                case (is AnyValueInfo) info.declarationModel;
+                case (is AnyValueInfo) info.declarationModel
+                case (is ValueSetterDefinitionInfo) info.declarationModel;
 
         "The container of a class or interface member is surely a ClassOrInterface"
         assert (is ClassOrInterfaceModel container = info.declarationModel.container);
@@ -294,9 +300,13 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         // Generate a DartFunctionExpression, then scrap it for parts
         value functionExpression
-            =   if (is AnyFunction that)
-                then generateFunctionExpression(that)
-                else generateForValueDefinitionGetter(that).functionExpression;
+            =   switch (that)
+                case (is AnyFunction)
+                    generateFunctionExpression(that)
+                case (is ValueDefinition | ValueGetterDefinition)
+                    generateForValueDefinitionGetter(that).functionExpression
+                case (is ValueSetterDefinition)
+                    generateForValueSetterDefinition(that).functionExpression;
 
         value standardParameters
             =   functionExpression.parameters

@@ -27,7 +27,8 @@ import ceylon.ast.core {
     ExistsOrNonemptyCondition,
     ExistsCondition,
     NonemptyCondition,
-    Condition
+    Condition,
+    ValueSetterDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -1224,6 +1225,79 @@ class BaseGenerator(CompilationContext ctx)
                         false;
                         withReturn {
                             declarationModel;
+                            () => statementTransformer.transformBlock {
+                                definition;
+                            }.first;
+                        };
+                    };
+            };
+        };
+    }
+
+    shared
+    DartFunctionDeclaration generateForValueSetterDefinition
+            (ValueSetterDefinition that) {
+
+        // NOTE toplevels may be setters
+        //      within functions, regular methods
+        //      within classes and interfaces, setters, but MethodDeclaration instead
+
+        // FIXME setter functions should return the argument (and not be void) to help
+        //       with assignment expressions.
+
+        // FIXME setter *static* functions for interfaces should also return the arg.
+
+        value info = ValueSetterDefinitionInfo(that);
+        value declarationModel = info.declarationModel;
+
+        value [identifier, isFunction]
+            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    that;
+                    declarationModel;
+                };
+
+        return
+        DartFunctionDeclaration {
+            false;
+            dartTypes.dartTypeNameForDeclaration {
+                that;
+                declarationModel;
+            };
+            !isFunction then "set";
+            identifier;
+            DartFunctionExpression {
+                DartFormalParameterList {
+                    false; false;
+                    [
+                        DartSimpleFormalParameter {
+                            false; false;
+                            dartTypes.dartReturnTypeNameForDeclaration {
+                                that;
+                                declarationModel.getter;
+                            };
+                            DartSimpleIdentifier {
+                                // use the attribute's name as the parameter name
+                                dartTypes.getName(declarationModel);
+                            };
+                        }
+                    ];
+                };
+                switch (definition = that.definition)
+                case (is LazySpecifier)
+                    // TODO if function, convert to block and return passed in value
+                    DartExpressionFunctionBody {
+                        false;
+                        withLhsNoType {
+                            () => definition.expression.transform(expressionTransformer);
+                        };
+                    }
+                case (is Block)
+                    // TODO if function, return passed in value
+                    DartBlockFunctionBody {
+                        null;
+                        false;
+                        withReturn {
+                            declarationModel.getter;
                             () => statementTransformer.transformBlock {
                                 definition;
                             }.first;

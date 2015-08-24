@@ -129,8 +129,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      non-formal interface methods."
     shared
     String getStaticInterfaceMethodName(
-            FunctionModel|ValueModel declaration,
-            Boolean isSetter = false)
+            FunctionModel|ValueModel|SetterModel declaration,
+            Boolean isSetter = declaration is SetterModel)
         =>  if (declaration is FunctionModel) then
                 "$" + getName(declaration)
             else if (isSetter) then
@@ -695,8 +695,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     [DartSimpleIdentifier, Boolean] dartIdentifierForFunctionOrValueDeclaration(
             Node|ScopeModel scope,
             FunctionOrValueModel declaration,
-            Boolean setter = false) {
+            Boolean setter = declaration is SetterModel) {
 
+        // FIXME how should "string" setters be mapped, since the getters
+        //       are mapped to "toString"? And, handle "hashCode" name translation.
         value mapped = mappedFunctionOrValue(declaration.refinedDeclaration);
         String name;
         Boolean isDartFunction;
