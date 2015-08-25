@@ -650,6 +650,13 @@ class Float implements Number, Exponentiable {
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
 
+  $dart$core.bool equals($dart$core.Object other) {
+    if (other is Float) {
+      return _value == other._value;
+    }
+    return false;
+  }
+
   // Comparable
   Comparison compare([Float other])
       =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
