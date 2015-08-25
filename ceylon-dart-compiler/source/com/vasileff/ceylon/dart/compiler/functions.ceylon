@@ -193,3 +193,35 @@ Result memoize<Result, Argument>
         return result;
     }
 }
+
+shared
+{Element+} loopFinished<Element>(
+        "The first element of the resulting stream."
+        Element first)(
+        "The function that produces the next element of the
+         stream, given the current element."
+        Element|Finished next(Element element))
+    => let (start = first)
+    object satisfies {Element+} {
+        first => start;
+        empty => false;
+        shared actual Nothing size {
+            "stream is infinite"
+            assert(false);
+        }
+        function nextElement(Element element)
+                => next(element);
+        iterator()
+                => object satisfies Iterator<Element> {
+            variable Element|Finished current = start;
+            shared actual Element|Finished next() {
+                if (is Element result = current) {
+                    current = nextElement(result);
+                    return result;
+                }
+                else {
+                    return finished;
+                }
+            }
+        };
+    };
