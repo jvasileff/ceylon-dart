@@ -223,6 +223,9 @@ class ArraySequence implements Sequence {
   $dart$core.bool get empty
     =>  List.$empty(this);
 
+  $dart$core.bool equals($dart$core.Object other)
+    =>  List.$equals(this, other);
+
   @$dart$core.override
   get($dart$core.Object index)
     =>  array.get(index);
@@ -949,6 +952,61 @@ abstract class List implements Collection, Correspondence {
     // simulate anonymous class
     return new _$ListIterator_anon($this, index);
   }
+
+  static $dart$core.bool $equals([List $this, $dart$core.Object that]) {
+      if (that is String) {
+          $dart$core.String that$0 = String.nativeValue(that);
+          return false;
+      }{
+          $dart$core.bool doElse$1 = true;
+          if (that is List) {
+              List that$2 = that;
+              doElse$1 = false;
+              if (Integer.instance(that$2.size).equals(Integer.instance($this.size))) {{
+                        // TODO use "while" loop once "measure" is available
+//                      $dart$core.Object element$4;
+//                      Iterator iterator$3 = (measure(Integer.instance(0), size) as List).iterator();
+//                      while ((element$4 = iterator$3.next()) is !Finished) {
+//                          Integer index = element$4 as Integer;
+                        for (var dartI = 0; dartI < $this.size; dartI++) {
+                          Integer index = Integer.instance(dartI);
+                          $dart$core.int x = Integer.nativeValue($this.getFromFirst(Integer.nativeValue(index)) as Integer);
+                          $dart$core.Object y = that$2.getFromFirst(Integer.nativeValue(index));{
+                              $dart$core.bool doElse$5 = true;
+                              if (!(x == null)) {
+                                  doElse$5 = false;{
+                                      $dart$core.bool doElse$7 = true;
+                                      if (!(y == null)) {
+                                          doElse$7 = false;
+                                          if (!Integer.instance(x).equals(y)) {
+                                              return false;
+                                          }
+                                      }
+                                      if (doElse$7) {
+                                          return false;
+                                      }
+                                  }
+                              }
+                              if (doElse$5) {
+                                  $dart$core.Object x$6 = Integer.instance(x);
+                                  if (!(y == null)) {
+                                      return false;
+                                  }
+                              }
+                          }
+                      }{
+                          return true;
+                      }
+                  }
+              } else {
+                  return false;
+              }
+          }
+          if (doElse$1) {
+              return false;
+          }
+      }
+  }
 }
 
 // Simulate anonymous class
@@ -1122,7 +1180,7 @@ class String implements List {
 
   // TODO change to "==" once compiler handles this
   $dart$core.bool equals($dart$core.Object other) {
-    if (other is Integer) {
+    if (other is String) {
       return _value == other._value;
     }
     return false;
