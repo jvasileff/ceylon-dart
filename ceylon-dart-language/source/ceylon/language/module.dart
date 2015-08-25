@@ -1120,8 +1120,13 @@ class String implements List {
     return result;
   }
 
-  // TODO remove this hack (compiler needs to translate)
-  $dart$core.String get string => toString();
+  // TODO change to "==" once compiler handles this
+  $dart$core.bool equals($dart$core.Object other) {
+    if (other is Integer) {
+      return _value == other._value;
+    }
+    return false;
+  }
 
   $dart$core.String toString() => _value;
 }
