@@ -573,4 +573,169 @@ class InterfaceTests() {
         };
     }
 
+    shared test ignore
+    void captureAndAssert() {
+        compileAndCompare {
+             """
+                void capturesWithControlBlocks() {
+                    Integer|Float|String x = 5;
+                    interface Bar {
+                        shared void capturesIFS() {
+                            Integer|Float|String capture = x;
+                            print(capture);
+                        }
+                    }
+
+                    print(x);
+                    assert (is Integer|Float x);
+                    print(x);
+
+                    interface Baz satisfies Bar {
+                        shared void capturesIF() {
+                            Integer|Float capture = x;
+                            print(capture);
+                        }
+                    }
+
+                    print(x);
+                    assert (is Integer x);
+                    print(x);
+
+                    interface Ban satisfies Baz {
+                        shared void capturesI() {
+                            Integer capture = x + 1;
+                            print(capture);
+                        }
+                    }
+
+                    //object b satisfies Ban {}
+                    //b.capturesI();
+                    //b.capturesIF();
+                    //b.capturesIFS();
+                }
+             """;
+
+             """
+                // TODO need declarations for the captures
+
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class Bar {
+                    void capturesIFS();
+                    static void $capturesIFS([final Bar $this]) {
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+                        $ceylon$language.print(capture);
+                    }
+                }
+                abstract class Baz implements Bar {
+                    void capturesIF();
+                    static void $capturesIF([final Baz $this]) {
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$x;
+                        $ceylon$language.print(capture);
+                    }
+                }
+                abstract class Ban implements Baz {
+                    void capturesI();
+                    static void $capturesI([final Ban $this]) {
+                        $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$x$0 + 1;
+                        $ceylon$language.print($ceylon$language.Integer.instance(capture));
+                    }
+                }
+                void $package$capturesWithControlBlocks() {
+                    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+                    $ceylon$language.print(x);
+                    if (!((x is $ceylon$language.Integer) || (x is $ceylon$language.Float))) {
+                        throw new $ceylon$language.AssertionError("Violated: is Integer|Float x");
+                    }
+                    $ceylon$language.print(x);
+                    $ceylon$language.print(x);
+                    if (!(x is $ceylon$language.Integer)) {
+                        throw new $ceylon$language.AssertionError("Violated: is Integer x");
+                    }
+                    $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                    $ceylon$language.print($ceylon$language.Integer.instance(x$0));
+                }
+
+                void capturesWithControlBlocks() => $package$capturesWithControlBlocks();
+             """;
+        };
+    }
+
+    shared test ignore
+    void captureAndControlBlocks() {
+        // TODO unfinished; see todo in 'expected' below
+        compileAndCompare {
+             """
+                void capturesWithControlBlocks() {
+                    Integer|Float|String x = 5;
+                    interface Bar {
+                        shared void capturesIFS() {
+                            Integer|Float|String capture = x;
+                            print(capture);
+                        }
+                    }
+                    if (is Integer|Float x) {
+                        interface Baz satisfies Bar {
+                            shared void capturesIF() {
+                                Integer|Float capture = x;
+                                print(capture);
+                            }
+                        }
+                        if (is Integer x) {
+                            interface Ban satisfies Baz {
+                                shared void capturesI() {
+                                    Integer capture = x;
+                                    print(capture);
+                                }
+                            }
+                            //object b satisfies Ban {}
+                            //b.capturesI();
+                            //b.capturesIF();
+                            //b.capturesIFS();
+                        }
+                    }
+                }
+             """;
+
+             """
+                // TODO need declarations for the captures
+
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class Bar {
+                    void capturesIFS();
+                    static void $capturesIFS([final Bar $this]) {
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+                        $ceylon$language.print(capture);
+                    }
+                }
+                abstract class Baz implements Bar {
+                    void capturesIF();
+                    static void $capturesIF([final Baz $this]) {
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
+                        $ceylon$language.print(capture);
+                    }
+                }
+                abstract class Ban implements Baz {
+                    void capturesI();
+                    static void $capturesI([final Ban $this]) {
+                        $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
+                        $ceylon$language.print($ceylon$language.Integer.instance(capture));
+                    }
+                }
+                void $package$capturesWithControlBlocks() {
+                    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+                    if ((x is $ceylon$language.Integer) || (x is $ceylon$language.Float)) {
+                        if (x is $ceylon$language.Integer) {
+                            $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                        }
+                    }
+                }
+
+                void capturesWithControlBlocks() => $package$capturesWithControlBlocks();
+             """;
+        };
+    }
 }

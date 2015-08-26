@@ -541,12 +541,14 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartStatement[] transformInterfaceDefinition(InterfaceDefinition that) {
+    [] transformInterfaceDefinition(InterfaceDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
-        return super.transformInterfaceDefinition(that);
+
+        that.visit(topLevelVisitor);
+        return [];
     }
 
     shared actual

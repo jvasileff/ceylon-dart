@@ -1,3 +1,6 @@
+import ceylon.ast.core {
+    Node
+}
 import ceylon.collection {
     HashMap
 }
@@ -5,6 +8,9 @@ import ceylon.interop.java {
     CeylonIterable
 }
 
+import com.redhat.ceylon.model.loader {
+    JvmBackendUtil
+}
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
     TypedDeclarationModel=TypedDeclaration,
@@ -25,13 +31,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ConstructorModel=Constructor
 }
-
-import com.vasileff.ceylon.dart.model {
-    DartTypeModel
-}
-import ceylon.ast.core {
-    Node
-}
 import com.vasileff.ceylon.dart.ast {
     DartConstructorName,
     DartPrefixedIdentifier,
@@ -41,11 +40,11 @@ import com.vasileff.ceylon.dart.ast {
     DartExpression,
     DartPropertyAccess
 }
+import com.vasileff.ceylon.dart.model {
+    DartTypeModel
+}
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
-}
-import com.redhat.ceylon.model.loader {
-    JvmBackendUtil
 }
 
 shared
@@ -638,54 +637,120 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         };
 
         // TODO support classes
-        if (is InterfaceModel container = getContainingClassOrInterface(scope),
-            is ClassOrInterfaceModel dc = declaration.container) {
+        if (is InterfaceModel container = getContainingClassOrInterface(scope)) {
+            assert (is ClassOrInterfaceModel | FunctionOrValueModel | ConstructorModel
+                        | ControlBlockModel | PackageModel
+                    declarationContainer = declaration.container);
 
-            "Identifiers for members will always be simple identifiers (not prefixed
-             as toplevels may be.)"
-            assert (is DartSimpleIdentifier identifier);
+            switch (declarationContainer)
+            case (is ClassOrInterfaceModel) {
 
-            if (container.inherits(dc)) {
-                // Note: If a member type implements its containing type, and wants
-                //       to call it a method on it's containing instance, it will
-                //       use `outer.f()`. Here, we can assume `this.f()`.
+                "Identifiers for members will always be simple identifiers (not prefixed
+                 as toplevels may be.)"
+                assert (is DartSimpleIdentifier identifier);
 
-                // The declaration belongs to the container or something it satisfies
-                return
-                [DartPropertyAccess {
-                    DartSimpleIdentifier {
-                        "$this";
-                    };
-                    identifier;
-                }, isFunction];
-            }
+                if (container.inherits(declarationContainer)) {
+                    // Note: If a member type implements its containing type, and wants
+                    //       to call it a method on it's containing instance, it will
+                    //       use `outer.f()`. Here, we can assume `this.f()`.
 
-            // The declaration must belong to an outer container. Find it.
-            variable ClassOrInterfaceModel c = container;
-            variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
-            while (true) {
-                assert(exists [outerDeclaration, outerField] =
-                            outerDeclarationAndFieldName(c));
-                fields = fields.follow(DartSimpleIdentifier(outerField));
-                if (outerDeclaration.inherits(dc)) {
-                    break; // found it.
+                    // The declaration belongs to the container or something it satisfies
+                    return
+                    [DartPropertyAccess {
+                        DartSimpleIdentifier {
+                            "$this";
+                        };
+                        identifier;
+                    }, isFunction];
                 }
-                c = outerDeclaration;
+
+                // The declaration must belong to an outer container. Find it.
+                variable ClassOrInterfaceModel c = container;
+                variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
+                while (true) {
+                    assert(exists [outerDeclaration, outerField] =
+                                outerDeclarationAndFieldName(c));
+                    fields = fields.follow(DartSimpleIdentifier(outerField));
+                    if (outerDeclaration.inherits(declarationContainer)) {
+                        break; // found it.
+                    }
+                    c = outerDeclaration;
+                }
+
+                fields = sequence(fields.follow(identifier)).reversed;
+                value expression = fields.reduce<DartExpression>(
+                        (expression, field)
+                    =>  DartPropertyAccess {
+                            expression;
+                            field;
+                        });
+
+                return [expression, isFunction];
             }
+            case (is FunctionOrValueModel | ConstructorModel | ControlBlockModel) {
 
-            fields = sequence(fields.follow(identifier)).reversed;
-            value expression = fields.reduce<DartExpression>(
-                    (expression, field)
-                =>  DartPropertyAccess {
-                        expression;
-                        field;
-                    });
+                "Identifiers for nested declarations will always be simple identifiers
+                 (not prefixed as toplevels may be.)"
+                assert (is DartSimpleIdentifier identifier);
 
-            return [expression, isFunction];
+                value declarationsClassOrInterface
+                    =   getContainingClassOrInterface(declaration);
+
+                if ([container] == [declarationsClassOrInterface]) {
+                    return [identifier, isFunction];
+                }
+                else {
+                    // The declaration doesn't belong to a class or interface, and it
+                    // does not share a containing class or interface, so it must be
+                    // a capture.
+                    return [
+                        DartPropertyAccess {
+                            DartSimpleIdentifier {
+                                "$this";
+                            };
+                            identifierForCapture(declaration);
+                        },
+                        isFunction
+                    ];
+                }
+            }
+            case (is PackageModel) {
+                return [identifier, isFunction];
+            }
         }
         else {
             return [identifier, isFunction];
         }
+    }
+
+    """
+       Produces an identifier of the form "$capture$" followed by each declaration's name
+       separated by '$' starting with the most distant ancestor of [[declaration]]—the
+       one with the package as its immediate container.
+
+       Control blocks are represented by the empty string, effectively being translated
+       to "$". The idea is that to resolve ambiguities, control block depth is sufficient
+       since declarations in sibling control blocks are not visible to each other.
+    """
+    shared
+    DartSimpleIdentifier identifierForCapture(FunctionOrValueModel declaration) {
+        value declarations
+            =   loopFinished<DeclarationModel|ControlBlockModel>(declaration)((d)
+                =>  if (is DeclarationModel|ControlBlockModel result = d.container)
+                    then result
+                    else finished);
+
+        return
+        DartSimpleIdentifier {
+            declarations
+                .collect((d)
+                    =>  if (is ControlBlockModel d)
+                        then ""
+                        else getName(d))
+                .reversed
+                .interpose("$")
+                .fold("$capture$")(plus);
+        };
     }
 
     "Returns a tuple containing:
