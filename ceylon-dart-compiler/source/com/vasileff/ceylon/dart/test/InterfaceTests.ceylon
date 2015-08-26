@@ -663,6 +663,69 @@ class InterfaceTests() {
     }
 
     shared test ignore
+    void captureAndAssertScopeVsContainer() {
+        // TODO unfinished; see todo in 'expected' below
+        /*
+            This test demonstrates the difference between `scope.scope` and
+            `scope.container`.
+
+            For the `x` defined in (2) below, the declaration's `scope` and `container`
+            are *both* `ConditionScope`. Presumably, `container` does not consider it to
+            be a "fake" scope since it is necessary to distinguish the two `x`s.
+
+            For the `y` defined in (3) below, the declaration's `scope` is a
+            `ConditionScope`, but its `container` is a `Function`, skipping the so
+            called "Fake" condition scope.
+
+            `container` is used when generating identifiers for captures, even though it
+            makes `y` and the second `x` appear to be in different scopes. `container`
+            should work find, and it's the one we will usually use in other areas of the
+            code. (Easier to just always use the same property).
+         */
+        compileAndCompare {
+             """
+                void capturesWithControlBlocks() {
+
+                    Integer|Float x = 5;    // 1
+                    assert (is Integer x);  // 2
+                    Integer y = 5;          // 3
+
+                    interface Bar {
+                        shared void foo() {
+                            Integer captureX = x;
+                            Integer captureY = y;
+                        }
+                    }
+                }
+             """;
+
+             """
+                // TODO need declarations for the captures
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class Bar {
+                    void foo();
+                    static void $foo([final Bar $this]) {
+                        $dart$core.int captureX = $this.$capture$capturesWithControlBlocks$$x$0;
+                        $dart$core.int captureY = $this.$capture$capturesWithControlBlocks$y;
+                    }
+                }
+                void $package$capturesWithControlBlocks() {
+                    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+                    if (!(x is $ceylon$language.Integer)) {
+                        throw new $ceylon$language.AssertionError("Violated: is Integer x");
+                    }
+                    $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                    $dart$core.int y = 5;
+                }
+
+                void capturesWithControlBlocks() => $package$capturesWithControlBlocks();
+             """;
+        };
+    }
+
+    shared test ignore
     void captureAndControlBlocks() {
         // TODO unfinished; see todo in 'expected' below
         compileAndCompare {
