@@ -18,6 +18,10 @@ import com.vasileff.ceylon.dart.ast {
     DartCompilationUnitMember,
     DartSimpleIdentifier
 }
+import com.vasileff.jl4c.guava.collect {
+    HashMultimap,
+    MutableSetMultimap
+}
 
 import org.antlr.runtime {
     Token
@@ -40,6 +44,14 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared
     HashSet<FunctionOrValueModel> disableErasureToNative
         =   HashSet<FunctionOrValueModel>();
+
+    shared
+    HashSet<FunctionOrValueModel> capturedDeclarations
+        =   HashSet<FunctionOrValueModel>();
+
+    shared
+    MutableSetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
+        =   HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
 
     shared variable
     DartSimpleIdentifier? doFailVariableTop = null;

@@ -1,5 +1,10 @@
 import com.redhat.ceylon.model.typechecker.model {
-    TypeModel=Type
+    TypeModel=Type,
+    ConstructorModel=Constructor,
+    ControlBlockModel=ControlBlock,
+    FunctionOrValueModel=FunctionOrValue,
+    NamedArgumentListModel=NamedArgumentList,
+    SpecificationModel=Specification
 }
 
 "Indicates the absence of a type (like void). One use is to
@@ -11,3 +16,10 @@ shared interface NoType of noType {}
 shared object noType satisfies NoType {}
 
 shared alias TypeOrNoType => TypeModel | NoType;
+
+shared alias LocalNonInitializerScope
+    =>  ConstructorModel
+        | ControlBlockModel
+        | FunctionOrValueModel
+        | NamedArgumentListModel
+        | SpecificationModel;

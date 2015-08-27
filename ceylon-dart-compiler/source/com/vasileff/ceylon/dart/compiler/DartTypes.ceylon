@@ -29,7 +29,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue,
     ControlBlockModel=ControlBlock,
-    ConstructorModel=Constructor
+    ConstructorModel=Constructor,
+    SpecificationModel=Specification,
+    NamedArgumentListModel=NamedArgumentList
 }
 import com.vasileff.ceylon.dart.ast {
     DartConstructorName,
@@ -638,9 +640,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         // TODO support classes
         if (is InterfaceModel container = getContainingClassOrInterface(scope)) {
-            assert (is ClassOrInterfaceModel | FunctionOrValueModel | ConstructorModel
-                        | ControlBlockModel | PackageModel
-                    declarationContainer = declaration.container);
+            value declarationContainer = getRealContainingScope(declaration);
+
+            "Arguments in named argument lists cannot be referenced."
+            assert(!is NamedArgumentListModel declarationContainer);
 
             switch (declarationContainer)
             case (is ClassOrInterfaceModel) {
@@ -687,7 +690,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
                 return [expression, isFunction];
             }
-            case (is FunctionOrValueModel | ConstructorModel | ControlBlockModel) {
+            case (is ConstructorModel | ControlBlockModel
+                    | FunctionOrValueModel | SpecificationModel) {
 
                 "Identifiers for nested declarations will always be simple identifiers
                  (not prefixed as toplevels may be.)"

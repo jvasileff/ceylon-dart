@@ -21,6 +21,7 @@ import com.redhat.ceylon.compiler.typechecker.tree {
 }
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
+    ConditionScopeModel=ConditionScope,
     UnitModel=Unit,
     PackageModel=Package,
     ElementModel=Element,
@@ -127,6 +128,44 @@ ClassOrInterfaceModel? getContainingClassOrInterface
     return null;
 }
 
+"The scope or nearest containing scope that is not a [[ConditionScopeModel]]."
+ClassOrInterfaceModel | PackageModel | LocalNonInitializerScope
+getRealScope(ElementModel scope) {
+    variable ScopeModel scopeModel = toScopeModel(scope);
+    while (scopeModel is ConditionScopeModel) {
+        scopeModel = scopeModel.container;
+    }
+    assert (is ClassOrInterfaceModel | PackageModel | LocalNonInitializerScope
+            result = scopeModel);
+
+    return result;
+}
+
+"The nearest containing scope that is not a [[ConditionScopeModel]]. This differs from
+ [[ScopeModel.container]] in that the latter does not exclude [[ConditionScopeModel]]s
+ that are necessary in order to disambiguate replacement declarations."
+ClassOrInterfaceModel | PackageModel | LocalNonInitializerScope
+getRealContainingScope(ElementModel scope) {
+    variable ScopeModel scopeModel = toScopeModel(scope).container;
+    while (scopeModel is ConditionScopeModel) {
+        scopeModel = scopeModel.container;
+    }
+    assert (is ClassOrInterfaceModel | PackageModel | LocalNonInitializerScope
+            result = scopeModel);
+
+    return result;
+}
+
+"True if the non-ConditionScope container is a class or interface.
+
+ Note: this method does not distinguish between captured and non-captured declarations
+ in class initializers. All declarations are considered captured, for now."
+Boolean isClassOrInterfaceMember(DeclarationModel scope)
+    =>  scope.container is ClassModel | InterfaceModel;
+
+Boolean isToplevel(DeclarationModel scope)
+    =>  scope.container is PackageModel;
+
 "Returns the name of the backend for declarations marked `native` with a Ceylon
  implementation for a specific backend, the empty String (\"\") for declarations marked
  native without specifying a backend, or null for non-`native` declarations."
@@ -225,3 +264,9 @@ shared
             }
         };
     };
+
+shared
+Boolean eq(Anything first, Anything second)
+    =>  if (exists first, exists second)
+        then first == second
+        else (!first exists) && (!second exists);
