@@ -743,6 +743,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
+    "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype
             (FunctionOrValueModel target, ClassOrInterfaceModel by)
         =>  ctx.captures.contains(by->target)
