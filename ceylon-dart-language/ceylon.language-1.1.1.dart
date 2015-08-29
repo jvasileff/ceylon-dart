@@ -40,7 +40,7 @@ Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => 
 Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
 
 abstract class Binary {
-    $dart$core.Object not;
+    $dart$core.Object get not;
     $dart$core.Object leftLogicalShift([$dart$core.int shift]);
     $dart$core.Object rightLogicalShift([$dart$core.int shift]);
     $dart$core.Object rightArithmeticShift([$dart$core.int shift]);
@@ -126,7 +126,7 @@ abstract class Collection implements Iterable {
             }
         }
     }
-    $dart$core.String get string;
+    $dart$core.String toString();
     static $dart$core.String $get$string([final Collection $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("{ " + $package$commaList($this)) + " }" : $lhs$)($this.empty ? "{}" : null);
 }
 abstract class Comparable {
@@ -248,7 +248,7 @@ abstract class Empty implements Sequential, Ranged {
     static Empty $get$reversed([final Empty $this]) => $this;
     Empty sequence();
     static Empty $sequence([final Empty $this]) => $this;
-    $dart$core.String get string;
+    $dart$core.String toString();
     static $dart$core.String $get$string([final Empty $this]) => "[]";
     $dart$core.Object get lastIndex;
     static $dart$core.Object $get$lastIndex([final Empty $this]) => null;
@@ -469,7 +469,7 @@ abstract class Identifiable {
             return false;
         }
     })();
-    $dart$core.int get hash;
+    $dart$core.int get hashCode;
     static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this);
 }
 $dart$core.double $package$infinity = 1.0 / 0.0;
@@ -478,13 +478,13 @@ $dart$core.double get infinity => $package$infinity;
 
 abstract class Integral implements Number, Enumerable {
     $dart$core.Object remainder([$dart$core.Object other]);
-    $dart$core.bool zero;
-    $dart$core.bool unit;
+    $dart$core.bool get zero;
+    $dart$core.bool get unit;
     $dart$core.bool divides([$dart$core.Object other]);
     static $dart$core.bool $divides([final Integral $this, $dart$core.Object other]) => ((other as Integral).remainder($this) as Integral).zero;
 }
 abstract class Invertible implements Summable {
-    $dart$core.Object negated;
+    $dart$core.Object get negated;
     $dart$core.Object minus([$dart$core.Object other]);
     static $dart$core.Object $minus([final Invertible $this, $dart$core.Object other]) => $this.plus((other as Invertible).negated);
 }
@@ -592,10 +592,10 @@ abstract class Number implements Numeric, Comparable {
             return 0;
         }
     }
-    $dart$core.bool positive;
-    $dart$core.bool negative;
-    $dart$core.Object fractionalPart;
-    $dart$core.Object wholePart;
+    $dart$core.bool get positive;
+    $dart$core.bool get negative;
+    $dart$core.Object get fractionalPart;
+    $dart$core.Object get wholePart;
     $dart$core.Object timesInteger([$dart$core.int integer]);
     $dart$core.Object plusInteger([$dart$core.int integer]);
     $dart$core.Object powerOfInteger([$dart$core.int integer]);
@@ -617,8 +617,8 @@ Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core
 Callable or([Callable p, Callable q]) => $package$or(p, q);
 
 abstract class Ordinal {
-    $dart$core.Object successor;
-    $dart$core.Object predecessor;
+    $dart$core.Object get successor;
+    $dart$core.Object get predecessor;
 }
 Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable secondIterable]) {
     Iterator firstIter = firstIterable.iterator();
@@ -819,10 +819,10 @@ abstract class Resource {
         }
         return $this.uri;
     }
-    $dart$core.int size;
-    $dart$core.String uri;
+    $dart$core.int get size;
+    $dart$core.String get uri;
     $dart$core.String textContent([$dart$core.Object encoding = $package$dart$default]);
-    $dart$core.String get string;
+    $dart$core.String toString();
     static $dart$core.String $get$string([final Resource $this]) => ((("" + $package$className($this)) + "[") + $this.uri) + "]";
 }
 abstract class Scalable {
