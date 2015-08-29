@@ -806,7 +806,6 @@ class InterfaceTests() {
     "The outermost possible class or interface should make the capture."
     shared test
     void captureOnBehalfOfInner() {
-        // TODO see fixme note in `expected`
         compileAndCompare {
              """
                 void run() {
@@ -839,6 +838,51 @@ class InterfaceTests() {
              """;
          };
      }
+
+    "The outermost possible class or interface should make the capture."
+    shared test
+    void captureOnBehalfOfInnerInner() {
+        compileAndCompare {
+             """
+                void run() {
+                    Integer x = 5;
+                    interface I1 {
+                        interface I2 {
+                            shared Integer i2capturedX => x;
+                            interface I3 {
+                                shared Integer i3capturedX => x;
+                            }
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1$I2$I3 {
+                    I1$I2 $outer$default$I1$I2$I3;
+                    $dart$core.int get i3capturedX;
+                    static $dart$core.int $get$i3capturedX([final I1$I2$I3 $this]) => $this.$outer$default$I1$I2$I3.$outer$default$I1$I2.$capture$run$x;
+                }
+                abstract class I1$I2 {
+                    I1 $outer$default$I1$I2;
+                    $dart$core.int get i2capturedX;
+                    static $dart$core.int $get$i2capturedX([final I1$I2 $this]) => $this.$outer$default$I1$I2.$capture$run$x;
+                }
+                abstract class I1 {
+                    $dart$core.int $capture$run$x;
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                }
+
+                void run() => $package$run();
+             """;
+         };
+     }
+
 
     "Don't bother capturing something already captured by a supertype."
     shared test
