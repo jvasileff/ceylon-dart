@@ -13,7 +13,8 @@ import ceylon.ast.core {
     AnyValue,
     AnyFunction,
     ValueSetterDefinition,
-    TypedDeclaration
+    TypedDeclaration,
+    ClassDefinition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -345,6 +346,15 @@ class ClassMemberTransformer(CompilationContext ctx)
     [] transformInterfaceDefinition(InterfaceDefinition that) {
         that.visit(topLevelVisitor);
         return [];
+    }
+
+    shared actual
+    [DartClassMember*] transformClassDefinition(ClassDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+        return super.transformClassDefinition(that);
     }
 
     shared actual default
