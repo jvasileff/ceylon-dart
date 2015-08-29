@@ -117,7 +117,7 @@ shared
             try {
                 value ctx = CompilationContext(phasedUnit);
 
-                unit.visit(CaptureVisitor(ctx));
+                computeCaptures(unit, ctx);
 
                 ctx.topLevelVisitor.transformCompilationUnit(unit);
 
