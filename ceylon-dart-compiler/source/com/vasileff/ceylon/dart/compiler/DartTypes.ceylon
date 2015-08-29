@@ -5,7 +5,8 @@ import ceylon.collection {
     HashMap
 }
 import ceylon.interop.java {
-    CeylonIterable
+    CeylonIterable,
+    CeylonList
 }
 
 import com.redhat.ceylon.model.loader {
@@ -707,15 +708,52 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The declaration doesn't belong to a class or interface, and it
                     // does not share a containing class or interface, so it must be
                     // a capture.
-                    return [
-                        DartPropertyAccess {
-                            DartSimpleIdentifier {
-                                "$this";
-                            };
-                            identifierForCapture(declaration);
-                        },
-                        isFunction
-                    ];
+
+                    // Capture must have been made by $this, a supertype of $this, or
+                    // some $outer or one of its supertypes.
+
+                    if (capturedBySelfOrSupertype(declaration, container)) {
+                        return [
+                            DartPropertyAccess {
+                                DartSimpleIdentifier {
+                                    "$this";
+                                };
+                                identifierForCapture(declaration);
+                            },
+                            isFunction
+                        ];
+                    }
+                    else {
+                        variable ClassOrInterfaceModel c = container;
+                        variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
+
+                        while (true) {
+                            assert(exists [outerDeclaration, outerField] =
+                                        outerDeclarationAndFieldName(c));
+                            fields = fields.follow(DartSimpleIdentifier(outerField));
+                            if (capturedBySelfOrSupertype(
+                                    declaration, outerDeclaration)) {
+                                break; // found it.
+                            }
+                            c = outerDeclaration;
+                        }
+
+                        fields = sequence(fields).reversed;
+                        value outerExpression = fields.reduce<DartExpression>(
+                                (expression, field)
+                            =>  DartPropertyAccess {
+                                    expression;
+                                    field;
+                                });
+
+                        return [
+                            DartPropertyAccess {
+                                outerExpression;
+                                identifierForCapture(declaration);
+                            },
+                            isFunction
+                        ];
+                    }
                 }
             }
             case (is PackageModel) {
@@ -726,6 +764,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return [identifier, isFunction];
         }
     }
+
+    Boolean capturedBySelfOrSupertype
+            (FunctionOrValueModel target, ClassOrInterfaceModel by)
+        =>  ctx.captures.contains(by->target)
+                || CeylonList(by.satisfiedTypes)
+                    .follow(by.extendedType of TypeModel?)
+                    .coalesced
+                    .map(TypeModel.declaration)
+                    .any((d) => ctx.captures.contains(d->target));
 
     """
        Produces an identifier of the form "$capture$" followed by each declaration's name

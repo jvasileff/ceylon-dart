@@ -804,7 +804,7 @@ class InterfaceTests() {
     }
 
     "The outermost possible class or interface should make the capture."
-    shared test ignore
+    shared test
     void captureOnBehalfOfInner() {
         // TODO see fixme note in `expected`
         compileAndCompare {
@@ -826,8 +826,7 @@ class InterfaceTests() {
                 abstract class I1$I2 {
                     I1 $outer$default$I1$I2;
                     $dart$core.int get capturedX;
-                    // FIXME should be $this.$outer$default$I1$I2.$capture$run$x;
-                    static $dart$core.int $get$capturedX([final I1$I2 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$capturedX([final I1$I2 $this]) => $this.$outer$default$I1$I2.$capture$run$x;
                 }
                 abstract class I1 {
                     $dart$core.int $capture$run$x;
@@ -842,7 +841,7 @@ class InterfaceTests() {
      }
 
     "Don't bother capturing something already captured by a supertype."
-    shared test ignore
+    shared test
     void dontCaptureIfSupertypeCaptures() {
         compileAndCompare {
              """
@@ -880,9 +879,8 @@ class InterfaceTests() {
      }
 
      "The outer type doesn't make the capture, but its supertype does."
-    shared test ignore
+    shared test
     void captureMadeByOutersSupertype() {
-        // TODO outer not yet used in reference to capture
         compileAndCompare {
              """
                 void run() {
@@ -922,5 +920,4 @@ class InterfaceTests() {
              """;
          };
      }
-
 }
