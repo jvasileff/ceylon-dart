@@ -573,7 +573,7 @@ class InterfaceTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void captureAndAssert() {
         compileAndCompare {
              """
@@ -616,8 +616,6 @@ class InterfaceTests() {
              """;
 
              """
-                // TODO need declarations for the captures
-
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
@@ -627,6 +625,7 @@ class InterfaceTests() {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
+                    $dart$core.Object $capture$capturesWithControlBlocks$x;
                 }
                 abstract class Baz implements Bar {
                     void capturesIF();
@@ -634,6 +633,7 @@ class InterfaceTests() {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$x;
                         $ceylon$language.print(capture);
                     }
+                    $dart$core.Object $capture$capturesWithControlBlocks$$x;
                 }
                 abstract class Ban implements Baz {
                     void capturesI();
@@ -641,6 +641,7 @@ class InterfaceTests() {
                         $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$x$0 + 1;
                         $ceylon$language.print($ceylon$language.Integer.instance(capture));
                     }
+                    $dart$core.int $capture$capturesWithControlBlocks$$$x$0;
                 }
                 void $package$capturesWithControlBlocks() {
                     $dart$core.Object x = $ceylon$language.Integer.instance(5);
@@ -662,9 +663,8 @@ class InterfaceTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void captureAndAssertScopeVsContainer() {
-        // TODO unfinished; see todo in 'expected' below
         /*
             This test demonstrates the difference between `scope.scope` and
             `scope.container`.
@@ -700,7 +700,6 @@ class InterfaceTests() {
              """;
 
              """
-                // TODO need declarations for the captures
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
@@ -710,6 +709,8 @@ class InterfaceTests() {
                         $dart$core.int captureX = $this.$capture$capturesWithControlBlocks$$x$0;
                         $dart$core.int captureY = $this.$capture$capturesWithControlBlocks$y;
                     }
+                    $dart$core.int $capture$capturesWithControlBlocks$$x$0;
+                    $dart$core.int $capture$capturesWithControlBlocks$y;
                 }
                 void $package$capturesWithControlBlocks() {
                     $dart$core.Object x = $ceylon$language.Integer.instance(5);
@@ -725,9 +726,8 @@ class InterfaceTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void captureAndControlBlocks() {
-        // TODO unfinished; see todo in 'expected' below
         compileAndCompare {
              """
                 void capturesWithControlBlocks() {
@@ -762,8 +762,6 @@ class InterfaceTests() {
              """;
 
              """
-                // TODO need declarations for the captures
-
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
@@ -773,6 +771,7 @@ class InterfaceTests() {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
+                    $dart$core.Object $capture$capturesWithControlBlocks$x;
                 }
                 abstract class Baz implements Bar {
                     void capturesIF();
@@ -780,6 +779,7 @@ class InterfaceTests() {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
                         $ceylon$language.print(capture);
                     }
+                    $dart$core.Object $capture$capturesWithControlBlocks$$$x;
                 }
                 abstract class Ban implements Baz {
                     void capturesI();
@@ -787,6 +787,7 @@ class InterfaceTests() {
                         $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
                         $ceylon$language.print($ceylon$language.Integer.instance(capture));
                     }
+                    $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
                 }
                 void $package$capturesWithControlBlocks() {
                     $dart$core.Object x = $ceylon$language.Integer.instance(5);

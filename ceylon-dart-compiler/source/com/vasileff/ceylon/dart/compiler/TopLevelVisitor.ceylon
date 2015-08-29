@@ -210,7 +210,24 @@ class TopLevelVisitor(CompilationContext ctx)
         value members = {
             outerField,
             *expand(that.body.transformChildren(ctx.classMemberTransformer))
-        }.coalesced.sequence();
+        }.coalesced;
+
+        value declarationsForCaptures = ctx.captures.get(info.declarationModel).map {
+            (capture) => DartFieldDeclaration {
+                false;
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        that;
+                        capture;
+                    };
+                    [DartVariableDeclaration {
+                        dartTypes.identifierForCapture(capture);
+                        null;
+                    }];
+                };
+            };
+        };
 
         add {
             DartClassDeclaration {
@@ -221,7 +238,10 @@ class TopLevelVisitor(CompilationContext ctx)
                     if (exists implementsTypes)
                     then DartImplementsClause(implementsTypes)
                     else null;
-                members;
+                concatenate(
+                    members,
+                    declarationsForCaptures
+                );
             };
         };
     }
