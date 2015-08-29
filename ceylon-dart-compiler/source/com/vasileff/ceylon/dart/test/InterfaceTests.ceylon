@@ -878,4 +878,49 @@ class InterfaceTests() {
              """;
          };
      }
+
+     "The outer type doesn't make the capture, but its supertype does."
+    shared test ignore
+    void captureMadeByOutersSupertype() {
+        // TODO outer not yet used in reference to capture
+        compileAndCompare {
+             """
+                void run() {
+                    Integer x = 5;
+                    interface I1 {
+                        shared Integer i1capturedX => x;
+                    }
+                    interface I2 satisfies I1 {
+                        interface I3 {
+                            shared Integer i3capturedX => x;
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1 {
+                    $dart$core.int get i1capturedX;
+                    static $dart$core.int $get$i1capturedX([final I1 $this]) => $this.$capture$run$x;
+                    $dart$core.int $capture$run$x;
+                }
+                abstract class I2$I3 {
+                    I2 $outer$default$I2$I3;
+                    $dart$core.int get i3capturedX;
+                    static $dart$core.int $get$i3capturedX([final I2$I3 $this]) => $this.$outer$default$I2$I3.$capture$run$x;
+                }
+                abstract class I2 implements I1 {
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                }
+
+                void run() => $package$run();
+             """;
+         };
+     }
+
 }
