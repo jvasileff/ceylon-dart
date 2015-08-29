@@ -655,55 +655,46 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                  as toplevels may be.)"
                 assert (is DartSimpleIdentifier identifier);
 
-                if (container.inherits(declarationContainer)) {
-                    // Note: If a member type implements its containing type, and wants
-                    //       to call it a method on it's containing instance, it will
-                    //       use `outer.f()`. Here, we can assume `this.f()`.
+                // The declaration must belong to $this or an outer container. Find it.
 
-                    // The declaration belongs to the container or something it satisfies
-                    return
-                    [DartPropertyAccess {
-                        DartSimpleIdentifier {
-                            "$this";
-                        };
-                        identifier;
-                    }, isFunction];
-                }
+                value containers
+                    =   loop<ClassOrInterfaceModel>(container)((c)
+                        =>  getContainingClassOrInterface(c.container) else finished);
 
-                // The declaration must belong to an outer container. Find it.
-                variable ClassOrInterfaceModel c = container;
-                variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
-                while (true) {
-                    assert(exists [outerDeclaration, outerField] =
-                                outerDeclarationAndFieldName(c));
-                    fields = fields.follow(DartSimpleIdentifier(outerField));
-                    if (outerDeclaration.inherits(declarationContainer)) {
-                        break; // found it.
-                    }
-                    c = outerDeclaration;
-                }
+                value pathToDeclarer // actually, stops one short of the declarer
+                    =   containers.takeWhile((c)
+                        =>  !c.inherits(declarationContainer));
 
-                fields = sequence(fields.follow(identifier)).reversed;
-                value expression = fields.reduce<DartExpression>(
-                        (expression, field)
-                    =>  DartPropertyAccess {
-                            expression;
-                            field;
-                        });
+                """
+                   Chain of references to the member:
+                        $this ("." $outer$CI)* "." memberName
+                """
+                value dartExpression
+                    =   pathToDeclarer
+                            .map(outerFieldName)
+                            .follow("$this")
+                            .map(DartSimpleIdentifier)
+                            .chain { identifier }
+                            .reduce<DartExpression> {
+                                (expression, field) =>
+                                DartPropertyAccess {
+                                    expression;
+                                    field;
+                                };
+                            };
 
-                return [expression, isFunction];
+                return [dartExpression, isFunction];
             }
             case (is ConstructorModel | ControlBlockModel
                     | FunctionOrValueModel | SpecificationModel) {
 
-                "Identifiers for nested declarations will always be simple identifiers
-                 (not prefixed as toplevels may be.)"
-                assert (is DartSimpleIdentifier identifier);
-
                 value declarationsClassOrInterface
                     =   getContainingClassOrInterface(declaration);
 
-                if ([container] == [declarationsClassOrInterface]) {
+                if (eq(container, declarationsClassOrInterface)) {
+                    "Identifiers for nested declarations will always be simple
+                     identifiers (not prefixed as toplevels may be.)"
+                    assert (is DartSimpleIdentifier identifier);
                     return [identifier, isFunction];
                 }
                 else {
@@ -722,13 +713,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         =   containers.takeWhile((c)
                             =>  !capturedBySelfOrSupertype(declaration, c));
 
-                    value outerExpressionChain
+                    """
+                       Chain of references to the capture:
+                            $this ("." $outer$CI)* "." $capture$V
+                    """
+                    value dartExpression
                         =   pathToCapturer
-                                .sequence()
-                                .reversed
                                 .map(outerFieldName)
                                 .follow("$this")
                                 .map(DartSimpleIdentifier)
+                                .chain { identifierForCapture(declaration) }
                                 .reduce<DartExpression> {
                                     (expression, field) =>
                                     DartPropertyAccess {
@@ -737,13 +731,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                     };
                                 };
 
-                    return [
-                        DartPropertyAccess {
-                            outerExpressionChain;
-                            identifierForCapture(declaration);
-                        },
-                        isFunction
-                    ];
+                    return [dartExpression, isFunction];
                 }
             }
             case (is PackageModel) {
