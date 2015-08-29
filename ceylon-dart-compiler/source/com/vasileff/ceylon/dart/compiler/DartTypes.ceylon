@@ -776,7 +776,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartSimpleIdentifier identifierForCapture(FunctionOrValueModel declaration) {
         value declarations
-            =   loopFinished<DeclarationModel|ControlBlockModel>(declaration)((d)
+            =   loop<DeclarationModel|ControlBlockModel>(declaration)((d)
                 =>  if (is DeclarationModel|ControlBlockModel result = d.container)
                     then result
                     else finished);
