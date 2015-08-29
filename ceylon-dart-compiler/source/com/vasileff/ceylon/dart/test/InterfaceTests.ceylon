@@ -802,4 +802,80 @@ class InterfaceTests() {
              """;
         };
     }
+
+    "The outermost possible class or interface should make the capture."
+    shared test ignore
+    void captureOnBehalfOfInner() {
+        // TODO see fixme note in `expected`
+        compileAndCompare {
+             """
+                void run() {
+                    Integer x = 5;
+                    interface I1 {
+                        interface I2 {
+                            shared Integer capturedX => x;
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1$I2 {
+                    I1 $outer$default$I1$I2;
+                    $dart$core.int get capturedX;
+                    // FIXME should be $this.$outer$default$I1$I2.$capture$run$x;
+                    static $dart$core.int $get$capturedX([final I1$I2 $this]) => $this.$capture$run$x;
+                }
+                abstract class I1 {
+                    $dart$core.int $capture$run$x;
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                }
+
+                void run() => $package$run();
+             """;
+         };
+     }
+
+    "Don't bother capturing something already captured by a supertype."
+    shared test ignore
+    void dontCaptureIfSupertypeCaptures() {
+        compileAndCompare {
+             """
+                void run() {
+                    Integer x = 5;
+                    interface I1 {
+                        shared Integer i1capturedX => x;
+                    }
+                    interface I2 satisfies I1 {
+                        shared Integer i2capturedX => x;
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1 {
+                    $dart$core.int get i1capturedX;
+                    static $dart$core.int $get$i1capturedX([final I1 $this]) => $this.$capture$run$x;
+                    $dart$core.int $capture$run$x;
+                }
+                abstract class I2 implements I1 {
+                    $dart$core.int get i2capturedX;
+                    static $dart$core.int $get$i2capturedX([final I2 $this]) => $this.$capture$run$x;
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                }
+
+                void run() => $package$run();
+             """;
+         };
+     }
 }
