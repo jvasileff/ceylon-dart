@@ -571,13 +571,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         if (is ClassOrInterfaceModel container =
                 getContainingClassOrInterface(declaration.container)) {
 
-            return [container,
-                    "$outer"
-                        + moduleImportPrefix(declaration) + "$"
-                        + getName(declaration)];
+            return [container, outerFieldName(declaration)];
         }
         return null;
     }
+
+    String outerFieldName(ClassOrInterfaceModel declaration)
+        =>  "$outer"
+                + moduleImportPrefix(declaration) + "$"
+                + getName(declaration);
 
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
@@ -709,51 +711,39 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // does not share a containing class or interface, so it must be
                     // a capture.
 
-                    // Capture must have been made by $this, a supertype of $this, or
-                    // some $outer or one of its supertypes.
+                    // The capture must have been made by $this, a supertype of $this,
+                    // some $outer, or a supertype of some $outer.
 
-                    if (capturedBySelfOrSupertype(declaration, container)) {
-                        return [
-                            DartPropertyAccess {
-                                DartSimpleIdentifier {
-                                    "$this";
+                    value containers
+                        =   loop<ClassOrInterfaceModel>(container)((c)
+                            =>  getContainingClassOrInterface(c.container) else finished);
+
+                    value pathToCapturer // actually, stops one short of the capturer
+                        =   containers.takeWhile((c)
+                            =>  !capturedBySelfOrSupertype(declaration, c));
+
+                    value outerExpressionChain
+                        =   pathToCapturer
+                                .sequence()
+                                .reversed
+                                .map(outerFieldName)
+                                .follow("$this")
+                                .map(DartSimpleIdentifier)
+                                .reduce<DartExpression> {
+                                    (expression, field) =>
+                                    DartPropertyAccess {
+                                        expression;
+                                        field;
+                                    };
                                 };
-                                identifierForCapture(declaration);
-                            },
-                            isFunction
-                        ];
-                    }
-                    else {
-                        variable ClassOrInterfaceModel c = container;
-                        variable {DartSimpleIdentifier+} fields = {DartSimpleIdentifier("$this")};
 
-                        while (true) {
-                            assert(exists [outerDeclaration, outerField] =
-                                        outerDeclarationAndFieldName(c));
-                            fields = fields.follow(DartSimpleIdentifier(outerField));
-                            if (capturedBySelfOrSupertype(
-                                    declaration, outerDeclaration)) {
-                                break; // found it.
-                            }
-                            c = outerDeclaration;
-                        }
-
-                        fields = sequence(fields).reversed;
-                        value outerExpression = fields.reduce<DartExpression>(
-                                (expression, field)
-                            =>  DartPropertyAccess {
-                                    expression;
-                                    field;
-                                });
-
-                        return [
-                            DartPropertyAccess {
-                                outerExpression;
-                                identifierForCapture(declaration);
-                            },
-                            isFunction
-                        ];
-                    }
+                    return [
+                        DartPropertyAccess {
+                            outerExpressionChain;
+                            identifierForCapture(declaration);
+                        },
+                        isFunction
+                    ];
                 }
             }
             case (is PackageModel) {
