@@ -19,8 +19,6 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier
 }
 import com.vasileff.jl4c.guava.collect {
-    HashMultimap,
-    MutableSetMultimap,
     LinkedHashMultimap
 }
 
