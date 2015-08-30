@@ -20,7 +20,8 @@ import com.vasileff.ceylon.dart.ast {
 }
 import com.vasileff.jl4c.guava.collect {
     HashMultimap,
-    MutableSetMultimap
+    MutableSetMultimap,
+    LinkedHashMultimap
 }
 
 import org.antlr.runtime {
@@ -49,9 +50,13 @@ class CompilationContext(PhasedUnit phasedUnit) {
     HashSet<FunctionOrValueModel> capturedDeclarations
         =   HashSet<FunctionOrValueModel>();
 
+    "A multimap to associated each capturing class and interface with its list of
+     captures. A [[LinkedHashMultimap]] is used to preserve insertion order. A
+     consistent order is important as the capture lists will be used to build parameter
+     and argument lists."
     shared
-    MutableSetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
-        =   HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
+    LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
+        =   LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
 
     shared variable
     DartSimpleIdentifier? doFailVariableTop = null;
