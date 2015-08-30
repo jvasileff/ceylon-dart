@@ -9,19 +9,21 @@ import ceylon.ast.core {
     InterfaceDefinition,
     FunctionShortcutDefinition,
     ValueGetterDefinition,
-    LazySpecifier,
     AnyValue,
     AnyFunction,
     ValueSetterDefinition,
     TypedDeclaration,
-    ClassDefinition
+    ClassDefinition,
+    ObjectDefinition,
+    Specifier
 }
 
 import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     InterfaceModel=Interface,
     SetterModel=Setter,
-    TypedDeclarationModel=TypedDeclaration
+    TypedDeclarationModel=TypedDeclaration,
+    ClassModel=Class
 }
 import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier,
@@ -38,7 +40,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyValueInfo,
     ValueDeclarationInfo,
     typedDeclarationInfo,
-    ValueSetterDefinitionInfo
+    ValueSetterDefinitionInfo,
+    DeclarationInfo
 }
 
 shared
@@ -63,55 +66,6 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartClassMember*] transformValueDefinition(ValueDefinition that) {
-        // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
-            return [];
-        }
-
-        value info = ValueDefinitionInfo(that);
-
-        "The container of a class or interface member is surely a ClassOrInterface"
-        assert (is ClassOrInterfaceModel container = info.declarationModel.container);
-
-        if (!container is InterfaceModel) {
-            // TODO support classes; assuming interface code below
-            throw CompilerBug(that, "classes not yet supported");
-        }
-
-        value specifier = that.definition;
-
-        "Interfaces don't have fields"
-        assert(is LazySpecifier specifier);
-
-        // NOTE "getters" cannot be variable, so not worrying about setter
-        //      declarations which are handled by ValueSetterDefinition
-        return [generateMethodGetterOrSetterDeclaration(that),
-                generateStaticInterfaceMethod(that)];
-    }
-
-    shared actual
-    [DartClassMember*] transformValueSetterDefinition(ValueSetterDefinition that) {
-        // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
-            return [];
-        }
-
-        return [generateMethodGetterOrSetterDeclaration(that),
-                generateStaticInterfaceMethod(that)];
-    }
-
-    shared actual
-    [DartClassMember*] transformValueGetterDefinition(ValueGetterDefinition that) {
-        // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
-            return [];
-        }
-        return [generateMethodGetterOrSetterDeclaration(that),
-                generateStaticInterfaceMethod(that)];
-    }
-
-    shared actual
     []|[DartMethodDeclaration] transformFunctionDeclaration(FunctionDeclaration that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
@@ -121,27 +75,57 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartMethodDeclaration*] transformFunctionShortcutDefinition
-            (FunctionShortcutDefinition that) {
+    [DartClassMember*] transformValueDefinition(ValueDefinition that) {
+        value info = ValueDefinitionInfo(that);
+
         // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
+        if (!isForDartBackend(info.declarationModel)) {
             return [];
         }
 
-        return [generateMethodGetterOrSetterDeclaration(that),
-                generateStaticInterfaceMethod(that)];
+        // TODO support eager values and variables in classes
+        if (that.definition is Specifier) {
+            throw CompilerBug(that,
+                    "Specifiers not yet supported \
+                     (only LazySpecifiers for now");
+        }
+
+        // NOTE getters cannot be variable, so not worrying about setter declarations
+        //      for interfaces which are handled by ValueSetterDefinition
+        return generateForMethodGetterOrSetterDefinition(that);
     }
 
     shared actual
-    [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that) {
-        // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
-            return [];
-        }
+    [DartClassMember*] transformValueGetterDefinition(ValueGetterDefinition that)
+        =>  generateForMethodGetterOrSetterDefinition(that);
 
-        return [generateMethodGetterOrSetterDeclaration(that),
-                generateStaticInterfaceMethod(that)];
-    }
+    shared actual
+    [DartClassMember*] transformValueSetterDefinition(ValueSetterDefinition that)
+        =>  generateForMethodGetterOrSetterDefinition(that);
+
+    shared actual
+    [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that)
+        =>  generateForMethodGetterOrSetterDefinition(that);
+
+    shared actual
+    [DartMethodDeclaration*] transformFunctionShortcutDefinition
+            (FunctionShortcutDefinition that)
+        =>  generateForMethodGetterOrSetterDefinition(that);
+
+    [DartMethodDeclaration*] generateForMethodGetterOrSetterDefinition(
+             FunctionDefinition
+                | FunctionShortcutDefinition
+                | ValueDefinition
+                | ValueGetterDefinition
+                | ValueSetterDefinition that)
+        =>  let (info = DeclarationInfo(that))
+            if (!isForDartBackend(that)) then
+                [] // skip native declarations entirely, for now
+            else if (info.declarationModel.container is InterfaceModel) then
+                [generateMethodGetterOrSetterDeclaration(that),
+                 generateMethodDefinition(that)]
+            else
+                [generateMethodDefinition(that)];
 
     "Generates a method or getter declaration (not to be confused with *definition*).
      Note: Setter declarations for `AnyValue`s are *not* generated by this method, and
@@ -213,9 +197,10 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     DartMethodDeclaration generateSetterDeclaration
-            (ValueDeclaration|ValueDefinition that) {
+            (ValueDeclaration | ValueDefinition that) {
 
-        value declarationModel = AnyValueInfo(that).declarationModel;
+        value declarationModel
+            =   AnyValueInfo(that).declarationModel;
 
         value [identifier, isFunction]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
@@ -256,7 +241,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         };
     }
 
-    DartMethodDeclaration generateStaticInterfaceMethod(
+    DartMethodDeclaration generateMethodDefinition(
             FunctionDefinition
             | FunctionShortcutDefinition
             | ValueDefinition
@@ -274,32 +259,11 @@ class ClassMemberTransformer(CompilationContext ctx)
                 case (is AnyValueInfo) info.declarationModel
                 case (is ValueSetterDefinitionInfo) info.declarationModel;
 
-        "The container of a class or interface member is surely a ClassOrInterface"
-        assert (is ClassOrInterfaceModel container = info.declarationModel.container);
+        "The container of a class or interface member is surely a Class or Interface"
+        assert (is ClassModel | InterfaceModel container
+            =   info.declarationModel.container);
 
-        if (!container is InterfaceModel) {
-            // TODO support classes; assuming interface code below
-            throw CompilerBug(that, "classes not yet supported");
-        }
-
-        // Member functions of interfaces need a $this parameter.
-        DartSimpleFormalParameter? thisParameter;
-        if (is InterfaceModel container) {
-            thisParameter = DartSimpleFormalParameter {
-                true; false;
-                dartTypes.dartTypeName {
-                    that;
-                    container.type;
-                    false; false;
-                };
-                DartSimpleIdentifier("$this");
-            };
-        }
-        else {
-            thisParameter = null;
-        }
-
-        // Generate a DartFunctionExpression, then scrap it for parts
+        "A DartFunctionExpression that will be scrapped for parts."
         value functionExpression
             =   switch (that)
                 case (is AnyFunction)
@@ -309,43 +273,95 @@ class ClassMemberTransformer(CompilationContext ctx)
                 case (is ValueSetterDefinition)
                     generateForValueSetterDefinition(that).functionExpression;
 
+        "Parameters for the function, not including the possible addition of $this."
         value standardParameters
             =   functionExpression.parameters
                 else dartFormalParameterListEmpty;
 
         // TODO defaulted parameters! (see also transformFunctionDefinition)
 
-        // a static method definition for the actual implementation
-        return
-        DartMethodDeclaration {
-            false;
-            "static";
-            generateFunctionReturnType(info);
-            null;
-            DartSimpleIdentifier {
-                dartTypes.getStaticInterfaceMethodName {
-                    declarationModel;
+        // For interfaces, the implementation is always a static method.
+        // For classes, the implementation may be a function or getter.
+
+        switch (container)
+        case (is InterfaceModel) {
+            // a static method definition for the actual implementation
+            return
+            DartMethodDeclaration {
+                false;
+                "static";
+                generateFunctionReturnType(info);
+                null;
+                DartSimpleIdentifier {
+                    dartTypes.getStaticInterfaceMethodName {
+                        declarationModel;
+                    };
                 };
+                DartFormalParameterList {
+                    true; false;
+                    [
+                        // $this parameter
+                        DartSimpleFormalParameter {
+                            true; false;
+                            dartTypes.dartTypeName {
+                                that;
+                                container.type;
+                                false; false;
+                            };
+                            DartSimpleIdentifier("$this");
+                        },
+                        // value parameters
+                        *standardParameters.parameters
+                    ].coalesced.sequence();
+                };
+                functionExpression.body;
             };
-            DartFormalParameterList {
-                true; false;
-                [
-                    thisParameter,
-                    *standardParameters.parameters
-                ].coalesced.sequence();
+        }
+        case (is ClassModel) {
+            value [dartIdentifier, isFunction]
+                =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                        that;
+                        declarationModel;
+                    };
+
+            return
+            DartMethodDeclaration {
+                false;
+                null;
+                generateFunctionReturnType(info);
+                !isFunction then (
+                    if (that is ValueSetterDefinition)
+                    then "set"
+                    else "get"
+                );
+                dartIdentifier;
+                if (is SetterModel declarationModel) then
+                    DartFormalParameterList {
+                        false; false;
+                        [
+                            DartSimpleFormalParameter {
+                                false; false;
+                                dartTypes.dartReturnTypeNameForDeclaration {
+                                    that;
+                                    declarationModel.getter;
+                                };
+                                DartSimpleIdentifier {
+                                    // use the attribute's name as the parameter name
+                                    dartTypes.getName(declarationModel);
+                                };
+                            }
+                        ];
+                    }
+                else if (isFunction) then
+                    DartFormalParameterList {
+                        true; false;
+                        standardParameters.parameters;
+                    }
+                else
+                    null;
+                functionExpression.body;
             };
-            functionExpression.body;
-        };
-    }
-
-    shared actual
-    [] transformTypeAliasDefinition(TypeAliasDefinition that)
-        =>  [];
-
-    shared actual
-    [] transformInterfaceDefinition(InterfaceDefinition that) {
-        that.visit(topLevelVisitor);
-        return [];
+        }
     }
 
     shared actual
@@ -356,6 +372,28 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
         return super.transformClassDefinition(that);
     }
+
+    shared actual
+    [] transformInterfaceDefinition(InterfaceDefinition that) {
+        that.visit(topLevelVisitor);
+        return [];
+    }
+
+    shared actual
+    [DartClassMember*] transformObjectDefinition(ObjectDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+// FIXME instantiate the object
+        that.visit(topLevelVisitor);
+        return [];
+    }
+
+    shared actual
+    [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
 
     shared actual default
     [] transformNode(Node that) {

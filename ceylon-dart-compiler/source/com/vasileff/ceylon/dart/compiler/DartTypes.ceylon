@@ -79,6 +79,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 then getName(container) + "$"
                 else "";
 
+        function classOrObjectShortName(ClassModel declaration)
+            =>  if (declaration.anonymous)
+                then declaration.name + "_"
+                else declaration.name;
+
         if (is SetterModel declaration) {
             return getName(declaration.getter);
         }
@@ -110,7 +115,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return declaration.name;
         }
         case (is ClassModel) {
-            return classOrInterfacePrefix(declaration) + declaration.name;
+            return classOrInterfacePrefix(declaration)
+                    + classOrObjectShortName(declaration);
         }
         case (is ConstructorModel) {
             return declaration.name;

@@ -28,7 +28,8 @@ import ceylon.ast.core {
     LazySpecifier,
     Specifier,
     ValueGetterDefinition,
-    ValueSetterDefinition
+    ValueSetterDefinition,
+    ObjectDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -532,7 +533,8 @@ class StatementTransformer(CompilationContext ctx)
         }];
     }
 
-    shared actual DartStatement[] transformClassDefinition(ClassDefinition that) {
+    shared actual
+    DartStatement[] transformClassDefinition(ClassDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
@@ -547,6 +549,18 @@ class StatementTransformer(CompilationContext ctx)
             return [];
         }
 
+        that.visit(topLevelVisitor);
+        return [];
+    }
+
+    shared actual
+    DartStatement[] transformObjectDefinition(ObjectDefinition that) {
+        // skip native declarations entirely, for now
+        if (!isForDartBackend(that)) {
+            return [];
+        }
+
+// FIXME instantiate the object
         that.visit(topLevelVisitor);
         return [];
     }

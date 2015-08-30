@@ -45,7 +45,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueDefinitionInfo,
     AnyFunctionInfo,
     AnyClassInfo,
-    ValueGetterDefinitionInfo
+    ValueGetterDefinitionInfo,
+    ObjectDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -169,7 +170,6 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitInterfaceDefinition(InterfaceDefinition that) {
-
         value info = AnyInterfaceInfo(that);
 
         // skip native declarations entirely, for now
@@ -180,54 +180,55 @@ class TopLevelVisitor(CompilationContext ctx)
         value name = dartTypes.getName(info.declarationModel);
         value identifier = DartSimpleIdentifier(name);
 
-        value implementsTypes = sequence(CeylonList(
-                    info.declarationModel.satisfiedTypes).map((satisfiedType)
-            =>  dartTypes.dartTypeName(that, satisfiedType, false)
-        ));
+        value implementsTypes
+            =   sequence(CeylonList(info.declarationModel.satisfiedTypes)
+                        .map((satisfiedType)
+                =>  dartTypes.dartTypeName(that, satisfiedType, false)));
 
-        // If this is a member interface, in needs an $outer property
-        DartFieldDeclaration? outerField =
-            if (exists [container, outerName] =
-                    dartTypes.outerDeclarationAndFieldName(info.declarationModel)) then
-                DartFieldDeclaration {
-                    false;
-                    DartVariableDeclarationList {
-                        null;
-                        dartTypes.dartTypeName {
-                            that;
-                            container.type;
-                            false; false;
-                        };
-                        [DartVariableDeclaration {
-                            DartSimpleIdentifier(outerName);
+        "An $outer field declaration, if there is an outer class or interface"
+        value outerField
+            =   if (exists [container, outerName] = dartTypes
+                        .outerDeclarationAndFieldName(info.declarationModel)) then
+                    DartFieldDeclaration {
+                        false;
+                        DartVariableDeclarationList {
                             null;
-                        }];
-                    };
-                }
-            else
-                null;
-
-        value members = {
-            outerField,
-            *expand(that.body.transformChildren(ctx.classMemberTransformer))
-        }.coalesced;
-
-        value declarationsForCaptures = ctx.captures.get(info.declarationModel).map {
-            (capture) => DartFieldDeclaration {
-                false;
-                DartVariableDeclarationList {
+                            dartTypes.dartTypeName {
+                                that;
+                                container.type;
+                                false; false;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier(outerName);
+                                null;
+                            }];
+                        };
+                    }
+                else
                     null;
-                    dartTypes.dartTypeNameForDeclaration {
-                        that;
-                        capture;
+
+        value members
+            =   { outerField,
+                  *expand(that.body.transformChildren(classMemberTransformer))
+                }.coalesced;
+
+        value declarationsForCaptures
+            =   ctx.captures.get(info.declarationModel).map {
+                    (capture) => DartFieldDeclaration {
+                        false;
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                capture;
+                            };
+                            [DartVariableDeclaration {
+                                dartTypes.identifierForCapture(capture);
+                                null;
+                            }];
+                        };
                     };
-                    [DartVariableDeclaration {
-                        dartTypes.identifierForCapture(capture);
-                        null;
-                    }];
                 };
-            };
-        };
 
         add {
             DartClassDeclaration {
@@ -248,12 +249,87 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitObjectDefinition(ObjectDefinition that) {
+        value info = ObjectDefinitionInfo(that);
+
         // skip native declarations entirely, for now
-        if (!isForDartBackend(that)) {
+        if (!isForDartBackend(info)) {
             return;
         }
 
-        super.visitObjectDefinition(that);
+        value name = dartTypes.getName(info.anonymousClass);
+        value identifier = DartSimpleIdentifier(name);
+
+        value implementsTypes
+            =   sequence(CeylonList(info.anonymousClass.satisfiedTypes)
+                        .map((satisfiedType)
+                =>  dartTypes.dartTypeName(that, satisfiedType, false)
+        ));
+
+// TODO consolidate with very similar visitInterfaceDefinition code
+// TODO outer and captures for extended & satisfied types
+// TODO toplevels should be constants
+// TODO extends clause
+
+        "An $outer field declaration, if there is an outer class or interface"
+        value outerField
+            =   if (exists [container, outerName] = dartTypes
+                        .outerDeclarationAndFieldName(info.anonymousClass)) then
+                    DartFieldDeclaration {
+                        false;
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeName {
+                                that;
+                                container.type;
+                                false; false;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier(outerName);
+                                null;
+                            }];
+                        };
+                    }
+                else
+                    null;
+
+        value members
+            =   { outerField,
+                  *expand(that.body.transformChildren(classMemberTransformer))
+                }.coalesced;
+
+        value declarationsForCaptures
+            =   ctx.captures.get(info.declarationModel).map {
+                    (capture) => DartFieldDeclaration {
+                        false;
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                capture;
+                            };
+                            [DartVariableDeclaration {
+                                dartTypes.identifierForCapture(capture);
+                                null;
+                            }];
+                        };
+                    };
+                };
+
+        add {
+            DartClassDeclaration {
+                abstract = false;
+                name = identifier;
+                extendsClause = null;
+                implementsClause =
+                    if (exists implementsTypes)
+                    then DartImplementsClause(implementsTypes)
+                    else null;
+                concatenate(
+                    members,
+                    declarationsForCaptures
+                );
+            };
+        };
     }
 
     shared actual

@@ -47,7 +47,9 @@ import ceylon.ast.core {
     ExistsCondition,
     NonemptyCondition,
     IfElseExpression,
-    ValueSetterDefinition
+    ValueSetterDefinition,
+    TypeNameWithTypeArguments,
+    ObjectDefinition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -302,6 +304,17 @@ class AnyFunctionInfo(AnyFunction astNode)
     shared actual default AnyFunction node => astNode;
     value tcNode = assertedTcNode<Tree.AnyMethod>(astNode);
     shared actual FunctionModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class ObjectDefinitionInfo(ObjectDefinition astNode)
+        extends DeclarationInfo(astNode) {
+
+    shared actual default ObjectDefinition node => astNode;
+    value tcNode = assertedTcNode<Tree.ObjectDefinition>(astNode);
+
+    shared actual ValueModel declarationModel => tcNode.declarationModel;
+    shared ClassModel anonymousClass => tcNode.anonymousClass;
 }
 
 "Tree.ExecutableStatement"
@@ -611,6 +624,16 @@ class ThisInfo(This astNode)
 
     value tcNode = assertedTcNode<Tree.This>(astNode);
     shared default DeclarationModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default TypeNameWithTypeArguments node => astNode;
+
+    value tcNode = assertedTcNode<Tree.SimpleType>(astNode);
+    shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node astNode)
