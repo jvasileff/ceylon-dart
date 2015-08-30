@@ -38,7 +38,10 @@ import com.vasileff.ceylon.dart.ast {
     DartFunctionDeclaration,
     DartVariableDeclarationList,
     DartVariableDeclaration,
-    DartFieldDeclaration
+    DartFieldDeclaration,
+    DartInstanceCreationExpression,
+    DartConstructorName,
+    DartTypeName
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -330,20 +333,54 @@ class TopLevelVisitor(CompilationContext ctx)
                 );
             };
         };
+
+        if (isToplevel(info.declarationModel)) {
+            // define toplevel value and forwarding function
+            addAll {
+                DartTopLevelVariableDeclaration {
+                    DartVariableDeclarationList {
+                        "final"; // TODO const
+                        DartTypeName { // TODO use dartTypes.dartTypeNameX for this
+                            identifier;
+                        };
+                        [DartVariableDeclaration {
+                            DartSimpleIdentifier {
+                                "$package$" + dartTypes.getName(info.declarationModel);
+                            };
+                            DartInstanceCreationExpression {
+                                const = false; // TODO const for toplevels
+                                DartConstructorName {
+                                    DartTypeName {
+                                        identifier;
+                                    };
+                                    name = null;
+                                };
+                                DartArgumentList {
+                                    [];
+                                };
+                            };
+                        }];
+                    };
+                },
+                *generateForwardingGetterSetter(that)
+            };
+        }
     }
 
     shared actual
     void visitTypeAliasDefinition(TypeAliasDefinition that) {}
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
-            (ValueDefinition | ValueGetterDefinition that) {
+            (ValueDefinition | ValueGetterDefinition | ObjectDefinition that) {
 
         value declarationModel =
             switch (that)
             case (is ValueDefinition)
                 ValueDefinitionInfo(that).declarationModel
             case (is ValueGetterDefinition)
-                ValueGetterDefinitionInfo(that).declarationModel;
+                ValueGetterDefinitionInfo(that).declarationModel
+            case (is ObjectDefinition)
+                ObjectDefinitionInfo(that).declarationModel;
 
         value getter =
         DartFunctionDeclaration {

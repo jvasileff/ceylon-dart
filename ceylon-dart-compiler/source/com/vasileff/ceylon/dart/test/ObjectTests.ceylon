@@ -6,9 +6,8 @@ import ceylon.test {
 shared
 class ObjectTests() {
 
-    shared test ignore
+    shared test
     void simpleToplevelObject() {
-        // TODO instantiate object
         compileAndCompare {
              """
                 object o1 {
@@ -16,6 +15,13 @@ class ObjectTests() {
                     shared String s2 { return ""; }
                     shared String s3() => "";
                     shared String s4() { return ""; }
+                }
+
+                shared void run() {
+                    print(o1.s1);
+                    print(o1.s2);
+                    print(o1.s3());
+                    print(o1.s4());
                 }
              """;
 
@@ -32,10 +38,19 @@ class ObjectTests() {
                     $dart$core.String s4() {
                         return "";
                     }
-
-                    o1_ o1 = new o1_();
-                    o1_ get $package$o1 => o1;
                 }
+                final o1_ $package$o1 = new o1_();
+
+                o1_ get o1 => $package$o1;
+
+                void $package$run() {
+                    $ceylon$language.print($ceylon$language.String.instance($package$o1.s1));
+                    $ceylon$language.print($ceylon$language.String.instance($package$o1.s2));
+                    $ceylon$language.print($ceylon$language.String.instance($package$o1.s3()));
+                    $ceylon$language.print($ceylon$language.String.instance($package$o1.s4()));
+                }
+
+                void run() => $package$run();
              """;
         };
     }
