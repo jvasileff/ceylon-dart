@@ -32,7 +32,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ConstructorModel=Constructor,
     SpecificationModel=Specification,
-    NamedArgumentListModel=NamedArgumentList
+    NamedArgumentListModel=NamedArgumentList,
+    TypeDeclarationModel=TypeDeclaration
 }
 import com.vasileff.ceylon.dart.ast {
     DartConstructorName,
@@ -698,9 +699,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     =   getContainingClassOrInterface(declaration);
 
                 if (eq(container, declarationsClassOrInterface)) {
-                    "Identifiers for nested declarations will always be simple
-                     identifiers (not prefixed as toplevels may be.)"
-                    assert (is DartSimpleIdentifier identifier);
                     return [identifier, isFunction];
                 }
                 else {
@@ -752,12 +750,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype
             (FunctionOrValueModel target, ClassOrInterfaceModel by)
-        =>  ctx.captures.contains(by->target)
-                || CeylonList(by.satisfiedTypes)
-                    .follow(by.extendedType of TypeModel?)
-                    .coalesced
-                    .map(TypeModel.declaration)
-                    .any((d) => ctx.captures.contains(d->target));
+        =>  supertypeDeclarations(by).any((d)
+            =>  ctx.captures.contains(d->target));
 
     """
        Produces an identifier of the form "$capture$" followed by each declaration's name

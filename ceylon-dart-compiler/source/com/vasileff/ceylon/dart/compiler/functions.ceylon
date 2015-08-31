@@ -31,12 +31,17 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ScopeModel=Scope,
     SetterModel=Setter,
-    ValueModel=Value
+    ValueModel=Value,
+    TypeDeclarationModel=TypeDeclaration,
+    TypeModel=Type
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
     DeclarationInfo,
     keys
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 void printNodeAsCode(Node node) {
@@ -154,6 +159,31 @@ getRealContainingScope(ElementModel scope) {
             result = scopeModel);
 
     return result;
+}
+
+"A stream including the given [[declaration]], the declarations of its extended and
+ satisfied types, and all of their extended and satisfied types, recursively.
+
+ Note: The values in this stream are not necessarily distinct!"
+shared
+{ClassOrInterfaceModel+} supertypeDeclarations(ClassOrInterfaceModel declaration) {
+    {TypeDeclarationModel+} collectx(TypeDeclarationModel declaration)
+        =>  {
+                declaration,
+                *CeylonList(declaration.satisfiedTypes)
+                    .follow(declaration.extendedType of TypeModel?)
+                    .coalesced
+                    .map(TypeModel.declaration)
+                    .flatMap(collectx)
+            };
+
+    return collectx(declaration).map {
+        function(d) {
+            "Extended and satisfied types are classes and interfaces."
+            assert (is ClassOrInterfaceModel d);
+            return d;
+        };
+    };
 }
 
 "True if the non-ConditionScope container is a class or interface.

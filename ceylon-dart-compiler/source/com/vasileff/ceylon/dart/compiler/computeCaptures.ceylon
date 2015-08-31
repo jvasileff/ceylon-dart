@@ -96,11 +96,9 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             value redundantCaptures = ctx.captures
                 .filter((entry)
                     =>  let (by->target = entry)
-                        CeylonList(entry.key.satisfiedTypes)
-                            .follow(entry.key.extendedType of TypeModel?)
-                            .coalesced
-                            .map(TypeModel.declaration)
-                            .any((d) => ctx.captures.contains(d->entry.item)))
+                        supertypeDeclarations(by)
+                            .skip(1)
+                            .any((d) => ctx.captures.contains(d->target)))
                 .sequence(); // eager; don't modify the multimap while iterating!
 
             // TODO should be easier - improve jl4c-guava
