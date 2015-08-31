@@ -588,6 +588,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 + moduleImportPrefix(declaration) + "$"
                 + getName(declaration);
 
+    "Required `outer` declarations the given [[declaration]] and all supertype
+     (extended and satisfied) declarations."
+    shared
+    {[ClassOrInterfaceModel, String]*} outerDeclarationsAndFieldNamesForClass
+            (ClassOrInterfaceModel declaration)
+        =>  supertypeDeclarations(declaration)
+                .distinct.map(outerDeclarationAndFieldName).coalesced;
+
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
             Node|ElementModel|ScopeModel scope,

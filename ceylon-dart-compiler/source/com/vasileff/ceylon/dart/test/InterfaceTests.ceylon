@@ -963,7 +963,6 @@ class InterfaceTests() {
          };
      }
 
-
      "The outer type doesn't make the capture, but its supertype does."
     shared test
     void captureMadeByOutersSupertype() {

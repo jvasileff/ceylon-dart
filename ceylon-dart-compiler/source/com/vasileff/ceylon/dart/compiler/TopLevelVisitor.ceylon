@@ -269,14 +269,16 @@ class TopLevelVisitor(CompilationContext ctx)
         ));
 
 // TODO consolidate with very similar visitInterfaceDefinition code
-// TODO outer and captures for extended & satisfied types
+// TODO captures for extended & satisfied types
 // TODO toplevels should be constants
 // TODO extends clause
 
-        "An $outer field declaration, if there is an outer class or interface"
-        value outerField
-            =   if (exists [container, outerName] = dartTypes
-                        .outerDeclarationAndFieldName(info.anonymousClass)) then
+        "$outer field declarations, if any."
+        value outerFields
+            =   dartTypes.outerDeclarationsAndFieldNamesForClass {
+                    info.anonymousClass;
+                }.map {
+                    (t) => let ([container, outerName] = t)
                     DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
@@ -291,14 +293,11 @@ class TopLevelVisitor(CompilationContext ctx)
                                 null;
                             }];
                         };
-                    }
-                else
-                    null;
+                    };
+                };
 
         value members
-            =   { outerField,
-                  *expand(that.body.transformChildren(classMemberTransformer))
-                }.coalesced;
+            =   expand(that.body.transformChildren(classMemberTransformer));
 
         value declarationsForCaptures
             =   ctx.captures.get(info.declarationModel).map {
@@ -328,6 +327,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     then DartImplementsClause(implementsTypes)
                     else null;
                 concatenate(
+                    outerFields,
                     members,
                     declarationsForCaptures
                 );

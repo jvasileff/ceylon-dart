@@ -113,6 +113,56 @@ class ObjectTests() {
                       o2 = new o1_$o2_(this);
                     }
                 }
+                final o1_ $package$o1 = new o1_();
+
+                o1_ get o1 => $package$o1;
+             """;
+        };
+    }
+
+    shared test ignore
+    void outerForSupertypesSupertype() {
+        // TODO constructor, instantiation
+        // TODO outer references are unique to the inner (i.e. declarations all have
+        //      their own ref for I1), but is this necessary?
+        compileAndCompare {
+             """
+                void run() {
+                    interface I1 {
+                        interface I2 satisfies I1 {}
+                        interface I3 satisfies I2 {}
+                        shared default void foo() {
+                            object o satisfies I3 {}
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1$I2 implements I1 {
+                    I1 $outer$default$I1$I2;
+                }
+                abstract class I1$I3 implements I1$I2 {
+                    I1 $outer$default$I1$I3;
+                }
+                class I1$o_ implements I1$I3 {
+                    I1 $outer$default$I1$o_;
+                    I1 $outer$default$I1$I3;
+                    I1 $outer$default$I1$I2;
+                    // TODO constructor
+                }
+                abstract class I1 {
+                    void foo();
+                    static void $foo([final I1 $this]) {
+                        // TODO object value declaration
+                    }
+                }
+                void $package$run() {}
+
+                void run() => $package$run();
              """;
         };
     }
