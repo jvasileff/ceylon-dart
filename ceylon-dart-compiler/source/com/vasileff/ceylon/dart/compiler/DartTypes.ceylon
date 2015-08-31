@@ -663,11 +663,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         };
 
         // TODO support classes
-        if (is InterfaceModel container = getContainingClassOrInterface(scope)) {
+        if (exists container = getContainingClassOrInterface(scope)) {
             value declarationContainer = getRealContainingScope(declaration);
 
             "Arguments in named argument lists cannot be referenced."
             assert(!is NamedArgumentListModel declarationContainer);
+
+            value isInterface = container is InterfaceModel;
 
             switch (declarationContainer)
             case (is ClassOrInterfaceModel) {
@@ -691,9 +693,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         $this ("." $outer$CI)* "." memberName
                 """
                 value dartExpression
-                    =   pathToDeclarer
-                            .map(outerFieldName)
-                            .follow("$this")
+                    =   (if (isInterface) then ["$this"] else [])
+                            .chain(pathToDeclarer.map(outerFieldName))
                             .map(DartSimpleIdentifier)
                             .chain { identifier }
                             .reduce<DartExpression> {
@@ -736,9 +737,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             $this ("." $outer$CI)* "." $capture$V
                     """
                     value dartExpression
-                        =   pathToCapturer
-                                .map(outerFieldName)
-                                .follow("$this")
+                        =   (if (isInterface) then ["$this"] else [])
+                                .chain(pathToCapturer.map(outerFieldName))
                                 .map(DartSimpleIdentifier)
                                 .chain { identifierForCapture(declaration) }
                                 .reduce<DartExpression> {
