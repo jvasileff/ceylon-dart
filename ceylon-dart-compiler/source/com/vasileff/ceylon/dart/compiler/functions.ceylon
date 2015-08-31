@@ -200,17 +200,13 @@ Boolean isToplevel(DeclarationModel scope)
  implementation for a specific backend, the empty String (\"\") for declarations marked
  native without specifying a backend, or null for non-`native` declarations."
 String? getNative(Declaration|DeclarationInfo|DeclarationModel that)
-    =>  let (model =
-                switch (that)
-                case (is Declaration) DeclarationInfo(that)
-                        .declarationModel
-                case (is DeclarationInfo) that
-                        .declarationModel
-                case (is DeclarationModel) that)
-        // workaround https://github.com/ceylon/ceylon-compiler/issues/2244
-        if (exists result=model.nativeBackend)
-        then result
-        else null;
+    =>  switch (that)
+        case (is Declaration)
+            DeclarationInfo(that).declarationModel.nativeBackend
+        case (is DeclarationInfo)
+            that.declarationModel.nativeBackend
+        case (is DeclarationModel)
+            that.nativeBackend;
 
 "Returns true if the declaration is not marked `native`, or if it is marked `native`
  with a Ceylon implementation for the Dart backend."
