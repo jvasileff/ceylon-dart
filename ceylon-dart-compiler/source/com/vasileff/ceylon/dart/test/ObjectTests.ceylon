@@ -121,6 +121,62 @@ class ObjectTests() {
     }
 
     shared test ignore
+    void multipleCaptures() {
+        // TODO instantiate object
+        //      constructors
+        compileAndCompare {
+             """
+                shared void run() {
+                    value s1 = "";
+                    interface I1 {
+                        shared default String i1s1 => s1;
+                        interface I2 satisfies I1 {
+                            shared void i2Foo() {
+                                value i2foo = "";
+                                object o satisfies I2 {
+                                    shared String i2fooo => i2foo;
+                                }
+                            }
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class I1$I2$o_ implements I1$I2 {
+                    I1$I2 $outer$default$I1$I2$o_;
+                    I1 $outer$default$I1$I2;
+                    $dart$core.String $capture$run$I1$I1$I2$i2Foo$i2foo;
+                    $dart$core.String $capture$run$s1;
+                    $dart$core.String get i2fooo => $capture$run$I1$I1$I2$i2Foo$i2foo;
+                    void i2Foo() => I1$I2.$i2Foo(this);
+                    $dart$core.String get i1s1 => I1.$get$i1s1(this);
+                }
+                abstract class I1$I2 implements I1 {
+                    I1 $outer$default$I1$I2;
+                    void i2Foo();
+                    static void $i2Foo([final I1$I2 $this]) {
+                        $dart$core.String i2foo = "";
+                    }
+                }
+                abstract class I1 {
+                    $dart$core.String get i1s1;
+                    static $dart$core.String $get$i1s1([final I1 $this]) => $this.$capture$run$s1;
+                    $dart$core.String $capture$run$s1;
+                }
+                void $package$run() {
+                    $dart$core.String s1 = "";
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test ignore
     void outerForSupertypesSupertype() {
         // TODO constructor, instantiation
         // TODO outer references are unique to the inner (i.e. declarations all have

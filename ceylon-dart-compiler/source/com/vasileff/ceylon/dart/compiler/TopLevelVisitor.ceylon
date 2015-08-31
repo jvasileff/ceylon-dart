@@ -272,6 +272,7 @@ class TopLevelVisitor(CompilationContext ctx)
 // TODO captures for extended & satisfied types
 // TODO toplevels should be constants
 // TODO extends clause
+// TODO bridge methods
 
         "$outer field declarations, if any."
         value outerFields
@@ -296,11 +297,11 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        value members
-            =   expand(that.body.transformChildren(classMemberTransformer));
-
-        value declarationsForCaptures
-            =   ctx.captures.get(info.declarationModel).map {
+        "$capture field declarations, if any."
+        value captureFields
+            =   dartTypes.captureDeclarationsForClass {
+                    info.anonymousClass;
+                }.map {
                     (capture) => DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
@@ -317,6 +318,9 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        value members
+            =   expand(that.body.transformChildren(classMemberTransformer));
+
         add {
             DartClassDeclaration {
                 abstract = false;
@@ -328,8 +332,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     else null;
                 concatenate(
                     outerFields,
-                    members,
-                    declarationsForCaptures
+                    captureFields,
+                    members
                 );
             };
         };

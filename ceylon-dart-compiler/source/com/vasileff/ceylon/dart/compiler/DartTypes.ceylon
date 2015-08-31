@@ -5,8 +5,7 @@ import ceylon.collection {
     HashMap
 }
 import ceylon.interop.java {
-    CeylonIterable,
-    CeylonList
+    CeylonIterable
 }
 
 import com.redhat.ceylon.model.loader {
@@ -32,8 +31,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ConstructorModel=Constructor,
     SpecificationModel=Specification,
-    NamedArgumentListModel=NamedArgumentList,
-    TypeDeclarationModel=TypeDeclaration
+    NamedArgumentListModel=NamedArgumentList
 }
 import com.vasileff.ceylon.dart.ast {
     DartConstructorName,
@@ -595,6 +593,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             (ClassOrInterfaceModel declaration)
         =>  supertypeDeclarations(declaration)
                 .distinct.map(outerDeclarationAndFieldName).coalesced;
+
+    "Declarations for captures required by the given [[declaration]] and all supertype
+     (extended and satisfied) declarations."
+    shared
+    {FunctionOrValueModel*} captureDeclarationsForClass
+        (ClassOrInterfaceModel declaration)
+        =>  supertypeDeclarations(declaration)
+                .flatMap(ctx.captures.get).coalesced;
 
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
