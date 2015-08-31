@@ -3,14 +3,10 @@ import ceylon.ast.core {
     BaseExpression,
     CompilationUnit
 }
-import ceylon.interop.java {
-    CeylonList
-}
 
 import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
-    ClassOrInterfaceModel=ClassOrInterface,
-    TypeModel=Type
+    ClassOrInterfaceModel=ClassOrInterface
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo
@@ -101,9 +97,8 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
                             .any((d) => ctx.captures.contains(d->target)))
                 .sequence(); // eager; don't modify the multimap while iterating!
 
-            // TODO should be easier - improve jl4c-guava
-            redundantCaptures.each((entry)
-                =>  ctx.captures.remove(entry.key, entry.item));
+            // remove them
+            ctx.captures.removeEntries(redundantCaptures);
         }
     }
 
