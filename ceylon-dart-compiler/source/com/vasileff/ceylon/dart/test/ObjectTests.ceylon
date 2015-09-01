@@ -103,8 +103,8 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_$o2_ {
-                    o1_$o2_(o1_ this.$outer$default$o1_$o2_) {}
-                    o1_ $outer$default$o1_$o2_;
+                    o1_$o2_(o1_ this.$outer$default$o1_) {}
+                    o1_ $outer$default$o1_;
                     $dart$core.String get s1 => "";
                 }
                 class o1_ {
@@ -147,8 +147,8 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class I1$I2$o_ implements I1$I2 {
-                    I1$I2 $outer$default$I1$I2$o_;
-                    I1 $outer$default$I1$I2;
+                    I1$I2 $outer$default$I1$I2;
+                    I1 $outer$default$I1;
                     $dart$core.String $capture$run$I1$I1$I2$i2Foo$i2foo;
                     $dart$core.String $capture$run$s1;
                     $dart$core.String get i2fooo => $capture$run$I1$I1$I2$i2Foo$i2foo;
@@ -156,7 +156,7 @@ class ObjectTests() {
                     $dart$core.String get i1s1 => I1.$get$i1s1(this);
                 }
                 abstract class I1$I2 implements I1 {
-                    I1 $outer$default$I1$I2;
+                    I1 $outer$default$I1;
                     void i2Foo();
                     static void $i2Foo([final I1$I2 $this]) {
                         $dart$core.String i2foo = "";
@@ -199,16 +199,15 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I1$I2 implements I1 {
-                    I1 $outer$default$I1$I2;
+                    I1 $outer$default$I1;
                 }
                 abstract class I1$I3 implements I1$I2 {
-                    I1 $outer$default$I1$I3;
+                    I1 $outer$default$I1;
                 }
                 class I1$o_ implements I1$I3 {
-                    I1 $outer$default$I1$o_;
-                    I1 $outer$default$I1$I3;
-                    I1 $outer$default$I1$I2;
+                    I1 $outer$default$I1;
                     // TODO constructor
+                    void foo() => I1.$foo(this);
                 }
                 abstract class I1 {
                     void foo();

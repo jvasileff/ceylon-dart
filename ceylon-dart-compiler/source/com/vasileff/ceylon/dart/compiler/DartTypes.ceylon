@@ -562,45 +562,36 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 || ceylonTypes.isCeylonFloat(definiteType)
                 || ceylonTypes.isCeylonString(definiteType));
 
-    "If the declaration is a member class or interface, return a Tuple holding:
-
-     1. the containing ClassOrInterface, and
-     2. the `$outer$...` field name for the containing ClassOrInterface
-
-     The field name must be unique globally unique, and therefore encodes the fully
-     qualified name of the declaration."
-    shared
-    [ClassOrInterfaceModel, String]? outerDeclarationAndFieldName
-            (ClassOrInterfaceModel declaration) {
-
-        if (is ClassOrInterfaceModel container =
-                getContainingClassOrInterface(declaration.container)) {
-
-            return [container, outerFieldName(declaration)];
-        }
-        return null;
-    }
 
     String outerFieldName(ClassOrInterfaceModel declaration)
         =>  "$outer"
                 + moduleImportPrefix(declaration) + "$"
                 + getName(declaration);
 
-    "Required `outer` declarations the given [[declaration]] and all supertype
-     (extended and satisfied) declarations."
     shared
-    {[ClassOrInterfaceModel, String]*} outerDeclarationsAndFieldNamesForClass
+    DartSimpleIdentifier identifierForOuter(ClassOrInterfaceModel declaration)
+        =>  DartSimpleIdentifier(outerFieldName(declaration));
+
+    "Outer declarations for the given [[declaration]] and all supertype (extended and
+     satisfied) declarations."
+    shared
+    {ClassOrInterfaceModel*} outerDeclarationsForClass
             (ClassOrInterfaceModel declaration)
         =>  supertypeDeclarations(declaration)
-                .distinct.map(outerDeclarationAndFieldName).coalesced;
+                .map((d) => getContainingClassOrInterface(d.container))
+                .coalesced
+                .distinct;
 
     "Declarations for captures required by the given [[declaration]] and all supertype
-     (extended and satisfied) declarations."
+     (extended and satisfied) declarations.
+
+     Note: The values in the returned stream are not necessarily distinct!"
     shared
     {FunctionOrValueModel*} captureDeclarationsForClass
         (ClassOrInterfaceModel declaration)
         =>  supertypeDeclarations(declaration)
-                .flatMap(ctx.captures.get).coalesced;
+                .flatMap(ctx.captures.get)
+                .distinct;
 
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
@@ -662,7 +653,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             setter;
         };
 
-        // TODO support classes
         if (exists container = getContainingClassOrInterface(scope)) {
             value declarationContainer = getRealContainingScope(declaration);
 
@@ -684,9 +674,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     =   loop<ClassOrInterfaceModel>(container)((c)
                         =>  getContainingClassOrInterface(c.container) else finished);
 
-                value pathToDeclarer // actually, stops one short of the declarer
-                    =   containers.takeWhile((c)
-                        =>  !c.inherits(declarationContainer));
+                value pathToDeclarer
+                    =   containers
+                        // stops one short of the declarer
+                        .takeWhile((c) => !c.inherits(declarationContainer))
+                        // shift up to declarer!
+                        .map((c) => getContainingClassOrInterface(c.container))
+                        .coalesced;
 
                 """
                    Chain of references to the member:
@@ -728,9 +722,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         =   loop<ClassOrInterfaceModel>(container)((c)
                             =>  getContainingClassOrInterface(c.container) else finished);
 
-                    value pathToCapturer // actually, stops one short of the capturer
-                        =   containers.takeWhile((c)
-                            =>  !capturedBySelfOrSupertype(declaration, c));
+                    value pathToCapturer
+                        =   containers
+                            // stops one short of the capturer
+                            .takeWhile((c) => !capturedBySelfOrSupertype(declaration, c))
+                            // shift up to capturer!
+                            .map((c) => getContainingClassOrInterface(c.container))
+                            .coalesced;
 
                     """
                        Chain of references to the capture:

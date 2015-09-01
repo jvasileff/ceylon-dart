@@ -1601,23 +1601,21 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformOuter(Outer that) {
         value info = OuterInfo(that);
         assert (is ClassOrInterfaceModel ci = getContainingClassOrInterface(info.scope));
-        assert (exists [d, fieldName] = dartTypes.outerDeclarationAndFieldName(ci));
-
-        // Qualify outer field with `this`. Required within interfaces,
-        // doesn't hurt within classes.
-        value thisIdentifier =
-                if (d is InterfaceModel)
-                then DartSimpleIdentifier("$this")
-                else DartSimpleIdentifier("this");
+        assert (exists outerDeclaration = getContainingClassOrInterface(ci.container));
+        value outerIdentifier = dartTypes.identifierForOuter(outerDeclaration);
 
         return withBoxing {
             that;
             info.typeModel;
             rhsDeclaration = null; // the field is synthetic
-            DartPrefixedIdentifier {
-                thisIdentifier;
-                DartSimpleIdentifier(fieldName);
-            };
+            if (ci is InterfaceModel) then
+                // static implementations for interface methods need $this
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$this");
+                    outerIdentifier;
+                }
+            else
+                outerIdentifier;
         };
     }
 

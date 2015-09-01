@@ -188,21 +188,25 @@ class TopLevelVisitor(CompilationContext ctx)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(that, satisfiedType, false)));
 
+
+        "The containing class or interface, if one exists."
+        value outerDeclaration
+            =   getContainingClassOrInterface(info.scope.container);
+
         "An $outer field declaration, if there is an outer class or interface"
         value outerField
-            =   if (exists [container, outerName] = dartTypes
-                        .outerDeclarationAndFieldName(info.declarationModel)) then
+            =   if (exists outerDeclaration) then
                     DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeName {
                                 that;
-                                container.type;
+                                outerDeclaration.type;
                                 false; false;
                             };
                             [DartVariableDeclaration {
-                                DartSimpleIdentifier(outerName);
+                                dartTypes.identifierForOuter(outerDeclaration);
                                 null;
                             }];
                         };
@@ -276,21 +280,23 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "$outer field declarations, if any."
         value outerFields
-            =   dartTypes.outerDeclarationsAndFieldNamesForClass {
+            =   dartTypes.outerDeclarationsForClass {
                     info.anonymousClass;
                 }.map {
-                    (t) => let ([container, outerName] = t)
+                    (outerDeclaration) =>
                     DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeName {
                                 that;
-                                container.type;
+                                outerDeclaration.type;
                                 false; false;
                             };
                             [DartVariableDeclaration {
-                                DartSimpleIdentifier(outerName);
+                                dartTypes.identifierForOuter {
+                                    outerDeclaration;
+                                };
                                 null;
                             }];
                         };

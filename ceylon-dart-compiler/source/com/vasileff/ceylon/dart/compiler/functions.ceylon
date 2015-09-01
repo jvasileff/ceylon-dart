@@ -164,7 +164,7 @@ getRealContainingScope(ElementModel scope) {
 "A stream including the given [[declaration]], the declarations of its extended and
  satisfied types, and all of their extended and satisfied types, recursively.
 
- Note: The values in this stream are not necessarily distinct!"
+ Note: The values in the returned stream are not necessarily distinct!"
 shared
 {ClassOrInterfaceModel+} supertypeDeclarations(ClassOrInterfaceModel declaration) {
     {TypeDeclarationModel+} collectx(TypeDeclarationModel declaration)
