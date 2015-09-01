@@ -365,7 +365,7 @@ class TopLevelVisitor(CompilationContext ctx)
             DartConstructorDeclaration {
                 const = false;
                 factory = false;
-                returnType = identifier; // TODO use dartTypes.x()
+                returnType = identifier;
                 null;
                 DartFormalParameterList {
                     true; false;
@@ -405,9 +405,10 @@ class TopLevelVisitor(CompilationContext ctx)
             addAll {
                 DartTopLevelVariableDeclaration {
                     DartVariableDeclarationList {
-                        "final"; // TODO const
-                        DartTypeName { // TODO use dartTypes.dartTypeNameX for this
-                            identifier;
+                        "final"; // TODO const for toplevels
+                        dartTypes.dartTypeNameForDeclaration {
+                            that;
+                            info.declarationModel;
                         };
                         [DartVariableDeclaration {
                             DartSimpleIdentifier {
@@ -415,11 +416,9 @@ class TopLevelVisitor(CompilationContext ctx)
                             };
                             DartInstanceCreationExpression {
                                 const = false; // TODO const for toplevels
-                                DartConstructorName {
-                                    DartTypeName {
-                                        identifier;
-                                    };
-                                    name = null;
+                                dartTypes.dartConstructorName {
+                                    that;
+                                    info.anonymousClass;
                                 };
                                 DartArgumentList {
                                     [];

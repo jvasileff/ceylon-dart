@@ -304,14 +304,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartConstructorName dartConstructorName(
             Node|ElementModel|ScopeModel scope,
             ClassModel|ConstructorModel declaration) {
-        // TODO should take type arguments too
-
-
-
         switch (declaration)
         case (is ClassModel) {
-            "Only toplevel classes supported for now"
-            assert(withinPackage(declaration));
+            //"Only toplevel classes supported for now"
+            //assert(withinPackage(declaration));
+            // TODO above assertion uncommented; was there a reason for the restriction?
 
             return DartConstructorName {
                 dartTypeName(scope, declaration.type, false, false);
