@@ -414,14 +414,22 @@ class TopLevelVisitor(CompilationContext ctx)
                             DartSimpleIdentifier {
                                 "$package$" + dartTypes.getName(info.declarationModel);
                             };
-                            DartInstanceCreationExpression {
-                                const = false; // TODO const for toplevels
-                                dartTypes.dartConstructorName {
+                            withLhs {
+                                null;
+                                info.declarationModel;
+                                () => withBoxingNonNative {
                                     that;
-                                    info.anonymousClass;
-                                };
-                                DartArgumentList {
-                                    [];
+                                    info.anonymousClass.type;
+                                    DartInstanceCreationExpression {
+                                        const = false; // TODO const for toplevels
+                                        dartTypes.dartConstructorName {
+                                            that;
+                                            info.anonymousClass;
+                                        };
+                                        DartArgumentList {
+                                            [];
+                                        };
+                                    };
                                 };
                             };
                         }];
