@@ -30,6 +30,7 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_ {
+                    o1_();
                     $dart$core.String get s1 => "";
                     $dart$core.String get s2 {
                         return "";
@@ -73,11 +74,11 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_ {
+                    o1_();
                     $dart$core.String get s1 => "";
                 }
                 void $package$run() {
                     o1_ o1 = new o1_();
-                    o1_ get $package$o1 => o1;
                 }
 
                 void run() => $package$run();
@@ -88,7 +89,8 @@ class ObjectTests() {
     shared test ignore
     void simpleObjectInObject() {
         // TODO instantiate object
-        //      constructors
+        //      constructor w/initialization
+        //      "captured" values from initializer
         compileAndCompare {
              """
                 object o1 {
@@ -103,8 +105,8 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_$o2_ {
-                    o1_$o2_(o1_ this.$outer$default$o1_) {}
                     o1_ $outer$default$o1_;
+                    o1_$o2_([o1_ this.$outer$default$o1_]);
                     $dart$core.String get s1 => "";
                 }
                 class o1_ {
@@ -123,7 +125,6 @@ class ObjectTests() {
     shared test ignore
     void multipleCaptures() {
         // TODO instantiate object
-        //      constructors
         compileAndCompare {
              """
                 shared void run() {
@@ -151,6 +152,7 @@ class ObjectTests() {
                     I1 $outer$default$I1;
                     $dart$core.String $capture$run$I1$I1$I2$i2Foo$i2foo;
                     $dart$core.String $capture$run$s1;
+                    I1$I2$o_([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1, $dart$core.String this.$capture$run$I1$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]);
                     $dart$core.String get i2fooo => $capture$run$I1$I1$I2$i2Foo$i2foo;
                     void i2Foo() => I1$I2.$i2Foo(this);
                     $dart$core.String get i1s1 => I1.$get$i1s1(this);
@@ -160,6 +162,7 @@ class ObjectTests() {
                     void i2Foo();
                     static void $i2Foo([final I1$I2 $this]) {
                         $dart$core.String i2foo = "";
+                        I1$I2$o_ o = new I1$I2$o_($this, $this.$outer$default$I1, i2foo, $this.$outer$default$I1.$capture$run$s1);
                     }
                 }
                 abstract class I1 {
@@ -178,9 +181,7 @@ class ObjectTests() {
 
     shared test ignore
     void outerForSupertypesSupertype() {
-        // TODO constructor, instantiation
-        // TODO outer references are unique to the inner (i.e. declarations all have
-        //      their own ref for I1), but is this necessary?
+        // TODO instantiation
         compileAndCompare {
              """
                 void run() {
@@ -206,13 +207,13 @@ class ObjectTests() {
                 }
                 class I1$o_ implements I1$I3 {
                     I1 $outer$default$I1;
-                    // TODO constructor
+                    I1$o_([I1 this.$outer$default$I1]);
                     void foo() => I1.$foo(this);
                 }
                 abstract class I1 {
                     void foo();
                     static void $foo([final I1 $this]) {
-                        // TODO object value declaration
+                        I1$o_ o = new I1$o_($this);
                     }
                 }
                 void $package$run() {}

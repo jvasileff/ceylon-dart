@@ -41,7 +41,9 @@ import com.vasileff.ceylon.dart.ast {
     DartFieldDeclaration,
     DartInstanceCreationExpression,
     DartConstructorName,
-    DartTypeName
+    DartTypeName,
+    DartFieldFormalParameter,
+    DartConstructorDeclaration
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -278,11 +280,13 @@ class TopLevelVisitor(CompilationContext ctx)
 // TODO extends clause
 // TODO bridge methods
 
+        "declarations for containers we must hold references to."
+        value outerDeclarations
+            =   [*dartTypes.outerDeclarationsForClass(info.anonymousClass)];
+
         "$outer field declarations, if any."
         value outerFields
-            =   dartTypes.outerDeclarationsForClass {
-                    info.anonymousClass;
-                }.map {
+            =   outerDeclarations.map {
                     (outerDeclaration) =>
                     DartFieldDeclaration {
                         false;
@@ -303,11 +307,29 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        value outerConstructorParameters
+            =   outerDeclarations.map {
+                    (declaration) =>
+                    DartFieldFormalParameter {
+                        false; false;
+                        dartTypes.dartTypeName {
+                            that;
+                            declaration.type;
+                            false; false;
+                        };
+                        dartTypes.identifierForOuter {
+                            declaration;
+                        };
+                    };
+                };
+
+        "declarations for captures we must hold references to."
+        value captureDeclarations
+            =   [*dartTypes.captureDeclarationsForClass(info.anonymousClass)];
+
         "$capture field declarations, if any."
         value captureFields
-            =   dartTypes.captureDeclarationsForClass {
-                    info.anonymousClass;
-                }.map {
+            =   captureDeclarations.map {
                     (capture) => DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
@@ -324,6 +346,39 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        value captureConstructorParameters
+            =   captureDeclarations.map {
+                    (declaration) =>
+                    DartFieldFormalParameter {
+                        false; false;
+                        dartTypes.dartTypeNameForDeclaration {
+                            that;
+                            declaration;
+                        };
+                        dartTypes.identifierForCapture {
+                            declaration;
+                        };
+                    };
+                };
+
+        value constructors = [
+            DartConstructorDeclaration {
+                const = false;
+                factory = false;
+                returnType = identifier; // TODO use dartTypes.x()
+                null;
+                DartFormalParameterList {
+                    true; false;
+                    concatenate (
+                        outerConstructorParameters,
+                        captureConstructorParameters
+                    );
+                };
+                null;
+                null;
+            }
+        ];
+
         value members
             =   expand(that.body.transformChildren(classMemberTransformer));
 
@@ -339,6 +394,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 concatenate(
                     outerFields,
                     captureFields,
+                    constructors,
                     members
                 );
             };

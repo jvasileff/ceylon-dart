@@ -881,7 +881,7 @@ class DartFormalParameter()
 shared abstract
 class DartNormalFormalParameter()
         of DartSimpleFormalParameter
-            //| DartFieldFormalParameter
+            | DartFieldFormalParameter
         extends DartFormalParameter() {
 
     // DartComment comment
@@ -918,6 +918,41 @@ class DartSimpleFormalParameter
             type.write(writer);
             writer.write(" ");
         }
+        identifier.write(writer);
+    }
+}
+
+"A field formal parameter."
+shared
+class DartFieldFormalParameter
+        (final, const, type, identifier)
+        extends DartNormalFormalParameter() {
+
+    shared Boolean final; // false
+    shared Boolean const; // false
+    shared DartTypeName? type;
+    shared DartSimpleIdentifier identifier;
+    // shared FormalParameterList? parameters
+
+    "Can only have one of final and const"
+    assert (!(final && const));
+
+    shared actual
+    void write(CodeWriter writer) {
+        if (final) {
+            writer.write("final ");
+        }
+        if (const) {
+            writer.write("const ");
+        }
+        if (exists type) {
+            type.write(writer);
+            writer.write(" ");
+        }
+        else {
+            writer.write("var ");
+        }
+        writer.write("this.");
         identifier.write(writer);
     }
 }
@@ -1015,6 +1050,47 @@ class DartIsExpression
             writer.write("!");
         }
         type.write(writer);
+    }
+}
+
+shared
+class DartConstructorDeclaration
+        (const, factory, returnType, name, parameters,
+         redirectedConstructor, body)
+        extends DartClassMember() {
+
+    // DartComment comment
+    // List<DartAnnotation> metadata
+    //shared Boolean external;
+    shared Boolean const;
+    shared Boolean factory;
+    shared DartIdentifier returnType;
+    shared DartSimpleIdentifier? name;
+    shared DartFormalParameterList parameters;
+    //shared [DartConstructorInitializer*] initializers;
+    shared DartConstructorName? redirectedConstructor;
+    shared DartFunctionBody? body;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        returnType.write(writer);
+        if (exists name) {
+            writer.write(".");
+            name.write(writer);
+        }
+        parameters.write(writer);
+
+        // TODO redirectedConstructor
+
+        if (exists body) {
+            writer.write(" ");
+            body.write(writer);
+        }
+        else {
+            writer.write(";");
+        }
     }
 }
 
@@ -1212,7 +1288,7 @@ class DartImplementsClause(interfaces)
 
 shared abstract
 class DartClassMember()
-        of  //DartConstructorDeclaration |
+        of  DartConstructorDeclaration |
             DartFieldDeclaration |
             DartMethodDeclaration
         extends DartDeclaration() {}
