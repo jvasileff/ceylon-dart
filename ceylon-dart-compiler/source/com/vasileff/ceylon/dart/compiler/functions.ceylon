@@ -264,3 +264,31 @@ Boolean eq(Anything first, Anything second)
     =>  if (exists first, exists second)
         then first == second
         else (!first exists) && (!second exists);
+
+"Like Iterable.takeWhile, but include the terminating element."
+shared
+{Element*} takeUntil<Element>(
+        {Element*} elements) (
+        Boolean terminating(Element element))
+        => object
+        satisfies {Element*} {
+    iterator()
+            => let (iter = elements.iterator())
+        object satisfies Iterator<Element> {
+            variable Boolean alive = true;
+            actual shared Element|Finished next() {
+                if (alive,
+                    !is Finished next = iter.next()) {
+                    if (!terminating(next)) {
+                        return next;
+                    }
+                    else {
+                        alive = false;
+                        return next;
+                    }
+                }
+                return finished;
+            }
+            string => outer.string + ".iterator()";
+        };
+};

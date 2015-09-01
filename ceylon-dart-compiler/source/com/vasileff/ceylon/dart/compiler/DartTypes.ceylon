@@ -675,12 +675,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         =>  getContainingClassOrInterface(c.container) else finished);
 
                 value pathToDeclarer
-                    =   containers
-                        // stops one short of the declarer
-                        .takeWhile((c) => !c.inherits(declarationContainer))
-                        // shift up to declarer!
-                        .map((c) => getContainingClassOrInterface(c.container))
-                        .coalesced;
+                    =   takeUntil(containers)(
+                            // up to and including the "declarer"
+                            (c) => c.inherits(declarationContainer))
+                        .skip(1); // don't include the expression's container
 
                 """
                    Chain of references to the member:
@@ -723,12 +721,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             =>  getContainingClassOrInterface(c.container) else finished);
 
                     value pathToCapturer
-                        =   containers
-                            // stops one short of the capturer
-                            .takeWhile((c) => !capturedBySelfOrSupertype(declaration, c))
-                            // shift up to capturer!
-                            .map((c) => getContainingClassOrInterface(c.container))
-                            .coalesced;
+                        =   takeUntil(containers)(
+                                // up to and including the capturer
+                                (c) => capturedBySelfOrSupertype(declaration, c))
+                            .skip(1); // don't include the expression's container
 
                     """
                        Chain of references to the capture:
