@@ -56,9 +56,8 @@ class ObjectTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void simpleObjectInFunction() {
-        // TODO instantiate object
         // FIXME include outer function names in type name
         compileAndCompare {
              """
@@ -78,7 +77,7 @@ class ObjectTests() {
                     $dart$core.String get s1 => "";
                 }
                 void $package$run() {
-                    o1_ o1 = new o1_();
+                    final o1_ o1 = new o1_();
                 }
 
                 void run() => $package$run();
@@ -124,7 +123,7 @@ class ObjectTests() {
 
     shared test ignore
     void multipleCaptures() {
-        // TODO instantiate object
+        // TODO interface bridge methods
         compileAndCompare {
              """
                 shared void run() {
@@ -162,7 +161,7 @@ class ObjectTests() {
                     void i2Foo();
                     static void $i2Foo([final I1$I2 $this]) {
                         $dart$core.String i2foo = "";
-                        I1$I2$o_ o = new I1$I2$o_($this, $this.$outer$default$I1, i2foo, $this.$outer$default$I1.$capture$run$s1);
+                        final I1$I2$o_ o = new I1$I2$o_($this, $this.$outer$default$I1, i2foo, $this.$capture$run$s1);
                     }
                 }
                 abstract class I1 {
@@ -181,7 +180,7 @@ class ObjectTests() {
 
     shared test ignore
     void outerForSupertypesSupertype() {
-        // TODO instantiation
+        // TODO interface bridge methods
         compileAndCompare {
              """
                 void run() {
@@ -213,7 +212,7 @@ class ObjectTests() {
                 abstract class I1 {
                     void foo();
                     static void $foo([final I1 $this]) {
-                        I1$o_ o = new I1$o_($this);
+                        final I1$o_ o = new I1$o_($this);
                     }
                 }
                 void $package$run() {}

@@ -40,8 +40,6 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclaration,
     DartFieldDeclaration,
     DartInstanceCreationExpression,
-    DartConstructorName,
-    DartTypeName,
     DartFieldFormalParameter,
     DartConstructorDeclaration
 }
@@ -404,36 +402,7 @@ class TopLevelVisitor(CompilationContext ctx)
             // define toplevel value and forwarding function
             addAll {
                 DartTopLevelVariableDeclaration {
-                    DartVariableDeclarationList {
-                        "final"; // TODO const for toplevels
-                        dartTypes.dartTypeNameForDeclaration {
-                            that;
-                            info.declarationModel;
-                        };
-                        [DartVariableDeclaration {
-                            DartSimpleIdentifier {
-                                "$package$" + dartTypes.getName(info.declarationModel);
-                            };
-                            withLhs {
-                                null;
-                                info.declarationModel;
-                                () => withBoxingNonNative {
-                                    that;
-                                    info.anonymousClass.type;
-                                    DartInstanceCreationExpression {
-                                        const = false; // TODO const for toplevels
-                                        dartTypes.dartConstructorName {
-                                            that;
-                                            info.anonymousClass;
-                                        };
-                                        DartArgumentList {
-                                            [];
-                                        };
-                                    };
-                                };
-                            };
-                        }];
-                    };
+                    generateForObjectDefinition(that);
                 },
                 *generateForwardingGetterSetter(that)
             };

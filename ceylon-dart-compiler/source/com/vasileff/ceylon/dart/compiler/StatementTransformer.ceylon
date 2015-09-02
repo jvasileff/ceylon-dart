@@ -560,9 +560,15 @@ class StatementTransformer(CompilationContext ctx)
             return [];
         }
 
-// FIXME instantiate the object
+        // define the anonymous class
         that.visit(topLevelVisitor);
-        return [];
+
+        // declare the value, instantiate the object
+        return [
+            DartVariableDeclarationStatement {
+                generateForObjectDefinition(that);
+            }
+        ];
     }
 
     shared actual

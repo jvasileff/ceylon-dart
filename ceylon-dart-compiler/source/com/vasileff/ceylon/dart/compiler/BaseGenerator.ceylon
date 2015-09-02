@@ -28,7 +28,8 @@ import ceylon.ast.core {
     ExistsCondition,
     NonemptyCondition,
     Condition,
-    ValueSetterDefinition
+    ValueSetterDefinition,
+    ObjectDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -43,9 +44,11 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
     ValueModel=Value,
+    ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
+    ScopeModel=Scope,
     Reference
 }
 import com.vasileff.ceylon.dart.ast {
@@ -104,7 +107,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ExistsOrNonemptyConditionInfo,
     AnyValueInfo,
     TypedDeclarationInfo,
-    ValueSetterDefinitionInfo
+    ValueSetterDefinitionInfo,
+    ObjectDefinitionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -1139,6 +1143,53 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
+    DartVariableDeclarationList generateForObjectDefinition(ObjectDefinition that) {
+        value info = ObjectDefinitionInfo(that);
+
+        value packagePrefix =
+                if (info.declarationModel.container is PackageModel)
+                then "$package$"
+                else "";
+
+        return
+        DartVariableDeclarationList {
+            "final"; // TODO const for toplevels
+            dartTypes.dartTypeNameForDeclaration {
+                that;
+                info.declarationModel;
+            };
+            [DartVariableDeclaration {
+                DartSimpleIdentifier {
+                    packagePrefix + dartTypes.getName(info.declarationModel);
+                };
+                withLhs {
+                    null;
+                    info.declarationModel;
+                    () => withBoxingNonNative {
+                        that;
+                        info.anonymousClass.type;
+                        DartInstanceCreationExpression {
+                            const = false; // TODO const for toplevels
+                            dartTypes.dartConstructorName {
+                                that;
+                                info.anonymousClass;
+                            };
+                            DartArgumentList {
+                                generateArgumentsForOutersAndCaptures {
+                                    // scope must be the value's scope, not the scope
+                                    // of the object definition!
+                                    scope = info.declarationModel;
+                                    ObjectDefinitionInfo(that).anonymousClass;
+                                };
+                            };
+                        };
+                    };
+                };
+            }];
+        };
+    }
+
+    shared
     DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {
         if (!that.definition is Specifier) {
             throw CompilerBug(that, "LazySpecifier not supported");
@@ -1536,6 +1587,27 @@ class BaseGenerator(CompilationContext ctx)
             positional = true;
             parameters = dartParameters;
         };
+    }
+
+    shared
+    [DartExpression*] generateArgumentsForOutersAndCaptures
+            (Node|ScopeModel scope, ClassModel declaration) {
+
+        // FIXME setters?
+        value captureExpressions
+            =   dartTypes.captureDeclarationsForClass(declaration)
+                    .map((capture)
+                        =>  dartTypes.expressionForBaseExpression(scope, capture, false))
+                    // Workaround https://github.com/ceylon/ceylon-compiler/issues/2293
+                    .map((tuple) => tuple.first);
+
+        value outerExpressions
+            =   if (exists container = getContainingClassOrInterface(scope))
+                then dartTypes.outerDeclarationsForClass(declaration).map((capture)
+                        =>  dartTypes.expressionToOuter(container, capture))
+                else []; // No outers if no containing class or interface.
+
+        return concatenate(outerExpressions, captureExpressions);
     }
 
     shared

@@ -580,9 +580,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 .distinct;
 
     "Declarations for captures required by the given [[declaration]] and all supertype
-     (extended and satisfied) declarations.
-
-     Note: The values in the returned stream are not necessarily distinct!"
+     (extended and satisfied) declarations."
     shared
     {FunctionOrValueModel*} captureDeclarationsForClass
         (ClassOrInterfaceModel declaration)
@@ -751,6 +749,47 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return [identifier, isFunction];
         }
     }
+
+    shared
+    {ClassOrInterfaceModel+} classOrInterfaceContainers
+            (ClassOrInterfaceModel declaration)
+        =>  loop<ClassOrInterfaceModel>(declaration)((c)
+                =>  getContainingClassOrInterface(c.container) else finished);
+
+    "A non empty stream of containers, starting with [[inner]], and ending with the first
+     of 1. a matching container per [[found]], or 2. the outermost class or interface."
+    shared
+    {ClassOrInterfaceModel+} classOrInterfaceContainerPath(
+            ClassOrInterfaceModel inner,
+            Boolean found(ClassOrInterfaceModel declaration))
+        =>  takeUntil(classOrInterfaceContainers(inner))(found);
+
+    shared
+    DartSimpleIdentifier thisReference(ClassOrInterfaceModel scope)
+        =>  if (scope is InterfaceModel)
+            then DartSimpleIdentifier("$this")
+            else DartSimpleIdentifier("this");
+
+    """
+       Returns a dart expression for [[outerDeclaration]] from [[scope]]. The expression
+       will be of the form:
+
+            $this ("." $outer$ref)*
+    """
+    shared
+    DartExpression expressionToOuter(
+            ClassOrInterfaceModel scope,
+            ClassOrInterfaceModel outerDeclaration)
+        =>  classOrInterfaceContainerPath(scope, outerDeclaration.equals)
+                .skip(1) // don't include scope; will be $this instead
+                .map(outerFieldName)
+                .map(DartSimpleIdentifier)
+                .follow(thisReference(scope))
+                .reduce((DartExpression expression, field)
+                    =>  DartPropertyAccess {
+                            expression;
+                            field;
+                        });
 
     "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype

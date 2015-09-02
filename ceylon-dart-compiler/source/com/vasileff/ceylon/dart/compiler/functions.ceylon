@@ -267,28 +267,28 @@ Boolean eq(Anything first, Anything second)
 
 "Like Iterable.takeWhile, but include the terminating element."
 shared
-{Element*} takeUntil<Element>(
-        {Element*} elements) (
-        Boolean terminating(Element element))
-        => object
-        satisfies {Element*} {
+Iterable<Element, Absent> takeUntil<Element, Absent=Null>
+        (Iterable<Element, Absent> elements)
+        (Boolean terminating(Element element))
+        given Absent satisfies Null => object
+        satisfies Iterable<Element, Absent> {
     iterator()
-            => let (iter = elements.iterator())
-        object satisfies Iterator<Element> {
-            variable Boolean alive = true;
-            actual shared Element|Finished next() {
-                if (alive,
-                    !is Finished next = iter.next()) {
-                    if (!terminating(next)) {
-                        return next;
+        =>  let (iter = elements.iterator())
+            object satisfies Iterator<Element> {
+                variable Boolean alive = true;
+                actual shared Element|Finished next() {
+                    if (alive,
+                        !is Finished next = iter.next()) {
+                        if (!terminating(next)) {
+                            return next;
+                        }
+                        else {
+                            alive = false;
+                            return next;
+                        }
                     }
-                    else {
-                        alive = false;
-                        return next;
-                    }
+                    return finished;
                 }
-                return finished;
-            }
-            string => outer.string + ".iterator()";
-        };
+                string => outer.string + ".iterator()";
+            };
 };
