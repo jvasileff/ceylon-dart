@@ -46,6 +46,10 @@ class CoreGenerator(CompilationContext ctx) {
         =>  ctx.classMemberTransformer;
 
     shared
+    ClassStatementTransformer classStatementTransformer
+        =>  ctx.classStatementTransformer;
+
+    shared
     ExpressionTransformer expressionTransformer
         =>  ctx.expressionTransformer;
 

@@ -100,7 +100,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
     IsConditionInfo,
     TypeInfo,
-    ValueDeclarationInfo,
     ValueDefinitionInfo,
     ValueGetterDefinitionInfo,
     UnspecifiedVariableInfo,
@@ -1117,9 +1116,14 @@ class BaseGenerator(CompilationContext ctx)
         }
     }
 
+    "Generate a dart *declaration* for a [[ValueDeclaration]] or [[ValueDefinition]]. The
+     latter is supported for eager class values which must be declared as members but
+     initialized in a dart constructor."
     shared
-    DartVariableDeclarationList generateForValueDeclaration(ValueDeclaration that) {
-        value info = ValueDeclarationInfo(that);
+    DartVariableDeclarationList generateForValueDeclaration
+            (ValueDeclaration | ValueDefinition that) {
+
+        value info = AnyValueInfo(that);
 
         value packagePrefix =
                 if (info.declarationModel.container is PackageModel)

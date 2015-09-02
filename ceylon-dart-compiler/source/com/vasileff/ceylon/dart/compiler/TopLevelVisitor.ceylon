@@ -15,7 +15,10 @@ import ceylon.ast.core {
     Node,
     Specifier,
     LazySpecifier,
-    ValueSetterDefinition
+    ValueSetterDefinition,
+    Declaration,
+    Specification,
+    Assertion
 }
 import ceylon.interop.java {
     CeylonList
@@ -39,9 +42,10 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList,
     DartVariableDeclaration,
     DartFieldDeclaration,
-    DartInstanceCreationExpression,
     DartFieldFormalParameter,
-    DartConstructorDeclaration
+    DartConstructorDeclaration,
+    DartBlockFunctionBody,
+    DartBlock
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -273,7 +277,6 @@ class TopLevelVisitor(CompilationContext ctx)
         ));
 
 // TODO consolidate with very similar visitInterfaceDefinition code
-// TODO captures for extended & satisfied types
 // TODO toplevels should be constants
 // TODO extends clause
 // TODO bridge methods
@@ -373,12 +376,25 @@ class TopLevelVisitor(CompilationContext ctx)
                     );
                 };
                 null;
-                null;
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        concatenate {
+                            that.body.transformChildren(classStatementTransformer);
+                        };
+                    };
+                };
             }
         ];
 
+        "Class members. Statements (aside from Specifiction and Assertion statements) do
+         not represent members and are therefore not supported by
+         [[ClassMemberTransformer]]."
         value members
-            =   expand(that.body.transformChildren(classMemberTransformer));
+            =   that.body.children
+                    .narrow<Declaration|Specification|Assertion>()
+                    .flatMap((d)
+                        =>  d.transform(classMemberTransformer));
 
         add {
             DartClassDeclaration {

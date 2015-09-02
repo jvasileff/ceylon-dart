@@ -32,7 +32,10 @@ import com.vasileff.ceylon.dart.ast {
     DartFormalParameterList,
     DartSimpleFormalParameter,
     dartFormalParameterListEmpty,
-    DartTypeName
+    DartTypeName,
+    DartFieldDeclaration,
+    DartVariableDeclarationList,
+    DartVariableDeclaration
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
@@ -41,7 +44,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueDeclarationInfo,
     typedDeclarationInfo,
     ValueSetterDefinitionInfo,
-    DeclarationInfo
+    DeclarationInfo,
+    ObjectDefinitionInfo
 }
 
 shared
@@ -83,11 +87,15 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-        // TODO support eager values and variables in classes
+        // Eager values and variables are declared here and initialized in a class
+        // body or constructor.
         if (that.definition is Specifier) {
-            throw CompilerBug(that,
-                    "Specifiers not yet supported \
-                     (only LazySpecifiers for now");
+            return [
+                DartFieldDeclaration {
+                    false;
+                    generateForValueDeclaration(that);
+                }
+            ];
         }
 
         // NOTE getters cannot be variable, so not worrying about setter declarations
@@ -386,9 +394,28 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-// FIXME instantiate the object
         that.visit(topLevelVisitor);
-        return [];
+
+        value info = ObjectDefinitionInfo(that);
+
+        // Declare the member field that will be initialized in a Dart constructor.
+        return [
+        DartFieldDeclaration {
+            false;
+            DartVariableDeclarationList {
+                null;
+                dartTypes.dartTypeNameForDeclaration {
+                    that;
+                    info.declarationModel;
+                };
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier {
+                        dartTypes.getName(info.declarationModel);
+                    };
+                    null;
+                }];
+            };
+        }];
     }
 
     shared actual

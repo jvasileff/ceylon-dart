@@ -30,7 +30,7 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_ {
-                    o1_();
+                    o1_() {}
                     $dart$core.String get s1 => "";
                     $dart$core.String get s2 {
                         return "";
@@ -73,7 +73,7 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class o1_ {
-                    o1_();
+                    o1_() {}
                     $dart$core.String get s1 => "";
                 }
                 void $package$run() {
@@ -85,11 +85,8 @@ class ObjectTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void simpleObjectInObject() {
-        // TODO instantiate object
-        //      constructor w/initialization
-        //      "captured" values from initializer
         compileAndCompare {
              """
                 object o1 {
@@ -105,14 +102,14 @@ class ObjectTests() {
 
                 class o1_$o2_ {
                     o1_ $outer$default$o1_;
-                    o1_$o2_([o1_ this.$outer$default$o1_]);
+                    o1_$o2_([o1_ this.$outer$default$o1_]) {}
                     $dart$core.String get s1 => "";
                 }
                 class o1_ {
-                    o1_$o2_ o2;
                     o1_() {
-                      o2 = new o1_$o2_(this);
+                        o2 = new o1_$o2_(this);
                     }
+                    o1_$o2_ o2;
                 }
                 final o1_ $package$o1 = new o1_();
 
@@ -121,7 +118,7 @@ class ObjectTests() {
         };
     }
 
-    shared test ignore
+    shared test //ignore
     void multipleCaptures() {
         // TODO interface bridge methods
         compileAndCompare {
@@ -151,7 +148,7 @@ class ObjectTests() {
                     I1 $outer$default$I1;
                     $dart$core.String $capture$run$I1$I1$I2$i2Foo$i2foo;
                     $dart$core.String $capture$run$s1;
-                    I1$I2$o_([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1, $dart$core.String this.$capture$run$I1$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]);
+                    I1$I2$o_([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1, $dart$core.String this.$capture$run$I1$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
                     $dart$core.String get i2fooo => $capture$run$I1$I1$I2$i2Foo$i2foo;
                     void i2Foo() => I1$I2.$i2Foo(this);
                     $dart$core.String get i1s1 => I1.$get$i1s1(this);
@@ -178,7 +175,7 @@ class ObjectTests() {
         };
     }
 
-    shared test ignore
+    shared test //ignore
     void outerForSupertypesSupertype() {
         // TODO interface bridge methods
         compileAndCompare {
@@ -206,7 +203,7 @@ class ObjectTests() {
                 }
                 class I1$o_ implements I1$I3 {
                     I1 $outer$default$I1;
-                    I1$o_([I1 this.$outer$default$I1]);
+                    I1$o_([I1 this.$outer$default$I1]) {}
                     void foo() => I1.$foo(this);
                 }
                 abstract class I1 {
@@ -218,6 +215,63 @@ class ObjectTests() {
                 void $package$run() {}
 
                 void run() => $package$run();
+             """;
+        };
+    }
+
+    "Replacement value from `assert` must be captured as class member."
+    shared test ignore
+    void replacementDeclarationIsMember() {
+        compileAndCompare {
+             """
+                class C() {
+                    shared String? x = "";
+                    assert (exists x);
+                    shared String y => x;
+                }
+             """;
+             """
+             """;
+         };
+     }
+
+
+    shared test
+    void objectWithInitialization() {
+        compileAndCompare {
+             """
+                object o {
+                    String myIterable = "abcd";
+                    shared void run() {
+                        for (x in myIterable) {
+                            print(x);
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class o_ {
+                    o_() {
+                        myIterable = "abcd";
+                    }
+                    $dart$core.String myIterable;
+                    void run() {{
+                            $dart$core.Object element$1;
+                            $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance(myIterable).iterator();
+                            while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
+                                $ceylon$language.Character x = element$1 as $ceylon$language.Character;
+                                $ceylon$language.print(x);
+                            }
+                        }
+                    }
+                }
+                final o_ $package$o = new o_();
+
+                o_ get o => $package$o;
              """;
         };
     }

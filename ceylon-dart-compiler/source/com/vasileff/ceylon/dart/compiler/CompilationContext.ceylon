@@ -85,6 +85,9 @@ class CompilationContext(PhasedUnit phasedUnit) {
     ClassMemberTransformer? cmtMemo = null;
 
     variable
+    ClassStatementTransformer? cstMemo = null;
+
+    variable
     ExpressionTransformer? etMemo = null;
 
     variable
@@ -100,6 +103,10 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared
     ClassMemberTransformer classMemberTransformer
         =>  cmtMemo else (cmtMemo = ClassMemberTransformer(this));
+
+    shared
+    ClassStatementTransformer classStatementTransformer
+        =>  cstMemo else (cstMemo = ClassStatementTransformer(this));
 
     shared
     ExpressionTransformer expressionTransformer
