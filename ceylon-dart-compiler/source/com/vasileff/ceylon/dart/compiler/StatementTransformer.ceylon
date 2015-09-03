@@ -731,6 +731,6 @@ class StatementTransformer(CompilationContext ctx)
     shared actual default
     [] transformNode(Node that) {
         throw CompilerBug(that,
-            "Unhandled node: '``className(that)``'");
+            "Unhandled node (StatementTransformer): '``className(that)``'");
     }
 }

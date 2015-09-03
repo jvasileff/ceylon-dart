@@ -79,9 +79,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 else "";
 
         function classOrObjectShortName(ClassModel declaration)
-            =>  if (declaration.anonymous)
-                then declaration.name + "_"
-                else declaration.name;
+            =>  if (declaration.anonymous) then
+                    // *all* objects are anonymous classes, not just expressions that
+                    // get the "anonymous#" names. Non-expression objects are named
+                    // the same as their values.
+                    declaration.name.replace("anonymous#", "$anonymous$") + "_"
+                else
+                    declaration.name;
 
         if (is SetterModel declaration) {
             return getName(declaration.getter);

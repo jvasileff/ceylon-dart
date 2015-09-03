@@ -1173,29 +1173,37 @@ class BaseGenerator(CompilationContext ctx)
                 withLhs {
                     null;
                     info.declarationModel;
-                    () => withBoxingNonNative {
-                        that;
-                        info.anonymousClass.type;
-                        DartInstanceCreationExpression {
-                            const = false; // TODO const for toplevels
-                            dartTypes.dartConstructorName {
-                                that;
-                                info.anonymousClass;
-                            };
-                            DartArgumentList {
-                                generateArgumentsForOutersAndCaptures {
-                                    // scope must be the value's scope, not the scope
-                                    // of the object definition!
-                                    scope = info.declarationModel;
-                                    ObjectDefinitionInfo(that).anonymousClass;
-                                };
-                            };
-                        };
+                    () => generateObjectInstantiation {
+                        info.declarationModel;
+                        info.anonymousClass;
                     };
                 };
             }];
         };
     }
+
+    shared
+    DartExpression generateObjectInstantiation
+            (ScopeModel valueScope, ClassModel classModel)
+        =>  withBoxingNonNative {
+                valueScope;
+                classModel.type;
+                DartInstanceCreationExpression {
+                    const = false; // TODO const for toplevels
+                    dartTypes.dartConstructorName {
+                        valueScope;
+                        classModel;
+                    };
+                    DartArgumentList {
+                        generateArgumentsForOutersAndCaptures {
+                            // scope must be the value's scope, not the scope
+                            // of the object definition!
+                            valueScope;
+                            classModel;
+                        };
+                    };
+                };
+            };
 
     shared
     DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {

@@ -91,7 +91,8 @@ import ceylon.ast.core {
     SpanFromSubscript,
     SpanToSubscript,
     BooleanCondition,
-    Condition
+    Condition,
+    ObjectExpression
 }
 import ceylon.collection {
     LinkedList
@@ -153,7 +154,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ThisInfo,
     OuterInfo,
     TypeInfo,
-    IfElseExpressionInfo
+    IfElseExpressionInfo,
+    ObjectExpressionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -913,6 +915,19 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
+    DartExpression transformObjectExpression(ObjectExpression that) {
+        value info = ObjectExpressionInfo(that);
+
+        that.transform(topLevelVisitor);
+
+        return
+        generateObjectInstantiation {
+            info.scope.container;
+            info.anonymousClass;
+        };
+    }
+
+    shared actual
     DartExpression transformFunctionExpression(FunctionExpression that)
         // FunctionExpressions are always wrapped in a Callable, although we probably
         // could optimize for expressions that are immediately invoked
@@ -1622,7 +1637,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual default
     DartExpression transformNode(Node that) {
         throw CompilerBug(that,
-            "Unhandled node: '``className(that)``'");
+            "Unhandled node (ExpressionTransformer): '``className(that)``'");
     }
 }
 

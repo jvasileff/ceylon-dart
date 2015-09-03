@@ -18,7 +18,9 @@ import ceylon.ast.core {
     ValueSetterDefinition,
     Declaration,
     Specification,
-    Assertion
+    Assertion,
+    ObjectExpression,
+    ClassBody
 }
 import ceylon.interop.java {
     CeylonList
@@ -26,6 +28,7 @@ import ceylon.interop.java {
 
 import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
+    ClassModel=Class,
     SetterModel=Setter,
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
@@ -62,7 +65,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
     AnyClassInfo,
     ValueGetterDefinitionInfo,
-    ObjectDefinitionInfo
+    ObjectDefinitionInfo,
+    ObjectExpressionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -268,6 +272,18 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     shared actual
+    void visitObjectExpression(ObjectExpression that) {
+        value info = ObjectExpressionInfo(that);
+        //super.visitObjectExpression(that);
+
+        addObjectDefinition {
+            that;
+            info.anonymousClass;
+            that.body;
+        };
+    }
+
+    shared actual
     void visitObjectDefinition(ObjectDefinition that) {
         value info = ObjectDefinitionInfo(that);
 
@@ -276,22 +292,41 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
+        addObjectDefinition {
+            that;
+            info.anonymousClass;
+            that.body;
+        };
+
+        if (isToplevel(info.declarationModel)) {
+            // define toplevel value and forwarding function
+            addAll {
+                DartTopLevelVariableDeclaration {
+                    generateForObjectDefinition(that);
+                },
+                *generateForwardingGetterSetter(that)
+            };
+        }
+    }
+
+    void addObjectDefinition(Node scope, ClassModel classModel, ClassBody classBody) {
+
         value identifier
             =   DartSimpleIdentifier {
                     dartTypes.getName {
-                        info.anonymousClass;
+                        classModel;
                     };
                 };
 
         value satisifesTypes
-            =   sequence(CeylonList(info.anonymousClass.satisfiedTypes)
+            =   sequence(CeylonList(classModel.satisfiedTypes)
                         .map((satisfiedType)
-                =>  dartTypes.dartTypeName(that, satisfiedType, false)));
+                =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
 
         // TODO extends clause
-        if (!ceylonTypes.isCeylonBasic(info.anonymousClass.extendedType)
-            && !ceylonTypes.isCeylonObject(info.anonymousClass.extendedType)) {
-            throw CompilerBug(that, "Objects with extended types not yet supported.");
+        if (!ceylonTypes.isCeylonBasic(classModel.extendedType)
+            && !ceylonTypes.isCeylonObject(classModel.extendedType)) {
+            throw CompilerBug(scope, "Objects with extended types not yet supported.");
         }
 
         // TODO consolidate with very similar visitInterfaceDefinition code
@@ -299,7 +334,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "declarations for containers we must hold references to."
         value outerDeclarations
-            =   [*dartTypes.outerDeclarationsForClass(info.anonymousClass)];
+            =   [*dartTypes.outerDeclarationsForClass(classModel)];
 
         "$outer field declarations, if any."
         value outerFields
@@ -310,7 +345,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeName {
-                                that;
+                                scope;
                                 outerDeclaration.type;
                                 false; false;
                             };
@@ -330,7 +365,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartFieldFormalParameter {
                         false; false;
                         dartTypes.dartTypeName {
-                            that;
+                            scope;
                             declaration.type;
                             false; false;
                         };
@@ -342,7 +377,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "declarations for captures we must hold references to."
         value captureDeclarations
-            =   [*dartTypes.captureDeclarationsForClass(info.anonymousClass)];
+            =   [*dartTypes.captureDeclarationsForClass(classModel)];
 
         "$capture field declarations, if any."
         value captureFields
@@ -352,7 +387,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeNameForDeclaration {
-                                that;
+                                scope;
                                 capture;
                             };
                             [DartVariableDeclaration {
@@ -369,7 +404,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartFieldFormalParameter {
                         false; false;
                         dartTypes.dartTypeNameForDeclaration {
-                            that;
+                            scope;
                             declaration;
                         };
                         dartTypes.identifierForCapture {
@@ -396,7 +431,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     null; false;
                     DartBlock {
                         concatenate {
-                            that.body.transformChildren(classStatementTransformer);
+                            classBody.transformChildren(classStatementTransformer);
                         };
                     };
                 };
@@ -407,7 +442,7 @@ class TopLevelVisitor(CompilationContext ctx)
          not represent members and are therefore not supported by
          [[ClassMemberTransformer]]."
         value members
-            =   that.body.children
+            =   classBody.children
                     .narrow<Declaration|Specification|Assertion>()
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
@@ -416,11 +451,11 @@ class TopLevelVisitor(CompilationContext ctx)
          an Interface."
         value declarationsToBridge
             // Shouldn't there be a better way?
-            =   supertypeDeclarations(info.anonymousClass)
+            =   supertypeDeclarations(classModel)
                     .flatMap((d) => CeylonList(d.members))
                     .narrow<FunctionOrValueModel>()
                     .filter(FunctionOrValueModel.shared)
-                    .map(curry(mostRefined)(info.anonymousClass))
+                    .map(curry(mostRefined)(classModel))
                     .distinct
                     .map((m) => assertExists(m,
                         "Surely a most-refined implementation exists."))
@@ -432,7 +467,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value bridgeFunctions
             =   declarationsToBridge.map((f)
-                =>  generateBridgeMethodOrField(that, f));
+                =>  generateBridgeMethodOrField(scope, f));
 
         add {
             DartClassDeclaration {
@@ -452,16 +487,6 @@ class TopLevelVisitor(CompilationContext ctx)
                 );
             };
         };
-
-        if (isToplevel(info.declarationModel)) {
-            // define toplevel value and forwarding function
-            addAll {
-                DartTopLevelVariableDeclaration {
-                    generateForObjectDefinition(that);
-                },
-                *generateForwardingGetterSetter(that)
-            };
-        }
     }
 
     shared actual
@@ -551,7 +576,7 @@ class TopLevelVisitor(CompilationContext ctx)
     shared actual default
     void visitNode(Node that) {
         throw CompilerBug(that,
-            "Unhandled node: '``className(that)``'");
+            "Unhandled node (TopLevelVisitor): '``className(that)``'");
     }
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)

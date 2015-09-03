@@ -51,7 +51,8 @@ import ceylon.ast.core {
     TypeNameWithTypeArguments,
     ObjectDefinition,
     Specification,
-    LazySpecification
+    LazySpecification,
+    ObjectExpression
 }
 import ceylon.interop.java {
     CeylonList,
@@ -316,6 +317,16 @@ class ObjectDefinitionInfo(ObjectDefinition astNode)
     value tcNode = assertedTcNode<Tree.ObjectDefinition>(astNode);
 
     shared actual ValueModel declarationModel => tcNode.declarationModel;
+    shared ClassModel anonymousClass => tcNode.anonymousClass;
+}
+
+shared
+class ObjectExpressionInfo(ObjectExpression astNode)
+        extends ExpressionInfo(astNode) {
+
+    shared actual default ObjectExpression node => astNode;
+    value tcNode = assertedTcNode<Tree.ObjectExpression>(astNode);
+
     shared ClassModel anonymousClass => tcNode.anonymousClass;
 }
 
