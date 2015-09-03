@@ -32,6 +32,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ScopeModel=Scope,
     SetterModel=Setter,
     ValueModel=Value,
+    FunctionModel=Function,
+    FunctionOrValueModel=FunctionOrValue,
     TypeDeclarationModel=TypeDeclaration,
     TypeModel=Type
 }
@@ -215,6 +217,28 @@ Boolean isForDartBackend(Declaration|DeclarationInfo|DeclarationModel that)
         then native.equals("dart")
         else true;
 
+
+shared
+SetterModel|FunctionModel|ValueModel? mostRefined
+        (ClassOrInterfaceModel bottom, FunctionOrValueModel declaration) {
+    // getMember by name turns setters into getters!
+    value setter = declaration is SetterModel;
+    DeclarationModel? result = bottom.getMember(declaration.name, null, false);
+    if (setter) {
+        assert (is ValueModel result);
+        return result.setter;
+    }
+    else {
+        assert (is FunctionModel | ValueModel | Null result);
+        return result;
+    }
+}
+
+shared
+ScopeModel container(DeclarationModel declaration)
+    // workaround interop issue with FunctionModel|ValueModel|SetterModel
+    =>  declaration.container;
+
 Boolean withinClassOrInterface(Node|ScopeModel|ElementModel scope)
     =>  toScopeModel(scope).container is ClassOrInterfaceModel;
 
@@ -256,6 +280,38 @@ Result memoize<Result, Argument>
         value result = compute(argument);
         cache.put(argument, result);
         return result;
+    }
+}
+
+shared
+Type asserted<Type>(Anything item, String? message = null) {
+    try {
+        assert(is Type item);
+        return item;
+    }
+    catch (AssertionError e) {
+        if (exists message) {
+            throw AssertionError(message);
+        }
+        else {
+            throw e;
+        }
+    }
+}
+
+shared
+T&Object assertExists<T>(T item, String? message = null) {
+    try {
+        assert(exists item);
+        return item;
+    }
+    catch (AssertionError e) {
+        if (exists message) {
+            throw AssertionError(message);
+        }
+        else {
+            throw e;
+        }
     }
 }
 

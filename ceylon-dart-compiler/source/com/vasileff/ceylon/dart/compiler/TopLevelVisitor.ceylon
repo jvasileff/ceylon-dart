@@ -24,6 +24,14 @@ import ceylon.interop.java {
     CeylonList
 }
 
+import com.redhat.ceylon.model.typechecker.model {
+    InterfaceModel=Interface,
+    SetterModel=Setter,
+    TypedDeclarationModel=TypedDeclaration,
+    FunctionModel=Function,
+    ValueModel=Value,
+    FunctionOrValueModel=FunctionOrValue
+}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartClassDeclaration,
@@ -45,7 +53,8 @@ import com.vasileff.ceylon.dart.ast {
     DartFieldFormalParameter,
     DartConstructorDeclaration,
     DartBlockFunctionBody,
-    DartBlock
+    DartBlock,
+    DartMethodDeclaration
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -267,19 +276,25 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        value name = dartTypes.getName(info.anonymousClass);
-        value identifier = DartSimpleIdentifier(name);
+        value identifier
+            =   DartSimpleIdentifier {
+                    dartTypes.getName {
+                        info.anonymousClass;
+                    };
+                };
 
-        value implementsTypes
+        value satisifesTypes
             =   sequence(CeylonList(info.anonymousClass.satisfiedTypes)
                         .map((satisfiedType)
-                =>  dartTypes.dartTypeName(that, satisfiedType, false)
-        ));
+                =>  dartTypes.dartTypeName(that, satisfiedType, false)));
 
-// TODO consolidate with very similar visitInterfaceDefinition code
-// TODO toplevels should be constants
-// TODO extends clause
-// TODO bridge methods
+        // TODO extends clause
+        if (!ceylonTypes.isCeylonBasic(info.anonymousClass.extendedType)) {
+            throw CompilerBug(that, "Objects with extended types not yet supported.");
+        }
+
+        // TODO consolidate with very similar visitInterfaceDefinition code
+        // TODO toplevels should be constants
 
         "declarations for containers we must hold references to."
         value outerDeclarations
@@ -396,20 +411,43 @@ class TopLevelVisitor(CompilationContext ctx)
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
 
+        "Functions and values for which the most refined member is contained by
+         an Interface."
+        value declarationsToBridge
+            // Shouldn't there be a better way?
+            =   supertypeDeclarations(info.anonymousClass)
+                    .flatMap((d) => CeylonList(d.members))
+                    .narrow<FunctionOrValueModel>()
+                    .filter(FunctionOrValueModel.shared)
+                    .distinct
+                    .map(curry(mostRefined)(info.anonymousClass))
+                    .map((m) => assertExists(m,
+                        "Surely a most-refined implementation exists."))
+                    .filter((m) => container(m) is InterfaceModel)
+                    .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
+                    .map((m) => asserted<FunctionOrValueModel>(m,
+                        "Most refined function or value should be a function or value."))
+                    .sequence();
+
+        value bridgeFunctions
+            =   declarationsToBridge.map((f)
+                =>  generateBridgeMethodOrField(that, f));
+
         add {
             DartClassDeclaration {
                 abstract = false;
                 name = identifier;
                 extendsClause = null;
                 implementsClause =
-                    if (exists implementsTypes)
-                    then DartImplementsClause(implementsTypes)
+                    if (exists satisifesTypes)
+                    then DartImplementsClause(satisifesTypes)
                     else null;
                 concatenate(
                     outerFields,
                     captureFields,
                     constructors,
-                    members
+                    members,
+                    bridgeFunctions
                 );
             };
         };
@@ -522,7 +560,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         info.declarationModel.firstParameterList.parameters))
             DartFunctionDeclaration {
                 external = false;
-                generateFunctionReturnType(info);
+                generateFunctionReturnType(that, info.declarationModel);
                 propertyKeyword = null;
                 DartSimpleIdentifier(functionName);
                 DartFunctionExpression {
@@ -546,4 +584,67 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
             };
+
+    DartMethodDeclaration generateBridgeMethodOrField
+            (Node scope, FunctionOrValueModel declaration) {
+
+        assert (is FunctionModel|ValueModel|SetterModel declaration);
+
+        value [identifier, isFunction]
+            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    scope;
+                    declaration;
+                };
+
+        value parameterModels
+            =   switch (declaration)
+                case (is FunctionModel)
+                    CeylonList(declaration.firstParameterList.parameters)
+                case (is SetterModel)
+                    [declaration.parameter]
+                case (is ValueModel)
+                    [];
+
+        value interfaceModel
+            =   (declaration of TypedDeclarationModel).container;
+
+        "The container of the target of a bridge method is surely an Interface."
+        assert (is InterfaceModel interfaceModel);
+
+        return
+        DartMethodDeclaration {
+            false; null;
+            generateFunctionReturnType(scope, declaration);
+            !isFunction then (
+                if (declaration is SetterModel)
+                then "set"
+                else "get"
+            );
+            identifier;
+            isFunction then generateFormalParameterList {
+                scope;
+                parameterModels;
+            };
+            DartExpressionFunctionBody {
+                false;
+                DartMethodInvocation {
+                    dartTypes.dartTypeReference {
+                        scope;
+                        interfaceModel;
+                    };
+                    dartTypes.getStaticInterfaceMethodIdentifier {
+                        declaration;
+                    };
+                    DartArgumentList {
+                        [DartSimpleIdentifier("this"),
+                         *parameterModels.collect { (parameterModel) =>
+                            DartSimpleIdentifier {
+                                dartTypes.getName(parameterModel);
+                            };
+                        }];
+                    };
+                };
+            };
+        };
+    }
 }

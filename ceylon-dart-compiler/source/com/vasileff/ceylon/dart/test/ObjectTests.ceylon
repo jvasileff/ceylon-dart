@@ -57,6 +57,69 @@ class ObjectTests() {
     }
 
     shared test
+    void bridgeMethods() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared String s1 => "";
+                    shared String s2 { return ""; }
+                    shared String s3() => "";
+                    shared String s4() { return ""; }
+
+                    assign s1 {
+                        print("Setting s1");
+                    }
+                    assign s2 {
+                        print("Setting s2");
+                    }
+                }
+
+                object o satisfies I {}
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get s1;
+                    static $dart$core.String $get$s1([final I $this]) => "";
+                    $dart$core.String get s2;
+                    static $dart$core.String $get$s2([final I $this]) {
+                        return "";
+                    }
+                    $dart$core.String s3();
+                    static $dart$core.String $s3([final I $this]) => "";
+                    $dart$core.String s4();
+                    static $dart$core.String $s4([final I $this]) {
+                        return "";
+                    }
+                    void set s1($dart$core.String s1);
+                    static void $set$s1([final I $this, $dart$core.String s1]) {
+                        $ceylon$language.print($ceylon$language.String.instance("Setting s1"));
+                    }
+                    void set s2($dart$core.String s2);
+                    static void $set$s2([final I $this, $dart$core.String s2]) {
+                        $ceylon$language.print($ceylon$language.String.instance("Setting s2"));
+                    }
+                }
+                class o_ implements I {
+                    o_() {}
+                    $dart$core.String get s1 => I.$get$s1(this);
+                    $dart$core.String get s2 => I.$get$s2(this);
+                    $dart$core.String s3() => I.$s3(this);
+                    $dart$core.String s4() => I.$s4(this);
+                    void set s1 => I.$set$s1(this, s1);
+                    void set s2 => I.$set$s2(this, s2);
+                }
+                final o_ $package$o = new o_();
+
+                o_ get o => $package$o;
+             """;
+        };
+    }
+
+    shared test
     void simpleObjectInFunction() {
         // FIXME include outer function names in type name
         compileAndCompare {
@@ -118,9 +181,8 @@ class ObjectTests() {
         };
     }
 
-    shared test //ignore
+    shared test
     void multipleCaptures() {
-        // TODO interface bridge methods
         compileAndCompare {
              """
                 shared void run() {
@@ -175,9 +237,8 @@ class ObjectTests() {
         };
     }
 
-    shared test //ignore
+    shared test
     void outerForSupertypesSupertype() {
-        // TODO interface bridge methods
         compileAndCompare {
              """
                 void run() {
@@ -233,8 +294,7 @@ class ObjectTests() {
              """
              """;
          };
-     }
-
+    }
 
     shared test
     void objectWithInitialization() {

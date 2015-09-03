@@ -49,6 +49,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     ScopeModel=Scope,
+    SetterModel=Setter,
     Reference
 }
 import com.vasileff.ceylon.dart.ast {
@@ -276,7 +277,7 @@ class BaseGenerator(CompilationContext ctx)
         return
         DartFunctionDeclaration {
             external = false;
-            returnType = generateFunctionReturnType(info);
+            returnType = generateFunctionReturnType(that, functionModel);
             propertyKeyword = null;
             name = functionIdentifier;
             functionExpression = generateFunctionExpression(that);
@@ -286,34 +287,38 @@ class BaseGenerator(CompilationContext ctx)
     "For the Value, or the return type of the Function"
     shared
     DartTypeName generateFunctionReturnType
-            (TypedDeclarationInfo|ValueSetterDefinitionInfo info)
-        =>  switch (info)
-            case (is AnyFunctionInfo)
-                if (info.declarationModel.parameterLists.size() > 1) then
+            (Node scope, FunctionOrValueModel declaration) {
+
+        assert (is FunctionModel | ValueModel | SetterModel declaration);
+
+        return switch (declaration)
+            case (is FunctionModel)
+                if (declaration.parameterLists.size() > 1) then
                     // return type is a `Callable`; we're not get generic, so the
                     // Callable's return is erased. Even on the Java backend, the
                     // arguments are erased.
                     dartTypes.dartTypeName {
-                        info.node;
+                        scope;
                         ceylonTypes.callableDeclaration.type;
                         false;
                     }
-                else if (!info.declarationModel.declaredVoid) then
+                else if (!declaration.declaredVoid) then
                     dartTypes.dartReturnTypeNameForDeclaration {
-                        info.node;
-                        info.declarationModel;
+                        scope;
+                        declaration;
                     }
                 else
                     // hacky way to create a void keyword
                     DartTypeName(DartSimpleIdentifier("void"))
-            case (is AnyValueInfo)
+            case (is ValueModel)
                 dartTypes.dartReturnTypeNameForDeclaration {
-                        info.node;
-                        info.declarationModel;
+                        scope;
+                        declaration;
                 }
-            case (is ValueSetterDefinitionInfo)
+            case (is SetterModel)
                 // hacky way to create a void keyword
                 DartTypeName(DartSimpleIdentifier("void"));
+    }
 
     "Generate an invocation or propery access expression for a toplevel."
     shared
@@ -1541,21 +1546,24 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartFormalParameterList generateFormalParameterList
-            (Node that, Parameters parameters) {
+            (Node scope, Parameters|{ParameterModel*} parameters) {
 
-        if (parameters.parameters.empty) {
+        value parameterList
+            =   if (is Parameters parameters)
+                then parameters.parameters.map(
+                        compose(ParameterInfo.parameterModel, ParameterInfo))
+                else parameters;
+
+        if (parameterList.empty) {
             return DartFormalParameterList();
         }
 
-        value dartParameters = parameters.parameters.collect((parameter) {
-            value parameterInfo = ParameterInfo(parameter);
-            value parameterModel = parameterInfo.parameterModel;
-
+        value dartParameters = parameterList.collect((parameterModel) {
             value defaulted = parameterModel.defaulted;
             value variadic = parameterModel.sequenced;
 
             if (variadic) {
-                throw CompilerBug(that, "Variadic parameters not yet supported");
+                throw CompilerBug(scope, "Variadic parameters not yet supported");
             }
             else {
                 // Use core.Object for defaulted parameters so we can
@@ -1564,7 +1572,7 @@ class BaseGenerator(CompilationContext ctx)
                     if (defaulted)
                     then dartTypes.dartObject
                     else dartTypes.dartTypeNameForDeclaration(
-                            that, parameterModel.model);
+                            scope, parameterModel.model);
 
                 value dartSimpleParameter =
                 DartSimpleFormalParameter {
@@ -1579,7 +1587,7 @@ class BaseGenerator(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(scope);
                     };
                 }
                 else {

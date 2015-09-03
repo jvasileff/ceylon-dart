@@ -166,7 +166,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         DartMethodDeclaration {
             false;
             null;
-            generateFunctionReturnType(info);
+            generateFunctionReturnType(that, declarationModel);
             !isFunction then (
                 if (that is ValueSetterDefinition)
                 then "set"
@@ -298,7 +298,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartMethodDeclaration {
                 false;
                 "static";
-                generateFunctionReturnType(info);
+                generateFunctionReturnType(that, declarationModel);
                 null;
                 DartSimpleIdentifier {
                     dartTypes.getStaticInterfaceMethodName {
@@ -336,7 +336,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartMethodDeclaration {
                 false;
                 null;
-                generateFunctionReturnType(info);
+                generateFunctionReturnType(that, declarationModel);
                 !isFunction then (
                     if (that is ValueSetterDefinition)
                     then "set"

@@ -146,6 +146,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 "$get$" + getName(declaration);
 
     shared
+    DartSimpleIdentifier getStaticInterfaceMethodIdentifier(
+            FunctionModel|ValueModel|SetterModel declaration,
+            Boolean isSetter = declaration is SetterModel)
+        =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
+
+    shared
     String createReplacementName(TypedDeclarationModel declaration) {
         if (is SetterModel declaration) {
             return createReplacementName(declaration.getter);
@@ -323,6 +329,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return DartConstructorName {
                 dartTypeName(scope, container.type, false, false);
                 DartSimpleIdentifier(getName(declaration));
+            };
+        }
+    }
+
+    // TODO this is ugly.
+    shared
+    DartExpression dartTypeReference(
+            Node|ElementModel|ScopeModel scope,
+            ClassOrInterfaceModel declaration) {
+
+        value fromDartPrefix = moduleImportPrefix(scope);
+        value dartModel = dartTypeModel(declaration.type, false);
+
+        if (dartModel.dartModule == fromDartPrefix) {
+            return DartSimpleIdentifier(dartModel.name);
+        }
+        else {
+            return
+            DartPrefixedIdentifier {
+                DartSimpleIdentifier(dartModel.dartModule);
+                DartSimpleIdentifier(dartModel.name);
             };
         }
     }
