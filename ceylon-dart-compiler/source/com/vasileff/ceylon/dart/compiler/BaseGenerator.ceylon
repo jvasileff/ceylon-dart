@@ -106,7 +106,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
     UnspecifiedVariableInfo,
     ExistsOrNonemptyConditionInfo,
     AnyValueInfo,
-    TypedDeclarationInfo,
     ValueSetterDefinitionInfo,
     ObjectDefinitionInfo
 }
@@ -1235,26 +1234,44 @@ class BaseGenerator(CompilationContext ctx)
     DartFunctionDeclaration generateForValueDefinitionGetter(
             ValueDefinition|ValueGetterDefinition that) {
 
-        // NOTE toplevels are getters (no parameter list)
-        //      within functions, not getters (empty parameter list)
-        //      within classes and interfaces, getters, but MethodDeclaration instead
-
         value definition = that.definition;
+
         if (definition is Specifier) {
             throw CompilerBug(that, "Specifier not supported");
         }
         assert (is LazySpecifier|Block definition);
 
-        value declarationModel =
-            switch (that)
-            case (is ValueDefinition)
-                ValueDefinitionInfo(that).declarationModel
-            case (is ValueGetterDefinition)
-                ValueGetterDefinitionInfo(that).declarationModel;
+        value declarationModel
+            =   switch (that)
+                case (is ValueDefinition)
+                    ValueDefinitionInfo(that).declarationModel
+                case (is ValueGetterDefinition)
+                    ValueGetterDefinitionInfo(that).declarationModel;
+
+        return
+        generateDefinitionForValueModelGetter {
+            that;
+            declarationModel;
+            definition;
+        };
+    }
+
+    shared
+    DartFunctionDeclaration generateDefinitionForValueModelGetter(
+            Node scope,
+            ValueModel declarationModel,
+            LazySpecifier|Block definition) {
+
+        // TODO Take a look at generateFunctionExpression, and
+        //      generateForValueDefinitionGetter and consider making more parallel.
+
+        // Note toplevels are getters (no parameter list)
+        //      within functions, not getters (empty parameter list)
+        //      within classes and interfaces, getters, but MethodDeclaration instead
 
         value [identifier, isFunction]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    that;
+                    scope;
                     declarationModel;
                 };
 
@@ -1262,7 +1279,7 @@ class BaseGenerator(CompilationContext ctx)
         DartFunctionDeclaration {
             false;
             dartTypes.dartTypeNameForDeclaration {
-                that;
+                scope;
                 declarationModel;
             };
             !isFunction then "get";
@@ -1378,7 +1395,6 @@ class BaseGenerator(CompilationContext ctx)
         FunctionModel functionModel;
         [Parameters+] parameterLists;
         LazySpecifier|Block definition;
-        String? functionName;
 
         switch (that)
         case (is FunctionExpression) {
@@ -1386,21 +1402,18 @@ class BaseGenerator(CompilationContext ctx)
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = null;
         }
         case (is FunctionDefinition) {
             value info = FunctionDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = dartTypes.getName(functionModel);
         }
         case (is FunctionShortcutDefinition) {
             value info = FunctionShortcutDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
-            functionName = dartTypes.getName(functionModel);
         }
         case (is DefaultedCallableParameter) {
             value info = ParameterInfo(that);
@@ -1408,8 +1421,22 @@ class BaseGenerator(CompilationContext ctx)
             definition = that.specifier;
             assert (is FunctionModel m = info.parameterModel.model);
             functionModel = m;
-            functionName = null;
         }
+
+        return generateFunctionExpressionRaw {
+            that;
+            functionModel;
+            parameterLists;
+            definition;
+        };
+    }
+
+    shared
+    DartFunctionExpression generateFunctionExpressionRaw(
+            Node scope,
+            FunctionModel functionModel,
+            [Parameters+] parameterLists,
+            LazySpecifier|Block definition) {
 
         variable DartExpression? result = null;
 
@@ -1417,7 +1444,7 @@ class BaseGenerator(CompilationContext ctx)
             if (i < parameterLists.size - 1) {
                 // wrap nested function in a callable
                 assert(exists previous = result);
-                result = generateNewCallable(that, functionModel, previous, i+1);
+                result = generateNewCallable(scope, functionModel, previous, i+1);
             }
 
             //Defaulted Parameters:
@@ -1470,7 +1497,7 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                                 DartArgumentList {
                                     [paramName,
-                                     dartTypes.dartDefault(that)];
+                                     dartTypes.dartDefault(scope)];
                                 };
                             };
                             // then set to default expression
@@ -1488,7 +1515,7 @@ class BaseGenerator(CompilationContext ctx)
                                         withLhsNonNative {
                                             parameterModelModel.typedReference.fullType;
                                             () => generateNewCallable {
-                                                that;
+                                                scope;
                                                 parameterModelModel;
                                                 generateFunctionExpression(param);
                                                 0; false; false;
@@ -1536,7 +1563,7 @@ class BaseGenerator(CompilationContext ctx)
                 body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
             }
             result = DartFunctionExpression {
-                generateFormalParameterList(that, list);
+                generateFormalParameterList(scope, list);
                 body;
             };
         }

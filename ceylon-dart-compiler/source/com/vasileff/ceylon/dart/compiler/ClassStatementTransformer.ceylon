@@ -12,7 +12,8 @@ import ceylon.ast.core {
     ObjectDefinition,
     Statement,
     Specification,
-    FunctionDeclaration
+    FunctionDeclaration,
+    LazySpecification
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -21,6 +22,10 @@ import com.vasileff.ceylon.dart.ast {
     DartAssignmentOperator,
     DartExpressionStatement,
     DartStatement
+}
+import com.vasileff.ceylon.dart.nodeinfo {
+    SpecificationInfo,
+    LazySpecificationInfo
 }
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
@@ -67,6 +72,20 @@ class ClassStatementTransformer(CompilationContext ctx)
                 };
             }];
         }
+    }
+
+    shared actual
+    DartStatement[] transformLazySpecification(LazySpecification that) {
+        value info = LazySpecificationInfo(that);
+
+        if (!info.refined exists) {
+            throw CompilerBug(that,
+                "LazySpecifications that are not shortcut refinements
+                 are not yet supported.");
+        }
+
+        // Functions and Values are (currently) always declared as members.
+        return [];
     }
 
     "Values are (currently) always declared as members."

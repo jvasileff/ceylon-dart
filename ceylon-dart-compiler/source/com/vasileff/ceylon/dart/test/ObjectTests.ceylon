@@ -56,8 +56,8 @@ class ObjectTests() {
         };
     }
 
-    shared test ignore
-    void specifications() {
+    shared test
+    void shortcutRefinement() {
         compileAndCompare {
              """
                 interface I {
@@ -72,7 +72,21 @@ class ObjectTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                abstract class I {
+                    $dart$core.String get s1;
+                    $dart$core.String s2();
+                }
+                class o_ implements I {
+                    o_() {}
+                    $dart$core.String get s1 => "s1Value";
+                    $dart$core.String s2() => "s2Value";
+                }
+                final o_ $package$o = new o_();
+
+                o_ get o => $package$o;
              """;
         };
     }

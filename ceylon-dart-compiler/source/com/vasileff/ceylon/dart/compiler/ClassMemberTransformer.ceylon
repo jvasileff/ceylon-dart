@@ -15,13 +15,17 @@ import ceylon.ast.core {
     TypedDeclaration,
     ClassDefinition,
     ObjectDefinition,
-    Specifier
+    Specifier,
+    LazySpecification
 }
 
 import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     InterfaceModel=Interface,
     SetterModel=Setter,
+    FunctionModel=Function,
+    FunctionOrValueModel=FunctionOrValue,
+    ValueModel=Value,
     TypedDeclarationModel=TypedDeclaration,
     ClassModel=Class
 }
@@ -35,7 +39,8 @@ import com.vasileff.ceylon.dart.ast {
     DartTypeName,
     DartFieldDeclaration,
     DartVariableDeclarationList,
-    DartVariableDeclaration
+    DartVariableDeclaration,
+    DartFunctionExpression
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyFunctionInfo,
@@ -45,13 +50,57 @@ import com.vasileff.ceylon.dart.nodeinfo {
     typedDeclarationInfo,
     ValueSetterDefinitionInfo,
     DeclarationInfo,
-    ObjectDefinitionInfo
+    ObjectDefinitionInfo,
+    LazySpecificationInfo
 }
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)
         extends BaseGenerator(ctx)
         satisfies WideningTransformer<[DartClassMember*]> {
+
+    shared actual
+    DartClassMember[] transformLazySpecification(LazySpecification that) {
+        value info = LazySpecificationInfo(that);
+
+        if (!info.refined exists) {
+            throw CompilerBug(that,
+                "LazySpecifications that are not shortcut refinements
+                 are not yet supported.");
+        }
+
+        // Shortcut refinement; just like function or getter definitions:
+
+        switch (declaration = info.declaration)
+        case (is FunctionModel) {
+            assert (nonempty parameterLists = that.parameterLists);
+
+            return
+            [generateMethodDefinitionRaw {
+                that;
+                declaration;
+                generateFunctionExpressionRaw {
+                    that;
+                    declaration;
+                    parameterLists;
+                    that.specifier;
+                };
+            }];
+        }
+        case (is ValueModel) {
+            return
+            [generateMethodDefinitionRaw {
+                that;
+                declaration;
+                generateDefinitionForValueModelGetter {
+                    that;
+                    declaration;
+                    //parameterLists;
+                    that.specifier;
+                }.functionExpression;
+            }];
+        }
+    }
 
     shared actual
     [DartClassMember*] transformValueDeclaration(ValueDeclaration that) {
@@ -267,11 +316,6 @@ class ClassMemberTransformer(CompilationContext ctx)
                 case (is AnyValueInfo) info.declarationModel
                 case (is ValueSetterDefinitionInfo) info.declarationModel;
 
-        "The container of a class or interface member is surely a Class or Interface"
-        assert (is ClassModel | InterfaceModel container
-            =   info.declarationModel.container);
-
-        "A DartFunctionExpression that will be scrapped for parts."
         value functionExpression
             =   switch (that)
                 case (is AnyFunction)
@@ -280,6 +324,27 @@ class ClassMemberTransformer(CompilationContext ctx)
                     generateForValueDefinitionGetter(that).functionExpression
                 case (is ValueSetterDefinition)
                     generateForValueSetterDefinition(that).functionExpression;
+
+        return
+        generateMethodDefinitionRaw {
+            that;
+            declarationModel;
+            functionExpression;
+        };
+    }
+
+    DartMethodDeclaration generateMethodDefinitionRaw(
+            Node scope,
+            FunctionOrValueModel declarationModel,
+            "A DartFunctionExpression that will be scrapped for parts."
+            DartFunctionExpression functionExpression) {
+
+        "Asserting the enumerated types of the abstract class."
+        assert (is FunctionModel | ValueModel | SetterModel declarationModel);
+
+        "The container of a class or interface member is surely a Class or Interface"
+        assert (is ClassModel | InterfaceModel container
+            =   container(declarationModel));
 
         "Parameters for the function, not including the possible addition of $this."
         value standardParameters
@@ -298,7 +363,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartMethodDeclaration {
                 false;
                 "static";
-                generateFunctionReturnType(that, declarationModel);
+                generateFunctionReturnType(scope, declarationModel);
                 null;
                 DartSimpleIdentifier {
                     dartTypes.getStaticInterfaceMethodName {
@@ -312,7 +377,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                         DartSimpleFormalParameter {
                             true; false;
                             dartTypes.dartTypeName {
-                                that;
+                                scope;
                                 container.type;
                                 false; false;
                             };
@@ -328,7 +393,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         case (is ClassModel) {
             value [dartIdentifier, isFunction]
                 =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                        that;
+                        scope;
                         declarationModel;
                     };
 
@@ -336,9 +401,9 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartMethodDeclaration {
                 false;
                 null;
-                generateFunctionReturnType(that, declarationModel);
+                generateFunctionReturnType(scope, declarationModel);
                 !isFunction then (
-                    if (that is ValueSetterDefinition)
+                    if (declarationModel is SetterModel)
                     then "set"
                     else "get"
                 );
@@ -350,7 +415,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             DartSimpleFormalParameter {
                                 false; false;
                                 dartTypes.dartReturnTypeNameForDeclaration {
-                                    that;
+                                    scope;
                                     declarationModel.getter;
                                 };
                                 DartSimpleIdentifier {

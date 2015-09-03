@@ -340,7 +340,7 @@ class SpecificationInfo(Specification astNode)
         return d;
     }
 
-    shared TypedDeclarationModel refined => tcNode.refined;
+    shared TypedDeclarationModel? refined => tcNode.refined;
 }
 
 shared
