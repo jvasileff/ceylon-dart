@@ -18,10 +18,12 @@
              {1.0, 2.0, 1.0}, {1.0, 1.0, 2.0})
      
  evaluates to the stream `{ 1.0, 3.0, 3.0 }`."
-native shared Iterable<Result,FirstAbsent|SecondAbsent> 
+shared Iterable<Result,FirstAbsent|SecondAbsent> 
 mapPairs<Result,First,Second,FirstAbsent,SecondAbsent>(
     "The mapping function to apply to the pair of elements."
-    Result collecting(First first, Second second),
+// FIXME Dart capture is broken with:
+//       Result collecting(First first, Second second),
+    Result(First, Second) collecting,
     Iterable<First,FirstAbsent> firstIterable,
     Iterable<Second,SecondAbsent> secondIterable)
         given FirstAbsent satisfies Null

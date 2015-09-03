@@ -773,22 +773,120 @@ abstract class Ordinal {
     $dart$core.Object get successor;
     $dart$core.Object get predecessor;
 }
+class iterable_$iterator_ implements Iterator {
+    iterable_ $outer$ceylon$language$iterable_;
+    iterable_$iterator_([iterable_ this.$outer$ceylon$language$iterable_]) {
+        firstIter = $outer$ceylon$language$iterable_.$capture$mapPairs$firstIterable.iterator();
+        secondIter = $outer$ceylon$language$iterable_.$capture$mapPairs$secondIterable.iterator();
+    }
+    Iterator firstIter;
+    Iterator secondIter;
+    $dart$core.Object next() {{
+            $dart$core.bool doElse$0 = true;{
+                $dart$core.Object first$1 = firstIter.next();
+                if (!(first$1 is Finished)) {
+                    $dart$core.Object first;
+                    first = first$1;{
+                        $dart$core.Object second$2 = secondIter.next();
+                        if (!(second$2 is Finished)) {
+                            $dart$core.Object second;
+                            second = second$2;
+                            doElse$0 = false;
+                            return $outer$ceylon$language$iterable_.$capture$mapPairs$collecting.$delegate$(first, second);
+                        }
+                    }
+                }
+            }
+            if (doElse$0) {
+                return $package$finished;
+            }
+        }
+    }
+    $dart$core.String toString() => ("" + $outer$ceylon$language$iterable_.toString()) + ".iterator()";
+}
+class iterable_ implements Iterable {
+    Iterable $capture$mapPairs$firstIterable;
+    Iterable $capture$mapPairs$secondIterable;
+    Callable $capture$mapPairs$collecting;
+    iterable_([Iterable this.$capture$mapPairs$firstIterable, Iterable this.$capture$mapPairs$secondIterable, Callable this.$capture$mapPairs$collecting]) {}
+    Iterator iterator() {
+        final iterable_$iterator_ iterator = new iterable_$iterator_(this);
+        return iterator;
+    }
+    $dart$core.String toString() => Iterable.$get$string(this);
+    $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
+    $dart$core.bool get empty => Iterable.$get$empty(this);
+    $dart$core.int get size => Iterable.$get$size(this);
+    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
+    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
+    $dart$core.Object get first => Iterable.$get$first(this);
+    $dart$core.Object get last => Iterable.$get$last(this);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
+    Sequential sequence() => Iterable.$sequence(this);
+    Iterable get rest => Iterable.$get$rest(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    void each([Callable step]) => Iterable.$each(this, step);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    $dart$core.Object find([Callable selecting]) => Iterable.$find(this, selecting);
+    $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
+    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
+    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
+    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get coalesced => Iterable.$get$coalesced(this);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+}
+Iterable $package$mapPairs([Callable collecting, Iterable firstIterable, Iterable secondIterable]) {
+    final iterable_ iterable = new iterable_(firstIterable, secondIterable, collecting);
+    return iterable;
+}
+
+Iterable mapPairs([Callable collecting, Iterable firstIterable, Iterable secondIterable]) => $package$mapPairs(collecting, firstIterable, secondIterable);
+
 Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable secondIterable]) {
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
         $dart$core.Object first;
-        $dart$core.Object first$0 = firstIter.next();
-        if (first$0 is Finished) {
+        $dart$core.Object first$3 = firstIter.next();
+        if (first$3 is Finished) {
             break;
         }
-        first = first$0;
+        first = first$3;
         $dart$core.Object second;
-        $dart$core.Object second$1 = secondIter.next();
-        if (second$1 is Finished) {
+        $dart$core.Object second$4 = secondIter.next();
+        if (second$4 is Finished) {
             break;
         }
-        second = second$1;
+        second = second$4;
         if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return new Tuple.$withList([first, second], null);
         }
@@ -803,17 +901,17 @@ $dart$core.bool $package$everyPair([Callable selecting, Iterable firstIterable, 
     Iterator secondIter = secondIterable.iterator();
     while (true) {
         $dart$core.Object first;
-        $dart$core.Object first$2 = firstIter.next();
-        if (first$2 is Finished) {
+        $dart$core.Object first$5 = firstIter.next();
+        if (first$5 is Finished) {
             break;
         }
-        first = first$2;
+        first = first$5;
         $dart$core.Object second;
-        $dart$core.Object second$3 = secondIter.next();
-        if (second$3 is Finished) {
+        $dart$core.Object second$6 = secondIter.next();
+        if (second$6 is Finished) {
             break;
         }
-        second = second$3;
+        second = second$6;
         if (!Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return false;
         }
@@ -828,17 +926,17 @@ $dart$core.bool $package$anyPair([Callable selecting, Iterable firstIterable, It
     Iterator secondIter = secondIterable.iterator();
     while (true) {
         $dart$core.Object first;
-        $dart$core.Object first$4 = firstIter.next();
-        if (first$4 is Finished) {
+        $dart$core.Object first$7 = firstIter.next();
+        if (first$7 is Finished) {
             break;
         }
-        first = first$4;
+        first = first$7;
         $dart$core.Object second;
-        $dart$core.Object second$5 = secondIter.next();
-        if (second$5 is Finished) {
+        $dart$core.Object second$8 = secondIter.next();
+        if (second$8 is Finished) {
             break;
         }
-        second = second$5;
+        second = second$8;
         if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return true;
         }
@@ -854,17 +952,17 @@ $dart$core.Object $package$foldPairs([$dart$core.Object initial, Callable accumu
     $dart$core.Object partial = initial;
     while (true) {
         $dart$core.Object first;
-        $dart$core.Object first$6 = firstIter.next();
-        if (first$6 is Finished) {
+        $dart$core.Object first$9 = firstIter.next();
+        if (first$9 is Finished) {
             break;
         }
-        first = first$6;
+        first = first$9;
         $dart$core.Object second;
-        $dart$core.Object second$7 = secondIter.next();
-        if (second$7 is Finished) {
+        $dart$core.Object second$10 = secondIter.next();
+        if (second$10 is Finished) {
             break;
         }
-        second = second$7;
+        second = second$10;
         partial = accumulating.$delegate$(partial, first, second);
     }
     return partial;
