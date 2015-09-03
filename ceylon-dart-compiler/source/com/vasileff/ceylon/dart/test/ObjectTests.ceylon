@@ -56,6 +56,27 @@ class ObjectTests() {
         };
     }
 
+    shared test ignore
+    void specifications() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal String s1;
+                    shared formal String s2();
+                }
+
+                object o satisfies I {
+                    s1 => "s1Value";
+                    s2() => "s2Value";
+                }
+             """;
+
+             """
+
+             """;
+        };
+    }
+
     shared test
     void bridgeMethods() {
         compileAndCompare {

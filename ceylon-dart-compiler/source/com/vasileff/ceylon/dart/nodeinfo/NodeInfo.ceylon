@@ -49,7 +49,9 @@ import ceylon.ast.core {
     IfElseExpression,
     ValueSetterDefinition,
     TypeNameWithTypeArguments,
-    ObjectDefinition
+    ObjectDefinition,
+    Specification,
+    LazySpecification
 }
 import ceylon.interop.java {
     CeylonList,
@@ -323,6 +325,28 @@ class StatementInfo(Statement astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Statement node => astNode;
+}
+
+shared abstract
+class SpecificationInfo(Specification astNode)
+        of LazySpecificationInfo
+        extends StatementInfo(astNode) {
+
+    shared actual default Specification node => astNode;
+    value tcNode = assertedTcNode<Tree.SpecifierStatement>(astNode);
+
+    shared FunctionModel|ValueModel declaration {
+        assert (is FunctionModel | ValueModel d = tcNode.declaration);
+        return d;
+    }
+
+    shared TypedDeclarationModel refined => tcNode.refined;
+}
+
+shared
+class LazySpecificationInfo(LazySpecification astNode)
+        extends SpecificationInfo(astNode) {
+    shared actual default LazySpecification node => astNode;
 }
 
 shared

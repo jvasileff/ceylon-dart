@@ -289,7 +289,8 @@ class TopLevelVisitor(CompilationContext ctx)
                 =>  dartTypes.dartTypeName(that, satisfiedType, false)));
 
         // TODO extends clause
-        if (!ceylonTypes.isCeylonBasic(info.anonymousClass.extendedType)) {
+        if (!ceylonTypes.isCeylonBasic(info.anonymousClass.extendedType)
+            && !ceylonTypes.isCeylonObject(info.anonymousClass.extendedType)) {
             throw CompilerBug(that, "Objects with extended types not yet supported.");
         }
 
