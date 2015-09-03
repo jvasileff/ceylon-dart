@@ -378,15 +378,6 @@ const $package$smaller = smaller;
 const $package$equal = equal;
 
 //
-// Correspondence.dart
-//
-
-abstract class Correspondence {
-  $dart$core.bool defines($dart$core.Object key);
-  $dart$core.Object get($dart$core.Object key);
-}
-
-//
 // Empty.dart
 //
 class $empty implements Empty {
@@ -584,17 +575,6 @@ class $empty implements Empty {
   Iterable follow([$dart$core.Object head])
       =>  Empty.$follow(this, head);
 }
-
-const empty = const $empty();
-final $package$empty = empty;
-
-class $EmptyIterator implements Iterator {
-  const $EmptyIterator();
-
-  @$dart$core.override
-  next() => finished;
-}
-final emptyIterator = new $EmptyIterator();
 
 //
 // Exception.dart

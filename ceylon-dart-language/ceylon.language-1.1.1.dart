@@ -142,6 +142,47 @@ abstract class Comparable {
 }
 abstract class ConstrainedAnnotation implements Annotation {
 }
+class Correspondence$$anonymous$0_ implements Category {
+    Correspondence $outer$ceylon$language$Correspondence;
+    Correspondence$$anonymous$0_([Correspondence this.$outer$ceylon$language$Correspondence]) {}
+    $dart$core.bool contains([$dart$core.Object key]) => $outer$ceylon$language$Correspondence.defines(key);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+}
+abstract class Correspondence {
+    $dart$core.Object get([$dart$core.Object key]);
+    $dart$core.bool defines([$dart$core.Object key]);
+    Category get keys;
+    static Category $get$keys([final Correspondence $this]) => new Correspondence$$anonymous$0_($this);
+    $dart$core.bool definesEvery([Iterable keys]);
+    static $dart$core.bool $definesEvery([final Correspondence $this, Iterable keys]) {{
+            $dart$core.Object element$1;
+            Iterator iterator$0 = keys.iterator();
+            while ((element$1 = iterator$0.next()) is !Finished) {
+                $dart$core.Object key = element$1;
+                if (!$this.defines(key)) {
+                    return false;
+                }
+            }{
+                return true;
+            }
+        }
+    }
+    $dart$core.bool definesAny([Iterable keys]);
+    static $dart$core.bool $definesAny([final Correspondence $this, Iterable keys]) {{
+            $dart$core.Object element$3;
+            Iterator iterator$2 = keys.iterator();
+            while ((element$3 = iterator$2.next()) is !Finished) {
+                $dart$core.Object key = element$3;
+                if ($this.defines(key)) {
+                    return true;
+                }
+            }{
+                return false;
+            }
+        }
+    }
+}
 $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) {
     if ($dart$core.identical(comparing, $package$dart$default)) {
         comparing = new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) {

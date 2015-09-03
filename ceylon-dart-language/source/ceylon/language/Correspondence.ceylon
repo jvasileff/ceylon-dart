@@ -20,7 +20,7 @@ see (`interface Map`,
      `interface List`, 
      `interface Category`)
 by ("Gavin")
-native shared interface Correspondence<in Key, out Item=Anything>
+shared interface Correspondence<in Key, out Item=Anything>
         given Key satisfies Object {
     
     "Returns the value defined for the given key, or `null` 
@@ -101,7 +101,7 @@ native shared interface Correspondence<in Key, out Item=Anything>
      does not have an item defined, the resulting stream 
      contains the value `null`."
     see (`function Correspondence.get`)
-    shared default 
+    native shared default 
     Iterable<Item?,Absent> getAll<Absent>
             (Iterable<Key,Absent> keys) 
             given Absent satisfies Null
