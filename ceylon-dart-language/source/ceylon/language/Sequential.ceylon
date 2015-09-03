@@ -10,7 +10,7 @@
    represents a non-empty sequence, and has the very 
    important subclass [[Tuple]]."
 see (`class Tuple`)
-native shared interface Sequential<out Element=Anything>
+shared interface Sequential<out Element=Anything>
         of []|[Element+]
         satisfies List<Element> & 
                   Ranged<Integer,Element,Element[]> {
@@ -63,7 +63,7 @@ native shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the start and end of this sequence, 
      returning a sequence no longer than this sequence."
-    shared actual default 
+    native shared actual default 
     Element[] trim(
         "The predicate function that determines if an 
          element at the start or end of this sequence should
@@ -74,7 +74,7 @@ native shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the start of this sequence, returning 
      a sequence no longer than this sequence."
-    shared actual default 
+    native shared actual default 
     Element[] trimLeading(
         "The predicate function that determines if an 
          element at the start of this sequence should be 
@@ -85,7 +85,7 @@ native shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the end of this sequence, returning a 
      sequence no longer than this sequence."
-    shared actual default 
+    native shared actual default 
     Element[] trimTrailing(
         "The predicate function that determines if an 
          element at the end of this sequence should be 

@@ -1052,15 +1052,6 @@ abstract class Sequence implements Sequential {
 }
 
 //
-// Sequential.dart
-//
-
-abstract class Sequential implements List {
-  Sequence withLeading($dart$core.Object element);
-  Sequence withTrailing($dart$core.Object element);
-}
-
-//
 // String.dart
 //
 

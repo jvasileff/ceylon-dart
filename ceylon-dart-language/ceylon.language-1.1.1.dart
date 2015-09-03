@@ -983,6 +983,30 @@ abstract class Scalable {
 }
 abstract class SequencedAnnotation implements ConstrainedAnnotation {
 }
+abstract class Sequential implements List, Ranged {
+    $dart$core.int get size;
+    Sequential get keys;
+    static Sequential $get$keys([final Sequential $this]) => $package$measure(Integer.instance(0), $this.size) as Sequential;
+    Sequential sequence();
+    static Sequential $sequence([final Sequential $this]) => $this;
+    Sequential get rest;
+    Sequential get reversed;
+    Sequential repeat([$dart$core.int times]);
+    Sequential initial([$dart$core.int length]);
+    static Sequential $initial([final Sequential $this, $dart$core.int length]) => $this.spanTo(Integer.instance(length - 1)) as Sequential;
+    Sequential terminal([$dart$core.int length]);
+    static Sequential $terminal([final Sequential $this, $dart$core.int length]) => $this.spanFrom(Integer.instance($this.size - length)) as Sequential;
+    Sequential clone();
+    static Sequential $clone([final Sequential $this]) => $this;
+    Tuple slice([$dart$core.int index]);
+    static Tuple $slice([final Sequential $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)) as Sequential, $this.spanFrom(Integer.instance(index)) as Sequential], null);
+    Tuple withLeading([$dart$core.Object element]);
+    Sequence withTrailing([$dart$core.Object element]);
+    Sequential append([Sequential elements]);
+    Sequential prepend([Sequential elements]);
+    $dart$core.String toString();
+    static $dart$core.String $get$string([final Sequential $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
+}
 class emptySet_ implements Set {
     emptySet_() {}
     Set union([Set set]) => set;
