@@ -109,7 +109,7 @@ native shared interface Set<out Element=Object>
 }
 
 "An immutable [[Set]] with no elements."
-native shared object emptySet 
+shared object emptySet
         extends Object() 
         satisfies Set<Nothing> {
     

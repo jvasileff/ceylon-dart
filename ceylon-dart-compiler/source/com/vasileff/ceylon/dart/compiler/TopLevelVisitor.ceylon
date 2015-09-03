@@ -420,8 +420,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     .flatMap((d) => CeylonList(d.members))
                     .narrow<FunctionOrValueModel>()
                     .filter(FunctionOrValueModel.shared)
-                    .distinct
                     .map(curry(mostRefined)(info.anonymousClass))
+                    .distinct
                     .map((m) => assertExists(m,
                         "Surely a most-refined implementation exists."))
                     .filter((m) => container(m) is InterfaceModel)

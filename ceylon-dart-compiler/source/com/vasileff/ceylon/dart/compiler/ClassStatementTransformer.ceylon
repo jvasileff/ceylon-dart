@@ -24,7 +24,6 @@ import com.vasileff.ceylon.dart.ast {
     DartStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
-    SpecificationInfo,
     LazySpecificationInfo
 }
 

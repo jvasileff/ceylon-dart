@@ -364,6 +364,118 @@ abstract class Empty implements Sequential, Ranged {
     void each([Callable step]);
     static void $each([final Empty $this, Callable step]) {}
 }
+class empty_ implements Empty {
+    empty_() {}
+    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.String toString() => Empty.$get$string(this);
+    $dart$core.Object getFromLast([$dart$core.int index]) => Empty.$getFromLast(this, index);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Empty.$getFromFirst(this, index);
+    $dart$core.bool contains([$dart$core.Object element]) => Empty.$contains(this, element);
+    $dart$core.bool defines([Integer index]) => Empty.$defines(this, index);
+    Empty get keys => Empty.$get$keys(this);
+    $dart$core.bool get empty => Empty.$get$empty(this);
+    $dart$core.int get size => Empty.$get$size(this);
+    Empty get reversed => Empty.$get$reversed(this);
+    Empty sequence() => Empty.$sequence(this);
+    $dart$core.Object get lastIndex => Empty.$get$lastIndex(this);
+    $dart$core.Object get first => Empty.$get$first(this);
+    $dart$core.Object get last => Empty.$get$last(this);
+    Empty get rest => Empty.$get$rest(this);
+    Empty clone() => Empty.$clone(this);
+    Empty get coalesced => Empty.$get$coalesced(this);
+    Empty get indexed => Empty.$get$indexed(this);
+    Empty repeat([$dart$core.int times]) => Empty.$repeat(this, times);
+    Empty get cycled => Empty.$get$cycled(this);
+    Empty get paired => Empty.$get$paired(this);
+    Iterator iterator() => Empty.$iterator(this);
+    Empty measure([Integer from, $dart$core.int length]) => Empty.$measure(this, from, length);
+    Empty span([Integer from, Integer to]) => Empty.$span(this, from, to);
+    Empty spanTo([Integer to]) => Empty.$spanTo(this, to);
+    Empty spanFrom([Integer from]) => Empty.$spanFrom(this, from);
+    Iterable chain([Iterable other]) => Empty.$chain(this, other);
+    Empty defaultNullElements([$dart$core.Object defaultValue]) => Empty.$defaultNullElements(this, defaultValue);
+    $dart$core.int count([Callable selecting]) => Empty.$count(this, selecting);
+    Empty map([Callable collecting]) => Empty.$map(this, collecting);
+    Empty flatMap([Callable collecting]) => Empty.$flatMap(this, collecting);
+    Callable spread([Callable method]) => Empty.$spread(this, method);
+    Empty filter([Callable selecting]) => Empty.$filter(this, selecting);
+    Callable fold([$dart$core.Object initial]) => Empty.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Empty.$reduce(this, accumulating);
+    $dart$core.Object find([Callable selecting]) => Empty.$find(this, selecting);
+    Empty sort([Callable comparing]) => Empty.$sort(this, comparing);
+    Empty collect([Callable collecting]) => Empty.$collect(this, collecting);
+    Empty select([Callable selecting]) => Empty.$select(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Empty.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Empty.$every(this, selecting);
+    Empty skip([$dart$core.int skipping]) => Empty.$skip(this, skipping);
+    Empty take([$dart$core.int taking]) => Empty.$take(this, taking);
+    Empty skipWhile([Callable skipping]) => Empty.$skipWhile(this, skipping);
+    Empty takeWhile([Callable taking]) => Empty.$takeWhile(this, taking);
+    Empty by([$dart$core.int step]) => Empty.$by(this, step);
+    Tuple withLeading([$dart$core.Object element]) => Empty.$withLeading(this, element);
+    Tuple withTrailing([$dart$core.Object element]) => Empty.$withTrailing(this, element);
+    Sequential append([Sequential elements]) => Empty.$append(this, elements);
+    Sequential prepend([Sequential elements]) => Empty.$prepend(this, elements);
+    Iterable follow([$dart$core.Object head]) => Empty.$follow(this, head);
+    Empty sublist([$dart$core.int from, $dart$core.int to]) => Empty.$sublist(this, from, to);
+    Empty sublistFrom([$dart$core.int from]) => Empty.$sublistFrom(this, from);
+    Empty sublistTo([$dart$core.int to]) => Empty.$sublistTo(this, to);
+    Empty initial([$dart$core.int length]) => Empty.$initial(this, length);
+    Empty terminal([$dart$core.int length]) => Empty.$terminal(this, length);
+    Empty indexesWhere([Callable selecting]) => Empty.$indexesWhere(this, selecting);
+    $dart$core.Object firstIndexWhere([Callable selecting]) => Empty.$firstIndexWhere(this, selecting);
+    $dart$core.Object lastIndexWhere([Callable selecting]) => Empty.$lastIndexWhere(this, selecting);
+    $dart$core.bool includes([List sublist]) => Empty.$includes(this, sublist);
+    Empty trim([Callable trimming]) => Empty.$trim(this, trimming);
+    Empty trimLeading([Callable trimming]) => Empty.$trimLeading(this, trimming);
+    Empty trimTrailing([Callable trimming]) => Empty.$trimTrailing(this, trimming);
+    Tuple slice([$dart$core.int index]) => Empty.$slice(this, index);
+    void each([Callable step]) => Empty.$each(this, step);
+    $dart$core.Object get([Integer index]) => List.$get(this, index);
+    $dart$core.bool shorterThan([$dart$core.int length]) => List.$shorterThan(this, length);
+    $dart$core.bool longerThan([$dart$core.int length]) => List.$longerThan(this, length);
+    $dart$core.Object findLast([Callable selecting]) => List.$findLast(this, selecting);
+    List patch([List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => List.$patch(this, list, from, length);
+    $dart$core.bool startsWith([List sublist]) => List.$startsWith(this, sublist);
+    $dart$core.bool endsWith([List sublist]) => List.$endsWith(this, sublist);
+    $dart$core.bool includesAt([$dart$core.int index, List sublist]) => List.$includesAt(this, index, sublist);
+    Iterable inclusions([List sublist]) => List.$inclusions(this, sublist);
+    $dart$core.int firstInclusion([List sublist]) => List.$firstInclusion(this, sublist);
+    $dart$core.int lastInclusion([List sublist]) => List.$lastInclusion(this, sublist);
+    $dart$core.bool occursAt([$dart$core.int index, $dart$core.Object element]) => List.$occursAt(this, index, element);
+    $dart$core.bool occurs([$dart$core.Object element]) => List.$occurs(this, element);
+    Iterable occurrences([$dart$core.Object element]) => List.$occurrences(this, element);
+    $dart$core.int firstOccurrence([$dart$core.Object element]) => List.$firstOccurrence(this, element);
+    $dart$core.int lastOccurrence([$dart$core.Object element]) => List.$lastOccurrence(this, element);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+    $dart$core.bool definesEvery([Iterable keys]) => Correspondence.$definesEvery(this, keys);
+    $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
+    Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
+}
+final empty_ $package$empty = new empty_();
+
+empty_ get empty => $package$empty;
+
+class emptyIterator_ implements Iterator {
+    emptyIterator_() {}
+    Finished next() => $package$finished;
+    $dart$core.String toString() => "empty.iterator()";
+}
+final emptyIterator_ $package$emptyIterator = new emptyIterator_();
+
+emptyIterator_ get emptyIterator => $package$emptyIterator;
+
 $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() {
     $dart$core.bool doElse$0 = true;
     if (!(element == null)) {
@@ -830,6 +942,73 @@ abstract class Scalable {
 }
 abstract class SequencedAnnotation implements ConstrainedAnnotation {
 }
+class emptySet_ implements Set {
+    emptySet_() {}
+    Set union([Set set]) => set;
+    Set intersection([Set set]) => this;
+    Set exclusiveUnion([Set set]) => set;
+    Set complement([Set set]) => this;
+    $dart$core.bool subset([Set set]) => true;
+    $dart$core.bool superset([Set set]) => set.empty;
+    Set clone() => this;
+    Iterator iterator() => $package$emptyIterator;
+    $dart$core.int get size => 0;
+    $dart$core.bool get empty => true;
+    $dart$core.bool contains([$dart$core.Object element]) => false;
+    $dart$core.bool containsAny([Iterable elements]) => false;
+    $dart$core.bool containsEvery([Iterable elements]) => false;
+    $dart$core.int count([Callable selecting]) => 0;
+    $dart$core.bool any([Callable selecting]) => false;
+    $dart$core.bool every([Callable selecting]) => true;
+    $dart$core.Object find([Callable selecting]) => null;
+    $dart$core.Object findLast([Callable selecting]) => null;
+    Iterable skip([$dart$core.int skipping]) => this;
+    Iterable take([$dart$core.int taking]) => this;
+    Iterable by([$dart$core.int step]) => this;
+    void each([Callable step]) {}
+    $dart$core.bool equals([$dart$core.Object that]) => Set.$equals(this, that);
+    $dart$core.int get hashCode => Set.$get$hash(this);
+    $dart$core.String toString() => Collection.$get$string(this);
+    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
+    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
+    $dart$core.Object get first => Iterable.$get$first(this);
+    $dart$core.Object get last => Iterable.$get$last(this);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
+    Sequential sequence() => Iterable.$sequence(this);
+    Iterable get rest => Iterable.$get$rest(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get coalesced => Iterable.$get$coalesced(this);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+}
+final emptySet_ $package$emptySet = new emptySet_();
+
+emptySet_ get emptySet => $package$emptySet;
+
 Callable $package$shuffle([Callable f]) => $package$flatten(new dart$Callable(([$dart$core.Object secondArgs]) => $package$flatten(new dart$Callable(([$dart$core.Object firstArgs]) => $package$unflatten($package$unflatten(f).$delegate$(firstArgs) as Callable).$delegate$(secondArgs)))));
 
 Callable shuffle([Callable f]) => $package$shuffle(f);
@@ -898,4 +1077,6 @@ abstract class Usable {
 Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => new Tuple.$withList([first, second], null)), firstElements, secondElements);
 
 Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package$zipPairs(firstElements, secondElements);
+
+void main() => run();
 

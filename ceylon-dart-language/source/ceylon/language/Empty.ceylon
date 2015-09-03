@@ -254,12 +254,12 @@ shared interface Empty of e
 "A sequence with no elements, abbreviated `[]`. The unique 
  instance of the type `[]`."
 by ("Tako Schotanus")
-native shared object empty 
+shared object empty 
 		extends Object() 
 		satisfies [] {}
 
 "An iterator that returns no elements."
-native shared object emptyIterator 
+shared object emptyIterator 
 		satisfies Iterator<Nothing> {
     next() => finished;
     string => "empty.iterator()";

@@ -895,7 +895,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is ClassOrInterfaceModel
                     | FunctionOrValueModel
                     | ControlBlockModel
-                    | ConstructorModel) {
+                    | ConstructorModel
+                    | SpecificationModel) {
 
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
