@@ -1016,13 +1016,6 @@ class _$ListIterator_anon implements Iterator {
 }
 
 //
-// Nothing.dart
-//
-
-$dart$core.Object get nothing
-  =>  throw new AssertionError("nothing may not be evaluated");
-
-//
 // Sequence.dart
 //
 

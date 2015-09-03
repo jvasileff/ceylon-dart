@@ -6,7 +6,7 @@
  `formal` members.)"
 throws (`class AssertionError`, 
         "when evaluated")
-native shared Nothing nothing {
+shared Nothing nothing {
     "nothing may not be evaluated"
     assert (false);
 }

@@ -732,6 +732,14 @@ Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val
 
 Callable not([Callable p]) => $package$not(p);
 
+$dart$core.Object get $package$nothing {
+    if (!false) {
+        throw new AssertionError("Violated: false");
+    }
+}
+
+$dart$core.Object get nothing => $package$nothing;
+
 abstract class Number implements Numeric, Comparable {
     $dart$core.Object get magnitude;
     static $dart$core.Object $get$magnitude([final Number $this]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $this : $lhs$)($this.negative ? $this.negated : null);
