@@ -638,7 +638,7 @@ class OuterInfo(Outer astNode)
     shared actual default Outer node => astNode;
 
     value tcNode = assertedTcNode<Tree.Outer>(astNode);
-    shared default DeclarationModel declarationModel => tcNode.declarationModel;
+    shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
 shared
@@ -648,7 +648,7 @@ class SuperInfo(Super astNode)
     shared actual default Super node => astNode;
 
     value tcNode = assertedTcNode<Tree.Super>(astNode);
-    shared default DeclarationModel declarationModel => tcNode.declarationModel;
+    shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
 shared

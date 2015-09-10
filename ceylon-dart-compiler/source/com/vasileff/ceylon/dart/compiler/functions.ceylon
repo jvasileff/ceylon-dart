@@ -121,11 +121,11 @@ ScopeModel toScopeModel(Node|ScopeModel|ElementModel scope) {
     }
 }
 
-ClassOrInterfaceModel? getContainingClassOrInterface
+ClassModel|InterfaceModel? getContainingClassOrInterface
         (Node|ScopeModel|ElementModel scope) {
     variable ScopeModel scopeModel = toScopeModel(scope);
     while (!is PackageModel s = scopeModel) {
-        if (is ClassOrInterfaceModel s) {
+        if (is ClassModel|InterfaceModel s) {
             return s;
         }
         else {

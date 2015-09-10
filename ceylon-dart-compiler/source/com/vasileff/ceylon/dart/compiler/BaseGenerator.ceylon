@@ -46,6 +46,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
+    InterfaceModel=Interface,
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     ScopeModel=Scope,
@@ -412,15 +413,26 @@ class BaseGenerator(CompilationContext ctx)
     DartExpression generateInvocation(
             Node scope,
             TypeModel resultType,
+            "The type of the receiver, which may be:
+             -  the type of an expression if [[generateReceiver]] is not null, or
+             -  an interface that is the container of the [[memberDeclaration]] to invoke
+                [[generateReceiver]] is null, indicating that the receiver is a `super`
+                reference."
             TypeModel receiverType,
-            DartExpression() generateReceiver,
+            "A function to generate the receiver of type [[receiverType]], or null if the
+             receiver is a `super` reference."
+            DartExpression()? generateReceiver,
             FunctionOrValueModel memberDeclaration,
             [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null,
             Boolean safeMemberOperator = false) {
 
+        "By definition."
+        assert(is FunctionModel|ValueModel|SetterModel memberDeclaration);
+
         value [callableType, a] = callableTypeAndArguments else [null, []];
 
         [Expression*] arguments;
+
         switch (a)
         case (is [Expression*]) {
             arguments = a;
@@ -433,7 +445,8 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         // TODO WIP native optimizations
-        if (exists optimization = nativeBinaryFunctions(memberDeclaration)) {
+        if (exists generateReceiver, // No optimizations for `super` receiver
+            exists optimization = nativeBinaryFunctions(memberDeclaration)) {
             assert (exists rightOperandExpression = arguments[0]);
 
             value [type, leftOperandType, operand, rightOperandType] = optimization;
@@ -456,37 +469,91 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        value [memberIdentifier, isFunction] =
-                dartTypes.dartIdentifierForFunctionOrValueDeclaration(
-                        scope, memberDeclaration, false);
+        [DartExpression]|[] thisArgument;
+        DartExpression boxedReceiver;
+        Boolean isFunction;
+        DartSimpleIdentifier memberIdentifier;
+        DartTypeName? receiverDartType;
 
-        value resultDeclaration =
-                if (is FunctionModel memberDeclaration,
-                        memberDeclaration.parameterLists.size() > 1)
+        if (!exists generateReceiver) {
+            // receiver is `super`
+
+            // only used for null safe operator, which can't be used with `super`
+            receiverDartType = null;
+
+            if (is InterfaceModel ri = receiverType.declaration ) {
+                "Caller indicated receiver is `super`, so there must be a `this` for the
+                 current scope."
+                assert (exists thisExpression = dartTypes.expressionForThis(scope));
+                thisArgument = [thisExpression];
+
+                isFunction = true; // static interface functions are... functions
+                boxedReceiver = dartTypes.dartTypeReference {
+                    scope;
+                    ri;
+                };
+                memberIdentifier = dartTypes.getStaticInterfaceMethodIdentifier {
+                    memberDeclaration;
+                    false;
+                };
+            }
+            else {
+                // super refers to the superclass
+                thisArgument = [];
+                boxedReceiver = DartSimpleIdentifier("super");
+                value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    scope;
+                    memberDeclaration;
+                    false;
+                };
+                memberIdentifier = m;
+                isFunction = f;
+            }
+        }
+        else {
+            // receiver is not `super`
+            thisArgument = [];
+            value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                scope;
+                memberDeclaration;
+                false;
+            };
+            memberIdentifier = m;
+            isFunction = f;
+
+            // Determine usable receiver type. `withLhsDenotable` would be simpler, but
+            // we may need the type (for safeMemberOperator code)
+            assert (is ClassOrInterfaceModel container
+                =   container(memberDeclaration));
+
+            value receiverDenotableType
+                =   ceylonTypes.denotableType {
+                        receiverType;
+                        container;
+                    };
+
+            receiverDartType
+                =   dartTypes.dartTypeName {
+                        scope;
+                        receiverDenotableType;
+                        eraseToNative = false;
+                    };
+
+            boxedReceiver
+                =   withLhsCustom {
+                        receiverDenotableType;
+                        false; false;
+                        generateReceiver;
+                    };
+        }
+
+        value resultDeclaration
+            =   if (is FunctionModel memberDeclaration,
+                    memberDeclaration.parameterLists.size() > 1)
                 // The function actually returns a Callable, not the
                 // ultimate return type advertised by the declaration.
                 then null
                 else memberDeclaration;
-
-        // Determine usable receiver type. `withLhsDenotable` would be simpler, but we
-        // may need the type below.
-        assert (is ClassOrInterfaceModel container = memberDeclaration.container);
-        value receiverDenotableType = ceylonTypes.denotableType {
-            receiverType;
-            container;
-        };
-
-        value receiverDartType = dartTypes.dartTypeName {
-            scope;
-            receiverDenotableType;
-            eraseToNative = false;
-        };
-
-        value boxedReceiver = withLhsCustom {
-            receiverDenotableType;
-            false; false;
-            generateReceiver;
-        };
 
         DartExpression invocation;
         if (arguments nonempty) {
@@ -507,38 +574,46 @@ class BaseGenerator(CompilationContext ctx)
 
                 return
                 DartArgumentList {
-                    [for (i -> argument in arguments.indexed)
-                        withLhs {
-                            argumentTypes[i];
-                            parameterDeclarations[i];
-                            () => argument.transform(expressionTransformer);
-                        }
-                    ];
+                    concatenate(
+                        thisArgument,
+                        [for (i -> argument in arguments.indexed)
+                            withLhs {
+                                argumentTypes[i];
+                                parameterDeclarations[i];
+                                () => argument.transform(expressionTransformer);
+                            }
+                        ]
+                    );
                 };
             }
 
             if (safeMemberOperator) {
-                invocation = createNullSafeExpression {
-                    parameterIdentifier = DartSimpleIdentifier("$r$");
-                    parameterType = receiverDartType;
-                    maybeNullExpression = boxedReceiver;
-                    ifNullExpression = DartNullLiteral();
-                    ifNotNullExpression = DartFunctionExpressionInvocation {
-                        DartPropertyAccess {
-                            DartSimpleIdentifier("$r$");
-                            memberIdentifier;
+                "Must exist since receiver is never `super` when the safe member
+                 operator is used."
+                assert (exists receiverDartType);
+
+                invocation
+                    =   createNullSafeExpression {
+                            parameterIdentifier = DartSimpleIdentifier("$r$");
+                            parameterType = receiverDartType;
+                            maybeNullExpression = boxedReceiver;
+                            ifNullExpression = DartNullLiteral();
+                            ifNotNullExpression = DartFunctionExpressionInvocation {
+                                DartPropertyAccess {
+                                    DartSimpleIdentifier("$r$");
+                                    memberIdentifier;
+                                };
+                                argumentList;
+                            };
                         };
-                        argumentList;
-                    };
-                };
             }
             else {
-                invocation =
-                DartMethodInvocation {
-                    boxedReceiver;
-                    memberIdentifier;
-                    argumentList;
-                };
+                invocation
+                    =   DartMethodInvocation {
+                            boxedReceiver;
+                            memberIdentifier;
+                            argumentList;
+                        };
             }
         }
         else {
@@ -548,22 +623,30 @@ class BaseGenerator(CompilationContext ctx)
                     else DartMethodInvocation {
                         receiver;
                         memberIdentifier;
-                        DartArgumentList();
+                        DartArgumentList {
+                            thisArgument;
+                        };
                     };
 
             if (safeMemberOperator) {
-                invocation = createNullSafeExpression {
-                    parameterIdentifier = DartSimpleIdentifier("$r$");
-                    parameterType = receiverDartType;
-                    maybeNullExpression = boxedReceiver;
-                    ifNullExpression = DartNullLiteral();
-                    ifNotNullExpression = valueAccess {
-                        DartSimpleIdentifier("$r$");
-                    };
-                };
+                "Must exist since receiver is never `super` when the safe member
+                 operator is used."
+                assert (exists receiverDartType);
+
+                invocation
+                    =   createNullSafeExpression {
+                            parameterIdentifier = DartSimpleIdentifier("$r$");
+                            parameterType = receiverDartType;
+                            maybeNullExpression = boxedReceiver;
+                            ifNullExpression = DartNullLiteral();
+                            ifNotNullExpression = valueAccess {
+                                DartSimpleIdentifier("$r$");
+                            };
+                        };
             }
             else {
-                invocation = valueAccess(boxedReceiver);
+                invocation
+                    =   valueAccess(boxedReceiver);
             }
         }
 

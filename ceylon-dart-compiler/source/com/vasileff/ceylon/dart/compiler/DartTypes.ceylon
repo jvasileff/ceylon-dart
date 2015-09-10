@@ -661,6 +661,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
+    shared
+    DartSimpleIdentifier? expressionForThis(Node|ScopeModel scope)
+        =>  switch (container = getContainingClassOrInterface(scope))
+            case (is ClassModel)
+                DartSimpleIdentifier("this")
+            case (is InterfaceModel)
+                DartSimpleIdentifier("$this")
+            case (is Null)
+                null;
+
     "Returns a tuple containing:
 
      - A Dart expression for the Ceylon FunctionOrValue
