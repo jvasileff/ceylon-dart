@@ -798,7 +798,7 @@ class Integer implements Integral, Exponentiable, Binary {
 // Iterable.dart
 //
 
-abstract class Iterable {
+abstract class Iterable implements Category {
   Iterator iterator();
 
   $dart$core.int get size;
@@ -1476,76 +1476,6 @@ class dart$Callable implements Callable {
   final $dart$core.Function $delegate$;
 
   dart$Callable($dart$core.Function this.$delegate$);
-}
-
-abstract class Set implements Collection {
-    $dart$core.bool contains([$dart$core.Object element]);
-    static $dart$core.bool $contains([final Set $this, $dart$core.Object element]) => Collection.$contains($this, element);
-    Set clone();
-    $dart$core.bool superset([Set set]);
-    static $dart$core.bool $superset([final Set $this, Set set]) {{
-            $dart$core.Object element$1;
-            Iterator iterator$0 = set.iterator();
-            while ((element$1 = iterator$0.next()) is !Finished) {
-                $dart$core.Object element = element$1;
-                if (!$this.contains(element)) {
-                    return false;
-                }
-            }{
-                return true;
-            }
-        }
-    }
-    $dart$core.bool subset([Set set]);
-    static $dart$core.bool $subset([final Set $this, Set set]) {{
-            $dart$core.Object element$3;
-            Iterator iterator$2 = $this.iterator();
-            while ((element$3 = iterator$2.next()) is !Finished) {
-                $dart$core.Object element = element$3;
-                if (!set.contains(element)) {
-                    return false;
-                }
-            }{
-                return true;
-            }
-        }
-    }
-    $dart$core.bool equals([$dart$core.Object that]);
-    static $dart$core.bool $equals([final Set $this, $dart$core.Object that]) {
-        if (that is Set) {
-            Set that$4 = that as Set;
-            if (Integer.instance(that$4.size).equals(Integer.instance($this.size))) {{
-                    $dart$core.Object element$6;
-                    Iterator iterator$5 = $this.iterator();
-                    while ((element$6 = iterator$5.next()) is !Finished) {
-                        $dart$core.Object element = element$6;
-                        if (!that$4.contains(element)) {
-                            return false;
-                        }
-                    }{
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Set $this]) {
-        $dart$core.int hashCode = 0;{
-            $dart$core.Object element$8;
-            Iterator iterator$7 = $this.iterator();
-            while ((element$8 = iterator$7.next()) is !Finished) {
-                $dart$core.Object elem = element$8;
-                hashCode = hashCode + elem.hashCode;
-            }
-        }
-        return hashCode;
-    }
-    Set union([Set set]);
-    Set intersection([Set set]);
-    Set exclusiveUnion([Set set]);
-    Set complement([Set set]);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

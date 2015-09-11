@@ -63,7 +63,7 @@ shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the start and end of this sequence, 
      returning a sequence no longer than this sequence."
-    native shared actual default 
+    shared actual default 
     Element[] trim(
         "The predicate function that determines if an 
          element at the start or end of this sequence should
@@ -74,7 +74,7 @@ shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the start of this sequence, returning 
      a sequence no longer than this sequence."
-    native shared actual default 
+    shared actual default 
     Element[] trimLeading(
         "The predicate function that determines if an 
          element at the start of this sequence should be 
@@ -85,7 +85,7 @@ shared interface Sequential<out Element=Anything>
     "Trim the elements satisfying the given predicate
      function from the end of this sequence, returning a 
      sequence no longer than this sequence."
-    native shared actual default 
+    shared actual default 
     Element[] trimTrailing(
         "The predicate function that determines if an 
          element at the end of this sequence should be 
