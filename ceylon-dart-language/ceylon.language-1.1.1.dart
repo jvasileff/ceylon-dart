@@ -61,6 +61,14 @@ Comparison $package$decreasing([$dart$core.Object x, $dart$core.Object y]) => (y
 
 Comparison decreasing([$dart$core.Object x, $dart$core.Object y]) => $package$decreasing(x, y);
 
+Comparison $package$decreasingKey([Entry x, Entry y]) => (y.key as Comparable).compare(x.key);
+
+Comparison decreasingKey([Entry x, Entry y]) => $package$decreasingKey(x, y);
+
+Comparison $package$decreasingItem([Entry x, Entry y]) => (y.item as Comparable).compare(x.item);
+
+Comparison decreasingItem([Entry x, Entry y]) => $package$decreasingItem(x, y);
+
 Callable $package$byIncreasing([Callable comparable]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) => (comparable.$delegate$(x) as Comparable).compare(comparable.$delegate$(y)));
 
 Callable byIncreasing([Callable comparable]) => $package$byIncreasing(comparable);
@@ -68,6 +76,14 @@ Callable byIncreasing([Callable comparable]) => $package$byIncreasing(comparable
 Comparison $package$increasing([$dart$core.Object x, $dart$core.Object y]) => (x as Comparable).compare(y);
 
 Comparison increasing([$dart$core.Object x, $dart$core.Object y]) => $package$increasing(x, y);
+
+Comparison $package$increasingKey([Entry x, Entry y]) => (x.key as Comparable).compare(y.key);
+
+Comparison increasingKey([Entry x, Entry y]) => $package$increasingKey(x, y);
+
+Comparison $package$increasingItem([Entry x, Entry y]) => (x.item as Comparable).compare(y.item);
+
+Comparison increasingItem([Entry x, Entry y]) => $package$increasingItem(x, y);
 
 Callable $package$byItem([Callable comparing]) => new dart$Callable(([Entry x, Entry y]) => comparing.$delegate$(x.item, y.item) as Comparison);
 
@@ -279,6 +295,8 @@ abstract class Empty implements Sequential, Ranged {
     static $dart$core.bool $defines([final Empty $this, Integer index]) => false;
     Empty get keys;
     static Empty $get$keys([final Empty $this]) => $this;
+    Empty indexes();
+    static Empty $indexes([final Empty $this]) => $this;
     $dart$core.bool get empty;
     static $dart$core.bool $get$empty([final Empty $this]) => true;
     $dart$core.int get size;
@@ -413,6 +431,7 @@ class empty_ implements Empty {
     $dart$core.bool contains([$dart$core.Object element]) => Empty.$contains(this, element);
     $dart$core.bool defines([Integer index]) => Empty.$defines(this, index);
     Empty get keys => Empty.$get$keys(this);
+    Empty indexes() => Empty.$indexes(this);
     $dart$core.bool get empty => Empty.$get$empty(this);
     $dart$core.int get size => Empty.$get$size(this);
     Empty get reversed => Empty.$get$reversed(this);
@@ -487,15 +506,19 @@ class empty_ implements Empty {
     Iterable occurrences([$dart$core.Object element]) => List.$occurrences(this, element);
     $dart$core.int firstOccurrence([$dart$core.Object element]) => List.$firstOccurrence(this, element);
     $dart$core.int lastOccurrence([$dart$core.Object element]) => List.$lastOccurrence(this, element);
+    Iterable get permutations => List.$get$permutations(this);
     Iterable get exceptLast => Iterable.$get$exceptLast(this);
     Iterable narrow() => Iterable.$narrow(this);
     Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
     Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
     Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
     $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
     Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
     Iterable product([Iterable other]) => Iterable.$product(this, other);
     Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
     $dart$core.bool definesEvery([Iterable keys]) => Correspondence.$definesEvery(this, keys);
@@ -829,6 +852,7 @@ class iterable_ implements Iterable {
     $dart$core.Object get last => Iterable.$get$last(this);
     $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
     Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
     Iterable get rest => Iterable.$get$rest(this);
     Iterable get exceptLast => Iterable.$get$exceptLast(this);
     void each([Callable step]) => Iterable.$each(this, step);
@@ -843,6 +867,7 @@ class iterable_ implements Iterable {
     $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
     Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
     Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
     $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
     Callable spread([Callable method]) => Iterable.$spread(this, method);
     Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
@@ -867,6 +892,8 @@ class iterable_ implements Iterable {
     Iterable product([Iterable other]) => Iterable.$product(this, other);
     Iterable get cycled => Iterable.$get$cycled(this);
     Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
@@ -1117,6 +1144,42 @@ abstract class Sequential implements List, Ranged {
     $dart$core.String toString();
     static $dart$core.String $get$string([final Sequential $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
 }
+serialization$DeserializationContext $package$serialization$deserialization() => new serialization$DeserializationContextImpl();
+
+serialization$DeserializationContext deserialization() => $package$deserialization();
+
+abstract class serialization$DeserializationContext {
+    void instance([$dart$core.Object instanceId, meta$model$ClassModel clazz]);
+    void memberInstance([$dart$core.Object containerId, $dart$core.Object instanceId]);
+    void attribute([$dart$core.Object instanceId, meta$declaration$ValueDeclaration attribute, $dart$core.Object attributeValueId]);
+    void element([$dart$core.Object instanceId, $dart$core.int index, $dart$core.Object elementValueId]);
+    void instanceValue([$dart$core.Object instanceId, $dart$core.Object instanceValue]);
+    $dart$core.Object reconstruct([$dart$core.Object instanceId]);
+}
+abstract class serialization$Element implements serialization$ReachableReference {
+    $dart$core.int get index;
+}
+abstract class serialization$Member implements serialization$ReachableReference {
+    meta$declaration$ValueDeclaration get attribute;
+    $dart$core.Object referred([$dart$core.Object instance]);
+}
+abstract class serialization$Outer implements serialization$ReachableReference {
+    $dart$core.Object referred([$dart$core.Object instance]);
+}
+abstract class serialization$ReachableReference {
+    $dart$core.Object referred([$dart$core.Object instance]);
+}
+abstract class serialization$References implements Iterable {
+    $dart$core.Object get instance;
+    Iterable get references;
+}
+serialization$SerializationContext $package$serialization$serialization() => new serialization$SerializationContextImpl();
+
+serialization$SerializationContext serialization() => $package$serialization();
+
+abstract class serialization$SerializationContext {
+    serialization$References references([$dart$core.Object instance]);
+}
 abstract class Set implements Collection {
     $dart$core.bool contains([$dart$core.Object element]);
     static $dart$core.bool $contains([final Set $this, $dart$core.Object element]) => Collection.$contains($this, element);
@@ -1219,6 +1282,7 @@ class emptySet_ implements Set {
     $dart$core.Object get last => Iterable.$get$last(this);
     $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
     Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
     Iterable get rest => Iterable.$get$rest(this);
     Iterable get exceptLast => Iterable.$get$exceptLast(this);
     Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
@@ -1230,6 +1294,7 @@ class emptySet_ implements Set {
     Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
     Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
     Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
     $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
     Callable spread([Callable method]) => Iterable.$spread(this, method);
     Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
@@ -1248,6 +1313,8 @@ class emptySet_ implements Set {
     Iterable product([Iterable other]) => Iterable.$product(this, other);
     Iterable get cycled => Iterable.$get$cycled(this);
     Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
 }
 final emptySet_ $package$emptySet = new emptySet_();
 
