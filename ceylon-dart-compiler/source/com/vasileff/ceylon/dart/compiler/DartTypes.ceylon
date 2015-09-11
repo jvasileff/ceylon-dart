@@ -201,8 +201,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      part of the containing module's base package, with `.` replaced
      by `$`, and a trailing `$` if nonempty."
     shared
-    String identifierPackagePrefix
-            (ElementModel|UnitModel declaration);
+    String identifierPackagePrefix(ElementModel|UnitModel declaration);
 
     identifierPackagePrefix
         =   memoize((ElementModel|UnitModel declaration)
@@ -622,44 +621,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
             Node|ElementModel|ScopeModel scope,
-            ClassOrInterfaceModel declaration) {
-
-        switch (container = declaration.container)
-        case (is PackageModel) {
-            if (sameModule(scope, declaration)) {
-                // don't qualify with module
-                return DartSimpleIdentifier(
-                    identifierPackagePrefix(declaration) +
-                    getName(declaration));
-            }
-            else {
-                // qualify toplevel with Dart import prefix
-                return DartPrefixedIdentifier {
+            ClassOrInterfaceModel declaration)
+        =>  let (identifier =
+                    dartIdentifierForClassOrInterfaceDeclaration(declaration))
+            if (sameModule(scope, declaration)) then
+                identifier
+            else
+                DartPrefixedIdentifier {
                     DartSimpleIdentifier(moduleImportPrefix(declaration));
-                    DartSimpleIdentifier(
-                        identifierPackagePrefix(declaration)
-                        + getName(declaration));
+                    identifier;
                 };
-            }
-        }
-        case (is ClassOrInterfaceModel
-                    | FunctionOrValueModel
-                    | ControlBlockModel
-                    | ConstructorModel) {
-            // FIXME this needs to be a CompilerBug exception
-            throw Exception(
-                "Unsupported container for base expression: \
-                 declaration type '``className(declaration)``' \
-                 container type '``className(container)``'");
-        }
-        else {
-            // FIXME this needs to be a CompilerBug exception
-            throw Exception(
-                "Unexpected container for base expression: \
-                 declaration type '``className(declaration)``' \
-                 container type '``className(container)``'");
-        }
-    }
+
+    shared
+    DartSimpleIdentifier dartIdentifierForClassOrInterfaceDeclaration
+            (ClassOrInterfaceModel declaration)
+        =>  DartSimpleIdentifier {
+                identifierPackagePrefix(declaration) + getName(declaration);
+            };
 
     shared
     DartSimpleIdentifier? expressionForThis(Node|ScopeModel scope)

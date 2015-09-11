@@ -197,8 +197,9 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        value name = dartTypes.getName(info.declarationModel);
-        value identifier = DartSimpleIdentifier(name);
+        value identifier
+            =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(
+                        info.declarationModel);
 
         value implementsTypes
             =   sequence(CeylonList(info.declarationModel.satisfiedTypes)
@@ -312,11 +313,7 @@ class TopLevelVisitor(CompilationContext ctx)
     void addObjectDefinition(Node scope, ClassModel classModel, ClassBody classBody) {
 
         value identifier
-            =   DartSimpleIdentifier {
-                    dartTypes.getName {
-                        classModel;
-                    };
-                };
+            =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
 
         value satisifesTypes
             =   sequence(CeylonList(classModel.satisfiedTypes)
