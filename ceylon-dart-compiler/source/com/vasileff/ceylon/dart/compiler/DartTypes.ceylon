@@ -1022,7 +1022,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     Boolean erasedToNative(FunctionOrValueModel declaration)
         =>  !ctx.disableErasureToNative.contains(declaration)
-            && !isCallableParameter(declaration)
+            && !isCallableParameterOrParamOf(declaration)
             && !isAnonymousFunctionOrParamOf(declaration)
             && native(formalType(declaration));
 

@@ -209,8 +209,15 @@ Boolean isAnonymousFunctionOrParamOf(FunctionOrValueModel declaration)
 
 "Is the declaration a Function that is a parameter? Callable parameters are implemented
  as values, but are presented as Functions by the model."
-Boolean isCallableParameter(FunctionOrValueModel declaration)
-    =>  declaration.parameter && declaration is FunctionModel;
+Boolean isCallableParameterOrParamOf(FunctionOrValueModel declaration)
+    =>  if (declaration.parameter && declaration is FunctionModel) then
+            true
+        else if (declaration.parameter,
+                 is FunctionModel f = declaration.container,
+                 f.parameter) then
+            true
+        else
+            false;
 
 "Returns the name of the backend for declarations marked `native` with a Ceylon
  implementation for a specific backend, the empty String (\"\") for declarations marked

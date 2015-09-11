@@ -308,7 +308,7 @@ class CoreGenerator(CompilationContext ctx) {
             FunctionOrValueModel? lhsDeclaration,
             Result fun()) {
 
-        if (exists lhsDeclaration, isCallableParameter(lhsDeclaration)) {
+        if (exists lhsDeclaration, isCallableParameterOrParamOf(lhsDeclaration)) {
             // Callable parameters are `Callable` values and are never erased to native
             return withLhsValues {
                 lhsType = lhsType else lhsDeclaration.typedReference.fullType;

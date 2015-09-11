@@ -259,4 +259,29 @@ class FunctionTests() {
              """;
         };
     }
+
+    "Return and parameter types of callable parameters should not be erased to native.
+     Otherwise, boxing/unboxing wrapper functions would be necessary when generating
+     Callables to hold them."
+    shared test
+    void dontEraseForCallableParameters() {
+        compileAndCompare {
+             """
+                shared void run(String f(String s) => s) {}
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run([$dart$core.Object f = $ceylon$language.dart$default]) {
+                    if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+                        f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+                    }
+                }
+
+                void run([$dart$core.Object f = $ceylon$language.dart$default]) => $package$run(f);
+             """;
+        };
+    }
 }
