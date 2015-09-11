@@ -1023,6 +1023,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     Boolean erasedToNative(FunctionOrValueModel declaration)
         =>  !ctx.disableErasureToNative.contains(declaration)
             && !isCallableParameter(declaration)
+            && !isAnonymousFunctionOrParamOf(declaration)
             && native(formalType(declaration));
 
     "For the Value, or the return type of the Function."

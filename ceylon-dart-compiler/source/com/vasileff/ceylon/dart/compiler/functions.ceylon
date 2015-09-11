@@ -198,6 +198,14 @@ Boolean isClassOrInterfaceMember(DeclarationModel scope)
 Boolean isToplevel(DeclarationModel scope)
     =>  scope.container is PackageModel;
 
+"Is the declaration an anonymous function, or a parameter of an anonymous function?"
+Boolean isAnonymousFunctionOrParamOf(FunctionOrValueModel declaration)
+    =>  if (is FunctionModel declaration, declaration.anonymous) then
+            true
+        else if (declaration.parameter, is FunctionModel f = declaration.container) then
+            f.anonymous
+        else
+            false;
 
 "Is the declaration a Function that is a parameter? Callable parameters are implemented
  as values, but are presented as Functions by the model."

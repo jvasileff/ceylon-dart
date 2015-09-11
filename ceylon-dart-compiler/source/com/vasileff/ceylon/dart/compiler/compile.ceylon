@@ -118,7 +118,6 @@ shared
                 value ctx = CompilationContext(phasedUnit);
 
                 computeCaptures(unit, ctx);
-                suppressErasure(unit, ctx);
 
                 ctx.topLevelVisitor.transformCompilationUnit(unit);
 
