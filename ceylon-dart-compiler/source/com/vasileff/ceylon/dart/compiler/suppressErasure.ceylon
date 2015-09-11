@@ -25,8 +25,10 @@ void suppressErasure(CompilationUnit unit, CompilationContext ctx) {
             value info = FunctionExpressionInfo(that);
             ctx.disableErasureToNative.add(info.declarationModel);
 
-            for (p in CeylonList(info.declarationModel.firstParameterList.parameters)) {
-                ctx.disableErasureToNative.add(p.model);
+            for (l in CeylonList(info.declarationModel.parameterLists)) {
+                for (p in CeylonList(l.parameters)) {
+                    ctx.disableErasureToNative.add(p.model);
+                }
             }
         }
     }

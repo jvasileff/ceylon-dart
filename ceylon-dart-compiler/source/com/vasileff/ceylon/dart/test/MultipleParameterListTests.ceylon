@@ -170,10 +170,8 @@ class MultipleParameterListTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $ceylon$language.Callable adder = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => new $ceylon$language.dart$Callable(([$dart$core.Object y]) {
-                        return (([$dart$core.int y]) {
-                            return $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + y);
-                        })($ceylon$language.Integer.nativeValue(y as $ceylon$language.Integer));
+                    $ceylon$language.Callable adder = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => new $ceylon$language.dart$Callable(([$ceylon$language.Integer y]) {
+                        return $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + $ceylon$language.Integer.nativeValue(y));
                     }));
                     $ceylon$language.Callable f = adder;
                     $ceylon$language.Callable g = adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
@@ -202,9 +200,7 @@ class MultipleParameterListTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $ceylon$language.Callable adder = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => new $ceylon$language.dart$Callable(([$dart$core.Object y]) {
-                        return (([$dart$core.int y]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + y))($ceylon$language.Integer.nativeValue(y as $ceylon$language.Integer));
-                    }));
+                    $ceylon$language.Callable adder = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => new $ceylon$language.dart$Callable(([$ceylon$language.Integer y]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + $ceylon$language.Integer.nativeValue(y))));
                     $ceylon$language.Callable f = adder;
                     $ceylon$language.Callable g = adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
                     $dart$core.int h = $ceylon$language.Integer.nativeValue((adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
