@@ -32,13 +32,12 @@ class FunctionTests() {
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$simpleFunction() {
-                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
-                        return $ceylon$language.String.instance((() => "result")());
-                    });
+                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
                     $ceylon$language.print(anon.$delegate$());
                 }
 
@@ -49,6 +48,8 @@ class FunctionTests() {
 
     shared test
     void functionReturnBoxingTest() {
+        // Note: prior to `suppressErasure`, this was a better test of
+        //       unboxing capabilities of generateCallable
         compileAndCompare {
              """void simpleFunction() {
                     Anything() anon = () => "result";
@@ -56,13 +57,12 @@ class FunctionTests() {
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$simpleFunction() {
-                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() {
-                        return $ceylon$language.String.instance((() => "result")());
-                    });
+                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
                     $ceylon$language.print(anon.$delegate$());
                 }
 
