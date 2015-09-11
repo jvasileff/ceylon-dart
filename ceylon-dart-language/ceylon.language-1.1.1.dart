@@ -1015,6 +1015,109 @@ $dart$core.int $package$maxRadix = 36;
 
 $dart$core.int get maxRadix => $package$maxRadix;
 
+$dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Object radix = $package$dart$default]) {
+    if ($dart$core.identical(radix, $package$dart$default)) {
+        radix = 10;
+    }
+    if (!(((radix as $dart$core.int) >= $package$minRadix) && ((radix as $dart$core.int) <= $package$maxRadix))) {
+        throw new AssertionError("Violated: minRadix <= radix <= maxRadix");
+    }
+    $dart$core.int index = 0;
+    $dart$core.int max = $package$runtime.minIntegerValue ~/ (radix as $dart$core.int);
+    $dart$core.bool negative;{
+        $dart$core.bool doElse$0 = true;{
+            Character tmp$1 = String.instance(string).get(Integer.instance(index)) as Character;
+            if (!(tmp$1 == null)) {
+                Character char;
+                char = tmp$1;
+                doElse$0 = false;
+                if (char.equals(new Character.$fromInt(45))) {
+                    negative = true;
+                    index = Integer.nativeValue(Integer.instance(index).successor);
+                } else if (char.equals(new Character.$fromInt(43))) {
+                    negative = false;
+                    index = Integer.nativeValue(Integer.instance(index).successor);
+                } else {
+                    negative = false;
+                }
+            }
+        }
+        if (doElse$0) {
+            return null;
+        }
+    }
+    $dart$core.int limit = (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance($package$runtime.maxIntegerValue).negated) : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
+    $dart$core.int length = String.instance(string).size;
+    $dart$core.int result = 0;
+    $dart$core.int digitIndex = 0;
+    while (index < length) {
+        Character ch;{
+            $dart$core.bool doElse$2 = true;{
+                Character tmp$3 = String.instance(string).get(Integer.instance(index)) as Character;
+                if (!(tmp$3 == null)) {
+                    Character char;
+                    char = tmp$3;
+                    doElse$2 = false;
+                    ch = char;
+                }
+            }
+            if (doElse$2) {
+                return null;
+            }
+        }
+        if ((Integer.instance(index + 1).equals(Integer.instance(length)) && Integer.instance(radix as $dart$core.int).equals(Integer.instance(10))) && String.instance("kMGTP").contains(ch)) {{
+                $dart$core.bool doElse$4 = true;{
+                    $dart$core.int tmp$5 = $package$parseIntegerExponent(ch);
+                    if (!(tmp$5 == null)) {
+                        $dart$core.int exp;
+                        exp = tmp$5;
+                        doElse$4 = false;
+                        $dart$core.int magnitude = Integer.nativeValue(Integer.instance(10).power(Integer.instance(exp)));
+                        if ((limit ~/ magnitude) < result) {
+                            result = result * magnitude;
+                            break;
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+                if (doElse$4) {
+                    return null;
+                }
+            }
+        } else {
+            $dart$core.bool doElse$6 = true;{
+                $dart$core.int tmp$7 = $package$parseDigit(ch, radix as $dart$core.int);
+                if (!(tmp$7 == null)) {
+                    $dart$core.int digit;
+                    digit = tmp$7;
+                    doElse$6 = false;
+                    if (result < max) {
+                        return null;
+                    }
+                    result = result * (radix as $dart$core.int);
+                    if (result < (limit + digit)) {
+                        return null;
+                    }
+                    result = result - digit;
+                }
+            }
+            if (doElse$6) {
+                return null;
+            }
+        }
+        index = Integer.nativeValue(Integer.instance(index).successor);
+        digitIndex = Integer.nativeValue(Integer.instance(digitIndex).successor);
+    }
+    if (Integer.instance(digitIndex).equals(Integer.instance(0))) {
+        return null;
+    } else {
+        return (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance(result).negated) : $lhs$)(negative ? result : null);
+    }
+}
+
+$dart$core.int parseInteger([$dart$core.String string, $dart$core.Object radix = $package$dart$default]) => $package$parseInteger(string, radix);
+
 $dart$core.int $package$aIntLower = (new Character.$fromInt(97)).integer;
 
 $dart$core.int get aIntLower => $package$aIntLower;

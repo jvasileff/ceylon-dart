@@ -26,7 +26,7 @@ throws (`class AssertionError`,
          [[maxRadix]]")
 see (`function formatInteger`,
      `function parseFloat`)
-native shared Integer? parseInteger(
+shared Integer? parseInteger(
             "The string representation to parse."
             String string,
             "The base, between [[minRadix]] and [[maxRadix]] 
