@@ -6,7 +6,6 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ScopeModel=Scope,
     ElementModel=Element,
-    FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     ClassOrInterfaceModel=ClassOrInterface
 }

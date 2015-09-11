@@ -15,6 +15,9 @@ import ceylon.formatter {
 import ceylon.formatter.options {
     FormattingOptions
 }
+import ceylon.interop.java {
+    CeylonList
+}
 
 import com.redhat.ceylon.compiler.typechecker.tree {
     TCNode=Node
@@ -41,9 +44,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
     DeclarationInfo,
     keys
-}
-import ceylon.interop.java {
-    CeylonList
 }
 
 void printNodeAsCode(Node node) {
@@ -204,6 +204,16 @@ Boolean isAnonymousFunctionOrParamOf(FunctionOrValueModel declaration)
             true
         else if (declaration.parameter, is FunctionModel f = declaration.container) then
             f.anonymous
+        else
+            false;
+
+"Is the declaration a parameter, and is it in a parameter list that is *not* the first
+ parameter list?"
+Boolean isParameterInNonFirstParamList(FunctionOrValueModel declaration)
+    =>  if (exists parameter = declaration.initializerParameter,
+                // could be a constructor or class
+                is FunctionModel f = declaration.container) then
+            !f.firstParameterList.parameters.contains(parameter)
         else
             false;
 
