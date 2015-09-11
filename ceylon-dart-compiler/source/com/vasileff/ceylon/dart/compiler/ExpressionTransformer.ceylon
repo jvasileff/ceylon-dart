@@ -1338,12 +1338,18 @@ class ExpressionTransformer(CompilationContext ctx)
                     switch (that)
                     case (is AndOperation) "&&"
                     case (is OrOperation) "||")
-            withLhsNative {
+
+            withBoxing {
+                that;
                 ceylonTypes.booleanType;
-                () => DartBinaryExpression {
-                    that.leftOperand.transform(this);
-                    dartOperator;
-                    that.rightOperand.transform(this);
+                null;
+                withLhsNative { // for the two transformations
+                    ceylonTypes.booleanType;
+                    () => DartBinaryExpression {
+                        that.leftOperand.transform(this);
+                        dartOperator;
+                        that.rightOperand.transform(this);
+                    };
                 };
             };
 
@@ -1457,22 +1463,26 @@ class ExpressionTransformer(CompilationContext ctx)
             case (is ClosedBound) "notLargerThan";
 
         return
-        withLhsNative {
-            // lhs boolean for both generateInvocations
+        withBoxing {
+            that;
             ceylonTypes.booleanType;
-            () => DartBinaryExpression {
-                generateInvocationFromName {
-                    that;
-                    that.operand;
-                    lowerMethodName;
-                    [that.lowerBound.endpoint];
-                };
-                "&&";
-                generateInvocationFromName {
-                    that;
-                    that.operand;
-                    upperMethodName;
-                    [that.upperBound.endpoint];
+            null;
+            withLhsNative { // for the two generateInvocations
+                ceylonTypes.booleanType;
+                () => DartBinaryExpression {
+                    generateInvocationFromName {
+                        that;
+                        that.operand;
+                        lowerMethodName;
+                        [that.lowerBound.endpoint];
+                    };
+                    "&&";
+                    generateInvocationFromName {
+                        that;
+                        that.operand;
+                        upperMethodName;
+                        [that.upperBound.endpoint];
+                    };
                 };
             };
         };
