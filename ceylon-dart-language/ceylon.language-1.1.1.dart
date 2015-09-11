@@ -185,20 +185,18 @@ abstract class Correspondence {
 }
 $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) {
     if ($dart$core.identical(comparing, $package$dart$default)) {
-        comparing = new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) {
-            return Boolean.instance((([$dart$core.Object first, $dart$core.Object second]) => (() {
-                $dart$core.bool doElse$0 = true;
-                if (!(first == null)) {
-                    if (!(second == null)) {
-                        doElse$0 = false;
-                        return first.equals(second);
-                    }
+        comparing = new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => (() {
+            $dart$core.bool doElse$0 = true;
+            if (!(first == null)) {
+                if (!(second == null)) {
+                    doElse$0 = false;
+                    return Boolean.instance(first.equals(second));
                 }
-                if (doElse$0) {
-                    return (!(!(first == null))) && (!(!(second == null)));
-                }
-            })())(first, second));
-        });
+            }
+            if (doElse$0) {
+                return Boolean.instance((!(!(first == null))) && (!(!(second == null))));
+            }
+        })());
     }
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();

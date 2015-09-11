@@ -1032,10 +1032,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    "For the Value, or the return type of the Function"
+    "For the Value, or the return type of the Function, *unless* it's a Function that is
+     a callable parameter, in which case the result will be false.
+
+     Regarding callable parameters:
+
+     - When invoked, non-native values are returned
+     - They may also appear as the lhs type, in which case they are treated as
+       Callable values, which course are not erased. (Although, the lhs case should be
+       handled by `withLhs`, preempting a call to this function.)"
     shared
     Boolean erasedToNative(FunctionOrValueModel declaration)
         =>  !ctx.disableErasureToNative.contains(declaration)
+            && !isCallableParameter(declaration)
             && native(formalType(declaration));
 
     "For the Value, or the return type of the Function."

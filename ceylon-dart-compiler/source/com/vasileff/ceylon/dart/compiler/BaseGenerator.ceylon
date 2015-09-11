@@ -1600,11 +1600,9 @@ class BaseGenerator(CompilationContext ctx)
                                         is FunctionModel parameterModelModel) then
                                         // Generate a Callable for the default function
                                         // value
-
-                                        // withLhs() doesn't know about Callable
-                                        // parameters.
-                                        withLhsNonNative {
-                                            parameterModelModel.typedReference.fullType;
+                                        withLhs {
+                                            null;
+                                            parameterModelModel;
                                             () => generateNewCallable {
                                                 scope;
                                                 parameterModelModel;

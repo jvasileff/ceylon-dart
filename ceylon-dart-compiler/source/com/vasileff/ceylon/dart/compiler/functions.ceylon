@@ -198,6 +198,12 @@ Boolean isClassOrInterfaceMember(DeclarationModel scope)
 Boolean isToplevel(DeclarationModel scope)
     =>  scope.container is PackageModel;
 
+
+"Is the declaration a Function that is a parameter? Callable parameters are implemented
+ as values, but are presented as Functions by the model."
+Boolean isCallableParameter(FunctionOrValueModel declaration)
+    =>  declaration.parameter && declaration is FunctionModel;
+
 "Returns the name of the backend for declarations marked `native` with a Ceylon
  implementation for a specific backend, the empty String (\"\") for declarations marked
  native without specifying a backend, or null for non-`native` declarations."

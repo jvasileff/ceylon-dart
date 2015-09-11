@@ -6,6 +6,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ScopeModel=Scope,
     ElementModel=Element,
+    FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     ClassOrInterfaceModel=ClassOrInterface
 }
@@ -307,6 +308,15 @@ class CoreGenerator(CompilationContext ctx) {
             FunctionOrValueModel? lhsDeclaration,
             Result fun()) {
 
+        if (exists lhsDeclaration, isCallableParameter(lhsDeclaration)) {
+            // Callable parameters are `Callable` values and are never erased to native
+            return withLhsValues {
+                lhsType = lhsType else lhsDeclaration.typedReference.fullType;
+                false;
+                false;
+                fun;
+            };
+        }
         if (exists lhsDeclaration) {
             return withLhsValues {
                 lhsType = lhsType else lhsDeclaration.type;
