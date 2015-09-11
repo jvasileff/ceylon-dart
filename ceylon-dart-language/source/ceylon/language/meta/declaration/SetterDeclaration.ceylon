@@ -6,19 +6,19 @@ native shared sealed interface SetterDeclaration
     "The variable value this setter is for."
     shared formal ValueDeclaration variable;
 
-    shared actual Boolean actual => variable.actual;
+    actual => variable.actual;
     
-    shared actual Boolean formal => variable.formal;
+    formal => variable.formal;
 
-    shared actual Boolean default => variable.default;
+    default => variable.default;
     
-    shared actual Boolean shared => variable.shared;
+    shared => variable.shared;
 
-    shared actual Package containingPackage => variable.containingPackage;
+    containingPackage => variable.containingPackage;
     
-    shared actual Module containingModule => variable.containingModule;
+    containingModule => variable.containingModule;
     
-    shared actual NestableDeclaration|Package container => variable.container;
+    container => variable.container;
 
-    shared actual Boolean toplevel => variable.toplevel;
+    toplevel => variable.toplevel;
 }

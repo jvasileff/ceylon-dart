@@ -36,4 +36,4 @@
        }
    """
 by ("Gavin King", "Stephane Epardaud")
-native shared package ceylon.language.meta.model;
+shared package ceylon.language.meta.model;

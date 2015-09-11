@@ -51,10 +51,23 @@ import ceylon.language.meta.model {
    """
 native shared sealed interface ClassDeclaration 
         of ClassWithInitializerDeclaration | ClassWithConstructorsDeclaration
-        satisfies ClassOrInterfaceDeclaration & FunctionalDeclaration {
+        satisfies ClassOrInterfaceDeclaration {
+    "True if the current declaration is an annotation class or function."
+    shared formal Boolean annotation;
+    
+    // TODO remove this, not all classes have parameters!
+    "The list of parameter declarations for this functional declaration."
+    shared formal FunctionOrValueDeclaration[] parameterDeclarations;
+    
+    // TODO remove this, not all classes have parameters!
+    "Gets a parameter declaration by name. Returns `null` if no such parameter exists."
+    shared formal FunctionOrValueDeclaration? getParameterDeclaration(String name);
     
     "True if the class has an [[abstract|ceylon.language::abstract]] annotation."
     shared formal Boolean abstract;
+
+    "True if the class is serializable class."
+    shared formal Boolean serializable;
 
     "True if the class is an anonymous class, as is the case for the class of object value declarations."
     shared formal Boolean anonymous;
@@ -93,13 +106,7 @@ native shared sealed interface ClassDeclaration
      Returns `null` if no such constructor matches. 
      This includes unshared constructors but not inherited constructors 
      (since constructors are not members)."
-    shared formal ConstructorDeclaration? getConstructorDeclaration(String name);
-    
-    "The default constructor declaration of this class. 
-     Returns null if this class lacks a default constructor.
-     The default constructor is the one with the name `\"\"`
-     (the empty string)."
-    shared formal ConstructorDeclaration? defaultConstructorDeclaration;
+    shared formal <CallableConstructorDeclaration|ValueConstructorDeclaration>? getConstructorDeclaration(String name);
     
     "Returns the list of constructors declared on this class. This includes unshared constructors."
     shared formal ConstructorDeclaration[] constructorDeclarations();
@@ -113,7 +120,6 @@ native shared sealed interface ClassDeclaration
 native shared sealed interface ClassWithInitializerDeclaration 
         satisfies ClassDeclaration {
     shared actual default [] constructorDeclarations() => [];
-    shared actual default Null defaultConstructorDeclaration => null;
     shared actual default Null getConstructorDeclaration(String name) => null;
     shared actual default [] annotatedConstructorDeclarations<Annotation>()
             given Annotation satisfies AnnotationType => [];
