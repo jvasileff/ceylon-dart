@@ -1003,9 +1003,57 @@ $dart$core.Object $package$foldPairs([$dart$core.Object initial, Callable accumu
 
 $dart$core.Object foldPairs([$dart$core.Object initial, Callable accumulating, Iterable firstIterable, Iterable secondIterable]) => $package$foldPairs(initial, accumulating, firstIterable, secondIterable);
 
+$dart$core.bool $package$parseBoolean([$dart$core.String string]) {{
+        $dart$core.String switch$0 = string;
+        if (String.instance(switch$0).equals(String.instance("true"))) {
+            return true;
+        } else if (String.instance(switch$0).equals(String.instance("false"))) {
+            return false;
+        } else {
+            return null;
+        }
+    }
+}
+
+$dart$core.bool parseBoolean([$dart$core.String string]) => $package$parseBoolean(string);
+
 $dart$core.int $package$maximumIntegerExponent = Integer.nativeValue($package$smallest(Integer.instance(String.instance(Integer.instance($package$runtime.maxIntegerValue).toString()).size), Integer.instance(String.instance(Integer.instance($package$runtime.minIntegerValue).toString()).size - 1)) as Integer);
 
 $dart$core.int get maximumIntegerExponent => $package$maximumIntegerExponent;
+
+$dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
+        $dart$core.String switch$0 = string;
+        if (String.instance(switch$0).equals(String.instance("k"))) {
+            return 3;
+        } else if (String.instance(switch$0).equals(String.instance("M"))) {
+            return 6;
+        } else if (String.instance(switch$0).equals(String.instance("G"))) {
+            return 9;
+        } else if (String.instance(switch$0).equals(String.instance("T"))) {
+            return 12;
+        } else if (String.instance(switch$0).equals(String.instance("P"))) {
+            return 15;
+        } else if (String.instance(switch$0).equals(String.instance("m"))) {
+            return Integer.nativeValue(Integer.instance(3).negated);
+        } else if (String.instance(switch$0).equals(String.instance("u"))) {
+            return Integer.nativeValue(Integer.instance(6).negated);
+        } else if (String.instance(switch$0).equals(String.instance("n"))) {
+            return Integer.nativeValue(Integer.instance(9).negated);
+        } else if (String.instance(switch$0).equals(String.instance("p"))) {
+            return Integer.nativeValue(Integer.instance(12).negated);
+        } else if (String.instance(switch$0).equals(String.instance("f"))) {
+            return Integer.nativeValue(Integer.instance(15).negated);
+        } else {
+            if (String.instance(String.instance(string).lowercased).startsWith(String.instance("e")) && String.instance(string).rest.every($package$digitOrSign)) {
+                return $package$parseInteger(String.nativeValue(String.instance(string).rest));
+            } else {
+                return null;
+            }
+        }
+    }
+}
+
+$dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseFloatExponent(string);
 
 $dart$core.int $package$minRadix = 2;
 
@@ -1117,6 +1165,26 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
 }
 
 $dart$core.int parseInteger([$dart$core.String string, $dart$core.Object radix = $package$dart$default]) => $package$parseInteger(string, radix);
+
+$dart$core.int $package$parseIntegerExponent([Character char]) {{
+        Character switch$8 = char;
+        if (switch$8.equals(new Character.$fromInt(80))) {
+            return 15;
+        } else if (switch$8.equals(new Character.$fromInt(84))) {
+            return 12;
+        } else if (switch$8.equals(new Character.$fromInt(71))) {
+            return 9;
+        } else if (switch$8.equals(new Character.$fromInt(77))) {
+            return 6;
+        } else if (switch$8.equals(new Character.$fromInt(107))) {
+            return 3;
+        } else {
+            return null;
+        }
+    }
+}
+
+$dart$core.int parseIntegerExponent([Character char]) => $package$parseIntegerExponent(char);
 
 $dart$core.int $package$aIntLower = (new Character.$fromInt(97)).integer;
 

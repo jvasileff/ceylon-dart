@@ -108,7 +108,7 @@ Integer maximumIntegerExponent
         = smallest(runtime.maxIntegerValue.string.size,
                    runtime.minIntegerValue.string.size-1);
 
-native Integer? parseFloatExponent(String string) {
+Integer? parseFloatExponent(String string) {
     switch (string)
     case ("k") {
         return 3;

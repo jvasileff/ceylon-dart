@@ -3,7 +3,7 @@
  boolean value.
  
  Recognized values are \"true\", \"false\"."
-native shared Boolean? parseBoolean(String string) {
+shared Boolean? parseBoolean(String string) {
     switch (string)
     case ("true") { return true; }
     case ("false") { return false; }

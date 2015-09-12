@@ -123,7 +123,7 @@ shared Integer? parseInteger(
     }
 }
 
-native Integer? parseIntegerExponent(Character char) {
+Integer? parseIntegerExponent(Character char) {
     switch (char)
     case ('P') {
         return 15;
