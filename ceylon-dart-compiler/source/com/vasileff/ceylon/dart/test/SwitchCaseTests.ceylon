@@ -1,5 +1,6 @@
 import ceylon.test {
-    test
+    test,
+    ignore
 }
 
 shared
@@ -169,6 +170,87 @@ class SwitchCaseTests() {
                 }
 
                 void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test ignore
+    void switchExprMatch() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    value a =
+                        switch (1+1)
+                        case (1 | 2) "one or two"
+                        case (3) "three"
+                        else "else";
+                    print(a);
+                }
+             """;
+
+             """
+
+             """;
+        };
+    }
+
+    shared test ignore
+    void switchExprIs() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String|Integer si = "";
+                    value a =
+                        switch (si)
+                        case (is String) "string" + si.size.string
+                        case (is Integer) "integer"
+                        else "fallback else";
+                    print(a);
+                }
+             """;
+
+             """
+
+             """;
+        };
+    }
+
+    shared test ignore
+    void switchExprIsNoElse() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String|Integer si = "";
+                    value a =
+                        switch (si)
+                        case (is String) "string" + si.size.string
+                        case (is Integer) "integer";
+                    print(a);
+                }
+             """;
+
+             """
+
+             """;
+        };
+    }
+
+    shared test ignore
+    void switchExprVariableSpec() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String|Integer si = "";
+                    value a =
+                        switch (newVar = si)
+                        case (is String) "string" + newVar.size.string
+                        case (is Integer) "integer";
+                    print(a);
+                }
+             """;
+
+             """
+
              """;
         };
     }
