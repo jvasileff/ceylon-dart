@@ -85,7 +85,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ElseClauseInfo,
     ExpressionInfo,
     TypeInfo,
-    IsCaseInfo
+    IsCaseInfo,
+    SpecifiedVariableInfo
 }
 
 import org.antlr.runtime {
@@ -131,10 +132,11 @@ class StatementTransformer(CompilationContext ctx)
 
         switch (switched = that.clause.switched)
         case (is Expression) {
-            value info = ExpressionInfo(switched);
-            expressionType = info.typeModel;
-            switchedVariable = DartSimpleIdentifier(
-                    dartTypes.createTempNameCustom("switch"));
+            expressionType
+                =   ExpressionInfo(switched).typeModel;
+
+            switchedVariable
+                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("switch"));
 
             // evaluate the switched expression to a possibly native temp variable
             statements.add {
@@ -159,8 +161,41 @@ class StatementTransformer(CompilationContext ctx)
             };
         }
         case (is SpecifiedVariable) {
-            // TODO implement
-            throw CompilerBug(that, "switch with SpecifiedVariable not yet supported.");
+            value declaration
+                =   SpecifiedVariableInfo(switched).declarationModel;
+
+            expressionType
+                =   declaration.type;
+
+            switchedVariable
+                =   DartSimpleIdentifier {
+                        dartTypes.getName(declaration);
+                    };
+
+            // declare the specified variable
+            statements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            that;
+                            declaration;
+                        };
+                        [DartVariableDeclaration {
+                            DartSimpleIdentifier {
+                                dartTypes.getName(declaration);
+                            };
+                            withLhs {
+                                null;
+                                declaration;
+                                () => switched.specifier.expression.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                        }];
+                    };
+                };
+            };
         }
 
         "equals() test for a single expression"

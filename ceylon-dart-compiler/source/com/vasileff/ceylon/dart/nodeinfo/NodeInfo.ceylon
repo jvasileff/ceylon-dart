@@ -53,7 +53,8 @@ import ceylon.ast.core {
     Specification,
     LazySpecification,
     ObjectExpression,
-    IsCase
+    IsCase,
+    SpecifiedVariable
 }
 import ceylon.interop.java {
     CeylonList,
@@ -451,6 +452,16 @@ class TypeInfo(Type astNode)
     value tcNode = assertedTcNode<Tree.Type>(astNode);
 
     shared TypeModel typeModel => tcNode.typeModel;
+}
+
+shared
+class SpecifiedVariableInfo(SpecifiedVariable astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default SpecifiedVariable node => astNode;
+    value tcNode = assertedTcNode<Tree.Variable>(astNode);
+
+    shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared
