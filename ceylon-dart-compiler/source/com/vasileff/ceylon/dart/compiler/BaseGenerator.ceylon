@@ -1145,6 +1145,11 @@ class BaseGenerator(CompilationContext ctx)
             then DartPrefixExpression("!", expression)
             else expression;
 
+// FIXME Document that the expression must not be of a native type, check usage
+//       Likely problem would be `is Integer` for an `Integer|Null`.
+//       Best may be to take a `DartExpression()` that boxes...
+//       Another idea: if we knew the *current* type, we could optimize the
+//       is check for `primitive|Null`s. We need this info anyway for other optimzns.
     shared
     DartExpression generateIsExpression(
             Node scope,

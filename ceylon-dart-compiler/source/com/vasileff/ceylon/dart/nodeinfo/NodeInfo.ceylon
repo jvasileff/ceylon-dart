@@ -52,7 +52,8 @@ import ceylon.ast.core {
     ObjectDefinition,
     Specification,
     LazySpecification,
-    ObjectExpression
+    ObjectExpression,
+    IsCase
 }
 import ceylon.interop.java {
     CeylonList,
@@ -535,6 +536,16 @@ class ComprehensionClauseInfo(ComprehensionClause astNode)
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
+}
+
+shared
+class IsCaseInfo(IsCase astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default IsCase node => astNode;
+    value tcNode = assertedTcNode<Tree.IsCase>(astNode);
+
+    shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
 }
 
 shared
