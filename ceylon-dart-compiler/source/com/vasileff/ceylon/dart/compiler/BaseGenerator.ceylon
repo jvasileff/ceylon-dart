@@ -29,7 +29,9 @@ import ceylon.ast.core {
     NonemptyCondition,
     Condition,
     ValueSetterDefinition,
-    ObjectDefinition
+    ObjectDefinition,
+    SwitchClause,
+    SpecifiedVariable
 }
 import ceylon.collection {
     LinkedList
@@ -108,7 +110,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ExistsOrNonemptyConditionInfo,
     AnyValueInfo,
     ValueSetterDefinitionInfo,
-    ObjectDefinitionInfo
+    ObjectDefinitionInfo,
+    SpecifiedVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -1741,6 +1744,124 @@ class BaseGenerator(CompilationContext ctx)
                 else []; // No outers if no containing class or interface.
 
         return concatenate(outerExpressions, captureExpressions);
+    }
+
+    "Generate a condition expression for a MatchCase of a switch statement or expression."
+    shared
+    DartExpression generateMatchCondition(
+            Node scope,
+            TypeModel switchedType,
+            DartExpression switchedVariable,
+            [Expression+] matchExpressions) {
+
+        "equals() test for a single expression"
+        function generateMatchCondition(Expression expression)
+            =>  withLhsNative {
+                    ceylonTypes.booleanType;
+                    () => generateInvocationDetailsSynthetic {
+                        scope;
+                        switchedType;
+                        // We may need to box the switched expression, which
+                        // has already been evaluated to the potentially
+                        // native switchedVariable.
+                        () => withBoxing {
+                            scope;
+                            switchedType;
+                            null;
+                            switchedVariable;
+                        };
+                        "equals";
+                        [expression];
+                    }[2]();
+                };
+
+        return matchExpressions
+                .reversed
+                .map(generateMatchCondition)
+                .reduce((DartExpression partial, c)
+                    =>  DartBinaryExpression(c, "||", partial));
+    }
+
+    "Determine switched expression type and generate dart expressions for
+     a `SwitchClause`. Returns:
+
+     - The [[TypeModel]] of the switched expression.
+     - A [[DartSimpleIdentifier]] for a new dart variable to hold the switched value.
+     - A [[DartVariableDeclarationStatement]] to declare the dart variable for the
+       switched value."
+    shared
+    [TypeModel, DartSimpleIdentifier, DartVariableDeclarationStatement]
+    generateForSwitchClause(SwitchClause that) {
+        TypeModel switchedType;
+        DartSimpleIdentifier switchedVariable;
+        DartVariableDeclarationStatement variableDeclaration;
+
+        switch (switched = that.switched)
+        case (is Expression) {
+            switchedType
+                =   ExpressionInfo(switched).typeModel;
+
+            switchedVariable
+                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("switch"));
+
+            // evaluate the switched expression to a possibly native temp variable
+            variableDeclaration
+                =   DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeName {
+                                that;
+                                switchedType;
+                                eraseToNative = true;
+                                eraseToObject = false;
+                            };
+                            [DartVariableDeclaration {
+                                switchedVariable;
+                                withLhsNative {
+                                    switchedType;
+                                    () => switched.transform(expressionTransformer);
+                                };
+                            }];
+                        };
+                    };
+        }
+        case (is SpecifiedVariable) {
+            value declaration
+                =   SpecifiedVariableInfo(switched).declarationModel;
+
+            switchedType
+                =   declaration.type;
+
+            switchedVariable
+                =   DartSimpleIdentifier {
+                        dartTypes.getName(declaration);
+                    };
+
+            // declare the specified variable
+            variableDeclaration
+                =   DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                declaration;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier {
+                                    dartTypes.getName(declaration);
+                                };
+                                withLhs {
+                                    null;
+                                    declaration;
+                                    () => switched.specifier.expression.transform {
+                                        expressionTransformer;
+                                    };
+                                };
+                            }];
+                        };
+                    };
+        }
+        return [switchedType, switchedVariable, variableDeclaration];
     }
 
     shared

@@ -125,107 +125,8 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformSwitchCaseElse(SwitchCaseElse that) {
-        value statements = LinkedList<DartStatement>();
-
-        TypeModel expressionType;
-        DartSimpleIdentifier switchedVariable;
-
-        switch (switched = that.clause.switched)
-        case (is Expression) {
-            expressionType
-                =   ExpressionInfo(switched).typeModel;
-
-            switchedVariable
-                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("switch"));
-
-            // evaluate the switched expression to a possibly native temp variable
-            statements.add {
-                DartVariableDeclarationStatement {
-                    DartVariableDeclarationList {
-                        null;
-                        dartTypes.dartTypeName {
-                            that;
-                            expressionType;
-                            eraseToNative = true;
-                            eraseToObject = false;
-                        };
-                        [DartVariableDeclaration {
-                            switchedVariable;
-                            withLhsNative {
-                                expressionType;
-                                () => switched.transform(expressionTransformer);
-                            };
-                        }];
-                    };
-                };
-            };
-        }
-        case (is SpecifiedVariable) {
-            value declaration
-                =   SpecifiedVariableInfo(switched).declarationModel;
-
-            expressionType
-                =   declaration.type;
-
-            switchedVariable
-                =   DartSimpleIdentifier {
-                        dartTypes.getName(declaration);
-                    };
-
-            // declare the specified variable
-            statements.add {
-                DartVariableDeclarationStatement {
-                    DartVariableDeclarationList {
-                        null;
-                        dartTypes.dartTypeNameForDeclaration {
-                            that;
-                            declaration;
-                        };
-                        [DartVariableDeclaration {
-                            DartSimpleIdentifier {
-                                dartTypes.getName(declaration);
-                            };
-                            withLhs {
-                                null;
-                                declaration;
-                                () => switched.specifier.expression.transform {
-                                    expressionTransformer;
-                                };
-                            };
-                        }];
-                    };
-                };
-            };
-        }
-
-        "equals() test for a single expression"
-        function generateMatchCondition(Expression expression)
-            =>  withLhsNative {
-                    ceylonTypes.booleanType;
-                    () => generateInvocationDetailsSynthetic {
-                        that;
-                        expressionType;
-                        // We may need to box the switched expression, which
-                        // has already been evaluated to the potentially
-                        // native switchedVariable.
-                        () => withBoxing {
-                            that;
-                            expressionType;
-                            null;
-                            switchedVariable;
-                        };
-                        "equals";
-                        [expression];
-                    }[2]();
-                };
-
-        "equals() test for multiple expressions"
-        function generateMatchConditions([Expression+] expressions)
-            =>  expressions
-                    .reversed
-                    .map(generateMatchCondition)
-                    .reduce((DartExpression partial, c)
-                        =>  DartBinaryExpression(c, "||", partial));
+        value [switchedType, switchedVariable, variableDeclaration]
+            =   generateForSwitchClause(that.clause);
 
         "Recursive function to generate an if statement for the switch clauses."
         DartStatement generateIf([CaseClause|ElseCaseClause*] clauses) {
@@ -235,7 +136,12 @@ class StatementTransformer(CompilationContext ctx)
                 case (is MatchCase) {
                     return
                     DartIfStatement {
-                        condition = generateMatchConditions(caseItem.expressions);
+                        generateMatchCondition {
+                            that;
+                            switchedType;
+                            switchedVariable;
+                            caseItem.expressions;
+                        };
                         thenStatement = toSingleStatementOrBlock {
                             transformBlock(clause.block);
                         };
@@ -257,7 +163,7 @@ class StatementTransformer(CompilationContext ctx)
 
                     return
                     DartIfStatement {
-                        condition = generateIsExpression {
+                        generateIsExpression {
                             that;
                             switchedVariable;
                             TypeInfo(caseItem.type).typeModel;
@@ -300,8 +206,8 @@ class StatementTransformer(CompilationContext ctx)
             }
         }
 
-        statements.add(generateIf(that.cases.children));
-        return [DartBlock(statements.sequence())];
+        value ifStatement = generateIf(that.cases.children);
+        return [DartBlock([variableDeclaration, ifStatement])];
     }
 
     shared actual
