@@ -31,8 +31,6 @@ import ceylon.ast.core {
     ValueSetterDefinition,
     ObjectDefinition,
     SwitchCaseElse,
-    Expression,
-    SpecifiedVariable,
     CaseClause,
     IsCase,
     MatchCase,
@@ -45,9 +43,6 @@ import ceylon.language.meta {
     type
 }
 
-import com.redhat.ceylon.model.typechecker.model {
-    TypeModel=Type
-}
 import com.vasileff.ceylon.dart.ast {
     DartArgumentList,
     DartReturnStatement,
@@ -71,9 +66,7 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList,
     DartPrefixExpression,
     DartStatement,
-    DartContinueStatement,
-    DartExpression,
-    DartBinaryExpression
+    DartContinueStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
@@ -83,10 +76,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     IsConditionInfo,
     ForFailInfo,
     ElseClauseInfo,
-    ExpressionInfo,
     TypeInfo,
-    IsCaseInfo,
-    SpecifiedVariableInfo
+    IsCaseInfo
 }
 
 import org.antlr.runtime {

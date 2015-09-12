@@ -174,7 +174,7 @@ class SwitchCaseTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void switchExprMatch() {
         compileAndCompare {
              """
@@ -189,12 +189,29 @@ class SwitchCaseTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                void $package$run() {
+                    $dart$core.String a = (() {
+                        $dart$core.int switch$0 = 1 + 1;
+                        if ($ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(1)) || $ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(2))) {
+                            return "one or two";
+                        } else if ($ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(3))) {
+                            return "three";
+                        } else {
+                            return "else";
+                        }
+                    })();
+                    $ceylon$language.print($ceylon$language.String.instance(a));
+                }
+
+                void run() => $package$run();
              """;
         };
     }
 
-    shared test ignore
+    shared test
     void switchExprIs() {
         compileAndCompare {
              """
@@ -210,12 +227,32 @@ class SwitchCaseTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                void $package$run() {
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    $dart$core.String a = (() {
+                        $dart$core.Object switch$0 = si;
+                        if (switch$0 is $ceylon$language.String) {
+                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size).toString();
+                        } else if (switch$0 is $ceylon$language.Integer) {
+                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            return "integer";
+                        } else {
+                            return "fallback else";
+                        }
+                    })();
+                    $ceylon$language.print($ceylon$language.String.instance(a));
+                }
+
+                void run() => $package$run();
              """;
         };
     }
 
-    shared test ignore
+    shared test
     void switchExprIsNoElse() {
         compileAndCompare {
              """
@@ -230,12 +267,32 @@ class SwitchCaseTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                void $package$run() {
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    $dart$core.String a = (() {
+                        $dart$core.Object switch$0 = si;
+                        if (switch$0 is $ceylon$language.String) {
+                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size).toString();
+                        } else if (switch$0 is $ceylon$language.Integer) {
+                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            return "integer";
+                        } else {
+                            throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+                        }
+                    })();
+                    $ceylon$language.print($ceylon$language.String.instance(a));
+                }
+
+                void run() => $package$run();
              """;
         };
     }
 
-    shared test ignore
+    shared test
     void switchExprVariableSpec() {
         compileAndCompare {
              """
@@ -250,7 +307,27 @@ class SwitchCaseTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                void $package$run() {
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    $dart$core.String a = (() {
+                        $dart$core.Object newVar = si;
+                        if (newVar is $ceylon$language.String) {
+                            $dart$core.String newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
+                            return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(newVar$0).size).toString();
+                        } else if (newVar is $ceylon$language.Integer) {
+                            $dart$core.int newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
+                            return "integer";
+                        } else {
+                            throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+                        }
+                    })();
+                    $ceylon$language.print($ceylon$language.String.instance(a));
+                }
+
+                void run() => $package$run();
              """;
         };
     }

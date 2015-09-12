@@ -94,7 +94,13 @@ import ceylon.ast.core {
     Condition,
     ObjectExpression,
     Super,
-    Primary
+    Primary,
+    SwitchCaseElseExpression,
+    IsCase,
+    CaseClause,
+    MatchCase,
+    ElseCaseClause,
+    CaseExpression
 }
 import ceylon.collection {
     LinkedList
@@ -145,7 +151,8 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleFormalParameter,
     DartStatement,
     DartAssignmentExpression,
-    DartAssignmentOperator
+    DartAssignmentOperator,
+    DartThrowExpression
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo,
@@ -158,7 +165,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     TypeInfo,
     IfElseExpressionInfo,
     ObjectExpressionInfo,
-    SuperInfo
+    SuperInfo,
+    IsCaseInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -1485,6 +1493,109 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             };
+        };
+    }
+
+    shared actual
+    DartExpression transformSwitchCaseElseExpression(SwitchCaseElseExpression that) {
+        value [switchedType, switchedVariable, variableDeclaration]
+            =   generateForSwitchClause(that.clause);
+
+        "Recursive function to generate an if statement for the switch clauses."
+        DartStatement generateIf({CaseExpression|Expression*} clauses) {
+            switch (clause = clauses.first)
+            case (is CaseExpression) {
+                switch (caseItem = clause.caseItem)
+                case (is MatchCase) {
+                    return
+                    DartIfStatement {
+                        generateMatchCondition {
+                            that;
+                            switchedType;
+                            switchedVariable;
+                            caseItem.expressions;
+                        };
+                        thenStatement = DartReturnStatement {
+                            clause.expression.transform(this);
+                        };
+                        elseStatement = generateIf(clauses.rest);
+                    };
+                }
+                case (is IsCase) {
+                    value variableDeclaration
+                        =   IsCaseInfo(caseItem).variableDeclarationModel;
+
+                    "Narrowed variable for case block, if any."
+                    value replacementVariable
+                        =   if (exists variableDeclaration) then
+                                generateReplacementVariableDefinition {
+                                    that; variableDeclaration;
+                                }
+                            else
+                                null;
+
+                    return
+                    DartIfStatement {
+                        generateIsExpression {
+                            that;
+                            switchedVariable;
+                            TypeInfo(caseItem.type).typeModel;
+                        };
+                        thenStatement = DartBlock {
+                            [   replacementVariable,
+                                DartReturnStatement {
+                                    clause.expression.transform(this);
+                                }
+                            ].coalesced.sequence();
+                        };
+                        elseStatement = generateIf(clauses.rest);
+                    };
+                }
+            }
+            case (is Expression) {
+                return DartReturnStatement {
+                    clause.transform(this);
+                };
+            }
+            case (is Null) {
+                return
+                DartExpressionStatement {
+                    DartThrowExpression {
+                        DartInstanceCreationExpression {
+                            const = false;
+                            DartConstructorName {
+                                dartTypes.dartTypeName {
+                                    that;
+                                    ceylonTypes.assertionErrorType;
+                                    false; false;
+                                };
+                            };
+                            DartArgumentList {
+                                [DartSimpleStringLiteral {
+                                    "Supposedly exhaustive switch was not exhaustive";
+                                }];
+                            };
+                        };
+                    };
+                };
+            }
+        }
+
+        value ifStatement = generateIf(
+                that.children.rest.narrow<CaseExpression|Expression>());
+
+        return
+        DartFunctionExpressionInvocation {
+            DartFunctionExpression {
+                DartFormalParameterList();
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        [variableDeclaration, ifStatement];
+                    };
+                };
+            };
+            DartArgumentList { []; };
         };
     }
 
