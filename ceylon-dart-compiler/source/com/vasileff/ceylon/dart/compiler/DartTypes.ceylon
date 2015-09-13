@@ -281,6 +281,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  DartTypeModel("$ceylon$language", "LazyIterable");
 
     shared
+    DartTypeModel dartFunctionIterableFactory
+        =>  DartTypeModel("$ceylon$language", "functionIterable");
+
+    shared
     DartTypeModel dartObjectModel
         =   DartTypeModel("$dart$core", "Object");
 
@@ -373,23 +377,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeName dartTypeNameForDartModel(
             Node|ElementModel|ScopeModel scope,
+            DartTypeModel dartModel)
+        =>  DartTypeName(dartIdentifierForDartModel(scope, dartModel));
+
+    shared
+    DartIdentifier dartIdentifierForDartModel(
+            Node|ElementModel|ScopeModel scope,
             DartTypeModel dartModel) {
 
         value fromDartPrefix = moduleImportPrefix(scope);
 
         if (dartModel.dartModule == fromDartPrefix) {
             return
-            DartTypeName {
-                DartSimpleIdentifier(dartModel.name);
-            };
+            DartSimpleIdentifier(dartModel.name);
         }
         else {
             return
-            DartTypeName {
-                DartPrefixedIdentifier {
-                    DartSimpleIdentifier(dartModel.dartModule);
-                    DartSimpleIdentifier(dartModel.name);
-                };
+            DartPrefixedIdentifier {
+                DartSimpleIdentifier(dartModel.dartModule);
+                DartSimpleIdentifier(dartModel.name);
             };
         }
     }

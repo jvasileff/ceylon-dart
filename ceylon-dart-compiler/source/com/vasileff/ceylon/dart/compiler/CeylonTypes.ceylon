@@ -238,6 +238,10 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(getLanguageModuleDeclaration("Finished"));
 
     shared
+    Value finishedValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("finished"));
+
+    shared
     Class floatDeclaration
         =>  assertClass(unit.floatDeclaration);
 

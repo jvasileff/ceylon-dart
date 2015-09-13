@@ -103,10 +103,18 @@ import ceylon.ast.core {
     SpecifiedPattern,
     VariablePattern,
     TuplePattern,
-    EntryPattern
+    EntryPattern,
+    SpreadArgument,
+    ComprehensionClause,
+    ForComprehensionClause,
+    IfComprehensionClause,
+    ExpressionComprehensionClause
 }
 import ceylon.collection {
     LinkedList
+}
+import ceylon.language.meta {
+    type
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -155,7 +163,14 @@ import com.vasileff.ceylon.dart.ast {
     DartStatement,
     DartAssignmentExpression,
     DartAssignmentOperator,
-    DartThrowExpression
+    DartThrowExpression,
+    DartFunctionDeclarationStatement,
+    DartFunctionDeclaration,
+    dartFormalParameterListEmpty,
+    DartWhileStatement,
+    DartIsExpression,
+    DartTypeName,
+    DartContinueStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo,
@@ -608,11 +623,6 @@ class ExpressionTransformer(CompilationContext ctx)
         value arguments = that.argumentList.listedArguments;
         value sequenceArgument = that.argumentList.sequenceArgument;
 
-        if (sequenceArgument is Comprehension) {
-            throw CompilerBug(that, "Comprehension for Iterable not suported");
-        }
-        assert(!is Comprehension sequenceArgument);
-
         if (arguments.empty && !sequenceArgument exists) {
             // Easy; there are no elements.
             return withBoxingNonNative {
@@ -628,7 +638,7 @@ class ExpressionTransformer(CompilationContext ctx)
         else if (!nonempty arguments) {
             // Just evaluate and return the spread expression
             assert (exists sequenceArgument);
-            return sequenceArgument.argument.transform(this);
+            return sequenceArgument.transform(this);
         }
         else {
             // Return a LazyIterable, which takes as an argument a function that lazily
@@ -685,7 +695,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         if (exists sequenceArgument) then
                             withLhsDenotable {
                                 ceylonTypes.iterableDeclaration;
-                                () => sequenceArgument.argument.transform(this);
+                                () => sequenceArgument.transform(this);
                             }
                         else
                             DartNullLiteral()
@@ -695,6 +705,10 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
     }
+
+    shared actual
+    DartExpression transformSpreadArgument(SpreadArgument that)
+        =>  that.argument.transform(this);
 
     "The non-intersection type of a `super` reference; should map directly to a Dart type."
     TypeModel? denotableSuperType(
@@ -1564,6 +1578,533 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
+    DartExpression transformComprehension(Comprehension that) {
+
+        function generateStepFunctionId(Integer step)
+            =>  DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom {
+                        "step$" + step.string;
+                    };
+                };
+
+        function generateStepInitFunctionId(Integer step)
+            =>  DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom {
+                        "step$" + step.string + "$Init";
+                    };
+                };
+
+        // step 0 bootstraps the chain; returns true a single time
+        value step0ExpiredVariable
+            =   DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom("step$0$expired");
+                };
+
+        value step0FunctionId
+            =   generateStepFunctionId(0);
+
+        value step0Statements
+            =   [DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartBool;
+                        [DartVariableDeclaration {
+                            step0ExpiredVariable;
+                            DartBooleanLiteral(false);
+                        }];
+                    };
+                },
+                createDartFunctionDeclarationStatement {
+                    dartTypes.dartBool;
+                    step0FunctionId;
+                    dartFormalParameterListEmpty;
+                    [DartIfStatement {
+                        step0ExpiredVariable;
+                        DartReturnStatement {
+                            DartBooleanLiteral(false);
+                        };
+                    },
+                    DartExpressionStatement {
+                        DartAssignmentExpression {
+                            step0ExpiredVariable;
+                            DartAssignmentOperator.equal;
+                            DartBooleanLiteral(true);
+                        };
+                    },
+                    DartReturnStatement {
+                        DartBooleanLiteral(true);
+                    }];
+                }];
+
+        "Recursively generate steps 1 through n (for Comprehension clauses 1 through n)."
+        [DartStatement*] generateSteps(
+                ComprehensionClause clause,
+                Integer count=1,
+                DartSimpleIdentifier prevStepFunction = step0FunctionId) {
+
+            switch (clause)
+            case (is ForComprehensionClause) {
+                value pattern = clause.iterator.pattern;
+                if (!pattern is VariablePattern) {
+                    throw CompilerBug(pattern,
+                        "For pattern type not yet supported: " + type(pattern).string);
+                }
+                assert (is VariablePattern pattern);
+
+                value variableInfo = UnspecifiedVariableInfo(pattern.variable);
+                value variableDeclaration = variableInfo.declarationModel;
+
+                // Don't erase to native the variable; avoid premature unboxing
+                ctx.disableErasureToNative.add(variableDeclaration);
+
+                // The iterator
+                value iteratorVariable
+                    =   DartSimpleIdentifier {
+                            dartTypes.createTempNameCustom("iterator_" + count.string);
+                        };
+
+                // The variable (for destructuring, we'll need more)
+                value dartVariable
+                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                            clause;
+                            variableDeclaration;
+                        }[0];
+
+                // Temp variable for result of `next()`
+                value nextVariable
+                    =   DartSimpleIdentifier {
+                            dartTypes.createTempNameCustom("element");
+                        };
+
+                // Discover the type of the iterator and obtain a function that
+                // will create an expression that yields the iterator
+                value [iteratorType, _, iteratorGenerator]
+                    =   generateInvocationDetailsFromName {
+                            clause;
+                            clause.iterator.iterated;
+                            "iterator";
+                            [];
+                        };
+
+                // Simplify iteratorType to a denotable supertype in case it
+                // is a union, intersection, or other non-denotable type.
+                // See also notes in `transformForFail`.
+                value iteratorDenotableType
+                    =   ceylonTypes.denotableType {
+                            iteratorType;
+                            ceylonTypes.iteratorDeclaration;
+                        };
+
+                // Discover the type of the result of `next()`. Obtain a function that
+                // will create an expression that calls `next` on the iterator
+                value [nextType, __, nextInvocationGenerator]
+                    =   generateInvocationDetailsSynthetic {
+                            that;
+                            iteratorDenotableType;
+                            // NonNative since that's how we created
+                            // `iteratorDenotable` (`withLhsNonNative`)
+                            () => withBoxingNonNative {
+                                that;
+                                iteratorDenotableType;
+                                iteratorVariable;
+                            };
+                            "next";
+                            [];
+                        };
+
+                value stepInitFunctionId
+                    =   generateStepInitFunctionId(count);
+
+                value stepFunctionId
+                    =   generateStepFunctionId(count);
+
+                // declare an iterator variable
+                value dartIteratorVariableDeclaration
+                    =   DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeName {
+                                    that;
+                                    iteratorDenotableType;
+                                    eraseToNative = false;
+                                    eraseToObject = false;
+                                };
+                                [DartVariableDeclaration {
+                                    iteratorVariable;
+                                }];
+                            };
+                        };
+
+                // declare an init function
+                value dartInitFunctionDeclaration
+                    =   createDartFunctionDeclarationStatement {
+                            dartTypes.dartBool;
+                            stepInitFunctionId;
+                            dartFormalParameterListEmpty;
+                            // if the iterator exists, return true
+                            [DartIfStatement {
+                                DartBinaryExpression {
+                                    iteratorVariable;
+                                    "!=";
+                                    DartNullLiteral();
+                                };
+                                DartReturnStatement {
+                                    DartBooleanLiteral(true);
+                                };
+                            },
+                            // if the previous step returns false,
+                            // return false
+                            DartIfStatement {
+                                DartPrefixExpression {
+                                    "!";
+                                    DartFunctionExpressionInvocation {
+                                        prevStepFunction;
+                                        DartArgumentList();
+                                    };
+                                };
+                                DartReturnStatement {
+                                    DartBooleanLiteral(false);
+                                };
+                            },
+                            // create and assign the iterator
+                            DartExpressionStatement {
+                                DartAssignmentExpression {
+                                    iteratorVariable;
+                                    DartAssignmentOperator.equal;
+                                    withLhsNonNative {
+                                        iteratorDenotableType;
+                                        iteratorGenerator;
+                                    };
+                                };
+                            },
+                            // return true
+                            DartReturnStatement {
+                                DartBooleanLiteral(true);
+                            }];
+                        };
+
+                // declare the variable
+                value dartVariableDeclaration
+                    =   DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    that;
+                                    variableDeclaration;
+                                };
+                                [DartVariableDeclaration {
+                                    dartVariable;
+                                }];
+                            };
+                        };
+
+                // declare a stepX function
+
+                value dartStepFunctionDeclaration
+                    =   createDartFunctionDeclarationStatement {
+                            dartTypes.dartBool;
+                            stepFunctionId;
+                            dartFormalParameterListEmpty;
+                            [DartWhileStatement {
+                                DartFunctionExpressionInvocation {
+                                    stepInitFunctionId;
+                                    DartArgumentList();
+                                };
+                                DartBlock {
+                                    [// declare variable to hold result of next()
+                                    DartVariableDeclarationStatement {
+                                        DartVariableDeclarationList {
+                                            null;
+                                            dartTypes.dartTypeName {
+                                                that;
+                                                nextType;
+                                                false; false;
+                                            };
+                                            [DartVariableDeclaration {
+                                                nextVariable;
+                                                null;
+                                            }];
+                                        };
+                                    },
+                                    // invoke next(), assign to nextVariable
+                                    DartIfStatement {
+                                        DartIsExpression {
+                                            DartAssignmentExpression {
+                                                nextVariable;
+                                                DartAssignmentOperator.equal;
+                                                withLhs {
+                                                    nextType;
+                                                    null;
+                                                    nextInvocationGenerator;
+                                                };
+                                            };
+                                            dartTypes.dartTypeName {
+                                                that;
+                                                ceylonTypes.finishedType;
+                                                false; false;
+                                            };
+                                            true;
+                                        };
+                                        DartBlock {
+                                            [// assign dartVariable = nextVariable
+                                            DartExpressionStatement {
+                                                DartAssignmentExpression {
+                                                    dartVariable;
+                                                    DartAssignmentOperator.equal;
+                                                    withLhs {
+                                                        null;
+                                                        variableDeclaration;
+                                                        () => withBoxing {
+                                                            clause;
+                                                            nextType;
+                                                            null;
+                                                            nextVariable;
+                                                        };
+                                                    };
+                                                };
+                                            },
+                                            DartReturnStatement {
+                                                DartBooleanLiteral(true);
+                                            }];
+                                        };
+                                    },
+                                    // assign null to the iterator, while
+                                    // loop will attempt to start from the
+                                    // top (if previous step is not also
+                                    // finished.)
+                                    DartExpressionStatement {
+                                        DartAssignmentExpression {
+                                            iteratorVariable;
+                                            DartAssignmentOperator.equal;
+                                            DartNullLiteral();
+                                        };
+                                    }];
+                                };
+                            },
+                            // We are finished, and so is the previous
+                            // step. Return false.
+                            DartReturnStatement {
+                                DartBooleanLiteral(false);
+                            }];
+                        };
+
+                return [dartIteratorVariableDeclaration,
+                        dartInitFunctionDeclaration,
+                        dartVariableDeclaration,
+                        dartStepFunctionDeclaration,
+                        *generateSteps(clause.clause, count+1, stepFunctionId)];
+            }
+            case (is IfComprehensionClause) {
+                value stepFunctionId
+                    =   generateStepFunctionId(count);
+
+                if (clause.conditions.conditions.every((c) => c is BooleanCondition)) {
+                    // simple case, no variable declarations
+                    value dartCondition
+                        =   generateBooleanDartCondition(clause.conditions);
+
+                    value functionBody
+                        =   [DartWhileStatement {
+                                DartFunctionExpressionInvocation {
+                                    prevStepFunction;
+                                    DartArgumentList();
+                                };
+                                DartBlock {
+                                    [DartIfStatement {
+                                        dartCondition;
+                                        DartReturnStatement {
+                                            DartBooleanLiteral(true);
+                                        };
+                                    }];
+                                };
+                            },
+                            DartReturnStatement {
+                                DartBooleanLiteral(false);
+                            }];
+
+                    return
+                    [createDartFunctionDeclarationStatement {
+                        dartTypes.dartBool;
+                        stepFunctionId;
+                        dartFormalParameterListEmpty;
+                        functionBody;
+                    }, *generateSteps(clause.clause, count+1, stepFunctionId)];
+                }
+
+                // Process `Condition`s:
+                //      1. Make declarations
+                //      2. While loop over previous step (as usual)
+                //      3. Process each condition in order, continuing upon
+                //         first failure, or returning true if no failures
+                //      4. Return false if exhausted while loop
+
+                "Sequence of Tuples holding
+                    - replacementDeclaration,
+                    - tempDefinition,
+                    - conditionExpression,
+                    - replacementDefinition"
+                value conditionExpressionParts
+                    =   clause.conditions.conditions
+                                .collect(generateConditionExpression);
+
+                "All of the replacement declarations."
+                value dartVariableDeclarations
+                    =   conditionExpressionParts.flatMap((p) => p[0]);
+
+                "All of the tests and assignments, serialized."
+                value dartTestsAndAssignments
+                    =   conditionExpressionParts.flatMap {
+                            (parts) => {
+                                // tmp variable definition
+                                parts[1],
+                                DartIfStatement {
+                                    condition = DartPrefixExpression {
+                                        "!"; parts[2];
+                                    };
+                                    DartContinueStatement();
+                                },
+                                // assign values (replacement definitions)
+                                *parts[3]
+                            }.coalesced;
+                        };
+
+                value dartStepFunctionDeclaration
+                    =   createDartFunctionDeclarationStatement {
+                            dartTypes.dartBool;
+                            stepFunctionId;
+                            dartFormalParameterListEmpty;
+                            [DartWhileStatement {
+                                DartFunctionExpressionInvocation {
+                                    prevStepFunction;
+                                    DartArgumentList();
+                                };
+                                DartBlock {
+                                    concatenate (
+                                        dartTestsAndAssignments,
+                                        [DartReturnStatement {
+                                            DartBooleanLiteral(true);
+                                        }]
+                                    );
+                                };
+                            },
+                            DartReturnStatement {
+                                DartBooleanLiteral(false);
+                            }];
+                        };
+
+                return concatenate (
+                    dartVariableDeclarations,
+                    [dartStepFunctionDeclaration],
+                    generateSteps(clause.clause, count+1, stepFunctionId)
+                );
+            }
+            case (is ExpressionComprehensionClause) {
+                value stepFunctionId
+                    =   generateStepFunctionId(count);
+
+                "The stepX function that will eventually serve as Iterator.next()"
+                value dartStepFunctionDeclaration
+                    =   createDartFunctionDeclarationStatement {
+                            // not using expressionType; actual type is
+                            // expressionType | Finished
+                            dartTypes.dartObject;
+                            stepFunctionId;
+                            dartFormalParameterListEmpty;
+                            [// if the previous step returns false,
+                             // return `finished`
+                            DartIfStatement {
+                                DartPrefixExpression {
+                                    "!";
+                                    DartFunctionExpressionInvocation {
+                                        prevStepFunction;
+                                        DartArgumentList();
+                                    };
+                                };
+                                DartReturnStatement {
+                                    // TODO Use generateInvocation to call finished?
+                                    //      Well, not yet; finished is a toplevel.
+                                    dartTypes.dartIdentifierForFunctionOrValue {
+                                        that;
+                                        ceylonTypes.finishedValueDeclaration;
+                                        false;
+                                    }[0];
+                                };
+                            },
+                            // evaluate and return the expression
+                            DartReturnStatement {
+                                // Effectively, the return for Iterator.next() which is
+                                // generic. So, lhs will be erased to a Dart Object.
+                                withLhsNonNative {
+                                    ceylonTypes.anythingType;
+                                    () => clause.expression.transform {
+                                        expressionTransformer;
+                                    };
+                                };
+                            }];
+                        };
+
+                "Return the function we just declared (but, as a Callable)"
+                value outerReturn
+                    =   DartReturnStatement {
+                            // Easy. Until we reify generics.
+                            DartInstanceCreationExpression {
+                                false;
+                                DartConstructorName {
+                                    dartTypes.dartTypeNameForDartModel {
+                                        that;
+                                        dartTypes.dartCallableModel;
+                                    };
+                                    null;
+                                };
+                                DartArgumentList {
+                                    [stepFunctionId];
+                                };
+                            };
+                        };
+
+                return [dartStepFunctionDeclaration, outerReturn];
+            }
+        }
+
+        // Return a new Iterable based on a function that returns a
+        // function that returns the elements of the comprehension.
+        return
+        DartFunctionExpressionInvocation {
+            dartTypes.dartIdentifierForDartModel {
+                that;
+                dartTypes.dartFunctionIterableFactory;
+            };
+            DartArgumentList {
+                // Easy. Until we reify generics.
+                [DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        dartTypes.dartTypeNameForDartModel {
+                            that;
+                            dartTypes.dartCallableModel;
+                        };
+                        null;
+                    };
+                    DartArgumentList {
+                        [DartFunctionExpression {
+                            dartFormalParameterListEmpty;
+                            DartBlockFunctionBody {
+                                null; false;
+                                DartBlock {
+                                    concatenate(
+                                        step0Statements,
+                                        generateSteps(that.clause)
+                                    );
+                                };
+                            };
+                        }];
+                    };
+                }];
+            };
+        };
+    }
+
+    shared actual
     DartExpression transformSwitchCaseElseExpression(SwitchCaseElseExpression that) {
         value [switchedType, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);
@@ -1861,6 +2402,29 @@ class ExpressionTransformer(CompilationContext ctx)
         throw CompilerBug(that,
             "Unhandled node (ExpressionTransformer): '``className(that)``'");
     }
+
+    DartFunctionDeclarationStatement createDartFunctionDeclarationStatement(
+            DartTypeName returnType,
+            DartSimpleIdentifier name,
+            DartFormalParameterList parameterList,
+            [DartStatement*] statements)
+        =>  DartFunctionDeclarationStatement {
+                DartFunctionDeclaration {
+                    false;
+                    returnType;
+                    null;
+                    name;
+                    DartFunctionExpression {
+                        parameterList;
+                        DartBlockFunctionBody {
+                            null; false;
+                            DartBlock {
+                                statements;
+                            };
+                        };
+                    };
+                };
+            };
 }
 
 // TODO come up with a plan for this stuff

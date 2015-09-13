@@ -593,7 +593,7 @@ class StatementTransformer(CompilationContext ctx)
                                     dartTypes.getName(variableDeclaration);
                                 };
                                 withLhs {
-                                    variableInfo.declarationModel.type;
+                                    null;
                                     variableDeclaration;
                                     () => withBoxing {
                                         that;
