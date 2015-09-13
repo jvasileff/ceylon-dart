@@ -903,8 +903,7 @@ abstract class List implements Collection, Correspondence {
   $dart$core.Object get($dart$core.Object index);
   static $dart$core.Object $get
         (List $this, $dart$core.Object index)
-    =>  index is Integer &&
-        $this.getFromFirst(index._value);
+    =>  $this.getFromFirst(index._value);
 
   $dart$core.Object getFromLast($dart$core.int index);
   static $dart$core.Object $getFromLast
