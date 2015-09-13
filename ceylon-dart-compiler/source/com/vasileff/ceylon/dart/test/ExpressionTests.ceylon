@@ -109,4 +109,59 @@ class ExpressionTests() {
              """;
         };
     }
+
+    shared test
+    void letExpression() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    value i = let (x = 1) x;
+                    print(i);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.int i = (() {
+                        $dart$core.int x = 1;
+                        return x;
+                    })();
+                    $ceylon$language.print($ceylon$language.Integer.instance(i));
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
+    shared test
+    void letExpressionMultiple() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    value i = let (x = 1, y = 2) x + y;
+                    print(i);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.int i = (() {
+                        $dart$core.int x = 1;
+                        $dart$core.int y = 2;
+                        return x + y;
+                    })();
+                    $ceylon$language.print($ceylon$language.Integer.instance(i));
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
 }

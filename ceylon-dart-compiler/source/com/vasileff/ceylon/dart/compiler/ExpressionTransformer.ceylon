@@ -97,10 +97,13 @@ import ceylon.ast.core {
     Primary,
     SwitchCaseElseExpression,
     IsCase,
-    CaseClause,
     MatchCase,
-    ElseCaseClause,
-    CaseExpression
+    CaseExpression,
+    LetExpression,
+    SpecifiedPattern,
+    VariablePattern,
+    TuplePattern,
+    EntryPattern
 }
 import ceylon.collection {
     LinkedList
@@ -166,7 +169,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     IfElseExpressionInfo,
     ObjectExpressionInfo,
     SuperInfo,
-    IsCaseInfo
+    IsCaseInfo,
+    UnspecifiedVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -1493,6 +1497,69 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             };
+        };
+    }
+
+    shared actual
+    DartExpression transformLetExpression(LetExpression that) {
+        [DartStatement+] generateVariableDeclarations(SpecifiedPattern sp) {
+            switch (p = sp.pattern)
+            case (is VariablePattern) {
+                value variableDeclaration
+                    =   UnspecifiedVariableInfo(p.variable).declarationModel;
+
+                value variableIdentifier
+                    =   DartSimpleIdentifier(dartTypes.getName(variableDeclaration));
+
+                value definition
+                    =   DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                keyword = null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    that;
+                                    variableDeclaration;
+                                };
+                                [DartVariableDeclaration {
+                                    variableIdentifier;
+                                    withLhs {
+                                        null;
+                                        variableDeclaration;
+                                        () => sp.specifier.expression.transform {
+                                            expressionTransformer;
+                                        };
+                                    };
+                                }];
+                            };
+                        };
+                return [definition];
+            }
+            case (is TuplePattern | EntryPattern) {
+                throw CompilerBug(p, "Destructure not yet supported");
+            }
+        }
+
+        [DartStatement+] variableDeclarations
+            =   sequence(that.patterns.children.flatMap(generateVariableDeclarations));
+
+        return
+        DartFunctionExpressionInvocation {
+            DartFunctionExpression {
+                DartFormalParameterList();
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        concatenate (
+                            variableDeclarations,
+                            [DartReturnStatement {
+                                that.expression.transform {
+                                    expressionTransformer;
+                                };
+                            }]
+                        );
+                    };
+                };
+            };
+            DartArgumentList { []; };
         };
     }
 

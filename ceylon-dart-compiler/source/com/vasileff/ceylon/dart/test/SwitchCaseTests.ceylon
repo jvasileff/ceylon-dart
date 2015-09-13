@@ -1,6 +1,5 @@
 import ceylon.test {
-    test,
-    ignore
+    test
 }
 
 shared
