@@ -31,7 +31,8 @@ import ceylon.ast.core {
     ValueSetterDefinition,
     ObjectDefinition,
     SwitchClause,
-    SpecifiedVariable
+    SpecifiedVariable,
+    Comprehension
 }
 import ceylon.collection {
     LinkedList
@@ -768,8 +769,8 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [[]|[DartVariableDeclarationStatement], DartVariableDeclarationStatement?,
-     DartExpression, []|[DartStatement]]
+    [[]|[ValueModel], []|[DartVariableDeclarationStatement],
+    DartVariableDeclarationStatement?, DartExpression, []|[DartStatement]]
     generateIsConditionExpression(IsCondition that, Boolean negate = false) {
 
         // IsCondition holds a TypedVariable that may
@@ -801,6 +802,7 @@ class BaseGenerator(CompilationContext ctx)
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
+        []|[ValueModel] replacementModel;
         []|[DartVariableDeclarationStatement] replacementDeclaration;
         DartVariableDeclarationStatement? tempDefinition;
         DartExpression conditionExpression;
@@ -823,6 +825,7 @@ class BaseGenerator(CompilationContext ctx)
                     dartTypes.createTempName(variableDeclaration));
 
             // 1. declare the new variable
+            replacementModel = [variableDeclaration];
             replacementDeclaration =
             [DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
@@ -881,6 +884,9 @@ class BaseGenerator(CompilationContext ctx)
         }
         else {
             tempDefinition = null;
+            // TODO optimizing away the separate declaration causes misalignment in the
+            //      various tuples (this one, replacementDefinition, and
+            //      replacementModel)
             replacementDeclaration = [];
 
             // check type of the original variable,
@@ -899,9 +905,15 @@ class BaseGenerator(CompilationContext ctx)
                             that, variableDeclaration))
                     then [r]
                     else [];
+
+            replacementModel
+                =   if (!replacementDefinition.empty)
+                    then [variableDeclaration]
+                    else [];
         }
 
-        return [replacementDeclaration,
+        return [replacementModel,
+                replacementDeclaration,
                 tempDefinition,
                 if (that.negated != negate)
                     then DartPrefixExpression("!", conditionExpression)
@@ -968,7 +980,7 @@ class BaseGenerator(CompilationContext ctx)
                 ceylonTypes.booleanType;
                 () => condition.condition.transform(expressionTransformer);
             };
-            return [[], null, conditionExpression, []];
+            return [[], [], null, conditionExpression, []];
         }
         case (is IsCondition) {
             return generateIsConditionExpression(condition);
@@ -1067,10 +1079,13 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
 
-                return [[replacementDeclaration],
-                        tempVariableDeclaration,
-                        conditionExpression,
-                        [replacementDefinition]];
+                return [
+                    [variableDeclaration],
+                    [replacementDeclaration],
+                    tempVariableDeclaration,
+                    conditionExpression,
+                    [replacementDefinition]
+                ];
             }
             else {
                 throw CompilerBug(that, "destructure not yet supported");
@@ -1113,10 +1128,7 @@ class BaseGenerator(CompilationContext ctx)
                     then [r]
                     else [];
 
-            return [[],
-                    null,
-                    conditionExpression,
-                    replacementDefinition];
+            return [[], [], null, conditionExpression, replacementDefinition];
         }
     }
 
@@ -2256,16 +2268,4 @@ class BaseGenerator(CompilationContext ctx)
             }];
         };
     }
-
-    "Tuple containing
-        - replacementDeclaration(s)
-        - tempDefinition
-        - conditionExpression
-        - replacementDefinition(s)]"
-    shared
-    alias ConditionCodeTuple =>
-            [[DartVariableDeclarationStatement*],
-             DartVariableDeclarationStatement?,
-             DartExpression,
-             [DartStatement*]];
 }

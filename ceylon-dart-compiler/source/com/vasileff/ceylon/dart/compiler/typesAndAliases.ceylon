@@ -11,6 +11,11 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     InterfaceModel=Interface
 }
+import com.vasileff.ceylon.dart.ast {
+    DartExpression,
+    DartVariableDeclarationStatement,
+    DartStatement
+}
 
 "Indicates the absence of a type (like void). One use is to
  indicate the absence of a `lhsType` when determining if
@@ -36,3 +41,19 @@ shared alias DeclarationModelType
         | FunctionModel
         | ValueModel
         | SetterModel;
+
+"Tuple containing:
+
+ - replacementDeclarationModels,
+ - replacementDeclarations
+ - tempDefinition
+ - conditionExpression
+ - replacementDefinitions"
+shared alias ConditionCodeTuple
+    =>  [
+            [ValueModel*],
+            [DartVariableDeclarationStatement*],
+            DartVariableDeclarationStatement?,
+            DartExpression,
+            [DartStatement*]
+        ];

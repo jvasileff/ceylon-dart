@@ -255,9 +255,9 @@ class StatementTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [replacementDeclaration, tempDefinition,
-                    conditionExpression, replacementDefinition]
-                    = generateConditionExpression(conditions.first);
+            value [_, replacementDeclarations, tempDefinition,
+                    conditionExpression, replacementDefinitions]
+                =   generateConditionExpression(conditions.first);
 
             value result = [
                 tempDefinition,
@@ -266,8 +266,8 @@ class StatementTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacementDeclaration,
-                            replacementDefinition,
+                            replacementDeclarations,
+                            replacementDefinitions,
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then
@@ -351,7 +351,7 @@ class StatementTransformer(CompilationContext ctx)
                 }];
             }
             case (is IsCondition) {
-                value [replacementDeclaration, tempDefinition,
+                value [_, replacementDeclaration, tempDefinition,
                             conditionExpression, replacementDefinition]
                         = generateIsConditionExpression(condition, true);
                 return expand {
@@ -778,9 +778,9 @@ class StatementTransformer(CompilationContext ctx)
                 .map(Token.text)
                 .reduce(plus) else "";
 
-        value [replacementDeclaration, tempDefinition,
+        value [_, replacementDeclaration, tempDefinition,
                 conditionExpression, replacementDefinition]
-            = generateIsConditionExpression(that, true);
+            =   generateIsConditionExpression(that, true);
 
         variable [DartStatement?*] statements = [
             replacementDeclaration.first,

@@ -1944,32 +1944,31 @@ class ExpressionTransformer(CompilationContext ctx)
                 //      4. Return false if exhausted while loop
 
                 "Sequence of Tuples holding
-                    - replacementDeclaration,
+                    - replacementDeclarations,
                     - tempDefinition,
                     - conditionExpression,
-                    - replacementDefinition"
+                    - replacementDefinitions"
                 value conditionExpressionParts
-                    =   clause.conditions.conditions
-                                .collect(generateConditionExpression);
+                    =   clause.conditions.conditions.collect(generateConditionExpression);
 
                 "All of the replacement declarations."
                 value dartVariableDeclarations
-                    =   conditionExpressionParts.flatMap((p) => p[0]);
+                    =   conditionExpressionParts.flatMap((p) => p[1]);
 
                 "All of the tests and assignments, serialized."
                 value dartTestsAndAssignments
                     =   conditionExpressionParts.flatMap {
                             (parts) => {
                                 // tmp variable definition
-                                parts[1],
+                                parts[2],
                                 DartIfStatement {
                                     condition = DartPrefixExpression {
-                                        "!"; parts[2];
+                                        "!"; parts[3];
                                     };
                                     DartContinueStatement();
                                 },
                                 // assign values (replacement definitions)
-                                *parts[3]
+                                *parts[4]
                             }.coalesced;
                         };
 
@@ -2294,9 +2293,9 @@ class ExpressionTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [replacementDeclaration, tempDefinition,
-                    conditionExpression, replacementDefinition]
-                    = generateConditionExpression(conditions.first);
+            value [_, replacementDeclarations, tempDefinition,
+                    conditionExpression, replacementDefinitions]
+                =   generateConditionExpression(conditions.first);
 
             value result = [
                 tempDefinition,
@@ -2305,8 +2304,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacementDeclaration,
-                            replacementDefinition,
+                            replacementDeclarations,
+                            replacementDefinitions,
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then
