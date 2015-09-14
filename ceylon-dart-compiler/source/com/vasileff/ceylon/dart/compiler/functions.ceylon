@@ -35,7 +35,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ScopeModel=Scope,
     SetterModel=Setter,
     ValueModel=Value,
-    ConstructorModel=Constructor,
     FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     TypeDeclarationModel=TypeDeclaration,
