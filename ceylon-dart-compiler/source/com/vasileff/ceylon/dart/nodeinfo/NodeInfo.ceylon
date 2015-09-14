@@ -54,7 +54,9 @@ import ceylon.ast.core {
     LazySpecification,
     ObjectExpression,
     IsCase,
-    SpecifiedVariable
+    SpecifiedVariable,
+    Comprehension,
+    SpreadArgument
 }
 import ceylon.interop.java {
     CeylonList,
@@ -291,6 +293,40 @@ class ArgumentListInfo(ArgumentList astNode)
     shared {[TypeModel, ParameterModel?]*} listedArgumentModels
         =>  CeylonIterable(tcNode.positionalArguments).map((arg)
                 =>  [arg.typeModel, arg.parameter else null]);
+}
+
+shared
+class ComprehensionInfo(Comprehension astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default Comprehension node => astNode;
+    value tcNode = assertedTcNode<Tree.Comprehension>(astNode);
+
+    shared TypeModel typeModel => tcNode.typeModel;
+    shared ParameterModel? parameter => tcNode.parameter;
+}
+
+shared
+class ComprehensionClauseInfo(ComprehensionClause astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default ComprehensionClause node => astNode;
+    value tcNode = assertedTcNode<Tree.ComprehensionClause>(astNode);
+
+    shared TypeModel typeModel => tcNode.typeModel;
+    shared TypeModel firstTypeModel => tcNode.firstTypeModel;
+    shared Boolean possiblyEmpty => tcNode.possiblyEmpty;
+}
+
+shared
+class SpreadArgumentInfo(SpreadArgument astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default SpreadArgument node => astNode;
+    value tcNode = assertedTcNode<Tree.SpreadArgument>(astNode);
+
+    shared TypeModel typeModel => tcNode.typeModel;
+    shared ParameterModel? parameter => tcNode.parameter;
 }
 
 shared
@@ -536,17 +572,6 @@ class ControlClauseInfo(ControlClauseNodeType astNode)
     value tcNode = assertedTcNode<Tree.ControlClause>(astNode);
 
     shared ControlBlockModel controlBlock => tcNode.controlBlock;
-}
-
-shared
-class ComprehensionClauseInfo(ComprehensionClause astNode)
-        extends ControlClauseInfo(astNode) {
-
-    shared actual default ComprehensionClause node => astNode;
-    value tcNode = assertedTcNode<Tree.ComprehensionClause>(astNode);
-
-    shared TypeModel typeModel => tcNode.typeModel;
-    shared TypeModel firstTypeModel => tcNode.firstTypeModel;
 }
 
 shared
