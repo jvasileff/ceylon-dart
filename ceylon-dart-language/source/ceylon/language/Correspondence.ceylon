@@ -101,7 +101,7 @@ shared interface Correspondence<in Key, out Item=Anything>
      does not have an item defined, the resulting stream 
      contains the value `null`."
     see (`function Correspondence.get`)
-    native shared default 
+    shared default 
     Iterable<Item?,Absent> getAll<Absent>
             (Iterable<Key,Absent> keys) 
             given Absent satisfies Null
