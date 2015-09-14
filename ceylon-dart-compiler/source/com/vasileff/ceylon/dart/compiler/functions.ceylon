@@ -35,6 +35,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ScopeModel=Scope,
     SetterModel=Setter,
     ValueModel=Value,
+    ConstructorModel=Constructor,
     FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     TypeDeclarationModel=TypeDeclaration,
@@ -126,6 +127,20 @@ ClassModel|InterfaceModel? getContainingClassOrInterface
     variable ScopeModel scopeModel = toScopeModel(scope);
     while (!is PackageModel s = scopeModel) {
         if (is ClassModel|InterfaceModel s) {
+            return s;
+        }
+        else {
+            scopeModel = s.container;
+        }
+    }
+    return null;
+}
+
+DeclarationModelType? getContainingDeclaration
+        (Node|ScopeModel|ElementModel scope) {
+    variable ScopeModel scopeModel = toScopeModel(scope);
+    while (!is PackageModel s = scopeModel) {
+        if (is DeclarationModelType s) {
             return s;
         }
         else {

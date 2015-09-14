@@ -4,7 +4,12 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     FunctionOrValueModel=FunctionOrValue,
     NamedArgumentListModel=NamedArgumentList,
-    SpecificationModel=Specification
+    SpecificationModel=Specification,
+    ClassModel=Class,
+    ValueModel=Value,
+    FunctionModel=Function,
+    SetterModel=Setter,
+    InterfaceModel=Interface
 }
 
 "Indicates the absence of a type (like void). One use is to
@@ -23,3 +28,11 @@ shared alias LocalNonInitializerScope
         | FunctionOrValueModel
         | NamedArgumentListModel
         | SpecificationModel;
+
+shared alias DeclarationModelType
+    =>  ClassModel
+        | InterfaceModel
+        | ConstructorModel
+        | FunctionModel
+        | ValueModel
+        | SetterModel;

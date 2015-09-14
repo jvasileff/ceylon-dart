@@ -156,7 +156,6 @@ class ObjectTests() {
 
     shared test
     void simpleObjectInFunction() {
-        // FIXME include outer function names in type name
         compileAndCompare {
              """
                 shared void run() {
@@ -170,12 +169,12 @@ class ObjectTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                class o1_ {
-                    o1_() {}
+                class run$o1_ {
+                    run$o1_() {}
                     $dart$core.String get s1 => "";
                 }
                 void $package$run() {
-                    final o1_ o1 = new o1_();
+                    final run$o1_ o1 = new run$o1_();
                 }
 
                 void run() => $package$run();
@@ -240,27 +239,27 @@ class ObjectTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                class I1$I2$o_ implements I1$I2 {
-                    I1$I2 $outer$default$I1$I2;
-                    I1 $outer$default$I1;
-                    $dart$core.String $capture$run$I1$I1$I2$i2Foo$i2foo;
+                class run$I1$I2$i2Foo$o_ implements run$I1$I2 {
+                    run$I1$I2 $outer$default$run$I1$I2;
+                    run$I1 $outer$default$run$I1;
+                    $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
                     $dart$core.String $capture$run$s1;
-                    I1$I2$o_([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1, $dart$core.String this.$capture$run$I1$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
-                    $dart$core.String get i2fooo => $capture$run$I1$I1$I2$i2Foo$i2foo;
-                    void i2Foo() => I1$I2.$i2Foo(this);
-                    $dart$core.String get i1s1 => I1.$get$i1s1(this);
+                    run$I1$I2$i2Foo$o_([run$I1$I2 this.$outer$default$run$I1$I2, run$I1 this.$outer$default$run$I1, $dart$core.String this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
+                    $dart$core.String get i2fooo => $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
+                    void i2Foo() => run$I1$I2.$i2Foo(this);
+                    $dart$core.String get i1s1 => run$I1.$get$i1s1(this);
                 }
-                abstract class I1$I2 implements I1 {
-                    I1 $outer$default$I1;
+                abstract class run$I1$I2 implements run$I1 {
+                    run$I1 $outer$default$run$I1;
                     void i2Foo();
-                    static void $i2Foo([final I1$I2 $this]) {
+                    static void $i2Foo([final run$I1$I2 $this]) {
                         $dart$core.String i2foo = "";
-                        final I1$I2$o_ o = new I1$I2$o_($this, $this.$outer$default$I1, i2foo, $this.$capture$run$s1);
+                        final run$I1$I2$i2Foo$o_ o = new run$I1$I2$i2Foo$o_($this, $this.$outer$default$run$I1, i2foo, $this.$capture$run$s1);
                     }
                 }
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.String get i1s1;
-                    static $dart$core.String $get$i1s1([final I1 $this]) => $this.$capture$run$s1;
+                    static $dart$core.String $get$i1s1([final run$I1 $this]) => $this.$capture$run$s1;
                     $dart$core.String $capture$run$s1;
                 }
                 void $package$run() {
@@ -291,21 +290,21 @@ class ObjectTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1$I2 implements I1 {
-                    I1 $outer$default$I1;
+                abstract class run$I1$I2 implements run$I1 {
+                    run$I1 $outer$default$run$I1;
                 }
-                abstract class I1$I3 implements I1$I2 {
-                    I1 $outer$default$I1;
+                abstract class run$I1$I3 implements run$I1$I2 {
+                    run$I1 $outer$default$run$I1;
                 }
-                class I1$o_ implements I1$I3 {
-                    I1 $outer$default$I1;
-                    I1$o_([I1 this.$outer$default$I1]) {}
-                    void foo() => I1.$foo(this);
+                class run$I1$foo$o_ implements run$I1$I3 {
+                    run$I1 $outer$default$run$I1;
+                    run$I1$foo$o_([run$I1 this.$outer$default$run$I1]) {}
+                    void foo() => run$I1.$foo(this);
                 }
-                abstract class I1 {
+                abstract class run$I1 {
                     void foo();
-                    static void $foo([final I1 $this]) {
-                        final I1$o_ o = new I1$o_($this);
+                    static void $foo([final run$I1 $this]) {
+                        final run$I1$foo$o_ o = new run$I1$foo$o_($this);
                     }
                 }
                 void $package$run() {}

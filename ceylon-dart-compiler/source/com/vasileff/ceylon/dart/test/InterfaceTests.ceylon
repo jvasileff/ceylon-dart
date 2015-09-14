@@ -619,25 +619,25 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class Bar {
+                abstract class capturesWithControlBlocks$Bar {
                     void capturesIFS();
-                    static void $capturesIFS([final Bar $this]) {
+                    static void $capturesIFS([final capturesWithControlBlocks$Bar $this]) {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$x;
                 }
-                abstract class Baz implements Bar {
+                abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
                     void capturesIF();
-                    static void $capturesIF([final Baz $this]) {
+                    static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$$x;
                 }
-                abstract class Ban implements Baz {
+                abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlocks$Baz {
                     void capturesI();
-                    static void $capturesI([final Ban $this]) {
+                    static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
                         $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$x$0 + 1;
                         $ceylon$language.print($ceylon$language.Integer.instance(capture));
                     }
@@ -703,9 +703,9 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class Bar {
+                abstract class capturesWithControlBlocks$Bar {
                     void foo();
-                    static void $foo([final Bar $this]) {
+                    static void $foo([final capturesWithControlBlocks$Bar $this]) {
                         $dart$core.int captureX = $this.$capture$capturesWithControlBlocks$$x$0;
                         $dart$core.int captureY = $this.$capture$capturesWithControlBlocks$y;
                     }
@@ -765,25 +765,25 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class Bar {
+                abstract class capturesWithControlBlocks$Bar {
                     void capturesIFS();
-                    static void $capturesIFS([final Bar $this]) {
+                    static void $capturesIFS([final capturesWithControlBlocks$Bar $this]) {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$x;
                 }
-                abstract class Baz implements Bar {
+                abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
                     void capturesIF();
-                    static void $capturesIF([final Baz $this]) {
+                    static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
                         $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$$$x;
                 }
-                abstract class Ban implements Baz {
+                abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlocks$Baz {
                     void capturesI();
-                    static void $capturesI([final Ban $this]) {
+                    static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
                         $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
                         $ceylon$language.print($ceylon$language.Integer.instance(capture));
                     }
@@ -822,12 +822,12 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1$I2 {
-                    I1 $outer$default$I1;
+                abstract class run$I1$I2 {
+                    run$I1 $outer$default$run$I1;
                     $dart$core.int get capturedX;
-                    static $dart$core.int $get$capturedX([final I1$I2 $this]) => $this.$outer$default$I1.$capture$run$x;
+                    static $dart$core.int $get$capturedX([final run$I1$I2 $this]) => $this.$outer$default$run$I1.$capture$run$x;
                 }
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.int $capture$run$x;
                 }
                 void $package$run() {
@@ -861,17 +861,17 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1$I2$I3 {
-                    I1$I2 $outer$default$I1$I2;
+                abstract class run$I1$I2$I3 {
+                    run$I1$I2 $outer$default$run$I1$I2;
                     $dart$core.int get i3capturedX;
-                    static $dart$core.int $get$i3capturedX([final I1$I2$I3 $this]) => $this.$outer$default$I1$I2.$outer$default$I1.$capture$run$x;
+                    static $dart$core.int $get$i3capturedX([final run$I1$I2$I3 $this]) => $this.$outer$default$run$I1$I2.$outer$default$run$I1.$capture$run$x;
                 }
-                abstract class I1$I2 {
-                    I1 $outer$default$I1;
+                abstract class run$I1$I2 {
+                    run$I1 $outer$default$run$I1;
                     $dart$core.int get i2capturedX;
-                    static $dart$core.int $get$i2capturedX([final I1$I2 $this]) => $this.$outer$default$I1.$capture$run$x;
+                    static $dart$core.int $get$i2capturedX([final run$I1$I2 $this]) => $this.$outer$default$run$I1.$capture$run$x;
                 }
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.int $capture$run$x;
                 }
                 void $package$run() {
@@ -904,14 +904,14 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.int get i1capturedX;
-                    static $dart$core.int $get$i1capturedX([final I1 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$i1capturedX([final run$I1 $this]) => $this.$capture$run$x;
                     $dart$core.int $capture$run$x;
                 }
-                abstract class I2 implements I1 {
+                abstract class run$I2 implements run$I1 {
                     $dart$core.int get i2capturedX;
-                    static $dart$core.int $get$i2capturedX([final I2 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$i2capturedX([final run$I2 $this]) => $this.$capture$run$x;
                 }
                 void $package$run() {
                     $dart$core.int x = 5;
@@ -943,16 +943,16 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.int get i1capturedX;
-                    static $dart$core.int $get$i1capturedX([final I1 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$i1capturedX([final run$I1 $this]) => $this.$capture$run$x;
                     $dart$core.int $capture$run$x;
                 }
-                abstract class I2 implements I1 {
+                abstract class run$I2 implements run$I1 {
                 }
-                abstract class I3 implements I2 {
+                abstract class run$I3 implements run$I2 {
                     $dart$core.int get i3capturedX;
-                    static $dart$core.int $get$i3capturedX([final I3 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$i3capturedX([final run$I3 $this]) => $this.$capture$run$x;
                 }
                 void $package$run() {
                     $dart$core.int x = 5;
@@ -985,17 +985,17 @@ class InterfaceTests() {
                 import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-                abstract class I1 {
+                abstract class run$I1 {
                     $dart$core.int get i1capturedX;
-                    static $dart$core.int $get$i1capturedX([final I1 $this]) => $this.$capture$run$x;
+                    static $dart$core.int $get$i1capturedX([final run$I1 $this]) => $this.$capture$run$x;
                     $dart$core.int $capture$run$x;
                 }
-                abstract class I2$I3 {
-                    I2 $outer$default$I2;
+                abstract class run$I2$I3 {
+                    run$I2 $outer$default$run$I2;
                     $dart$core.int get i3capturedX;
-                    static $dart$core.int $get$i3capturedX([final I2$I3 $this]) => $this.$outer$default$I2.$capture$run$x;
+                    static $dart$core.int $get$i3capturedX([final run$I2$I3 $this]) => $this.$outer$default$run$I2.$capture$run$x;
                 }
-                abstract class I2 implements I1 {
+                abstract class run$I2 implements run$I1 {
                 }
                 void $package$run() {
                     $dart$core.int x = 5;

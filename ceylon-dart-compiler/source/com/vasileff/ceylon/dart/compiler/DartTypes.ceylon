@@ -65,20 +65,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }.get;
     })();
 
-    shared
-    String getName(DeclarationModel|ParameterModel declaration) {
-        // TODO it might make sense to make this private, and have callers
-        //      use `dartIdentifierForX()` methods that can also handle
-        //      function <-> value mappings.
-
-        function classOrInterfacePrefix(ClassOrInterfaceModel member)
-            // for member classes/interfaces, prepend with outer type names
-            =>  if (exists container =
-                        getContainingClassOrInterface(member.container))
-                then getName(container) + "$"
-                else "";
-
-        function classOrObjectShortName(ClassModel declaration)
+    String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
+        String classOrObjectShortName(ClassModel declaration)
             =>  if (declaration.anonymous) then
                     // *all* objects are anonymous classes, not just expressions that
                     // get the "anonymous#" names. Non-expression objects are named
@@ -88,7 +76,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     declaration.name;
 
         if (is SetterModel declaration) {
-            return getName(declaration.getter);
+            return getUnprefixedName(declaration.getter);
         }
 
         if (is TypedDeclarationModel declaration) {
@@ -118,17 +106,44 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return declaration.name;
         }
         case (is ClassModel) {
-            return classOrInterfacePrefix(declaration)
-                    + classOrObjectShortName(declaration);
+            return classOrObjectShortName(declaration);
         }
         case (is ConstructorModel) {
             return declaration.name;
         }
         case (is InterfaceModel) {
-            return classOrInterfacePrefix(declaration) + declaration.name;
+            return declaration.name;
         }
         case (is ParameterModel) {
             return declaration.name;
+        }
+        else {
+            throw Exception("declaration type not yet supported \
+                             for ``className(declaration)``");
+        }
+    }
+
+    shared
+    String getName(DeclarationModel|ParameterModel declaration) {
+        // TODO it might make sense to make this private, and have callers
+        //      use `dartIdentifierForX()` methods that can also handle
+        //      function <-> value mappings.
+
+        String classOrInterfacePrefix(DeclarationModel member)
+            // for member classes/interfaces, prepend with outer type names
+            =>  if (exists container = getContainingDeclaration(member.container))
+                then classOrInterfacePrefix(container)
+                        + getUnprefixedName(container) + "$"
+                else "";
+
+        switch (declaration)
+        case (is SetterModel | ValueModel | FunctionModel
+                | ConstructorModel | ParameterModel) {
+            return getUnprefixedName(declaration);
+        }
+        case (is ClassModel | InterfaceModel) {
+            return classOrInterfacePrefix(declaration)
+                    + getUnprefixedName(declaration);
         }
         else {
             throw Exception("declaration type not yet supported \
