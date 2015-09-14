@@ -639,7 +639,8 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
         else if (!nonempty arguments) {
-            // Just evaluate and return the spread expression
+            // Just evaluate and return the spread expression. We don't care about the
+            // lhs type, which should have already been set by code that does care.
             assert (exists sequenceArgument);
             return sequenceArgument.transform(this);
         }
@@ -695,12 +696,14 @@ class ExpressionTransformer(CompilationContext ctx)
                                 };
                             };
                         },
-                        if (exists sequenceArgument) then
+                        switch (sequenceArgument)
+                        case (is Comprehension | SpreadArgument)
+                            // Whatever Iterable type we come up with is surely correct.
                             withLhsDenotable {
                                 ceylonTypes.iterableDeclaration;
                                 () => sequenceArgument.transform(this);
                             }
-                        else
+                        case (is Null)
                             DartNullLiteral()
                         ];
                     };
@@ -1582,7 +1585,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformComprehension(Comprehension that) {
-
         function generateStepFunctionId(Integer step)
             =>  DartSimpleIdentifier {
                     dartTypes.createTempNameCustom {
@@ -2069,40 +2071,53 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
 
+        "The type of the Iterable we are creating and the return type of
+         `dartFunctionIterableFactory`.
+
+         Note: when we reify, we'll need to make sure the `Absent` type parameter is
+         correct. It would also be better to have dartFunctionIterableFactory model
+         information, and calculate the return type using a `FunctionModel`."
+        value resultType = iterableComprehensionType(that);
+
         // Return a new Iterable based on a function that returns a
         // function that returns the elements of the comprehension.
         return
-        DartFunctionExpressionInvocation {
-            dartTypes.dartIdentifierForDartModel {
-                that;
-                dartTypes.dartFunctionIterableFactory;
-            };
-            DartArgumentList {
-                // Easy. Until we reify generics.
-                [DartInstanceCreationExpression {
-                    false;
-                    DartConstructorName {
-                        dartTypes.dartTypeNameForDartModel {
-                            that;
-                            dartTypes.dartCallableModel;
-                        };
-                        null;
-                    };
-                    DartArgumentList {
-                        [DartFunctionExpression {
-                            dartFormalParameterListEmpty;
-                            DartBlockFunctionBody {
-                                null; false;
-                                DartBlock {
-                                    concatenate(
-                                        step0Statements,
-                                        generateSteps(that.clause)
-                                    );
-                                };
+        withBoxing {
+            that;
+            resultType;
+            null;
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    that;
+                    dartTypes.dartFunctionIterableFactory;
+                };
+                DartArgumentList {
+                    // Easy. Until we reify generics.
+                    [DartInstanceCreationExpression {
+                        false;
+                        DartConstructorName {
+                            dartTypes.dartTypeNameForDartModel {
+                                that;
+                                dartTypes.dartCallableModel;
                             };
-                        }];
-                    };
-                }];
+                            null;
+                        };
+                        DartArgumentList {
+                            [DartFunctionExpression {
+                                dartFormalParameterListEmpty;
+                                DartBlockFunctionBody {
+                                    null; false;
+                                    DartBlock {
+                                        concatenate(
+                                            step0Statements,
+                                            generateSteps(that.clause)
+                                        );
+                                    };
+                                };
+                            }];
+                        };
+                    }];
+                };
             };
         };
     }
