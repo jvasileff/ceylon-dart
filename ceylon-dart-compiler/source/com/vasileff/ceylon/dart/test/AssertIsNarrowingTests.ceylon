@@ -8,21 +8,24 @@ class AssertIsNarrowingTests() {
     shared test
     void narrowObjectToString() {
         compileAndCompare {
-             """void assertions() {
+             """
+                void assertions() {
                     Object obj = "x";
                     assert (is String obj);
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.String.instance("x");
+                    $dart$core.String obj$0;
                     if (!(obj is $ceylon$language.String)) {
                         throw new $ceylon$language.AssertionError("Violated: is String obj");
                     }
-                    $dart$core.String obj$0 = $ceylon$language.String.nativeValue(obj as $ceylon$language.String);
+                    obj$0 = $ceylon$language.String.nativeValue(obj as $ceylon$language.String);
                 }
 
                 void assertions() => $package$assertions();
@@ -59,22 +62,25 @@ class AssertIsNarrowingTests() {
     shared test
     void useShadowAfterNarrowing() {
         compileAndCompare {
-             """void assertions() {
+             """
+                void assertions() {
                     Object obj = true;
                     assert (is Boolean obj);
                     Boolean bool = obj;
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.$true;
+                    $dart$core.bool obj$0;
                     if (!(obj is $ceylon$language.Boolean)) {
                         throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
                     }
-                    $dart$core.bool obj$0 = $ceylon$language.Boolean.nativeValue(obj as $ceylon$language.Boolean);
+                    obj$0 = $ceylon$language.Boolean.nativeValue(obj as $ceylon$language.Boolean);
                     $dart$core.bool bool = obj$0;
                 }
 
@@ -119,7 +125,8 @@ class AssertIsNarrowingTests() {
         //       When we find a type parameter, should we replace it with its
         //       constraints at least?
         compileAndCompare {
-             """shared T echoString<T>(T t) given T satisfies String {
+             """
+                shared T echoString<T>(T t) given T satisfies String {
                     String s = t;
                     assert (is T s);
                     return s;
@@ -130,15 +137,17 @@ class AssertIsNarrowingTests() {
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 $dart$core.Object $package$echoString([$dart$core.Object t]) {
                     $dart$core.String s = $ceylon$language.String.nativeValue(t as $ceylon$language.String);
+                    $dart$core.Object s$0;
                     if (!true) {
                         throw new $ceylon$language.AssertionError("Violated: is T s");
                     }
-                    $dart$core.Object s$0 = $ceylon$language.String.instance(s);
+                    s$0 = $ceylon$language.String.instance(s);
                     return s$0;
                 }
 

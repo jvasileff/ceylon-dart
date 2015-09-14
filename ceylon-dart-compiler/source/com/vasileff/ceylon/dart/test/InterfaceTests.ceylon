@@ -651,10 +651,11 @@ class InterfaceTests() {
                     }
                     $ceylon$language.print(x);
                     $ceylon$language.print(x);
+                    $dart$core.int x$0;
                     if (!(x is $ceylon$language.Integer)) {
                         throw new $ceylon$language.AssertionError("Violated: is Integer x");
                     }
-                    $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                    x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
                     $ceylon$language.print($ceylon$language.Integer.instance(x$0));
                 }
 
@@ -714,10 +715,11 @@ class InterfaceTests() {
                 }
                 void $package$capturesWithControlBlocks() {
                     $dart$core.Object x = $ceylon$language.Integer.instance(5);
+                    $dart$core.int x$0;
                     if (!(x is $ceylon$language.Integer)) {
                         throw new $ceylon$language.AssertionError("Violated: is Integer x");
                     }
-                    $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                    x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
                     $dart$core.int y = 5;
                 }
 
@@ -793,7 +795,8 @@ class InterfaceTests() {
                     $dart$core.Object x = $ceylon$language.Integer.instance(5);
                     if ((x is $ceylon$language.Integer) || (x is $ceylon$language.Float)) {
                         if (x is $ceylon$language.Integer) {
-                            $dart$core.int x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+                            $dart$core.int x$0;
+                            x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
                         }
                     }
                 }

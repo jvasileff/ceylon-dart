@@ -150,7 +150,7 @@ class StatementTransformer(CompilationContext ctx)
                                     that; variableDeclaration;
                                 }
                             else
-                                null;
+                                [];
 
                     return
                     DartIfStatement {
@@ -160,9 +160,10 @@ class StatementTransformer(CompilationContext ctx)
                             TypeInfo(caseItem.type).typeModel;
                         };
                         thenStatement = DartBlock {
-                            [   replacementVariable,
-                                *transformBlock(clause.block).first.statements
-                            ].coalesced.sequence();
+                            concatenate (
+                                replacementVariable,
+                                transformBlock(clause.block).first.statements
+                            );
                         };
                         elseStatement = generateIf(clauses.rest);
                     };
@@ -236,7 +237,7 @@ class StatementTransformer(CompilationContext ctx)
                     exists variableDeclaration =
                         ElseClauseInfo(elseClause).variableDeclarationModel)
                 then generateReplacementVariableDefinition(that, variableDeclaration)
-                else null;
+                else [];
 
         value statements = LinkedList<DartStatement?>();
 
@@ -314,13 +315,12 @@ class StatementTransformer(CompilationContext ctx)
                 DartIfStatement {
                     doElseVariable;
                     DartBlock {
-                        [elseReplacementVariable,
-                         *( switch (elseChild)
-                            case (is Block)
-                                transformBlock(elseChild).first.statements
-                            case (is IfElse)
-                                elseChild.transform(this))
-                        ].coalesced.sequence();
+                        concatenate (
+                            elseReplacementVariable,
+                            (switch (elseChild)
+                             case (is Block) transformBlock(elseChild).first.statements
+                             case (is IfElse) elseChild.transform(this))
+                        ).coalesced.sequence();
                     };
                 };
             };
@@ -360,16 +360,22 @@ class StatementTransformer(CompilationContext ctx)
             }
             case (is IsCondition) {
                 value [_, replacementDeclaration, tempDefinition,
-                            conditionExpression, replacementDefinition]
-                        = generateIsConditionExpression(condition, true);
+                        conditionExpression, replacementDefinition]
+                    =   generateIsConditionExpression(condition, true);
+// FIXME WIP combine with existsornonempty
+//           and make sure decl and def can always be split.
                 return expand {
                     replacementDeclaration,
-                    [tempDefinition],
-                    [DartIfStatement {
-                        conditionExpression;
-                        DartBreakStatement();
-                    }],
-                    replacementDefinition
+                    [DartBlock {
+                        concatenate(
+                            [tempDefinition].coalesced,
+                            [DartIfStatement {
+                                conditionExpression;
+                                DartBreakStatement();
+                            }],
+                            replacementDefinition
+                        );
+                    }]
                 }.coalesced;
             }
             case (is ExistsOrNonemptyCondition) {
@@ -780,11 +786,11 @@ class StatementTransformer(CompilationContext ctx)
         value info = IsConditionInfo(that);
 
         "The Ceylon source code for the condition"
-        value errorMessage =
-                ctx.tokens[info.token.tokenIndex..
+        value errorMessage
+            =   ctx.tokens[info.token.tokenIndex..
                            info.endToken.tokenIndex]
-                .map(Token.text)
-                .reduce(plus) else "";
+                    .map(Token.text)
+                    .reduce(plus) else "";
 
         value [_, replacementDeclaration, tempDefinition,
                 conditionExpression, replacementDefinition]

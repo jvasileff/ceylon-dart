@@ -2158,7 +2158,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                     that; variableDeclaration;
                                 }
                             else
-                                null;
+                                [];
 
                     return
                     DartIfStatement {
@@ -2168,11 +2168,12 @@ class ExpressionTransformer(CompilationContext ctx)
                             TypeInfo(caseItem.type).typeModel;
                         };
                         thenStatement = DartBlock {
-                            [   replacementVariable,
-                                DartReturnStatement {
+                            concatenate (
+                                replacementVariable,
+                                [DartReturnStatement {
                                     clause.expression.transform(this);
-                                }
-                            ].coalesced.sequence();
+                                }]
+                            );
                         };
                         elseStatement = generateIf(clauses.rest);
                     };
@@ -2276,7 +2277,7 @@ class ExpressionTransformer(CompilationContext ctx)
             =   if (exists variableDeclaration =
                         info.elseVariableDeclarationModel)
                 then generateReplacementVariableDefinition(that, variableDeclaration)
-                else null;
+                else [];
 
         value statements = LinkedList<DartStatement?>();
 
@@ -2347,12 +2348,12 @@ class ExpressionTransformer(CompilationContext ctx)
             DartIfStatement {
                 doElseVariable;
                 DartBlock {
-                    [
+                    concatenate (
                         elseReplacementVariable,
-                        DartReturnStatement {
+                        [DartReturnStatement {
                             that.elseExpression.transform(this);
-                        }
-                    ].coalesced.sequence();
+                        }]
+                    );
                 };
             };
         };

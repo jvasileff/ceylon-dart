@@ -72,11 +72,13 @@ class SwitchCaseTests() {
                     $dart$core.Object si = $ceylon$language.String.instance("");{
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
-                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            $dart$core.String si$1;
+                            si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
                             $ceylon$language.print($ceylon$language.String.instance("string"));
                             $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size));
                         } else if (switch$0 is $ceylon$language.Integer) {
-                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            $dart$core.int si$2;
+                            si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
                             $ceylon$language.print($ceylon$language.String.instance("integer"));
                         } else {
                             $ceylon$language.print($ceylon$language.String.instance("fallback else"));
@@ -114,11 +116,13 @@ class SwitchCaseTests() {
                     $dart$core.Object si = $ceylon$language.String.instance("");{
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
-                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            $dart$core.String si$1;
+                            si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
                             $ceylon$language.print($ceylon$language.String.instance("string"));
                             $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size));
                         } else if (switch$0 is $ceylon$language.Integer) {
-                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            $dart$core.int si$2;
+                            si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
                             $ceylon$language.print($ceylon$language.String.instance("integer"));
                         } else {
                             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
@@ -156,11 +160,13 @@ class SwitchCaseTests() {
                     $dart$core.Object si = $ceylon$language.String.instance("");{
                         $dart$core.Object newVar = si;
                         if (newVar is $ceylon$language.String) {
-                            $dart$core.String newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
+                            $dart$core.String newVar$0;
+                            newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
                             $ceylon$language.print($ceylon$language.String.instance("string"));
                             $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(newVar$0).size));
                         } else if (newVar is $ceylon$language.Integer) {
-                            $dart$core.int newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
+                            $dart$core.int newVar$1;
+                            newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
                             $ceylon$language.print($ceylon$language.String.instance("integer"));
                         } else {
                             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
@@ -234,10 +240,12 @@ class SwitchCaseTests() {
                     $dart$core.String a = (() {
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
-                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            $dart$core.String si$1;
+                            si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
                             return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size).toString();
                         } else if (switch$0 is $ceylon$language.Integer) {
-                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            $dart$core.int si$2;
+                            si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
                             return "integer";
                         } else {
                             return "fallback else";
@@ -274,10 +282,12 @@ class SwitchCaseTests() {
                     $dart$core.String a = (() {
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
-                            $dart$core.String si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
+                            $dart$core.String si$1;
+                            si$1 = $ceylon$language.String.nativeValue(si as $ceylon$language.String);
                             return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(si$1).size).toString();
                         } else if (switch$0 is $ceylon$language.Integer) {
-                            $dart$core.int si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                            $dart$core.int si$2;
+                            si$2 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
                             return "integer";
                         } else {
                             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
@@ -314,10 +324,12 @@ class SwitchCaseTests() {
                     $dart$core.String a = (() {
                         $dart$core.Object newVar = si;
                         if (newVar is $ceylon$language.String) {
-                            $dart$core.String newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
+                            $dart$core.String newVar$0;
+                            newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
                             return "string" + $ceylon$language.Integer.instance($ceylon$language.String.instance(newVar$0).size).toString();
                         } else if (newVar is $ceylon$language.Integer) {
-                            $dart$core.int newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
+                            $dart$core.int newVar$1;
+                            newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
                             return "integer";
                         } else {
                             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");

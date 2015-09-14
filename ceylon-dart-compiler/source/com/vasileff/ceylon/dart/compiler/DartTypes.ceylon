@@ -172,6 +172,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     String createReplacementName(TypedDeclarationModel declaration) {
+        // TODO make this function idempotent!
+
         if (is SetterModel declaration) {
             return createReplacementName(declaration.getter);
         }
