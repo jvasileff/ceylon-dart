@@ -207,7 +207,11 @@ class StatementTransformer(CompilationContext ctx)
             // simple case, no variable declarations
             return
             [DartIfStatement {
-                generateBooleanDartCondition(that.ifClause.conditions);
+                generateBooleanDartCondition {
+                    that.ifClause.conditions.conditions.map {
+                        asserted<BooleanCondition>;
+                    };
+                };
                 transformBlock(that.ifClause.block).first;
                 if (exists c = that.elseClause?.child,
                     nonempty s = c.transform(this))
@@ -336,7 +340,11 @@ class StatementTransformer(CompilationContext ctx)
             // simple case, no variable declarations
             return
             [DartWhileStatement {
-                generateBooleanDartCondition(that.conditions);
+                generateBooleanDartCondition {
+                    that.conditions.conditions.map {
+                        asserted<BooleanCondition>;
+                    };
+                };
                 statementTransformer.transformBlock(that.block).first;
             }];
         }

@@ -1905,9 +1905,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 if (clause.conditions.conditions.every((c) => c is BooleanCondition)) {
                     // simple case, no variable declarations
-                    value dartCondition
-                        =   generateBooleanDartCondition(clause.conditions);
-
                     value functionBody
                         =   [DartWhileStatement {
                                 DartFunctionExpressionInvocation {
@@ -1916,7 +1913,11 @@ class ExpressionTransformer(CompilationContext ctx)
                                 };
                                 DartBlock {
                                     [DartIfStatement {
-                                        dartCondition;
+                                        generateBooleanDartCondition {
+                                            clause.conditions.conditions.map {
+                                                asserted<BooleanCondition>;
+                                            };
+                                        };
                                         DartReturnStatement {
                                             DartBooleanLiteral(true);
                                         };
@@ -2238,7 +2239,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
         if (that.conditions.conditions.every((c) => c is BooleanCondition)) {
             // simple case, no variable declarations
-            value dartCondition = generateBooleanDartCondition(that.conditions);
             return
             DartFunctionExpressionInvocation {
                 DartFunctionExpression {
@@ -2247,7 +2247,11 @@ class ExpressionTransformer(CompilationContext ctx)
                         null; false;
                         DartBlock {
                             [DartIfStatement {
-                                dartCondition;
+                                generateBooleanDartCondition {
+                                    that.conditions.conditions.map {
+                                        asserted<BooleanCondition>;
+                                    };
+                                };
                                 DartReturnStatement {
                                     that.thenExpression.transform(this);
                                 };

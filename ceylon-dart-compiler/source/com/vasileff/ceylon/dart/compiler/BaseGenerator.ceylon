@@ -2056,29 +2056,19 @@ class BaseGenerator(CompilationContext ctx)
         };
     }
 
-    "Only handles `BooleanCondition`s!!!"
+    "Generate a DartExpression for a series of `BooleanCondition`s."
     shared
-    DartExpression generateBooleanDartCondition(Conditions that) {
-        // TODO IsCondition & ExistsOrNonemptyCondition
-        if (that.conditions.any((condition)
-                =>  !condition is BooleanCondition)) {
-            throw CompilerBug(that,
-                "Only BooleanConditions are currently supported.");
-        }
-
-        value dartCondition = withLhsNative {
-            ceylonTypes.booleanType;
-            () => that.conditions
-                    .reversed
-                    .narrow<BooleanCondition>()
-                    .map(generateBooleanConditionExpression)
-                    .reduce((DartExpression partial, c)
-                        =>  DartBinaryExpression(c, "&&", partial));
-        };
-
-        assert (exists dartCondition);
-        return dartCondition;
-    }
+    DartExpression generateBooleanDartCondition({BooleanCondition+} conditions)
+            =>  withLhsNative {
+                    ceylonTypes.booleanType;
+                    () => sequence(conditions)
+                            .reversed
+                            .map(generateBooleanConditionExpression)
+                            .reduce {
+                                (DartExpression partial, c)
+                                    =>  DartBinaryExpression(c, "&&", partial);
+                            };
+                };
 
     shared
     DartArgumentList generateArgumentListFromArguments(
