@@ -288,7 +288,7 @@ native shared sealed interface Sequence<out Element=Anything>
      [Element*] sequenceOfElements = sequence(elements) else [];"
 by ("Gavin")
 see (`function Iterable.sequence`)
-native shared [Element+]|Absent sequence<Element,Absent=Null>
+shared [Element+]|Absent sequence<Element,Absent=Null>
         (Iterable<Element, Absent> elements)
         given Absent satisfies Null {
     if (nonempty sequence = elements.sequence()) {

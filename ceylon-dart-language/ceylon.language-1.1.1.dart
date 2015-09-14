@@ -1562,6 +1562,27 @@ abstract class Resource {
 abstract class Scalable {
     $dart$core.Object scale([$dart$core.Object scalar]);
 }
+Sequence $package$sequence([Iterable elements]) {{
+        $dart$core.bool doElse$0 = true;{
+            Sequential tmp$1 = elements.sequence();
+            if (tmp$1 is Sequence) {
+                Sequence sequence;
+                sequence = tmp$1 as Sequence;
+                doElse$0 = false;
+                return sequence;
+            }
+        }
+        if (doElse$0) {
+            if (!true) {
+                throw new AssertionError("Violated: is Absent null");
+            }
+            return null as Sequence;
+        }
+    }
+}
+
+Sequence sequence([Iterable elements]) => $package$sequence(elements);
+
 abstract class SequencedAnnotation implements ConstrainedAnnotation {
 }
 abstract class Sequential implements List, Ranged {
