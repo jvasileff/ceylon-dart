@@ -185,7 +185,10 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ObjectExpressionInfo,
     SuperInfo,
     IsCaseInfo,
-    UnspecifiedVariableInfo
+    UnspecifiedVariableInfo,
+    ComprehensionInfo,
+    ArgumentListInfo,
+    ComprehensionClauseInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -2425,6 +2428,13 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             };
+
+    TypeModel iterableComprehensionType(Comprehension that)
+        =>  let (firstClauseInfo = ComprehensionClauseInfo(that.clause))
+            ceylonTypes.iterableDeclaration.appliedType(null, javaList {
+                firstClauseInfo.typeModel,
+                firstClauseInfo.firstTypeModel
+            });
 }
 
 // TODO come up with a plan for this stuff
