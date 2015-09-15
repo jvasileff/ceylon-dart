@@ -159,10 +159,10 @@ class StatementTransformer(CompilationContext ctx)
                             TypeInfo(caseItem.type).typeModel;
                         };
                         thenStatement = DartBlock {
-                            concatenate (
+                            concatenate {
                                 replacementVariable,
                                 transformBlock(clause.block).first.statements
-                            );
+                            };
                         };
                         elseStatement = generateIf(clauses.rest);
                     };
@@ -262,41 +262,40 @@ class StatementTransformer(CompilationContext ctx)
             value [tempDefinition, conditionExpression, *replacements]
                 =   generateConditionExpression(conditions.first);
 
-            value result = [
-                tempDefinition,
-                DartIfStatement {
-                    conditionExpression;
-                    DartBlock {
-                        expand {
-                            // declare and define new variables, if any
-                            replacements.map(VariableTriple.dartDeclaration),
-                            replacements.map(VariableTriple.dartAssignment),
+            value result
+                =   [tempDefinition,
+                    DartIfStatement {
+                        conditionExpression;
+                        DartBlock {
+                            concatenate {
+                                // declare and define new variables, if any
+                                replacements.map(VariableTriple.dartDeclaration),
+                                replacements.map(VariableTriple.dartAssignment),
 
-                            // nest if statement for next condition, if any
-                            if (nonempty rest = conditions.rest) then
-                                generateIf(rest)
-                            else [
-                                // last condition; output if block statements
-                                if (exists doElseVariable)
-                                    then DartExpressionStatement {
-                                        DartAssignmentExpression {
-                                            doElseVariable;
-                                            DartAssignmentOperator.equal;
-                                            DartBooleanLiteral(false);
-                                        };
-                                    }
-                                else
-                                    null,
-                                *transformBlock {
-                                    that.ifClause.block;
-                                }.first.statements
-                            ]
-                        }.coalesced.sequence();
-                    };
-                    // TODO if outermost, and there is only one condition, optimize away
-                    //      the doElseVariable and put "else" block here.
-                }
-            ].coalesced.sequence();
+                                // nest if statement for next condition, if any
+                                if (nonempty rest = conditions.rest) then
+                                    generateIf(rest)
+                                else [
+                                    // last condition; output if block statements
+                                    if (exists doElseVariable) then
+                                        DartExpressionStatement {
+                                            DartAssignmentExpression {
+                                                doElseVariable;
+                                                DartAssignmentOperator.equal;
+                                                DartBooleanLiteral(false);
+                                            };
+                                        }
+                                    else null,
+                                    *transformBlock {
+                                        that.ifClause.block;
+                                    }.first.statements
+                                ].coalesced
+                            };
+                        };
+                        // TODO if outermost, and there is only one condition, optimize
+                        //      awaythe doElseVariable and put "else" block here.
+                    }].coalesced.sequence();
+
             assert(nonempty result);
 
             // wrap in a block to scope temp variable, if exists
@@ -313,12 +312,12 @@ class StatementTransformer(CompilationContext ctx)
                 DartIfStatement {
                     doElseVariable;
                     DartBlock {
-                        concatenate (
+                        concatenate {
                             elseReplacementVariable,
                             (switch (elseChild)
                              case (is Block) transformBlock(elseChild).first.statements
                              case (is IfElse) elseChild.transform(this))
-                        ).coalesced.sequence();
+                        };
                     };
                 };
             };
@@ -364,16 +363,16 @@ class StatementTransformer(CompilationContext ctx)
                     expand {
                         replacements.map(VariableTriple.dartDeclaration),
                         [DartBlock {
-                            concatenate(
+                            concatenate {
                                 [tempDefinition].coalesced,
                                 [DartIfStatement {
                                     conditionExpression;
                                     DartBreakStatement();
                                 }],
                                 replacements.map(VariableTriple.dartAssignment)
-                            );
+                            };
                         }]
-                    }.coalesced);
+                    });
 
         return
         [DartWhileStatement {

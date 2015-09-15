@@ -329,6 +329,10 @@ Result memoize<Result, Argument>
 }
 
 shared
+[Element*] concatenate<Element>({{Element*}*} iterables)
+    =>  [ for (it in iterables) for (val in it) val ];
+
+shared
 Type asserted<Type>(Anything item, String? message = null) {
     try {
         assert(is Type item);

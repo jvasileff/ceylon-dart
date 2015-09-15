@@ -264,10 +264,10 @@ class TopLevelVisitor(CompilationContext ctx)
                     if (exists implementsTypes)
                     then DartImplementsClause(implementsTypes)
                     else null;
-                concatenate(
+                concatenate {
                     members,
                     declarationsForCaptures
-                );
+                };
             };
         };
     }
@@ -418,10 +418,10 @@ class TopLevelVisitor(CompilationContext ctx)
                 null;
                 DartFormalParameterList {
                     true; false;
-                    concatenate (
+                    concatenate {
                         outerConstructorParameters,
                         captureConstructorParameters
-                    );
+                    };
                 };
                 null;
                 DartBlockFunctionBody {
@@ -475,13 +475,13 @@ class TopLevelVisitor(CompilationContext ctx)
                     if (exists satisifesTypes)
                     then DartImplementsClause(satisifesTypes)
                     else null;
-                concatenate(
+                concatenate {
                     outerFields,
                     captureFields,
                     constructors,
                     members,
                     bridgeFunctions
-                );
+                };
             };
         };
     }

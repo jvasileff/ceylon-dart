@@ -577,7 +577,7 @@ class BaseGenerator(CompilationContext ctx)
 
                 return
                 DartArgumentList {
-                    concatenate(
+                    concatenate {
                         thisArgument,
                         [for (i -> argument in arguments.indexed)
                             withLhs {
@@ -586,7 +586,7 @@ class BaseGenerator(CompilationContext ctx)
                                 () => argument.transform(expressionTransformer);
                             }
                         ]
-                    );
+                    };
                 };
             }
 
@@ -1755,7 +1755,7 @@ class BaseGenerator(CompilationContext ctx)
                         =>  dartTypes.expressionToOuter(container, capture))
                 else []; // No outers if no containing class or interface.
 
-        return concatenate(outerExpressions, captureExpressions);
+        return concatenate { outerExpressions, captureExpressions };
     }
 
     "Generate a condition expression for a MatchCase of a switch statement or expression."
