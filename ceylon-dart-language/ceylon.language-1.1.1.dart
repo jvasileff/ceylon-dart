@@ -823,7 +823,8 @@ abstract class Identifiable {
     static $dart$core.bool $equals([final Identifiable $this, $dart$core.Object that]) => (() {
         $dart$core.bool doElse$0 = true;
         if (that is Identifiable) {
-            Identifiable that$1 = that as Identifiable;
+            Identifiable that$1;
+            that$1 = that as Identifiable;
             doElse$0 = false;
             return $dart$core.identical($this, that$1);
         }
@@ -964,12 +965,13 @@ $dart$core.Object $package$max([Iterable values]) {
                 doElse$0 = false;
                 $dart$core.Object max = first;
                 while (true) {
-                    $dart$core.Object val;
-                    $dart$core.Object val$2 = it.next();
-                    if (val$2 is Finished) {
-                        break;
+                    $dart$core.Object val;{
+                        $dart$core.Object val$2 = it.next();
+                        if (val$2 is Finished) {
+                            break;
+                        }
+                        val = val$2;
                     }
-                    val = val$2;
                     if ((val as Comparable).largerThan(max)) {
                         max = val;
                     }
@@ -1002,12 +1004,13 @@ $dart$core.Object $package$min([Iterable values]) {
                 doElse$0 = false;
                 $dart$core.Object min = first;
                 while (true) {
-                    $dart$core.Object val;
-                    $dart$core.Object val$2 = it.next();
-                    if (val$2 is Finished) {
-                        break;
+                    $dart$core.Object val;{
+                        $dart$core.Object val$2 = it.next();
+                        if (val$2 is Finished) {
+                            break;
+                        }
+                        val = val$2;
                     }
-                    val = val$2;
                     if ((val as Comparable).smallerThan(min)) {
                         min = val;
                     }
@@ -1187,18 +1190,20 @@ Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable se
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;
-        $dart$core.Object first$3 = firstIter.next();
-        if (first$3 is Finished) {
-            break;
+        $dart$core.Object first;{
+            $dart$core.Object first$3 = firstIter.next();
+            if (first$3 is Finished) {
+                break;
+            }
+            first = first$3;
         }
-        first = first$3;
-        $dart$core.Object second;
-        $dart$core.Object second$4 = secondIter.next();
-        if (second$4 is Finished) {
-            break;
+        $dart$core.Object second;{
+            $dart$core.Object second$4 = secondIter.next();
+            if (second$4 is Finished) {
+                break;
+            }
+            second = second$4;
         }
-        second = second$4;
         if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return new Tuple.$withList([first, second], null);
         }
@@ -1212,18 +1217,20 @@ $dart$core.bool $package$everyPair([Callable selecting, Iterable firstIterable, 
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;
-        $dart$core.Object first$5 = firstIter.next();
-        if (first$5 is Finished) {
-            break;
+        $dart$core.Object first;{
+            $dart$core.Object first$5 = firstIter.next();
+            if (first$5 is Finished) {
+                break;
+            }
+            first = first$5;
         }
-        first = first$5;
-        $dart$core.Object second;
-        $dart$core.Object second$6 = secondIter.next();
-        if (second$6 is Finished) {
-            break;
+        $dart$core.Object second;{
+            $dart$core.Object second$6 = secondIter.next();
+            if (second$6 is Finished) {
+                break;
+            }
+            second = second$6;
         }
-        second = second$6;
         if (!Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return false;
         }
@@ -1237,18 +1244,20 @@ $dart$core.bool $package$anyPair([Callable selecting, Iterable firstIterable, It
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;
-        $dart$core.Object first$7 = firstIter.next();
-        if (first$7 is Finished) {
-            break;
+        $dart$core.Object first;{
+            $dart$core.Object first$7 = firstIter.next();
+            if (first$7 is Finished) {
+                break;
+            }
+            first = first$7;
         }
-        first = first$7;
-        $dart$core.Object second;
-        $dart$core.Object second$8 = secondIter.next();
-        if (second$8 is Finished) {
-            break;
+        $dart$core.Object second;{
+            $dart$core.Object second$8 = secondIter.next();
+            if (second$8 is Finished) {
+                break;
+            }
+            second = second$8;
         }
-        second = second$8;
         if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
             return true;
         }
@@ -1263,18 +1272,20 @@ $dart$core.Object $package$foldPairs([$dart$core.Object initial, Callable accumu
     Iterator secondIter = secondIterable.iterator();
     $dart$core.Object partial = initial;
     while (true) {
-        $dart$core.Object first;
-        $dart$core.Object first$9 = firstIter.next();
-        if (first$9 is Finished) {
-            break;
+        $dart$core.Object first;{
+            $dart$core.Object first$9 = firstIter.next();
+            if (first$9 is Finished) {
+                break;
+            }
+            first = first$9;
         }
-        first = first$9;
-        $dart$core.Object second;
-        $dart$core.Object second$10 = secondIter.next();
-        if (second$10 is Finished) {
-            break;
+        $dart$core.Object second;{
+            $dart$core.Object second$10 = secondIter.next();
+            if (second$10 is Finished) {
+                break;
+            }
+            second = second$10;
         }
-        second = second$10;
         partial = accumulating.$delegate$(partial, first, second);
     }
     return partial;
@@ -1686,7 +1697,8 @@ abstract class Set implements Collection {
     $dart$core.bool equals([$dart$core.Object that]);
     static $dart$core.bool $equals([final Set $this, $dart$core.Object that]) {
         if (that is Set) {
-            Set that$4 = that as Set;
+            Set that$4;
+            that$4 = that as Set;
             if (Integer.instance(that$4.size).equals(Integer.instance($this.size))) {{
                     $dart$core.Object element$6;
                     Iterator iterator$5 = $this.iterator();
@@ -1826,12 +1838,13 @@ $dart$core.Object $package$sum([Iterable values]) {
     }
     $dart$core.Object sum = first;
     while (true) {
-        $dart$core.Object val;
-        $dart$core.Object val$1 = it.next();
-        if (val$1 is Finished) {
-            break;
+        $dart$core.Object val;{
+            $dart$core.Object val$1 = it.next();
+            if (val$1 is Finished) {
+                break;
+            }
+            val = val$1;
         }
-        val = val$1;
         sum = (sum as Summable).plus(val);
     }
     return sum;
