@@ -17,7 +17,6 @@ import ceylon.ast.core {
     While,
     Condition,
     BooleanCondition,
-    ExistsOrNonemptyCondition,
     ClassDefinition,
     InterfaceDefinition,
     TypeAliasDefinition,
@@ -348,38 +347,33 @@ class StatementTransformer(CompilationContext ctx)
             }];
         }
 
-        value tests = that.conditions.conditions.flatMap((condition) {
-            switch (condition)
-            case (is BooleanCondition) {
-                return
-                [DartIfStatement {
-                    generateBooleanConditionExpression(condition, true);
-                    DartBreakStatement();
-                }];
-            }
-            case (is IsCondition) {
-                value [tempDefinition, conditionExpression, *replacements]
-                    =   generateIsConditionExpression(condition, true);
-
-                return expand {
-                    replacements.map(VariableTriple.dartDeclaration),
-                    [DartBlock {
-                        concatenate(
-                            [tempDefinition].coalesced,
-                            [DartIfStatement {
-                                conditionExpression;
-                                DartBreakStatement();
-                            }],
-                            replacements.map(VariableTriple.dartAssignment)
-                        );
-                    }]
-                }.coalesced;
-            }
-            case (is ExistsOrNonemptyCondition) {
-                throw CompilerBug(that,
-                    "ExistsOrNonemptyCondition in while not yet supported.");
-            }
-        });
+        value tests = that.conditions.conditions.flatMap((condition)
+            =>  let ([tempDefinition, conditionExpression, *replacements]
+                        =   generateConditionExpression(condition, true))
+                if (!exists tempDefinition) then
+                    // block for temp var scoping not required
+                    expand {
+                        replacements.map(VariableTriple.dartDeclaration),
+                        [DartIfStatement {
+                            conditionExpression;
+                            DartBreakStatement();
+                        }],
+                        replacements.map(VariableTriple.dartAssignment)
+                    }.coalesced
+                else
+                    expand {
+                        replacements.map(VariableTriple.dartDeclaration),
+                        [DartBlock {
+                            concatenate(
+                                [tempDefinition].coalesced,
+                                [DartIfStatement {
+                                    conditionExpression;
+                                    DartBreakStatement();
+                                }],
+                                replacements.map(VariableTriple.dartAssignment)
+                            );
+                        }]
+                    }.coalesced);
 
         return
         [DartWhileStatement {

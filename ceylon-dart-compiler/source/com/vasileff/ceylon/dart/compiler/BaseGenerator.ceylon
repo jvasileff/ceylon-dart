@@ -979,22 +979,15 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    ConditionCodeTuple generateConditionExpression(Condition condition) {
-        switch (condition)
-        case (is BooleanCondition) {
-            value conditionExpression=withLhsNative {
-                ceylonTypes.booleanType;
-                () => condition.condition.transform(expressionTransformer);
-            };
-            return [null, conditionExpression];
-        }
-        case (is IsCondition) {
-            return generateIsConditionExpression(condition);
-        }
-        case (is ExistsOrNonemptyCondition) {
-            return generateExistsOrNonemptyConditionExpression(condition);
-        }
-    }
+    ConditionCodeTuple generateConditionExpression
+            (Condition condition, Boolean negate = false)
+        =>  switch (condition)
+            case (is BooleanCondition)
+                [null, generateBooleanConditionExpression(condition, negate)]
+            case (is IsCondition)
+                generateIsConditionExpression(condition, negate)
+            case (is ExistsOrNonemptyCondition)
+                generateExistsOrNonemptyConditionExpression(condition, negate);
 
     shared
     ConditionCodeTuple generateExistsOrNonemptyConditionExpression(
