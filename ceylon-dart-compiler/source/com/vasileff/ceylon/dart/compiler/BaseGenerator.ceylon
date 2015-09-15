@@ -768,10 +768,8 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [[]|[[ValueModel,DartVariableDeclarationStatement,DartStatement]],
-    DartVariableDeclarationStatement?, DartExpression]
+    [DartVariableDeclarationStatement?, DartExpression, VariableTriple=]
     generateIsConditionExpression(IsCondition that, Boolean negate = false) {
-
         // IsCondition holds a TypedVariable that may
         // or may not include a specifier to define a new variable
 
@@ -802,7 +800,7 @@ class BaseGenerator(CompilationContext ctx)
         value expression = that.variable.specifier?.expression;
 
 
-        []|[[ValueModel,DartVariableDeclarationStatement,DartStatement]] replacements;
+        []|[VariableTriple] replacements;
         DartVariableDeclarationStatement? tempDefinition;
         DartExpression conditionExpression;
 
@@ -880,9 +878,11 @@ class BaseGenerator(CompilationContext ctx)
                     };
 
             replacements
-                =   [[variableDeclaration,
-                      replacementDeclaration,
-                      replacementDefinition]];
+                =   [VariableTriple {
+                        variableDeclaration;
+                        replacementDeclaration;
+                        replacementDefinition;
+                    }];
         }
         else {
             tempDefinition = null;
@@ -901,15 +901,15 @@ class BaseGenerator(CompilationContext ctx)
             replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
                                         that, variableDeclaration))
-                    then [[variableDeclaration, *r]]
+                    then [VariableTriple(variableDeclaration, *r)]
                     else [];
         }
 
-        return [replacements,
-                tempDefinition,
+        return [tempDefinition,
                 if (that.negated != negate)
                     then DartPrefixExpression("!", conditionExpression)
-                    else conditionExpression];
+                    else conditionExpression,
+                *replacements];
     }
 
     "Generate a replacement variable declaration and assignment for a narrowing operation
@@ -986,7 +986,7 @@ class BaseGenerator(CompilationContext ctx)
                 ceylonTypes.booleanType;
                 () => condition.condition.transform(expressionTransformer);
             };
-            return [[], null, conditionExpression];
+            return [null, conditionExpression];
         }
         case (is IsCondition) {
             return generateIsConditionExpression(condition);
@@ -1086,11 +1086,13 @@ class BaseGenerator(CompilationContext ctx)
                         };
 
                 value replacements
-                    =   [[variableDeclaration,
-                          replacementDeclaration,
-                          replacementDefinition]];
+                    =   VariableTriple {
+                            variableDeclaration;
+                            replacementDeclaration;
+                            replacementDefinition;
+                        };
 
-                return [replacements, tempVariableDeclaration, conditionExpression];
+                return [tempVariableDeclaration, conditionExpression, replacements];
             }
             else {
                 throw CompilerBug(that, "destructure not yet supported");
@@ -1130,10 +1132,10 @@ class BaseGenerator(CompilationContext ctx)
             value replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
                                 that, variableDeclaration))
-                    then [[variableDeclaration, *r]]
+                    then [VariableTriple(variableDeclaration, *r)]
                     else [];
 
-            return [replacements, null, conditionExpression];
+            return [null, conditionExpression, *replacements];
         }
     }
 

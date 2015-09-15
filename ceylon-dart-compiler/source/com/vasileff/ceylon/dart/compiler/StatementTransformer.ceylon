@@ -260,7 +260,7 @@ class StatementTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [replacements, tempDefinition, conditionExpression]
+            value [tempDefinition, conditionExpression, *replacements]
                 =   generateConditionExpression(conditions.first);
 
             value result = [
@@ -270,8 +270,8 @@ class StatementTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacements.map((r) => r[1]),
-                            replacements.map((r) => r[2]),
+                            replacements.map(VariableTriple.dartDeclaration),
+                            replacements.map(VariableTriple.dartAssignment),
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then
@@ -358,11 +358,11 @@ class StatementTransformer(CompilationContext ctx)
                 }];
             }
             case (is IsCondition) {
-                value [replacements, tempDefinition, conditionExpression]
+                value [tempDefinition, conditionExpression, *replacements]
                     =   generateIsConditionExpression(condition, true);
 
                 return expand {
-                    replacements.map((r) => r[1]),
+                    replacements.map(VariableTriple.dartDeclaration),
                     [DartBlock {
                         concatenate(
                             [tempDefinition].coalesced,
@@ -370,7 +370,7 @@ class StatementTransformer(CompilationContext ctx)
                                 conditionExpression;
                                 DartBreakStatement();
                             }],
-                            replacements.map((r) => r[2])
+                            replacements.map(VariableTriple.dartAssignment)
                         );
                     }]
                 }.coalesced;
@@ -780,7 +780,8 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     [DartStatement+] generateIsConditionAssertion(IsCondition that) {
-        value info = IsConditionInfo(that);
+        value info
+            =   IsConditionInfo(that);
 
         "The Ceylon source code for the condition"
         value errorMessage
@@ -789,40 +790,40 @@ class StatementTransformer(CompilationContext ctx)
                     .map(Token.text)
                     .reduce(plus) else "";
 
-        value [replacements, tempDefinition, conditionExpression]
+        value [tempDefinition, conditionExpression, *replacements]
             =   generateIsConditionExpression(that, true);
 
         value replacement
-            =   replacements.first else [null,null,null];
+            =   replacements.first;
 
-        variable [DartStatement?*] statements = [
-            replacement[1],
-            tempDefinition,
-            // if (!(x is T)) then throw new AssertionError(...)
-            DartIfStatement {
-                conditionExpression; // negated above
-                DartExpressionStatement {
-                    DartThrowExpression {
-                        DartInstanceCreationExpression {
-                            const = false;
-                            DartConstructorName {
-                                dartTypes.dartTypeName {
-                                    that;
-                                    ceylonTypes.assertionErrorType;
-                                    false; false;
+        variable [DartStatement?*] statements
+            =   [replacement?.dartDeclaration,
+                    tempDefinition,
+                    // if (!(x is T)) then throw new AssertionError(...)
+                    DartIfStatement {
+                        conditionExpression; // negated above
+                        DartExpressionStatement {
+                            DartThrowExpression {
+                                DartInstanceCreationExpression {
+                                    const = false;
+                                    DartConstructorName {
+                                        dartTypes.dartTypeName {
+                                            that;
+                                            ceylonTypes.assertionErrorType;
+                                            false; false;
+                                        };
+                                    };
+                                    DartArgumentList {
+                                        [DartSimpleStringLiteral {
+                                            "Violated: ``errorMessage``";
+                                        }];
+                                    };
                                 };
                             };
-                            DartArgumentList {
-                                [DartSimpleStringLiteral {
-                                    "Violated: ``errorMessage``";
-                                }];
-                            };
                         };
-                    };
-                };
-            },
-            replacement[2]
-        ];
+                    },
+                    replacement?.dartAssignment
+                ];
 
         if (tempDefinition exists) {
             // scope the temp variable in a block

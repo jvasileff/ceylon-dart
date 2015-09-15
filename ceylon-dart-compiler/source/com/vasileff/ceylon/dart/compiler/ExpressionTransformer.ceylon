@@ -1954,22 +1954,24 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 "All of the replacement declarations."
                 value dartVariableDeclarations
-                    =   conditionExpressionParts.flatMap((p) => p[0]).map((r) => r[1]);
+                    =   conditionExpressionParts
+                            .flatMap((p) => p[2...])
+                            .map(VariableTriple.dartDeclaration);
 
                 "All of the tests and assignments, serialized."
                 value dartTestsAndAssignments
                     =   conditionExpressionParts.flatMap {
                             (parts) => {
                                 // tmp variable definition
-                                parts[1],
+                                parts[0],
                                 DartIfStatement {
                                     condition = DartPrefixExpression {
-                                        "!"; parts[2];
+                                        "!"; parts[1];
                                     };
                                     DartContinueStatement();
                                 },
-                                // assign values (replacement definitions)
-                                *parts[0].map((r) => r[2])
+                                // assign values (for replacements)
+                                *parts[2...].map(VariableTriple.dartAssignment)
                             }.coalesced;
                         };
 
@@ -2298,7 +2300,7 @@ class ExpressionTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [replacements, tempDefinition, conditionExpression]
+            value [tempDefinition, conditionExpression, *replacements]
                 =   generateConditionExpression(conditions.first);
 
             value result = [
@@ -2308,8 +2310,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacements.map((r) => r[1]),
-                            replacements.map((r) => r[2]),
+                            replacements.map(VariableTriple.dartDeclaration),
+                            replacements.map(VariableTriple.dartAssignment),
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then

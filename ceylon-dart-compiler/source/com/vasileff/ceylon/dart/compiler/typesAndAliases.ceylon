@@ -42,16 +42,15 @@ shared alias DeclarationModelType
         | ValueModel
         | SetterModel;
 
+shared class VariableTriple(
+    shared ValueModel declarationModel,
+    shared DartVariableDeclarationStatement dartDeclaration,
+    shared DartStatement dartAssignment) {}
+
 "Tuple containing:
 
- - replacementDeclarationModels,
- - replacementDeclarations
+ - replacement variables,
  - tempDefinition
- - conditionExpression
- - replacementDefinitions"
+ - conditionExpression"
 shared alias ConditionCodeTuple
-    =>  [
-            [[ValueModel, DartVariableDeclarationStatement, DartStatement]*],
-            DartVariableDeclarationStatement?,
-            DartExpression
-        ];
+    =>  [DartVariableDeclarationStatement?, DartExpression, VariableTriple*];
