@@ -52,7 +52,8 @@ class WhileTests() {
                 void $package$run() {
                     $dart$core.Object isv = $ceylon$language.Integer.instance(0);
                     while (true) {
-                        $dart$core.int i;{
+                        $dart$core.int i;
+                        {
                             $dart$core.Object i$0 = isv;
                             if (!(i$0 is $ceylon$language.Integer)) {
                                 break;

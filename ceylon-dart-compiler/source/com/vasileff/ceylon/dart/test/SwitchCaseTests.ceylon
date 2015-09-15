@@ -69,7 +69,8 @@ class SwitchCaseTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $dart$core.Object si = $ceylon$language.String.instance("");{
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    {
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
                             $dart$core.String si$1;
@@ -113,7 +114,8 @@ class SwitchCaseTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $dart$core.Object si = $ceylon$language.String.instance("");{
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    {
                         $dart$core.Object switch$0 = si;
                         if (switch$0 is $ceylon$language.String) {
                             $dart$core.String si$1;
@@ -157,7 +159,8 @@ class SwitchCaseTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $dart$core.Object si = $ceylon$language.String.instance("");{
+                    $dart$core.Object si = $ceylon$language.String.instance("");
+                    {
                         $dart$core.Object newVar = si;
                         if (newVar is $ceylon$language.String) {
                             $dart$core.String newVar$0;

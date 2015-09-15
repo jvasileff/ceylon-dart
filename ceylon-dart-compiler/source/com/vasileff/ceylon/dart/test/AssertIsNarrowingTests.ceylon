@@ -104,7 +104,8 @@ class AssertIsNarrowingTests() {
 
                 void $package$assertions() {
                     $dart$core.Object obj = $ceylon$language.Float.instance(1.0);
-                    $dart$core.double f;{
+                    $dart$core.double f;
+                    {
                         $dart$core.Object f$0 = obj;
                         if (!(f$0 is $ceylon$language.Float)) {
                             throw new $ceylon$language.AssertionError("Violated: is Float f = obj");
@@ -185,7 +186,8 @@ class AssertIsNarrowingTests() {
                         throw new $ceylon$language.AssertionError("Violated: exists s");
                     }
                     $ceylon$language.print($ceylon$language.String.instance(s));
-                    $dart$core.String s2;{
+                    $dart$core.String s2;
+                    {
                         $dart$core.String tmp$0 = true ? s : null;
                         if (tmp$0 == null) {
                             throw new $ceylon$language.AssertionError("Violated: exists s2 = true then s");
@@ -219,7 +221,8 @@ class AssertIsNarrowingTests() {
 
                 void $package$run() {
                     $ceylon$language.Sequential ints = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)], null);
-                    $ceylon$language.Sequence ints2;{
+                    $ceylon$language.Sequence ints2;
+                    {
                         $ceylon$language.Sequential tmp$0 = ints;
                         if (!(tmp$0 is $ceylon$language.Sequence)) {
                             throw new $ceylon$language.AssertionError("Violated: nonempty ints2 = ints");

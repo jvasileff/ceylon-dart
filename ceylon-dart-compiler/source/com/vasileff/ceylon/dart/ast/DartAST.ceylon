@@ -43,7 +43,7 @@ class DartBreakStatement(label = null)
             writer.write(" ");
             label.write(writer);
         }
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -143,7 +143,7 @@ class DartContinueStatement(label = null)
             writer.write(" ");
             label.write(writer);
         }
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -192,7 +192,7 @@ class DartImportDirective(uri, prefix)
             writer.write(" as ");
             prefix.write(writer);
         }
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -212,7 +212,7 @@ class DartReturnStatement(expression = null)
             writer.write(" ");
             expression.write(writer);
         }
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -266,7 +266,7 @@ class DartExpressionStatement(expression)
         writer.writeLine();
         writer.writeIndent();
         expression.write(writer);
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -655,7 +655,7 @@ class DartVariableDeclarationStatement(variableList)
         writer.writeLine();
         writer.writeIndent();
         variableList.write(writer);
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -746,7 +746,7 @@ class DartFunctionDeclaration(
         name.write(writer);
         functionExpression.write(writer);
         if (functionExpression.body is DartExpressionFunctionBody) {
-            writer.write(";");
+            writer.endStatement();
         }
         writer.writeLine();
     }
@@ -1089,7 +1089,7 @@ class DartConstructorDeclaration
             body.write(writer);
         }
         else {
-            writer.write(";");
+            writer.endStatement();
         }
     }
 }
@@ -1308,7 +1308,7 @@ class DartFieldDeclaration(static, fieldList)
             writer.write("static ");
         }
         fieldList.write(writer);
-        writer.write(";");
+        writer.endStatement();
     }
 }
 
@@ -1354,11 +1354,11 @@ class DartMethodDeclaration(
             writer.write(" ");
             body.write(writer);
             if (body is DartExpressionFunctionBody) {
-                writer.write(";");
+                writer.endStatement();
             }
         }
         else {
-            writer.write(";");
+            writer.endStatement();
         }
     }
 }

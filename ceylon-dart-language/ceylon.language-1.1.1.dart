@@ -137,7 +137,8 @@ abstract class Collection implements Iterable {
                         return true;
                     }
                 }
-            }{
+            }
+            {
                 return false;
             }
         }
@@ -179,7 +180,8 @@ abstract class Correspondence {
                 if (!$this.defines(key)) {
                     return false;
                 }
-            }{
+            }
+            {
                 return true;
             }
         }
@@ -193,7 +195,8 @@ abstract class Correspondence {
                 if ($this.defines(key)) {
                     return true;
                 }
-            }{
+            }
+            {
                 return false;
             }
         }
@@ -263,7 +266,8 @@ $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondI
     Iterator secondIter = secondIterable.iterator();
     while (true) {
         $dart$core.Object first = firstIter.next();
-        $dart$core.Object second = secondIter.next();{
+        $dart$core.Object second = secondIter.next();
+        {
             $dart$core.bool doElse$1 = true;
             if (!(first is Finished)) {
                 if (!(second is Finished)) {
@@ -283,7 +287,8 @@ $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondI
 $dart$core.bool corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) => $package$corresponding(firstIterable, secondIterable, comparing);
 
 $dart$core.int $package$count([Iterable values]) {
-    $dart$core.int count = 0;{
+    $dart$core.int count = 0;
+    {
         $dart$core.Object element$1;
         Iterator iterator$0 = values.iterator();
         while ((element$1 = iterator$0.next()) is !Finished) {
@@ -379,7 +384,8 @@ Iterable functionIterable([Callable f]) => $package$functionIterable(f);
 
 $dart$core.String $package$dartJoin([$dart$core.String val, Iterable objects]) {
     $dart$core.String result = "";
-    $dart$core.bool first = true;{
+    $dart$core.bool first = true;
+    {
         $dart$core.Object element$1;
         Iterator iterator$0 = objects.iterator();
         while ((element$1 = iterator$0.next()) is !Finished) {
@@ -871,7 +877,8 @@ class loop$$anonymous$0_$$anonymous$1_ implements Iterator {
     }
     $dart$core.Object current;
     $dart$core.Object next() {{
-            $dart$core.bool doElse$0 = true;{
+            $dart$core.bool doElse$0 = true;
+            {
                 $dart$core.Object result$1 = current;
                 if (!(result$1 is Finished)) {
                     $dart$core.Object result;
@@ -956,8 +963,10 @@ Callable $package$loop([$dart$core.Object first]) => new dart$Callable(([Callabl
 Callable loop([$dart$core.Object first]) => $package$loop(first);
 
 $dart$core.Object $package$max([Iterable values]) {
-    Iterator it = values.iterator();{
-        $dart$core.bool doElse$0 = true;{
+    Iterator it = values.iterator();
+    {
+        $dart$core.bool doElse$0 = true;
+        {
             $dart$core.Object first$1 = it.next();
             if (!(first$1 is Finished)) {
                 $dart$core.Object first;
@@ -965,7 +974,8 @@ $dart$core.Object $package$max([Iterable values]) {
                 doElse$0 = false;
                 $dart$core.Object max = first;
                 while (true) {
-                    $dart$core.Object val;{
+                    $dart$core.Object val;
+                    {
                         $dart$core.Object val$2 = it.next();
                         if (val$2 is Finished) {
                             break;
@@ -995,8 +1005,10 @@ $dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size
 $dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
 
 $dart$core.Object $package$min([Iterable values]) {
-    Iterator it = values.iterator();{
-        $dart$core.bool doElse$0 = true;{
+    Iterator it = values.iterator();
+    {
+        $dart$core.bool doElse$0 = true;
+        {
             $dart$core.Object first$1 = it.next();
             if (!(first$1 is Finished)) {
                 $dart$core.Object first;
@@ -1004,7 +1016,8 @@ $dart$core.Object $package$min([Iterable values]) {
                 doElse$0 = false;
                 $dart$core.Object min = first;
                 while (true) {
-                    $dart$core.Object val;{
+                    $dart$core.Object val;
+                    {
                         $dart$core.Object val$2 = it.next();
                         if (val$2 is Finished) {
                             break;
@@ -1093,11 +1106,13 @@ class mapPairs$iterable_$iterator$iterator_ implements Iterator {
     Iterator firstIter;
     Iterator secondIter;
     $dart$core.Object next() {{
-            $dart$core.bool doElse$0 = true;{
+            $dart$core.bool doElse$0 = true;
+            {
                 $dart$core.Object first$1 = firstIter.next();
                 if (!(first$1 is Finished)) {
                     $dart$core.Object first;
-                    first = first$1;{
+                    first = first$1;
+                    {
                         $dart$core.Object second$2 = secondIter.next();
                         if (!(second$2 is Finished)) {
                             $dart$core.Object second;
@@ -1190,14 +1205,16 @@ Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable se
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;{
+        $dart$core.Object first;
+        {
             $dart$core.Object first$3 = firstIter.next();
             if (first$3 is Finished) {
                 break;
             }
             first = first$3;
         }
-        $dart$core.Object second;{
+        $dart$core.Object second;
+        {
             $dart$core.Object second$4 = secondIter.next();
             if (second$4 is Finished) {
                 break;
@@ -1217,14 +1234,16 @@ $dart$core.bool $package$everyPair([Callable selecting, Iterable firstIterable, 
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;{
+        $dart$core.Object first;
+        {
             $dart$core.Object first$5 = firstIter.next();
             if (first$5 is Finished) {
                 break;
             }
             first = first$5;
         }
-        $dart$core.Object second;{
+        $dart$core.Object second;
+        {
             $dart$core.Object second$6 = secondIter.next();
             if (second$6 is Finished) {
                 break;
@@ -1244,14 +1263,16 @@ $dart$core.bool $package$anyPair([Callable selecting, Iterable firstIterable, It
     Iterator firstIter = firstIterable.iterator();
     Iterator secondIter = secondIterable.iterator();
     while (true) {
-        $dart$core.Object first;{
+        $dart$core.Object first;
+        {
             $dart$core.Object first$7 = firstIter.next();
             if (first$7 is Finished) {
                 break;
             }
             first = first$7;
         }
-        $dart$core.Object second;{
+        $dart$core.Object second;
+        {
             $dart$core.Object second$8 = secondIter.next();
             if (second$8 is Finished) {
                 break;
@@ -1272,14 +1293,16 @@ $dart$core.Object $package$foldPairs([$dart$core.Object initial, Callable accumu
     Iterator secondIter = secondIterable.iterator();
     $dart$core.Object partial = initial;
     while (true) {
-        $dart$core.Object first;{
+        $dart$core.Object first;
+        {
             $dart$core.Object first$9 = firstIter.next();
             if (first$9 is Finished) {
                 break;
             }
             first = first$9;
         }
-        $dart$core.Object second;{
+        $dart$core.Object second;
+        {
             $dart$core.Object second$10 = secondIter.next();
             if (second$10 is Finished) {
                 break;
@@ -1362,8 +1385,10 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
     }
     $dart$core.int index = 0;
     $dart$core.int max = $package$runtime.minIntegerValue ~/ (radix as $dart$core.int);
-    $dart$core.bool negative;{
-        $dart$core.bool doElse$0 = true;{
+    $dart$core.bool negative;
+    {
+        $dart$core.bool doElse$0 = true;
+        {
             Character tmp$1 = String.instance(string).get(Integer.instance(index)) as Character;
             if (!(tmp$1 == null)) {
                 Character char;
@@ -1389,8 +1414,10 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
     $dart$core.int result = 0;
     $dart$core.int digitIndex = 0;
     while (index < length) {
-        Character ch;{
-            $dart$core.bool doElse$2 = true;{
+        Character ch;
+        {
+            $dart$core.bool doElse$2 = true;
+            {
                 Character tmp$3 = String.instance(string).get(Integer.instance(index)) as Character;
                 if (!(tmp$3 == null)) {
                     Character char;
@@ -1404,7 +1431,8 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
             }
         }
         if ((Integer.instance(index + 1).equals(Integer.instance(length)) && Integer.instance(radix as $dart$core.int).equals(Integer.instance(10))) && String.instance("kMGTP").contains(ch)) {{
-                $dart$core.bool doElse$4 = true;{
+                $dart$core.bool doElse$4 = true;
+                {
                     $dart$core.int tmp$5 = $package$parseIntegerExponent(ch);
                     if (!(tmp$5 == null)) {
                         $dart$core.int exp;
@@ -1424,7 +1452,8 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
                 }
             }
         } else {
-            $dart$core.bool doElse$6 = true;{
+            $dart$core.bool doElse$6 = true;
+            {
                 $dart$core.int tmp$7 = $package$parseDigit(ch, radix as $dart$core.int);
                 if (!(tmp$7 == null)) {
                     $dart$core.int digit;
@@ -1536,7 +1565,8 @@ $dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.St
 $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
 
 $dart$core.Object $package$product([Iterable values]) {
-    $dart$core.Object product = values.first;{
+    $dart$core.Object product = values.first;
+    {
         $dart$core.Object element$1;
         Iterator iterator$0 = values.rest.iterator();
         while ((element$1 = iterator$0.next()) is !Finished) {
@@ -1574,7 +1604,8 @@ abstract class Scalable {
     $dart$core.Object scale([$dart$core.Object scalar]);
 }
 Sequence $package$sequence([Iterable elements]) {{
-        $dart$core.bool doElse$0 = true;{
+        $dart$core.bool doElse$0 = true;
+        {
             Sequential tmp$1 = elements.sequence();
             if (tmp$1 is Sequence) {
                 Sequence sequence;
@@ -1675,7 +1706,8 @@ abstract class Set implements Collection {
                 if (!$this.contains(element)) {
                     return false;
                 }
-            }{
+            }
+            {
                 return true;
             }
         }
@@ -1689,7 +1721,8 @@ abstract class Set implements Collection {
                 if (!set.contains(element)) {
                     return false;
                 }
-            }{
+            }
+            {
                 return true;
             }
         }
@@ -1707,7 +1740,8 @@ abstract class Set implements Collection {
                         if (!that$4.contains(element)) {
                             return false;
                         }
-                    }{
+                    }
+                    {
                         return true;
                     }
                 }
@@ -1717,7 +1751,8 @@ abstract class Set implements Collection {
     }
     $dart$core.int get hashCode;
     static $dart$core.int $get$hash([final Set $this]) {
-        $dart$core.int hashCode = 0;{
+        $dart$core.int hashCode = 0;
+        {
             $dart$core.Object element$8;
             Iterator iterator$7 = $this.iterator();
             while ((element$8 = iterator$7.next()) is !Finished) {
@@ -1829,7 +1864,8 @@ Range span([$dart$core.Object first, $dart$core.Object last]) => $package$span(f
 
 $dart$core.Object $package$sum([Iterable values]) {
     Iterator it = values.iterator();
-    $dart$core.Object first;{
+    $dart$core.Object first;
+    {
         $dart$core.Object first$0 = it.next();
         if (first$0 is Finished) {
             throw new AssertionError("Violated: !is Finished first = it.next()");
@@ -1838,7 +1874,8 @@ $dart$core.Object $package$sum([Iterable values]) {
     }
     $dart$core.Object sum = first;
     while (true) {
-        $dart$core.Object val;{
+        $dart$core.Object val;
+        {
             $dart$core.Object val$1 = it.next();
             if (val$1 is Finished) {
                 break;

@@ -4,6 +4,9 @@ class CodeWriter(
         shared variable Integer indentLevel = 0,
         shared variable Integer indentAmount = 4) {
 
+    variable
+    Boolean lastWasEndStatement = false;
+
     shared
     CodeWriter indentPlus() {
         indentLevel++;
@@ -21,12 +24,14 @@ class CodeWriter(
         write(" ".repeat(
                 indentLevel *
                 indentAmount));
+        lastWasEndStatement = false;
         return this;
     }
 
     shared
     CodeWriter write(String s) {
         append(s);
+        lastWasEndStatement = false;
         return this;
     }
 
@@ -34,13 +39,26 @@ class CodeWriter(
     CodeWriter writeLine(String s = "") {
         write(s);
         write("\n");
+        lastWasEndStatement = false;
+        return this;
+    }
+
+    shared
+    CodeWriter endStatement() {
+        write(";");
+        lastWasEndStatement = true;
         return this;
     }
 
     shared
     CodeWriter startBlock() {
+        if (lastWasEndStatement) {
+            writeLine();
+            writeIndent();
+        }
         write("{");
         indentPlus();
+        lastWasEndStatement = false;
         return this;
     }
 
@@ -50,6 +68,7 @@ class CodeWriter(
         writeLine();
         writeIndent();
         write("}");
+        lastWasEndStatement = true;
         return this;
     }
 }
