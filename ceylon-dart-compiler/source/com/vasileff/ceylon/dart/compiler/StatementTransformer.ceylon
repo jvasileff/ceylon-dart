@@ -33,7 +33,8 @@ import ceylon.ast.core {
     CaseClause,
     IsCase,
     MatchCase,
-    ElseCaseClause
+    ElseCaseClause,
+    ExistsOrNonemptyCondition
 }
 import ceylon.collection {
     LinkedList
@@ -72,7 +73,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueSpecificationInfo,
     UnspecifiedVariableInfo,
     ValueDeclarationInfo,
-    IsConditionInfo,
     ForFailInfo,
     ElseClauseInfo,
     TypeInfo,
@@ -724,14 +724,12 @@ class StatementTransformer(CompilationContext ctx)
         return [*that.conditions.conditions.flatMap(generateConditionAssertion)];
     }
 
-    [DartStatement+] generateConditionAssertion(Condition that) {
-        "Only IsConditions supported"
-        assert (is IsCondition|BooleanCondition that);
-
-        return switch (that)
-            case (is IsCondition) generateIsConditionAssertion(that)
-            case (is BooleanCondition) [generateBooleanConditionAssertion(that)];
-    }
+    [DartStatement+] generateConditionAssertion(Condition that)
+        =>  switch (that)
+            case (is BooleanCondition)
+                [generateBooleanConditionAssertion(that)]
+            case (is IsCondition | ExistsOrNonemptyCondition)
+                generateIsConditionAssertion(that);
 
     DartStatement generateBooleanConditionAssertion(BooleanCondition that) {
         value info = NodeInfo(that);
@@ -772,9 +770,11 @@ class StatementTransformer(CompilationContext ctx)
         };
     }
 
-    [DartStatement+] generateIsConditionAssertion(IsCondition that) {
+    [DartStatement+] generateIsConditionAssertion
+            (IsCondition | ExistsOrNonemptyCondition that) {
+
         value info
-            =   IsConditionInfo(that);
+            =   NodeInfo(that);
 
         "The Ceylon source code for the condition"
         value errorMessage
@@ -784,13 +784,18 @@ class StatementTransformer(CompilationContext ctx)
                     .reduce(plus) else "";
 
         value [tempDefinition, conditionExpression, *replacements]
-            =   generateIsConditionExpression(that, true);
+            =   switch (that)
+                case (is IsCondition)
+                    generateIsConditionExpression(that, true)
+                case (is ExistsOrNonemptyCondition)
+                    generateExistsOrNonemptyConditionExpression(that, true);
 
         value replacement
             =   replacements.first;
 
-        variable [DartStatement?*] statements
-            =   [replacement?.dartDeclaration,
+        value statements
+            =   [
+                    replacement?.dartDeclaration,
                     tempDefinition,
                     // if (!(x is T)) then throw new AssertionError(...)
                     DartIfStatement {
@@ -818,14 +823,17 @@ class StatementTransformer(CompilationContext ctx)
                     replacement?.dartAssignment
                 ];
 
-        if (tempDefinition exists) {
-            // scope the temp variable in a block
-            statements = [
-                statements[0], // the variable declaration
-                DartBlock(statements[1:3].coalesced.sequence())];
-        }
+        value result
+            =   if (tempDefinition exists) then
+                    // scope the temp variable in a block
+                    [
+                        statements[0], // the variable declaration
+                        DartBlock(statements[1...].coalesced.sequence())
+                    ].coalesced.sequence()
+                 else
+                    statements.coalesced.sequence();
 
-        assert (nonempty result = statements.coalesced.sequence());
+        assert (nonempty result);
         return result;
     }
 

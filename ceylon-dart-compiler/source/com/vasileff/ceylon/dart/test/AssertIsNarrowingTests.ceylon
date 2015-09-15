@@ -161,4 +161,82 @@ class AssertIsNarrowingTests() {
              """;
         };
     }
+
+    shared test
+    void assertExists() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String? s = "";
+                    assert(exists s);
+                    print(s);
+                    assert(exists s2 = true then s);
+                    print(s2);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.String s = "";
+                    if (s == null) {
+                        throw new $ceylon$language.AssertionError("Violated: exists s");
+                    }
+                    $ceylon$language.print($ceylon$language.String.instance(s));
+                    $dart$core.String s2;{
+                        $dart$core.String tmp$0 = true ? s : null;
+                        if (tmp$0 == null) {
+                            throw new $ceylon$language.AssertionError("Violated: exists s2 = true then s");
+                        }
+                        s2 = tmp$0;
+                    }
+                    $ceylon$language.print($ceylon$language.String.instance(s2));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void assertNonempty() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    [Integer*] ints = [1];
+                    assert(nonempty ints2 = ints);
+                    print(ints2);
+                    assert(nonempty ints);
+                    print(ints);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Sequential ints = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)], null);
+                    $ceylon$language.Sequence ints2;{
+                        $ceylon$language.Sequential tmp$0 = ints;
+                        if (!(tmp$0 is $ceylon$language.Sequence)) {
+                            throw new $ceylon$language.AssertionError("Violated: nonempty ints2 = ints");
+                        }
+                        ints2 = tmp$0 as $ceylon$language.Sequence;
+                    }
+                    $ceylon$language.print(ints2);
+                    $ceylon$language.Sequence ints$1;
+                    if (!(ints is $ceylon$language.Sequence)) {
+                        throw new $ceylon$language.AssertionError("Violated: nonempty ints");
+                    }
+                    ints$1 = ints as $ceylon$language.Sequence;
+                    $ceylon$language.print(ints$1);
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
 }
