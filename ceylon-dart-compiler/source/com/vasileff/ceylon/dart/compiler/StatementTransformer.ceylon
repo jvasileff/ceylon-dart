@@ -260,8 +260,7 @@ class StatementTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [_, replacementDeclarations, tempDefinition,
-                    conditionExpression, replacementDefinitions]
+            value [replacements, tempDefinition, conditionExpression]
                 =   generateConditionExpression(conditions.first);
 
             value result = [
@@ -271,8 +270,8 @@ class StatementTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacementDeclarations,
-                            replacementDefinitions,
+                            replacements.map((r) => r[1]),
+                            replacements.map((r) => r[2]),
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then
@@ -359,13 +358,11 @@ class StatementTransformer(CompilationContext ctx)
                 }];
             }
             case (is IsCondition) {
-                value [_, replacementDeclaration, tempDefinition,
-                        conditionExpression, replacementDefinition]
+                value [replacements, tempDefinition, conditionExpression]
                     =   generateIsConditionExpression(condition, true);
-// FIXME WIP combine with existsornonempty
-//           and make sure decl and def can always be split.
+
                 return expand {
-                    replacementDeclaration,
+                    replacements.map((r) => r[1]),
                     [DartBlock {
                         concatenate(
                             [tempDefinition].coalesced,
@@ -373,7 +370,7 @@ class StatementTransformer(CompilationContext ctx)
                                 conditionExpression;
                                 DartBreakStatement();
                             }],
-                            replacementDefinition
+                            replacements.map((r) => r[2])
                         );
                     }]
                 }.coalesced;
@@ -792,12 +789,14 @@ class StatementTransformer(CompilationContext ctx)
                     .map(Token.text)
                     .reduce(plus) else "";
 
-        value [_, replacementDeclaration, tempDefinition,
-                conditionExpression, replacementDefinition]
+        value [replacements, tempDefinition, conditionExpression]
             =   generateIsConditionExpression(that, true);
 
+        value replacement
+            =   replacements.first else [null,null,null];
+
         variable [DartStatement?*] statements = [
-            replacementDeclaration.first,
+            replacement[1],
             tempDefinition,
             // if (!(x is T)) then throw new AssertionError(...)
             DartIfStatement {
@@ -822,13 +821,13 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 };
             },
-            replacementDefinition.first
+            replacement[2]
         ];
 
         if (tempDefinition exists) {
             // scope the temp variable in a block
             statements = [
-                replacementDeclaration.first,
+                statements[0], // the variable declaration
                 DartBlock(statements[1:3].coalesced.sequence())];
         }
 

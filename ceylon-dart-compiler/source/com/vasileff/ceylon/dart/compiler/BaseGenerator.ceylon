@@ -768,8 +768,8 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [[]|[ValueModel], []|[DartVariableDeclarationStatement],
-    DartVariableDeclarationStatement?, DartExpression, []|[DartStatement]]
+    [[]|[[ValueModel,DartVariableDeclarationStatement,DartStatement]],
+    DartVariableDeclarationStatement?, DartExpression]
     generateIsConditionExpression(IsCondition that, Boolean negate = false) {
 
         // IsCondition holds a TypedVariable that may
@@ -801,11 +801,10 @@ class BaseGenerator(CompilationContext ctx)
         "The expression node if defining a new variable"
         value expression = that.variable.specifier?.expression;
 
-        []|[ValueModel] replacementModel;
-        []|[DartVariableDeclarationStatement] replacementDeclaration;
+
+        []|[[ValueModel,DartVariableDeclarationStatement,DartStatement]] replacements;
         DartVariableDeclarationStatement? tempDefinition;
         DartExpression conditionExpression;
-        []|[DartStatement] replacementDefinition;
 
         // new variable, or narrowing existing?
         if (exists expression) {
@@ -824,20 +823,19 @@ class BaseGenerator(CompilationContext ctx)
                     dartTypes.createTempName(variableDeclaration));
 
             // 1. declare the new variable
-            replacementModel = [variableDeclaration];
-            replacementDeclaration =
-            [DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    keyword = null;
-                    dartTypes.dartTypeNameForDeclaration {
-                        that;
-                        variableDeclaration;
+            value replacementDeclaration
+                =   DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                that;
+                                variableDeclaration;
+                            };
+                            [DartVariableDeclaration {
+                                variableIdentifier;
+                            }];
+                        };
                     };
-                    [DartVariableDeclaration {
-                        variableIdentifier;
-                    }];
-                };
-            }];
 
             // 2. evaluate to tmp variable
             tempDefinition =
@@ -861,25 +859,30 @@ class BaseGenerator(CompilationContext ctx)
                     that, tempIdentifier, isType);
 
             // 4. set replacement variable
-            replacementDefinition =
-            [DartExpressionStatement {
-                DartAssignmentExpression {
-                    variableIdentifier;
-                    DartAssignmentOperator.equal;
-                    withLhs {
-                        null;
-                        variableDeclaration;
-                        () => withBoxing {
-                            that;
-                            // as noted above, tmpVariable may be erased. Maybe
-                            // when narrowing optionals like String?.
-                            expressionType;
-                            null;
-                            tempIdentifier;
+            value replacementDefinition
+                =   DartExpressionStatement {
+                        DartAssignmentExpression {
+                            variableIdentifier;
+                            DartAssignmentOperator.equal;
+                            withLhs {
+                                null;
+                                variableDeclaration;
+                                () => withBoxing {
+                                    that;
+                                    // as noted above, tmpVariable may be erased. Maybe
+                                    // when narrowing optionals like String?.
+                                    expressionType;
+                                    null;
+                                    tempIdentifier;
+                                };
+                            };
                         };
                     };
-                };
-            }];
+
+            replacements
+                =   [[variableDeclaration,
+                      replacementDeclaration,
+                      replacementDefinition]];
         }
         else {
             tempDefinition = null;
@@ -895,26 +898,18 @@ class BaseGenerator(CompilationContext ctx)
             conditionExpression
                 =   generateIsExpression(that, originalIdentifier, isType);
 
-            if (nonempty r = generateReplacementVariableDefinition(
-                    that, variableDeclaration)) {
-                replacementModel = [variableDeclaration];
-                replacementDeclaration = [r[0]];
-                replacementDefinition = [r[1]];
-            }
-            else {
-                replacementModel = [];
-                replacementDeclaration = [];
-                replacementDefinition = [];
-            }
+            replacements
+                =   if (nonempty r = generateReplacementVariableDefinition(
+                                        that, variableDeclaration))
+                    then [[variableDeclaration, *r]]
+                    else [];
         }
 
-        return [replacementModel,
-                replacementDeclaration,
+        return [replacements,
                 tempDefinition,
                 if (that.negated != negate)
                     then DartPrefixExpression("!", conditionExpression)
-                    else conditionExpression,
-                replacementDefinition];
+                    else conditionExpression];
     }
 
     "Generate a replacement variable declaration and assignment for a narrowing operation
@@ -991,7 +986,7 @@ class BaseGenerator(CompilationContext ctx)
                 ceylonTypes.booleanType;
                 () => condition.condition.transform(expressionTransformer);
             };
-            return [[], [], null, conditionExpression, []];
+            return [[], null, conditionExpression];
         }
         case (is IsCondition) {
             return generateIsConditionExpression(condition);
@@ -1090,13 +1085,12 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
 
-                return [
-                    [variableDeclaration],
-                    [replacementDeclaration],
-                    tempVariableDeclaration,
-                    conditionExpression,
-                    [replacementDefinition]
-                ];
+                value replacements
+                    =   [[variableDeclaration,
+                          replacementDeclaration,
+                          replacementDefinition]];
+
+                return [replacements, tempVariableDeclaration, conditionExpression];
             }
             else {
                 throw CompilerBug(that, "destructure not yet supported");
@@ -1133,29 +1127,13 @@ class BaseGenerator(CompilationContext ctx)
             // We could *almost* just delete this for "exists". On dart, intersecting
             // with Object never changes the type since numbers, etc. can be null.
             // But... the type *does* change on `!exists`, since null erases to object!
+            value replacements
+                =   if (nonempty r = generateReplacementVariableDefinition(
+                                that, variableDeclaration))
+                    then [[variableDeclaration, *r]]
+                    else [];
 
-
-            []|[ValueModel] replacementModel;
-            []|[DartVariableDeclarationStatement] replacementDeclaration;
-            []|[DartStatement] replacementDefinition;
-
-            if (nonempty r = generateReplacementVariableDefinition(
-                    that, variableDeclaration)) {
-                replacementModel = [variableDeclaration];
-                replacementDeclaration = [r[0]];
-                replacementDefinition = [r[1]];
-            }
-            else {
-                replacementModel = [];
-                replacementDeclaration = [];
-                replacementDefinition = [];
-            }
-
-            return [replacementModel,
-                    replacementDeclaration,
-                    null,
-                    conditionExpression,
-                    replacementDefinition];
+            return [replacements, null, conditionExpression];
         }
     }
 

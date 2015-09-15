@@ -1954,22 +1954,22 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 "All of the replacement declarations."
                 value dartVariableDeclarations
-                    =   conditionExpressionParts.flatMap((p) => p[1]);
+                    =   conditionExpressionParts.flatMap((p) => p[0]).map((r) => r[1]);
 
                 "All of the tests and assignments, serialized."
                 value dartTestsAndAssignments
                     =   conditionExpressionParts.flatMap {
                             (parts) => {
                                 // tmp variable definition
-                                parts[2],
+                                parts[1],
                                 DartIfStatement {
                                     condition = DartPrefixExpression {
-                                        "!"; parts[3];
+                                        "!"; parts[2];
                                     };
                                     DartContinueStatement();
                                 },
                                 // assign values (replacement definitions)
-                                *parts[4]
+                                *parts[0].map((r) => r[2])
                             }.coalesced;
                         };
 
@@ -2298,8 +2298,7 @@ class ExpressionTransformer(CompilationContext ctx)
         "Recursive function to generate nested if statements, one if per condition."
         [DartStatement+] generateIf([Condition+] conditions, Boolean outermost = false) {
 
-            value [_, replacementDeclarations, tempDefinition,
-                    conditionExpression, replacementDefinitions]
+            value [replacements, tempDefinition, conditionExpression]
                 =   generateConditionExpression(conditions.first);
 
             value result = [
@@ -2309,8 +2308,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     DartBlock {
                         expand {
                             // declare and define new variables, if any
-                            replacementDeclarations,
-                            replacementDefinitions,
+                            replacements.map((r) => r[1]),
+                            replacements.map((r) => r[2]),
 
                             // nest if statement for next condition, if any
                             if (nonempty rest = conditions.rest) then

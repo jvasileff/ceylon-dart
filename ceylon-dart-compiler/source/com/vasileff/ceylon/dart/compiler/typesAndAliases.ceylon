@@ -51,9 +51,7 @@ shared alias DeclarationModelType
  - replacementDefinitions"
 shared alias ConditionCodeTuple
     =>  [
-            [ValueModel*],
-            [DartVariableDeclarationStatement*],
+            [[ValueModel, DartVariableDeclarationStatement, DartStatement]*],
             DartVariableDeclarationStatement?,
-            DartExpression,
-            [DartStatement*]
+            DartExpression
         ];
