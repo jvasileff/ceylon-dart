@@ -31,7 +31,8 @@ import ceylon.ast.core {
     ObjectDefinition,
     SwitchClause,
     SpecifiedVariable,
-    Comprehension
+    Comprehension,
+    SpreadArgument
 }
 import ceylon.collection {
     LinkedList
@@ -111,10 +112,12 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyValueInfo,
     ValueSetterDefinitionInfo,
     ObjectDefinitionInfo,
-    SpecifiedVariableInfo
+    SpecifiedVariableInfo,
+    ComprehensionClauseInfo
 }
 import com.vasileff.jl4c.guava.collect {
-    ImmutableMap
+    ImmutableMap,
+    javaList
 }
 
 shared abstract
@@ -2258,4 +2261,47 @@ class BaseGenerator(CompilationContext ctx)
             }];
         };
     }
+
+    shared
+    DartExpression generateSequentialFromArgument(SpreadArgument | Comprehension that)
+        =>  switch (that)
+            case (is SpreadArgument) generateSequentialFromSpreadArgument(that)
+            case (is Comprehension) generateSequentialFromComprehension(that);
+
+    shared
+    DartExpression generateSequentialFromSpreadArgument(SpreadArgument that)
+        =>  let (argumentInfo = ExpressionInfo(that.argument))
+            if (ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) then
+                // Basically a noop; `x[*y] === y` if `y is Sequential`.
+                that.argument.transform(expressionTransformer)
+            else
+                // The argument is an Iterable; result may be a Sequential or Sequence.
+                // TODO It would probably be more correct to create the Sequential from
+                //      the iterator using a utility method rather than trusting the
+                //      implementation of `sequence()`.
+                generateInvocationFromName {
+                    that;
+                    that.argument;
+                    "sequence";
+                    [];
+                };
+
+    shared
+    DartExpression generateSequentialFromComprehension(Comprehension that)
+        =>  let (comprehensionType =iterableComprehensionType(that))
+            generateInvocationDetailsSynthetic {
+                that;
+                comprehensionType;
+                () => that.transform(expressionTransformer);
+                "sequence";
+                [];
+            }[2]();
+
+    shared
+    TypeModel iterableComprehensionType(Comprehension that)
+        =>  let (firstClauseInfo = ComprehensionClauseInfo(that.clause))
+            ceylonTypes.iterableDeclaration.appliedType(null, javaList {
+                firstClauseInfo.typeModel,
+                firstClauseInfo.firstTypeModel
+            });
 }

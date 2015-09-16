@@ -185,8 +185,7 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ObjectExpressionInfo,
     SuperInfo,
     IsCaseInfo,
-    UnspecifiedVariableInfo,
-    ComprehensionClauseInfo
+    UnspecifiedVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -547,32 +546,15 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // Ok, not empty, create a Sequential or a Tuple
         value sequenceArgument = that.argumentList.sequenceArgument;
-        if (sequenceArgument is Comprehension) {
-            throw CompilerBug(that, "Comprehension for Tuple not suported");
-        }
-        assert (!is Comprehension sequenceArgument);
+        //if (sequenceArgument is Comprehension) {
+        //    throw CompilerBug(that, "Comprehension for Tuple not suported");
+        //}
+        //assert (!is Comprehension sequenceArgument);
 
         if (that.argumentList.listedArguments.empty) {
             "Not Empty and no listed arguments; a sequence argument must exist."
             assert (exists sequenceArgument);
-
-            value argumentInfo = ExpressionInfo(sequenceArgument.argument);
-            if (ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) {
-                // Basically a noop; `x[*y] === y` if `y is Sequential`.
-                // Result may be a Sequential, Sequence, or Tuple
-                return sequenceArgument.argument.transform(this);
-            }
-            else {
-                // The argument is an Iterable; result may be a Sequential or Sequence.
-                // Would it be more correct to create the sequential from the iterator
-                // rather than trusting `arg.sequence()` to produce the same result?
-                return generateInvocationFromName {
-                    that;
-                    sequenceArgument.argument;
-                    "sequence";
-                    [];
-                };
-            }
+            return generateSequentialFromArgument(sequenceArgument);
         }
         else {
             // Listed arguments, and possibly a spread argument.
@@ -605,12 +587,15 @@ class ExpressionTransformer(CompilationContext ctx)
                                 };
                             };
                         },
-                        if (!exists sequenceArgument)
-                            then DartNullLiteral()
-                            else withLhsDenotable {
+                        switch (sequenceArgument)
+                        case (is Comprehension | SpreadArgument)
+                            // Whatever Iterable type we come up with is surely correct.
+                            withLhsDenotable {
                                 ceylonTypes.iterableDeclaration;
-                                () => sequenceArgument.argument.transform(this);
+                                () => sequenceArgument.transform(this);
                             }
+                        case (is Null)
+                            DartNullLiteral()
                         ];
                     };
                 };
@@ -2592,13 +2577,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             };
-
-    TypeModel iterableComprehensionType(Comprehension that)
-        =>  let (firstClauseInfo = ComprehensionClauseInfo(that.clause))
-            ceylonTypes.iterableDeclaration.appliedType(null, javaList {
-                firstClauseInfo.typeModel,
-                firstClauseInfo.firstTypeModel
-            });
 }
 
 // TODO come up with a plan for this stuff
