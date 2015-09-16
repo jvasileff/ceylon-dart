@@ -213,7 +213,7 @@ abstract class Correspondence {
         }
 
         Iterator iterator_1$6;
-        $dart$core.bool step$1$Init$8() {
+        $dart$core.bool step$1$Init$9() {
             if (iterator_1$6 != null) {
                 return true;
             }
@@ -224,12 +224,12 @@ abstract class Correspondence {
             return true;
         }
 
-        $dart$core.Object key;
-        $dart$core.bool step$1$9() {
-            while (step$1$Init$8()) {
-                $dart$core.Object element$7;
-                if ((element$7 = iterator_1$6.next()) is !Finished) {
-                    key = element$7;
+        $dart$core.Object key$7;
+        $dart$core.bool step$1$10() {
+            while (step$1$Init$9()) {
+                $dart$core.Object next$8;
+                if ((next$8 = iterator_1$6.next()) is !Finished) {
+                    key$7 = next$8;
                     return true;
                 }
                 iterator_1$6 = null;
@@ -237,14 +237,15 @@ abstract class Correspondence {
             return false;
         }
 
-        $dart$core.Object step$2$10() {
-            if (!step$1$9()) {
+        $dart$core.Object step$2$11() {
+            if (!step$1$10()) {
                 return $package$finished;
             }
+            $dart$core.Object key = key$7;
             return $this.get(key);
         }
 
-        return new dart$Callable(step$2$10);
+        return new dart$Callable(step$2$11);
     }));
 }
 $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondIterable, $dart$core.Object comparing = $package$dart$default]) {
@@ -709,7 +710,7 @@ Iterable $package$expand([Iterable iterables]) => functionIterable(new dart$Call
     }
 
     Iterator iterator_1$2;
-    $dart$core.bool step$1$Init$4() {
+    $dart$core.bool step$1$Init$5() {
         if (iterator_1$2 != null) {
             return true;
         }
@@ -720,12 +721,12 @@ Iterable $package$expand([Iterable iterables]) => functionIterable(new dart$Call
         return true;
     }
 
-    Iterable it;
-    $dart$core.bool step$1$5() {
-        while (step$1$Init$4()) {
-            $dart$core.Object element$3;
-            if ((element$3 = iterator_1$2.next()) is !Finished) {
-                it = element$3 as Iterable;
+    Iterable it$3;
+    $dart$core.bool step$1$6() {
+        while (step$1$Init$5()) {
+            $dart$core.Object next$4;
+            if ((next$4 = iterator_1$2.next()) is !Finished) {
+                it$3 = next$4 as Iterable;
                 return true;
             }
             iterator_1$2 = null;
@@ -733,39 +734,43 @@ Iterable $package$expand([Iterable iterables]) => functionIterable(new dart$Call
         return false;
     }
 
-    Iterator iterator_2$6;
-    $dart$core.bool step$2$Init$8() {
-        if (iterator_2$6 != null) {
+    Iterator iterator_2$7;
+    $dart$core.bool step$2$Init$10() {
+        if (iterator_2$7 != null) {
             return true;
         }
-        if (!step$1$5()) {
+        if (!step$1$6()) {
             return false;
         }
-        iterator_2$6 = it.iterator();
+        Iterable it = it$3;
+        iterator_2$7 = it.iterator();
         return true;
     }
 
-    $dart$core.Object val;
-    $dart$core.bool step$2$9() {
-        while (step$2$Init$8()) {
-            $dart$core.Object element$7;
-            if ((element$7 = iterator_2$6.next()) is !Finished) {
-                val = element$7;
+    $dart$core.Object val$8;
+    $dart$core.bool step$2$11() {
+        while (step$2$Init$10()) {
+            Iterable it = it$3;
+            $dart$core.Object next$9;
+            if ((next$9 = iterator_2$7.next()) is !Finished) {
+                val$8 = next$9;
                 return true;
             }
-            iterator_2$6 = null;
+            iterator_2$7 = null;
         }
         return false;
     }
 
-    $dart$core.Object step$3$10() {
-        if (!step$2$9()) {
+    $dart$core.Object step$3$12() {
+        if (!step$2$11()) {
             return $package$finished;
         }
+        Iterable it = it$3;
+        $dart$core.Object val = val$8;
         return val;
     }
 
-    return new dart$Callable(step$3$10);
+    return new dart$Callable(step$3$12);
 }));
 
 Iterable expand([Iterable iterables]) => $package$expand(iterables);
