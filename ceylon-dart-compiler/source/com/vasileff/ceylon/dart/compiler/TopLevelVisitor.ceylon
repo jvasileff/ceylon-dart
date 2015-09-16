@@ -334,14 +334,41 @@ class TopLevelVisitor(CompilationContext ctx)
             throw CompilerBug(scope, "Classes with extended types not yet supported.");
         }
 
-        // TODO initializer parameters
-        if (exists parameters, !parameters.children.empty) {
-            throw CompilerBug(parameters,
-                "Classes with initializer parameters not yet supported.");
-        }
-
         // TODO consolidate with very similar visitInterfaceDefinition code
-        // TODO toplevels should be constants
+        // TODO toplevels objects should be constants
+
+        "Class initializer parameters."
+        value standardParameters = (() {
+            if (exists parameters, !parameters.children.empty) {
+                value list = generateFormalParameterList(scope, parameters);
+                if (!list.parameters.every((p) => p is DartSimpleFormalParameter)) {
+                    throw CompilerBug(parameters,
+                        "Initializer parameters with default values not yet supported.");
+                }
+                return list.parameters.narrow<DartSimpleFormalParameter>();
+            }
+            else {
+                return [];
+            }
+        })();
+
+        "Fields to capture initializer parameters. See also
+         [[ClassMemberTransformer.transformValueDefinition]]."
+        value fieldsForInitializerParameters
+            =   (standardParameters).map {
+                    (parameter) =>
+                    DartFieldDeclaration {
+                        false;
+                            DartVariableDeclarationList {
+                                null;
+                                parameter.type;
+                                [DartVariableDeclaration {
+                                    parameter.identifier;
+                                    initializer = null;
+                                }];
+                            };
+                        };
+                    };
 
         "declarations for containers we must hold references to."
         value outerDeclarations
@@ -370,7 +397,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        value outerConstructorParameters
+        value outerFieldsConstructorParameters
             =   outerDeclarations.map {
                     (declaration) =>
                     DartFieldFormalParameter {
@@ -433,8 +460,19 @@ class TopLevelVisitor(CompilationContext ctx)
                 DartFormalParameterList {
                     true; false;
                     concatenate {
-                        outerConstructorParameters,
-                        captureConstructorParameters
+                        outerFieldsConstructorParameters,
+                        captureConstructorParameters,
+                        standardParameters.map {
+                            // Prepend with "this." for dart. Eventually, we'll
+                            // just do this for the ones we want to capture.
+                            // Not supporting defaulted parameters yet.
+                            (p) => DartFieldFormalParameter {
+                                final = false; // todo final for non-variables
+                                const = false;
+                                type = p.type;
+                                p.identifier;
+                            };
+                        }
                     };
                 };
                 null;
@@ -492,6 +530,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 concatenate {
                     outerFields,
                     captureFields,
+                    fieldsForInitializerParameters,
                     constructors,
                     members,
                     bridgeFunctions
