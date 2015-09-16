@@ -726,6 +726,17 @@ class StatementTransformer(CompilationContext ctx)
         return [*that.conditions.conditions.flatMap(generateConditionAssertion)];
     }
 
+    // TODO fix this
+    String assertionErrorMessage(NodeInfo info)
+        =>  ctx.tokens[info.token.tokenIndex..
+                       info.endToken.tokenIndex]
+            .map(Token.text)
+            .fold("")(plus)
+            .lines
+            .map(String.trimmed)
+            .interpose(" ")
+            .fold("")(plus);
+
     [DartStatement+] generateConditionAssertion(Condition that)
         =>  switch (that)
             case (is BooleanCondition)
@@ -737,11 +748,7 @@ class StatementTransformer(CompilationContext ctx)
         value info = NodeInfo(that);
 
         "The Ceylon source code for the condition"
-        value errorMessage =
-                ctx.tokens[info.token.tokenIndex..
-                           info.endToken.tokenIndex]
-                .map(Token.text)
-                .reduce(plus) else "";
+        value errorMessage = assertionErrorMessage(info);
 
         // if (!condition) then throw new AssertionError(...)
         return
@@ -779,11 +786,7 @@ class StatementTransformer(CompilationContext ctx)
             =   NodeInfo(that);
 
         "The Ceylon source code for the condition"
-        value errorMessage
-            =   ctx.tokens[info.token.tokenIndex..
-                           info.endToken.tokenIndex]
-                    .map(Token.text)
-                    .reduce(plus) else "";
+        value errorMessage = assertionErrorMessage(info);
 
         value [tempDefinition, conditionExpression, *replacements]
             =   switch (that)
