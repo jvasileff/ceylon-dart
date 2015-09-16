@@ -1,6 +1,6 @@
 "A [[Sequence]] with exactly one [[element]], which may be 
  null."
-native shared final serializable class Singleton<out Element>
+shared final serializable class Singleton<out Element>
         (Element element)
         extends Object()
         satisfies [Element+] {

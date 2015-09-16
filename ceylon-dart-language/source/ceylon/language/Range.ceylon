@@ -31,7 +31,7 @@ import ceylon.language {
  `..` and `:` are used to create new instances of `Range`."
 see (`function makeSpan`,
     `function makeMeasure`)
-native shared sealed
+shared sealed
 abstract serializable
 class Range<Element>()
         of Span<Element> | Measure<Element>

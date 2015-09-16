@@ -1,4 +1,4 @@
-native class CycledIterator<Element>
+class CycledIterator<Element>
                 ({Element*} iterable, Integer times) 
         satisfies Iterator<Element> {
     
