@@ -21,7 +21,8 @@ import ceylon.ast.core {
     Assertion,
     ObjectExpression,
     ClassBody,
-    Parameters
+    Parameters,
+    ExtendedType
 }
 import ceylon.interop.java {
     CeylonList
@@ -58,7 +59,8 @@ import com.vasileff.ceylon.dart.ast {
     DartConstructorDeclaration,
     DartBlockFunctionBody,
     DartBlock,
-    DartMethodDeclaration
+    DartMethodDeclaration,
+    DartExtendsClause
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -163,6 +165,7 @@ class TopLevelVisitor(CompilationContext ctx)
             that;
             info.declarationModel;
             that.body;
+            that.extendedType;
             that.parameters;
         };
     }
@@ -287,6 +290,7 @@ class TopLevelVisitor(CompilationContext ctx)
             that;
             info.anonymousClass;
             that.body;
+            that.extendedType;
         };
     }
 
@@ -303,6 +307,7 @@ class TopLevelVisitor(CompilationContext ctx)
             that;
             info.anonymousClass;
             that.body;
+            that.extendedType;
         };
 
         if (isToplevel(info.declarationModel)) {
@@ -318,7 +323,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     void addClassDefinition(
             Node scope, ClassModel classModel, ClassBody classBody,
-            Parameters? parameters = null) {
+            ExtendedType? extendedTypeNode, Parameters? parameters = null) {
 
         value identifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
@@ -328,11 +333,27 @@ class TopLevelVisitor(CompilationContext ctx)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
 
-        // TODO extends clause
-        if (!ceylonTypes.isCeylonBasic(classModel.extendedType)
-                && !ceylonTypes.isCeylonObject(classModel.extendedType)) {
-            throw CompilerBug(scope, "Classes with extended types not yet supported.");
+        // TODO extends clause with parameters
+        if (exists extendedTypeNode,
+                exists arguments = extendedTypeNode.target.arguments,
+                !arguments.argumentList.children.empty) {
+            throw CompilerBug(scope, "Classes with extended types with parameters not \
+                                      yet supported.");
         }
+
+        value extendedType
+            =   if (exists et = classModel.extendedType,
+                    !ceylonTypes.isCeylonBasic(classModel.extendedType)
+                    && !ceylonTypes.isCeylonObject(classModel.extendedType))
+                then dartTypes.dartTypeName(scope, classModel.extendedType, false)
+                else null;
+
+        value extendsClause
+            =   if (exists extendedType) then
+                    DartExtendsClause {
+                        extendedType;
+                    }
+                else null;
 
         // TODO consolidate with very similar visitInterfaceDefinition code
         // TODO toplevels objects should be constants
@@ -521,8 +542,8 @@ class TopLevelVisitor(CompilationContext ctx)
         add {
             DartClassDeclaration {
                 classModel.abstract;
-                name = identifier;
-                extendsClause = null;
+                identifier;
+                extendsClause;
                 implementsClause =
                     if (exists satisifesTypes)
                     then DartImplementsClause(satisifesTypes)
