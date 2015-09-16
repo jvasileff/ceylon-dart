@@ -632,12 +632,14 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartStatement[] transformClassDefinition(ClassDefinition that) {
+    [] transformClassDefinition(ClassDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
-        return super.transformClassDefinition(that);
+
+        that.visit(topLevelVisitor);
+        return [];
     }
 
     shared actual

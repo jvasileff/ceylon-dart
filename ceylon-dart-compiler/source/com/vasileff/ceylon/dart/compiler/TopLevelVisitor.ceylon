@@ -20,7 +20,8 @@ import ceylon.ast.core {
     Specification,
     Assertion,
     ObjectExpression,
-    ClassBody
+    ClassBody,
+    Parameters
 }
 import ceylon.interop.java {
     CeylonList
@@ -158,7 +159,12 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.visitClassDefinition(that);
+        addClassDefinition {
+            that;
+            info.declarationModel;
+            that.body;
+            that.parameters;
+        };
     }
 
     shared actual
@@ -277,7 +283,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value info = ObjectExpressionInfo(that);
         //super.visitObjectExpression(that);
 
-        addObjectDefinition {
+        addClassDefinition {
             that;
             info.anonymousClass;
             that.body;
@@ -293,7 +299,7 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        addObjectDefinition {
+        addClassDefinition {
             that;
             info.anonymousClass;
             that.body;
@@ -310,7 +316,9 @@ class TopLevelVisitor(CompilationContext ctx)
         }
     }
 
-    void addObjectDefinition(Node scope, ClassModel classModel, ClassBody classBody) {
+    void addClassDefinition(
+            Node scope, ClassModel classModel, ClassBody classBody,
+            Parameters? parameters = null) {
 
         value identifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
@@ -322,8 +330,14 @@ class TopLevelVisitor(CompilationContext ctx)
 
         // TODO extends clause
         if (!ceylonTypes.isCeylonBasic(classModel.extendedType)
-            && !ceylonTypes.isCeylonObject(classModel.extendedType)) {
-            throw CompilerBug(scope, "Objects with extended types not yet supported.");
+                && !ceylonTypes.isCeylonObject(classModel.extendedType)) {
+            throw CompilerBug(scope, "Classes with extended types not yet supported.");
+        }
+
+        // TODO initializer parameters
+        if (exists parameters, !parameters.children.empty) {
+            throw CompilerBug(parameters,
+                "Classes with initializer parameters not yet supported.");
         }
 
         // TODO consolidate with very similar visitInterfaceDefinition code
@@ -468,7 +482,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         add {
             DartClassDeclaration {
-                abstract = false;
+                classModel.abstract;
                 name = identifier;
                 extendsClause = null;
                 implementsClause =

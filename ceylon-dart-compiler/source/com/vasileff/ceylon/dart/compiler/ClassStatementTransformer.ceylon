@@ -13,7 +13,8 @@ import ceylon.ast.core {
     Statement,
     Specification,
     FunctionDeclaration,
-    LazySpecification
+    LazySpecification,
+    ClassDefinition
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -112,8 +113,8 @@ class ClassStatementTransformer(CompilationContext ctx)
     DartStatement[] transformFunctionDefinition(FunctionDefinition that)
         =>  [];
 
-    "Initialize the value/field. The anonymous class and Dart field will have already
-     been defined/declared by [[ClassMemberTransformer.transformObjectDefinition]]."
+    "Initialize the value/field. The class will have already been defined by
+     [[ClassMemberTransformer.transformObjectDefinition]]."
     shared actual
     DartStatement[] transformObjectDefinition(ObjectDefinition that) {
         value dartVariableDeclaration
@@ -132,6 +133,12 @@ class ClassStatementTransformer(CompilationContext ctx)
             };
         }];
     }
+
+    "Nothing to do. The anonymous class will have already been defined/declared by
+     [[ClassMemberTransformer.transformClassDefinition]]."
+    shared actual
+    DartStatement[] transformClassDefinition(ClassDefinition that)
+        =>  [];
 
     "Avoid redundant declarations for assertion statements that declare replacement
      values that are captured as members."

@@ -438,12 +438,16 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartClassMember*] transformClassDefinition(ClassDefinition that) {
+    [] transformClassDefinition(ClassDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
-        return super.transformClassDefinition(that);
+
+        that.visit(topLevelVisitor);
+
+        // We might have somethiing later for type families. For now, nada.
+        return [];
     }
 
     shared actual
