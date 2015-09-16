@@ -51,7 +51,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueSetterDefinitionInfo,
     DeclarationInfo,
     ObjectDefinitionInfo,
-    LazySpecificationInfo
+    LazySpecificationInfo,
+    FunctionDeclarationInfo
 }
 
 shared
@@ -109,6 +110,14 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
+        // FIXME ok to just skip these?
+        //       Skipping for now to avoid dup declarations w/classes where init params
+        //       are declared in the body.
+        value info = ValueDeclarationInfo(that);
+        if (info.declarationModel.parameter) {
+            return [];
+        }
+
         if (ValueDeclarationInfo(that).declarationModel.variable) {
             return [generateMethodGetterOrSetterDeclaration(that),
                     generateSetterDeclaration(that)];
@@ -124,6 +133,15 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (!isForDartBackend(that)) {
             return [];
         }
+
+        // FIXME ok to just skip these?
+        //       Skipping for now to avoid dup declarations w/classes where init params
+        //       are declared in the body.
+        value info = FunctionDeclarationInfo(that);
+        if (info.declarationModel.parameter) {
+            return [];
+        }
+
         return [generateMethodGetterOrSetterDeclaration(that)];
     }
 
@@ -494,6 +512,6 @@ class ClassMemberTransformer(CompilationContext ctx)
     shared actual default
     [] transformNode(Node that) {
         throw CompilerBug(that,
-            "Unhandled node: '``className(that)``'");
+            "Unhandled node (ClassMemberTransformer): '``className(that)``'");
     }
 }

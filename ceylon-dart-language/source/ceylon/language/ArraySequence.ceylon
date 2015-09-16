@@ -8,15 +8,16 @@ import ceylon.language {
  modified after the `ArraySequence` has been initialized."
 by ("Tom")
 see (`function seq`)
-native shared sealed final
+shared sealed final
 serializable
 class ArraySequence<out Element>(array)
         extends Object()
         satisfies [Element+] {
     
     Array<Element> array;
-    
-    assert (!array.empty);
+   
+    // FIXME Dart uncomment!
+    //assert (!array.empty);
     
     getFromFirst(Integer index) 
             => array.getFromFirst(index);

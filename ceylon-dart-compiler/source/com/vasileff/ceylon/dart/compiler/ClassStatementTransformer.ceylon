@@ -134,7 +134,7 @@ class ClassStatementTransformer(CompilationContext ctx)
         }];
     }
 
-    "Nothing to do. The anonymous class will have already been defined/declared by
+    "Nothing to do. The class will have already been defined/declared by
      [[ClassMemberTransformer.transformClassDefinition]]."
     shared actual
     DartStatement[] transformClassDefinition(ClassDefinition that)
