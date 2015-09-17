@@ -2,7 +2,6 @@ import ceylon.ast.core {
     FunctionDefinition,
     ValueDefinition,
     FunctionShortcutDefinition,
-    Assertion,
     ValueDeclaration,
     Node,
     WideningTransformer,
@@ -37,7 +36,7 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformStatement(Statement that)
-        =>  if (that is Specification | Assertion)
+        =>  if (that is Specification)
             then super.transformStatement(that)
             else that.transform(statementTransformer);
 
@@ -139,12 +138,6 @@ class ClassStatementTransformer(CompilationContext ctx)
     shared actual
     DartStatement[] transformClassDefinition(ClassDefinition that)
         =>  [];
-
-    "Avoid redundant declarations for assertion statements that declare replacement
-     values that are captured as members."
-    shared actual
-    DartStatement[] transformAssertion(Assertion that)
-        =>  super.transformAssertion(that);
 
     shared actual default
     [] transformNode(Node that) {

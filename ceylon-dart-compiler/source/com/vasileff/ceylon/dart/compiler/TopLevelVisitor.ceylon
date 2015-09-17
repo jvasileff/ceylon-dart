@@ -509,7 +509,7 @@ class TopLevelVisitor(CompilationContext ctx)
         ];
 
         "Class members. Statements (aside from Specifiction and Assertion statements) do
-         not represent members and are therefore not supported by
+         not introduce members and are therefore not supported by
          [[ClassMemberTransformer]]."
         value members
             =   classBody.children
@@ -551,8 +551,8 @@ class TopLevelVisitor(CompilationContext ctx)
                 concatenate {
                     outerFields,
                     captureFields,
-                    fieldsForInitializerParameters,
                     constructors,
+                    fieldsForInitializerParameters,
                     members,
                     bridgeFunctions
                 };

@@ -16,7 +16,10 @@ import ceylon.ast.core {
     ClassDefinition,
     ObjectDefinition,
     Specifier,
-    LazySpecification
+    LazySpecification,
+    Assertion,
+    ExistsOrNonemptyCondition,
+    IsCondition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -508,6 +511,30 @@ class ClassMemberTransformer(CompilationContext ctx)
     shared actual
     [] transformTypeAliasDefinition(TypeAliasDefinition that)
         =>  [];
+
+    shared actual
+    DartClassMember[] transformAssertion(Assertion that) {
+        // Declare class members for new and replacement values
+        value capturedVariableTriples
+            =   that.conditions.conditions
+                    .narrow<IsCondition | ExistsOrNonemptyCondition>()
+                    .map(generateConditionExpression)
+                    .flatMap((conditionTuple) => conditionTuple[2...])
+                    .filter(compose(ctx.capturedInitializerDeclarations.contains,
+                                    VariableTriple.declarationModel));
+
+        return
+        capturedVariableTriples.collect((variableTriple)
+            =>  DartFieldDeclaration {
+                        false;
+                        generateForValueDeclarationRaw {
+                            // TODO Use Condition node for more accurate line/col info
+                            //      (must first make the node avail in VariableTriple)
+                            that;
+                            variableTriple.declarationModel;
+                        };
+                    });
+    }
 
     shared actual default
     [] transformNode(Node that) {

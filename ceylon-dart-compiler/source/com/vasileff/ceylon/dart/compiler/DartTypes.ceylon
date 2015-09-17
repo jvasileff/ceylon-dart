@@ -171,25 +171,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
 
     shared
-    String createReplacementName(TypedDeclarationModel declaration) {
-        // TODO make this function idempotent!
+    String getOrCreateReplacementName(ValueModel declaration);
 
-        if (is SetterModel declaration) {
-            return createReplacementName(declaration.getter);
-        }
+    getOrCreateReplacementName = memoize((ValueModel declaration) {
+        // Note: This *must* be memoized, to ensure idempotence!!!
+        value replacement
+            =   declaration.name + "$" + (counter++).string;
 
-        String replacement;
-        switch (declaration)
-        case (is ValueModel) {
-            replacement = declaration.name + "$" + (counter++).string;
-        }
-        else {
-            throw Exception("declaration type not yet supported \
-                             for ``className(declaration)``");
-        }
         nameCache.put(declaration, replacement);
         return replacement;
-    }
+    });
 
     shared
     String createTempName(TypedDeclarationModel declaration) {

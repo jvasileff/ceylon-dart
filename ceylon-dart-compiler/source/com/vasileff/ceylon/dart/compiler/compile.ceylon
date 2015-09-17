@@ -118,6 +118,7 @@ shared
                 value ctx = CompilationContext(phasedUnit);
 
                 computeCaptures(unit, ctx);
+                computeClassCaptures(unit, ctx);
 
                 ctx.topLevelVisitor.transformCompilationUnit(unit);
 

@@ -71,7 +71,8 @@ import com.vasileff.ceylon.dart.compiler {
     augmentNode,
     CompilationContext,
     CompilerBug,
-    computeCaptures
+    computeCaptures,
+    computeClassCaptures
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -176,6 +177,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 }
 
                 computeCaptures(unit, ctx);
+                computeClassCaptures(unit, ctx);
 
                 ctx.topLevelVisitor.transformCompilationUnit(unit);
                 declarations.addAll(ctx.compilationUnitMembers.sequence());

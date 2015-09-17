@@ -11,6 +11,7 @@ import com.redhat.ceylon.compiler.typechecker.context {
 }
 import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
+    ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue
 }
@@ -19,7 +20,8 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier
 }
 import com.vasileff.jl4c.guava.collect {
-    LinkedHashMultimap
+    LinkedHashMultimap,
+    SetMultimap
 }
 
 import org.antlr.runtime {
@@ -43,6 +45,19 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared
     HashSet<FunctionOrValueModel> disableErasureToNative
         =   HashSet<FunctionOrValueModel>();
+
+
+    "Captured functions and values that occur in class initializers and constructors, as
+     opposed to captured functions and values with non-class or interface containers."
+    shared variable
+    Set<FunctionOrValueModel> capturedInitializerDeclarations
+        =   emptySet;
+
+    "A Multimap containing captured initializer declarations by class. Contains the same
+     items as [[capturedInitializerDeclarations]]."
+    shared variable
+    SetMultimap<ClassModel, FunctionOrValueModel> initializerCaptures
+        =   LinkedHashMultimap<ClassModel, FunctionOrValueModel>();
 
     shared
     HashSet<FunctionOrValueModel> capturedDeclarations

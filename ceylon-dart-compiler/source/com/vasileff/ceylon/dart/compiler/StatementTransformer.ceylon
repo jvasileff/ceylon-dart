@@ -713,18 +713,8 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [DartStatement*] transformAssertion(Assertion that) {
-        // children are 'Annotations' and 'Conditions'
-        // 'Conditions' has 'Condition's.
-
-        // TODO Annotations
-        // TODO Don't visit conditions individually?
-        // annotations, especially 'doc', need to apply to
-        // each condition. Any other annotations matter?
-
-        // won't be empty
-        return [*that.conditions.conditions.flatMap(generateConditionAssertion)];
-    }
+    [DartStatement*] transformAssertion(Assertion that)
+        =>  [*that.conditions.conditions.flatMap(generateConditionAssertion)];
 
     // TODO fix this
     String assertionErrorMessage(NodeInfo info)
@@ -742,7 +732,7 @@ class StatementTransformer(CompilationContext ctx)
             case (is BooleanCondition)
                 [generateBooleanConditionAssertion(that)]
             case (is IsCondition | ExistsOrNonemptyCondition)
-                generateIsConditionAssertion(that);
+                generateIsOrExistsOrNonemptyConditionAssertion(that);
 
     DartStatement generateBooleanConditionAssertion(BooleanCondition that) {
         value info = NodeInfo(that);
@@ -779,14 +769,15 @@ class StatementTransformer(CompilationContext ctx)
         };
     }
 
-    [DartStatement+] generateIsConditionAssertion
+    [DartStatement+] generateIsOrExistsOrNonemptyConditionAssertion
             (IsCondition | ExistsOrNonemptyCondition that) {
 
         value info
             =   NodeInfo(that);
 
         "The Ceylon source code for the condition"
-        value errorMessage = assertionErrorMessage(info);
+        value errorMessage
+            =   assertionErrorMessage(info);
 
         value [tempDefinition, conditionExpression, *replacements]
             =   switch (that)
@@ -798,9 +789,17 @@ class StatementTransformer(CompilationContext ctx)
         value replacement
             =   replacements.first;
 
+        "The Dart declaration for the replacement iff it has not already been declared
+         as a class member."
+        value replacementDartDeclaration
+            =   if (exists declaration = replacement?.declarationModel,
+                    !ctx.capturedInitializerDeclarations.contains(declaration))
+                then replacement?.dartDeclaration
+                else null;
+
         value statements
             =   [
-                    replacement?.dartDeclaration,
+                    replacementDartDeclaration,
                     tempDefinition,
                     // if (!(x is T)) then throw new AssertionError(...)
                     DartIfStatement {
