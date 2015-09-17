@@ -847,13 +847,14 @@ class ExpressionTransformer(CompilationContext ctx)
             return invocationForCallable();
         }
         case (is ClassModel) {
-            if (!withinPackage(invokedDeclaration)) {
-                throw CompilerBug(that,
-                    "Invocations of member classes not yet supported.");
-            }
-
             "We only handle topelevel classes for now"
             assert (is BaseExpression invoked = that.invoked);
+
+            value captureArguments
+                =   generateArgumentsForOutersAndCaptures {
+                        that;
+                        invokedDeclaration;
+                    };
 
             return
             withBoxingNonNative {
@@ -866,9 +867,14 @@ class ExpressionTransformer(CompilationContext ctx)
                         that;
                         invokedDeclaration;
                     };
-                    generateArgumentListFromArguments {
-                        that.arguments;
-                        invokedInfo.typeModel;
+                    DartArgumentList {
+                        concatenate {
+                            captureArguments,
+                            generateArgumentListFromArguments {
+                                that.arguments;
+                                invokedInfo.typeModel;
+                            }.arguments
+                        };
                     };
                 };
             };
