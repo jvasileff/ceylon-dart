@@ -11,6 +11,10 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo
 }
+import com.vasileff.jl4c.guava.collect {
+    LinkedHashMultimap,
+    ImmutableSetMultimap
+}
 
 "Identify captured functions and values. For each class and interface, determine list of
  captures. Store results in [[ctx]] properties [[CompilationContext.capturedDeclarations]]
@@ -18,13 +22,14 @@ import com.vasileff.ceylon.dart.nodeinfo {
 shared
 void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
+    value builder = LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
+
     "For proper operation, this visitor must be visited by a [[CompilationUnit]]."
     object captureVisitor satisfies Visitor {
 
         shared actual
         void visitCompilationUnit(CompilationUnit that) {
             super.visitCompilationUnit(that);
-            optimizeCaptures(ctx);
         }
 
         shared actual
@@ -78,29 +83,24 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             while (true) {
                 value bysClassOrInterface = getContainingClassOrInterface(by.container);
                 if (eq(targetsClassOrInterface, bysClassOrInterface)) {
-                    ctx.capturedDeclarations.add(target);
-                    ctx.captures.put(by, target);
+                    builder.put(by, target);
                     return;
                 }
                 assert (exists bysClassOrInterface);
                 by = bysClassOrInterface;
             }
         }
-
-        "Remove captures that are also captured by a supertype."
-        void optimizeCaptures(CompilationContext ctx) {
-            value redundantCaptures = ctx.captures
-                .filter((entry)
-                    =>  let (by->target = entry)
-                        supertypeDeclarations(by)
-                            .skip(1)
-                            .any((d) => ctx.captures.contains(d->target)))
-                .sequence(); // eager; don't modify the multimap while iterating!
-
-            // remove them
-            ctx.captures.removeEntries(redundantCaptures);
-        }
     }
 
     unit.visit(captureVisitor);
+
+    "Is the capture also captured by a supertype?"
+    function redundant(ClassOrInterfaceModel->FunctionOrValueModel entry)
+        =>  let (by->target = entry)
+            supertypeDeclarations(by).skip(1).any((d)
+                =>  builder.contains(d->target));
+
+    value captures = ImmutableSetMultimap(builder.filter(not(redundant)));
+    ctx.captures = captures;
+    ctx.capturedDeclarations = captures.inverse;
 }

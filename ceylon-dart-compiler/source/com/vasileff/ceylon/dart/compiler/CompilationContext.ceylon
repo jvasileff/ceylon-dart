@@ -21,7 +21,8 @@ import com.vasileff.ceylon.dart.ast {
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
-    SetMultimap
+    SetMultimap,
+    ImmutableSetMultimap
 }
 
 import org.antlr.runtime {
@@ -46,7 +47,6 @@ class CompilationContext(PhasedUnit phasedUnit) {
     HashSet<FunctionOrValueModel> disableErasureToNative
         =   HashSet<FunctionOrValueModel>();
 
-
     "Captured functions and values that occur in class initializers and constructors, as
      opposed to captured functions and values with non-class or interface containers."
     shared variable
@@ -57,19 +57,19 @@ class CompilationContext(PhasedUnit phasedUnit) {
      items as [[capturedInitializerDeclarations]]."
     shared variable
     SetMultimap<ClassModel, FunctionOrValueModel> initializerCaptures
-        =   LinkedHashMultimap<ClassModel, FunctionOrValueModel>();
+        =   ImmutableSetMultimap<ClassModel, FunctionOrValueModel> {};
 
-    shared
-    HashSet<FunctionOrValueModel> capturedDeclarations
-        =   HashSet<FunctionOrValueModel>();
+    shared variable
+    ImmutableSetMultimap<FunctionOrValueModel,ClassOrInterfaceModel> capturedDeclarations
+        =   ImmutableSetMultimap<FunctionOrValueModel, ClassOrInterfaceModel> {};
 
     "A multimap to associated each capturing class and interface with its list of
      captures. A [[LinkedHashMultimap]] is used to preserve insertion order. A
      consistent order is important as the capture lists will be used to build parameter
      and argument lists."
-    shared
-    LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
-        =   LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
+    shared variable
+    SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
+        =   ImmutableSetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
 
     shared variable
     DartSimpleIdentifier? doFailVariableTop = null;
