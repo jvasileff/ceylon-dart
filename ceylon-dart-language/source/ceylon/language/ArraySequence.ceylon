@@ -15,9 +15,8 @@ class ArraySequence<out Element>(array)
         satisfies [Element+] {
     
     Array<Element> array;
-   
-    // FIXME Dart uncomment!
-    //assert (!array.empty);
+    
+    assert (!array.empty);
     
     getFromFirst(Integer index) 
             => array.getFromFirst(index);

@@ -40,8 +40,12 @@ Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => 
 Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
 
 class ArraySequence implements Sequence {
+    ArraySequence([Array this.array]) {
+        if (!(!array.empty)) {
+            throw new AssertionError("Violated: !array.empty");
+        }
+    }
     Array array;
-    ArraySequence([Array this.array]) {}
     $dart$core.Object getFromFirst([$dart$core.int index]) => array.getFromFirst(index);
     $dart$core.bool contains([$dart$core.Object element]) => array.contains(element);
     $dart$core.int get size => array.size;
@@ -308,12 +312,12 @@ abstract class Category {
     }
 }
 class ChainedIterator implements Iterator {
-    Iterable first;
-    Iterable second;
     ChainedIterator([Iterable this.first, Iterable this.second]) {
         iter = first.iterator();
         more = true;
     }
+    Iterable first;
+    Iterable second;
     Iterator iter;
     $dart$core.bool more;
     $dart$core.Object next() {
@@ -519,12 +523,12 @@ Callable $package$uncurry([Callable f]) => $package$flatten(new dart$Callable(([
 Callable uncurry([Callable f]) => $package$uncurry(f);
 
 class CycledIterator implements Iterator {
-    Iterable iterable;
-    $dart$core.int times;
     CycledIterator([Iterable this.iterable, $dart$core.int this.times]) {
         iter = $package$emptyIterator;
         count = 0;
     }
+    Iterable iterable;
+    $dart$core.int times;
     Iterator iter;
     $dart$core.int count;
     $dart$core.Object next() {{
@@ -914,9 +918,9 @@ $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() 
 $dart$core.Object emptyOrSingleton([$dart$core.Object element]) => $package$emptyOrSingleton(element);
 
 class Entry {
+    Entry([$dart$core.Object this.key, $dart$core.Object this.item]) {}
     $dart$core.Object key;
     $dart$core.Object item;
-    Entry([$dart$core.Object this.key, $dart$core.Object this.item]) {}
     Tuple get pair => new Tuple.$withList([key, item], null);
     Entry get coalesced => (() {
         $dart$core.bool doElse$0 = true;
@@ -2285,8 +2289,8 @@ class Singleton$iterator$$anonymous$0_ implements Iterator {
     $dart$core.String toString() => ("" + $outer$ceylon$language$Singleton.toString()) + ".iterator()";
 }
 class Singleton implements Sequence {
-    $dart$core.Object element;
     Singleton([$dart$core.Object this.element]) {}
+    $dart$core.Object element;
     $dart$core.Object get first => element;
     $dart$core.Object get last => element;
     $dart$core.int get lastIndex => 0;
@@ -2522,4 +2526,6 @@ abstract class Usable {
 Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => new Tuple.$withList([first, second], null)), firstElements, secondElements);
 
 Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package$zipPairs(firstElements, secondElements);
+
+void main() => run();
 
