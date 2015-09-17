@@ -4,7 +4,7 @@
  non-negative and less than the `size`."
 see (`class Span`,
     `interface Enumerable`)
-native final serializable
+final serializable
 class Measure<Element>(first, size)
         extends Range<Element>()
         given Element satisfies Enumerable<Element> {
