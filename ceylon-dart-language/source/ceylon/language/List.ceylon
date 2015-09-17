@@ -52,7 +52,7 @@
 see (`interface Sequence`, 
      `interface Empty`, 
      `class Array`)
-native shared interface List<out Element=Anything>
+shared interface List<out Element=Anything>
         satisfies Collection<Element> &
                   Correspondence<Integer,Element> &
                   Ranged<Integer,Element,List<Element>> {
@@ -776,7 +776,9 @@ native shared interface List<out Element=Anything>
                     extends Object() 
                     satisfies List<Result> {
                 lastIndex => outer.lastIndex;
-                size = outer.size;
+                // FIXME Dart workaround
+                //size = outer.size;
+                size => outer.size;
                 getFromFirst(Integer index)
                         => if (0<=index<size) 
                         then collecting(outer.getElement(index))
@@ -849,7 +851,8 @@ native shared interface List<out Element=Anything>
         spanTo(Integer to) 
                 => outer[this.from..to+this.from];
         
-        clone() => outer.clone().Rest(from);
+        // FIXME Dart workaround
+        clone() => nothing;//outer.clone().Rest(from);
         
         iterator() 
                 => let (o = outer)
@@ -897,7 +900,8 @@ native shared interface List<out Element=Anything>
                     then outer[...this.to] 
                     else outer[...to];
         
-        clone() => outer.clone().Sublist(to);
+        // FIXME Dart workaround
+        clone() => nothing;//outer.clone().Sublist(to);
         
         iterator() 
                 => let (iter = outer.iterator()) 
@@ -927,7 +931,8 @@ native shared interface List<out Element=Anything>
                         then outer.getFromFirst(index%size)
                         else null;
         
-        clone() => outer.clone().Repeat(times);
+        // FIXME Dart workaround
+        clone() => nothing;//outer.clone().Repeat(times);
         
         iterator() => CycledIterator(outer,times);
         
@@ -957,7 +962,8 @@ native shared interface List<out Element=Anything>
                 else
                     outer.getFromFirst(index-list.size+length);
         
-        clone() => outer.clone().Patch(list.clone(),from,length);
+        // FIXME Dart workaround
+        clone() => nothing;//outer.clone().Patch(list.clone(),from,length);
         
         iterator() 
                 => let (iter = outer.iterator(), 
