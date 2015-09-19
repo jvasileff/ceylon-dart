@@ -475,17 +475,27 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
+        "An optional `$this` argument, for use with static invocations."
         [DartExpression]|[] thisArgument;
-        DartExpression boxedReceiver;
+
+        "Will either be an Interface or an expression for the Ceylon receiver."
+        DartExpression dartBoxedReceiver;
+
+        "Are we invoking a Dart function? (As opposed to a value)"
         Boolean isFunction;
+
+        "The dart identifier for the function or value"
         DartSimpleIdentifier memberIdentifier;
-        DartTypeName? receiverDartType;
+
+        "The Dart type of what Ceylon thinks is the receiver! They differ when Dart needs
+         the receiver to be an interface for a static method invocation."
+        DartTypeName? ceylonReceiverDartType;
 
         if (!exists generateReceiver) {
             // Receiver is `super`
 
             // Only used for null safe operator, and `super` is never null
-            receiverDartType = null;
+            ceylonReceiverDartType = null;
 
             if (is InterfaceModel ri = receiverType.declaration ) {
                 // Invoking a specific interface's implementation. Abandon polymorphism
@@ -499,7 +509,7 @@ class BaseGenerator(CompilationContext ctx)
                 thisArgument = [dartTypes.expressionForThis(scopeContainer)];
                 isFunction = true; // Static interface functions are... functions
 
-                boxedReceiver
+                dartBoxedReceiver
                     =   dartTypes.dartIdentifierForClassOrInterface {
                             scope;
                             ri;
@@ -514,7 +524,7 @@ class BaseGenerator(CompilationContext ctx)
             else {
                 // super refers to the superclass
                 thisArgument = [];
-                boxedReceiver = DartSimpleIdentifier("super");
+                dartBoxedReceiver = DartSimpleIdentifier("super");
                 value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     memberDeclaration;
@@ -537,7 +547,7 @@ class BaseGenerator(CompilationContext ctx)
             isFunction
                 =   true; // Static interface functions are... functions
 
-            boxedReceiver
+            dartBoxedReceiver
                 =   dartTypes.dartIdentifierForClassOrInterface {
                         scope;
                         memberContainer;
@@ -549,12 +559,20 @@ class BaseGenerator(CompilationContext ctx)
                         false;
                     };
 
-            // FIXME is our attempt busted? Null safe operations will need to treat
-            //       `thisArgument` as the possibly null receiver.
-            receiverDartType = null;
+            // The Dart type of what Ceylon thinks is the receiver!
+            ceylonReceiverDartType
+                =   dartTypes.dartTypeName {
+                        scope;
+                        ceylonTypes.denotableType {
+                            receiverType;
+                            memberContainer;
+                        };
+                        eraseToNative = false;
+                    };
         }
         else {
             // receiver is not `super`
+
             thisArgument = [];
             value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                 scope;
@@ -575,14 +593,14 @@ class BaseGenerator(CompilationContext ctx)
                         container;
                     };
 
-            receiverDartType
+            ceylonReceiverDartType
                 =   dartTypes.dartTypeName {
                         scope;
                         receiverDenotableType;
                         eraseToNative = false;
                     };
 
-            boxedReceiver
+            dartBoxedReceiver
                 =   withLhsCustom {
                         receiverDenotableType;
                         false; false;
@@ -615,10 +633,18 @@ class BaseGenerator(CompilationContext ctx)
                         memberDeclaration.firstParameterList.parameters)
                         .collect(ParameterModel.model);
 
+                "Actual `$this` argument which may be the parameter to an anonymous
+                 function for the null safe operator."
+                value dartThisArgument
+                    =   if (thisArgument nonempty // Dart receiver is a static function
+                                && safeMemberOperator) // Ceylon receiver may be null
+                        then [DartSimpleIdentifier("$r$")]
+                        else thisArgument;
+
                 return
                 DartArgumentList {
                     concatenate {
-                        thisArgument,
+                        dartThisArgument,
                         [for (i -> argument in arguments.indexed)
                             withLhs {
                                 argumentTypes[i];
@@ -633,17 +659,29 @@ class BaseGenerator(CompilationContext ctx)
             if (safeMemberOperator) {
                 "Must exist since receiver is never `super` when the safe member
                  operator is used."
-                assert (exists receiverDartType);
+                assert (exists ceylonReceiverDartType);
 
                 invocation
                     =   createNullSafeExpression {
                             parameterIdentifier = DartSimpleIdentifier("$r$");
-                            parameterType = receiverDartType;
-                            maybeNullExpression = boxedReceiver;
+                            parameterType = ceylonReceiverDartType;
+                            // For static invocations, the possibly null value is the
+                            // $this argument
+                            maybeNullExpression
+                                =   if (nonempty thisArgument)
+                                    then thisArgument.first
+                                    else dartBoxedReceiver;
                             ifNullExpression = DartNullLiteral();
                             ifNotNullExpression = DartFunctionExpressionInvocation {
                                 DartPropertyAccess {
-                                    DartSimpleIdentifier("$r$");
+                                    // For static invocations, the dart receiver is the
+                                    // static methods containing interface, which is
+                                    // represented by `dartBoxedReceiver`
+                                    // (`dartBoxedReceiver` is not the expression that
+                                    // might be null in this case)
+                                    if (thisArgument nonempty)
+                                        then dartBoxedReceiver
+                                        else DartSimpleIdentifier("$r$");
                                     memberIdentifier;
                                 };
                                 argumentList;
@@ -653,7 +691,7 @@ class BaseGenerator(CompilationContext ctx)
             else {
                 invocation
                     =   DartMethodInvocation {
-                            boxedReceiver;
+                            dartBoxedReceiver;
                             memberIdentifier;
                             argumentList;
                         };
@@ -667,20 +705,20 @@ class BaseGenerator(CompilationContext ctx)
                         receiver;
                         memberIdentifier;
                         DartArgumentList {
-                            thisArgument;
+                            thisArgument; // possibly empty
                         };
                     };
 
             if (safeMemberOperator) {
                 "Must exist since receiver is never `super` when the safe member
                  operator is used."
-                assert (exists receiverDartType);
+                assert (exists ceylonReceiverDartType);
 
                 invocation
                     =   createNullSafeExpression {
                             parameterIdentifier = DartSimpleIdentifier("$r$");
-                            parameterType = receiverDartType;
-                            maybeNullExpression = boxedReceiver;
+                            parameterType = ceylonReceiverDartType;
+                            maybeNullExpression = dartBoxedReceiver;
                             ifNullExpression = DartNullLiteral();
                             ifNotNullExpression = valueAccess {
                                 DartSimpleIdentifier("$r$");
@@ -689,7 +727,7 @@ class BaseGenerator(CompilationContext ctx)
             }
             else {
                 invocation
-                    =   valueAccess(boxedReceiver);
+                    =   valueAccess(dartBoxedReceiver);
             }
         }
 
