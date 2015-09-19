@@ -767,9 +767,90 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
 
-        // the subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel
+        "The subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel, with
+         Null for expressions to Callables."
         assert (is FunctionModel | ValueModel | SetterModel
                 | ClassModel | ConstructorModel | Null invokedDeclaration);
+
+        value invokedDeclarationContainer
+            =  if (exists invokedDeclaration)
+               then getContainingClassOrInterface(invokedDeclaration)
+               else null;
+
+        if (is FunctionModel | ValueModel invokedDeclaration,
+                !invokedDeclaration.shared,
+                // callable parameters are local values!
+                !invokedDeclaration.parameter,
+                is InterfaceModel invokedDeclarationContainer,
+                is BaseExpression invoked = that.invoked) {
+
+            // Special case: invoking private interface member using a BaseExpression.
+            //
+            // Private interface members are not polymorphic and cannot be accessed
+            // through $this. Instead, we must invoke the `getStaticInterfaceMethodName`
+            // directly, passing in a suitable `$this` value.
+            //
+            // Note: private interface members may also be invoked using a
+            // QualifiedExpression, but that can be handled by `generateInvocation`.
+
+            "The 'reciever' of the invocation, that will be passed as the first argument
+             to the Dart static implementation of invokedDeclaration."
+            DartExpression thisExpression;
+
+            // Find a value for the receiver ($this argument), starting from the
+            // container and searching ancestors until a match is found.
+            //
+            // It's simply the thisOrOuter for the exact type of the member's
+            // (invokedDeclaration's) interface.
+
+            "The scope of a BaseExpression to a function or value member of a class
+             or interface will have a containing class or interface."
+            assert (exists scopeContainer
+                =   getContainingClassOrInterface(that));
+
+            thisExpression
+                =   dartTypes.expressionToThisOrOuter {
+                        dartTypes.ancestorChainToExactDeclaration {
+                            scopeContainer;
+                            invokedDeclarationContainer;
+                        };
+                    };
+
+            value hasMultipleParameterLists
+                =   if (is FunctionModel invokedDeclaration)
+                    then invokedDeclaration.parameterLists.size() > 1
+                    else false;
+
+            return withBoxing {
+                that;
+                info.typeModel;
+                // If there are multiple parameter lists, the function returns a
+                // Callable, not the ultimate return type as advertised by the
+                // declaration.
+                !hasMultipleParameterLists then invokedDeclaration;
+                DartFunctionExpressionInvocation {
+                    // qualified reference to the static interface method
+                    DartPropertyAccess {
+                        dartTypes.dartIdentifierForClassOrInterface {
+                            that;
+                            invokedDeclarationContainer;
+                        };
+                        DartSimpleIdentifier {
+                            dartTypes.getStaticInterfaceMethodName(invokedDeclaration);
+                        };
+                    };
+                    DartArgumentList {
+                        concatenate {
+                            [thisExpression],
+                            generateArgumentListFromArguments {
+                                that.arguments;
+                                invokedInfo.typeModel;
+                            }.arguments
+                        };
+                    };
+                };
+            };
+        }
 
         switch (invokedDeclaration)
         case (is FunctionModel) {
@@ -795,8 +876,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     invoked.memberOperator is SafeMemberOperator;
                 };
             }
-            // Treat QualifiedExpressions w/Package "receivers" the
-            // same as BaseExpressions
+            // QualifiedExpressions, but exclude those w/Package "receivers"; they are
+            // more like BaseExpressions
             else if (is QualifiedExpression invoked,
                     !invoked.receiverExpression is Package) {
 

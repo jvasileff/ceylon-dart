@@ -482,26 +482,34 @@ class BaseGenerator(CompilationContext ctx)
         DartTypeName? receiverDartType;
 
         if (!exists generateReceiver) {
-            // receiver is `super`
+            // Receiver is `super`
 
-            // only used for null safe operator, which can't be used with `super`
+            // Only used for null safe operator, and `super` is never null
             receiverDartType = null;
 
             if (is InterfaceModel ri = receiverType.declaration ) {
-                "Caller indicated receiver is `super`, so there must be a `this` for the
-                 current scope."
-                assert (exists thisExpression = dartTypes.expressionForThis(scope));
-                thisArgument = [thisExpression];
+                // Invoking a specific interface's implementation. Abandon polymorphism
+                // and invoke the Dart static method directly. This also works when
+                // `super` is used to invoke private interface methods, which must
+                // *always* use the static methods.
 
-                isFunction = true; // static interface functions are... functions
-                boxedReceiver = dartTypes.dartTypeReference {
-                    scope;
-                    ri;
-                };
-                memberIdentifier = dartTypes.getStaticInterfaceMethodIdentifier {
-                    memberDeclaration;
-                    false;
-                };
+                "A `super` reference is surely contained within a class or interface."
+                assert (exists scopeContainer = getContainingClassOrInterface(scope));
+
+                thisArgument = [dartTypes.expressionForThis(scopeContainer)];
+                isFunction = true; // Static interface functions are... functions
+
+                boxedReceiver
+                    =   dartTypes.dartIdentifierForClassOrInterface {
+                            scope;
+                            ri;
+                        };
+
+                memberIdentifier
+                    =   dartTypes.getStaticInterfaceMethodIdentifier {
+                            memberDeclaration;
+                            false;
+                        };
             }
             else {
                 // super refers to the superclass
@@ -515,6 +523,35 @@ class BaseGenerator(CompilationContext ctx)
                 memberIdentifier = m;
                 isFunction = f;
             }
+        }
+        else if (!memberDeclaration.shared,
+                 is InterfaceModel memberContainer
+                         =  getContainingClassOrInterface(memberDeclaration)) {
+            // Invoking private interface member; must call static implementation method.
+            thisArgument
+                =   [withLhsDenotable {
+                        memberContainer;
+                        generateReceiver;
+                    }];
+
+            isFunction
+                =   true; // Static interface functions are... functions
+
+            boxedReceiver
+                =   dartTypes.dartIdentifierForClassOrInterface {
+                        scope;
+                        memberContainer;
+                    };
+
+            memberIdentifier
+                =   dartTypes.getStaticInterfaceMethodIdentifier {
+                        memberDeclaration;
+                        false;
+                    };
+
+            // FIXME is our attempt busted? Null safe operations will need to treat
+            //       `thisArgument` as the possibly null receiver.
+            receiverDartType = null;
         }
         else {
             // receiver is not `super`

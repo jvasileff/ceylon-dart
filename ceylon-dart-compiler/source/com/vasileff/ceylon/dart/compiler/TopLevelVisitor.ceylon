@@ -725,7 +725,7 @@ class TopLevelVisitor(CompilationContext ctx)
             DartExpressionFunctionBody {
                 false;
                 DartMethodInvocation {
-                    dartTypes.dartTypeReference {
+                    dartTypes.dartIdentifierForClassOrInterface {
                         scope;
                         interfaceModel;
                     };

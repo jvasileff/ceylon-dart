@@ -40,7 +40,8 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier,
     DartIdentifier,
     DartExpression,
-    DartPropertyAccess
+    DartPropertyAccess,
+    createDartPropertyAccess
 }
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
@@ -348,27 +349,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    // TODO this is ugly.
-    shared
-    DartExpression dartTypeReference(
-            Node|ElementModel|ScopeModel scope,
-            ClassOrInterfaceModel declaration) {
-
-        value fromDartPrefix = moduleImportPrefix(scope);
-        value dartModel = dartTypeModel(declaration.type, false);
-
-        if (dartModel.dartModule == fromDartPrefix) {
-            return DartSimpleIdentifier(dartModel.name);
-        }
-        else {
-            return
-            DartPrefixedIdentifier {
-                DartSimpleIdentifier(dartModel.dartModule);
-                DartSimpleIdentifier(dartModel.name);
-            };
-        }
-    }
-
     shared
     DartTypeName dartTypeName(
             Node|ElementModel|ScopeModel scope,
@@ -654,14 +634,86 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     shared
-    DartSimpleIdentifier? expressionForThis(Node|ScopeModel scope)
+    DartSimpleIdentifier expressionForThis(ClassOrInterfaceModel scope)
         =>  switch (container = getContainingClassOrInterface(scope))
             case (is ClassModel)
                 DartSimpleIdentifier("this")
-            case (is InterfaceModel)
-                DartSimpleIdentifier("$this")
-            case (is Null)
-                null;
+            else
+                DartSimpleIdentifier("$this");
+
+    "A stream containing the given [[declaration]] followed by declarations for all
+     of [[declaration]]'s ancestor Classes and Interfaces."
+    {ClassOrInterfaceModel+} ancestorChain
+            (ClassOrInterfaceModel declaration)
+        =>  loop<ClassOrInterfaceModel>(declaration)((c)
+            =>  getContainingClassOrInterface(c.container) else finished);
+
+    shared
+    {ClassOrInterfaceModel+} ancestorChainToExactDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel declaration)
+        =>  // up to and including an exact match for `declaration`
+            takeUntil(ancestorChain(scope))
+                    (declaration.equals);
+
+    shared
+    {ClassOrInterfaceModel+} ancestorChainToInheritingDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel inheritedDeclaration)
+        =>  // up to and including a declarations that inherits inheritedDeclaration
+            takeUntil(ancestorChain(scope))((c)
+                =>  c.inherits(inheritedDeclaration));
+
+    shared
+    {ClassOrInterfaceModel+} ancestorChainToCapturerOfDeclaration(
+            ClassModel|InterfaceModel scope,
+            FunctionOrValueModel capturedDeclaration)
+        =>  // up to and including a declarations that inherits inheritedDeclaration
+            takeUntil(ancestorChain(scope))((c)
+                =>  capturedBySelfOrSupertype(capturedDeclaration, c));
+
+    """
+       Chain of references to the member:
+            $this ("." $outer$CI)* "." memberName
+
+        The first identifier in the chain will be `this` or `$this`.
+    """
+    shared
+    DartPropertyAccess | DartSimpleIdentifier expressionToThisOrOuter
+            ({ClassOrInterfaceModel+} chain)
+        =>  let (isInterface = chain.first is InterfaceModel)
+            (if (isInterface) then ["$this"] else ["this"])
+                .chain(chain.skip(1).map(outerFieldName))
+                .map(DartSimpleIdentifier)
+                .reduce<DartPropertyAccess|DartSimpleIdentifier> {
+                    (expression, field) =>
+                    DartPropertyAccess {
+                        expression;
+                        field;
+                    };
+                };
+
+    """
+       Chain of references to the member:
+            $this ("." $outer$CI)* "." memberName
+
+       If the first declaration in the chain is a class, the leading `this`
+       will be suppressed.
+    """
+    shared
+    DartPropertyAccess | DartSimpleIdentifier? expressionToThisOrOuterStripThis
+            ({ClassOrInterfaceModel+} chain)
+        =>  let (isInterface = chain.first is InterfaceModel)
+            (if (isInterface) then ["$this"] else [])
+                .chain(chain.skip(1).map(outerFieldName))
+                .map(DartSimpleIdentifier)
+                .reduce<DartPropertyAccess|DartSimpleIdentifier> {
+                    (expression, field) =>
+                    DartPropertyAccess {
+                        expression;
+                        field;
+                    };
+                };
 
     "Returns a tuple containing:
 
@@ -675,6 +727,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             FunctionOrValueModel declaration,
             Boolean setter = false) {
 
+        "By definition."
+        assert (is FunctionModel|ValueModel|SetterModel declaration);
+
         value [identifier, isFunction] = dartIdentifierForFunctionOrValue {
             scope;
             declaration;
@@ -687,8 +742,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             "Arguments in named argument lists cannot be referenced."
             assert(!is NamedArgumentListModel declarationContainer);
 
-            value isInterface = container is InterfaceModel;
-
             switch (declarationContainer)
             case (is ClassOrInterfaceModel) {
 
@@ -696,34 +749,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                  as toplevels may be.)"
                 assert (is DartSimpleIdentifier identifier);
 
-                // The declaration must belong to $this or an outer container. Find it.
-
-                value containers
-                    =   loop<ClassOrInterfaceModel>(container)((c)
-                        =>  getContainingClassOrInterface(c.container) else finished);
-
-                value pathToDeclarer
-                    =   takeUntil(containers)(
-                            // up to and including the "declarer"
-                            (c) => c.inherits(declarationContainer))
-                        .skip(1); // don't include the expression's container
-
-                """
-                   Chain of references to the member:
-                        $this ("." $outer$CI)* "." memberName
-                """
+                "An expression to the declaration including:
+                 - `this`, `$this`, or a reference to an outer container that is also the
+                   container of the declaration, and
+                 - the identifier."
                 value dartExpression
-                    =   (if (isInterface) then ["$this"] else [])
-                            .chain(pathToDeclarer.map(outerFieldName))
-                            .map(DartSimpleIdentifier)
-                            .chain { identifier }
-                            .reduce<DartExpression> {
-                                (expression, field) =>
-                                DartPropertyAccess {
-                                    expression;
-                                    field;
+                    =   createDartPropertyAccess {
+                            expressionToThisOrOuterStripThis {
+                                ancestorChainToInheritingDeclaration {
+                                    container;
+                                    declarationContainer;
                                 };
                             };
+                            identifier;
+                        };
 
                 return [dartExpression, isFunction];
             }
@@ -744,32 +783,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
-                    value containers
-                        =   loop<ClassOrInterfaceModel>(container)((c)
-                            =>  getContainingClassOrInterface(c.container) else finished);
-
-                    value pathToCapturer
-                        =   takeUntil(containers)(
-                                // up to and including the capturer
-                                (c) => capturedBySelfOrSupertype(declaration, c))
-                            .skip(1); // don't include the expression's container
-
-                    """
-                       Chain of references to the capture:
-                            $this ("." $outer$CI)* "." $capture$V
-                    """
                     value dartExpression
-                        =   (if (isInterface) then ["$this"] else [])
-                                .chain(pathToCapturer.map(outerFieldName))
-                                .map(DartSimpleIdentifier)
-                                .chain { identifierForCapture(declaration) }
-                                .reduce<DartExpression> {
-                                    (expression, field) =>
-                                    DartPropertyAccess {
-                                        expression;
-                                        field;
+                        =   createDartPropertyAccess {
+                                expressionToThisOrOuterStripThis {
+                                    ancestorChainToCapturerOfDeclaration {
+                                        container;
+                                        declaration;
                                     };
                                 };
+                                identifierForCapture(declaration);
+                            };
 
                     return [dartExpression, isFunction];
                 }

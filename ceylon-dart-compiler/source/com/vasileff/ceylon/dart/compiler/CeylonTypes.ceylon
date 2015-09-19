@@ -407,9 +407,10 @@ class CeylonTypes(Unit unit) {
      type, such as `Object`, on the target platform."
     shared
     Type denotableType(Type expressionType, ClassOrInterface required)
-        // FIXME this returns null when Type is Nothing
+        // FIXME This returns null when Type is Nothing
         //       or when no suitable type exists
-        =>  definiteType(expressionType).getSupertype(required);
+        // FIXME Really. Now just returning Object. If correct, only by very lucky chance.
+        =>  definiteType(expressionType).getSupertype(required) else objectType;
 
     "Return the first type argument, or null if the type does not have type arguments."
     shared
