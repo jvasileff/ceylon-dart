@@ -138,7 +138,7 @@ class Array implements List {
 
   @$dart$core.override
   $dart$core.bool get empty
-    =>  List.$empty(this);
+    =>  _list.length == 0;
 
   @$dart$core.override
   get($dart$core.Object index)
@@ -824,6 +824,13 @@ abstract class Sequence implements Sequential {
   static Sequence $withLeading
         (Sequence $this, $dart$core.Object other)
     =>  new Tuple(other, $this);
+
+  @$dart$core.override
+  static $dart$core.String $get$string($this)
+    =>  Iterable.$toString($this);
+
+  static $dart$core.bool $get$empty($this)
+    =>  false;
 }
 
 //
@@ -870,7 +877,7 @@ class String implements List {
 
   @$dart$core.override
   $dart$core.bool get empty
-    =>  List.$empty(this);
+    =>  _value == "";
 
   @$dart$core.override
   get($dart$core.Object index)
@@ -1053,7 +1060,7 @@ class Tuple implements List, Sequence, Iterable {
 
   @$dart$core.override
   $dart$core.bool get empty
-    =>  List.$empty(this);
+    =>  _list.length == 0;
 
   @$dart$core.override
   get($dart$core.Object index)

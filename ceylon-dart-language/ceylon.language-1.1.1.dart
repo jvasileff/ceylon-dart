@@ -1181,7 +1181,7 @@ class List$iterator$$anonymous$0_ implements Iterator {
     }
     $dart$core.int index;
     $dart$core.int size;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.getElement((() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? List.$getElement(this.$outer$ceylon$language$List, (() {
         $dart$core.int tmp$5 = index;
         index = Integer.nativeValue(Integer.instance(index).successor);
         return tmp$5;
@@ -1196,7 +1196,7 @@ class List$collect$list_ implements List {
     $dart$core.int get size => $outer$ceylon$language$List.size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
-            return collecting.$delegate$($outer$ceylon$language$List.getElement(index));
+            return collecting.$delegate$(List.$getElement($outer$ceylon$language$List, index));
         } else {
             return null;
         }
@@ -1433,7 +1433,7 @@ class List$Rest$$anonymous$2_ implements Iterator {
     $dart$core.int i;
     $dart$core.Object next() => (() {
         if (i < $outer$ceylon$language$List$Rest.size) {
-            return $capture$$o.getElement($outer$ceylon$language$List$Rest.from + (() {
+            return List.$getElement($capture$$o, $outer$ceylon$language$List$Rest.from + (() {
                 $dart$core.int tmp$85 = i;
                 i = Integer.nativeValue(Integer.instance(i).successor);
                 return tmp$85;
@@ -1973,7 +1973,7 @@ class List$Reversed$$anonymous$5_ implements Iterator {
         index = $capture$$outerList.size - 1;
     }
     $dart$core.int index;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? $capture$$outerList.getElement((() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? List.$getElement($capture$$outerList, (() {
         $dart$core.int tmp$89 = index;
         index = Integer.nativeValue(Integer.instance(index).predecessor);
         return tmp$89;
