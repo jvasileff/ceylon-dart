@@ -49,6 +49,19 @@ class LazyIterator implements Iterator {
 // Array.dart
 //
 
+$dart$core.Function dartComparator(Callable ceylonComparator) {
+  return (var x, var y) {
+    var result = ceylonComparator.$delegate$(x,y);
+    if (result is $Smaller) {
+      return -1;
+    }
+    if (result is $Equal) {
+      return 0;
+    }
+    return 1;
+  };
+}
+
 class Array extends impl$BaseList {
   $dart$core.List _list;
 
@@ -86,8 +99,12 @@ class Array extends impl$BaseList {
 
   Sequential sort([Callable c]) {
     var newList = _list.toList();
-    newList.sort(c.$delegate$);
+    newList.sort(dartComparator(c));
     return new ArraySequence(new Array._withList(newList));
+  }
+
+  void sortInPlace([Callable c]) {
+    _list.sort(dartComparator(c));
   }
 
   @$dart$core.override
@@ -129,6 +146,9 @@ class Boolean {
 const $true = const Boolean.$true();
 const $false = const Boolean.$false();
 
+const $package$$true = $true;
+const $package$$false = $false;
+
 //
 // Callable.dart
 //
@@ -165,8 +185,10 @@ class Character {
 // Comparison.dart
 //
 
-class Comparison {
+abstract class Comparison {
   const Comparison();
+  $dart$core.bool equals($dart$core.Object other)
+    =>  ($dart$core.identical(this, other));
 }
 
 class $Larger extends Comparison {
@@ -242,6 +264,8 @@ class Float implements Number, Exponentiable {
     return false;
   }
 
+  $dart$core.int get hashCode => _value.hashCode;
+
   // Comparable
   Comparison compare([Float other])
       =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
@@ -293,6 +317,7 @@ class Integer implements Integral, Exponentiable, Binary {
   Integer times([Integer other]) => new Integer(this._value * other._value);
 
   Integer get negated => new Integer(-this._value);
+  Integer get magnitude => new Integer(this._value.abs());
   Integer minus([Integer other]) => new Integer(this._value - other._value);
 
   Integer plus([Integer other]) => new Integer(this._value + other._value);
@@ -303,6 +328,8 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.String toString() => _value.toString();
 
   Character get character => new Character.$fromInt(_value);
+
+  $dart$core.int get hashCode => _value.hashCode;
 
   $dart$core.bool equals($dart$core.Object other) {
     if (other is Integer) {
