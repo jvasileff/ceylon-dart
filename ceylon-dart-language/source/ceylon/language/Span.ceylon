@@ -6,7 +6,7 @@ by ("Gavin")
 see (`class Measure`,
     `interface Enumerable`)
 final serializable
-native class Span<Element>(first, last)
+class Span<Element>(first, last)
         extends Range<Element>()
         given Element satisfies Enumerable<Element> {
     
@@ -18,7 +18,9 @@ native class Span<Element>(first, last)
     
     string => first.string + ".." + last.string;
     
-    increasing = last.offsetSign(first) >= 0;
+// FIXME Dart workaround
+//    increasing = last.offsetSign(first) >= 0;
+    increasing => last.offsetSign(first) >= 0;
     
     decreasing => !increasing;
     
@@ -70,7 +72,10 @@ native class Span<Element>(first, last)
             return lastIndex + 1;
         }
         else {
-            throw OverflowException("size of range");
+// FIXME Dart workaround
+//            throw OverflowException("size of range");
+            "size of range"
+            assert(false);
         }
     }
     
@@ -99,7 +104,9 @@ native class Span<Element>(first, last)
      evaluated and collected into a new sequence."
     //TODO: we should have a way to produce a decreasing
     //      recursive range
-    shared actual 
+// FIXME Dart workaround
+    //shared actual 
+    native shared actual 
     [Element+] reversed
             => recursive 
             then super.reversed
@@ -139,9 +146,13 @@ native class Span<Element>(first, last)
                     result = outer.next(c);
                 }
                 if (result.offset(last) == 0) {
-                    this.element = finished;
+// FIXME Dart workaround ** `this` for ValueSpecifications results in null for the tcNode.declaration
+//                    this.element = finished;
+                    element = finished;
                 } else {
-                    this.element  = result;
+// FIXME Dart workaround ** `this` for ValueSpecifications results in null for the tcNode.declaration
+                    //this.element  = result;
+                    element  = result;
                 }
                 return result;
             } else {
