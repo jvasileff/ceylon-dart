@@ -438,6 +438,9 @@ class Float implements Number, Exponentiable {
   Float times([Float other]) => new Float(this._value * other._value);
 
   Float get negated => new Float(-this._value);
+  
+  $dart$core.int get integer => this._value.toInt();
+  
   Float minus([Float other]) => new Float(this._value - other._value);
 
   Float plus([Float other]) => new Float(this._value + other._value);
@@ -576,6 +579,11 @@ class Integer implements Integral, Exponentiable, Binary {
 
   Integer get not => new Integer(~_value.toSigned(64));
 
+  // Enumerable
+  Integer neighbour([$dart$core.int offset]) => new Integer(this._value + offset);
+  $dart$core.int offset([Integer other]) => this._value - other._value;
+  $dart$core.int offsetSign([Integer other]) => offset(other).sign;
+  
   // Ordinal
 
   Integer get predecessor => new Integer(this._value - 1);
@@ -877,6 +885,24 @@ const operatingSystem = const operatingSystem_.$value$();
 
 const $package$operatingSystem = operatingSystem;
 
+// system
+
+class system_ {
+const system_.$value$();
+  $dart$core.int get milliseconds
+      =>  new $dart$core.DateTime.now().millisecondsSinceEpoch;
+  
+  $dart$core.int get nanoseconds
+      =>  new $dart$core.DateTime.now().millisecondsSinceEpoch * 1000000;
+
+  $dart$core.String toString()
+      =>  "Dart";
+}
+
+const system = const system_.$value$();
+
+const $package$system = system;
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Runtime Package (ceylon.language.dart)
@@ -926,6 +952,7 @@ class dart$VariableBoxString {
 ///////////////////////////////////////
 
 class Map {}
+class Span {}
 
 ///////////////////////////////////////
 //
