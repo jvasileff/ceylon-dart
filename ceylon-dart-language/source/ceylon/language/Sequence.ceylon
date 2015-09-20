@@ -32,7 +32,7 @@ see (`interface Empty`,
 	 `class Tuple`, 
 	 `class Singleton`)
 by ("Gavin")
-native shared sealed interface Sequence<out Element=Anything>
+shared sealed interface Sequence<out Element=Anything>
         satisfies Element[] & 
                   {Element+} {
     
@@ -117,7 +117,9 @@ native shared sealed interface Sequence<out Element=Anything>
                 extends Object() 
                 satisfies List<Result> {
             lastIndex => outer.lastIndex;
-            size = outer.size;
+// FIXME Dart workaround
+            //size = outer.size;
+            size => outer.size;
             getFromFirst(Integer index)
                     => if (0<=index<size) 
                     then collecting(outer.getElement(index))
@@ -195,9 +197,13 @@ native shared sealed interface Sequence<out Element=Anything>
     shared actual default 
     Element[] spanTo(Integer to) 
             => sublistTo(to).sequence();
-    
+
+// FIXME Dart workaround
+//    shared actual default 
+//    String string => (super of Sequential<Element>).string;
     shared actual default 
-    String string => (super of Sequential<Element>).string;
+    String string => empty then "[]" else "[``commaList(this)``]";
+
     
     Element getElement(Integer index) {
         if (exists element = getFromFirst(index)) { 
@@ -300,7 +306,7 @@ shared [Element+]|Absent sequence<Element,Absent=Null>
     }
 }
 
-native class JoinedSequence<Element>
+class JoinedSequence<Element>
         ([Element+] firstSeq, [Element+] secondSeq)
         extends Object()
         satisfies [Element+] {
