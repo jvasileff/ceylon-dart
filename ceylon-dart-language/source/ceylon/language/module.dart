@@ -6,64 +6,21 @@ import 'dart:math' as $dart$math;
 import 'dart:mirrors' as $dart$mirrors;
 import '../../../ceylon.language-1.1.1.dart';
 
-class LazyIterable implements Iterable {
+class LazyIterable extends impl$BaseIterable {
   $dart$core.int count_;
   $dart$core.Function generate; // Object(Integer)
-  Iterable spread;
+  Iterable spread_;
 
-  LazyIterable(this.count_, this.generate, this.spread) {}
+  LazyIterable(this.count_, this.generate, this.spread_) {}
 
   @$dart$core.override
   Iterator iterator()
-    =>  new LazyIterator(count_, generate, spread);
+    =>  new LazyIterator(count_, generate, spread_);
 
   @$dart$core.override
   Iterable follow([$dart$core.Object head])
     // FIXME this is a terrible, non-lazy hack
     =>  new Tuple(head, this);
-
-  // bridge methods
-// FIXME Generate these now!
-
-  @$dart$core.override
-  $dart$core.int get size
-    =>  Iterable.$get$size(this);
-
-  @$dart$core.override
-  $dart$core.bool get empty
-    =>  Iterable.$get$empty(this);
-
-  @$dart$core.override
-  $dart$core.Object get first
-    =>  Iterable.$get$first(this);
-
-  @$dart$core.override
-  Iterable map([Callable collecting])
-    =>  Iterable.$map(this, collecting);
-
-  @$dart$core.override
-  Iterable flatMap([Callable collecting])
-    =>  Iterable.$flatMap(this, collecting);
-
-  @$dart$core.override
-  Iterable get rest
-    =>  Iterable.$get$rest(this);
-
-  @$dart$core.override
-  $dart$core.String toString()
-    =>  Iterable.$get$string(this);
-
-  @$dart$core.override
-  void each([Callable step])
-    =>  Iterable.$each(this, step);
-
-  @$dart$core.override
-  $dart$core.bool contains([$dart$core.Object element])
-    =>  Iterable.$contains(this, element);
-
-  @$dart$core.override
-  Sequential sequence()
-    =>  Iterable.$sequence(this);
 }
 
 class LazyIterator implements Iterator {
@@ -97,7 +54,7 @@ class LazyIterator implements Iterator {
 // Array.dart
 //
 
-class Array implements List {
+class Array extends impl$BaseList {
   $dart$core.List _list;
 
   Array(Iterable elements) {
@@ -132,62 +89,15 @@ class Array implements List {
   Iterable follow([$dart$core.Object head])
     =>  new Tuple(head, this);
 
-  // bridge methods
-  @$dart$core.override
-  $dart$core.bool defines([$dart$core.Object index])
-    =>  List.$defines(this, index);
+  Sequential sort([Callable c]) {
+    var newList = _list.toList();
+    newList.sort(c.$delegate$);
+    return new ArraySequence(new Array._withList(newList));
+  }
 
   @$dart$core.override
   $dart$core.bool get empty
     =>  _list.length == 0;
-
-  @$dart$core.override
-  get([$dart$core.Object index])
-    =>  List.$get(this, index);
-
-  @$dart$core.override
-  getFromLast([$dart$core.int index])
-    =>  List.$getFromLast(this, index);
-
-  @$dart$core.override
-  Iterator iterator()
-    =>  List.$iterator(this);
-
-  @$dart$core.override
-  $dart$core.int get size
-    =>  List.$get$size(this);
-
-  @$dart$core.override
-  $dart$core.Object get first
-    =>  Iterable.$get$first(this);
-
-  @$dart$core.override
-  Iterable map([Callable collecting])
-    =>  Iterable.$map(this, collecting);
-
-  @$dart$core.override
-  Iterable flatMap([Callable collecting])
-    =>  Iterable.$flatMap(this, collecting);
-
-  @$dart$core.override
-  Iterable get rest
-    =>  Iterable.$get$rest(this);
-
-  @$dart$core.override
-  $dart$core.String toString()
-    =>  Iterable.$get$string(this);
-
-  @$dart$core.override
-  void each([Callable step])
-    =>  Iterable.$each(this, step);
-
-  @$dart$core.override
-  $dart$core.bool contains([$dart$core.Object element])
-    =>  Iterable.$contains(this, element);
-
-  @$dart$core.override
-  Sequential sequence()
-    =>  Iterable.$sequence(this);
 }
 
 //
@@ -741,7 +651,7 @@ abstract class Sequence implements Sequential {
 // String.dart
 //
 
-class String implements List {
+class String extends impl$BaseList {
   final $dart$core.String _value;
 
   String(Iterable characters) :
@@ -773,59 +683,9 @@ class String implements List {
   Iterable follow([$dart$core.Object c])
     =>  new String._fromNative(c.toString() + _value);
 
-  // bridge methods
-
-  @$dart$core.override
-  $dart$core.bool defines([$dart$core.Object index])
-    => List.$defines(this, index);
-
   @$dart$core.override
   $dart$core.bool get empty
     =>  _value == "";
-
-  @$dart$core.override
-  get([$dart$core.Object index])
-    => List.$get(this, index);
-
-  @$dart$core.override
-  Iterator iterator()
-    => List.$iterator(this);
-
-  @$dart$core.override
-  getFromLast([index])
-    => List.$getFromLast(this, index);
-
-  @$dart$core.override
-  $dart$core.int get size
-    => List.$get$size(this);
-
-  @$dart$core.override
-  $dart$core.Object get first
-    =>  Iterable.$get$first(this);
-
-  @$dart$core.override
-  Iterable get rest
-    =>  Iterable.$get$rest(this);
-
-  @$dart$core.override
-  void each([Callable step])
-    => Iterable.$each(this, step);
-
-  @$dart$core.override
-  Iterable map([Callable collecting])
-    =>  Iterable.$map(this, collecting);
-
-  @$dart$core.override
-  Iterable flatMap([Callable collecting])
-    =>  Iterable.$flatMap(this, collecting);
-
-  @$dart$core.override
-  $dart$core.bool contains([$dart$core.Object element])
-    =>  Collection.$contains(this, element);
-
-  @$dart$core.override
-  Sequential sequence()
-    =>  Iterable.$sequence(this);
 
   // Dart runtime
 
@@ -906,7 +766,7 @@ class Throwable extends $dart$core.Error {
 // Tuple.dart
 //
 
-class Tuple implements List, Sequence, Iterable {
+class Tuple extends impl$BaseList implements Sequence, Iterable {
   final $dart$core.List _list;
 
   Tuple($dart$core.Object first, Iterable rest) : _list = [] {
@@ -957,62 +817,9 @@ class Tuple implements List, Sequence, Iterable {
   Iterable follow([$dart$core.Object head])
     =>  withLeading(head);
 
-  // bridge methods
-  @$dart$core.override
-  $dart$core.bool defines([$dart$core.Object index])
-    =>  List.$defines(this, index);
-
   @$dart$core.override
   $dart$core.bool get empty
     =>  _list.length == 0;
-
-  @$dart$core.override
-  get([$dart$core.Object index])
-    =>  List.$get(this, index);
-
-  @$dart$core.override
-  getFromLast([$dart$core.int index])
-    =>  List.$getFromLast(this, index);
-
-  @$dart$core.override
-  Iterator iterator()
-    =>  List.$iterator(this);
-
-  @$dart$core.override
-  $dart$core.int get size
-    =>  List.$get$size(this);
-
-  @$dart$core.override
-  $dart$core.Object get first
-    =>  Iterable.$get$first(this);
-
-  @$dart$core.override
-  Iterable map([Callable collecting])
-    =>  Iterable.$map(this, collecting);
-
-  @$dart$core.override
-  Iterable flatMap([Callable collecting])
-    =>  Iterable.$flatMap(this, collecting);
-
-  @$dart$core.override
-  Iterable get rest
-    =>  Iterable.$get$rest(this);
-
-  @$dart$core.override
-  $dart$core.String toString()
-    =>  Iterable.$get$string(this);
-
-  @$dart$core.override
-  void each([Callable step])
-    =>  Iterable.$each(this, step);
-
-  @$dart$core.override
-  $dart$core.bool contains([$dart$core.Object element])
-    =>  Collection.$contains(this, element);
-
-  @$dart$core.override
-  Sequence sequence()
-    =>  Sequence.$sequence(this);
 }
 
 //
