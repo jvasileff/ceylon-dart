@@ -25,7 +25,7 @@
 see (`class Entry`, 
      `function forKey`, `function forItem`, 
      `function byItem`, `function byKey`)
-native shared interface Map<out Key=Object, out Item=Anything>
+shared interface Map<out Key=Object, out Item=Anything>
         satisfies Collection<Key->Item> &
                   Correspondence<Object,Item>
         given Key satisfies Object {
@@ -69,7 +69,9 @@ native shared interface Map<out Key=Object, out Item=Anything>
             => object
             satisfies Collection<Key> {
         contains(Object key) => outer.defines(key);
-        iterator() => outer.map(Entry.key).iterator();
+// FIXME Dart workaround
+//        iterator() => outer.map(Entry.key).iterator();
+        iterator() => outer.map((x) => x.key).iterator();
         clone() => [*this];
         size => outer.size;
     };
@@ -82,7 +84,11 @@ native shared interface Map<out Key=Object, out Item=Anything>
             => object
             satisfies Collection<Item> {
         shared actual Boolean contains(Object item) {
-            for (k->v in outer) {
+// FIXME Dart workaround
+//            for (k->v in outer) {
+            for (e in outer) {
+                value k = e.key;
+                value v = e.item;
                 if (exists v, v==item) {
                     return true;
                 }
@@ -91,7 +97,9 @@ native shared interface Map<out Key=Object, out Item=Anything>
                 return false;
             }
         }
-        iterator() => outer.map(Entry.item).iterator();
+// FIXME Dart workaround
+//        iterator() => outer.map(Entry.item).iterator();
+        iterator() => outer.map((e) => e.item).iterator();
         clone() => [*this];
         size => outer.size;
     };
