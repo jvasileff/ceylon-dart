@@ -128,7 +128,7 @@
        Boolean same = corresponding(xs, ys);"""
 see (`interface Collection`, `function corresponding`)
 by ("Gavin")
-native shared interface Iterable<out Element=Anything, 
+shared interface Iterable<out Element=Anything, 
                           out Absent=Null>
         satisfies Category<>
         given Absent satisfies Null {
@@ -765,7 +765,9 @@ native shared interface Iterable<out Element=Anything,
      
          {Boolean+}(Object) fun = (-1..1).spread(Object.equals);
          print(fun(0)); //prints { false, true, false }"
-    shared default 
+// FIXME Dart workaround
+    native shared default 
+    //shared default 
     Iterable<Result,Absent>(*Args) 
     spread<Result,Args>(Result(*Args) method(Element element))
             given Args satisfies Anything[]
@@ -1456,11 +1458,16 @@ native shared interface Iterable<out Element=Anything,
             value it = elements.iterator();
             variable value count = 0;
             
+// FIXME Dart workaround
+//            variable value store 
+//                    = Array.ofSize {
+//                size = 16;
+//                element = null of ElementEntry<Element>?;
+//            };
             variable value store 
-                    = Array.ofSize {
-                size = 16;
-                element = null of ElementEntry<Element>?;
-            };
+                    = Array.ofSize (
+                16,
+                null of ElementEntry<Element>?);
             
             function hash(Element element, Integer size) 
                     => if (exists element) 
@@ -1469,10 +1476,14 @@ native shared interface Iterable<out Element=Anything,
             
             function rebuild(Array<ElementEntry<Element>?> store) {
                 value newStore 
-                        = Array.ofSize {
-                    size = store.size*2;
-                    element = null of ElementEntry<Element>?;
-                };
+// FIXME Dart workaround
+//                        = Array.ofSize {
+//                    size = store.size*2;
+//                    element = null of ElementEntry<Element>?;
+//                };
+                        = Array.ofSize (
+                    store.size*2,
+                    null of ElementEntry<Element>?);
                 for (entries in store) {
                     variable value entry = entries;
                     while (exists e = entry) {
@@ -1535,20 +1546,28 @@ native shared interface Iterable<out Element=Anything,
                       satisfies Map<Group,[Element+]> {
         
         variable value store 
-                = Array.ofSize {
-            size = 16;
-            element = null of GroupEntry<Group,Element>?;
-        };
+// FIXME Dart workaround
+//                = Array.ofSize {
+//            size = 16;
+//            element = null of GroupEntry<Group,Element>?;
+//        };
+                = Array.ofSize (
+            16,
+            null of GroupEntry<Group,Element>?);
         
         function hash(Object group, Integer size) 
                 => group.hash.magnitude % size;
         
         function rebuild(Array<GroupEntry<Group,Element>?> store) {
             value newStore 
-                    = Array.ofSize {
-                size = store.size*2;
-                element = null of GroupEntry<Group,Element>?;
-            };
+// FIXME Dart workaround
+//                    = Array.ofSize {
+//                size = store.size*2;
+//                element = null of GroupEntry<Group,Element>?;
+//            };
+                    = Array.ofSize (
+                store.size*2,
+                null of GroupEntry<Group,Element>?);
             for (groups in store) {
                 variable value group = groups;
                 while (exists g = group) {
@@ -1563,7 +1582,9 @@ native shared interface Iterable<out Element=Anything,
             return newStore;
         }
         
-        variable value count = 0;
+// FIXME Dart workaround rename "count" due to name conflict with `shared count()`
+//        variable value count = 0;
+        variable value _count = 0;
         for (element in outer) {
             value group = grouping(element);
             value index = hash(group, store.size);
@@ -1578,23 +1599,27 @@ native shared interface Iterable<out Element=Anything,
                 else {
                     newEntry 
                             = GroupEntry(group, 
-                                ElementEntry(element), 
+// FIXME Dart workaround
+//                                ElementEntry(element), 
+                                ElementEntry(element, null), 
                                     entries);
                 }
             }
             else {
                 newEntry 
                         = GroupEntry(group,
-                            ElementEntry(element));
+// FIXME Dart workaround
+//                            ElementEntry(element));
+                            ElementEntry(element, null), null);
             }
             store.set(index, newEntry);
-            count++;
-            if (count>store.size*2) {
+            _count++;
+            if (_count>store.size*2) {
                 store = rebuild(store);
             }
         }
         
-        size => count;
+        size => _count;
         
         iterator() 
                 => object satisfies Iterator<Group->[Element+]> {
@@ -1624,12 +1649,14 @@ native shared interface Iterable<out Element=Anything,
         
         clone() => this;
         
-        function group(Object key) 
+// FIXME Dart workaround rename group due to name conflict with `shared group()`
+//        function group(Object key) 
+        function group_(Object key) 
                 => store[hash(key, store.size)]?.get(key);
         
-        defines(Object key) => group(key) exists;
+        defines(Object key) => group_(key) exists;
         
-        get(Object key) => group(key)?.elements;
+        get(Object key) => group_(key)?.elements;
         
     };
     
@@ -1657,8 +1684,10 @@ native shared interface Iterable<out Element=Anything,
 String commaList({Anything*} elements)
     =>  ", ".join(elements.map(stringify));
 
-native class ElementEntry<Element>
-        (element, next = null)
+class ElementEntry<Element>
+// FIXME Dart workaround
+//        (element, next)
+        (element, next)
         extends Object()
         satisfies [Element+] {
     
@@ -1740,8 +1769,10 @@ native class ElementEntry<Element>
     
 }
 
-native class GroupEntry<Group,Element>
-        (group, elements, next = null)
+class GroupEntry<Group,Element>
+// FIXME Dart workaround
+//        (group, elements, next = null)
+        (group, elements, next)
         given Group satisfies Object {
     
     shared Group group;
