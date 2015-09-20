@@ -1076,6 +1076,17 @@ Iterable expand([Iterable iterables]) => $package$expand(iterables);
 abstract class Exponentiable implements Numeric {
     $dart$core.Object power([$dart$core.Object other]);
 }
+abstract class Finished {
+    Finished() {}
+}
+class finished_  extends Finished {
+    finished_() {}
+    $dart$core.String toString() => "finished";
+}
+final finished_ $package$finished = new finished_();
+
+finished_ get finished => $package$finished;
+
 Callable $package$forItem([Callable resulting]) => new dart$Callable(([Entry entry]) => resulting.$delegate$(entry.item));
 
 Callable forItem([Callable resulting]) => $package$forItem(resulting);
