@@ -1158,7 +1158,6 @@ abstract class Identifiable {
 abstract class impl$BaseIterable implements Iterable {
     impl$BaseIterable() {}
     $dart$core.String toString() => Iterable.$get$string(this);
-    Iterator iterator() => Iterable.$iterator(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
     $dart$core.int get size => Iterable.$get$size(this);
@@ -1215,17 +1214,13 @@ abstract class impl$BaseIterable implements Iterable {
 }
 abstract class impl$BaseIterator implements Iterator {
     impl$BaseIterator() {}
-    $dart$core.Object next() => Iterator.$next(this);
 }
 abstract class impl$BaseMap implements Map {
     impl$BaseMap() {}
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
-    $dart$core.Object get([$dart$core.Object key]) => Map.$get(this, key);
-    $dart$core.bool defines([$dart$core.Object key]) => Map.$defines(this, key);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
-    Map clone() => Map.$clone(this);
     Collection get keys => Map.$get$keys(this);
     Collection get items => Map.$get$items(this);
     Map mapItems([Callable mapping]) => Map.$mapItems(this, mapping);
@@ -1233,7 +1228,6 @@ abstract class impl$BaseMap implements Map {
     Map patch([Map other]) => Map.$patch(this, other);
     Map get coalescedMap => Map.$get$coalescedMap(this);
     $dart$core.bool get empty => Collection.$get$empty(this);
-    Iterator iterator() => Iterable.$iterator(this);
     $dart$core.int get size => Iterable.$get$size(this);
     $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
     $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
@@ -1297,9 +1291,7 @@ abstract class impl$BaseList implements List {
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
-    $dart$core.Object getFromFirst([$dart$core.int index]) => List.$getFromFirst(this, index);
     $dart$core.Object getFromLast([$dart$core.int index]) => List.$getFromLast(this, index);
-    $dart$core.int get lastIndex => List.$get$lastIndex(this);
     $dart$core.int get size => List.$get$size(this);
     $dart$core.bool defines([Integer index]) => List.$defines(this, index);
     $dart$core.bool contains([$dart$core.Object element]) => List.$contains(this, element);
@@ -1397,9 +1389,7 @@ abstract class impl$BaseCharacterList implements List {
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
-    $dart$core.Object getFromFirst([$dart$core.int index]) => List.$getFromFirst(this, index);
     $dart$core.Object getFromLast([$dart$core.int index]) => List.$getFromLast(this, index);
-    $dart$core.int get lastIndex => List.$get$lastIndex(this);
     $dart$core.int get size => List.$get$size(this);
     $dart$core.bool defines([Integer index]) => List.$defines(this, index);
     $dart$core.bool contains([$dart$core.Object element]) => List.$contains(this, element);
@@ -1494,15 +1484,11 @@ abstract class impl$BaseSequence implements Sequence {
     $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
-    $dart$core.Object get first => Sequence.$get$first(this);
-    $dart$core.Object get last => Sequence.$get$last(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
-    $dart$core.int get size => Sequence.$get$size(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);
     Sequence sequence() => Sequence.$sequence(this);
-    Sequential get rest => Sequence.$get$rest(this);
     Sequence get reversed => Sequence.$get$reversed(this);
     Sequential repeat([$dart$core.int times]) => Sequence.$repeat(this, times);
     Sequence clone() => Sequence.$clone(this);
@@ -1531,7 +1517,6 @@ abstract class impl$BaseSequence implements Sequence {
     $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
     $dart$core.Object getFromLast([$dart$core.int index]) => List.$getFromLast(this, index);
     $dart$core.bool defines([Integer index]) => List.$defines(this, index);
-    Iterator iterator() => Iterable.$iterator(this);
     List sublistFrom([$dart$core.int from]) => List.$sublistFrom(this, from);
     List sublistTo([$dart$core.int to]) => List.$sublistTo(this, to);
     List sublist([$dart$core.int from, $dart$core.int to]) => List.$sublist(this, from, to);
@@ -7958,15 +7943,11 @@ abstract class Range implements Sequence {
     $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
-    $dart$core.Object get first => Sequence.$get$first(this);
-    $dart$core.Object get last => Sequence.$get$last(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
-    $dart$core.int get size => Sequence.$get$size(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);
     Sequence sequence() => Sequence.$sequence(this);
-    Sequential get rest => Sequence.$get$rest(this);
     Sequence get reversed => Sequence.$get$reversed(this);
     Sequential repeat([$dart$core.int times]) => Sequence.$repeat(this, times);
     Sequence clone() => Sequence.$clone(this);
@@ -7994,7 +7975,6 @@ abstract class Range implements Sequence {
     $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
     $dart$core.Object getFromLast([$dart$core.int index]) => List.$getFromLast(this, index);
     $dart$core.bool defines([Integer index]) => List.$defines(this, index);
-    Iterator iterator() => Iterable.$iterator(this);
     List sublistFrom([$dart$core.int from]) => List.$sublistFrom(this, from);
     List sublistTo([$dart$core.int to]) => List.$sublistTo(this, to);
     List sublist([$dart$core.int from, $dart$core.int to]) => List.$sublist(this, from, to);

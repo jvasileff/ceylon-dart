@@ -533,6 +533,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
                     .map((m) => asserted<FunctionOrValueModel>(m,
                         "Most refined function or value should be a function or value."))
+                    .filter(not(FunctionOrValueModel.formal))
                     .sequence();
 
         value bridgeFunctions
