@@ -2209,6 +2209,8 @@ class BaseGenerator(CompilationContext ctx)
                 // Invoking a real function (not a callable value)
                 // Use the argument type, even though the parameter type should be
                 // sufficient until we add support for generics
+
+                // FIXME fails with varargs. Try "interleave(x, y)"
                 assert (exists argumentType = argumentTypes[i]);
 
                 lhsType = argumentType;

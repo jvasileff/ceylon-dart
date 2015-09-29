@@ -276,11 +276,14 @@ class DartLiteral() extends DartExpression() {}
 
 "A string literal expression."
 shared abstract
-class DartStringLiteral() extends DartLiteral() {}
+class DartStringLiteral()
+        of DartSingleStringLiteral
+        extends DartLiteral() {}
 
 "A single string literal expression."
 shared abstract
 class DartSingleStringLiteral()
+        of DartSimpleStringLiteral
         extends DartStringLiteral() {}
 
 "A string literal expression that does not contain
@@ -293,9 +296,22 @@ class DartSimpleStringLiteral(text)
 
     shared actual
     void write(CodeWriter writer) {
-        // TODO escaping
         writer.write("\"");
-        writer.write(text);
+        for (c in text) {
+            writer.write(
+                switch (c)
+                case('\n') "\\n"
+                case('\r') "\\r"
+                case('\f') "\\f"
+                case('\b') "\\b"
+                case('\t') "\\t"
+                case('\{#0b}') "\\v"
+                case('\\') "\\\\"
+                case('"') "\\\""
+                case('$') "\\$"
+                case('\{#7f}') "\\x7f"
+                else c.string);
+        }
         writer.write("\"");
     }
 }
