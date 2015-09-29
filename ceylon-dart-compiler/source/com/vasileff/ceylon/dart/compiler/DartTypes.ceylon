@@ -472,8 +472,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // for parameters of method refinements, use the type of the parameter
                 // of the refined method
                 refinedParameter(declaration).type
-            else if (is FunctionOrValueModel r =
-                    declaration.refinedDeclaration) then
+            else if (declaration.parameter,
+                // same, for shortcut refinements
+                    is SpecificationModel s = declaration.container,
+                    is FunctionModel c = s.declaration,
+                    is FunctionModel r = c.refinedDeclaration) then
+                refinedParameter(declaration).type
+            else if (is FunctionOrValueModel r = declaration.refinedDeclaration) then
                 r.type
             else
                 declaration.type;

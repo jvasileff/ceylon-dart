@@ -423,4 +423,32 @@ class ErasureTests() {
              """;
          };
     }
+
+    shared test
+    void shortcutRefinementParameterErasure() {
+        compileAndCompare {
+             """
+                interface I<in T> {
+                    shared formal void foo(T o);
+                }
+
+                class J() satisfies I<Integer> {
+                    foo(Integer i) => noop();
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    void foo([$dart$core.Object o]);
+                }
+                class J implements I {
+                    J() {}
+                    void foo([$ceylon$language.Integer i]) => $ceylon$language.noop();
+                }
+             """;
+         };
+    }
 }
