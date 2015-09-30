@@ -1063,8 +1063,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
      - When invoked, non-native values are returned
      - They may also appear as the lhs type, in which case they are treated as
-       Callable values, which course are not erased. (Although, the lhs case should be
-       handled by `withLhs`, preempting a call to this function.)"
+       `Callable` values, which of course are not erased. (Although, the lhs case should
+       be handled by `withLhs`, preempting a call to this function.)
+     - They may also appear as the rhs type (when taking a reference to a Function), in
+       which case they are treated as `Callable` values, which of course are not erased."
     shared
     Boolean erasedToNative(FunctionOrValueModel declaration)
         =>  !ctx.disableErasureToNative.contains(declaration)
@@ -1073,12 +1075,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             && !isParameterInNonFirstParamList(declaration)
             && native(formalType(declaration));
 
-    "For the Value, or the return type of the Function."
+    "For the Value, or the return type of the Function.
+
+     Regarding callable parameters:
+
+     - This function cannot be used when callable parameters are used as the rhs
+       expression, since this would be ambiguous with the normal case where we are
+       concerned with the *return* type. (The return is always erased to `Object` for
+       callable parameters, but the `Callable` value itself is usually not erased.)"
     shared
     Boolean erasedToObject(FunctionOrValueModel declaration)
         // Ignore "defaulted" for FunctionModel parameters, which are Callable
         // parameters that may be defaulted, where the erasure of the parameter
         // itself has no bearing on the erasure of the actual function return type
+        // TODO shouldn't we always return `true` for FunctionModels that are parameters?
         =>  ((!declaration is FunctionModel)
                 && (declaration.initializerParameter?.defaulted else false))
             || !denotable(declaration.type);

@@ -268,16 +268,17 @@ class ExpressionTransformer(CompilationContext ctx)
             }
             case (is FunctionModel) {
                 if (targetDeclaration.parameter) {
-                    // The Callable parameter, which is not erased
-                    // For now, we are calculating erased-to-Object with the defaulted
-                    // check.
-                    // TODO consider teaching  `withBoxing()`, `erasedToNative()`, and
-                    //      `erasedToObject()` about Callable parameters, and then
-                    //      use `withBoxing()`.
+                    // The Callable parameter, which is not erased.
+                    //
+                    // `withBoxing` cannot be used when taking a reference to a callable
+                    // parameter, since the logic for `Function` declarations is to
+                    // consider the *return* type of the `Callable`, but here, we're
+                    // concerned about the `Callable` value itself.
                     return withBoxingCustom {
                         that;
                         info.typeModel;
                         false;
+                        // erased-to-object if defaulted
                         targetDeclaration.initializerParameter.defaulted;
                         dartTypes.expressionForBaseExpression {
                             that;
