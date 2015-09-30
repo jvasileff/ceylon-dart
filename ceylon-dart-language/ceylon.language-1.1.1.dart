@@ -626,14 +626,41 @@ Iterable $package$functionIterable([Callable f]) => new functionIterable$$anonym
 
 Iterable functionIterable([Callable f]) => $package$functionIterable(f);
 
+void $package$dartListCopyTo([List val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
+    if ($dart$core.identical(sourcePosition, $package$dart$default)) {
+        sourcePosition = 0;
+    }
+    if ($dart$core.identical(destinationPosition, $package$dart$default)) {
+        destinationPosition = 0;
+    }
+    if ($dart$core.identical(length, $package$dart$default)) {
+        length = Integer.nativeValue($package$smallest(Integer.instance(val.size - (sourcePosition as $dart$core.int)), Integer.instance(destination.size - (destinationPosition as $dart$core.int))) as Integer);
+    }
+    $dart$core.int i = destinationPosition as $dart$core.int;
+    {
+        $dart$core.Object element$1;
+        Iterator iterator$0 = val.sublistFrom(sourcePosition as $dart$core.int).take(length as $dart$core.int).iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            $dart$core.Object c = element$1;
+            destination.set((() {
+                $dart$core.int tmp$2 = i;
+                i = Integer.nativeValue(Integer.instance(i).successor);
+                return tmp$2;
+            })(), c);
+        }
+    }
+}
+
+void dartListCopyTo([List val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) => $package$dartListCopyTo(val, destination, sourcePosition, destinationPosition, length);
+
 $dart$core.String $package$dartStringJoin([$dart$core.String val, Iterable objects]) {
     $dart$core.String result = "";
     $dart$core.bool first = true;
     {
-        $dart$core.Object element$1;
-        Iterator iterator$0 = objects.iterator();
-        while ((element$1 = iterator$0.next()) is !Finished) {
-            $dart$core.Object el = element$1;
+        $dart$core.Object element$4;
+        Iterator iterator$3 = objects.iterator();
+        while ((element$4 = iterator$3.next()) is !Finished) {
+            $dart$core.Object el = element$4;
             if (first) {
                 first = false;
             } else {
@@ -670,47 +697,20 @@ Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.i
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
     $dart$core.String br = String.nativeValue(lineWithBreak.get(Integer.instance(1)) as String);
     return (() {
-        $dart$core.bool doElse$2 = true;
+        $dart$core.bool doElse$5 = true;
         if (!(br == null)) {
-            doElse$2 = false;
+            doElse$5 = false;
             return String.instance(line + br);
         }
-        if (doElse$2) {
-            $dart$core.Object br$3;
-            br$3 = String.instance(br);
+        if (doElse$5) {
+            $dart$core.Object br$6;
+            br$6 = String.instance(br);
             return String.instance(line);
         }
     })();
 })()));
 
 Iterable dartStringLinesWithBreaks([$dart$core.String val]) => $package$dartStringLinesWithBreaks(val);
-
-void $package$dartStringCopyTo([$dart$core.String val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
-    if ($dart$core.identical(sourcePosition, $package$dart$default)) {
-        sourcePosition = 0;
-    }
-    if ($dart$core.identical(destinationPosition, $package$dart$default)) {
-        destinationPosition = 0;
-    }
-    if ($dart$core.identical(length, $package$dart$default)) {
-        length = Integer.nativeValue($package$smallest(Integer.instance(String.instance(val).size - (sourcePosition as $dart$core.int)), Integer.instance(destination.size - (destinationPosition as $dart$core.int))) as Integer);
-    }
-    $dart$core.int i = destinationPosition as $dart$core.int;
-    {
-        $dart$core.Object element$5;
-        Iterator iterator$4 = String.instance(val).sublistFrom(sourcePosition as $dart$core.int).take(length as $dart$core.int).iterator();
-        while ((element$5 = iterator$4.next()) is !Finished) {
-            Character c = element$5 as Character;
-            destination.set((() {
-                $dart$core.int tmp$6 = i;
-                i = Integer.nativeValue(Integer.instance(i).successor);
-                return tmp$6;
-            })(), c);
-        }
-    }
-}
-
-void dartStringCopyTo([$dart$core.String val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) => $package$dartStringCopyTo(val, destination, sourcePosition, destinationPosition, length);
 
 class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
     dartStringSplit$$anonymous$3_ $outer$ceylon$language$dartStringSplit$$anonymous$3_;

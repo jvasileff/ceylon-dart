@@ -76,6 +76,26 @@ class Array extends impl$BaseList {
 
   Array._withList($dart$core.List this._list);
 
+  @$dart$core.override
+  $dart$core.Object getFromFirst([$dart$core.int index])
+    => (0 <= index && index < size) ? _list[index] : null;
+
+  @$dart$core.override
+  $dart$core.int get lastIndex
+    => _list.isEmpty ? null : _list.length - 1;
+
+  @$dart$core.override
+  $dart$core.int get size
+    => _list.length;
+
+  @$dart$core.override
+  $dart$core.bool get empty
+    => _list.isEmpty;
+
+  @$dart$core.override
+  Array clone()
+    => new Array._withList(_list.toList());
+
   void set($dart$core.int index, $dart$core.Object element) {
     if (index < 0 || index > lastIndex) {
       throw new AssertionError("Index out of bounds");
@@ -83,23 +103,36 @@ class Array extends impl$BaseList {
     _list[index] = element;
   }
 
+  void copyTo([Array destination,
+          $dart$core.Object sourcePosition = $package$dart$default,
+          $dart$core.Object destinationPosition = $package$dart$default,
+          $dart$core.Object length = $package$dart$default]) {
+    Array source;
+    if ($dart$core.identical(this._list, destination._list)) {
+      source = this.clone();
+    }
+    else {
+      source = this;
+    }
+    dartListCopyTo(source, destination, sourcePosition, destinationPosition, length);
+  }
+
+  // TODO optimize span and measure functions
   @$dart$core.override
-  $dart$core.bool get empty
-    => _list.isEmpty;
+  Array span([Integer from, Integer to])
+    => new Array(List.$span(this, from, to));
 
   @$dart$core.override
-  $dart$core.int get size
-    => _list.length;
+  Array spanFrom([Integer from])
+    => new Array(List.$spanFrom(this, from));
 
   @$dart$core.override
-  $dart$core.int get lastIndex
-    => _list.isEmpty ? null : _list.length - 1;
+  Array spanTo([Integer to])
+    => new Array(List.$spanTo(this, to));
 
   @$dart$core.override
-  $dart$core.Object getFromFirst([$dart$core.int index])
-    => (0 <= index && index < size)
-            ? _list[index]
-            : null;
+  Array measure([Integer from, $dart$core.int length])
+    => new Array(List.$measure(this, from, length));
 
   Sequential sort([Callable c]) {
     var newList = _list.toList();
@@ -858,8 +891,9 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   void copyTo([Array destination,
           $dart$core.Object sourcePosition = $package$dart$default,
           $dart$core.Object destinationPosition = $package$dart$default,
-          $dart$core.Object length = $package$dart$default])
-      => dartStringCopyTo(this._value, destination, sourcePosition, destinationPosition);
+          $dart$core.Object length = $package$dart$default]) {
+      dartListCopyTo(this, destination, sourcePosition, destinationPosition, length);
+  }
 
   // TODO
   //  shared actual native Boolean occurs(Anything element);
