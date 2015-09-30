@@ -225,4 +225,43 @@ class ClassTests() {
         };
     }
 
+    shared test
+    void noBridgeForFormals() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared default void foo0() {}
+                    shared default void foo1() {}
+                    shared formal void foo2();
+                    shared formal void foo3();
+                }
+
+                abstract class C() satisfies I {
+                    shared actual formal void foo1();
+                    shared actual formal void foo3();
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    void foo0();
+                    static void $foo0([final I $this]) {}
+                    void foo1();
+                    static void $foo1([final I $this]) {}
+                    void foo2();
+                    void foo3();
+                }
+                abstract class C implements I {
+                    C() {}
+                    void foo1();
+                    void foo3();
+                    void foo0() => I.$foo0(this);
+                }
+             """;
+        };
+    }
+
 }
