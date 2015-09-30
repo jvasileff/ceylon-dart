@@ -962,9 +962,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      - The Dart identifier for a Ceylon FunctionOrValue
      - A boolean value that is true if the target is a dart function, or false if the
        target is a dart value. This will be true for Ceylon values that must be mapped
-       to Dart functions."
+       to Dart functions.
+
+     **Note** this function should not be used for base expressions since they may
+     reference captured values. Use [[expressionForBaseExpression]] instead."
     shared
     see(`function dartIdentifierForFunctionOrValueDeclaration`)
+    see(`function expressionForBaseExpression`)
     [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
             Node|ScopeModel scope,
             FunctionOrValueModel declaration,

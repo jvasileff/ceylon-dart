@@ -264,4 +264,41 @@ class ClassTests() {
         };
     }
 
+    shared test
+    void capturedCallableParameter() {
+        compileAndCompare {
+             """
+                shared void fun(String captureMe1(), String() captureMe2) {
+                    class C() {
+                        captureMe1();
+                        captureMe2();
+
+                        value cm1 = captureMe1;
+                        value cm2 = captureMe2;
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class fun$C {
+                    $ceylon$language.Callable $capture$fun$captureMe1;
+                    $ceylon$language.Callable $capture$fun$captureMe2;
+                    fun$C([$ceylon$language.Callable this.$capture$fun$captureMe1, $ceylon$language.Callable this.$capture$fun$captureMe2]) {
+                        $capture$fun$captureMe1.$delegate$();
+                        $capture$fun$captureMe2.$delegate$();
+                        cm1 = $capture$fun$captureMe1;
+                        cm2 = $capture$fun$captureMe2;
+                    }
+                    $ceylon$language.Callable cm1;
+                    $ceylon$language.Callable cm2;
+                }
+                void $package$fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) {}
+
+                void fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) => $package$fun(captureMe1, captureMe2);
+             """;
+        };
+    }
 }

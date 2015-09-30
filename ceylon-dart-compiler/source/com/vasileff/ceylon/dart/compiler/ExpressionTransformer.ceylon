@@ -279,7 +279,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         info.typeModel;
                         false;
                         targetDeclaration.initializerParameter.defaulted;
-                        dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.expressionForBaseExpression {
                             that;
                             targetDeclaration;
                             false;
@@ -294,7 +294,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         generateNewCallable {
                             that;
                             functionModel = targetDeclaration;
-                            dartTypes.dartIdentifierForFunctionOrValue {
+                            dartTypes.expressionForBaseExpression {
                                 scope = that;
                                 targetDeclaration;
                             }[0];

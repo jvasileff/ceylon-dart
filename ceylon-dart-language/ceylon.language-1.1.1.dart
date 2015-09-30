@@ -2163,7 +2163,7 @@ class Iterable$scan$$anonymous$4_$$anonymous$5_ implements Iterator {
                     $dart$core.Object element;
                     element = element$49;
                     doElse$48 = false;
-                    partial = accumulating.$delegate$(partial, element);
+                    partial = $outer$ceylon$language$Iterable$scan$$anonymous$4_.$capture$Iterable$scan$accumulating.$delegate$(partial, element);
                     return partial;
                 }
             }
@@ -2258,7 +2258,7 @@ class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
             {
                 $dart$core.bool doElse$58 = true;
                 if (!(next == null)) {
-                    if (Boolean.nativeValue(selecting.$delegate$(next) as Boolean)) {
+                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$locations$$anonymous$6_.$capture$Iterable$locations$selecting.$delegate$(next) as Boolean)) {
                         doElse$58 = false;
                         return new Entry((() {
                             $dart$core.Object tmp$59 = Integer.instance(i);
@@ -2514,7 +2514,7 @@ class Iterable$skipWhile$$anonymous$12_ implements Iterable {
                 }
                 elem = elem$71;
             }
-            if (!Boolean.nativeValue(skipping.$delegate$(elem) as Boolean)) {
+            if (!Boolean.nativeValue($capture$Iterable$skipWhile$skipping.$delegate$(elem) as Boolean)) {
                 return new Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_(this, elem, iter);
             }
         }
@@ -2588,7 +2588,7 @@ class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
                 if (!(next$72 is Finished)) {
                     $dart$core.Object next;
                     next = next$72;
-                    if (Boolean.nativeValue(taking.$delegate$(next) as Boolean)) {
+                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$takeWhile$$anonymous$14_.$capture$Iterable$takeWhile$taking.$delegate$(next) as Boolean)) {
                         return next;
                     } else {
                         alive = false;
@@ -3552,7 +3552,7 @@ class Iterable$group$$anonymous$32_ implements Map {
             Iterator iterator$123 = $outer$ceylon$language$Iterable.iterator();
             while ((element$124 = iterator$123.next()) is !Finished) {
                 $dart$core.Object element = element$124;
-                $dart$core.Object group = grouping.$delegate$(element);
+                $dart$core.Object group = $capture$Iterable$group$grouping.$delegate$(element);
                 $dart$core.int index = hash(group, store.size);
                 GroupEntry newEntry;
                 {
@@ -4751,7 +4751,7 @@ class List$collect$list_ implements List {
     $dart$core.int get size => $outer$ceylon$language$List.size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
-            return collecting.$delegate$(List.$getElement($outer$ceylon$language$List, index));
+            return $capture$List$collect$collecting.$delegate$(List.$getElement($outer$ceylon$language$List, index));
         } else {
             return null;
         }
@@ -6597,7 +6597,7 @@ class loop$$anonymous$0_ implements Iterable {
     loop$$anonymous$0_([$dart$core.Object this.$capture$loop$$start, Callable this.$capture$loop$next]) {}
     $dart$core.Object get first => $capture$loop$$start;
     $dart$core.bool get empty => false;
-    $dart$core.Object nextElement([$dart$core.Object element]) => next.$delegate$(element);
+    $dart$core.Object nextElement([$dart$core.Object element]) => $capture$loop$next.$delegate$(element);
     Iterator iterator() => new loop$$anonymous$0_$$anonymous$1_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -6814,7 +6814,7 @@ class Map$mapItems$$anonymous$4_ implements Map {
                         }
                         item = item$18;
                     }
-                    return mapping.$delegate$(key, item);
+                    return $capture$Map$mapItems$mapping.$delegate$(key, item);
                 }
             }
             if (doElse$17) {
@@ -6822,10 +6822,10 @@ class Map$mapItems$$anonymous$4_ implements Map {
             }
         }
     }
-    Entry mapEntry([Entry entry]) => new Entry(entry.key, mapping.$delegate$(entry.key, entry.item));
+    Entry mapEntry([Entry entry]) => new Entry(entry.key, $capture$Map$mapItems$mapping.$delegate$(entry.key, entry.item));
     Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(mapEntry)).iterator();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
-    Map clone() => $outer$ceylon$language$Map.clone().mapItems(mapping);
+    Map clone() => $outer$ceylon$language$Map.clone().mapItems($capture$Map$mapItems$mapping);
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
@@ -6898,7 +6898,7 @@ class Map$filterKeys$$anonymous$5_ implements Map {
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
         if (true) {
-            if (Boolean.nativeValue(filtering.$delegate$(key) as Boolean)) {
+            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.$delegate$(key) as Boolean)) {
                 doElse$19 = false;
                 return $outer$ceylon$language$Map.get(key);
             }
@@ -6910,7 +6910,7 @@ class Map$filterKeys$$anonymous$5_ implements Map {
     $dart$core.bool defines([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$20 = true;
         if (true) {
-            if (Boolean.nativeValue(filtering.$delegate$(key) as Boolean)) {
+            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.$delegate$(key) as Boolean)) {
                 doElse$20 = false;
                 return $outer$ceylon$language$Map.defines(key);
             }
@@ -6919,8 +6919,8 @@ class Map$filterKeys$$anonymous$5_ implements Map {
             return false;
         }
     })();
-    Iterator iterator() => $outer$ceylon$language$Map.filter($package$forKey(filtering)).iterator();
-    Map clone() => $outer$ceylon$language$Map.clone().filterKeys(filtering);
+    Iterator iterator() => $outer$ceylon$language$Map.filter($package$forKey($capture$Map$filterKeys$filtering)).iterator();
+    Map clone() => $outer$ceylon$language$Map.clone().filterKeys($capture$Map$filterKeys$filtering);
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
@@ -8525,7 +8525,7 @@ class Sequence$collect$list_ implements List {
     $dart$core.int get size => $outer$ceylon$language$Sequence.size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
-            return collecting.$delegate$(Sequence.$getElement($outer$ceylon$language$Sequence, index));
+            return $capture$Sequence$collect$collecting.$delegate$(Sequence.$getElement($outer$ceylon$language$Sequence, index));
         } else {
             return null;
         }
