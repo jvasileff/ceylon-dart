@@ -69,7 +69,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     AnyClassInfo,
     ValueGetterDefinitionInfo,
     ObjectDefinitionInfo,
-    ObjectExpressionInfo
+    ObjectExpressionInfo,
+    NodeInfo
 }
 
 "For Dart TopLevel declarations."
@@ -162,7 +163,7 @@ class TopLevelVisitor(CompilationContext ctx)
         }
 
         addClassDefinition {
-            that;
+            info;
             info.declarationModel;
             that.body;
             that.extendedType;
@@ -213,7 +214,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value implementsTypes
             =   sequence(CeylonList(info.declarationModel.satisfiedTypes)
                         .map((satisfiedType)
-                =>  dartTypes.dartTypeName(that, satisfiedType, false)));
+                =>  dartTypes.dartTypeName(info, satisfiedType, false)));
 
 
         "The containing class or interface, if one exists."
@@ -228,7 +229,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeName {
-                                that;
+                                info;
                                 outerDeclaration.type;
                                 false; false;
                             };
@@ -253,7 +254,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeNameForDeclaration {
-                                that;
+                                info;
                                 capture;
                             };
                             [DartVariableDeclaration {
@@ -287,7 +288,7 @@ class TopLevelVisitor(CompilationContext ctx)
         //super.visitObjectExpression(that);
 
         addClassDefinition {
-            that;
+            info;
             info.anonymousClass;
             that.body;
             that.extendedType;
@@ -304,7 +305,7 @@ class TopLevelVisitor(CompilationContext ctx)
         }
 
         addClassDefinition {
-            that;
+            info;
             info.anonymousClass;
             that.body;
             that.extendedType;
@@ -322,7 +323,7 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     void addClassDefinition(
-            Node scope, ClassModel classModel, ClassBody classBody,
+            DScope scope, ClassModel classModel, ClassBody classBody,
             ExtendedType? extendedTypeNode, Parameters? parameters = null) {
 
         value identifier
@@ -567,6 +568,8 @@ class TopLevelVisitor(CompilationContext ctx)
     [DartFunctionDeclaration*] generateForwardingGetterSetter
             (ValueDefinition | ValueGetterDefinition | ObjectDefinition that) {
 
+        value info = NodeInfo(that);
+
         value declarationModel =
             switch (that)
             case (is ValueDefinition)
@@ -580,7 +583,7 @@ class TopLevelVisitor(CompilationContext ctx)
         DartFunctionDeclaration {
             external = false;
             returnType = dartTypes.dartTypeNameForDeclaration(
-                that, declarationModel);
+                info, declarationModel);
             propertyKeyword = "get";
             DartSimpleIdentifier {
                 dartTypes.getName(declarationModel);
@@ -612,7 +615,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             final = false;
                             var = false;
                             type = dartTypes.dartTypeNameForDeclaration(
-                                that, declarationModel);
+                                info, declarationModel);
                             identifier = DartSimpleIdentifier("value");
                         }];
                     };
@@ -658,12 +661,12 @@ class TopLevelVisitor(CompilationContext ctx)
                         info.declarationModel.firstParameterList.parameters))
             DartFunctionDeclaration {
                 external = false;
-                generateFunctionReturnType(that, info.declarationModel);
+                generateFunctionReturnType(info, info.declarationModel);
                 propertyKeyword = null;
                 DartSimpleIdentifier(functionName);
                 DartFunctionExpression {
                     generateFormalParameterList {
-                        that;
+                        info;
                         that.parameterLists.first;
                     };
                     DartExpressionFunctionBody {
@@ -684,7 +687,7 @@ class TopLevelVisitor(CompilationContext ctx)
             };
 
     DartMethodDeclaration generateBridgeMethodOrField
-            (Node scope, FunctionOrValueModel declaration) {
+            (DScope scope, FunctionOrValueModel declaration) {
 
         assert (is FunctionModel|ValueModel|SetterModel declaration);
 

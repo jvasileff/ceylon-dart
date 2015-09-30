@@ -8,8 +8,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
 // TODO better location info
 shared
 class CompilerBug(
-        shared Node node, String description,
+        shared DScope|Node node, String description,
         Throwable? cause = null)
         extends Exception(
-            let (NodeInfo info = NodeInfo(node))
+            let (DScope info = if (is DScope node) then node else NodeInfo(node))
             description + " at '``info.filename``: ``info.location``'") {}

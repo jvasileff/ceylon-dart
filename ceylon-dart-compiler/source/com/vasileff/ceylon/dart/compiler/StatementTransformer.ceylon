@@ -115,6 +115,9 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformSwitchCaseElse(SwitchCaseElse that) {
+        value info
+            =   NodeInfo(that);
+
         value [switchedType, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);
 
@@ -127,7 +130,7 @@ class StatementTransformer(CompilationContext ctx)
                     return
                     DartIfStatement {
                         generateMatchCondition {
-                            that;
+                            info;
                             switchedType;
                             switchedVariable;
                             caseItem.expressions;
@@ -146,7 +149,7 @@ class StatementTransformer(CompilationContext ctx)
                     value replacementVariable
                         =   if (exists variableDeclaration) then
                                 generateReplacementVariableDefinition {
-                                    that; variableDeclaration;
+                                    info; variableDeclaration;
                                 }
                             else
                                 [];
@@ -154,7 +157,7 @@ class StatementTransformer(CompilationContext ctx)
                     return
                     DartIfStatement {
                         generateIsExpression {
-                            that;
+                            info;
                             switchedVariable;
                             TypeInfo(caseItem.type).typeModel;
                         };
@@ -181,7 +184,7 @@ class StatementTransformer(CompilationContext ctx)
                             const = false;
                             DartConstructorName {
                                 dartTypes.dartTypeName {
-                                    that;
+                                    info;
                                     ceylonTypes.assertionErrorType;
                                     false; false;
                                 };
@@ -226,6 +229,9 @@ class StatementTransformer(CompilationContext ctx)
         //  3. execute then block in innermost if (after setting temp boolean to 'false'
         //  4. after unwinding all if's, if there's an else, wrap it in an 'if (temp)'
 
+        value info
+            =   NodeInfo(that);
+
         value doElseVariable
             =   that.elseClause exists
                 then DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));
@@ -235,7 +241,7 @@ class StatementTransformer(CompilationContext ctx)
             =   if (exists elseClause = that.elseClause,
                     exists variableDeclaration =
                         ElseClauseInfo(elseClause).variableDeclarationModel)
-                then generateReplacementVariableDefinition(that, variableDeclaration)
+                then generateReplacementVariableDefinition(info, variableDeclaration)
                 else [];
 
         value statements = LinkedList<DartStatement?>();
@@ -415,7 +421,7 @@ class StatementTransformer(CompilationContext ctx)
         =>  [DartExpressionStatement {
                 withLhsNoType {
                     () => generateAssignmentExpression {
-                        that;
+                        NodeInfo(that);
                         ValueSpecificationInfo(that).declaration;
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
@@ -481,7 +487,7 @@ class StatementTransformer(CompilationContext ctx)
         // will create an expression that yields the iterator
         value [iteratorType, _, iteratorGenerator]
             =   generateInvocationDetailsFromName {
-                    that;
+                    info;
                     that.forClause.iterator.iterated;
                     "iterator";
                     [];
@@ -501,12 +507,12 @@ class StatementTransformer(CompilationContext ctx)
         // will create an expression that calls `next` on the iterator
         value [loopVariableType, __, nextInvocationGenerator]
             =   generateInvocationDetailsSynthetic {
-                    that;
+                    info;
                     iteratorDenotableType;
                     // NonNative since that's how we created
                     // `iteratorDenotable` (`withLhsNonNative`)
                     () => withBoxingNonNative {
-                        that;
+                        info;
                         iteratorDenotableType;
                         dartIteratorVariable;
                     };
@@ -534,7 +540,7 @@ class StatementTransformer(CompilationContext ctx)
                 DartVariableDeclarationList {
                     null;
                     dartTypes.dartTypeName {
-                        that;
+                        info;
                         loopVariableType;
                         false; false;
                     };
@@ -549,7 +555,7 @@ class StatementTransformer(CompilationContext ctx)
                 DartVariableDeclarationList {
                     null;
                     dartTypes.dartTypeName {
-                        that;
+                        info;
                         iteratorDenotableType;
                         eraseToNative = false;
                         eraseToObject = false;
@@ -576,7 +582,7 @@ class StatementTransformer(CompilationContext ctx)
                         };
                     };
                     dartTypes.dartTypeName {
-                        that;
+                        info;
                         ceylonTypes.finishedType;
                         false; false;
                     };
@@ -589,7 +595,7 @@ class StatementTransformer(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeNameForDeclaration {
-                                that;
+                                info;
                                 variableDeclaration;
                             };
                             [DartVariableDeclaration {
@@ -600,7 +606,7 @@ class StatementTransformer(CompilationContext ctx)
                                     null;
                                     variableDeclaration;
                                     () => withBoxing {
-                                        that;
+                                        info;
                                         loopVariableType;
                                         null;
                                         dartLoopVariable;
@@ -753,7 +759,7 @@ class StatementTransformer(CompilationContext ctx)
                         const = false;
                         DartConstructorName {
                             dartTypes.dartTypeName {
-                                that;
+                                info;
                                 ceylonTypes.assertionErrorType;
                                 false; false;
                             };
@@ -810,7 +816,7 @@ class StatementTransformer(CompilationContext ctx)
                                     const = false;
                                     DartConstructorName {
                                         dartTypes.dartTypeName {
-                                            that;
+                                            info;
                                             ceylonTypes.assertionErrorType;
                                             false; false;
                                         };

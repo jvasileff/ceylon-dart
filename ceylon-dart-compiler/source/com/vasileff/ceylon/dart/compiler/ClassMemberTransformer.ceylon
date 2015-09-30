@@ -55,7 +55,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     DeclarationInfo,
     ObjectDefinitionInfo,
     LazySpecificationInfo,
-    FunctionDeclarationInfo
+    FunctionDeclarationInfo,
+    NodeInfo
 }
 
 shared
@@ -81,10 +82,10 @@ class ClassMemberTransformer(CompilationContext ctx)
 
             return
             [generateMethodDefinitionRaw {
-                that;
+                info;
                 declaration;
                 generateFunctionExpressionRaw {
-                    that;
+                    info;
                     declaration;
                     parameterLists;
                     that.specifier;
@@ -94,10 +95,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         case (is ValueModel) {
             return
             [generateMethodDefinitionRaw {
-                that;
+                info;
                 declaration;
                 generateDefinitionForValueModelGetter {
-                    that;
+                    info;
                     declaration;
                     //parameterLists;
                     that.specifier;
@@ -229,7 +230,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value [identifier, isFunction]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    that;
+                    info;
                     declarationModel;
                 };
 
@@ -237,7 +238,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         DartMethodDeclaration {
             false;
             null;
-            generateFunctionReturnType(that, declarationModel);
+            generateFunctionReturnType(info, declarationModel);
             !isFunction then (
                 if (that is ValueSetterDefinition)
                 then "set"
@@ -247,7 +248,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             parameters =
                 if (isFunction, is AnyFunction that) then
                     generateFormalParameterList {
-                        that;
+                        info;
                         that.parameterLists.first;
                     }
                 else if (is SetterModel declarationModel) then
@@ -257,7 +258,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             DartSimpleFormalParameter {
                                 false; false;
                                 dartTypes.dartReturnTypeNameForDeclaration {
-                                    that;
+                                    info;
                                     declarationModel.getter;
                                 };
                                 DartSimpleIdentifier {
@@ -278,12 +279,15 @@ class ClassMemberTransformer(CompilationContext ctx)
     DartMethodDeclaration generateSetterDeclaration
             (ValueDeclaration | ValueDefinition that) {
 
+        value info
+            =   NodeInfo(that);
+
         value declarationModel
             =   AnyValueInfo(that).declarationModel;
 
         value [identifier, isFunction]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    that;
+                    info;
                     declarationModel;
                     true;
                 };
@@ -306,7 +310,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                     DartSimpleFormalParameter {
                         false; false;
                         dartTypes.dartReturnTypeNameForDeclaration {
-                            that;
+                            info;
                             declarationModel;
                         };
                         DartSimpleIdentifier {
@@ -349,14 +353,14 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         return
         generateMethodDefinitionRaw {
-            that;
+            info;
             declarationModel;
             functionExpression;
         };
     }
 
     DartMethodDeclaration generateMethodDefinitionRaw(
-            Node scope,
+            DScope scope,
             FunctionOrValueModel declarationModel,
             "A DartFunctionExpression that will be scrapped for parts."
             DartFunctionExpression functionExpression) {
@@ -496,7 +500,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartVariableDeclarationList {
                 null;
                 dartTypes.dartTypeNameForDeclaration {
-                    that;
+                    info;
                     info.declarationModel;
                 };
                 [DartVariableDeclaration {
@@ -527,14 +531,14 @@ class ClassMemberTransformer(CompilationContext ctx)
         return
         capturedVariableTriples.collect((variableTriple)
             =>  DartFieldDeclaration {
-                        false;
-                        generateForValueDeclarationRaw {
-                            // TODO Use Condition node for more accurate line/col info
-                            //      (must first make the node avail in VariableTriple)
-                            that;
-                            variableTriple.declarationModel;
-                        };
-                    });
+                    false;
+                    generateForValueDeclarationRaw {
+                        // TODO Use Condition node for more accurate line/col info
+                        //      (must first make the node avail in VariableTriple)
+                        NodeInfo(that);
+                        variableTriple.declarationModel;
+                    };
+                });
     }
 
     shared actual default

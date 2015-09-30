@@ -4,8 +4,6 @@ import ceylon.ast.core {
 
 import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
-    ScopeModel=Scope,
-    ElementModel=Element,
     FunctionOrValueModel=FunctionOrValue,
     ClassOrInterfaceModel=ClassOrInterface
 }
@@ -77,7 +75,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     DartExpression withBoxing(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel rhsType,
             "The declaration that produces the value.
 
@@ -101,7 +99,7 @@ class CoreGenerator(CompilationContext ctx) {
             };
 
     DartExpression withBoxingConversion(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             "The type of [[expression]]."
             TypeModel rhsType,
             "If the [[expression]]'s static type is not denotable, is a defaulted
@@ -155,7 +153,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     DartExpression withBoxingCustom(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
@@ -169,7 +167,7 @@ class CoreGenerator(CompilationContext ctx) {
             };
 
     DartExpression withBoxingForType(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
@@ -193,7 +191,7 @@ class CoreGenerator(CompilationContext ctx) {
                 };
 
     DartExpression withBoxingLhsRhs(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel lhsType,
             Boolean lhsErasedToNative,
             Boolean lhsErasedToObject,
@@ -218,7 +216,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     DartExpression withBoxingNonNative(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel rhsType,
             DartExpression dartExpression)
         =>  withBoxingForType {
@@ -230,7 +228,7 @@ class CoreGenerator(CompilationContext ctx) {
             };
 
     DartExpression withCastingLhsRhs(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeModel|NoType lhsType,
             "means: lhsDefinitelyErasedToObject"
             Boolean lhsErasedToObject,

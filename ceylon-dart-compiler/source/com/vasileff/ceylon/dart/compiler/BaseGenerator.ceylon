@@ -1,5 +1,4 @@
 import ceylon.ast.core {
-    Node,
     FunctionShortcutDefinition,
     FunctionDefinition,
     Parameters,
@@ -52,7 +51,6 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
-    ScopeModel=Scope,
     SetterModel=Setter,
     Reference
 }
@@ -113,7 +111,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueSetterDefinitionInfo,
     ObjectDefinitionInfo,
     SpecifiedVariableInfo,
-    ComprehensionClauseInfo
+    ComprehensionClauseInfo,
+    NodeInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -278,12 +277,12 @@ class BaseGenerator(CompilationContext ctx)
         value info = AnyFunctionInfo(that);
         value functionModel = info.declarationModel;
         value functionIdentifier = dartTypes.dartIdentifierForFunctionOrValueDeclaration(
-                    that, functionModel, false)[0];
+                    info, functionModel, false)[0];
 
         return
         DartFunctionDeclaration {
             external = false;
-            returnType = generateFunctionReturnType(that, functionModel);
+            returnType = generateFunctionReturnType(info, functionModel);
             propertyKeyword = null;
             name = functionIdentifier;
             functionExpression = generateFunctionExpression(that);
@@ -293,7 +292,7 @@ class BaseGenerator(CompilationContext ctx)
     "For the Value, or the return type of the Function"
     shared
     DartTypeName generateFunctionReturnType
-            (Node scope, FunctionOrValueModel declaration) {
+            (DScope scope, FunctionOrValueModel declaration) {
 
         assert (is FunctionModel | ValueModel | SetterModel declaration);
 
@@ -329,7 +328,7 @@ class BaseGenerator(CompilationContext ctx)
     "Generate an invocation or propery access expression for a toplevel."
     shared
     DartExpression generateTopLevelInvocation(
-            Node scope,
+            DScope scope,
             TypeModel resultType,
             FunctionOrValueModel memberDeclaration,
             [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null) {
@@ -417,7 +416,7 @@ class BaseGenerator(CompilationContext ctx)
     "Generate an invocation or propery access expression."
     shared
     DartExpression generateInvocation(
-            Node scope,
+            DScope scope,
             TypeModel resultType,
             "The type of the receiver, which may be:
              -  the type of an expression if [[generateReceiver]] is not null, or
@@ -742,7 +741,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateInvocationFromName(
-            Node scope,
+            DScope scope,
             Expression receiver,
             String memberName,
             [Expression*] arguments)
@@ -764,7 +763,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
     generateInvocationDetailsFromName(
-            Node scope,
+            DScope scope,
             Expression receiver,
             String memberName,
             [Expression*] arguments) {
@@ -785,7 +784,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
     generateInvocationDetailsSynthetic(
-            Node scope,
+            DScope scope,
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
@@ -904,7 +903,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartVariableDeclarationList {
                             keyword = null;
                             dartTypes.dartTypeNameForDeclaration {
-                                that;
+                                info;
                                 variableDeclaration;
                             };
                             [DartVariableDeclaration {
@@ -918,7 +917,7 @@ class BaseGenerator(CompilationContext ctx)
             DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
                     keyword = null;
-                    dartTypes.dartTypeName(that, expressionType, true);
+                    dartTypes.dartTypeName(info, expressionType, true);
                     [DartVariableDeclaration {
                         tempIdentifier;
                         // possibly erase to a native type!
@@ -932,7 +931,7 @@ class BaseGenerator(CompilationContext ctx)
 
             // 3. perform is check on tmp variable
             conditionExpression = generateIsExpression(
-                    that, tempIdentifier, isType);
+                    info, tempIdentifier, isType);
 
             // 4. set replacement variable
             value replacementDefinition
@@ -944,7 +943,7 @@ class BaseGenerator(CompilationContext ctx)
                                 null;
                                 variableDeclaration;
                                 () => withBoxing {
-                                    that;
+                                    info;
                                     // as noted above, tmpVariable may be erased. Maybe
                                     // when narrowing optionals like String?.
                                     expressionType;
@@ -974,11 +973,11 @@ class BaseGenerator(CompilationContext ctx)
                 =   DartSimpleIdentifier(dartTypes.getName(originalDeclaration));
 
             conditionExpression
-                =   generateIsExpression(that, originalIdentifier, isType);
+                =   generateIsExpression(info, originalIdentifier, isType);
 
             replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
-                                        that, variableDeclaration))
+                                        info, variableDeclaration))
                     then [VariableTriple(variableDeclaration, *r)]
                     else [];
         }
@@ -999,7 +998,7 @@ class BaseGenerator(CompilationContext ctx)
      separate declarations for scoping reasons."
     shared
     []|[DartVariableDeclarationStatement,DartExpressionStatement]
-    generateReplacementVariableDefinition(Node scope, ValueModel variableDeclaration) {
+    generateReplacementVariableDefinition(DScope scope, ValueModel variableDeclaration) {
 
         assert(is ValueModel originalDeclaration
             =   variableDeclaration.originalDeclaration);
@@ -1071,6 +1070,8 @@ class BaseGenerator(CompilationContext ctx)
     ConditionCodeTuple generateExistsOrNonemptyConditionExpression(
             ExistsOrNonemptyCondition that, Boolean negate = false) {
 
+        value info = ExistsOrNonemptyConditionInfo(that);
+
         // ExistsCondition holds
         //  - a MemberName to test existing values, or
         //  - a SpecifiedPattern for new declarations and destructures
@@ -1089,7 +1090,7 @@ class BaseGenerator(CompilationContext ctx)
                 =   DartVariableDeclarationStatement {
                         DartVariableDeclarationList {
                             keyword = null;
-                            dartTypes.dartTypeName(that, expressionType, true);
+                            dartTypes.dartTypeName(info, expressionType, true);
                             [DartVariableDeclaration {
                                 tempIdentifier;
                                 // possibly erase to a native type (although not really
@@ -1106,13 +1107,13 @@ class BaseGenerator(CompilationContext ctx)
                 =   switch (that)
                     case (is ExistsCondition)
                         generateExistsExpression {
-                            that;
+                            info;
                             tempIdentifier;
                             that.negated != negate;
                         }
                     case (is NonemptyCondition)
                         generateNonemptyExpression {
-                            that;
+                            info;
                             tempIdentifier;
                             that.negated != negate;
                         };
@@ -1129,7 +1130,7 @@ class BaseGenerator(CompilationContext ctx)
                             DartVariableDeclarationList {
                                 keyword = null;
                                 dartTypes.dartTypeNameForDeclaration {
-                                    that;
+                                    info;
                                     variableDeclaration;
                                 };
                                 [DartVariableDeclaration {
@@ -1147,7 +1148,7 @@ class BaseGenerator(CompilationContext ctx)
                                     null;
                                     variableDeclaration;
                                     () => withBoxing {
-                                        that;
+                                        info;
                                         expressionType;
                                         null;
                                         tempIdentifier;
@@ -1170,8 +1171,6 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
         else {
-            value info = ExistsOrNonemptyConditionInfo(that);
-
             assert (exists variableDeclaration = info.variableDeclarationModel);
 
             // check type of the original variable,
@@ -1186,13 +1185,13 @@ class BaseGenerator(CompilationContext ctx)
                 =   switch (that)
                     case (is ExistsCondition)
                         generateExistsExpression {
-                            that;
+                            info;
                             originalIdentifier;
                             that.negated != negate;
                         }
                     case (is NonemptyCondition)
                         generateNonemptyExpression {
-                            that;
+                            info;
                             originalIdentifier;
                             that.negated != negate;
                         };
@@ -1202,7 +1201,7 @@ class BaseGenerator(CompilationContext ctx)
             // But... the type *does* change on `!exists`, since null erases to object!
             value replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
-                                that, variableDeclaration))
+                                info, variableDeclaration))
                     then [VariableTriple(variableDeclaration, *r)]
                     else [];
 
@@ -1212,7 +1211,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateExistsExpression(
-            Node scope,
+            DScope scope,
             DartExpression expressionToCheck,
             Boolean negated = false)
         =>  let (expression = generateIsExpression {
@@ -1226,7 +1225,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateNonemptyExpression(
-            Node scope,
+            DScope scope,
             DartExpression expressionToCheck,
             Boolean negated = false)
         =>  let (expression = generateIsExpression {
@@ -1245,7 +1244,7 @@ class BaseGenerator(CompilationContext ctx)
 //       is check for `primitive|Null`s. We need this info anyway for other optimzns.
     shared
     DartExpression generateIsExpression(
-            Node scope,
+            DScope scope,
             DartExpression expressionToCheck,
             TypeModel isType) {
 
@@ -1307,12 +1306,13 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartVariableDeclarationList generateForValueDeclaration
             (ValueDeclaration | ValueDefinition that)
-        =>  generateForValueDeclarationRaw(that, AnyValueInfo(that).declarationModel);
+        =>  let (info = AnyValueInfo(that))
+            generateForValueDeclarationRaw(info, info.declarationModel);
 
     "Generate a dart *declaration*."
     shared see(`function generateForValueDeclaration`)
     DartVariableDeclarationList generateForValueDeclarationRaw
-            (Node scope, ValueModel declarationModel) {
+            (DScope scope, ValueModel declarationModel) {
 
         // TODO Handle translations to/from value/function, like toString.
         //      What about `variable`s?
@@ -1353,7 +1353,7 @@ class BaseGenerator(CompilationContext ctx)
         DartVariableDeclarationList {
             "final"; // TODO const for toplevels
             dartTypes.dartTypeNameForDeclaration {
-                that;
+                info;
                 info.declarationModel;
             };
             [DartVariableDeclaration {
@@ -1364,7 +1364,7 @@ class BaseGenerator(CompilationContext ctx)
                     null;
                     info.declarationModel;
                     () => generateObjectInstantiation {
-                        info.declarationModel;
+                        dScope(info, info.declarationModel);
                         info.anonymousClass;
                     };
                 };
@@ -1374,7 +1374,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateObjectInstantiation
-            (ScopeModel valueScope, ClassModel classModel)
+            (DScope valueScope, ClassModel classModel)
         =>  withBoxingNonNative {
                 valueScope;
                 classModel.type;
@@ -1412,7 +1412,7 @@ class BaseGenerator(CompilationContext ctx)
         DartVariableDeclarationList {
             null;
             dartTypes.dartTypeNameForDeclaration {
-                that;
+                info;
                 info.declarationModel;
             };
             [DartVariableDeclaration {
@@ -1448,7 +1448,7 @@ class BaseGenerator(CompilationContext ctx)
 
         return
         generateDefinitionForValueModelGetter {
-            that;
+            dScope(that);
             declarationModel;
             definition;
         };
@@ -1456,7 +1456,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartFunctionDeclaration generateDefinitionForValueModelGetter(
-            Node scope,
+            DScope scope,
             ValueModel declarationModel,
             LazySpecifier|Block definition) {
 
@@ -1527,7 +1527,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value [identifier, isFunction]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    that;
+                    info;
                     declarationModel;
                 };
 
@@ -1548,7 +1548,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartSimpleFormalParameter {
                             false; false;
                             dartTypes.dartReturnTypeNameForDeclaration {
-                                that;
+                                info;
                                 declarationModel.getter;
                             };
                             DartSimpleIdentifier {
@@ -1622,7 +1622,7 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         return generateFunctionExpressionRaw {
-            that;
+            dScope(that);
             functionModel;
             parameterLists;
             definition;
@@ -1631,7 +1631,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartFunctionExpression generateFunctionExpressionRaw(
-            Node scope,
+            DScope scope,
             FunctionModel functionModel,
             [Parameters+] parameterLists,
             LazySpecifier|Block definition) {
@@ -1769,7 +1769,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartFormalParameterList generateFormalParameterList
-            (Node scope, Parameters|{ParameterModel*} parameters) {
+            (DScope scope, Parameters|{ParameterModel*} parameters) {
 
         value parameterList
             =   if (is Parameters parameters)
@@ -1826,7 +1826,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     [DartExpression*] generateArgumentsForOutersAndCaptures
-            (Node|ScopeModel scope, ClassModel declaration) {
+            (DScope scope, ClassModel declaration) {
 
         // FIXME setters?
         value captureExpressions
@@ -1848,7 +1848,7 @@ class BaseGenerator(CompilationContext ctx)
     "Generate a condition expression for a MatchCase of a switch statement or expression."
     shared
     DartExpression generateMatchCondition(
-            Node scope,
+            DScope scope,
             TypeModel switchedType,
             DartExpression switchedVariable,
             [Expression+] matchExpressions) {
@@ -1891,6 +1891,8 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [TypeModel, DartSimpleIdentifier, DartVariableDeclarationStatement]
     generateForSwitchClause(SwitchClause that) {
+        value info = NodeInfo(that);
+
         TypeModel switchedType;
         DartSimpleIdentifier switchedVariable;
         DartVariableDeclarationStatement variableDeclaration;
@@ -1909,7 +1911,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeName {
-                                that;
+                                info;
                                 switchedType;
                                 eraseToNative = true;
                                 eraseToObject = false;
@@ -1942,7 +1944,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartVariableDeclarationList {
                             null;
                             dartTypes.dartTypeNameForDeclaration {
-                                that;
+                                info;
                                 declaration;
                             };
                             [DartVariableDeclaration {
@@ -1965,7 +1967,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartInstanceCreationExpression generateNewCallable(
-            Node that,
+            DScope that,
             FunctionModel functionModel,
             DartExpression delegateFunction,
             Integer parameterListNumber = 0,
@@ -2234,7 +2236,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression
     generateAssignmentExpression(
-                Node that,
+                DScope that,
                 ValueModel | BaseExpression | QualifiedExpression target,
                 DartExpression() rhsExpression) {
 
@@ -2320,7 +2322,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartVariableDeclarationList generateVariableDeclarationSynthetic(
-            Node scope,
+            DScope scope,
             DartSimpleIdentifier identifier,
             TypeModel lhsType,
             Boolean lhsErasedToNative,
@@ -2366,7 +2368,7 @@ class BaseGenerator(CompilationContext ctx)
                 //      the iterator using a utility method rather than trusting the
                 //      implementation of `sequence()`.
                 generateInvocationFromName {
-                    that;
+                    dScope(that);
                     that.argument;
                     "sequence";
                     [];
@@ -2374,9 +2376,9 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateSequentialFromComprehension(Comprehension that)
-        =>  let (comprehensionType =iterableComprehensionType(that))
+        =>  let (comprehensionType = iterableComprehensionType(that))
             generateInvocationDetailsSynthetic {
-                that;
+                dScope(that);
                 comprehensionType;
                 () => that.transform(expressionTransformer);
                 "sequence";

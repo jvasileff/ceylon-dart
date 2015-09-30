@@ -196,10 +196,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "The Dart library prefix for the Ceylon module."
     shared
     String moduleImportPrefix
-            (Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
+            (DScope|Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
 
+    // FIXME uneffective memoization
     moduleImportPrefix
-        =   memoize((Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
+        =   memoize((DScope | Node | ElementModel | UnitModel
+                    | ModuleModel | ScopeModel declaration)
             =>  CeylonIterable(getModule(declaration).name)
                     .map(Object.string)
                     .interpose("$")
@@ -276,7 +278,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     shared
-    DartIdentifier dartDefault(Node scope)
+    DartIdentifier dartDefault(DScope scope)
         =>  if (getModule(scope).nameAsString == "ceylon.language") then
                 DartSimpleIdentifier("$package$dart$default")
             else
@@ -324,7 +326,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartConstructorName dartConstructorName(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             ClassModel|ConstructorModel declaration) {
         switch (declaration)
         case (is ClassModel) {
@@ -351,7 +353,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeName dartTypeName(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             TypeOrNoType type,
             Boolean eraseToNative,
             Boolean eraseToObject = false)
@@ -364,13 +366,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeName dartTypeNameForDartModel(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             DartTypeModel dartModel)
         =>  DartTypeName(dartIdentifierForDartModel(scope, dartModel));
 
     shared
     DartIdentifier dartIdentifierForDartModel(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             DartTypeModel dartModel) {
 
         value fromDartPrefix = moduleImportPrefix(scope);
@@ -391,7 +393,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "For the `Value`, or a `Callable` if the declaration is a `Function`."
     shared
     DartTypeName dartTypeNameForDeclaration(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             FunctionOrValueModel declaration) {
 
         value dartModel =
@@ -425,7 +427,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "For the Value, or the return type of the Function"
     shared
     DartTypeName dartReturnTypeNameForDeclaration(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             FunctionModel|ValueModel declaration) {
 
         value dartModel = dartTypeModel {
@@ -619,7 +621,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
-            Node|ElementModel|ScopeModel scope,
+            DScope scope,
             ClassOrInterfaceModel declaration)
         =>  let (identifier =
                     dartIdentifierForClassOrInterfaceDeclaration(declaration))
@@ -728,7 +730,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        mapped to Dart functions."
     shared
     [DartExpression, Boolean] expressionForBaseExpression(
-            Node|ScopeModel scope,
+            DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
 
@@ -897,7 +899,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     see(`function dartIdentifierForFunctionOrValue`)
     [DartSimpleIdentifier, Boolean] dartIdentifierForFunctionOrValueDeclaration(
-            Node|ScopeModel scope,
+            DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = declaration is SetterModel) {
 
@@ -970,7 +972,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     see(`function dartIdentifierForFunctionOrValueDeclaration`)
     see(`function expressionForBaseExpression`)
     [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
-            Node|ScopeModel scope,
+            DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false)
         =>  let ([identifier, isDartFunction]

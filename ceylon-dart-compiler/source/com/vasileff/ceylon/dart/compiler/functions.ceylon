@@ -85,7 +85,7 @@ PackageModel getPackage
     =>  getUnit(declaration).\ipackage;
 
 ModuleModel getModule
-        (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
+        (DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
     =>  if (is Node declaration) then
             getModule(NodeInfo(declaration).scope)
@@ -93,12 +93,14 @@ ModuleModel getModule
             declaration.\imodule
         else if (is ModuleModel declaration) then
             declaration
+        else if (is DScope declaration) then
+            getModule(declaration.scope)
         else
             getPackage(declaration).\imodule;
 
 Boolean sameModule(
-        Node|ScopeModel|ElementModel|ModuleModel|UnitModel first,
-        Node|ScopeModel|ElementModel|ModuleModel|UnitModel second)
+        DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel first,
+        DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel second)
     =>  getModule(first) == getModule(second);
 
 "Shortcut for `(scope of ScopeModel).container`,"
@@ -107,13 +109,19 @@ ScopeModel? containerOfScope(ScopeModel scope)
 
 "Returns the `ScopeModel` for the argument, extracting from the `Node` or casting
  `ElementModel` to `ScopeModel` as necessary."
-ScopeModel toScopeModel(Node|ScopeModel|ElementModel scope) {
+ScopeModel toScopeModel(DScope|Node|NodeInfo|ScopeModel|ElementModel scope) {
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
     if (is Node scope) {
         return NodeInfo(scope).scope;
     }
+    else if (is NodeInfo scope) {
+        return scope.scope;
+    }
     else if (is ScopeModel scope) {
         return scope;
+    }
+    else if (is DScope scope) {
+        return scope.scope;
     }
     else {
         "Shouldn't happen; aren't all concrete `Element`s `Scope`s?"
@@ -122,7 +130,7 @@ ScopeModel toScopeModel(Node|ScopeModel|ElementModel scope) {
 }
 
 ClassModel|InterfaceModel? getContainingClassOrInterface
-        (Node|ScopeModel|ElementModel scope) {
+        (DScope|Node|ScopeModel|ElementModel scope) {
     variable ScopeModel scopeModel = toScopeModel(scope);
     while (!is PackageModel s = scopeModel) {
         if (is ClassModel|InterfaceModel s) {
