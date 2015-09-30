@@ -358,6 +358,9 @@ class Float implements Number, Exponentiable {
     if (other is Float) {
       return _value == other._value;
     }
+    else if (other is Integer) {
+      return _value == other._value;
+    }
     return false;
   }
 
@@ -430,6 +433,9 @@ class Integer implements Integral, Exponentiable, Binary {
 
   $dart$core.bool equals($dart$core.Object other) {
     if (other is Integer) {
+      return _value == other._value;
+    }
+    else if (other is Float) {
       return _value == other._value;
     }
     return false;
