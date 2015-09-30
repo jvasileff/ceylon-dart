@@ -782,6 +782,24 @@ class BaseGenerator(CompilationContext ctx)
        fundamental (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
     """
     shared
+    DartExpression generateInvocationSynthetic(
+            DScope scope,
+            TypeModel receiverType,
+            DartExpression generateReceiver(),
+            String memberName,
+            [Expression*] arguments)
+        =>  generateInvocationDetailsSynthetic {
+                scope;
+                receiverType;
+                generateReceiver;
+                memberName;
+                arguments;
+            }[2]();
+
+    """The same as [[generateInvocationFromName]], but with parameters that are more
+       fundamental (i.e. `TypeModel` and `DartExpression()` rather than `ExpressionInfo`).
+    """
+    shared
     [TypeModel, FunctionOrValueModel?, DartExpression()]
     generateInvocationDetailsSynthetic(
             DScope scope,
@@ -1857,7 +1875,7 @@ class BaseGenerator(CompilationContext ctx)
         function generateMatchCondition(Expression expression)
             =>  withLhsNative {
                     ceylonTypes.booleanType;
-                    () => generateInvocationDetailsSynthetic {
+                    () => generateInvocationSynthetic {
                         scope;
                         switchedType;
                         // We may need to box the switched expression, which
@@ -1871,7 +1889,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
                         "equals";
                         [expression];
-                    }[2]();
+                    };
                 };
 
         return matchExpressions
@@ -2377,13 +2395,13 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateSequentialFromComprehension(Comprehension that)
         =>  let (comprehensionType = iterableComprehensionType(that))
-            generateInvocationDetailsSynthetic {
+            generateInvocationSynthetic {
                 dScope(that);
                 comprehensionType;
                 () => that.transform(expressionTransformer);
                 "sequence";
                 [];
-            }[2]();
+            };
 
     shared
     TypeModel iterableComprehensionType(Comprehension that)
