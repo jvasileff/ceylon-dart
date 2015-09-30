@@ -84,18 +84,22 @@ class Array extends impl$BaseList {
   }
 
   @$dart$core.override
+  $dart$core.bool get empty
+    => _list.isEmpty;
+
+  @$dart$core.override
+  $dart$core.int get size
+    => _list.length;
+
+  @$dart$core.override
   $dart$core.int get lastIndex
-    =>  _list.length - 1;
+    => _list.isEmpty ? null : _list.length - 1;
 
   @$dart$core.override
   $dart$core.Object getFromFirst([$dart$core.int index])
-    =>  (0 <= index && index < size)
+    => (0 <= index && index < size)
             ? _list[index]
             : null;
-
-  @$dart$core.override
-  Iterable follow([$dart$core.Object head])
-    =>  new Tuple(head, this);
 
   Sequential sort([Callable c]) {
     var newList = _list.toList();
@@ -106,10 +110,6 @@ class Array extends impl$BaseList {
   void sortInPlace([Callable c]) {
     _list.sort(dartComparator(c));
   }
-
-  @$dart$core.override
-  $dart$core.bool get empty
-    =>  _list.length == 0;
 }
 
 //
