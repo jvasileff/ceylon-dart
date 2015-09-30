@@ -1285,14 +1285,26 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformArithmeticOperation(ArithmeticOperation that)
-        =>  generateInvocationForBinaryOperation(that,
-                switch(that)
-                case (is ExponentiationOperation) "power"
-                case (is ProductOperation) "times"
-                case (is QuotientOperation) "divided"
-                case (is RemainderOperation) "remainder"
-                case (is SumOperation) "plus"
-                case (is DifferenceOperation) "minus");
+        =>  let (info = ExpressionInfo(that),
+                 methodName = switch(that)
+                        case (is ExponentiationOperation) "power"
+                        case (is ProductOperation) "times"
+                        case (is QuotientOperation) "divided"
+                        case (is RemainderOperation) "remainder"
+                        case (is SumOperation) "plus"
+                        case (is DifferenceOperation) "minus")
+            if (ceylonTypes.isCeylonFloat(info.typeModel)) then
+                // The receiver type may be `Float` despite the lhs
+                // possibly being `Integer`!
+                generateInvocationSynthetic {
+                    info;
+                    ceylonTypes.floatType;
+                    () => that.leftOperand.transform(expressionTransformer);
+                    methodName;
+                    [that.rightOperand];
+                }
+            else
+                generateInvocationForBinaryOperation(that, methodName);
 
     shared actual
     DartExpression transformSetOperation(SetOperation that)

@@ -199,20 +199,53 @@ class CoreGenerator(CompilationContext ctx) {
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
             DartExpression dartExpression)
-        =>  let (conversion = dartTypes.boxingConversionFor(
-                    lhsType, lhsErasedToNative,
-                    rhsType, rhsErasedToNative))
-            if (exists conversion) then
-                // assume the lhsType is a supertype of the result
-                // of the boxing conversion, and don't cast
-                withBoxingConversion(scope, rhsType, rhsErasedToObject,
-                        dartExpression, conversion)
+        =>  if (ceylonTypes.isCeylonFloat(lhsType)
+                && ceylonTypes.isCeylonInteger(rhsType)) then
+                withLhsCustom  {
+                    lhsType;
+                    lhsErasedToNative;
+                    lhsErasedToObject;
+                    () => integerToFloat {
+                        scope;
+                        rhsErasedToNative;
+                        rhsErasedToObject;
+                        dartExpression;
+                    };
+                }
             else
-                withCastingLhsRhs(scope,
-                        lhsType, lhsErasedToObject,
-                        rhsType, rhsErasedToObject,
-                        // if the lhsActual is native, so must be the rhsActual
-                        lhsErasedToNative, dartExpression);
+                let (conversion = dartTypes.boxingConversionFor(
+                        lhsType, lhsErasedToNative,
+                        rhsType, rhsErasedToNative))
+                if (exists conversion) then
+                    // assume the lhsType is a supertype of the result
+                    // of the boxing conversion, and don't cast
+                    withBoxingConversion(scope, rhsType, rhsErasedToObject,
+                            dartExpression, conversion)
+                else
+                    withCastingLhsRhs(scope,
+                            lhsType, lhsErasedToObject,
+                            rhsType, rhsErasedToObject,
+                            // if the lhsActual is native, so must be the rhsActual
+                            lhsErasedToNative, dartExpression);
+
+    DartExpression integerToFloat(
+            DScope scope,
+            Boolean erasedToNative,
+            Boolean erasedToObject,
+            DartExpression expression)
+        =>  expressionTransformer.generateInvocationSynthetic {
+                scope;
+                ceylonTypes.integerType;
+                () => withBoxingCustom {
+                    scope;
+                    ceylonTypes.integerType;
+                    erasedToNative;
+                    erasedToObject;
+                    expression;
+                };
+                memberName = "float";
+                arguments = [];
+            };
 
     shared
     DartExpression withBoxingNonNative(
