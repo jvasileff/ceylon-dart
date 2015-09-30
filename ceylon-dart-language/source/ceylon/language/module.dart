@@ -972,62 +972,107 @@ class Throwable extends $dart$core.Error {
 // Tuple.dart
 //
 
-class Tuple extends impl$BaseList implements Sequence, Iterable {
+class Tuple extends impl$BaseSequence {
   final $dart$core.List _list;
+  Sequential restSequence;
 
-  Tuple($dart$core.Object first, Iterable rest) : _list = [] {
+  Tuple([$dart$core.Object first, Sequential rest = dart$default]) : _list = [] {
+    restSequence = rest == dart$default ? $package$empty : rest;
     _list.add(first);
-    rest.each(new dart$Callable((e) => _list.add(e)));
   }
 
   Tuple._trailing(Iterable initial, $dart$core.Object element) : _list = [] {
+    restSequence = $package$empty;
     initial.each(new dart$Callable((e) => _list.add(e)));
     _list.add(element);
   }
 
   Tuple.$ofElements(Iterable rest) : _list = [] {
+    if (_list.length == 0) {
+      throw new AssertionError("list must not be empty");
+    }
+    restSequence = $package$empty;
     rest.each(new dart$Callable((e) => _list.add(e)));
+  }
+
+  Tuple.$withList([$dart$core.List this._list, Sequential rest = dart$default]) {
     if (_list.length == 0) {
       throw new AssertionError("list must not be empty");
     }
-  }
-
-  Tuple.$withList([$dart$core.List this._list, Iterable rest = null]) {
-    if (_list.length == 0) {
-      throw new AssertionError("list must not be empty");
-    }
-    if (rest != null) {
-      rest.each(new dart$Callable((e) => _list.add(e)));
-    }
+    restSequence = rest == dart$default || rest == null ? $package$empty : rest;
   }
 
   @$dart$core.override
-  $dart$core.int get lastIndex =>
-      _list.length - 1;
+  $dart$core.Object get first
+    => getFromFirst(0);
 
   @$dart$core.override
-  $dart$core.Object getFromFirst([$dart$core.int index])
-    =>  (0 <= index && index < size)
-            ? _list[index]
-            : null;
+  Sequential get rest {
+    if (_list.length == 1) {
+      return restSequence;
+    }
+    else {
+      return new Tuple.$withList(_list.sublist(1), restSequence);
+    }
+  }
 
   @$dart$core.override
-  Sequence withTrailing([$dart$core.Object other])
-    =>  new Tuple._trailing(this, other);
+  $dart$core.int get lastIndex
+    => size - 1;
+
+  @$dart$core.override
+  $dart$core.int get size
+    => _list.length + restSequence.size;
+
+  @$dart$core.override
+  $dart$core.Object getFromFirst([$dart$core.int index]) {
+    if (index < 0) {
+      return null;
+    }
+    else if (index < _list.length) {
+      return _list[index];
+    }
+    else {
+      return restSequence.getFromFirst(index - _list.length);
+    }
+  }
+
+  @$dart$core.override
+  $dart$core.Object get last
+    => getFromLast(0);
+
+  // measure
+  @$dart$core.override
+  Sequential measure([Integer from, $dart$core.int length])
+    => List.$measure(this, from, length).sequence();
+
+  // span
+  @$dart$core.override
+  Sequential span([Integer from, Integer to])
+    => List.$span(this, from, to).sequence();
+
+  // spanTo
+  @$dart$core.override
+  Sequential spanTo([Integer to])
+    => List.$spanTo(this, to).sequence();
+
+  // spanFrom
+  @$dart$core.override
+  Sequential spanFrom([Integer from])
+    => List.$spanFrom(this, from).sequence();
+
+  // FIXME why doesn't impl$BaseSequence define this?
+  @$dart$core.override
+  Iterator iterator()
+    => List.$iterator(this);
 
   @$dart$core.override
   Sequence withLeading([$dart$core.Object other])
-    =>  new Tuple(other, this);
+    => new Tuple(other, this);
 
   @$dart$core.override
-  Iterable follow([$dart$core.Object head])
-    =>  withLeading(head);
-
-  @$dart$core.override
-  $dart$core.bool get empty
-    =>  _list.length == 0;
-
-  $dart$core.String toString() => Sequence.$get$string(this);
+  Sequence withTrailing([$dart$core.Object other])
+    => new Tuple._trailing(this, other);
 }
 
 //
@@ -1072,6 +1117,27 @@ class process_ {
 const process = const process_.$value$();
 
 const $package$process = process;
+
+// runtime
+
+class runtime_ {
+  const runtime_.$value$();
+
+  final $dart$core.String name = "DartVM";
+  final $dart$core.String version = "Unknown Version";
+  $dart$core.String toString() => "runtime [" + name + " / " + version + "]";
+
+  // just making stuff up...
+  final $dart$core.int integerSize = 64;
+  final $dart$core.int integerAddressableSize = 64;
+  $dart$core.int get maxIntegerValue => $dart$math.pow(2, 63) - 1;
+  $dart$core.int get minIntegerValue => -$dart$math.pow(2, 63);
+  $dart$core.int get maxArraySize => $dart$math.pow(2, 63) - 1;
+}
+
+const runtime = const runtime_.$value$();
+
+const $package$runtime = runtime;
 
 // operatingSystem
 
