@@ -1008,4 +1008,33 @@ class InterfaceTests() {
              """;
          };
      }
+
+    shared test
+    void noFormalForPrivate() {
+        compileAndCompare {
+             """
+                interface I1 {
+                    void foo() {}
+                    shared void bar() {}
+
+                    String baz => "";
+                    shared String ban => "";
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I1 {
+                    static void $foo([final I1 $this]) {}
+                    void bar();
+                    static void $bar([final I1 $this]) {}
+                    static $dart$core.String $get$baz([final I1 $this]) => "";
+                    $dart$core.String get ban;
+                    static $dart$core.String $get$ban([final I1 $this]) => "";
+                }
+             """;
+         };
+     }
 }

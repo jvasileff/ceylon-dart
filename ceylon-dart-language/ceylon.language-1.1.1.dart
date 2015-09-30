@@ -5833,7 +5833,6 @@ abstract class List implements Collection, Correspondence, Ranged {
     $dart$core.Object getFromFirst([$dart$core.int index]);
     $dart$core.Object getFromLast([$dart$core.int index]);
     static $dart$core.Object $getFromLast([final List $this, $dart$core.int index]) => $this.getFromFirst(($this.size - 1) - index);
-    $dart$core.Object getElement([$dart$core.int index]);
     static $dart$core.Object $getElement([final List $this, $dart$core.int index]) {{
             $dart$core.bool doElse$0 = true;
             {
@@ -8982,7 +8981,6 @@ abstract class Sequence implements Sequential, Iterable {
     static Sequential $spanTo([final Sequence $this, Integer to]) => $this.sublistTo(Integer.nativeValue(to)).sequence();
     $dart$core.String toString();
     static $dart$core.String $get$string([final Sequence $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
-    $dart$core.Object getElement([$dart$core.int index]);
     static $dart$core.Object $getElement([final Sequence $this, $dart$core.int index]) {{
             $dart$core.bool doElse$6 = true;
             {

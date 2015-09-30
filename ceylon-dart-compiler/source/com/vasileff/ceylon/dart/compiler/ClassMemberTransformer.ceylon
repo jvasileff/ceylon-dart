@@ -199,7 +199,8 @@ class ClassMemberTransformer(CompilationContext ctx)
         =>  let (info = DeclarationInfo(that))
             if (!isForDartBackend(that)) then
                 [] // skip native declarations entirely, for now
-            else if (info.declarationModel.container is InterfaceModel) then
+            else if (info.declarationModel.container is InterfaceModel
+                    && info.declarationModel.shared) then
                 [generateMethodGetterOrSetterDeclaration(that),
                  generateMethodDefinition(that)]
             else
