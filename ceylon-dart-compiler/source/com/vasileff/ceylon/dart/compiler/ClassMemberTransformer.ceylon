@@ -124,7 +124,11 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-        if (ValueDeclarationInfo(that).declarationModel.variable) {
+        if (info.declarationModel.variable
+                && (   info.declarationModel.formal
+                    || info.declarationModel.transient)) {
+            // Only generate setter declarations for variables that are `formal`
+            // or non-references
             return [generateMethodGetterOrSetterDeclaration(that),
                     generateSetterDeclaration(that)];
         }

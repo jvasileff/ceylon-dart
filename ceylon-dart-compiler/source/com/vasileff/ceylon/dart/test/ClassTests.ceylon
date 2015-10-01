@@ -335,4 +335,297 @@ class ClassTests() {
              """;
         };
     }
+
+    shared test
+    void variableReferences() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal String i1;
+                    shared formal String i2;
+                    shared formal variable String i3;
+                    shared formal variable String i4;
+                }
+
+                class C() satisfies I {
+                    shared actual variable String i1 = "";
+                    shared actual variable String i2;
+                    shared actual variable String i3 = "";
+                    shared actual variable String i4;
+
+                    i1 = "i1-1";
+                    i2 = "i2-1";
+                    i3 = "i3-1";
+                    i4 = "i4-1";
+
+                    i1 = "i1-2";
+                    i2 = "i2-2";
+                    i3 = "i3-2";
+                    i4 = "i4-2";
+
+                    shared variable String c1 = "";
+                    shared variable String c2;
+                    variable String c3 = "";
+                    variable String c4;
+
+                    c1 = "c1-1";
+                    c2 = "c2-1";
+                    c3 = "c3-1";
+                    c4 = "c4-1";
+
+                    c1 = "c1-2";
+                    c2 = "c2-2";
+                    c3 = "c3-2";
+                    c4 = "c4-2";
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get i1;
+                    $dart$core.String get i2;
+                    $dart$core.String get i3;
+                    set i3($dart$core.String i3);
+                    $dart$core.String get i4;
+                    set i4($dart$core.String i4);
+                }
+                class C implements I {
+                    C() {
+                        i1 = "";
+                        i3 = "";
+                        i1 = "i1-1";
+                        i2 = "i2-1";
+                        i3 = "i3-1";
+                        i4 = "i4-1";
+                        i1 = "i1-2";
+                        i2 = "i2-2";
+                        i3 = "i3-2";
+                        i4 = "i4-2";
+                        c1 = "";
+                        c3 = "";
+                        c1 = "c1-1";
+                        c2 = "c2-1";
+                        c3 = "c3-1";
+                        c4 = "c4-1";
+                        c1 = "c1-2";
+                        c2 = "c2-2";
+                        c3 = "c3-2";
+                        c4 = "c4-2";
+                    }
+                    $dart$core.String i1;
+                    $dart$core.String i2;
+                    $dart$core.String i3;
+                    $dart$core.String i4;
+                    $dart$core.String c1;
+                    $dart$core.String c2;
+                    $dart$core.String c3;
+                    $dart$core.String c4;
+                }
+             """;
+        };
+    }
+
+    shared test
+    void nonVariableReferences() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal String i1;
+                    shared formal String i2;
+                }
+
+                class C() satisfies I {
+                    shared actual String i1 = "";
+                    i2 = "i2-1"; // shortcut refinement
+
+                    shared String c1 = "";
+                    shared String c2;
+
+                    c2 = "c2-1";
+
+                    String c3 = "";
+                    String c4;
+
+                    c4 = "c4-1";
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get i1;
+                    $dart$core.String get i2;
+                }
+                class C implements I {
+                    C() {
+                        i1 = "";
+                        i2 = "i2-1";
+                        c1 = "";
+                        c2 = "c2-1";
+                        c3 = "";
+                        c4 = "c4-1";
+                    }
+                    $dart$core.String i1;
+                    $dart$core.String i2;
+                    $dart$core.String c1;
+                    $dart$core.String c2;
+                    $dart$core.String c3;
+                    $dart$core.String c4;
+                }
+             """;
+        };
+    }
+
+    shared test
+    void nonVariableGetters() {
+        // TODO LazySpecifications see below
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal String i1;
+                    shared formal String i2;
+                }
+
+                class C() satisfies I {
+                    shared actual String i1 => "";
+                    i2 => i1;
+
+                    shared String c1 => "";
+                    shared String c2 => c1;
+
+                    String c3 => "";
+                    String c4 => c3;
+
+                    // TODO LazySpecifications that are not shortcut refinements
+                    //      are not yet supported.
+                    //shared String c5;
+                    //c5 => "c5-1";
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get i1;
+                    $dart$core.String get i2;
+                }
+                class C implements I {
+                    C() {}
+                    $dart$core.String get i1 => "";
+                    $dart$core.String get i2 => i1;
+                    $dart$core.String get c1 => "";
+                    $dart$core.String get c2 => c1;
+                    $dart$core.String get c3 => "";
+                    $dart$core.String get c4 => c3;
+                }
+             """;
+        };
+    }
+
+    shared test
+    void variableGetters() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal variable String i1;
+                }
+
+                class C() satisfies I {
+                    shared actual String i1 => "";
+                    assign i1 { print("Setting i1 to: " + i1); }
+
+                    i1 = "i1-1";
+                    i1 = "i1-2";
+                    print(i1);
+
+                    shared String c1 => "";
+                    assign c1 { print("Setting c1 to: " + c1); }
+
+                    c1 = "c1-1";
+                    c1 = "c1-2";
+                    print(c1);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get i1;
+                    set i1($dart$core.String i1);
+                }
+                class C implements I {
+                    C() {
+                        i1 = "i1-1";
+                        i1 = "i1-2";
+                        $ceylon$language.print($ceylon$language.String.instance(i1));
+                        c1 = "c1-1";
+                        c1 = "c1-2";
+                        $ceylon$language.print($ceylon$language.String.instance(c1));
+                    }
+                    $dart$core.String get i1 => "";
+                    void set i1($dart$core.String i1) {
+                        $ceylon$language.print($ceylon$language.String.instance("Setting i1 to: " + i1));
+                    }
+                    $dart$core.String get c1 => "";
+                    void set c1($dart$core.String c1) {
+                        $ceylon$language.print($ceylon$language.String.instance("Setting c1 to: " + c1));
+                    }
+                }
+             """;
+        };
+    }
+
+    shared test
+    void referencesToNonReferences() {
+        compileAndCompare {
+             """
+                class C() {
+                    shared default String c1 = "";
+                    shared default variable String c2 = "";
+                }
+
+                class D() extends C() {
+                    shared actual String c1 => "";
+                    assign c1 { print("assigning c1 to: " + c1); }
+
+                    shared actual String c2 => "";
+                    assign c2 { print("assigning c2 to: " + c2); }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C {
+                    C() {
+                        c1 = "";
+                        c2 = "";
+                    }
+                    $dart$core.String c1;
+                    $dart$core.String c2;
+                }
+                class D  extends C {
+                    D() {}
+                    $dart$core.String get c1 => "";
+                    void set c1($dart$core.String c1) {
+                        $ceylon$language.print($ceylon$language.String.instance("assigning c1 to: " + c1));
+                    }
+                    $dart$core.String get c2 => "";
+                    void set c2($dart$core.String c2) {
+                        $ceylon$language.print($ceylon$language.String.instance("assigning c2 to: " + c2));
+                    }
+                }
+             """;
+        };
+    }
 }

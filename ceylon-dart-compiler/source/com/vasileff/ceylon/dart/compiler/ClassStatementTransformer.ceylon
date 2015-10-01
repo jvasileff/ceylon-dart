@@ -14,7 +14,8 @@ import ceylon.ast.core {
     FunctionDeclaration,
     LazySpecification,
     ClassDefinition,
-    ValueSpecification
+    ValueSpecification,
+    ValueSetterDefinition
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -96,6 +97,11 @@ class ClassStatementTransformer(CompilationContext ctx)
     "Value getters are always lazy and are (currently) always captured as members."
     shared actual
     DartStatement[] transformValueGetterDefinition(ValueGetterDefinition that)
+        =>  [];
+
+    "Value setters are always lazy and are (currently) always captured as members."
+    shared actual
+    DartStatement[] transformValueSetterDefinition(ValueSetterDefinition that)
         =>  [];
 
     "Functions are (currently) always captured as members."
