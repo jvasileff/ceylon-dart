@@ -31,7 +31,10 @@ import ceylon.ast.core {
     SwitchClause,
     SpecifiedVariable,
     Comprehension,
-    SpreadArgument
+    SpreadArgument,
+    AnyMemberOperator,
+    MemberOperator,
+    SafeMemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -429,10 +432,14 @@ class BaseGenerator(CompilationContext ctx)
             DartExpression()? generateReceiver,
             FunctionOrValueModel memberDeclaration,
             [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null,
-            Boolean safeMemberOperator = false) {
+            AnyMemberOperator? memberOperator = null) {
 
         "By definition."
-        assert(is FunctionModel|ValueModel|SetterModel memberDeclaration);
+        assert (is FunctionModel|ValueModel|SetterModel memberDeclaration);
+
+        "SpreadMemberOperator not yet supported."
+        assert (is Null | MemberOperator | SafeMemberOperator memberOperator);
+        value safeMemberOperator = memberOperator is SafeMemberOperator;
 
         value [callableType, a] = callableTypeAndArguments else [null, []];
 
@@ -842,7 +849,6 @@ class BaseGenerator(CompilationContext ctx)
                 memberDeclaration;
                 (arguments nonempty) then
                     [typedReference.fullType, arguments];
-                false;
             }
         ];
     }

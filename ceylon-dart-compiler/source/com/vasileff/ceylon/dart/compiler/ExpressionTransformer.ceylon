@@ -108,7 +108,9 @@ import ceylon.ast.core {
     ComprehensionClause,
     ForComprehensionClause,
     IfComprehensionClause,
-    ExpressionComprehensionClause
+    ExpressionComprehensionClause,
+    AnyMemberOperator,
+    MemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -349,7 +351,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 () => that.receiverExpression.transform(this);
                 memberDeclaration;
                 null;
-                safeMemberOperator;
+                that.memberOperator;
             };
         }
         case (is FunctionModel) {
@@ -770,9 +772,9 @@ class ExpressionTransformer(CompilationContext ctx)
         }
 
         "The subtypes of FunctionOrValueModel, ClassModel, and ConstructorModel, with
-         Null for expressions to Callables."
-        assert (is FunctionModel | ValueModel | SetterModel
-                | ClassModel | ConstructorModel | Null invokedDeclaration);
+         Null for expressions to Callables, and excluding SetterModel"
+        assert (is FunctionModel | ValueModel | ClassModel | ConstructorModel
+                    | Null invokedDeclaration);
 
         value invokedDeclarationContainer
             =  if (exists invokedDeclaration)
@@ -862,9 +864,10 @@ class ExpressionTransformer(CompilationContext ctx)
              expression or a qualified expression"
             assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
+            // QualifiedExpression with a `super` receiver
             if (is QualifiedExpression invoked,
                 exists superType = denotableSuperType(invoked.receiverExpression)) {
-                // receiver is a `super` reference
+
                 return generateInvocation {
                     info;
                     info.typeModel;
@@ -875,11 +878,11 @@ class ExpressionTransformer(CompilationContext ctx)
                         invokedInfo.typeModel,
                         that.arguments
                     ];
-                    invoked.memberOperator is SafeMemberOperator;
+                    invoked.memberOperator;
                 };
             }
-            // QualifiedExpressions, but exclude those w/Package "receivers"; they are
-            // more like BaseExpressions
+            // Other QualifiedExpressions, but exclude those w/Package "receivers";
+            // they are more like BaseExpressions
             else if (is QualifiedExpression invoked,
                     !invoked.receiverExpression is Package) {
 
@@ -895,9 +898,10 @@ class ExpressionTransformer(CompilationContext ctx)
                         invokedInfo.typeModel,
                         that.arguments
                     ];
-                    invoked.memberOperator is SafeMemberOperator;
+                    invoked.memberOperator;
                 };
             }
+            // BaseExpression or QualifiedExpression w/Package "receiver"
             else {
                 if (invokedDeclaration.parameter) {
                     // Invoking a Callable parameter
@@ -916,7 +920,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             dartTypes.expressionForBaseExpression {
                                 info;
                                 invokedDeclaration;
-                            }[0];
+                            }[0]; // never a value, as far as we know!
                             generateArgumentListFromArguments {
                                 that.arguments;
                                 invokedInfo.typeModel;
@@ -992,11 +996,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             };
-        }
-        case (is SetterModel) {
-            throw CompilerBug(that,
-                "The invoked expression's declaration type is not supported: \
-                 '``className(invokedDeclaration)``'");
         }
     }
 

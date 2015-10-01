@@ -10,7 +10,7 @@ import com.vasileff.ceylon.dart.ast {
 }
 
 void compileAndCompare(String ceylon, String expected) {
-    value dartUnits = compile { ceylon };
+    value dartUnits = compile { false; ceylon };
     assert (exists dartUnit = dartUnits[0]);
 
     value sb = StringBuilder();
