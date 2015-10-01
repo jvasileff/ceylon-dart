@@ -2254,11 +2254,11 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression
     generateAssignmentExpression(
-                DScope that,
-                ValueModel | BaseExpression | QualifiedExpression target,
-                DartExpression() rhsExpression) {
+            DScope that,
+            BaseExpression | QualifiedExpression target,
+            DartExpression() rhsExpression) {
 
-        // TODO test with receivers (not even tried yet...)
+        // TODO review and test
         // TODO make sure setters return the new value, or do somthing here
         // TODO consider merging with generateInvocation()
 
@@ -2267,11 +2267,6 @@ class BaseGenerator(CompilationContext ctx)
         Reference typedReference;
 
         switch (target)
-        case (is ValueModel) {
-            targetDeclaration = target;
-            dartTarget = null;
-            typedReference = target.typedReference;
-        }
         case (is BaseExpression) {
             value info = BaseExpressionInfo(target);
             targetDeclaration = info.declaration;

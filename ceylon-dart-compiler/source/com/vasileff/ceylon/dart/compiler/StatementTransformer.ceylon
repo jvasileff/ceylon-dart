@@ -422,7 +422,7 @@ class StatementTransformer(CompilationContext ctx)
                 withLhsNoType {
                     () => generateAssignmentExpression {
                         NodeInfo(that);
-                        ValueSpecificationInfo(that).declaration;
+                        ValueSpecificationInfo(that).target;
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
                 };

@@ -66,4 +66,37 @@ class AssignmentTests() {
         };
     }
 
+    shared test
+    void specificationWithThis() {
+         compileAndCompare {
+             """
+                class C() {
+                    shared variable String s;
+                    this.s = "s1";
+                    s = "s2";
+                    void foo(variable String s) {
+                        s = "foo's s";
+                        this.s = "s3";
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C {
+                    C() {
+                        this.s = "s1";
+                        s = "s2";
+                    }
+                    $dart$core.String s;
+                    void foo([$dart$core.String s]) {
+                        s = "foo's s";
+                        this.s = "s3";
+                    }
+                }
+             """;
+        };
+    }
 }

@@ -90,7 +90,11 @@ import org.antlr.runtime {
     Token
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    augmentNode
+}
+import ceylon.ast.redhat {
+    primaryToCeylon
 }
 
 shared
@@ -613,11 +617,33 @@ class ValueSpecificationInfo(ValueSpecification astNode)
 
     shared actual default ValueSpecification node => astNode;
     value tcNode = assertedTcNode<Tree.SpecifierStatement>(astNode);
+
     shared ValueModel declaration {
-        assert (is ValueModel result = tcNode.declaration);
+        if (astNode.qualifier exists) {
+            // If qualified with `this`, the `tcNode.declaration` isn't set (for
+            // whatever reason).
+            assert (is Tree.QualifiedMemberExpression qme = tcNode.baseMemberExpression);
+            assert (is ValueModel result = qme.declaration);
+            return result;
+        }
+        else {
+            // tcNode.baseMemberExpression is a Tree.BaseMemberExpression
+            assert (is ValueModel result = tcNode.declaration);
+            return result;
+        }
+    }
+
+    //shared TypedDeclarationModel? refined => tcNode.refined;
+
+    shared QualifiedExpression | BaseExpression target {
+        assert (is Tree.BaseMemberExpression | Tree.QualifiedMemberExpression
+                baseMemberExpression = tcNode.baseMemberExpression);
+
+        assert (is QualifiedExpression | BaseExpression result =
+                primaryToCeylon(baseMemberExpression, augmentNode));
+
         return result;
     }
-    //shared TypedDeclarationModel? refined => tcNode.refined;
 }
 
 shared
