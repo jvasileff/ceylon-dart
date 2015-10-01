@@ -18,9 +18,7 @@ class Span<Element>(first, last)
     
     string => first.string + ".." + last.string;
     
-// FIXME Dart workaround
-//    increasing = last.offsetSign(first) >= 0;
-    increasing => last.offsetSign(first) >= 0;
+    increasing = last.offsetSign(first) >= 0;
     
     decreasing => !increasing;
     

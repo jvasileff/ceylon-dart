@@ -4746,9 +4746,11 @@ class List$iterator$$anonymous$0_ implements Iterator {
 class List$collect$list_ implements List {
     List $outer$ceylon$language$List;
     Callable $capture$List$collect$collecting;
-    List$collect$list_([List this.$outer$ceylon$language$List, Callable this.$capture$List$collect$collecting]) {}
+    List$collect$list_([List this.$outer$ceylon$language$List, Callable this.$capture$List$collect$collecting]) {
+        size = $outer$ceylon$language$List.size;
+    }
     $dart$core.int get lastIndex => $outer$ceylon$language$List.lastIndex;
-    $dart$core.int get size => $outer$ceylon$language$List.size;
+    $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
             return $capture$List$collect$collecting.$delegate$(List.$getElement($outer$ceylon$language$List, index));
@@ -8520,9 +8522,11 @@ abstract class Scalable {
 class Sequence$collect$list_ implements List {
     Sequence $outer$ceylon$language$Sequence;
     Callable $capture$Sequence$collect$collecting;
-    Sequence$collect$list_([Sequence this.$outer$ceylon$language$Sequence, Callable this.$capture$Sequence$collect$collecting]) {}
+    Sequence$collect$list_([Sequence this.$outer$ceylon$language$Sequence, Callable this.$capture$Sequence$collect$collecting]) {
+        size = $outer$ceylon$language$Sequence.size;
+    }
     $dart$core.int get lastIndex => $outer$ceylon$language$Sequence.lastIndex;
-    $dart$core.int get size => $outer$ceylon$language$Sequence.size;
+    $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
             return $capture$Sequence$collect$collecting.$delegate$(Sequence.$getElement($outer$ceylon$language$Sequence, index));
@@ -9747,12 +9751,13 @@ class Span$By implements Iterable {
 }
 class Span  extends Range {
     Span([$dart$core.Object this.first, $dart$core.Object this.last]) {
+        increasing = (last as Enumerable).offsetSign(first) >= 0;
         recursive = ((first as Enumerable).offsetSign((first as Enumerable).successor) > 0) && (((last as Enumerable).predecessor as Enumerable).offsetSign(last) > 0);
     }
     $dart$core.Object first;
     $dart$core.Object last;
     $dart$core.String toString() => (first.toString() + "..") + last.toString();
-    $dart$core.bool get increasing => (last as Enumerable).offsetSign(first) >= 0;
+    $dart$core.bool increasing;
     $dart$core.bool get decreasing => !increasing;
     $dart$core.bool recursive;
     $dart$core.Object next([$dart$core.Object x]) => (($dart$core.Object $lhs$) => $lhs$ == null ? (x as Enumerable).predecessor : $lhs$)(increasing ? (x as Enumerable).successor : null);

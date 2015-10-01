@@ -776,9 +776,7 @@ shared interface List<out Element=Anything>
                     extends Object() 
                     satisfies List<Result> {
                 lastIndex => outer.lastIndex;
-                // FIXME Dart workaround
-                //size = outer.size;
-                size => outer.size;
+                size = outer.size;
                 getFromFirst(Integer index)
                         => if (0<=index<size) 
                         then collecting(outer.getElement(index))
