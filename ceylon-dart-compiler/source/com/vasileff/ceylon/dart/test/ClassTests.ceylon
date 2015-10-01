@@ -301,4 +301,38 @@ class ClassTests() {
              """;
         };
     }
+
+    shared test
+    void valueSpecificationShortcutRefinement() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared formal String s;
+                }
+
+                class Foo() satisfies I {
+                    s = ""; // shortcut refinement
+                    String x;
+                    x = ""; // not shortcut refinement
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    $dart$core.String get s;
+                }
+                class Foo implements I {
+                    Foo() {
+                        s = "";
+                        x = "";
+                    }
+                    $dart$core.String s;
+                    $dart$core.String x;
+                }
+             """;
+        };
+    }
 }

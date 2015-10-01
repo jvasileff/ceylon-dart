@@ -13,7 +13,8 @@ import ceylon.ast.core {
     Specification,
     FunctionDeclaration,
     LazySpecification,
-    ClassDefinition
+    ClassDefinition,
+    ValueSpecification
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -36,7 +37,7 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformStatement(Statement that)
-        =>  if (that is Specification)
+        =>  if (that is Specification && !that is ValueSpecification)
             then super.transformStatement(that)
             else that.transform(statementTransformer);
 
