@@ -9620,9 +9620,9 @@ class Span$iterator$$anonymous$0_ implements Iterator {
                         result = $outer$ceylon$language$Span.next(c);
                     }
                     if (Integer.instance((result as Enumerable).offset($outer$ceylon$language$Span.last)).equals(Integer.instance(0))) {
-                        element = $package$finished;
+                        this.element = $package$finished;
                     } else {
-                        element = result;
+                        this.element = result;
                     }
                     return result;
                 }

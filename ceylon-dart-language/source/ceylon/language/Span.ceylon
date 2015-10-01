@@ -144,13 +144,9 @@ class Span<Element>(first, last)
                     result = outer.next(c);
                 }
                 if (result.offset(last) == 0) {
-// FIXME Dart workaround ** `this` for ValueSpecifications results in null for the tcNode.declaration
-//                    this.element = finished;
-                    element = finished;
+                    this.element = finished;
                 } else {
-// FIXME Dart workaround ** `this` for ValueSpecifications results in null for the tcNode.declaration
-                    //this.element  = result;
-                    element  = result;
+                    this.element  = result;
                 }
                 return result;
             } else {
