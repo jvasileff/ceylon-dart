@@ -420,6 +420,9 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateInvocation(
             DScope scope,
+            "The return type of the invocation. If [[callableTypeAndArguments]]
+             is also provided, the [[resultType]] should match exactly the
+             return type of the given callable type."
             TypeModel resultType,
             "The type of the receiver, which may be:
              -  the type of an expression if [[generateReceiver]] is not null, or
@@ -431,7 +434,9 @@ class BaseGenerator(CompilationContext ctx)
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
             FunctionOrValueModel memberDeclaration,
-            [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null,
+            [TypeModel,   [DartExpression()*]
+                        | [Expression*]
+                        | Arguments]? callableTypeAndArguments = null,
             AnyMemberOperator? memberOperator = null) {
 
         "By definition."
@@ -443,23 +448,27 @@ class BaseGenerator(CompilationContext ctx)
 
         value [callableType, a] = callableTypeAndArguments else [null, []];
 
-        [Expression*] arguments;
+        [DartExpression()*] arguments;
 
-        switch (a)
-        case (is [Expression*]) {
+        if (is [DartExpression()*] a) {
             arguments = a;
         }
-        case (is PositionalArguments) {
-            arguments = a.argumentList.listedArguments;
+        else if (is [Expression*] a) {
+            arguments = a.collect((a) => ()
+                    => a.transform(expressionTransformer));
         }
-        case (is NamedArguments) {
+        else if (is PositionalArguments a) {
+            arguments = a.argumentList.listedArguments.collect((a) => ()
+                    => a.transform(expressionTransformer));
+        }
+        else { //(is NamedArguments)
             throw CompilerBug(scope, "NamedArguments not supported");
         }
 
         // TODO WIP native optimizations
         if (exists generateReceiver, // No optimizations for `super` receiver
             exists optimization = nativeBinaryFunctions(memberDeclaration)) {
-            assert (exists rightOperandExpression = arguments[0]);
+            assert (exists rightOperandArgument = arguments[0]);
 
             value [type, leftOperandType, operand, rightOperandType] = optimization;
 
@@ -475,7 +484,7 @@ class BaseGenerator(CompilationContext ctx)
                     operator = operand;
                     rightOperand = withLhsNative {
                         rightOperandType;
-                        () => rightOperandExpression.transform(expressionTransformer);
+                        rightOperandArgument;
                     };
                 };
             };
@@ -655,7 +664,7 @@ class BaseGenerator(CompilationContext ctx)
                             withLhs {
                                 argumentTypes[i];
                                 parameterDeclarations[i];
-                                () => argument.transform(expressionTransformer);
+                                argument;
                             }
                         ]
                     };
@@ -1987,6 +1996,156 @@ class BaseGenerator(CompilationContext ctx)
                     };
         }
         return [switchedType, switchedVariable, variableDeclaration];
+    }
+
+    shared see(`function generateInvocation`)
+    DartInstanceCreationExpression generateNewCallableForQualifiedExpression(
+            DScope scope,
+            "The type of the receiver, which may be:
+             -  the type of an expression if [[generateReceiver]] is not null, or
+             -  an interface that is the container of the [[memberDeclaration]] to invoke
+                [[generateReceiver]] is null, indicating that the receiver is a `super`
+                reference."
+            TypeModel receiverType,
+            "A function to generate the receiver of type [[receiverType]], or null if the
+             receiver is a `super` reference."
+            DartExpression()? generateReceiver,
+            FunctionModel memberDeclaration,
+            TypeModel callableType,
+            AnyMemberOperator? memberOperator = null) {
+
+        // TODO optimize away the invocation and outer function wrapper, and simply
+        //      return a Dart function reference when possible. This can be done when:
+        //
+        //      - neither the return nor arguments require boxing
+        //      - the member operator is not null-safe or spread
+        //      - we do not need to invoke a static dart interface method
+        //          - non-shared methods
+        //          - qualified with super
+        //      - other restrictions from reviewing generateInvocation?
+
+        "Parameters for the first parameter list"
+        value parameters = CeylonList(memberDeclaration.firstParameterList.parameters);
+
+        "The actual return type given the receiver's parameterization"
+        value resultType = ctx.unit.getCallableReturnType(callableType);
+
+        "Dart parameters for the *outer* function–the one with the public facing
+         signature."
+        value outerParameters = parameters.collect((parameterModel) {
+            value dartSimpleParameter
+                =   DartSimpleFormalParameter {
+                        false; false;
+                        // $dart$core.Object for the type of all parameters since
+                        // `Callable` is generic
+                        dartTypes.dartObject;
+                        DartSimpleIdentifier {
+                            dartTypes.getName(parameterModel);
+                        };
+                    };
+
+            if (parameterModel.defaulted) {
+                return
+                DartDefaultFormalParameter {
+                    dartSimpleParameter;
+                    dartTypes.dartDefault(scope);
+                };
+            }
+            else {
+                return dartSimpleParameter;
+            }
+        });
+
+        "Generator functions to produce arguments for the invocation wrapped by the
+         `Callable`.
+
+         The functions will be called by `generateInvocation`, which is responsible
+         for determining lhs types. But, we must by-pass boxing at runtime for default
+         value indicator values."
+        value innerArguments = parameters.collect((parameterModel) {
+            value parameterName = dartTypes.getName(parameterModel);
+            value parameterIdentifier = DartSimpleIdentifier(parameterName);
+            return () {
+                "The caller is responsible for `withLhs`."
+                value boxed
+                    =   withBoxing {
+                            scope;
+                            // Parameters for Callables are always `core.Object`
+                            rhsType = ceylonTypes.anythingType;
+                            rhsDeclaration = null;
+                            parameterIdentifier;
+                        };
+
+                if (parameterModel.defaulted) {
+                    return
+                    DartConditionalExpression {
+                        // condition
+                        DartFunctionExpressionInvocation {
+                            dartDCIdentical;
+                            DartArgumentList {
+                                [parameterIdentifier,
+                                 dartTypes.dartDefault(scope)];
+                            };
+                        };
+                        // propagate defaulted
+                        thenExpression = dartTypes.dartDefault(scope);
+                        // not default, use boxed/unboxed value
+                        elseExpression = boxed;
+                    };
+                }
+                else {
+                    return boxed;
+                }
+            };
+        });
+
+        "The invocation wrapped by the `Callable`, returning a boxed result."
+        value invocation
+            =   withLhsNonNative {
+                    lhsType = resultType;
+                    () => generateInvocation {
+                        scope;
+                        resultType;
+                        receiverType;
+                        generateReceiver;
+                        memberDeclaration;
+                        [callableType, innerArguments];
+                        memberOperator;
+                    };
+                };
+
+        "The outer function, serving as the delegate for the `Callable`. This function
+         accepts and returns non-erased types."
+        DartExpression outerFunction
+            =   DartFunctionExpression {
+                    DartFormalParameterList {
+                        true; false;
+                        outerParameters;
+                    };
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            [DartReturnStatement {
+                                invocation;
+                            }];
+                        };
+                    };
+                };
+
+        return // the Callable
+        DartInstanceCreationExpression {
+            false;
+            DartConstructorName {
+                dartTypes.dartTypeNameForDartModel {
+                    scope;
+                    dartTypes.dartCallableModel;
+                };
+                null;
+            };
+            DartArgumentList {
+                [outerFunction];
+            };
+        };
     }
 
     shared

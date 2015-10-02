@@ -381,16 +381,16 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     Result withLhsDenotable<Result>(
-            ClassOrInterfaceModel container,
+            ClassOrInterfaceModel lhsClassOrInterface,
             Result fun())
-        =>  withLhsValues(null, false, false, fun, container);
+        =>  withLhsValues(null, false, false, fun, lhsClassOrInterface);
 
     "Erase to native if possible"
     shared
     Result withLhsNative<Result>(
-            TypeModel type,
+            TypeModel lhsType,
             Result fun())
-        =>  withLhs(type, null, fun);
+        =>  withLhs(lhsType, null, fun);
 
     "No specific lhs type required; disable boxing and casting."
     shared
@@ -405,9 +405,9 @@ class CoreGenerator(CompilationContext ctx) {
     "Never erase to native (always box)"
     shared
     Result withLhsNonNative<Result>(
-            TypeModel type,
+            TypeModel lhsType,
             Result fun())
-        =>  withLhsValues(type, false, false, fun);
+        =>  withLhsValues(lhsType, false, false, fun);
 
     Result withLhsValues<Result>(
             TypeOrNoType? lhsType,

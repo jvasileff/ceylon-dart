@@ -27,7 +27,6 @@ import ceylon.ast.core {
     Node,
     ElseOperation,
     ThenOperation,
-    SafeMemberOperator,
     SpreadMemberOperator,
     NotOperation,
     AssignOperation,
@@ -108,9 +107,7 @@ import ceylon.ast.core {
     ComprehensionClause,
     ForComprehensionClause,
     IfComprehensionClause,
-    ExpressionComprehensionClause,
-    AnyMemberOperator,
-    MemberOperator
+    ExpressionComprehensionClause
 }
 import ceylon.collection {
     LinkedList
@@ -120,7 +117,6 @@ import ceylon.language.meta {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    SetterModel=Setter,
     DeclarationModel=Declaration,
     FunctionModel=Function,
     ValueModel=Value,
@@ -336,7 +332,6 @@ class ExpressionTransformer(CompilationContext ctx)
         value receiverInfo = ExpressionInfo(that.receiverExpression);
         value memberDeclaration = info.target.declaration;
         value memberContainer = memberDeclaration.container;
-        value safeMemberOperator = that.memberOperator is SafeMemberOperator;
 
         "Maybe this is a type alias?"
         assert (is ClassOrInterfaceModel memberContainer);
@@ -355,101 +350,127 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
         case (is FunctionModel) {
-            // Return a new Callable
-            value receiverDenotableType = ceylonTypes.denotableType {
-                receiverInfo.typeModel;
-                memberContainer;
-            };
+            // Return a new Callable.
 
-            value receiverDartType = dartTypes.dartTypeName {
-                info;
-                receiverDenotableType;
-                eraseToNative = false;
-            };
+            // QualifiedExpression with a `super` receiver
+            if (exists superType = denotableSuperType(that.receiverExpression)) {
+                return generateNewCallableForQualifiedExpression {
+                    info;
+                    superType;
+                    null;
+                    memberDeclaration;
+                    info.typeModel;
+                    that.memberOperator;
+                };
+            }
 
-            value receiver = withLhsNonNative {
-                receiverDenotableType;
-                () => that.receiverExpression.transform(this);
-            };
-
-            value [memberIdentifier, isFunction] = dartTypes
-                    .dartIdentifierForFunctionOrValue {
-                info;
-                memberDeclaration;
-                false;
-            };
-
-            "Qualified expressions aren't toplevels, and only toplevels
-             are qualified by dartIdentifierForFunctionOrValue()"
-            assert (is DartSimpleIdentifier memberIdentifier);
-
-            "Ignore the possibility that a Ceylon function is a Dart
-             property, for which there are no known cases."
-            assert (isFunction);
-
-            // The core.Function result of the qualified expression must be
-            // captured to avoid re-evaluating the receiver expression
-            // each time Callable is invoked.
+            // QualifiedExpression with a non-`super` receiver
             //
-            // So...
-            //   - create a closure that
-            //     - declares a variable holding the evaluated qe (1)
-            //     - returns a new Callable that holds the saved function (2)
-            //   - invoke the closure to obtain the Callable (3)
-            value unboxed =
-            DartFunctionExpressionInvocation { // (3)
-                DartFunctionExpression {
-                    DartFormalParameterList();
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartVariableDeclarationStatement {
-                                DartVariableDeclarationList {
-                                    keyword = null;
-                                    type = dartTypes.dartFunction;
-                                    [DartVariableDeclaration { // (1)
-                                        DartSimpleIdentifier {
-                                            "$capturedDelegate$";
-                                        };
-                                        if (!safeMemberOperator)
-                                        then DartPropertyAccess(
-                                                receiver, memberIdentifier)
-                                        else createNullSafeExpression {
-                                            DartSimpleIdentifier("$r$");
-                                            receiverDartType;
-                                            receiver;
-                                            DartNullLiteral();
-                                            DartPropertyAccess {
-                                                DartSimpleIdentifier("$r$");
-                                                memberIdentifier;
-                                            };
-                                        };
+            // The receiver must be captured to avoid re-evaluating the expression for
+            // the receiver each time Callable is invoked.
+            //
+            // So:
+            //
+            // - Create a closure that
+            //      - Declares a variable holding the evaluated receiver (1)
+            //      - Returns a new Callable that captures the variable (2)
+            //
+            // - Invoke the closure to obtain the Callable (3)
 
+
+            // Attempt optimization: avoid the extra closure for receivers that are
+            // constants and therefore can be evaluated when the Callable is invoked.
+            function isConstant(Expression e) {
+                if (is BaseExpression be = e,
+                    is ValueModel vm = BaseExpressionInfo(be).declaration) {
+                    return !vm.transient && !vm.variable && !vm.formal;
+                }
+                return e is Outer|This;
+            }
+
+            if (isConstant(that.receiverExpression)) {
+                return generateNewCallableForQualifiedExpression {
+                    info;
+                    receiverInfo.typeModel;
+                    () => that.receiverExpression.transform(this);
+                    memberDeclaration;
+                    info.typeModel;
+                    that.memberOperator;
+                };
+            }
+
+            // Ok, we really do to evaluate and capture the receiver.
+            value receiverDenotableType
+                =   ceylonTypes.denotableType {
+                        receiverInfo.typeModel;
+                        memberContainer;
+                    };
+
+            value receiverDartType
+                =   dartTypes.dartTypeName {
+                        info;
+                        receiverDenotableType;
+                        eraseToNative = false;
+                    };
+
+            value receiverDartExpression
+                =   withLhsNonNative {
+                        receiverDenotableType;
+                        () => that.receiverExpression.transform(this);
+                    };
+
+            value newCallableDartExpression
+                =   generateNewCallableForQualifiedExpression {
+                        info;
+                        receiverInfo.typeModel;
+                        // receiverDartExpression was generated with lhsNonNative
+                        () => withBoxingNonNative {
+                            info;
+                            receiverDenotableType;
+                            DartSimpleIdentifier {
+                                "$capturedReceiver$";
+                            };
+                        };
+                        memberDeclaration;
+                        info.typeModel;
+                        that.memberOperator;
+                    };
+
+            value unboxed
+                =   DartFunctionExpressionInvocation { // (3)
+                        DartFunctionExpression {
+                            DartFormalParameterList();
+                            DartBlockFunctionBody {
+                                null; false;
+                                DartBlock {
+                                    [DartVariableDeclarationStatement {
+                                        DartVariableDeclarationList {
+                                            null;
+                                            receiverDartType;
+                                            [DartVariableDeclaration { // (1)
+                                                DartSimpleIdentifier {
+                                                    "$capturedReceiver$";
+                                                };
+                                                receiverDartExpression;
+                                            }];
+                                        };
+                                    },
+                                    DartReturnStatement { // (2)
+                                        newCallableDartExpression;
                                     }];
                                 };
-                            },
-                            DartReturnStatement { // (2)
-                                generateNewCallable {
-                                    info;
-                                    memberDeclaration;
-                                    DartSimpleIdentifier {
-                                        "$capturedDelegate$";
-                                    };
-                                    delegateMayBeNull = safeMemberOperator;
-                                };
-                            }];
+                            };
                         };
+                        DartArgumentList(); // (3)
                     };
-                };
-                DartArgumentList(); // (3)
-            };
-            // a new Callable, so never erased to native
-            return withBoxingNonNative {
+
+            // A new Callable, so never erased to native
+            return
+            withBoxingNonNative {
                 info;
                 info.typeModel;
                 unboxed;
             };
-
         }
         else {
             throw CompilerBug(that,
