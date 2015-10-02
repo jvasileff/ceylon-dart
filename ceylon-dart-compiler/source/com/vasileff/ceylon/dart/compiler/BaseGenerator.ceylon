@@ -2021,15 +2021,17 @@ class BaseGenerator(CompilationContext ctx)
         value parameters = CeylonList(functionModel.parameterLists
                 .get(parameterListNumber).parameters);
 
-        // determine if return or arguments need boxing
-        value boxingRequired =
-                (!delegateReturnsCallable
+        "Either boxing is required or `delegateMayBeNull` (null safe member operator).
+         If `true`, an extra outer function will be created to handle boxing and null
+         safety."
+        value needsWrapperFunction =
+                delegateMayBeNull
+                || (!delegateReturnsCallable
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
                     =>  dartTypes.erasedToNative(parameterModel.model));
-
         // generate outerFunction to handle boxing
-        if (!boxingRequired) {
+        if (!needsWrapperFunction) {
             outerFunction = delegateFunction;
         }
         else {

@@ -169,4 +169,33 @@ class QualifiedExpressionTests() {
              """;
          };
     }
+
+    shared test
+    void nullSafeMemberOperatorNoBoxing() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    Destroyable? u1 = nothing;
+
+                    value destroy = u1?.destroy;
+                }
+             """;
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Destroyable u1 = $ceylon$language.nothing as $ceylon$language.Destroyable;
+                    $ceylon$language.Callable destroy = (() {
+                        $dart$core.Function $capturedDelegate$ = (($ceylon$language.Destroyable $r$) => $r$ == null ? null : $r$.destroy)(u1);
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object error]) {
+                            return $capturedDelegate$ == null ? null : $capturedDelegate$(error as $ceylon$language.Throwable);
+                        });
+                    })();
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
 }
