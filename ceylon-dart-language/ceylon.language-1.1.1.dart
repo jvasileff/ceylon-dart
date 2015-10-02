@@ -675,23 +675,23 @@ $dart$core.String $package$dartStringJoin([$dart$core.String val, Iterable objec
 $dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $package$dartStringJoin(val, objects);
 
 Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
-    $dart$core.Function $capturedDelegate$ = (new Character.$fromInt(10)).equals;
+    Character $capturedReceiver$ = new Character.$fromInt(10);
     return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedDelegate$(that));
+        return Boolean.instance($capturedReceiver$.equals(that));
     });
 })(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
-    $dart$core.Function $capturedDelegate$ = (new Character.$fromInt(13)).equals;
+    Character $capturedReceiver$ = new Character.$fromInt(13);
     return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedDelegate$(that));
+        return Boolean.instance($capturedReceiver$.equals(that));
     });
 })())));
 
 Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
 
 Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
-    $dart$core.Function $capturedDelegate$ = (new Character.$fromInt(10)).equals;
+    Character $capturedReceiver$ = new Character.$fromInt(10);
     return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedDelegate$(that));
+        return Boolean.instance($capturedReceiver$.equals(that));
     });
 })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
@@ -7008,18 +7008,12 @@ class Map$patch$$anonymous$6_ implements Map {
             return false;
         }
     })();
-    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not((() {
-        $dart$core.Function $capturedDelegate$ = $outer$ceylon$language$Map.defines;
-        return new dart$Callable(([$dart$core.Object key]) {
-            return Boolean.instance($capturedDelegate$(key));
-        });
-    })()));
-    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not((() {
-        $dart$core.Function $capturedDelegate$ = $capture$Map$patch$other.contains;
-        return new dart$Callable(([$dart$core.Object entry]) {
-            return Boolean.instance($capturedDelegate$(entry));
-        });
-    })())));
+    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object key]) {
+        return Boolean.instance($outer$ceylon$language$Map.defines(key));
+    })));
+    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object entry]) {
+        return Boolean.instance($capture$Map$patch$other.contains(entry));
+    }))));
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
