@@ -2122,13 +2122,9 @@ class BaseGenerator(CompilationContext ctx)
                         true; false;
                         outerParameters;
                     };
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartReturnStatement {
-                                invocation;
-                            }];
-                        };
+                    DartExpressionFunctionBody {
+                        false;
+                        invocation;
                     };
                 };
 
@@ -2291,23 +2287,18 @@ class BaseGenerator(CompilationContext ctx)
                     named = false;
                     parameters = outerParameters;
                 };
-                DartBlockFunctionBody {
-                    keyword = null;
-                    star = false;
-                    DartBlock {
-                        // return boxed (no erasure) result of
-                        // the invocation of the original function
-                        [DartReturnStatement {
-                            withLhsNonNative {
-                                returnType;
-                                () => withBoxing {
-                                    that;
-                                    returnType;
-                                    returnDeclaration;
-                                    wrappedInvocation;
-                                };
-                            };
-                        }];
+                DartExpressionFunctionBody {
+                    false;
+                    // return boxed (no erasure) result of
+                    // the invocation of the original function
+                    withLhsNonNative {
+                        returnType;
+                        () => withBoxing {
+                            that;
+                            returnType;
+                            returnDeclaration;
+                            wrappedInvocation;
+                        };
                     };
                 };
             };

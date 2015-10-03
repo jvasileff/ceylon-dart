@@ -104,7 +104,8 @@ class FunctionTests() {
     shared test
     void functionReferenceTest() {
         compileAndCompare {
-             """void simpleFunction() {
+             """
+                void simpleFunction() {
                     String nested1() => "result1";
                     value nested1Ref = nested1;
                     print(nested1());
@@ -112,15 +113,14 @@ class FunctionTests() {
                 }
              """;
 
-             """import "dart:core" as $dart$core;
+             """
+                import "dart:core" as $dart$core;
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$simpleFunction() {
                     $dart$core.String nested1() => "result1";
 
-                    $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() {
-                        return $ceylon$language.String.instance(nested1());
-                    });
+                    $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(nested1()));
                     $ceylon$language.print($ceylon$language.String.instance(nested1()));
                     $ceylon$language.print(nested1Ref.$delegate$());
                 }

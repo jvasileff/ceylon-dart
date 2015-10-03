@@ -31,9 +31,7 @@ class QualifiedExpressionTests() {
                     $dart$core.Object o = $ceylon$language.Integer.instance($ceylon$language.String.instance(s).size);
                     $ceylon$language.Callable f1 = (() {
                         $ceylon$language.String $capturedReceiver$ = $ceylon$language.String.instance("");
-                        return new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                            return $ceylon$language.Boolean.instance($capturedReceiver$.contains(element));
-                        });
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($capturedReceiver$.contains(element)));
                     })();
                     $dart$core.bool b = $ceylon$language.String.instance("").contains($ceylon$language.String.instance("apples"));
                 }
@@ -75,14 +73,10 @@ class QualifiedExpressionTests() {
                 $dart$core.Object get somethingL => $package$somethingL;
 
                 void $package$run() {
-                    $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.Boolean.instance(($package$somethingE as $ceylon$language.List).contains(element));
-                    });
+                    $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance(($package$somethingE as $ceylon$language.List).contains(element)));
                     $ceylon$language.Callable cl = (() {
                         $ceylon$language.List $capturedReceiver$ = $package$somethingL as $ceylon$language.List;
-                        return new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                            return $ceylon$language.Boolean.instance($capturedReceiver$.contains(element));
-                        });
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($capturedReceiver$.contains(element)));
                     })();
                     ($package$somethingE as $ceylon$language.List).contains($ceylon$language.String.instance("x"));
                     $ceylon$language.print($ceylon$language.Boolean.instance(($package$somethingE as $ceylon$language.List).contains($ceylon$language.String.instance("x"))));
@@ -127,12 +121,8 @@ class QualifiedExpressionTests() {
                 $ceylon$language.List get somethingL => $package$somethingL;
 
                 void $package$run() {
-                    $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.Boolean.instance($package$somethingE.contains(element));
-                    });
-                    $ceylon$language.Callable cl = new $ceylon$language.dart$Callable(([$dart$core.Object element]) {
-                        return $ceylon$language.Boolean.instance($package$somethingL.contains(element));
-                    });
+                    $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($package$somethingE.contains(element)));
+                    $ceylon$language.Callable cl = new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($package$somethingL.contains(element)));
                     $package$somethingE.contains($ceylon$language.String.instance("x"));
                     $ceylon$language.print($ceylon$language.Boolean.instance($package$somethingE.contains($ceylon$language.String.instance("x"))));
                     $package$somethingL.contains($ceylon$language.String.instance("x"));
@@ -179,15 +169,11 @@ class QualifiedExpressionTests() {
                     $ceylon$language.print($ceylon$language.Integer.instance((($ceylon$language.String $r$) => $r$ == null ? null : $r$.size)($ceylon$language.String.instance(os2$get()))));
                     $ceylon$language.Callable fos1 = (() {
                         $ceylon$language.String $capturedReceiver$ = $ceylon$language.String.instance(os1$get());
-                        return new $ceylon$language.dart$Callable(([$dart$core.Object index]) {
-                            return (($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst($ceylon$language.Integer.nativeValue(index as $ceylon$language.Integer)))($capturedReceiver$);
-                        });
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object index]) => (($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst($ceylon$language.Integer.nativeValue(index as $ceylon$language.Integer)))($capturedReceiver$));
                     })();
                     $ceylon$language.Callable fos2 = (() {
                         $ceylon$language.String $capturedReceiver$ = $ceylon$language.String.instance(os2$get());
-                        return new $ceylon$language.dart$Callable(([$dart$core.Object index]) {
-                            return (($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst($ceylon$language.Integer.nativeValue(index as $ceylon$language.Integer)))($capturedReceiver$);
-                        });
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object index]) => (($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst($ceylon$language.Integer.nativeValue(index as $ceylon$language.Integer)))($capturedReceiver$));
                     })();
                     $ceylon$language.print(fos1.$delegate$($ceylon$language.Integer.instance(0)));
                     $ceylon$language.print(fos2.$delegate$($ceylon$language.Integer.instance(0)));
@@ -220,9 +206,7 @@ class QualifiedExpressionTests() {
 
                     $ceylon$language.Callable destroy = (() {
                         $ceylon$language.Destroyable $capturedReceiver$ = u1$get();
-                        return new $ceylon$language.dart$Callable(([$dart$core.Object error]) {
-                            return (($ceylon$language.Destroyable $r$) => $r$ == null ? null : $r$.destroy(error as $ceylon$language.Throwable))($capturedReceiver$);
-                        });
+                        return new $ceylon$language.dart$Callable(([$dart$core.Object error]) => (($ceylon$language.Destroyable $r$) => $r$ == null ? null : $r$.destroy(error as $ceylon$language.Throwable))($capturedReceiver$));
                     })();
                 }
 
@@ -266,32 +250,22 @@ class QualifiedExpressionTests() {
                     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();
                     static void $run([final I $this]) {
-                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return $this.foo(u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $this.foo(u as $ceylon$language.Usable));
                         I ie = $ceylon$language.nothing as I;
                         I il$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return ie.foo(u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ie.foo(u as $ceylon$language.Usable));
                         $ceylon$language.Callable fooRefIl = (() {
                             I $capturedReceiver$ = il$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                                return $capturedReceiver$.foo(u as $ceylon$language.Usable);
-                            });
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $capturedReceiver$.foo(u as $ceylon$language.Usable));
                         })();
                         I me = $ceylon$language.nothing as I;
                         I ml$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))(me);
-                        });
+                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))(me));
                         $ceylon$language.Callable fooRefMl = (() {
                             I $capturedReceiver$ = ml$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                                return ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))($capturedReceiver$);
-                            });
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))($capturedReceiver$));
                         })();
                     }
                 }
@@ -333,32 +307,22 @@ class QualifiedExpressionTests() {
                     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();
                     static void $run([final I $this]) {
-                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return I.$foo($this, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo($this, u as $ceylon$language.Usable));
                         I ie = $ceylon$language.nothing as I;
                         I il$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return I.$foo(ie, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo(ie, u as $ceylon$language.Usable));
                         $ceylon$language.Callable fooRefIl = (() {
                             I $capturedReceiver$ = il$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                                return I.$foo($capturedReceiver$, u as $ceylon$language.Usable);
-                            });
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo($capturedReceiver$, u as $ceylon$language.Usable));
                         })();
                         I me = $ceylon$language.nothing as I;
                         I ml$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))(me);
-                        });
+                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))(me));
                         $ceylon$language.Callable fooRefMl$get() => (() {
                             I $capturedReceiver$ = ml$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                                return ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))($capturedReceiver$);
-                            });
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))($capturedReceiver$));
                         })();
 
                     }
@@ -413,15 +377,9 @@ class QualifiedExpressionTests() {
                     C() {}
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run() {
-                        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Top.$bar(this, u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Left.$foo(this, u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Right.$foo(this, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Top.$bar(this, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Left.$foo(this, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Right.$foo(this, u as $ceylon$language.Usable));
                     }
                     $ceylon$language.Usable bar([$ceylon$language.Usable u]) => Top.$bar(this, u);
                 }
@@ -476,15 +434,9 @@ class QualifiedExpressionTests() {
                     static $ceylon$language.Usable $foo([final Bottom $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();
                     static void $run([final Bottom $this]) {
-                        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Top.$bar($this, u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Left.$foo($this, u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return Right.$foo($this, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Top.$bar($this, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Left.$foo($this, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Right.$foo($this, u as $ceylon$language.Usable));
                     }
                 }
              """;
@@ -519,12 +471,8 @@ class QualifiedExpressionTests() {
                     static $ceylon$language.Usable $foo([final I$J $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();
                     static void $run([final I$J $this]) {
-                        $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return $this.$outer$default$I.foo(u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return I.$bar($this.$outer$default$I, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $this.$outer$default$I.foo(u as $ceylon$language.Usable));
+                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$bar($this.$outer$default$I, u as $ceylon$language.Usable));
                     }
                 }
                 abstract class I {
@@ -563,12 +511,8 @@ class QualifiedExpressionTests() {
                     I$C([I this.$outer$default$I]) {}
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run() {
-                        $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return $outer$default$I.foo(u as $ceylon$language.Usable);
-                        });
-                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) {
-                            return I.$bar($outer$default$I, u as $ceylon$language.Usable);
-                        });
+                        $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $outer$default$I.foo(u as $ceylon$language.Usable));
+                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$bar($outer$default$I, u as $ceylon$language.Usable));
                     }
                 }
                 abstract class I {

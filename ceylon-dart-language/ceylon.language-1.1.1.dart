@@ -5,9 +5,7 @@ import "dart:math" as $dart$math;
 import "dart:mirrors" as $dart$mirrors;
 import "source/ceylon/language/module.dart";
 
-Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) {
-    return Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) && Boolean.nativeValue(q.$delegate$(val) as Boolean))(val));
-});
+Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) && Boolean.nativeValue(q.$delegate$(val) as Boolean))(val)));
 
 Callable and([Callable p, Callable q]) => $package$and(p, q);
 
@@ -676,23 +674,17 @@ $dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $
 
 Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
     Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedReceiver$.equals(that));
-    });
+    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
 })(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
     Character $capturedReceiver$ = new Character.$fromInt(13);
-    return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedReceiver$.equals(that));
-    });
+    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
 })())));
 
 Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
 
 Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
     Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object that]) {
-        return Boolean.instance($capturedReceiver$.equals(that));
-    });
+    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
 })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
     $dart$core.String br = String.nativeValue(lineWithBreak.get(Integer.instance(1)) as String);
@@ -4466,9 +4458,7 @@ abstract class Iterable implements Category {
         })();
     })();
 }
-$dart$core.String $package$commaList([Iterable elements]) => String.instance(", ").join(elements.map(new dart$Callable(([$dart$core.Object val]) {
-    return String.instance($package$stringify(val));
-})));
+$dart$core.String $package$commaList([Iterable elements]) => String.instance(", ").join(elements.map(new dart$Callable(([$dart$core.Object val]) => String.instance($package$stringify(val)))));
 
 $dart$core.String commaList([Iterable elements]) => $package$commaList(elements);
 
@@ -7008,12 +6998,8 @@ class Map$patch$$anonymous$6_ implements Map {
             return false;
         }
     })();
-    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object key]) {
-        return Boolean.instance($outer$ceylon$language$Map.defines(key));
-    })));
-    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object entry]) {
-        return Boolean.instance($capture$Map$patch$other.contains(entry));
-    }))));
+    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object key]) => Boolean.instance($outer$ceylon$language$Map.defines(key)))));
+    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object entry]) => Boolean.instance($capture$Map$patch$other.contains(entry))))));
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
@@ -7830,9 +7816,7 @@ $dart$core.Object $package$min([Iterable values]) {
 
 $dart$core.Object min([Iterable values]) => $package$min(values);
 
-Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) {
-    return Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val));
-});
+Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val)));
 
 Callable not([Callable p]) => $package$not(p);
 
@@ -7875,9 +7859,7 @@ abstract class Obtainable implements Usable {
 }
 abstract class OptionalAnnotation implements ConstrainedAnnotation {
 }
-Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) {
-    return Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) || Boolean.nativeValue(q.$delegate$(val) as Boolean))(val));
-});
+Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) || Boolean.nativeValue(q.$delegate$(val) as Boolean))(val)));
 
 Callable or([Callable p, Callable q]) => $package$or(p, q);
 
