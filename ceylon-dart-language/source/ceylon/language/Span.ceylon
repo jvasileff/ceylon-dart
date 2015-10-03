@@ -102,9 +102,7 @@ class Span<Element>(first, last)
      evaluated and collected into a new sequence."
     //TODO: we should have a way to produce a decreasing
     //      recursive range
-// FIXME Dart workaround
-    //shared actual 
-    native shared actual 
+    shared actual 
     [Element+] reversed
             => recursive 
             then super.reversed

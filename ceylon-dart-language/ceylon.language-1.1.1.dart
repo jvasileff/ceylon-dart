@@ -4458,7 +4458,51 @@ abstract class Iterable implements Category {
         })();
     })();
 }
-$dart$core.String $package$commaList([Iterable elements]) => String.instance(", ").join(elements.map(new dart$Callable(([$dart$core.Object val]) => String.instance($package$stringify(val)))));
+$dart$core.String $package$commaList([Iterable elements]) => String.instance(", ").join(functionIterable(new dart$Callable(() {
+    $dart$core.bool step$0$expired$136 = false;
+    $dart$core.bool step$0$137() {
+        if (step$0$expired$136) {
+            return false;
+        }
+        step$0$expired$136 = true;
+        return true;
+    }
+
+    Iterator iterator_1$138;
+    $dart$core.bool step$1$Init$141() {
+        if (iterator_1$138 != null) {
+            return true;
+        }
+        if (!step$0$137()) {
+            return false;
+        }
+        iterator_1$138 = elements.iterator();
+        return true;
+    }
+
+    $dart$core.Object e$139;
+    $dart$core.bool step$1$142() {
+        while (step$1$Init$141()) {
+            $dart$core.Object next$140;
+            if ((next$140 = iterator_1$138.next()) is !Finished) {
+                e$139 = next$140;
+                return true;
+            }
+            iterator_1$138 = null;
+        }
+        return false;
+    }
+
+    $dart$core.Object step$2$143() {
+        if (!step$1$142()) {
+            return $package$finished;
+        }
+        $dart$core.Object e = e$139;
+        return String.instance($package$stringify(e));
+    }
+
+    return new dart$Callable(step$2$143);
+})));
 
 $dart$core.String commaList([Iterable elements]) => $package$commaList(elements);
 
@@ -4469,18 +4513,18 @@ class ElementEntry$$anonymous$34_ implements Iterator {
     }
     ElementEntry entry;
     $dart$core.Object next() {{
-            $dart$core.bool doElse$145 = true;
+            $dart$core.bool doElse$153 = true;
             {
-                ElementEntry tmp$146 = entry;
-                if (!(tmp$146 == null)) {
+                ElementEntry tmp$154 = entry;
+                if (!(tmp$154 == null)) {
                     ElementEntry e;
-                    e = tmp$146;
-                    doElse$145 = false;
+                    e = tmp$154;
+                    doElse$153 = false;
                     entry = e.next;
                     return e.element;
                 }
             }
-            if (doElse$145) {
+            if (doElse$153) {
                 return $package$finished;
             }
         }
@@ -4496,28 +4540,28 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry e;
             {
-                ElementEntry tmp$138 = entry;
-                if (tmp$138 == null) {
+                ElementEntry tmp$146 = entry;
+                if (tmp$146 == null) {
                     break;
                 }
-                e = tmp$138;
+                e = tmp$146;
             }
             {
-                $dart$core.bool doElse$136 = true;
+                $dart$core.bool doElse$144 = true;
                 if (!(element == null)) {
-                    doElse$136 = false;
+                    doElse$144 = false;
                     {
-                        $dart$core.Object tmp$137 = e.element;
-                        if (!(tmp$137 == null)) {
+                        $dart$core.Object tmp$145 = e.element;
+                        if (!(tmp$145 == null)) {
                             $dart$core.Object ee;
-                            ee = tmp$137;
+                            ee = tmp$145;
                             if (element.equals(ee)) {
                                 return true;
                             }
                         }
                     }
                 }
-                if (doElse$136) {
+                if (doElse$144) {
                     if (!(!(e.element == null))) {
                         return true;
                     }
@@ -4533,22 +4577,22 @@ class ElementEntry implements Sequence {
         } else {
             ElementEntry entry = this;
             {
-                $dart$core.Object element$140;
-                Iterator iterator$139 = ($package$measure(Integer.instance(0), index) as List).iterator();
-                while ((element$140 = iterator$139.next()) is !Finished) {
-                    Integer i = element$140 as Integer;
+                $dart$core.Object element$148;
+                Iterator iterator$147 = ($package$measure(Integer.instance(0), index) as List).iterator();
+                while ((element$148 = iterator$147.next()) is !Finished) {
+                    Integer i = element$148 as Integer;
                     {
-                        $dart$core.bool doElse$141 = true;
+                        $dart$core.bool doElse$149 = true;
                         {
-                            ElementEntry tmp$142 = entry.next;
-                            if (!(tmp$142 == null)) {
+                            ElementEntry tmp$150 = entry.next;
+                            if (!(tmp$150 == null)) {
                                 ElementEntry next;
-                                next = tmp$142;
-                                doElse$141 = false;
+                                next = tmp$150;
+                                doElse$149 = false;
                                 entry = next;
                             }
                         }
-                        if (doElse$141) {
+                        if (doElse$149) {
                             return null;
                         }
                     }
@@ -4563,11 +4607,11 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry next;
             {
-                ElementEntry tmp$143 = entry.next;
-                if (tmp$143 == null) {
+                ElementEntry tmp$151 = entry.next;
+                if (tmp$151 == null) {
                     break;
                 }
-                next = tmp$143;
+                next = tmp$151;
             }
             entry = next;
         }
@@ -4579,11 +4623,11 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry next;
             {
-                ElementEntry tmp$144 = entry.next;
-                if (tmp$144 == null) {
+                ElementEntry tmp$152 = entry.next;
+                if (tmp$152 == null) {
                     break;
                 }
-                next = tmp$144;
+                next = tmp$152;
             }
             entry = next;
             count = Integer.nativeValue(Integer.instance(count).successor);
@@ -4697,11 +4741,11 @@ class GroupEntry {
         while (true) {
             GroupEntry e;
             {
-                GroupEntry tmp$147 = entry;
-                if (tmp$147 == null) {
+                GroupEntry tmp$155 = entry;
+                if (tmp$155 == null) {
                     break;
                 }
-                e = tmp$147;
+                e = tmp$155;
             }
             if (group.equals(e.group)) {
                 return e;
@@ -8960,7 +9004,7 @@ abstract class Sequence implements Sequential, Iterable {
     Sequential spanTo([Integer to]);
     static Sequential $spanTo([final Sequence $this, Integer to]) => $this.sublistTo(Integer.nativeValue(to)).sequence();
     $dart$core.String toString();
-    static $dart$core.String $get$string([final Sequence $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
+    static $dart$core.String $get$string([final Sequence $this]) => Sequential.$get$string($this);
     static $dart$core.Object $getElement([final Sequence $this, $dart$core.int index]) {{
             $dart$core.bool doElse$6 = true;
             {
@@ -9781,6 +9825,7 @@ class Span  extends Range {
     })();
     $dart$core.int get lastIndex => size - 1;
     Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? $package$span(next(first), last) : $lhs$)(first.equals(last) ? $package$empty : null);
+    Sequence get reversed => ((Sequence $lhs$) => $lhs$ == null ? $package$span(last, first) : $lhs$)(recursive ? Sequence.$get$reversed(this) : null);
     $dart$core.Object getFromFirst([$dart$core.int index]) {
         if (index < 0) {
             return null;

@@ -1677,12 +1677,10 @@ shared interface Iterable<out Element=Anything,
     
 }
 
-//String commaList({Anything*} elements)
-//        => ", ".join { for (e in elements) stringify(e) };
-
-// TODO revert back to comprehension version
 String commaList({Anything*} elements)
-    =>  ", ".join(elements.map(stringify));
+// FIXME Dart workaround
+        => ", ".join({ for (e in elements) stringify(e) });
+//        => ", ".join { for (e in elements) stringify(e) };
 
 class ElementEntry<Element>
 // FIXME Dart workaround

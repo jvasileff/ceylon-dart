@@ -458,15 +458,32 @@ class ExpressionTransformer(CompilationContext ctx)
         switch (memberDeclaration)
         case (is ValueModel) {
             // Return an expression that will yield the value
-            return generateInvocation {
-                info;
-                info.typeModel;
-                receiverInfo.typeModel;
-                () => that.receiverExpression.transform(this);
-                memberDeclaration;
-                null;
-                that.memberOperator;
-            };
+            // See transformInvocation()
+
+            if (exists superType = denotableSuperType(that.receiverExpression)) {
+                // QualifiedExpression with a `super` receiver
+                return generateInvocation {
+                    info;
+                    info.typeModel;
+                    superType;
+                    null;
+                    memberDeclaration;
+                    null;
+                    that.memberOperator;
+                };
+            }
+            else {
+                // Boring case
+                return generateInvocation {
+                    info;
+                    info.typeModel;
+                    receiverInfo.typeModel;
+                    () => that.receiverExpression.transform(this);
+                    memberDeclaration;
+                    null;
+                    that.memberOperator;
+                };
+            }
         }
         case (is FunctionModel) {
             // Return a new Callable.

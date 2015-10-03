@@ -196,11 +196,8 @@ shared sealed interface Sequence<out Element=Anything>
     Element[] spanTo(Integer to) 
             => sublistTo(to).sequence();
 
-// FIXME Dart workaround
-//    shared actual default 
-//    String string => (super of Sequential<Element>).string;
     shared actual default 
-    String string => empty then "[]" else "[``commaList(this)``]";
+    String string => (super of Sequential<Element>).string;
 
     
     Element getElement(Integer index) {
