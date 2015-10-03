@@ -6655,7 +6655,7 @@ class Map$keys$$anonymous$0_ implements Collection {
     Map $outer$ceylon$language$Map;
     Map$keys$$anonymous$0_([Map this.$outer$ceylon$language$Map]) {}
     $dart$core.bool contains([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
-    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([Entry x]) => x.key)).iterator();
+    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)).iterator();
     Collection clone() => this.sequence();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     $dart$core.String toString() => Collection.$get$string(this);
@@ -6711,9 +6711,9 @@ class Map$keys$$anonymous$0_ implements Collection {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Map$items$$anonymous$2_ implements Collection {
+class Map$items$$anonymous$1_ implements Collection {
     Map $outer$ceylon$language$Map;
-    Map$items$$anonymous$2_([Map this.$outer$ceylon$language$Map]) {}
+    Map$items$$anonymous$1_([Map this.$outer$ceylon$language$Map]) {}
     $dart$core.bool contains([$dart$core.Object item]) {{
             $dart$core.Object element$7;
             Iterator iterator$6 = $outer$ceylon$language$Map.iterator();
@@ -6732,7 +6732,7 @@ class Map$items$$anonymous$2_ implements Collection {
             }
         }
     }
-    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([Entry e]) => e.item)).iterator();
+    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item)).iterator();
     Collection clone() => this.sequence();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     $dart$core.String toString() => Collection.$get$string(this);
@@ -6788,10 +6788,10 @@ class Map$items$$anonymous$2_ implements Collection {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Map$mapItems$$anonymous$4_ implements Map {
+class Map$mapItems$$anonymous$2_ implements Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$mapItems$mapping;
-    Map$mapItems$$anonymous$4_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$mapItems$mapping]) {}
+    Map$mapItems$$anonymous$2_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$mapItems$mapping]) {}
     $dart$core.bool defines([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
     $dart$core.Object get([$dart$core.Object key]) {{
             $dart$core.bool doElse$17 = true;
@@ -6883,10 +6883,10 @@ class Map$mapItems$$anonymous$4_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$filterKeys$$anonymous$5_ implements Map {
+class Map$filterKeys$$anonymous$3_ implements Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$filterKeys$filtering;
-    Map$filterKeys$$anonymous$5_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$filterKeys$filtering]) {}
+    Map$filterKeys$$anonymous$3_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$filterKeys$filtering]) {}
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
         if (true) {
@@ -6979,10 +6979,10 @@ class Map$filterKeys$$anonymous$5_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$patch$$anonymous$6_ implements Map {
+class Map$patch$$anonymous$4_ implements Map {
     Map $outer$ceylon$language$Map;
     Map $capture$Map$patch$other;
-    Map$patch$$anonymous$6_([Map this.$outer$ceylon$language$Map, Map this.$capture$Map$patch$other]) {}
+    Map$patch$$anonymous$4_([Map this.$outer$ceylon$language$Map, Map this.$capture$Map$patch$other]) {}
     $dart$core.Object get([$dart$core.Object key]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $outer$ceylon$language$Map.get(key) : $lhs$)($capture$Map$patch$other.get(key));
     Map clone() => $outer$ceylon$language$Map.clone().patch($capture$Map$patch$other.clone());
     $dart$core.bool defines([$dart$core.Object key]) => $capture$Map$patch$other.defines(key) || $outer$ceylon$language$Map.defines(key);
@@ -7064,9 +7064,9 @@ class Map$patch$$anonymous$6_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$coalescedMap$$anonymous$7_ implements Map {
+class Map$coalescedMap$$anonymous$5_ implements Map {
     Map $outer$ceylon$language$Map;
-    Map$coalescedMap$$anonymous$7_([Map this.$outer$ceylon$language$Map]) {}
+    Map$coalescedMap$$anonymous$5_([Map this.$outer$ceylon$language$Map]) {}
     $dart$core.bool defines([$dart$core.Object key]) => !($outer$ceylon$language$Map.get(key) == null);
     $dart$core.Object get([$dart$core.Object key]) => $outer$ceylon$language$Map.get(key);
     Iterator iterator() => functionIterable(new dart$Callable(() {
@@ -7249,7 +7249,7 @@ abstract class Map implements Collection, Correspondence {
     Collection get keys;
     static Collection $get$keys([final Map $this]) => new Map$keys$$anonymous$0_($this);
     Collection get items;
-    static Collection $get$items([final Map $this]) => new Map$items$$anonymous$2_($this);
+    static Collection $get$items([final Map $this]) => new Map$items$$anonymous$1_($this);
     $dart$core.bool equals([$dart$core.Object that]);
     static $dart$core.bool $equals([final Map $this, $dart$core.Object that]) {{
             $dart$core.bool doElse$8 = true;
@@ -7318,13 +7318,13 @@ abstract class Map implements Collection, Correspondence {
         return hashCode;
     }
     Map mapItems([Callable mapping]);
-    static Map $mapItems([final Map $this, Callable mapping]) => new Map$mapItems$$anonymous$4_($this, mapping);
+    static Map $mapItems([final Map $this, Callable mapping]) => new Map$mapItems$$anonymous$2_($this, mapping);
     Map filterKeys([Callable filtering]);
-    static Map $filterKeys([final Map $this, Callable filtering]) => new Map$filterKeys$$anonymous$5_($this, filtering);
+    static Map $filterKeys([final Map $this, Callable filtering]) => new Map$filterKeys$$anonymous$3_($this, filtering);
     Map patch([Map other]);
-    static Map $patch([final Map $this, Map other]) => new Map$patch$$anonymous$6_($this, other);
+    static Map $patch([final Map $this, Map other]) => new Map$patch$$anonymous$4_($this, other);
     Map get coalescedMap;
-    static Map $get$coalescedMap([final Map $this]) => new Map$coalescedMap$$anonymous$7_($this);
+    static Map $get$coalescedMap([final Map $this]) => new Map$coalescedMap$$anonymous$5_($this);
 }
 class emptyMap_ implements Map {
     emptyMap_() {}

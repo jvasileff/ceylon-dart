@@ -21,9 +21,7 @@
 shared Iterable<Result,FirstAbsent|SecondAbsent> 
 mapPairs<Result,First,Second,FirstAbsent,SecondAbsent>(
     "The mapping function to apply to the pair of elements."
-// FIXME Dart capture is broken with:
-//       Result collecting(First first, Second second),
-    Result(First, Second) collecting,
+       Result collecting(First first, Second second),
     Iterable<First,FirstAbsent> firstIterable,
     Iterable<Second,SecondAbsent> secondIterable)
         given FirstAbsent satisfies Null

@@ -69,9 +69,7 @@ shared interface Map<out Key=Object, out Item=Anything>
             => object
             satisfies Collection<Key> {
         contains(Object key) => outer.defines(key);
-// FIXME Dart workaround
-//        iterator() => outer.map(Entry.key).iterator();
-        iterator() => outer.map((x) => x.key).iterator();
+        iterator() => outer.map(Entry.key).iterator();
         clone() => [*this];
         size => outer.size;
     };
@@ -97,9 +95,7 @@ shared interface Map<out Key=Object, out Item=Anything>
                 return false;
             }
         }
-// FIXME Dart workaround
-//        iterator() => outer.map(Entry.item).iterator();
-        iterator() => outer.map((e) => e.item).iterator();
+        iterator() => outer.map(Entry.item).iterator();
         clone() => [*this];
         size => outer.size;
     };
