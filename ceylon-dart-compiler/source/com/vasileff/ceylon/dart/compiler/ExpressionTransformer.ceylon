@@ -168,7 +168,8 @@ import com.vasileff.ceylon.dart.ast {
     DartWhileStatement,
     DartIsExpression,
     DartTypeName,
-    DartContinueStatement
+    DartContinueStatement,
+    DartExpressionFunctionBody
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo,
@@ -322,19 +323,137 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
 
+        value info = QualifiedExpressionInfo(that);
+
         if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
                     "Member operator not yet supported: \
                      '``that.memberOperator.text``'");
         }
 
-        value info = QualifiedExpressionInfo(that);
-        value receiverInfo = ExpressionInfo(that.receiverExpression);
-        value memberDeclaration = info.target.declaration;
+        value memberDeclaration = info.declaration;
         value memberContainer = memberDeclaration.container;
 
         "Maybe this is a type alias?"
         assert (is ClassOrInterfaceModel memberContainer);
+
+        function getTarget(BaseExpression | QualifiedExpression expression)
+            =>  switch (expression)
+                case (is BaseExpression) BaseExpressionInfo(expression).target
+                case (is QualifiedExpression) QualifiedExpressionInfo(expression).target;
+
+        if (is BaseExpression | QualifiedExpression
+                    receiverExpression = that.receiverExpression,
+            is TypeModel containerType = getTarget(receiverExpression)) {
+
+            // The QualifiedExpression expression is a static member reference
+
+            switch (memberDeclaration)
+            case (is ValueModel) {
+                // Return a Callable that takes a `containerType` and returns the result
+                // of the invocation of memberDeclaration
+
+                "The type of the value member."
+                value memberReturnType
+                    =   info.target.type;
+
+                "The invocation of `memberDeclaration` on `$r$` which is the
+                 parameter to the `Callable`."
+                value invocation
+                    =   withLhsNonNative {
+                            memberReturnType;
+                            () => generateInvocation {
+                                info;
+                                memberReturnType;
+                                containerType;
+                                generateReceiver()
+                                    =>  withBoxingNonNative {
+                                            info;
+                                            // Callable argument; erasedToObject
+                                            ceylonTypes.anythingType;
+                                            DartSimpleIdentifier("$r$");
+                                        };
+                                memberDeclaration;
+                            };
+                        };
+
+                "A Dart function that takes a receiver of `containerType` and returns
+                 the result of the invoking `memberDeclaration` on the receiver."
+                value outerFunction
+                    =   DartFunctionExpression {
+                            DartFormalParameterList {
+                                true; false;
+                                // takes the container
+                                [DartSimpleFormalParameter {
+                                    false; false;
+                                    // dartObject since Callable is generic
+                                    dartTypes.dartObject;
+                                    DartSimpleIdentifier("$r$");
+                                }];
+                            };
+                            DartExpressionFunctionBody {
+                                false;
+                                invocation;
+                            };
+                        };
+
+                // The Callable that takes a `containerType`
+                return createCallable(info, outerFunction);
+            }
+            case (is FunctionModel) {
+                // Return a `Callable` that takes a `containerType` and returns a
+                // `Callable` that can be used to invoke the `memberDeclaration`
+
+                "A Callable that invokes `memberDeclaration`."
+                value innerCallable
+                    =   generateNewCallableForQualifiedExpression {
+                            info;
+                            containerType;
+                            generateReceiver()
+                                =>  withBoxingNonNative {
+                                        info;
+                                        // Callable argument; erasedToObject
+                                        ceylonTypes.anythingType;
+                                        DartSimpleIdentifier("$r$");
+                                    };
+                            memberDeclaration;
+                            info.target.fullType;
+                            that.memberOperator;
+                        };
+
+                "A Dart function that takes a receiver of `containerType` and returns
+                 a Callable that invokes `memberDeclaration`."
+                value outerFunction
+                    =   DartFunctionExpression {
+                            DartFormalParameterList {
+                                true; false;
+                                // takes the container
+                                [DartSimpleFormalParameter {
+                                    false; false;
+                                    // dartObject since Callable is generic
+                                    dartTypes.dartObject;
+                                    DartSimpleIdentifier("$r$");
+                                }];
+                            };
+                            DartExpressionFunctionBody {
+                                false;
+                                innerCallable;
+                            };
+                        };
+
+                // The Callable that takes a `containerType`
+                return createCallable(info, outerFunction);
+            }
+            //case (is ClassModel) {}
+            //case (is ConstructorModel) {}
+            else {
+                throw CompilerBug (that,
+                    "Unsupported type member type for qualified expression: "
+                    + type(memberDeclaration).string);
+            }
+        }
+
+        value receiverInfo = ExpressionInfo(that.receiverExpression);
 
         switch (memberDeclaration)
         case (is ValueModel) {
@@ -474,8 +593,8 @@ class ExpressionTransformer(CompilationContext ctx)
         }
         else {
             throw CompilerBug(that,
-                "Unexpected declaration type for qualified expression: \
-                 ``className(memberDeclaration)``");
+                "Unsupported member type for qualified expression: \
+                 ``type(memberDeclaration)``");
         }
     }
 
@@ -2322,19 +2441,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 value outerReturn
                     =   DartReturnStatement {
                             // Easy. Until we reify generics.
-                            DartInstanceCreationExpression {
-                                false;
-                                DartConstructorName {
-                                    dartTypes.dartTypeNameForDartModel {
-                                        info;
-                                        dartTypes.dartCallableModel;
-                                    };
-                                    null;
-                                };
-                                DartArgumentList {
-                                    [stepFunctionId];
-                                };
-                            };
+                            createCallable(info, stepFunctionId);
                         };
 
                 return [dartStepFunctionDeclaration, outerReturn];
@@ -2363,31 +2470,22 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
                 DartArgumentList {
                     // Easy. Until we reify generics.
-                    [DartInstanceCreationExpression {
-                        false;
-                        DartConstructorName {
-                            dartTypes.dartTypeNameForDartModel {
-                                info;
-                                dartTypes.dartCallableModel;
-                            };
-                            null;
-                        };
-                        DartArgumentList {
-                            [DartFunctionExpression {
-                                dartFormalParameterListEmpty;
-                                DartBlockFunctionBody {
-                                    null; false;
-                                    DartBlock {
-                                        concatenate<DartStatement> {
-                                            step0Statements,
-                                            generateSteps {
-                                                that.clause;
-                                                1; step0FunctionId; {};
-                                            }
-                                        };
+                    [createCallable {
+                        info;
+                        DartFunctionExpression {
+                            dartFormalParameterListEmpty;
+                            DartBlockFunctionBody {
+                                null; false;
+                                DartBlock {
+                                    concatenate<DartStatement> {
+                                        step0Statements,
+                                        generateSteps {
+                                            that.clause;
+                                            1; step0FunctionId; {};
+                                        }
                                     };
                                 };
-                            }];
+                            };
                         };
                     }];
                 };

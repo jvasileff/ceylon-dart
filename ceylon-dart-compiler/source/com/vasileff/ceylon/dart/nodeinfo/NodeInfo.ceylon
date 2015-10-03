@@ -58,6 +58,9 @@ import ceylon.ast.core {
     Comprehension,
     SpreadArgument
 }
+import ceylon.ast.redhat {
+    primaryToCeylon
+}
 import ceylon.interop.java {
     CeylonList,
     CeylonIterable
@@ -75,7 +78,6 @@ import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
     TypeDeclarationModel=TypeDeclaration,
     TypedDeclarationModel=TypedDeclaration,
-    ReferenceModel=Reference,
     TypeModel=Type,
     FunctionModel=Function,
     ParameterModel=Parameter,
@@ -85,16 +87,13 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ScopeModel=Scope
 }
-
-import org.antlr.runtime {
-    Token
-}
 import com.vasileff.ceylon.dart.compiler {
     DScope,
     augmentNode
 }
-import ceylon.ast.redhat {
-    primaryToCeylon
+
+import org.antlr.runtime {
+    Token
 }
 
 shared
@@ -141,9 +140,12 @@ class BaseExpressionInfo(BaseExpression astNode)
 
     // MemberOrTypeExpression
 
-    "The declaration and type arguments of the target
-     of the BaseExpression"
-    shared ReferenceModel target => tcNode.target;
+    "The declaration and type arguments of the target of the BaseExpression, or the
+     type if the target is a type."
+    shared TypeModel | TypedReferenceModel target {
+        assert (is TypeModel | TypedReferenceModel result = tcNode.target);
+        return result;
+    }
 
     "The declaration of the target of the BaseExpression"
     shared DeclarationModel declaration => tcNode.declaration;
@@ -169,10 +171,10 @@ class QualifiedExpressionInfo(QualifiedExpression astNode)
 
     // MemberOrTypeExpression
 
-    "The declaration and type arguments of the target
-     of the QualifiedExpression"
-    shared TypedReferenceModel target {
-        assert (is TypedReferenceModel result = tcNode.target);
+    "The declaration and type arguments of the target of the QualifiedExpression, or the
+     type if the target is a type."
+    shared TypeModel | TypedReferenceModel target {
+        assert (is TypeModel | TypedReferenceModel result = tcNode.target);
         return result;
     }
 

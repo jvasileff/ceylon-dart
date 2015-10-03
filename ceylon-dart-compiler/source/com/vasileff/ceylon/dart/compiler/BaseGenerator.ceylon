@@ -212,6 +212,23 @@ class BaseGenerator(CompilationContext ctx)
     })();
 
     shared
+    DartInstanceCreationExpression createCallable
+            (DScope scope, DartExpression delegateFunction)
+        =>  DartInstanceCreationExpression {
+                false;
+                DartConstructorName {
+                    dartTypes.dartTypeNameForDartModel {
+                        scope;
+                        dartTypes.dartCallableModel;
+                    };
+                    null;
+                };
+                DartArgumentList {
+                    [delegateFunction];
+                };
+            };
+
+    shared
     DartFunctionExpressionInvocation createInlineDartStatements(
             "Zero or more statements, followed by a Return"
             [DartStatement*] statements)
@@ -2116,7 +2133,7 @@ class BaseGenerator(CompilationContext ctx)
 
         "The outer function, serving as the delegate for the `Callable`. This function
          accepts and returns non-erased types."
-        DartExpression outerFunction
+        DartFunctionExpression outerFunction
             =   DartFunctionExpression {
                     DartFormalParameterList {
                         true; false;
@@ -2128,20 +2145,8 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 };
 
-        return // the Callable
-        DartInstanceCreationExpression {
-            false;
-            DartConstructorName {
-                dartTypes.dartTypeNameForDartModel {
-                    scope;
-                    dartTypes.dartCallableModel;
-                };
-                null;
-            };
-            DartArgumentList {
-                [outerFunction];
-            };
-        };
+        // The Callable
+        return createCallable(scope, outerFunction);
     }
 
     shared
@@ -2305,20 +2310,7 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         // create the Callable!
-        return
-        DartInstanceCreationExpression {
-            false;
-            DartConstructorName {
-                dartTypes.dartTypeNameForDartModel {
-                    that;
-                    dartTypes.dartCallableModel;
-                };
-                null;
-            };
-            DartArgumentList {
-                [outerFunction];
-            };
-        };
+        return createCallable(that, outerFunction);
     }
 
     "Generate a DartExpression for a series of `BooleanCondition`s."
