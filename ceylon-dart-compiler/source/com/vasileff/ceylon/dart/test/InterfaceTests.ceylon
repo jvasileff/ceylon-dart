@@ -576,7 +576,7 @@ class InterfaceTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void simpleFunctionInterface() {
         compileAndCompare {
              """
@@ -588,7 +588,15 @@ class InterfaceTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                abstract class f$I {
+                    $dart$core.String fun();
+                }
+                void $package$f() {}
+
+                void f() => $package$f();
              """;
         };
     }
