@@ -228,7 +228,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     "BaseExpression nameAndArgs type not yet supported: \
                      '``className(nameAndArgs)``'");
         }
-        assert (is MemberNameWithTypeArguments nameAndArgs);
 
         value info = ExpressionInfo(that);
 
