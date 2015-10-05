@@ -315,17 +315,33 @@ class ObjectTests() {
     }
 
     "Replacement value from `assert` must be captured as class member."
-    shared test ignore
+    shared test
     void replacementDeclarationIsMember() {
         compileAndCompare {
              """
                 class C() {
-                    shared String? x = "";
-                    assert (exists x);
+                    shared String|Integer x = "";
+                    assert (is String x);
                     shared String y => x;
                 }
              """;
+
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C {
+                    C() {
+                        x = $ceylon$language.String.instance("");
+                        if (!(x is $ceylon$language.String)) {
+                            throw new $ceylon$language.AssertionError("Violated: is String x");
+                        }
+                        x$0 = $ceylon$language.String.nativeValue(x as $ceylon$language.String);
+                    }
+                    $dart$core.Object x;
+                    $dart$core.String x$0;
+                    $dart$core.String get y => x$0;
+                }
              """;
          };
     }
