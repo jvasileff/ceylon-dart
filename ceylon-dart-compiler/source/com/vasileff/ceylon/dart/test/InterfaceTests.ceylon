@@ -528,7 +528,7 @@ class InterfaceTests() {
         };
     }
 
-    shared test ignore
+    shared test
     void superDisambiguation() {
         // NOTE based on the JVM compiler, (super of Right2).fun should
         //      disambiguate to Right.fun, since Right2 doesn't override fun().
@@ -551,7 +551,27 @@ class InterfaceTests() {
              """;
 
              """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
 
+                abstract class Top {
+                    $dart$core.String fun();
+                    static $dart$core.String $fun([final Top $this]) => "";
+                }
+                abstract class Left implements Top {
+                    $dart$core.String fun();
+                    static $dart$core.String $fun([final Left $this]) => "";
+                }
+                abstract class Right implements Top {
+                    $dart$core.String fun();
+                    static $dart$core.String $fun([final Right $this]) => "";
+                }
+                abstract class Right2 implements Right {
+                }
+                abstract class Bottom implements Left, Right2 {
+                    $dart$core.String fun();
+                    static $dart$core.String $fun([final Bottom $this]) => Right.$fun($this);
+                }
              """;
         };
     }

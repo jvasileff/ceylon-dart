@@ -529,7 +529,7 @@ class BaseGenerator(CompilationContext ctx)
             // Only used for null safe operator, and `super` is never null
             ceylonReceiverDartType = null;
 
-            if (is InterfaceModel ri = receiverType.declaration ) {
+            if (receiverType.declaration is InterfaceModel) {
                 // Invoking a specific interface's implementation. Abandon polymorphism
                 // and invoke the Dart static method directly. This also works when
                 // `super` is used to invoke private interface methods, which must
@@ -539,12 +539,24 @@ class BaseGenerator(CompilationContext ctx)
                 assert (exists scopeContainer = getContainingClassOrInterface(scope));
 
                 thisArgument = [dartTypes.expressionForThis(scopeContainer)];
+
                 isFunction = true; // Static interface functions are... functions
+
+                // Note: It's nice that we have the declaration pointed to by
+                //       referenced by `super`, but it's also completely useless.
+                //
+                //       Instead, we'll ues the interface that is the container of
+                //       memberDeclaration, which will be a supertype of `super` if
+                //       `super` doesn't refine the member. (Since we're calling a static
+                //       method, we need the interface that actually provides the
+                //       definition.)
+                assert (is InterfaceModel implementingContainer
+                    =   container(memberDeclaration));
 
                 dartBoxedReceiver
                     =   dartTypes.dartIdentifierForClassOrInterface {
                             scope;
-                            ri;
+                            implementingContainer;
                         };
 
                 memberIdentifier
