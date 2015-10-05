@@ -1,9 +1,6 @@
 import ceylon.ast.core {
     Node
 }
-import ceylon.collection {
-    HashMap
-}
 import ceylon.interop.java {
     CeylonIterable
 }
@@ -55,7 +52,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     variable value counter = 0;
 
-    value nameCache = HashMap<TypedDeclarationModel, String>();
+    value nameCache => ctx.nameCache;
 
     [String, Boolean]?(DeclarationModel) mappedFunctionOrValue = (() {
         return ImmutableMap {
@@ -84,7 +81,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // search for replacement name
             variable value model = declaration;
             while (true) {
-                if (exists name = nameCache[declaration]) {
+                if (exists name = nameCache[model]) {
                     return name;
                 }
                 if (exists parent = model.originalDeclaration) {
@@ -172,16 +169,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
 
     shared
-    String getOrCreateReplacementName(ValueModel declaration);
+    String getOrCreateReplacementName(ValueModel declaration) {
+        // Must be idempotent!!!
+        if (exists replacement = nameCache.get(declaration)) {
+            return replacement;
+        }
 
-    getOrCreateReplacementName = memoize((ValueModel declaration) {
-        // Note: This *must* be memoized, to ensure idempotence!!!
-        value replacement
-            =   declaration.name + "$" + (counter++).string;
-
+        value replacement = declaration.name + "$" + (counter++).string;
         nameCache.put(declaration, replacement);
         return replacement;
-    });
+    }
 
     shared
     String createTempName(TypedDeclarationModel declaration) {
@@ -1094,4 +1091,63 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  ((!declaration is FunctionModel)
                 && (declaration.initializerParameter?.defaulted else false))
             || !denotable(declaration.type);
+
+    "For a given Ceylon declaration, the closest original declaration that was actually
+     used to create a Dart declaration.
+
+     This function is used by [[CoreGenerator.withBoxing]]."
+    shared
+    FunctionOrValueModel | Absent declarationConsideringElidedReplacements<Absent>
+            (FunctionOrValueModel | Absent declaration)
+            given Absent satisfies Null {
+
+        if (exists declaration) {
+            if (!is ValueModel declaration) {
+                return declaration;
+            }
+            else {
+                variable value model = declaration;
+                while (!ctx.nameCache.defines(model)) {
+                    if (exists parent = model.originalDeclaration) {
+                        assert (is ValueModel parent);
+                        model = parent;
+                        continue;
+                    }
+                    break;
+                }
+                return model;
+            }
+        }
+        else {
+            return declaration; // null
+        }
+    }
+
+    "If the given declaration is a replacement declaration that was elided, the returned
+     type will be that of the closest original declaration that was actually used as the
+     basis for a Dart declaration.
+
+     Otherwise, the returned type will be the given [[type]], or the given
+     [[declaration]]'s type if the given [[type]] is null.
+
+     Note that for replacement declarations, it's ok to determine the [[TypeModel]] from
+     the [[ValueModel]] declaration, since the declaration will contain all known type
+     information (no unbound type parameters, as is the case with parameters for called
+     functions, for example.)
+
+     This function is used by [[CoreGenerator.withBoxing]]."
+    shared
+    throws(`class AssertionError`, "If both [[type]] and [[declaration]] are null.")
+    TypeModel typeConsideringElidedReplacements
+            (TypeModel? type, FunctionOrValueModel? declaration) {
+        if (exists declaration) {
+            value usedDeclaration = declarationConsideringElidedReplacements(declaration);
+            if (usedDeclaration != declaration) {
+                return usedDeclaration.type;
+            }
+        }
+        "Type and declaration arguments must not both be null."
+        assert (exists type);
+        return type;
+    }
 }

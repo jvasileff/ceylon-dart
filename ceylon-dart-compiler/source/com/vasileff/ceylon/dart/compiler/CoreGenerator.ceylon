@@ -86,14 +86,18 @@ class CoreGenerator(CompilationContext ctx) {
              [[rhsType]]s, as always.)"
             FunctionOrValueModel? rhsDeclaration,
             DartExpression dartExpression)
-        =>  withBoxingForType {
+        =>  let (actualDeclaration
+                    = dartTypes.declarationConsideringElidedReplacements(rhsDeclaration),
+                 actualType
+                    = dartTypes.typeConsideringElidedReplacements(rhsType, rhsDeclaration))
+            withBoxingForType {
                 scope;
-                rhsType;
-                if (exists rhsDeclaration)
-                    then dartTypes.erasedToNative(rhsDeclaration)
+                actualType;
+                if (exists actualDeclaration)
+                    then dartTypes.erasedToNative(actualDeclaration)
                     else dartTypes.native(rhsType);
-                if (exists rhsDeclaration)
-                    then dartTypes.erasedToObject(rhsDeclaration)
+                if (exists actualDeclaration)
+                    then dartTypes.erasedToObject(actualDeclaration)
                     else false;
                 dartExpression;
             };

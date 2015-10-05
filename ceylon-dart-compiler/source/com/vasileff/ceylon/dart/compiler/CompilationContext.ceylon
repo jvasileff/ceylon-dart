@@ -1,6 +1,7 @@
 import ceylon.collection {
     HashSet,
-    LinkedList
+    LinkedList,
+    HashMap
 }
 import ceylon.interop.java {
     CeylonList
@@ -13,7 +14,8 @@ import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
     ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
-    FunctionOrValueModel=FunctionOrValue
+    FunctionOrValueModel=FunctionOrValue,
+    TypedDeclarationModel=TypedDeclaration
 }
 import com.vasileff.ceylon.dart.ast {
     DartCompilationUnitMember,
@@ -70,6 +72,14 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared variable
     SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
         =   ImmutableSetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
+
+    "Dart declaration names for Ceylon declarations.
+
+     Additionally, for replacement declarations, the existance of a declaration in this
+     map indicates that a cooresponding Dart replacement declaration exists."
+    shared
+    HashMap<TypedDeclarationModel, String> nameCache
+        =   HashMap<TypedDeclarationModel, String>();
 
     shared variable
     DartSimpleIdentifier? doFailVariableTop = null;

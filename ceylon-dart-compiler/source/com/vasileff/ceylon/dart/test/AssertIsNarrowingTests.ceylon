@@ -242,4 +242,34 @@ class AssertIsNarrowingTests() {
              """;
         };
     }
+
+    shared test
+    void guardNarrowing() {
+         compileAndCompare {
+             """
+                shared void run() {
+                    String|Integer si = "abc";
+                    if (is Integer si) { return; }
+                    print(si.size);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.Object si = $ceylon$language.String.instance("abc");
+                    if (si is $ceylon$language.Integer) {
+                        $dart$core.int si$0;
+                        si$0 = $ceylon$language.Integer.nativeValue(si as $ceylon$language.Integer);
+                        return;
+                    }
+                    $ceylon$language.print($ceylon$language.Integer.instance((si as $ceylon$language.String).size));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
 }
