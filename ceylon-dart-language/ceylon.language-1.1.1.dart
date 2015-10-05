@@ -2345,7 +2345,7 @@ class Iterable$skip$$anonymous$9_ implements Iterable {
         })() < $capture$Iterable$skip$skipping) && (!(iter.next() is Finished))) {}
         return iter;
     }
-    $dart$core.String get string => $outer$ceylon$language$Iterable.toString() + ".iterator()";
+    $dart$core.String toString() => $outer$ceylon$language$Iterable.toString() + ".iterator()";
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
     $dart$core.int get size => Iterable.$get$size(this);
@@ -2660,7 +2660,7 @@ class Iterable$repeat$$anonymous$16_ implements Iterable {
     $dart$core.int $capture$Iterable$repeat$times;
     Iterable$repeat$$anonymous$16_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$repeat$times]) {}
     $dart$core.int get size => $capture$Iterable$repeat$times * $outer$ceylon$language$Iterable.size;
-    $dart$core.String get string => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").repeat(") + Integer.instance($capture$Iterable$repeat$times).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").repeat(") + Integer.instance($capture$Iterable$repeat$times).toString()) + ")";
     Iterator iterator() => new CycledIterator($outer$ceylon$language$Iterable, $capture$Iterable$repeat$times);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -2725,13 +2725,13 @@ class Iterable$by$$anonymous$17_$$anonymous$18_ implements Iterator {
         while (((i = Integer.nativeValue(Integer.instance(i).successor)) < $outer$ceylon$language$Iterable$by$$anonymous$17_.$capture$Iterable$by$step) && (!($capture$$iter.next() is Finished))) {}
         return next;
     }
-    $dart$core.String toString() => $outer$ceylon$language$Iterable$by$$anonymous$17_.string + ".iterator()";
+    $dart$core.String toString() => $outer$ceylon$language$Iterable$by$$anonymous$17_.toString() + ".iterator()";
 }
 class Iterable$by$$anonymous$17_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$by$step;
     Iterable$by$$anonymous$17_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$by$step]) {}
-    $dart$core.String get string => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").by(") + Integer.instance($capture$Iterable$by$step).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").by(") + Integer.instance($capture$Iterable$by$step).toString()) + ")";
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$by$$anonymous$17_$$anonymous$18_(this, iter);
@@ -3178,13 +3178,13 @@ class Iterable$cycled$$anonymous$26_$$anonymous$27_ implements Iterator {
             }
         }
     }
-    $dart$core.String toString() => $outer$ceylon$language$Iterable$cycled$$anonymous$26_.string + ".iterator()";
+    $dart$core.String toString() => $outer$ceylon$language$Iterable$cycled$$anonymous$26_.toString() + ".iterator()";
 }
 class Iterable$cycled$$anonymous$26_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$cycled$$anonymous$26_([Iterable this.$outer$ceylon$language$Iterable]) {}
     Iterable get orig => $outer$ceylon$language$Iterable;
-    $dart$core.String get string => ("(" + $outer$ceylon$language$Iterable.toString()) + ").cycled";
+    $dart$core.String toString() => ("(" + $outer$ceylon$language$Iterable.toString()) + ").cycled";
     $dart$core.int get size {
         if (!false) {
             throw new AssertionError("Violated: false");
@@ -7505,7 +7505,7 @@ class Measure$$anonymous$0_ implements Iterator {
             return current = (current as Enumerable).successor;
         }
     }
-    $dart$core.String toString() => ("(" + $outer$ceylon$language$Measure.string) + ").iterator()";
+    $dart$core.String toString() => ("(" + $outer$ceylon$language$Measure.toString()) + ").iterator()";
 }
 class Measure$By$$anonymous$1_ implements Iterator {
     Measure$By $outer$ceylon$language$Measure$By;
@@ -7539,7 +7539,7 @@ class Measure$By implements Iterable {
     $dart$core.int step;
     $dart$core.int get size => 1 + (($outer$ceylon$language$Measure.size - 1) ~/ step);
     $dart$core.Object get first => $outer$ceylon$language$Measure.first;
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Measure.string) + ").by(") + Integer.instance(step).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Measure.toString()) + ").by(") + Integer.instance(step).toString()) + ")";
     Iterator iterator() => new Measure$By$$anonymous$1_(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -7601,7 +7601,7 @@ class Measure  extends Range {
     }
     $dart$core.Object first;
     $dart$core.int size;
-    $dart$core.String get string => (first.toString() + ":") + Integer.instance(size).toString();
+    $dart$core.String toString() => (first.toString() + ":") + Integer.instance(size).toString();
     $dart$core.Object get last => (first as Enumerable).neighbour(size - 1);
     $dart$core.bool longerThan([$dart$core.int length]) => size > length;
     $dart$core.bool shorterThan([$dart$core.int length]) => size < length;
@@ -9040,7 +9040,7 @@ Sequence $package$sequence([Iterable elements]) {{
             if (!true) {
                 throw new AssertionError("Violated: is Absent null");
             }
-            return null as Sequence;
+            return null;
         }
     }
 }

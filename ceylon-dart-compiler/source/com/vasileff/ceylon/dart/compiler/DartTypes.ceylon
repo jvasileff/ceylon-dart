@@ -467,7 +467,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     TypeModel formalType(FunctionOrValueModel declaration)
         =>  if (declaration.parameter,
                     is FunctionModel c = declaration.container,
-                    is FunctionModel r = c.refinedDeclaration) then
+                    is FunctionModel r = refinedDeclaration(c)) then
                 // for parameters of method refinements, use the type of the parameter
                 // of the refined method
                 refinedParameter(declaration).type
@@ -475,9 +475,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // same, for shortcut refinements
                     is SpecificationModel s = declaration.container,
                     is FunctionModel c = s.declaration,
-                    is FunctionModel r = c.refinedDeclaration) then
+                    is FunctionModel r = refinedDeclaration(c)) then
                 refinedParameter(declaration).type
-            else if (is FunctionOrValueModel r = declaration.refinedDeclaration) then
+            else if (is FunctionOrValueModel r = refinedDeclaration(declaration)) then
                 r.type
             else
                 declaration.type;
@@ -902,7 +902,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         // FIXME how should "string" setters be mapped, since the getters
         //       are mapped to "toString"? And, handle "hashCode" name translation.
-        value mapped = mappedFunctionOrValue(declaration.refinedDeclaration);
+        value mapped = mappedFunctionOrValue(refinedDeclaration(declaration));
         String name;
         Boolean isDartFunction;
 
