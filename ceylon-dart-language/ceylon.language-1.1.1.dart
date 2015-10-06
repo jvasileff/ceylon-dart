@@ -8144,31 +8144,157 @@ $dart$core.bool $package$parseBoolean([$dart$core.String string]) {{
 
 $dart$core.bool parseBoolean([$dart$core.String string]) => $package$parseBoolean(string);
 
+$dart$core.double $package$parseFloat([$dart$core.String string]) {
+    $dart$core.int sign;
+    $dart$core.String unsignedPart;
+    if (String.instance(string).startsWith(String.instance("-"))) {
+        sign = Integer.nativeValue(Integer.instance(1).negated);
+        unsignedPart = String.nativeValue(String.instance(string).spanFrom(Integer.instance(1)));
+    } else if (String.instance(string).startsWith(String.instance("+"))) {
+        sign = 1;
+        unsignedPart = String.nativeValue(String.instance(string).spanFrom(Integer.instance(1)));
+    } else {
+        sign = 1;
+        unsignedPart = string;
+    }
+    $dart$core.String wholePart;
+    $dart$core.String fractionalPart;
+    $dart$core.String rest;
+    {
+        $dart$core.bool doElse$0 = true;
+        {
+            $dart$core.int tmp$1 = String.instance(unsignedPart).firstOccurrence(new Character.$fromInt(46));
+            if (!(tmp$1 == null)) {
+                $dart$core.int dot;
+                dot = tmp$1;
+                doElse$0 = false;
+                wholePart = String.nativeValue(String.instance(unsignedPart).spanTo(Integer.instance(dot - 1)));
+                $dart$core.String afterWholePart = String.nativeValue(String.instance(unsignedPart).spanFrom(Integer.instance(dot + 1)));
+                {
+                    $dart$core.bool doElse$2 = true;
+                    {
+                        $dart$core.int tmp$3 = String.instance(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).letter)));
+                        if (!(tmp$3 == null)) {
+                            $dart$core.int mag;
+                            mag = tmp$3;
+                            doElse$2 = false;
+                            fractionalPart = String.nativeValue(String.instance(afterWholePart).spanTo(Integer.instance(mag - 1)));
+                            rest = String.nativeValue(String.instance(afterWholePart).spanFrom(Integer.instance(mag)));
+                        }
+                    }
+                    if (doElse$2) {
+                        fractionalPart = afterWholePart;
+                        rest = null;
+                    }
+                }
+            }
+        }
+        if (doElse$0) {{
+                $dart$core.bool doElse$4 = true;
+                {
+                    $dart$core.int tmp$5 = String.instance(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).letter)));
+                    if (!(tmp$5 == null)) {
+                        $dart$core.int mag;
+                        mag = tmp$5;
+                        doElse$4 = false;
+                        wholePart = String.nativeValue(String.instance(unsignedPart).spanTo(Integer.instance(mag - 1)));
+                        rest = String.nativeValue(String.instance(unsignedPart).spanFrom(Integer.instance(mag)));
+                    }
+                }
+                if (doElse$4) {
+                    wholePart = unsignedPart;
+                    rest = null;
+                }
+            }
+            fractionalPart = "0";
+        }
+    }
+    if ((!String.instance(wholePart).every(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit)))) || (!String.instance(fractionalPart).every(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit))))) {
+        return null;
+    }
+    {
+        $dart$core.int tmp$6 = $package$parseInteger(wholePart);
+        if (!(tmp$6 == null)) {
+            $dart$core.int whole;
+            whole = tmp$6;
+            {
+                $dart$core.int tmp$7 = $package$parseInteger(fractionalPart);
+                if (!(tmp$7 == null)) {
+                    $dart$core.int fractional;
+                    fractional = tmp$7;
+                    $dart$core.int shift = String.instance(fractionalPart).size;
+                    $dart$core.int exponent;
+                    {
+                        $dart$core.bool doElse$8 = true;
+                        if (!(rest == null)) {
+                            doElse$8 = false;
+                            {
+                                $dart$core.bool doElse$10 = true;
+                                {
+                                    $dart$core.int tmp$11 = $package$parseFloatExponent(rest);
+                                    if (!(tmp$11 == null)) {
+                                        $dart$core.int magnitude;
+                                        magnitude = tmp$11;
+                                        doElse$10 = false;
+                                        exponent = magnitude - shift;
+                                    }
+                                }
+                                if (doElse$10) {
+                                    return null;
+                                }
+                            }
+                        }
+                        if (doElse$8) {
+                            $dart$core.Object rest$9;
+                            rest$9 = String.instance(rest);
+                            exponent = Integer.nativeValue(Integer.instance(shift).negated);
+                        }
+                    }
+                    $dart$core.int numerator = (whole * Integer.nativeValue(Integer.instance(10).power(Integer.instance(shift)))) + fractional;
+                    $dart$core.double signedNumerator = (($dart$core.double $lhs$) => $lhs$ == null ? Integer.instance(sign * numerator).float : $lhs$)(Integer.instance(numerator).zero ? Integer.instance(0).float * Integer.instance(sign).float : null);
+                    $dart$core.int exponentMagnitude = Integer.nativeValue(Integer.instance(exponent).magnitude);
+                    if (Integer.instance(exponentMagnitude).equals(Integer.instance(0))) {
+                        return signedNumerator;
+                    } else if (exponentMagnitude < $package$maximumIntegerExponent) {
+                        $dart$core.int scale = Integer.nativeValue(Integer.instance(10).power(Integer.instance(exponentMagnitude)));
+                        return (($dart$core.double $lhs$) => $lhs$ == null ? signedNumerator * Integer.instance(scale).float : $lhs$)(exponent < 0 ? signedNumerator / Integer.instance(scale).float : null);
+                    } else {
+                        return signedNumerator * Float.nativeValue(Float.instance(10.0).power(Float.instance(Integer.instance(exponent).float)));
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+
+$dart$core.double parseFloat([$dart$core.String string]) => $package$parseFloat(string);
+
 $dart$core.int $package$maximumIntegerExponent = Integer.nativeValue($package$smallest(Integer.instance(String.instance(Integer.instance($package$runtime.maxIntegerValue).toString()).size), Integer.instance(String.instance(Integer.instance($package$runtime.minIntegerValue).toString()).size - 1)) as Integer);
 
 $dart$core.int get maximumIntegerExponent => $package$maximumIntegerExponent;
 
 $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
-        $dart$core.String switch$0 = string;
-        if (String.instance(switch$0).equals(String.instance("k"))) {
+        $dart$core.String switch$12 = string;
+        if (String.instance(switch$12).equals(String.instance("k"))) {
             return 3;
-        } else if (String.instance(switch$0).equals(String.instance("M"))) {
+        } else if (String.instance(switch$12).equals(String.instance("M"))) {
             return 6;
-        } else if (String.instance(switch$0).equals(String.instance("G"))) {
+        } else if (String.instance(switch$12).equals(String.instance("G"))) {
             return 9;
-        } else if (String.instance(switch$0).equals(String.instance("T"))) {
+        } else if (String.instance(switch$12).equals(String.instance("T"))) {
             return 12;
-        } else if (String.instance(switch$0).equals(String.instance("P"))) {
+        } else if (String.instance(switch$12).equals(String.instance("P"))) {
             return 15;
-        } else if (String.instance(switch$0).equals(String.instance("m"))) {
+        } else if (String.instance(switch$12).equals(String.instance("m"))) {
             return Integer.nativeValue(Integer.instance(3).negated);
-        } else if (String.instance(switch$0).equals(String.instance("u"))) {
+        } else if (String.instance(switch$12).equals(String.instance("u"))) {
             return Integer.nativeValue(Integer.instance(6).negated);
-        } else if (String.instance(switch$0).equals(String.instance("n"))) {
+        } else if (String.instance(switch$12).equals(String.instance("n"))) {
             return Integer.nativeValue(Integer.instance(9).negated);
-        } else if (String.instance(switch$0).equals(String.instance("p"))) {
+        } else if (String.instance(switch$12).equals(String.instance("p"))) {
             return Integer.nativeValue(Integer.instance(12).negated);
-        } else if (String.instance(switch$0).equals(String.instance("f"))) {
+        } else if (String.instance(switch$12).equals(String.instance("f"))) {
             return Integer.nativeValue(Integer.instance(15).negated);
         } else {
             if (String.instance(String.instance(string).lowercased).startsWith(String.instance("e")) && String.instance(string).rest.every($package$digitOrSign)) {
@@ -8181,6 +8307,13 @@ $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
 }
 
 $dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseFloatExponent(string);
+
+Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit)), (() {
+    String $capturedReceiver$ = String.instance("+-");
+    return new dart$Callable(([$dart$core.Object element]) => Boolean.instance($capturedReceiver$.contains(element)));
+})());
+
+Callable get digitOrSign => $package$digitOrSign;
 
 $dart$core.int $package$minRadix = 2;
 
@@ -10106,9 +10239,21 @@ Tuple $package$unzipPairs([Iterable pairs]) => new Tuple.$withList([pairs.map(ne
 
 Tuple unzipPairs([Iterable pairs]) => $package$unzipPairs(pairs);
 
+Tuple $package$unzipEntries([Iterable entries]) => new Tuple.$withList([entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)), entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item))], null);
+
+Tuple unzipEntries([Iterable entries]) => $package$unzipEntries(entries);
+
 abstract class Usable {
 }
+Iterable $package$zipEntries([Iterable keys, Iterable items]) => $package$mapPairs(new dart$Callable(([$dart$core.Object key, $dart$core.Object item]) => new Entry(key, item)), keys, items);
+
+Iterable zipEntries([Iterable keys, Iterable items]) => $package$zipEntries(keys, items);
+
 Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => new Tuple.$withList([first, second], null)), firstElements, secondElements);
 
 Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package$zipPairs(firstElements, secondElements);
+
+Iterable $package$zip([Iterable heads, Iterable tails]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object rest]) => new Tuple(first, rest)), heads, tails);
+
+Iterable zip([Iterable heads, Iterable tails]) => $package$zip(heads, tails);
 

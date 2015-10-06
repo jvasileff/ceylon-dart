@@ -12,7 +12,7 @@
      zipEntries(keys, items)[i] == keys[i] -> items[i]
  
  for every `0<=i<smallest(keys.size,items.size)`."
-native shared Iterable<<Key->Item>,KeyAbsent|ItemAbsent> 
+shared Iterable<<Key->Item>,KeyAbsent|ItemAbsent> 
 zipEntries<Key,Item,KeyAbsent,ItemAbsent>
         (Iterable<Key,KeyAbsent> keys, 
          Iterable<Item,ItemAbsent> items)
@@ -55,7 +55,7 @@ zipPairs<First,Second,FirstAbsent,SecondAbsent>
      zip(heads, tails)[i] == [heads[i], *tails[i]]
  
  for every `0<=i<smallest(heads.size,tails.size)`."
-native shared Iterable<Tuple<Element|Head,Head,Tail>,HeadAbsent|TailAbsent> 
+shared Iterable<Tuple<Element|Head,Head,Tail>,HeadAbsent|TailAbsent> 
 zip<Element,Head,Tail,HeadAbsent,TailAbsent>
         (Iterable<Head,HeadAbsent> heads, 
          Iterable<Tail,TailAbsent> tails)

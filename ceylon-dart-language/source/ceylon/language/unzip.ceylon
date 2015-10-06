@@ -42,7 +42,7 @@ unzipPairs<First,Second,Absent>
  
      entries[i] == unzipEntries(entries)[0][i] 
                 -> unzipEntries(entries)[1][i]"
-native shared [Iterable<Key,Absent>, Iterable<Item,Absent>] 
+shared [Iterable<Key,Absent>, Iterable<Item,Absent>] 
 unzipEntries<Key,Item,Absent>
         (Iterable<<Key->Item>,Absent> entries)
         given Key satisfies Object

@@ -9,7 +9,7 @@
  character (`+` or `-`) and may not contain grouping 
  underscore characters."
 see (`function parseInteger`)
-native shared Float? parseFloat(String string) {
+shared Float? parseFloat(String string) {
     
     // parse the sign first
     Integer sign;
@@ -151,5 +151,5 @@ Integer? parseFloatExponent(String string) {
     }
 }
 
-native Boolean(Character) digitOrSign 
+Boolean(Character) digitOrSign 
         = or(Character.digit, "+-".contains);
