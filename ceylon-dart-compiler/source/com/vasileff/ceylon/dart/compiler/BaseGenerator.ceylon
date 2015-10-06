@@ -706,7 +706,7 @@ class BaseGenerator(CompilationContext ctx)
                 else memberDeclaration;
 
         DartExpression invocation;
-        if (arguments nonempty) {
+        if (arguments nonempty || memberIdentifier is DartConstructorName) {
             "If there are arguments, the member is a FunctionModel and will translate
              to a Dart function, or it's a ClassModel, and will translate to a Dart
              constructor."
@@ -803,7 +803,7 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
         else {
-            "Constructors will always have `arguments nonempty`"
+            "If statement covered this condition."
             assert (!is DartConstructorName memberIdentifier);
 
             function valueAccess(DartExpression receiver)
@@ -2103,7 +2103,7 @@ class BaseGenerator(CompilationContext ctx)
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
-            FunctionModel memberDeclaration,
+            FunctionModel | ClassModel memberDeclaration,
             TypeModel callableType,
             AnyMemberOperator? memberOperator = null) {
 
