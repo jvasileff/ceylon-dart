@@ -1776,7 +1776,7 @@ class BaseGenerator(CompilationContext ctx)
                                                 scope;
                                                 parameterModelModel;
                                                 generateFunctionExpression(param);
-                                                0; false; false;
+                                                0; false;
                                             };
                                         }
                                     else
@@ -2167,8 +2167,6 @@ class BaseGenerator(CompilationContext ctx)
             FunctionModel functionModel,
             DartExpression delegateFunction,
             Integer parameterListNumber = 0,
-            "Handle null delegates produces with the null safe member operator"
-            Boolean delegateMayBeNull = false,
             Boolean delegateReturnsCallable =
                     parameterListNumber <
                     functionModel.parameterLists.size() - 1) {
@@ -2197,8 +2195,7 @@ class BaseGenerator(CompilationContext ctx)
          If `true`, an extra outer function will be created to handle boxing and null
          safety."
         value needsWrapperFunction =
-                delegateMayBeNull
-                || (!delegateReturnsCallable
+                (!delegateReturnsCallable
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
                     =>  dartTypes.erasedToNative(parameterModel.model));
@@ -2281,20 +2278,6 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 };
 
-            value wrappedInvocation =
-                if (!delegateMayBeNull) then
-                    invocation
-                else
-                    DartConditionalExpression {
-                        DartBinaryExpression {
-                            delegateFunction;
-                            "==";
-                            DartNullLiteral();
-                        };
-                        DartNullLiteral();
-                        invocation;
-                    };
-
             // the outer function accepts and returns non-erased types
             // using the inner function that follows normal erasure rules
             outerFunction =
@@ -2314,7 +2297,7 @@ class BaseGenerator(CompilationContext ctx)
                             that;
                             returnType;
                             returnDeclaration;
-                            wrappedInvocation;
+                            invocation;
                         };
                     };
                 };

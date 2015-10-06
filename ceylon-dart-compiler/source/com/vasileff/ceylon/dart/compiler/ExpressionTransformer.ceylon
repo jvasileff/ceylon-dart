@@ -1228,7 +1228,7 @@ class ExpressionTransformer(CompilationContext ctx)
             generateNewCallable(
                 info,
                 info.declarationModel,
-                generateFunctionExpression(that), 0, false, false);
+                generateFunctionExpression(that), 0, false);
 
     DartExpression generateBooleanExpression(
             DScope scope,
