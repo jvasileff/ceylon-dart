@@ -849,8 +849,7 @@ shared interface List<out Element=Anything>
         spanTo(Integer to) 
                 => outer[this.from..to+this.from];
         
-        // FIXME Dart workaround
-        clone() => nothing;//outer.clone().Rest(from);
+        clone() => outer.clone().Rest(from);
         
         iterator() 
                 => let (o = outer)
@@ -898,8 +897,7 @@ shared interface List<out Element=Anything>
                     then outer[...this.to] 
                     else outer[...to];
         
-        // FIXME Dart workaround
-        clone() => nothing;//outer.clone().Sublist(to);
+        clone() => outer.clone().Sublist(to);
         
         iterator() 
                 => let (iter = outer.iterator()) 
@@ -929,8 +927,7 @@ shared interface List<out Element=Anything>
                         then outer.getFromFirst(index%size)
                         else null;
         
-        // FIXME Dart workaround
-        clone() => nothing;//outer.clone().Repeat(times);
+        clone() => outer.clone().Repeat(times);
         
         iterator() => CycledIterator(outer,times);
         
@@ -960,8 +957,7 @@ shared interface List<out Element=Anything>
                 else
                     outer.getFromFirst(index-list.size+length);
         
-        // FIXME Dart workaround
-        clone() => nothing;//outer.clone().Patch(list.clone(),from,length);
+        clone() => outer.clone().Patch(list.clone(),from,length);
         
         iterator() 
                 => let (iter = outer.iterator(), 

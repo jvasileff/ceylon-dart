@@ -5058,7 +5058,7 @@ class List$Rest implements List {
     List span([Integer from, Integer to]) => $outer$ceylon$language$List.span(Integer.instance(Integer.nativeValue(from) + this.from), Integer.instance(Integer.nativeValue(to) + this.from));
     List spanFrom([Integer from]) => $outer$ceylon$language$List.spanFrom(Integer.instance(Integer.nativeValue(from) + this.from));
     List spanTo([Integer to]) => $outer$ceylon$language$List.span(Integer.instance(this.from), Integer.instance(Integer.nativeValue(to) + this.from));
-    List clone() => $package$nothing as List;
+    List clone() => new List$Rest($outer$ceylon$language$List.clone(), from);
     Iterator iterator() => (() {
         List o = $outer$ceylon$language$List;
         return new List$Rest$$anonymous$2_(this, o);
@@ -5190,7 +5190,7 @@ class List$Sublist implements List {
     List span([Integer from, Integer to]) => ((List $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.span(from, to) : $lhs$)(Integer.nativeValue(to) > this.to ? $outer$ceylon$language$List.span(from, Integer.instance(this.to)) : null);
     List spanFrom([Integer from]) => $outer$ceylon$language$List.span(from, Integer.instance(to));
     List spanTo([Integer to]) => ((List $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.spanTo(to) : $lhs$)(Integer.nativeValue(to) > this.to ? $outer$ceylon$language$List.spanTo(Integer.instance(this.to)) : null);
-    List clone() => $package$nothing as List;
+    List clone() => new List$Sublist($outer$ceylon$language$List.clone(), to);
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$List.iterator();
         return new List$Sublist$$anonymous$3_(this, iter);
@@ -5304,7 +5304,7 @@ class List$Repeat implements List {
             }
         })();
     })();
-    List clone() => $package$nothing as List;
+    List clone() => new List$Repeat($outer$ceylon$language$List.clone(), times);
     Iterator iterator() => new CycledIterator($outer$ceylon$language$List, times);
     $dart$core.String toString() => ((("(" + $outer$ceylon$language$List.toString()) + ").repeat(") + Integer.instance(times).toString()) + ")";
     $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
@@ -5458,7 +5458,7 @@ class List$Patch implements List {
             })();
         }
     })();
-    List clone() => $package$nothing as List;
+    List clone() => new List$Patch($outer$ceylon$language$List.clone(), list.clone(), from, length);
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$List.iterator();
         Iterator patchIter = list.iterator();

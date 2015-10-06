@@ -192,9 +192,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
 import com.vasileff.jl4c.guava.collect {
     javaList
 }
-import ceylon.ast.create {
-    qualifiedExpression
-}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
