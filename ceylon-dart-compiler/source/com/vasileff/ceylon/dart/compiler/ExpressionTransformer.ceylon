@@ -108,7 +108,8 @@ import ceylon.ast.core {
     ForComprehensionClause,
     IfComprehensionClause,
     ExpressionComprehensionClause,
-    TypeNameWithTypeArguments
+    TypeNameWithTypeArguments,
+    PositionalArguments
 }
 import ceylon.collection {
     LinkedList
@@ -1104,20 +1105,52 @@ class ExpressionTransformer(CompilationContext ctx)
 
             switch (invoked)
             case (is QualifiedExpression) {
-                value receiverInfo = ExpressionInfo(invoked.receiverExpression);
+                value invokedQEInfo = QualifiedExpressionInfo(invoked);
 
-                return generateInvocation {
-                    info;
-                    info.typeModel;
-                    receiverInfo.typeModel;
-                    () => invoked.receiverExpression.transform(expressionTransformer);
-                    invokedDeclaration;
-                    callableTypeAndArguments = [
-                        invokedInfo.typeModel,
-                        that.arguments
-                    ];
-                    invoked.memberOperator;
-                };
+                if (is TypeModel containerType = invokedQEInfo.target) {
+                    // Invoking a member class, just return a callable. It's possible
+                    // that the callable we return will immediately be called with args
+                    // to construct the class. Not optimizing this now.
+                    "Named arguments not allowed for indirect invocations per spec."
+                    assert (is PositionalArguments positionalArguments = that.arguments);
+
+                    if (positionalArguments.argumentList.sequenceArgument exists) {
+                        // TODO support sequence argument (a single element Tuple...)
+                        throw CompilerBug(that, "Sequence arguments not yet supported");
+                    }
+
+                    "There must be a single argument for the container."
+                    assert (exists argument
+                        =   positionalArguments.argumentList.listedArguments.first);
+
+                    return
+                    generateNewCallableForQualifiedExpression {
+                        info;
+                        containerType;
+                        () => argument.transform(expressionTransformer);
+                        invokedDeclaration;
+                        info.typeModel;
+                        null;
+                    };
+                }
+                else {
+                    // Normal case, receiver is an object.
+
+                    value receiverInfo = ExpressionInfo(invoked.receiverExpression);
+
+                    return generateInvocation {
+                        info;
+                        info.typeModel;
+                        receiverInfo.typeModel;
+                        () => invoked.receiverExpression.transform(expressionTransformer);
+                        invokedDeclaration;
+                        callableTypeAndArguments = [
+                            invokedInfo.typeModel,
+                            that.arguments
+                        ];
+                        invoked.memberOperator;
+                    };
+                }
             }
             case (is BaseExpression) {
                 value captureArguments
