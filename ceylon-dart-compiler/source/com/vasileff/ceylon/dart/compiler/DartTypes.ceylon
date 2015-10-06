@@ -1067,12 +1067,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      - They may also appear as the rhs type (when taking a reference to a Function), in
        which case they are treated as `Callable` values, which of course are not erased."
     shared
-    Boolean erasedToNative(FunctionOrValueModel declaration)
-        =>  !ctx.disableErasureToNative.contains(declaration)
-            && !isCallableParameterOrParamOf(declaration)
-            && !isAnonymousFunctionOrParamOf(declaration)
-            && !isParameterInNonFirstParamList(declaration)
-            && native(formalType(declaration));
+    Boolean erasedToNative(FunctionOrValueModel | ClassModel declaration)
+        =>  switch (declaration)
+            case (is ClassModel)
+                false
+            case (is FunctionOrValueModel)
+                !ctx.disableErasureToNative.contains(declaration)
+                && !isCallableParameterOrParamOf(declaration)
+                && !isAnonymousFunctionOrParamOf(declaration)
+                && !isParameterInNonFirstParamList(declaration)
+                && native(formalType(declaration));
 
     "For the Value, or the return type of the Function.
 

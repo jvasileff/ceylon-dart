@@ -2163,9 +2163,9 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartInstanceCreationExpression generateNewCallable(
-            DScope that,
-            FunctionModel functionModel,
-            DartExpression delegateFunction,
+            DScope scope,
+            FunctionModel | ClassModel functionModel,
+            DartExpression? delegateFunction = null,
             Integer parameterListNumber = 0,
             Boolean delegateReturnsCallable =
                     parameterListNumber <
@@ -2178,7 +2178,7 @@ class BaseGenerator(CompilationContext ctx)
         DartExpression outerFunction;
 
         TypeModel returnType;
-        FunctionOrValueModel? returnDeclaration;
+        FunctionOrValueModel | ClassModel? returnDeclaration;
         if (delegateReturnsCallable) {
             returnType = ceylonTypes.callableDeclaration.type;
             returnDeclaration = null;
@@ -2191,19 +2191,27 @@ class BaseGenerator(CompilationContext ctx)
         value parameters = CeylonList(functionModel.parameterLists
                 .get(parameterListNumber).parameters);
 
-        "Either boxing is required or `delegateMayBeNull` (null safe member operator).
-         If `true`, an extra outer function will be created to handle boxing and null
-         safety."
+        "True if boxing is required. If `true`, an extra outer function will be created
+         to handle boxing and null safety."
         value needsWrapperFunction =
-                (!delegateReturnsCallable
+                functionModel is ClassModel
+                || (!delegateReturnsCallable
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
                     =>  dartTypes.erasedToNative(parameterModel.model));
-        // generate outerFunction to handle boxing
+
         if (!needsWrapperFunction) {
-            outerFunction = delegateFunction;
+            "A bit ugly, but we do know it's a FunctionModel."
+            assert (is FunctionModel functionModel);
+            outerFunction
+                =   delegateFunction else
+                    dartTypes.expressionForBaseExpression {
+                        scope;
+                        functionModel;
+                    }[0];
         }
         else {
+            // Generate outerFunction to handle boxing and/or call to constructor
             value outerParameters = parameters.collect((parameterModel) {
                 value dartSimpleParameter =
                         DartSimpleFormalParameter {
@@ -2220,7 +2228,7 @@ class BaseGenerator(CompilationContext ctx)
                     return
                     DartDefaultFormalParameter {
                         dartSimpleParameter;
-                        dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(scope);
                     };
                 }
                 else {
@@ -2237,7 +2245,7 @@ class BaseGenerator(CompilationContext ctx)
                     // "lhs" is the inner function's parameter
                     lhsDeclaration = parameterModel.model;
                     () => withBoxing {
-                        that;
+                        scope;
                         // Parameters for Callables are always `core.Object`
                         rhsType = ceylonTypes.anythingType;
                         rhsDeclaration = null;
@@ -2253,11 +2261,11 @@ class BaseGenerator(CompilationContext ctx)
                             dartDCIdentical;
                             DartArgumentList {
                                 [parameterIdentifier,
-                                 dartTypes.dartDefault(that)];
+                                 dartTypes.dartDefault(scope)];
                             };
                         };
                         // propagate defaulted
-                        dartTypes.dartDefault(that);
+                        dartTypes.dartDefault(scope);
                         // not default, unbox as necessary
                         unboxed;
                     };
@@ -2268,15 +2276,38 @@ class BaseGenerator(CompilationContext ctx)
                 }
             });
 
-            // prepare the actual invocation expression, which
-            // may need to protect against a null receiver.
-            value invocation =
-                DartFunctionExpressionInvocation {
-                    delegateFunction;
-                    DartArgumentList {
-                        innerArguments;
-                    };
-                };
+            // prepare the actual invocation expression
+
+            DartExpression invocation;
+            switch (functionModel)
+            case (is FunctionModel) {
+                invocation
+                    =   DartFunctionExpressionInvocation {
+                            // ugliness: we have the same exact expression above!
+                            delegateFunction else
+                            dartTypes.expressionForBaseExpression {
+                                scope;
+                                functionModel;
+                            }[0];
+                            DartArgumentList {
+                                innerArguments;
+                            };
+                        };
+            }
+            case (is ClassModel) {
+                invocation
+                    =   DartInstanceCreationExpression {
+                            false;
+                            // no need to transform the base expression:
+                            dartTypes.dartConstructorName {
+                                scope;
+                                functionModel;
+                            };
+                            DartArgumentList {
+                                innerArguments;
+                            };
+                        };
+            }
 
             // the outer function accepts and returns non-erased types
             // using the inner function that follows normal erasure rules
@@ -2294,7 +2325,7 @@ class BaseGenerator(CompilationContext ctx)
                     withLhsNonNative {
                         returnType;
                         () => withBoxing {
-                            that;
+                            scope;
                             returnType;
                             returnDeclaration;
                             invocation;
@@ -2305,7 +2336,7 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         // create the Callable!
-        return createCallable(that, outerFunction);
+        return createCallable(scope, outerFunction);
     }
 
     "Generate a DartExpression for a series of `BooleanCondition`s."

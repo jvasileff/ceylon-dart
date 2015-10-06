@@ -107,7 +107,8 @@ import ceylon.ast.core {
     ComprehensionClause,
     ForComprehensionClause,
     IfComprehensionClause,
-    ExpressionComprehensionClause
+    ExpressionComprehensionClause,
+    TypeNameWithTypeArguments
 }
 import ceylon.collection {
     LinkedList
@@ -185,7 +186,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     SuperInfo,
     IsCaseInfo,
     UnspecifiedVariableInfo,
-    NodeInfo
+    NodeInfo,
+    TypeNameWithTypeArgumentsInfo
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -220,29 +222,22 @@ class ExpressionTransformer(CompilationContext ctx)
             NameWithTypeArguments nameAndArgs,
             DeclarationModel targetDeclaration) {
 
-        // TODO Consider consolidating/refactoring all base expression
-        //      and qualified expression functions.
-
-        if (!is MemberNameWithTypeArguments nameAndArgs) {
-            throw CompilerBug(that,
-                    "BaseExpression nameAndArgs type not yet supported: \
-                     '``className(nameAndArgs)``'");
-        }
-
         value info = ExpressionInfo(that);
 
-        if (ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(
-                    info, ctx.assertedLhsErasedToNativeTop, true);
-        }
-        else if (ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
-            return generateBooleanExpression(
-                    info, ctx.assertedLhsErasedToNativeTop, false);
-        }
-        else if (ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
-            return DartNullLiteral();
-        }
-        else {
+        switch (nameAndArgs)
+        case (is MemberNameWithTypeArguments) {
+            if (ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
+                return generateBooleanExpression(
+                        info, ctx.assertedLhsErasedToNativeTop, true);
+            }
+            else if (ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
+                return generateBooleanExpression(
+                        info, ctx.assertedLhsErasedToNativeTop, false);
+            }
+            else if (ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
+                return DartNullLiteral();
+            }
+
             switch (targetDeclaration)
             case (is ValueModel) {
                 value [dartIdentifier, dartIdentifierIsFunction] =
@@ -293,11 +288,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         info.typeModel;
                         generateNewCallable {
                             info;
-                            functionModel = targetDeclaration;
-                            dartTypes.expressionForBaseExpression {
-                                info;
-                                targetDeclaration;
-                            }[0];
+                            targetDeclaration;
                         };
                     };
                 }
@@ -306,6 +297,26 @@ class ExpressionTransformer(CompilationContext ctx)
                 throw CompilerBug(that,
                         "Unexpected declaration type for base expression: \
                          ``className(targetDeclaration)``");
+            }
+        }
+        case (is TypeNameWithTypeArguments) {
+            value typeNameInfo = TypeNameWithTypeArgumentsInfo(nameAndArgs);
+
+            "BaseExpressions to types are references to classes."
+            assert (is ClassModel declaration = typeNameInfo.declarationModel);
+
+            if (typeNameInfo.declarationModel.toplevel) {
+                // Return a `Callable` that takes the same arguments as the class
+                // initializer and returns an instance of the class.
+                return generateNewCallable {
+                    info;
+                    declaration;
+                };
+            }
+            else {
+                throw CompilerBug(that,
+                    "BaseExpression to non-toplevel class not yet supported: \
+                     '``className(nameAndArgs)``'");
             }
         }
     }
@@ -451,6 +462,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     + type(memberDeclaration).string);
             }
         }
+
+        // The QualifiedExpression expression is *not* a static member reference
 
         value receiverInfo = ExpressionInfo(that.receiverExpression);
 

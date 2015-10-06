@@ -5,6 +5,7 @@ import ceylon.ast.core {
 import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
+    ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface
 }
 import com.vasileff.ceylon.dart.ast {
@@ -84,23 +85,34 @@ class CoreGenerator(CompilationContext ctx) {
              If a declaration is not provided, boxing will erase to native if possible,
              and casting will *not* assume erased to Object (except for non-denotable
              [[rhsType]]s, as always.)"
-            FunctionOrValueModel? rhsDeclaration,
+            FunctionOrValueModel? | ClassModel rhsDeclaration,
             DartExpression dartExpression)
-        =>  let (actualDeclaration
-                    = dartTypes.declarationConsideringElidedReplacements(rhsDeclaration),
-                 actualType
-                    = dartTypes.typeConsideringElidedReplacements(rhsType, rhsDeclaration))
-            withBoxingForType {
-                scope;
-                actualType;
-                if (exists actualDeclaration)
-                    then dartTypes.erasedToNative(actualDeclaration)
-                    else dartTypes.native(rhsType);
-                if (exists actualDeclaration)
-                    then dartTypes.erasedToObject(actualDeclaration)
-                    else false;
-                dartExpression;
-            };
+        =>  switch (rhsDeclaration)
+            case (is ClassModel)
+                // Result of a constructor invocation is never native
+                withBoxingNonNative {
+                    scope;
+                    rhsType;
+                    dartExpression;
+                }
+            case (is FunctionOrValueModel?)
+                let (actualDeclaration
+                        = dartTypes.declarationConsideringElidedReplacements(
+                                rhsDeclaration),
+                     actualType
+                        = dartTypes.typeConsideringElidedReplacements(rhsType,
+                                rhsDeclaration))
+                withBoxingForType {
+                    scope;
+                    actualType;
+                    if (exists actualDeclaration)
+                        then dartTypes.erasedToNative(actualDeclaration)
+                        else dartTypes.native(rhsType);
+                    if (exists actualDeclaration)
+                        then dartTypes.erasedToObject(actualDeclaration)
+                        else false;
+                    dartExpression;
+                };
 
     DartExpression withBoxingConversion(
             DScope scope,

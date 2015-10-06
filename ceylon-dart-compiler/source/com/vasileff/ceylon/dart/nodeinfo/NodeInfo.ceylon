@@ -89,7 +89,8 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
-    augmentNode
+    augmentNode,
+    asserted
 }
 
 import org.antlr.runtime {
@@ -744,8 +745,14 @@ class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
 
     shared actual default TypeNameWithTypeArguments node => astNode;
 
-    value tcNode = assertedTcNode<Tree.SimpleType>(astNode);
-    shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
+    value tcNode = assertedTcNode<Tree.SimpleType | Tree.BaseTypeExpression>(astNode);
+
+    shared default TypeDeclarationModel declarationModel
+        =>  switch (tcNode)
+            case (is Tree.SimpleType)
+                tcNode.declarationModel
+            case (is Tree.BaseTypeExpression)
+                asserted<TypeDeclarationModel>(tcNode.declaration);
 }
 
 TcNodeType assertedTcNode<TcNodeType>(Node astNode)
