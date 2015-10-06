@@ -2216,9 +2216,19 @@ class BaseGenerator(CompilationContext ctx)
                 value dartSimpleParameter =
                         DartSimpleFormalParameter {
                             false; false;
-                            // core.Object for the type of all parameters since
-                            // `Callable` is generic
-                            dartTypes.dartObject;
+                            // Technically, we *should* be using `$dart$core.Object`
+                            // for the param types, but then we'd need ugly casting
+                            // in `innerArguments` below. This simplification is fine
+                            // for Dart since function references don't really have types
+                            // anyway - there is no type checking when calling a function
+                            // reference.
+                            dartTypes.dartTypeName {
+                                scope;
+                                parameterModel.type;
+                                // Callables are generic, so never erase to native.
+                                eraseToNative = false;
+                                eraseToObject = false;
+                            };
                             DartSimpleIdentifier {
                                 dartTypes.getName(parameterModel);
                             };
@@ -2244,11 +2254,11 @@ class BaseGenerator(CompilationContext ctx)
                     null;
                     // "lhs" is the inner function's parameter
                     lhsDeclaration = parameterModel.model;
-                    () => withBoxing {
+                    // As noted above, Callables are generic, so params are never erased
+                    // to native (iow, expect non-natives to be passed in).
+                    () => withBoxingNonNative {
                         scope;
-                        // Parameters for Callables are always `core.Object`
-                        rhsType = ceylonTypes.anythingType;
-                        rhsDeclaration = null;
+                        rhsType = parameterModel.type;
                         parameterIdentifier;
                     };
                 };

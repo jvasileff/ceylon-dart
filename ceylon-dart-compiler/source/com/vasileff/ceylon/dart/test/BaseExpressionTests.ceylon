@@ -21,7 +21,7 @@ class BaseExpressionTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $ceylon$language.Callable newString1 = new $ceylon$language.dart$Callable(([$dart$core.Object characters]) => new $ceylon$language.String(characters as $ceylon$language.Iterable));
+                    $ceylon$language.Callable newString1 = new $ceylon$language.dart$Callable(([$ceylon$language.Iterable characters]) => new $ceylon$language.String(characters));
                     $ceylon$language.Callable newString2 = new $ceylon$language.dart$Callable(([$ceylon$language.Iterable characters]) => new $ceylon$language.String(characters));
                 }
 

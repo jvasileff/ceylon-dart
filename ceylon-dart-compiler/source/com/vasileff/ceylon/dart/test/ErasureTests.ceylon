@@ -383,7 +383,7 @@ class ErasureTests() {
                 $dart$core.String echoString([$dart$core.String s]) => $package$echoString(s);
 
                 void $package$run() {
-                    $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$dart$core.Object s]) => $ceylon$language.String.instance($package$echoString($ceylon$language.String.nativeValue(s as $ceylon$language.String))));
+                    $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($package$echoString($ceylon$language.String.nativeValue(s))));
                     $dart$core.String result = $ceylon$language.String.nativeValue(ref.$delegate$($ceylon$language.String.instance(".")) as $ceylon$language.String);
                 }
 
