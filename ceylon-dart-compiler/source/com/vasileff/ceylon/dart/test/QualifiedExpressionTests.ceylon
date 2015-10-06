@@ -466,7 +466,7 @@ class QualifiedExpressionTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]);
                     static $ceylon$language.Usable $foo([final I$J $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();

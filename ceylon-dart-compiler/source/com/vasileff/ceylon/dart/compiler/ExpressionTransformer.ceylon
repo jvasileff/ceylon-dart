@@ -1122,7 +1122,7 @@ class ExpressionTransformer(CompilationContext ctx)
             }
             case (is BaseExpression) {
                 value captureArguments
-                    =   generateArgumentsForOutersAndCaptures {
+                    =   generateArgumentsForOuterAndCaptures {
                             info;
                             invokedDeclaration;
                         };

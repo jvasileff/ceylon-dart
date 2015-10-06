@@ -1511,7 +1511,7 @@ class BaseGenerator(CompilationContext ctx)
                         classModel;
                     };
                     DartArgumentList {
-                        generateArgumentsForOutersAndCaptures {
+                        generateArgumentsForOuterAndCaptures {
                             // scope must be the value's scope, not the scope
                             // of the object definition!
                             valueScope;
@@ -1951,7 +1951,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    [DartExpression*] generateArgumentsForOutersAndCaptures
+    [DartExpression*] generateArgumentsForOuterAndCaptures
             (DScope scope, ClassModel declaration) {
 
         // FIXME setters?
@@ -1962,13 +1962,13 @@ class BaseGenerator(CompilationContext ctx)
                     // Workaround https://github.com/ceylon/ceylon-compiler/issues/2293
                     .map((tuple) => tuple.first);
 
-        value outerExpressions
-            =   if (exists container = getContainingClassOrInterface(scope))
-                then dartTypes.outerDeclarationsForClass(declaration).map((capture)
-                        =>  dartTypes.expressionToOuter(container, capture))
-                else []; // No outers if no containing class or interface.
+        value outerExpression
+            =   if (exists container = getContainingClassOrInterface(scope),
+                    exists outerCI = getContainingClassOrInterface(declaration.container))
+                then [dartTypes.expressionToOuter(container, outerCI)]
+                else []; // No outer if no containing class or interface.
 
-        return concatenate { outerExpressions, captureExpressions };
+        return concatenate { outerExpression, captureExpressions };
     }
 
     "Generate a condition expression for a MatchCase of a switch statement or expression."
@@ -2313,7 +2313,7 @@ class BaseGenerator(CompilationContext ctx)
             "Extra leading arguments for non-toplevel classes."
             value outerAndCaptureArguments
                 =   if (is ClassModel functionModel) then
-                        generateArgumentsForOutersAndCaptures {
+                        generateArgumentsForOuterAndCaptures {
                             scope;
                             functionModel;
                         }

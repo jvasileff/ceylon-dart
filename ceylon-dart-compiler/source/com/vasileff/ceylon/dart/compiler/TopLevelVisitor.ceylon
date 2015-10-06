@@ -221,23 +221,21 @@ class TopLevelVisitor(CompilationContext ctx)
         value outerDeclaration
             =   getContainingClassOrInterface(info.scope.container);
 
-        "An $outer field declaration, if there is an outer class or interface"
+        "An $outer getter declaration, if there is an outer class or interface."
         value outerField
             =   if (exists outerDeclaration) then
-                    DartFieldDeclaration {
+                    DartMethodDeclaration {
                         false;
-                        DartVariableDeclarationList {
-                            null;
-                            dartTypes.dartTypeName {
-                                info;
-                                outerDeclaration.type;
-                                false; false;
-                            };
-                            [DartVariableDeclaration {
-                                dartTypes.identifierForOuter(outerDeclaration);
-                                null;
-                            }];
+                        null;
+                        dartTypes.dartTypeName {
+                            info;
+                            outerDeclaration.type;
+                            false; false;
                         };
+                        "get";
+                        dartTypes.identifierForOuter(outerDeclaration);
+                        null;
+                        null;
                     }
                 else
                     null;
@@ -392,13 +390,14 @@ class TopLevelVisitor(CompilationContext ctx)
                         };
                     };
 
-        "declarations for containers we must hold references to."
+        "Declarations for outer containers. We'll hold a reference to our immediate
+         container, and access the rest through that."
         value outerDeclarations
             =   [*dartTypes.outerDeclarationsForClass(classModel)];
 
-        "$outer field declarations, if any."
-        value outerFields
-            =   outerDeclarations.map {
+        "$outer field declaration, if any."
+        value outerField
+            =   outerDeclarations.take(1).map {
                     (outerDeclaration) =>
                     DartFieldDeclaration {
                         false;
@@ -419,8 +418,43 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        value outerFieldsConstructorParameters
-            =   outerDeclarations.map {
+        "$outer getters for $outers that may be required by satisfied interfaces.
+         Access through *our* outer."
+        value outerForwarders
+            // TODO We may also be picking up $outers handled by extended classes;
+            //      if so, we should filter those out...
+            =   outerDeclarations.skip(1).map {
+                    (outerDeclaration) =>
+                    DartMethodDeclaration {
+                        false;
+                        null;
+                        dartTypes.dartTypeName {
+                            scope;
+                            outerDeclaration.type;
+                            false; false;
+                        };
+                        "get";
+                        dartTypes.identifierForOuter {
+                            outerDeclaration;
+                        };
+                        null;
+                        DartExpressionFunctionBody {
+                            false;
+                            assertExists {
+                                dartTypes.expressionToThisOrOuterStripThis {
+                                    dartTypes.ancestorChainToExactDeclaration {
+                                        classModel;
+                                        outerDeclaration;
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+
+        "An $outer parameter, if there is an outer class or interface"
+        value outerFieldConstructorParameter
+            =   outerDeclarations.take(1).map {
                     (declaration) =>
                     DartFieldFormalParameter {
                         false; false;
@@ -482,7 +516,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 DartFormalParameterList {
                     true; false;
                     concatenate {
-                        outerFieldsConstructorParameters,
+                        outerFieldConstructorParameter,
                         captureConstructorParameters,
                         standardParameters.map {
                             // Prepend with "this." for dart. Eventually, we'll
@@ -551,7 +585,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     then DartImplementsClause(satisifesTypes)
                     else null;
                 concatenate {
-                    outerFields,
+                    outerField,
+                    outerForwarders,
                     captureFields,
                     constructors,
                     fieldsForInitializerParameters,

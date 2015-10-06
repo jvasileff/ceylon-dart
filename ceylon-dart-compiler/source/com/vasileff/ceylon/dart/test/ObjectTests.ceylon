@@ -240,20 +240,20 @@ class ObjectTests() {
 
                 class run$I1$I2$i2Foo$o_ implements run$I1$I2 {
                     run$I1$I2 $outer$default$run$I1$I2;
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2.$outer$default$run$I1;
                     $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
                     $dart$core.String $capture$run$s1;
-                    run$I1$I2$i2Foo$o_([run$I1$I2 this.$outer$default$run$I1$I2, run$I1 this.$outer$default$run$I1, $dart$core.String this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
+                    run$I1$I2$i2Foo$o_([run$I1$I2 this.$outer$default$run$I1$I2, $dart$core.String this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
                     $dart$core.String get i2fooo => $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
                     void i2Foo() => run$I1$I2.$i2Foo(this);
                     $dart$core.String get i1s1 => run$I1.$get$i1s1(this);
                 }
                 abstract class run$I1$I2 implements run$I1 {
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1;
                     void i2Foo();
                     static void $i2Foo([final run$I1$I2 $this]) {
                         $dart$core.String i2foo = "";
-                        final run$I1$I2$i2Foo$o_ o = new run$I1$I2$i2Foo$o_($this, $this.$outer$default$run$I1, i2foo, $this.$capture$run$s1);
+                        final run$I1$I2$i2Foo$o_ o = new run$I1$I2$i2Foo$o_($this, i2foo, $this.$capture$run$s1);
                     }
                 }
                 abstract class run$I1 {
@@ -290,10 +290,10 @@ class ObjectTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class run$I1$I2 implements run$I1 {
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1;
                 }
                 abstract class run$I1$I3 implements run$I1$I2 {
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1;
                 }
                 class run$I1$foo$o_ implements run$I1$I3 {
                     run$I1 $outer$default$run$I1;

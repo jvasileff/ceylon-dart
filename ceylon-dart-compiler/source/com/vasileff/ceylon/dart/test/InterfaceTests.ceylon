@@ -115,7 +115,7 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $dart$core.String fun();
                 }
                 abstract class I {
@@ -142,11 +142,11 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J$K {
-                    I$J $outer$default$I$J;
+                    I$J get $outer$default$I$J;
                     $dart$core.String fun();
                 }
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                 }
                 abstract class I {
                 }
@@ -175,14 +175,14 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J$K {
-                    I$J $outer$default$I$J;
+                    I$J get $outer$default$I$J;
                     $dart$core.String fki();
                     static $dart$core.String $fki([final I$J$K $this]) => $this.$outer$default$I$J.$outer$default$I.fi();
                     $dart$core.String fkj();
                     static $dart$core.String $fkj([final I$J$K $this]) => $this.$outer$default$I$J.fj();
                 }
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $dart$core.String fj();
                     static $dart$core.String $fj([final I$J $this]) => $this.$outer$default$I.fi();
                 }
@@ -215,14 +215,14 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J$K {
-                    I$J $outer$default$I$J;
+                    I$J get $outer$default$I$J;
                     $dart$core.String get fki;
                     static $dart$core.String $get$fki([final I$J$K $this]) => $this.$outer$default$I$J.$outer$default$I.fi;
                     $dart$core.String get fkj;
                     static $dart$core.String $get$fkj([final I$J$K $this]) => $this.$outer$default$I$J.fj;
                 }
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $dart$core.String get fj;
                     static $dart$core.String $get$fj([final I$J $this]) => $this.$outer$default$I.fi;
                 }
@@ -255,7 +255,7 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J$K {
-                    I$J $outer$default$I$J;
+                    I$J get $outer$default$I$J;
                     $dart$core.String get fki;
                     static $dart$core.String $get$fki([final I$J$K $this]) {
                         return $this.$outer$default$I$J.$outer$default$I.fi;
@@ -266,7 +266,7 @@ class InterfaceTests() {
                     }
                 }
                 abstract class I$J {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $dart$core.String get fj;
                     static $dart$core.String $get$fj([final I$J $this]) {
                         return $this.$outer$default$I.fi;
@@ -330,7 +330,7 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class Outer$Inner$Innest {
-                    Outer$Inner $outer$default$Outer$Inner;
+                    Outer$Inner get $outer$default$Outer$Inner;
                     $dart$core.String get innestValue;
                     $dart$core.String innestFn();
                     static $dart$core.String $innestFn([final Outer$Inner$Innest $this]) {
@@ -348,7 +348,7 @@ class InterfaceTests() {
                     }
                 }
                 abstract class Outer$Inner {
-                    Outer $outer$default$Outer;
+                    Outer get $outer$default$Outer;
                     $dart$core.String get innerValue;
                     $dart$core.String innerFn();
                     static $dart$core.String $innerFn([final Outer$Inner $this]) {
@@ -510,7 +510,7 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I$J implements I {
-                    I $outer$default$I;
+                    I get $outer$default$I;
                     $dart$core.String f();
                     static $dart$core.String $f([final I$J $this]) => "D.f()";
                     void testResolution();
@@ -853,7 +853,7 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class run$I1$I2 {
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1;
                     $dart$core.int get capturedX;
                     static $dart$core.int $get$capturedX([final run$I1$I2 $this]) => $this.$outer$default$run$I1.$capture$run$x;
                 }
@@ -892,12 +892,12 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class run$I1$I2$I3 {
-                    run$I1$I2 $outer$default$run$I1$I2;
+                    run$I1$I2 get $outer$default$run$I1$I2;
                     $dart$core.int get i3capturedX;
                     static $dart$core.int $get$i3capturedX([final run$I1$I2$I3 $this]) => $this.$outer$default$run$I1$I2.$outer$default$run$I1.$capture$run$x;
                 }
                 abstract class run$I1$I2 {
-                    run$I1 $outer$default$run$I1;
+                    run$I1 get $outer$default$run$I1;
                     $dart$core.int get i2capturedX;
                     static $dart$core.int $get$i2capturedX([final run$I1$I2 $this]) => $this.$outer$default$run$I1.$capture$run$x;
                 }
@@ -1021,7 +1021,7 @@ class InterfaceTests() {
                     $dart$core.int $capture$run$x;
                 }
                 abstract class run$I2$I3 {
-                    run$I2 $outer$default$run$I2;
+                    run$I2 get $outer$default$run$I2;
                     $dart$core.int get i3capturedX;
                     static $dart$core.int $get$i3capturedX([final run$I2$I3 $this]) => $this.$outer$default$run$I2.$capture$run$x;
                 }

@@ -206,17 +206,17 @@ class BaseExpressionTests() {
 
                 class I1$I2$C implements I1$I2 {
                     I1$I2 $outer$default$I1$I2;
-                    I1 $outer$default$I1;
-                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1]) {}
+                    I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
+                    I1$I2$C([I1$I2 this.$outer$default$I1$I2]) {}
                 }
                 abstract class I1$I2 {
-                    I1 $outer$default$I1;
-                    static $ceylon$language.Callable $get$newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
-                    static $ceylon$language.Callable $get$newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+                    I1 get $outer$default$I1;
+                    static $ceylon$language.Callable $get$newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+                    static $ceylon$language.Callable $get$newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
                     static void $foo([final I1$I2 $this]) {
-                        $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+                        $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
 
-                        $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+                        $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
 
                     }
                 }
