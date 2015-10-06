@@ -14,6 +14,151 @@ abstract class Annotated {
 }
 abstract class Annotation {
 }
+class AnnotationAnnotation implements OptionalAnnotation {
+    AnnotationAnnotation() {}
+}
+AnnotationAnnotation $package$annotation() => new AnnotationAnnotation();
+
+AnnotationAnnotation annotation() => $package$annotation();
+
+class SharedAnnotation implements OptionalAnnotation {
+    SharedAnnotation() {}
+}
+SharedAnnotation $package$shared() => new SharedAnnotation();
+
+SharedAnnotation shared() => $package$shared();
+
+class VariableAnnotation implements OptionalAnnotation {
+    VariableAnnotation() {}
+}
+VariableAnnotation $package$variable() => new VariableAnnotation();
+
+VariableAnnotation variable() => $package$variable();
+
+class AbstractAnnotation implements OptionalAnnotation {
+    AbstractAnnotation() {}
+}
+AbstractAnnotation $package$abstract() => new AbstractAnnotation();
+
+AbstractAnnotation abstract() => $package$abstract();
+
+class FinalAnnotation implements OptionalAnnotation {
+    FinalAnnotation() {}
+}
+FinalAnnotation $package$final() => new FinalAnnotation();
+
+FinalAnnotation final() => $package$final();
+
+class SealedAnnotation implements OptionalAnnotation {
+    SealedAnnotation() {}
+}
+SealedAnnotation $package$sealed() => new SealedAnnotation();
+
+SealedAnnotation sealed() => $package$sealed();
+
+class ActualAnnotation implements OptionalAnnotation {
+    ActualAnnotation() {}
+}
+ActualAnnotation $package$actual() => new ActualAnnotation();
+
+ActualAnnotation actual() => $package$actual();
+
+class FormalAnnotation implements OptionalAnnotation {
+    FormalAnnotation() {}
+}
+FormalAnnotation $package$formal() => new FormalAnnotation();
+
+FormalAnnotation formal() => $package$formal();
+
+class DefaultAnnotation implements OptionalAnnotation {
+    DefaultAnnotation() {}
+}
+DefaultAnnotation $package$default() => new DefaultAnnotation();
+
+DefaultAnnotation default() => $package$default();
+
+class LateAnnotation implements OptionalAnnotation {
+    LateAnnotation() {}
+}
+LateAnnotation $package$late() => new LateAnnotation();
+
+LateAnnotation late() => $package$late();
+
+class NativeAnnotation implements OptionalAnnotation {
+    NativeAnnotation([$dart$core.String this.backend]) {}
+    $dart$core.String backend;
+}
+NativeAnnotation $package$native([$dart$core.Object backend = $package$dart$default]) {
+    if ($dart$core.identical(backend, $package$dart$default)) {
+        backend = "";
+    }
+    return new NativeAnnotation(backend as $dart$core.String);
+}
+
+NativeAnnotation native([$dart$core.Object backend = $package$dart$default]) => $package$native(backend);
+
+class DocAnnotation implements OptionalAnnotation {
+    DocAnnotation([$dart$core.String this.description]) {}
+    $dart$core.String description;
+}
+DocAnnotation $package$doc([$dart$core.String description]) => new DocAnnotation(description);
+
+DocAnnotation doc([$dart$core.String description]) => $package$doc(description);
+
+class ThrownExceptionAnnotation implements SequencedAnnotation {
+    ThrownExceptionAnnotation([meta$declaration$Declaration this.type, $dart$core.String this.when]) {}
+    meta$declaration$Declaration type;
+    $dart$core.String when;
+}
+ThrownExceptionAnnotation $package$throws([meta$declaration$Declaration type, $dart$core.Object when = $package$dart$default]) {
+    if ($dart$core.identical(when, $package$dart$default)) {
+        when = "";
+    }
+    return new ThrownExceptionAnnotation(type, when as $dart$core.String);
+}
+
+ThrownExceptionAnnotation throws([meta$declaration$Declaration type, $dart$core.Object when = $package$dart$default]) => $package$throws(type, when);
+
+class DeprecationAnnotation implements OptionalAnnotation {
+    DeprecationAnnotation([$dart$core.String this.description]) {}
+    $dart$core.String description;
+    $dart$core.String get reason => !String.instance(description).empty ? description : null;
+}
+DeprecationAnnotation $package$deprecated([$dart$core.Object reason = $package$dart$default]) {
+    if ($dart$core.identical(reason, $package$dart$default)) {
+        reason = "";
+    }
+    return new DeprecationAnnotation(reason as $dart$core.String);
+}
+
+DeprecationAnnotation deprecated([$dart$core.Object reason = $package$dart$default]) => $package$deprecated(reason);
+
+class LicenseAnnotation implements OptionalAnnotation {
+    LicenseAnnotation([$dart$core.String this.description]) {}
+    $dart$core.String description;
+}
+LicenseAnnotation $package$license([$dart$core.String description]) => new LicenseAnnotation(description);
+
+LicenseAnnotation license([$dart$core.String description]) => $package$license(description);
+
+class OptionalImportAnnotation implements OptionalAnnotation {
+    OptionalImportAnnotation() {}
+}
+OptionalImportAnnotation $package$optional() => new OptionalImportAnnotation();
+
+OptionalImportAnnotation optional() => $package$optional();
+
+class SuppressWarningsAnnotation implements OptionalAnnotation {
+    SuppressWarningsAnnotation([Sequential this.warnings]) {}
+    Sequential warnings;
+}
+class SerializableAnnotation implements OptionalAnnotation {
+    SerializableAnnotation() {}
+}
+SerializableAnnotation $package$serializable() => new SerializableAnnotation();
+
+SerializableAnnotation serializable() => $package$serializable();
+
 $dart$core.bool $package$any([Iterable values]) {{
         $dart$core.Object element$1;
         Iterator iterator$0 = values.iterator();
