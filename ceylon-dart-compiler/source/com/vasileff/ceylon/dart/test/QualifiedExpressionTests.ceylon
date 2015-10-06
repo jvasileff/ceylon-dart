@@ -523,4 +523,39 @@ class QualifiedExpressionTests() {
              """;
         };
     }
+
+    shared test
+    void refToClassInInterfaceInInterface() {
+        compileAndCompare {
+             """
+                interface I {
+                    shared interface J {
+                        shared class C(String s) {}
+                    }
+                }
+
+                I.J.C(String)(I.J) newC = I.J.C;
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class I$J$C {
+                    I$J $outer$default$I$J;
+                    I$J$C([I$J this.$outer$default$I$J, $dart$core.String this.s]) {}
+                    $dart$core.String s;
+                }
+                abstract class I$J {
+                    I get $outer$default$I;
+                }
+                abstract class I {
+                }
+                $ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object s]) => new I$J$C($r$, $ceylon$language.String.nativeValue(s as $ceylon$language.String))));
+
+                $ceylon$language.Callable get newC => $package$newC;
+             """;
+        };
+    }
+
 }

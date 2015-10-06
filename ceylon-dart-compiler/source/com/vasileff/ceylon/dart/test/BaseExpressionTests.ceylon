@@ -226,6 +226,70 @@ class BaseExpressionTests() {
         };
     }
 
+    shared test
+    void membersWithCapture() {
+        compileAndCompare {
+             """
+                class A() {
+                    class B() {
+                        A.B()(A) newB1 = A.B;
+                        A.B() newB2 = B;
+                        class C() {
+                            A.B.C()(A.B) newB1 = A.B.C;
+                            A.B.C()(A.B) newB2 = B.C;
+                            A.B.C() newB3 = C;
+                            shared void asdf() {
+                                String cap1 = "";
+                                class D(String x) {
+                                    shared String useit => cap1;
+                                }
+                                value newd = D;
+                            }
+                        }
+                    }
+                }
+             """;
 
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class A$B$C$asdf$D {
+                    A$B$C $outer$default$A$B$C;
+                    $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1;
+                    A$B$C$asdf$D([A$B$C this.$outer$default$A$B$C, $dart$core.String this.$capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String this.x]) {}
+                    $dart$core.String x;
+                    $dart$core.String get useit => $capture$A$A$B$A$B$C$asdf$cap1;
+                }
+                class A$B$C {
+                    A$B $outer$default$A$B;
+                    A$B$C([A$B this.$outer$default$A$B]) {
+                        newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C($r$)));
+                        newB2 = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C($r$)));
+                        newB3 = new $ceylon$language.dart$Callable(() => new A$B$C(this.$outer$default$A$B));
+                    }
+                    $ceylon$language.Callable newB1;
+                    $ceylon$language.Callable newB2;
+                    $ceylon$language.Callable newB3;
+                    void asdf() {
+                        $dart$core.String cap1 = "";
+                        $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String x]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.String.nativeValue(x)));
+                    }
+                }
+                class A$B {
+                    A $outer$default$A;
+                    A$B([A this.$outer$default$A]) {
+                        newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B($r$)));
+                        newB2 = new $ceylon$language.dart$Callable(() => new A$B(this.$outer$default$A));
+                    }
+                    $ceylon$language.Callable newB1;
+                    $ceylon$language.Callable newB2;
+                }
+                class A {
+                    A() {}
+                }
+             """;
+        };
+    }
 
 }

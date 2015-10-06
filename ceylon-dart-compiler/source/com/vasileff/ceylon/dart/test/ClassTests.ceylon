@@ -713,4 +713,131 @@ class ClassTests() {
         };
     }
 
+    shared test
+    void outerReferenceTest() {
+        compileAndCompare {
+             """
+                interface I1 {
+                    shared default String ident => "i1";
+                    shared interface I2 {
+                        shared default String ident => "i2";
+                        shared default String outerIdent => outer.ident;
+                        shared class C(Integer version) satisfies I2 {
+                            shared default String cident => "c-``version``";
+                            shared default String couterIdent => outer.ident;
+                            shared actual String ident => "i2byC-``version``";
+                        }
+                    }
+                    shared formal I2 i2;
+                }
+
+                shared void run() {
+                    I1 i1o => object satisfies I1 {
+                        shared actual String ident => "i1o";
+                        shared actual I2 i2 => object satisfies I1.I2 {
+                            shared actual String ident => "i2o";
+                            shared actual String outerIdent => outer.ident;
+                        };
+                    };
+
+                    I1.I2.C(Integer)(I1.I2) newC => I1.I2.C;
+
+                    value c = newC(i1o.i2)(1);
+                    value c1 = I1.I2.C(i1o.i2)(1);
+                    value c2 = I1.I2.C(i1o.i2)(1);
+
+                    assert(c.cident == "c-1");
+                    assert(c.couterIdent == "i2o");
+                    assert(c.ident == "i2byC-1");
+                    assert(c.outerIdent == "i1o");
+
+                    value cSelfOuter = newC(c)(2);
+                    assert(cSelfOuter.cident == "c-2");
+                    assert(cSelfOuter.couterIdent == "i2byC-1");
+                    assert(cSelfOuter.ident == "i2byC-2");
+                    assert(cSelfOuter.outerIdent == "i1o");
+
+                    print("done");
+                }
+
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class I1$I2$C implements I1$I2 {
+                    I1$I2 $outer$default$I1$I2;
+                    I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
+                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int this.version]) {}
+                    $dart$core.int version;
+                    $dart$core.String get cident => ("c-" + $ceylon$language.Integer.instance(version).toString()) + "";
+                    $dart$core.String get couterIdent => $outer$default$I1$I2.ident;
+                    $dart$core.String get ident => ("i2byC-" + $ceylon$language.Integer.instance(version).toString()) + "";
+                    $dart$core.String get outerIdent => I1$I2.$get$outerIdent(this);
+                }
+                abstract class I1$I2 {
+                    I1 get $outer$default$I1;
+                    $dart$core.String get ident;
+                    static $dart$core.String $get$ident([final I1$I2 $this]) => "i2";
+                    $dart$core.String get outerIdent;
+                    static $dart$core.String $get$outerIdent([final I1$I2 $this]) => $this.$outer$default$I1.ident;
+                }
+                abstract class I1 {
+                    $dart$core.String get ident;
+                    static $dart$core.String $get$ident([final I1 $this]) => "i1";
+                    I1$I2 get i2;
+                }
+                class run$i1o$$anonymous$0_$i2$$anonymous$1_ implements I1$I2 {
+                    run$i1o$$anonymous$0_ $outer$default$run$i1o$$anonymous$0_;
+                    I1 get $outer$default$I1 => $outer$default$run$i1o$$anonymous$0_;
+                    run$i1o$$anonymous$0_$i2$$anonymous$1_([run$i1o$$anonymous$0_ this.$outer$default$run$i1o$$anonymous$0_]) {}
+                    $dart$core.String get ident => "i2o";
+                    $dart$core.String get outerIdent => $outer$default$run$i1o$$anonymous$0_.ident;
+                }
+                class run$i1o$$anonymous$0_ implements I1 {
+                    run$i1o$$anonymous$0_() {}
+                    $dart$core.String get ident => "i1o";
+                    I1$I2 get i2 => new run$i1o$$anonymous$0_$i2$$anonymous$1_(this);
+                }
+                void $package$run() {
+                    I1 i1o$get() => new run$i1o$$anonymous$0_();
+
+                    $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C($r$, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer))));
+
+                    I1$I2$C c = (newC$get().$delegate$(i1o$get().i2) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c1 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c2 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    if (!$ceylon$language.String.instance(c.cident).equals($ceylon$language.String.instance("c-1"))) {
+                        throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");
+                    }
+                    if (!$ceylon$language.String.instance(c.couterIdent).equals($ceylon$language.String.instance("i2o"))) {
+                        throw new $ceylon$language.AssertionError("Violated: c.couterIdent == \"i2o\"");
+                    }
+                    if (!$ceylon$language.String.instance(c.ident).equals($ceylon$language.String.instance("i2byC-1"))) {
+                        throw new $ceylon$language.AssertionError("Violated: c.ident == \"i2byC-1\"");
+                    }
+                    if (!$ceylon$language.String.instance(c.outerIdent).equals($ceylon$language.String.instance("i1o"))) {
+                        throw new $ceylon$language.AssertionError("Violated: c.outerIdent == \"i1o\"");
+                    }
+                    I1$I2$C cSelfOuter = (newC$get().$delegate$(c) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(2)) as I1$I2$C;
+                    if (!$ceylon$language.String.instance(cSelfOuter.cident).equals($ceylon$language.String.instance("c-2"))) {
+                        throw new $ceylon$language.AssertionError("Violated: cSelfOuter.cident == \"c-2\"");
+                    }
+                    if (!$ceylon$language.String.instance(cSelfOuter.couterIdent).equals($ceylon$language.String.instance("i2byC-1"))) {
+                        throw new $ceylon$language.AssertionError("Violated: cSelfOuter.couterIdent == \"i2byC-1\"");
+                    }
+                    if (!$ceylon$language.String.instance(cSelfOuter.ident).equals($ceylon$language.String.instance("i2byC-2"))) {
+                        throw new $ceylon$language.AssertionError("Violated: cSelfOuter.ident == \"i2byC-2\"");
+                    }
+                    if (!$ceylon$language.String.instance(cSelfOuter.outerIdent).equals($ceylon$language.String.instance("i1o"))) {
+                        throw new $ceylon$language.AssertionError("Violated: cSelfOuter.outerIdent == \"i1o\"");
+                    }
+                    $ceylon$language.print($ceylon$language.String.instance("done"));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
 }
