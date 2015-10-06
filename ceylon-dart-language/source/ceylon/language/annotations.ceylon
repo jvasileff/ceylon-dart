@@ -54,14 +54,14 @@ shared annotation AbstractAnnotation abstract()
         => AbstractAnnotation();
 
 "The annotation class for the [[final]] annotation."
-shared final sealed annotation class FinalAnnotation()
+native shared final sealed annotation class FinalAnnotation()
         satisfies OptionalAnnotation<FinalAnnotation,
                 ClassDeclaration> {}
 
 "Annotation to mark a class as final. A `final` class may 
  not be extended. Marking a class as `final` affects disjoint
  type analysis."
-shared annotation FinalAnnotation final()
+native shared annotation FinalAnnotation final()
         => FinalAnnotation();
                 
 "The annotation class for the [[sealed]] annotation."
@@ -99,14 +99,14 @@ shared annotation FormalAnnotation formal()
         => FormalAnnotation();
 
 "The annotation class for the [[default]] annotation."
-shared final sealed annotation class DefaultAnnotation()
+native shared final sealed annotation class DefaultAnnotation()
         satisfies OptionalAnnotation<DefaultAnnotation,
                 FunctionDeclaration|ValueDeclaration|ClassOrInterfaceDeclaration> {}
 
 "Annotation to mark a member whose implementation may be 
  refined by subtypes. Non-`default` declarations may not be 
  refined."
-shared annotation DefaultAnnotation default()
+native shared annotation DefaultAnnotation default()
         => DefaultAnnotation();
 
 "The annotation class for the [[late]] annotation."

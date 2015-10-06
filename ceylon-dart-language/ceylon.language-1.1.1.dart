@@ -42,13 +42,6 @@ AbstractAnnotation $package$abstract() => new AbstractAnnotation();
 
 AbstractAnnotation abstract() => $package$abstract();
 
-class FinalAnnotation implements OptionalAnnotation {
-    FinalAnnotation() {}
-}
-FinalAnnotation $package$final() => new FinalAnnotation();
-
-FinalAnnotation final() => $package$final();
-
 class SealedAnnotation implements OptionalAnnotation {
     SealedAnnotation() {}
 }
@@ -69,13 +62,6 @@ class FormalAnnotation implements OptionalAnnotation {
 FormalAnnotation $package$formal() => new FormalAnnotation();
 
 FormalAnnotation formal() => $package$formal();
-
-class DefaultAnnotation implements OptionalAnnotation {
-    DefaultAnnotation() {}
-}
-DefaultAnnotation $package$default() => new DefaultAnnotation();
-
-DefaultAnnotation default() => $package$default();
 
 class LateAnnotation implements OptionalAnnotation {
     LateAnnotation() {}
