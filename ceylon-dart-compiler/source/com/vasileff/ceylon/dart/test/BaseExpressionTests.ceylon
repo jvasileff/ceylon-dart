@@ -1,6 +1,5 @@
 import ceylon.test {
-    test,
-    ignore
+    test
 }
 
 shared
@@ -111,19 +110,16 @@ class BaseExpressionTests() {
         };
     }
 
-    shared test ignore
-    void typeNameWithTypeArgumentsMember() {
+    shared test
+    void referenceToMemberClass() {
         compileAndCompare {
              """
                 class C() {
                     class D(String s) {
                     }
                     shared void foo() {
-                        value newD1 = (String s) => D(s);
+                        value newD1 = D;
                         value newD2 = (String s) => D(s);
-
-                        value fooRef = foo;
-                        //$ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(foo);
                     }
                 }
              """;
@@ -147,4 +143,89 @@ class BaseExpressionTests() {
              """;
         };
     }
+
+    shared test
+    void referenceToInnerClassWithCapture() {
+        compileAndCompare {
+             """
+                class C() {
+                    void foo() {
+                        String captureMe = "";
+                        class D(String s) {
+                            String useCM => captureMe;
+                        }
+                        value newD1 = D;
+                        value newD2 = (String s) => D(s);
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C$foo$D {
+                    C $outer$default$C;
+                    $dart$core.String $capture$C$foo$captureMe;
+                    C$foo$D([C this.$outer$default$C, $dart$core.String this.$capture$C$foo$captureMe, $dart$core.String this.s]) {}
+                    $dart$core.String s;
+                    $dart$core.String get useCM => $capture$C$foo$captureMe;
+                }
+                class C {
+                    C() {}
+                    void foo() {
+                        $dart$core.String captureMe = "";
+                        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$foo$D(this, captureMe, $ceylon$language.String.nativeValue(s)));
+                        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$foo$D(this, captureMe, $ceylon$language.String.nativeValue(s)));
+                    }
+                }
+             """;
+        };
+    }
+
+    shared test
+    void referenceToMemberClassTwoOuters() {
+        compileAndCompare {
+             """
+                interface I1 {
+                    interface I2 {
+                        class C() satisfies I2 {}
+                        value newC1 => C;
+                        value newC2 => () => C();
+                        void foo() {
+                            value newC3 => C;
+                            value newC4 => () => C();
+                        }
+                    }
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class I1$I2$C implements I1$I2 {
+                    I1$I2 $outer$default$I1$I2;
+                    I1 $outer$default$I1;
+                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, I1 this.$outer$default$I1]) {}
+                }
+                abstract class I1$I2 {
+                    I1 $outer$default$I1;
+                    static $ceylon$language.Callable $get$newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+                    static $ceylon$language.Callable $get$newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+                    static void $foo([final I1$I2 $this]) {
+                        $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+
+                        $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this, $this.$outer$default$I1));
+
+                    }
+                }
+                abstract class I1 {
+                }
+             """;
+        };
+    }
+
+
+
 }

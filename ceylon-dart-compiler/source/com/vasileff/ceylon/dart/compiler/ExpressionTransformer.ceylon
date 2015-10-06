@@ -300,24 +300,20 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
         case (is TypeNameWithTypeArguments) {
+            // Return a `Callable` that takes the same arguments as the class
+            // initializer and returns an instance of the class.
+
             value typeNameInfo = TypeNameWithTypeArgumentsInfo(nameAndArgs);
 
             "BaseExpressions to types are references to classes."
             assert (is ClassModel declaration = typeNameInfo.declarationModel);
 
-            if (typeNameInfo.declarationModel.toplevel) {
-                // Return a `Callable` that takes the same arguments as the class
-                // initializer and returns an instance of the class.
-                return generateNewCallable {
-                    info;
-                    declaration;
-                };
-            }
-            else {
-                throw CompilerBug(that,
-                    "BaseExpression to non-toplevel class not yet supported: \
-                     '``className(nameAndArgs)``'");
-            }
+            // Note: if `declaration` is not toplevel, the Dart constructor may need
+            // some outers and captures. `generateNewCallable` will take care of that.
+            return generateNewCallable {
+                info;
+                declaration;
+            };
         }
     }
 

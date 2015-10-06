@@ -2310,6 +2310,17 @@ class BaseGenerator(CompilationContext ctx)
                 }
             });
 
+            "Extra leading arguments for non-toplevel classes."
+            value outerAndCaptureArguments
+                =   if (is ClassModel functionModel) then
+                        generateArgumentsForOutersAndCaptures {
+                            scope;
+                            functionModel;
+                        }
+                    else [];
+
+            "Arguments that are part of the public signature for the class or function.
+             They have corresponding parameters in the generated Callable."
             value innerArguments = parameters.collect((parameterModel) {
                 value parameterName = dartTypes.getName(parameterModel);
                 value parameterIdentifier = DartSimpleIdentifier(parameterName);
@@ -2378,7 +2389,10 @@ class BaseGenerator(CompilationContext ctx)
                                 functionModel;
                             };
                             DartArgumentList {
-                                innerArguments;
+                                concatenate {
+                                    outerAndCaptureArguments,
+                                    innerArguments
+                                };
                             };
                         };
             }
