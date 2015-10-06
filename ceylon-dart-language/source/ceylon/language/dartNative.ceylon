@@ -209,7 +209,7 @@ shared final class StringBuilder()
     String substring(Integer index, Integer length)
         =>  string.measure(index, length);
 
-    shared actual native
+    shared actual
     Character? getFromFirst(Integer index)
         =>  string.getFromFirst(index);
 
@@ -239,7 +239,7 @@ shared final class StringBuilder()
     }
 
     "Prepend the characters in the given [[strings]]."
-    shared native
+    shared
     StringBuilder prependAll({String*} strings) {
         for (s in strings) {
             prepend(s);

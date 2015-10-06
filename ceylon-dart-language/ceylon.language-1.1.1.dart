@@ -1035,6 +1035,7 @@ class StringBuilder implements List {
     $dart$core.String toString() => delegate.toString();
     Iterator iterator() => String.instance(toString()).iterator();
     $dart$core.String substring([$dart$core.int index, $dart$core.int length]) => String.nativeValue(String.instance(toString()).measure(Integer.instance(index), length));
+    Character getFromFirst([$dart$core.int index]) => String.instance(toString()).getFromFirst(index);
     StringBuilder append([$dart$core.String string]) {
         delegate.write(String.instance(string));
         return this;
@@ -1053,6 +1054,16 @@ class StringBuilder implements List {
         $dart$core.String newString = string + this.toString();
         clear();
         delegate.write(String.instance(newString));
+        return this;
+    }
+    StringBuilder prependAll([Iterable strings]) {{
+            $dart$core.Object element$12;
+            Iterator iterator$11 = strings.iterator();
+            while ((element$12 = iterator$11.next()) is !Finished) {
+                String s = element$12 as String;
+                prepend(String.nativeValue(s));
+            }
+        }
         return this;
     }
     StringBuilder appendCharacter([Character character]) {
@@ -1141,14 +1152,14 @@ class StringBuilder implements List {
         return this;
     }
     $dart$core.bool equals([$dart$core.Object that]) => (() {
-        $dart$core.bool doElse$11 = true;
+        $dart$core.bool doElse$13 = true;
         if (that is StringBuilder) {
-            StringBuilder that$12;
-            that$12 = that as StringBuilder;
-            doElse$11 = false;
-            return delegate.equals(that$12.delegate);
+            StringBuilder that$14;
+            that$14 = that as StringBuilder;
+            doElse$13 = false;
+            return delegate.equals(that$14.delegate);
         }
-        if (doElse$11) {
+        if (doElse$13) {
             return false;
         }
     })();
