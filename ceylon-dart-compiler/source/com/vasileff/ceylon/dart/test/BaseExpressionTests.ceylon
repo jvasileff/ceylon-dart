@@ -7,7 +7,7 @@ shared
 class BaseExpressionTests() {
 
     shared test
-    void typeNameWithTypeArguments() {
+    void referenceToStringInitializer() {
         compileAndCompare {
              """
                 void run() {
@@ -23,6 +23,56 @@ class BaseExpressionTests() {
                 void $package$run() {
                     $ceylon$language.Callable newString1 = new $ceylon$language.dart$Callable(([$ceylon$language.Iterable characters]) => new $ceylon$language.String(characters));
                     $ceylon$language.Callable newString2 = new $ceylon$language.dart$Callable(([$ceylon$language.Iterable characters]) => new $ceylon$language.String(characters));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void referenceToIntegerInitializer() {
+        compileAndCompare {
+             """
+                void run() {
+                    value newInteger = Integer;
+                    value five = newInteger(5);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Callable newInteger = new $ceylon$language.dart$Callable(([$ceylon$language.Integer integer]) => new $ceylon$language.Integer($ceylon$language.Integer.nativeValue(integer)));
+                    $dart$core.int five = $ceylon$language.Integer.nativeValue(newInteger.$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void referenceToEntryInitializer() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    value newEntry = Entry<String, Destroyable?>;
+                    value entry = newEntry("d", null);
+                    print(entry);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Callable newEntry = new $ceylon$language.dart$Callable(([$dart$core.Object key, $dart$core.Object item]) => new $ceylon$language.Entry(key, item));
+                    $ceylon$language.Entry entry = newEntry.$delegate$($ceylon$language.String.instance("d"), null) as $ceylon$language.Entry;
+                    $ceylon$language.print(entry);
                 }
 
                 void run() => $package$run();
