@@ -745,13 +745,17 @@ class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
 
     shared actual default TypeNameWithTypeArguments node => astNode;
 
-    value tcNode = assertedTcNode<Tree.SimpleType | Tree.BaseTypeExpression>(astNode);
+    value tcNode = assertedTcNode<
+            Tree.SimpleType | Tree.BaseTypeExpression | Tree.QualifiedTypeExpression>
+            (astNode);
 
     shared default TypeDeclarationModel declarationModel
         =>  switch (tcNode)
             case (is Tree.SimpleType)
                 tcNode.declarationModel
             case (is Tree.BaseTypeExpression)
+                asserted<TypeDeclarationModel>(tcNode.declaration)
+            case (is Tree.QualifiedTypeExpression)
                 asserted<TypeDeclarationModel>(tcNode.declaration);
 }
 

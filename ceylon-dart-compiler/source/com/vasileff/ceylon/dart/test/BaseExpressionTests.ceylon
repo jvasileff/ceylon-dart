@@ -80,6 +80,37 @@ class BaseExpressionTests() {
         };
     }
 
+    shared test
+    void packageQualifierToToplevelClass() {
+        compileAndCompare {
+             """
+                class Foo(String s, Destroyable d) {}
+
+                shared void run() {
+                    value newFoo1 = Foo;
+                    value newFoo2 = package.Foo;
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class Foo {
+                    Foo([$dart$core.String this.s, $ceylon$language.Destroyable this.d]) {}
+                    $dart$core.String s;
+                    $ceylon$language.Destroyable d;
+                }
+                void $package$run() {
+                    $ceylon$language.Callable newFoo1 = new $ceylon$language.dart$Callable(([$ceylon$language.String s, $ceylon$language.Destroyable d]) => new Foo($ceylon$language.String.nativeValue(s), d));
+                    $ceylon$language.Callable newFoo2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s, $ceylon$language.Destroyable d]) => new Foo($ceylon$language.String.nativeValue(s), d));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
     shared test ignore
     void typeNameWithTypeArgumentsMember() {
         compileAndCompare {
