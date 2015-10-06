@@ -406,7 +406,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 // The Callable that takes a `containerType`
                 return createCallable(info, outerFunction);
             }
-            case (is FunctionModel) {
+            case (is FunctionModel | ClassModel) {
                 // Return a `Callable` that takes a `containerType` and returns a
                 // `Callable` that can be used to invoke the `memberDeclaration`
 
@@ -450,7 +450,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 // The Callable that takes a `containerType`
                 return createCallable(info, outerFunction);
             }
-            //case (is ClassModel) {}
             //case (is ConstructorModel) {}
             else {
                 throw CompilerBug (that,
