@@ -15,7 +15,8 @@ import ceylon.ast.core {
     LazySpecification,
     ClassDefinition,
     ValueSpecification,
-    ValueSetterDefinition
+    ValueSetterDefinition,
+    InterfaceDefinition
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -144,6 +145,12 @@ class ClassStatementTransformer(CompilationContext ctx)
      [[ClassMemberTransformer.transformClassDefinition]]."
     shared actual
     DartStatement[] transformClassDefinition(ClassDefinition that)
+        =>  [];
+
+    "Nothing to do. The class will have already been defined/declared by
+     [[ClassMemberTransformer.transformInterfaceDefinition]]."
+    shared actual
+    DartStatement[] transformInterfaceDefinition(InterfaceDefinition that)
         =>  [];
 
     shared actual default
