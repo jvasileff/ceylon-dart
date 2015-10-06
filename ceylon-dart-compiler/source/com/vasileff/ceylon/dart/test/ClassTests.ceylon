@@ -628,4 +628,89 @@ class ClassTests() {
              """;
         };
     }
+
+    shared test
+    void invokeMemberClass() {
+        compileAndCompare {
+             """
+                shared class C() {
+                    shared class D(String s) {}
+                    shared D d1 = D("d1");
+                    shared D d2 = C().D("d2");
+                }
+                shared void run() {
+                    value d3 = C().D("d3");
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C$D {
+                    C $outer$default$C;
+                    C$D([C this.$outer$default$C, $dart$core.String this.s]) {}
+                    $dart$core.String s;
+                }
+                class C {
+                    C() {
+                        d1 = new C$D(this, "d1");
+                        d2 = new C$D(new C(), "d2");
+                    }
+                    C$D d1;
+                    C$D d2;
+                }
+                void $package$run() {
+                    C$D d3 = new C$D(new C(), "d3");
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void invokeMemberClassSafe() {
+        compileAndCompare {
+             """
+                shared class C() {
+                    shared class D(String s) {
+                        print(s);
+                    }
+                }
+                shared void run() {
+                    C? c1 = C();
+                    C? c2 = null;
+
+                    c1?.D("Test1");
+                    c2?.D("Test2");
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C$D {
+                    C $outer$default$C;
+                    C$D([C this.$outer$default$C, $dart$core.String this.s]) {
+                        $ceylon$language.print($ceylon$language.String.instance(s));
+                    }
+                    $dart$core.String s;
+                }
+                class C {
+                    C() {}
+                }
+                void $package$run() {
+                    C c1 = new C();
+                    C c2 = null;
+                    ((C $r$) => $r$ == null ? null : new C$D($r$, "Test1"))(c1);
+                    ((C $r$) => $r$ == null ? null : new C$D($r$, "Test2"))(c2);
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
 }

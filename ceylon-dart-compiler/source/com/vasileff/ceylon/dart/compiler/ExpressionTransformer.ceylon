@@ -192,6 +192,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
 import com.vasileff.jl4c.guava.collect {
     javaList
 }
+import ceylon.ast.create {
+    qualifiedExpression
+}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
@@ -1103,37 +1106,57 @@ class ExpressionTransformer(CompilationContext ctx)
             return invocationForCallable();
         }
         case (is ClassModel) {
-            "We only handle topelevel classes for now"
-            assert (is BaseExpression invoked = that.invoked);
+            "If the declaration is ClassModel, the expression must be a base
+             expression or a qualified expression"
+            assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
-            value captureArguments
-                =   generateArgumentsForOutersAndCaptures {
-                        info;
-                        invokedDeclaration;
-                    };
+            switch (invoked)
+            case (is QualifiedExpression) {
+                value receiverInfo = ExpressionInfo(invoked.receiverExpression);
 
-            return
-            withBoxingNonNative {
-                info;
-                info.typeModel;
-                DartInstanceCreationExpression {
-                    false;
-                    // no need to transform the base expression:
-                    dartTypes.dartConstructorName {
-                        info;
-                        invokedDeclaration;
-                    };
-                    DartArgumentList {
-                        concatenate {
-                            captureArguments,
-                            generateArgumentListFromArguments {
-                                that.arguments;
-                                invokedInfo.typeModel;
-                            }.arguments
+                return generateInvocation {
+                    info;
+                    info.typeModel;
+                    receiverInfo.typeModel;
+                    () => invoked.receiverExpression.transform(expressionTransformer);
+                    invokedDeclaration;
+                    callableTypeAndArguments = [
+                        invokedInfo.typeModel,
+                        that.arguments
+                    ];
+                    invoked.memberOperator;
+                };
+            }
+            case (is BaseExpression) {
+                value captureArguments
+                    =   generateArgumentsForOutersAndCaptures {
+                            info;
+                            invokedDeclaration;
+                        };
+
+                return
+                withBoxingNonNative {
+                    info;
+                    info.typeModel;
+                    DartInstanceCreationExpression {
+                        false;
+                        // no need to transform the base expression:
+                        dartTypes.dartConstructorName {
+                            info;
+                            invokedDeclaration;
+                        };
+                        DartArgumentList {
+                            concatenate {
+                                captureArguments,
+                                generateArgumentListFromArguments {
+                                    that.arguments;
+                                    invokedInfo.typeModel;
+                                }.arguments
+                            };
                         };
                     };
                 };
-            };
+            }
         }
         case (is ConstructorModel) {
             assert (is ClassModel clazzModel = invokedDeclaration.container);

@@ -450,14 +450,15 @@ class BaseGenerator(CompilationContext ctx)
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
-            FunctionOrValueModel memberDeclaration,
+            FunctionOrValueModel | ClassModel memberDeclaration,
             [TypeModel,   [DartExpression()*]
                         | [Expression*]
                         | Arguments]? callableTypeAndArguments = null,
             AnyMemberOperator? memberOperator = null) {
 
         "By definition."
-        assert (is FunctionModel|ValueModel|SetterModel memberDeclaration);
+        assert (is FunctionModel | ValueModel | SetterModel | ClassModel
+                memberDeclaration);
 
         "SpreadMemberOperator not yet supported."
         assert (is Null | MemberOperator | SafeMemberOperator memberOperator);
@@ -507,23 +508,67 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        "An optional `$this` argument, for use with static invocations."
+        "An optional `$this` argument, for use with static invocations and constructors."
         [DartExpression]|[] thisArgument;
 
-        "Will either be an Interface or an expression for the Ceylon receiver."
+        "Will either be an Interface or an expression for the Ceylon receiver. A dummy
+         value is used for constructors, d'oh!"
         DartExpression dartBoxedReceiver;
 
-        "Are we invoking a Dart function? (As opposed to a value)"
+        "Are we invoking a Dart function or constructor? (As opposed to a Dart value)"
         Boolean isFunction;
 
-        "The dart identifier for the function or value"
-        DartSimpleIdentifier memberIdentifier;
+        "The Dart identifier for the function, value, or constructor"
+        DartSimpleIdentifier | DartConstructorName memberIdentifier;
 
         "The Dart type of what Ceylon thinks is the receiver! They differ when Dart needs
          the receiver to be an interface for a static method invocation."
         DartTypeName? ceylonReceiverDartType;
 
-        if (!exists generateReceiver) {
+        if (is ClassModel memberDeclaration) {
+            if (!exists generateReceiver) {
+                throw CompilerBug(scope,
+                        "Member class invocations on super not supported.");
+            }
+
+            // Invoking a member class; must call the statically known Dart constructor,
+            // passing the receiver (outer) as the first argument.
+
+            "The container of a member class invoked with a receiver must be a class
+             or interface."
+            assert (is ClassOrInterfaceModel memberContainer
+                 =  getContainingClassOrInterface(memberDeclaration.container));
+
+            thisArgument
+                =   [withLhsDenotable {
+                        memberContainer;
+                        generateReceiver;
+                    }];
+
+            isFunction
+                =   true; // Constructor, really
+
+            dartBoxedReceiver // Very ugly. But won't be used.
+                =   DartNullLiteral();
+
+            memberIdentifier
+                =   dartTypes.dartConstructorName {
+                        scope;
+                        memberDeclaration;
+                    };
+
+            // The Dart type of what Ceylon thinks is the receiver!
+            ceylonReceiverDartType
+                =   dartTypes.dartTypeName {
+                        scope;
+                        ceylonTypes.denotableType {
+                            receiverType;
+                            memberContainer;
+                        };
+                        eraseToNative = false;
+                    };
+        }
+        else if (!exists generateReceiver) {
             // Receiver is `super`
 
             // Only used for null safe operator, and `super` is never null
@@ -662,9 +707,10 @@ class BaseGenerator(CompilationContext ctx)
 
         DartExpression invocation;
         if (arguments nonempty) {
-            "If there are arguments, the member is surely a FunctionModel and must
-             translate to a Dart function"
-            assert (is FunctionModel memberDeclaration, isFunction);
+            "If there are arguments, the member is a FunctionModel and will translate
+             to a Dart function, or it's a ClassModel, and will translate to a Dart
+             constructor."
+            assert (is FunctionModel | ClassModel memberDeclaration, isFunction);
 
             "If we have arguments, we'll have a callableType."
             assert (exists callableType);
@@ -716,32 +762,50 @@ class BaseGenerator(CompilationContext ctx)
                                     then thisArgument.first
                                     else dartBoxedReceiver;
                             ifNullExpression = DartNullLiteral();
-                            ifNotNullExpression = DartFunctionExpressionInvocation {
-                                DartPropertyAccess {
-                                    // For static invocations, the dart receiver is the
-                                    // static methods containing interface, which is
-                                    // represented by `dartBoxedReceiver`
-                                    // (`dartBoxedReceiver` is not the expression that
-                                    // might be null in this case)
-                                    if (thisArgument nonempty)
-                                        then dartBoxedReceiver
-                                        else DartSimpleIdentifier("$r$");
-                                    memberIdentifier;
-                                };
-                                argumentList;
-                            };
+                            ifNotNullExpression =
+                                if (is DartConstructorName memberIdentifier) then
+                                    DartInstanceCreationExpression {
+                                        false;
+                                        memberIdentifier;
+                                        argumentList;
+                                    }
+                                else
+                                    DartFunctionExpressionInvocation {
+                                        DartPropertyAccess {
+                                            // For static invocations, the dart receiver
+                                            // is the static methods containing interface,
+                                            // which is represented by `dartBoxedReceiver`
+                                            // (`dartBoxedReceiver` is not the expression
+                                            // that might be null in this case)
+                                            if (thisArgument nonempty)
+                                            then dartBoxedReceiver
+                                            else DartSimpleIdentifier("$r$");
+                                            memberIdentifier;
+                                        };
+                                        argumentList;
+                                    };
                         };
             }
             else {
                 invocation
-                    =   DartMethodInvocation {
-                            dartBoxedReceiver;
-                            memberIdentifier;
-                            argumentList;
-                        };
+                    =   if (is DartConstructorName memberIdentifier) then
+                            DartInstanceCreationExpression {
+                                false;
+                                memberIdentifier;
+                                argumentList;
+                            }
+                        else
+                            DartMethodInvocation {
+                                dartBoxedReceiver;
+                                memberIdentifier;
+                                argumentList;
+                            };
             }
         }
         else {
+            "Constructors will always have `arguments nonempty`"
+            assert (!is DartConstructorName memberIdentifier);
+
             function valueAccess(DartExpression receiver)
                 =>  if (!isFunction)
                     then DartPropertyAccess(receiver, memberIdentifier)
