@@ -72,10 +72,9 @@ shared interface Category<in Element=Object>
                 return false;
             }
         }
-        // FIXME uncomment once `fail` support is added
-        //else {
+        else {
             return true;
-        //}
+        }
     }
 
     "Returns `true` if any one of the given values belongs 
@@ -88,10 +87,9 @@ shared interface Category<in Element=Object>
                 return true;
             }
         }
-        // FIXME uncomment once `fail` support is added
-        //else {
+        else {
             return false;
-        //}
+        }
     }
 
 }
