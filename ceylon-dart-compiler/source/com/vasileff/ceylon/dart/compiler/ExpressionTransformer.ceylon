@@ -907,7 +907,12 @@ class ExpressionTransformer(CompilationContext ctx)
 
         "Generate an invocation on `ValueModel`s, or `FunctionModel`s for Callable
          parameters, which are implemented as Callable values. This function is called
-         in two locations in the main `switch` statement below."
+         a few places in the main `switch` statement below.
+
+         Note: this function can also be used as a fallback or unoptimized code path,
+         relying on [[transformBaseExpression]] and [[transformQualifiedExpression]] to
+         generate `Callable`s via `that.invoked.transform(this)` which are then
+         immediately invoked."
         function invocationForCallable() {
             // Callables (being generic) always erase to `core.Object`.
             // We don't have a declaration to to use, so explicitly
@@ -1050,6 +1055,15 @@ class ExpressionTransformer(CompilationContext ctx)
             // they are more like BaseExpressions
             else if (is QualifiedExpression invoked,
                     !invoked.receiverExpression is Package) {
+
+                value invokedQEInfo = QualifiedExpressionInfo(invoked);
+
+                if(invokedQEInfo.staticMethodReference) {
+                    // Note: Needs optimization! This causes a Callable to be created for
+                    // the function ref, which is immediately invoked with the argument,
+                    // returning a Callable that can be used to invoke the now bound method.
+                    return(invocationForCallable());
+                }
 
                 value receiverInfo = ExpressionInfo(invoked.receiverExpression);
 

@@ -630,6 +630,51 @@ class ClassTests() {
     }
 
     shared test
+    void invokeClassMethodStatically() {
+        // This is very unoptimized.
+        compileAndCompare {
+             """
+                class A() {
+                    shared class B() {
+                        shared String foo() => "foo";
+                        shared String bar => "bar";
+                    }
+                }
+                shared void run() {
+                    String() f = A.B.foo(A().B());
+                    String b = A.B.bar(A().B());
+
+                    print(f());
+                    print(b);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class A$B {
+                    A $outer$default$A;
+                    A$B([A this.$outer$default$A]) {}
+                    $dart$core.String foo() => "foo";
+                    $dart$core.String get bar => "bar";
+                }
+                class A {
+                    A() {}
+                }
+                void $package$run() {
+                    $ceylon$language.Callable f = (new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(($r$ as A$B).foo())))).$delegate$(new A$B(new A())) as $ceylon$language.Callable;
+                    $dart$core.String b = $ceylon$language.String.nativeValue((new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => $ceylon$language.String.instance(($r$ as A$B).bar))).$delegate$(new A$B(new A())) as $ceylon$language.String);
+                    $ceylon$language.print(f.$delegate$());
+                    $ceylon$language.print($ceylon$language.String.instance(b));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
     void invokeMemberClass() {
         compileAndCompare {
              """
