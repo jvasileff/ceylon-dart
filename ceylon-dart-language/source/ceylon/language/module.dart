@@ -1259,6 +1259,43 @@ class dart$VariableBoxString {
 
 ///////////////////////////////////////
 //
+// Flatten
+//
+///////////////////////////////////////
+
+Callable flatten(Callable tupleFunction) {
+    return new dart$FlatFunction(tupleFunction.$delegate$);
+}
+
+Callable unflatten(Callable flatFunction) {
+    return new dart$UnflatFunction(flatFunction.$delegate$);
+}
+
+class dart$FlatFunction implements $dart$core.Function, dart$Callable {
+  final $dart$core.Function tupleFunction;
+  $dart$core.Function get $delegate$ => this;
+  dart$FlatFunction($dart$core.Function this.tupleFunction);
+
+  noSuchMethod($dart$core.Invocation invocation) {
+    var tuple = new Tuple.$withList(invocation.positionalArguments, empty);
+    return $dart$core.Function.apply(tupleFunction, [tuple], null);
+  }
+}
+
+class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
+  final $dart$core.Function flatFunction;
+  $dart$core.Function get $delegate$ => this;
+  dart$UnflatFunction($dart$core.Function this.flatFunction);
+
+  noSuchMethod($dart$core.Invocation invocation) {
+    var list = [];
+    invocation.positionalArguments[0].each(new dart$Callable((e) => list.add(e)));
+    return $dart$core.Function.apply(flatFunction, list, null);
+  }
+}
+
+///////////////////////////////////////
+//
 // Wrappers
 //
 ///////////////////////////////////////
