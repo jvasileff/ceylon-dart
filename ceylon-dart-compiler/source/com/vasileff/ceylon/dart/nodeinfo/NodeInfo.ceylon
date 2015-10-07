@@ -196,6 +196,9 @@ class QualifiedExpressionInfo(QualifiedExpression astNode)
 
     "If being passed as an argument, the parameter type."
     shared TypeModel? parameterType => tcNode.parameterType;
+
+    shared Boolean staticMethodReference => tcNode.staticMethodReference;
+    shared Boolean staticMethodReferencePrimary => tcNode.staticMethodReferencePrimary;
 }
 
 shared

@@ -1107,10 +1107,12 @@ class ExpressionTransformer(CompilationContext ctx)
             case (is QualifiedExpression) {
                 value invokedQEInfo = QualifiedExpressionInfo(invoked);
 
-                if (is TypeModel containerType = invokedQEInfo.target) {
-                    // Invoking a member class, just return a callable. It's possible
-                    // that the callable we return will immediately be called with args
-                    // to construct the class. Not optimizing this now.
+                if (invokedQEInfo.staticMethodReference,
+                    is TypeModel containerType = invokedQEInfo.target) {
+
+                    // Invoking a member class, statically. Just return a callable. It's
+                    // possible that the callable we return will immediately be called
+                    // with args to construct the class. Not optimizing this now.
                     "Named arguments not allowed for indirect invocations per spec."
                     assert (is PositionalArguments positionalArguments = that.arguments);
 
