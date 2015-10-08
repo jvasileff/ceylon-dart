@@ -2086,12 +2086,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value dartParameters = parameterList.collect((parameterModel) {
             value defaulted = parameterModel.defaulted;
-            value variadic = parameterModel.sequenced;
 
-            if (variadic) {
-                throw CompilerBug(scope, "Variadic parameters not yet supported");
-            }
-            else {
                 // Use core.Object for defaulted parameters so we can
                 // initialize with `dart$default`
                 value dartParameterType =
@@ -2119,7 +2114,7 @@ class BaseGenerator(CompilationContext ctx)
                 else {
                     return dartSimpleParameter;
                 }
-            }
+
         });
         return DartFormalParameterList {
             positional = true;
