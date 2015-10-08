@@ -904,31 +904,41 @@ class ExpressionTransformer(CompilationContext ctx)
                     then invokedDeclaration.parameterLists.size() > 1
                     else false;
 
-            return withBoxing {
-                info;
-                info.typeModel;
-                // If there are multiple parameter lists, the function returns a
-                // Callable, not the ultimate return type as advertised by the
-                // declaration.
-                !hasMultipleParameterLists then invokedDeclaration;
-                DartFunctionExpressionInvocation {
-                    // qualified reference to the static interface method
-                    DartPropertyAccess {
-                        dartTypes.dartIdentifierForClassOrInterface {
-                            info;
-                            invokedDeclarationContainer;
-                        };
-                        DartSimpleIdentifier {
-                            dartTypes.getStaticInterfaceMethodName(invokedDeclaration);
-                        };
+
+            value [argsSetup, args]
+                =   generateArgumentListFromArguments2 {
+                        info;
+                        that.arguments;
+                        invokedInfo.typeModel;
+                        invokedDeclaration;
                     };
-                    DartArgumentList {
-                        concatenate {
-                            [thisExpression],
-                            generateArgumentListFromArguments {
-                                that.arguments;
-                                invokedInfo.typeModel;
-                            }.arguments
+
+            return
+            createExpressionEvaluationWithSetup {
+                argsSetup;
+                withBoxing {
+                    info;
+                    info.typeModel;
+                    // If there are multiple parameter lists, the function returns a
+                    // Callable, not the ultimate return type as advertised by the
+                    // declaration.
+                    !hasMultipleParameterLists then invokedDeclaration;
+                    DartFunctionExpressionInvocation {
+                        // qualified reference to the static interface method
+                        DartPropertyAccess {
+                            dartTypes.dartIdentifierForClassOrInterface {
+                                info;
+                                invokedDeclarationContainer;
+                            };
+                            DartSimpleIdentifier {
+                                dartTypes.getStaticInterfaceMethodName(invokedDeclaration);
+                            };
+                        };
+                        DartArgumentList {
+                            concatenate {
+                                [thisExpression],
+                                args.arguments
+                            };
                         };
                     };
                 };
@@ -1089,7 +1099,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             info;
                             that.arguments;
                             invokedInfo.typeModel;
-                            invokedDeclaration.parameterList;
+                            invokedDeclaration;
                         };
 
                 return
@@ -1135,7 +1145,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         info;
                         that.arguments;
                         invokedInfo.typeModel;
-                        invokedDeclaration.parameterList;
+                        invokedDeclaration;
                     };
 
             return

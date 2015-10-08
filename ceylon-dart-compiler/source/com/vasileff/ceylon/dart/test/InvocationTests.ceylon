@@ -55,4 +55,50 @@ class InvocationTests() {
         };
     }
 
+    "This is a special case where the method cannot be invoked on $this."
+    shared test
+    void namedArgNonsharedInterfaceMethodBaseExpression() {
+        compileAndCompare {
+             """
+                interface I {
+                    String echo(String s) => s;
+
+                    shared void foo() {
+                        print(echo("list"));
+                        print(echo { "named"; });
+                    }
+                }
+                shared void run() {
+                    object satisfies I {}.foo();
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class I {
+                    static $dart$core.String $echo([final I $this, $dart$core.String s]) => s;
+                    void foo();
+                    static void $foo([final I $this]) {
+                        $ceylon$language.print($ceylon$language.String.instance(I.$echo($this, "list")));
+                        $ceylon$language.print((() {
+                            $dart$core.String arg$0$0 = "named";
+                            return $ceylon$language.String.instance(I.$echo($this, arg$0$0));
+                        })());
+                    }
+                }
+                class run$$anonymous$0_ implements I {
+                    run$$anonymous$0_() {}
+                    void foo() => I.$foo(this);
+                }
+                void $package$run() {
+                    (new run$$anonymous$0_()).foo();
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
 }

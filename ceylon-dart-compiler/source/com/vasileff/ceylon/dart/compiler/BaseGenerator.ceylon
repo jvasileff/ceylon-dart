@@ -54,6 +54,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
     InterfaceModel=Interface,
+    ConstructorModel=Constructor,
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     SetterModel=Setter,
@@ -2694,35 +2695,48 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [[DartStatement*], DartArgumentList] generateArgumentListFromArguments2(
             DScope scope,
-            Arguments that,
+            Arguments arguments,
             TypeModel callableType,
-            ParameterListModel parameterList,
+            ParameterListModel | FunctionModel| ValueModel
+                    | ClassModel | ConstructorModel declarationOrparameterList,
             "True if the ArgumentList is for a Callable, even though ParameterModels
              are available. This is used for invocations on Callable Parameters"
             Boolean overrideNonCallable = false) {
-        switch (that)
+
+        switch (arguments)
         case (is PositionalArguments) {
             return [[], generateArgumentListFromArgumentList(
-                    that.argumentList, callableType, overrideNonCallable)];
+                    arguments.argumentList, callableType, overrideNonCallable)];
         }
         case (is NamedArguments) {
-            value [argsSetup, arguments]
+            if (is ValueModel declarationOrparameterList) {
+                return [[], DartArgumentList()];
+            }
+
+            value pList
+                =   switch(declarationOrparameterList)
+                    case (is ParameterListModel) declarationOrparameterList
+                    case (is FunctionModel) declarationOrparameterList.firstParameterList
+                    case (is ClassModel) declarationOrparameterList.parameterList
+                    case (is ConstructorModel) declarationOrparameterList.parameterList;
+
+            value [argsSetup, argGenerators]
                 =   generateFromNamedArguments {
                         scope;
-                        that;
+                        arguments;
                         callableType;
-                        parameterList;
+                        pList;
                     };
 
             value argumentTypes
                 =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType.fullType));
 
             value parameterDeclarations
-                =   CeylonList(parameterList.parameters).collect(ParameterModel.model);
+                =   CeylonList(pList.parameters).collect(ParameterModel.model);
 
             value argumentList
                 =   DartArgumentList {
-                        [for (i -> argument in arguments.indexed)
+                        [for (i -> argument in argGenerators.indexed)
                             withLhs {
                                 argumentTypes[i];
                                 parameterDeclarations[i];
