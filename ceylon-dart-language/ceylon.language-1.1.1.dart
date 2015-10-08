@@ -4621,7 +4621,7 @@ abstract class Iterable implements Category {
     })();
 }
 $dart$core.String $package$commaList([Iterable elements]) => (() {
-    Iterable arg$140$0 = String.nativeValue(functionIterable(new dart$Callable(() {
+    Iterable arg$140$0 = functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$141 = false;
         $dart$core.bool step$0$142() {
             if (step$0$expired$141) {
@@ -4665,7 +4665,7 @@ $dart$core.String $package$commaList([Iterable elements]) => (() {
         }
 
         return new dart$Callable(step$2$148);
-    })));
+    }));
     return String.instance(", ").join(arg$140$0);
 })();
 

@@ -2904,9 +2904,12 @@ class BaseGenerator(CompilationContext ctx)
                             };
                             [DartVariableDeclaration {
                                 dartIdentifier;
-                                expressionTransformer.generateIterable {
-                                    scope;
-                                    namedArguments.iterableArgument;
+                                withLhsNonNative {
+                                    typeModel;
+                                    () => expressionTransformer.generateIterable {
+                                        scope;
+                                        namedArguments.iterableArgument;
+                                    };
                                 };
                             }];
                         };
