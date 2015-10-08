@@ -94,7 +94,10 @@ import com.vasileff.ceylon.dart.ast {
     DartExpressionStatement,
     DartConditionalExpression,
     DartFunctionBody,
-    DartStatement
+    DartStatement,
+    DartSwitchCase,
+    DartIntegerLiteral,
+    DartSwitchStatement
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,
@@ -1178,6 +1181,110 @@ class BaseGenerator(CompilationContext ctx)
                     [typedReference.fullType, arguments];
             }
         ];
+    }
+
+    shared
+    DartExpression generateIterable(DScope scope, ArgumentList argumentList) {
+        value arguments = argumentList.listedArguments;
+        value sequenceArgument = argumentList.sequenceArgument;
+
+        if (arguments.empty && !sequenceArgument exists) {
+            // Easy; there are no elements.
+            return withBoxingNonNative {
+                scope;
+                ceylonTypes.emptyType;
+                dartTypes.dartIdentifierForFunctionOrValue {
+                    scope;
+                    ceylonTypes.emptyValueDeclaration;
+                    false;
+                }[0];
+            };
+        }
+        else if (!nonempty arguments) {
+            // Just evaluate and return the spread expression. We don't care about the
+            // lhs type, which should have already been set by code that does care.
+            assert (exists sequenceArgument);
+            return sequenceArgument.transform(expressionTransformer);
+        }
+        else {
+            // Return a LazyIterable, which takes as an argument a function that lazily
+            // evaluates expressions by index.
+            value indexIdentifier = DartSimpleIdentifier("$i$");
+
+            return withBoxingNonNative {
+                scope;
+                // Lazily using '{Anything*}' as the type, since Dart types are not
+                // generic, and therefore we haven't attempted to calculate a proper
+                // type for this DartInstanceCreationExpression base on the arguments.
+                ceylonTypes.iterableAnythingType;
+                DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        dartTypes.dartTypeNameForDartModel {
+                            scope;
+                            dartTypes.dartLazyIterable;
+                        };
+                    };
+                    DartArgumentList {
+                        [DartIntegerLiteral(arguments.size),
+                        DartFunctionExpression {
+                            DartFormalParameterList {
+                                false; false;
+                                [DartSimpleFormalParameter {
+                                    true;
+                                    false;
+                                    dartTypes.dartInt;
+                                    indexIdentifier;
+                                }];
+                            };
+                            DartBlockFunctionBody {
+                                null; false;
+                                DartBlock {
+                                    [DartSwitchStatement {
+                                        indexIdentifier;
+                                        // Sequences are generic, so elements must
+                                        // not be erased to native.
+
+                                        // Note: lazily using Anything as the LHS type,
+                                        // since we really don't care about the type as
+                                        // long as it's not native. If we had a proper
+                                        // type for the iterable, we could use the type:
+                                        //     ctx.unit.getIteratedType(typeModel);
+                                        withLhsNonNative {
+                                            ceylonTypes.anythingType;
+                                            () => [for (i -> argument
+                                                        in arguments.indexed)
+                                                DartSwitchCase {
+                                                    [];
+                                                    DartIntegerLiteral(i);
+                                                    [DartReturnStatement {
+                                                        argument.transform {
+                                                            expressionTransformer;
+                                                        };
+                                                    }];
+                                                }
+                                            ];
+                                        };
+                                    }];
+                                };
+                            };
+                        },
+                        switch (sequenceArgument)
+                        case (is Comprehension | SpreadArgument)
+                            // Whatever Iterable type we come up with is surely correct.
+                            withLhsDenotable {
+                                ceylonTypes.iterableDeclaration;
+                                () => sequenceArgument.transform {
+                                    expressionTransformer;
+                                };
+                            }
+                        case (is Null)
+                            DartNullLiteral()
+                        ];
+                    };
+                };
+            };
+        }
     }
 
     "Generates a DartExpression that produces a native boolean.
