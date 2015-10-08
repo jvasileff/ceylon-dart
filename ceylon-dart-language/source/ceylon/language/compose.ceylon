@@ -9,7 +9,8 @@
  
  for every possible argument tuple `args` of `f()`."
 see(`function curry`, `function uncurry`)
-native shared X(*Args) compose<X,Y,Args>(X(Y) x, Y(*Args) y) 
+shared X(*Args) compose<X,Y,Args>(X(Y) x, Y(*Args) y) 
         given Args satisfies Anything[]
-               => flatten((Args args) => x(y(*args)));
-               //=> flatten((Args args) => x(unflatten(y)(args)));
+// FIXME Dart workaround - swap the commented/uncommented lines
+               //=> flatten((Args args) => x(y(*args)));
+               => flatten((Args args) => x(unflatten(y)(args)));

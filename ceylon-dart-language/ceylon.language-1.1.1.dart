@@ -500,6 +500,10 @@ abstract class Comparable {
     $dart$core.bool notLargerThan([$dart$core.Object other]);
     static $dart$core.bool $notLargerThan([final Comparable $this, $dart$core.Object other]) => !$dart$core.identical($this.compare(other), $package$larger);
 }
+Callable $package$compose([Callable x, Callable y]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => x.$delegate$($package$unflatten(y).$delegate$(args))));
+
+Callable compose([Callable x, Callable y]) => $package$compose(x, y);
+
 abstract class ConstrainedAnnotation implements Annotation {
 }
 class Correspondence$keys$$anonymous$0_ implements Category {
