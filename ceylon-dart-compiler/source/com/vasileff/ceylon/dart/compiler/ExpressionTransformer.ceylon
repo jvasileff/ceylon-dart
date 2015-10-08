@@ -109,7 +109,8 @@ import ceylon.ast.core {
     IfComprehensionClause,
     ExpressionComprehensionClause,
     TypeNameWithTypeArguments,
-    PositionalArguments
+    PositionalArguments,
+    NamedArguments
 }
 import ceylon.collection {
     LinkedList
@@ -822,7 +823,18 @@ class ExpressionTransformer(CompilationContext ctx)
          relying on [[transformBaseExpression]] and [[transformQualifiedExpression]] to
          generate `Callable`s via `that.invoked.transform(this)` which are then
          immediately invoked."
-        function invocationForCallable() {
+        function indirectInvocationOnCallable() {
+
+            "NamedArguments not supported for indirect invocations."
+            assert (!is NamedArguments arguments = that.arguments);
+
+            value argumentList
+                =   generateArgumentListFromArgumentList {
+                        arguments.argumentList;
+                        invokedInfo.typeModel;
+                        true;
+                    };
+
             // Callables (being generic) always erase to `core.Object`.
             // We don't have a declaration to to use, so explicitly
             // specify erasure:
@@ -841,11 +853,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                         DartSimpleIdentifier("$delegate$");
                     };
-                    generateArgumentListFromArguments {
-                        that.arguments;
-                        invokedInfo.typeModel;
-                        true;
-                    };
+                    argumentList;
                 };
             };
         }
@@ -906,7 +914,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
 
             value [argsSetup, argumentList]
-                =   generateArgumentListFromArguments2 {
+                =   generateArgumentListFromArguments {
                         info;
                         that.arguments;
                         invokedInfo.typeModel;
@@ -980,8 +988,9 @@ class ExpressionTransformer(CompilationContext ctx)
                 if(invokedQEInfo.staticMethodReference) {
                     // Note: Needs optimization! This causes a Callable to be created for
                     // the function ref, which is immediately invoked with the argument,
-                    // returning a Callable that can be used to invoke the now bound method.
-                    return(invocationForCallable());
+                    // returning a Callable that can be used to invoke the now bound
+                    // method.
+                    return(indirectInvocationOnCallable());
                 }
 
                 value receiverInfo = ExpressionInfo(invoked.receiverExpression);
@@ -1003,11 +1012,11 @@ class ExpressionTransformer(CompilationContext ctx)
             else {
                 if (invokedDeclaration.parameter) {
                     // Invoking a Callable parameter
-                    return invocationForCallable();
+                    return indirectInvocationOnCallable();
                 }
                 else {
                     value [argsSetup, argumentList]
-                        =   generateArgumentListFromArguments2 {
+                        =   generateArgumentListFromArguments {
                                 info;
                                 that.arguments;
                                 invokedInfo.typeModel;
@@ -1038,7 +1047,7 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
         case (is ValueModel?) {
-            return invocationForCallable();
+            return indirectInvocationOnCallable();
         }
         case (is ClassModel) {
             "If the declaration is ClassModel, the expression must be a base
@@ -1104,7 +1113,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
 
                 value [argsSetup, argumentList]
-                    =   generateArgumentListFromArguments2 {
+                    =   generateArgumentListFromArguments {
                             info;
                             that.arguments;
                             invokedInfo.typeModel;
@@ -1150,7 +1159,7 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (invoked.receiverExpression is BaseExpression);
 
             value [argsSetup, argumentList]
-                =   generateArgumentListFromArguments2 {
+                =   generateArgumentListFromArguments {
                         info;
                         that.arguments;
                         invokedInfo.typeModel;

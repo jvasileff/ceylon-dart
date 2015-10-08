@@ -392,12 +392,15 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             TypeModel resultType,
             FunctionOrValueModel memberDeclaration,
-            [TypeModel, [Expression*]|Arguments]? callableTypeAndArguments = null) {
+            [TypeModel, [Expression*] | PositionalArguments]?
+                    callableTypeAndArguments = null) {
 
         "Only toplevels are supported; declaration's container must be a package."
         assert (memberDeclaration.container is PackageModel);
 
-        // TODO use this in transformInvocation, transformBaseExpression, etc.
+        // TODO Use this in transformInvocation, transformBaseExpression, etc.
+        //      Which will also require support for NamedArguments
+        //
         // NOTE not yet used for values
 
         value [callableType, a] = callableTypeAndArguments else [null, []];
@@ -409,9 +412,6 @@ class BaseGenerator(CompilationContext ctx)
         }
         case (is PositionalArguments) {
             arguments = a.argumentList.listedArguments;
-        }
-        case (is NamedArguments) {
-            throw CompilerBug(scope, "NamedArguments not supported");
         }
 
         value [functionOrValueIdentifier, isFunction] = dartTypes
@@ -2619,23 +2619,6 @@ class BaseGenerator(CompilationContext ctx)
                 };
 
     shared
-    DartArgumentList generateArgumentListFromArguments(
-            Arguments that,
-            TypeModel callableType,
-            "True if the ArgumentList is for a Callable, even though ParameterModels
-             are available. This is used for invocations on Callable Parameters"
-            Boolean overrideNonCallable = false) {
-        switch (that)
-        case (is PositionalArguments) {
-            return generateArgumentListFromArgumentList(
-                    that.argumentList, callableType, overrideNonCallable);
-        }
-        case (is NamedArguments) {
-            throw CompilerBug(that, "NamedArguments not supported");
-        }
-    }
-
-    shared
     DartArgumentList generateArgumentListFromArgumentList(
             ArgumentList that,
             TypeModel callableType,
@@ -2693,7 +2676,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    [[DartStatement*], DartArgumentList] generateArgumentListFromArguments2(
+    [[DartStatement*], DartArgumentList] generateArgumentListFromArguments(
             DScope scope,
             Arguments arguments,
             TypeModel callableType,
