@@ -1294,6 +1294,10 @@ class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
   }
 }
 
+Callable $package$flatten(Callable tupleFunction) => flatten(tupleFunction);
+
+Callable $package$unflatten(Callable flatFunction) => unflatten(flatFunction);
+
 ///////////////////////////////////////
 //
 // Wrappers
