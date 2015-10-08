@@ -1084,24 +1084,32 @@ class ExpressionTransformer(CompilationContext ctx)
                             invokedDeclaration;
                         };
 
-                return
-                withBoxingNonNative {
-                    info;
-                    info.typeModel;
-                    DartInstanceCreationExpression {
-                        false;
-                        // no need to transform the base expression:
-                        dartTypes.dartConstructorName {
+                value [argsSetup, argumentList]
+                    =   generateArgumentListFromArguments2 {
                             info;
-                            invokedDeclaration;
+                            that.arguments;
+                            invokedInfo.typeModel;
+                            invokedDeclaration.parameterList;
                         };
-                        DartArgumentList {
-                            concatenate {
-                                captureArguments,
-                                generateArgumentListFromArguments {
-                                    that.arguments;
-                                    invokedInfo.typeModel;
-                                }.arguments
+
+                return
+                createExpressionEvaluationWithSetup {
+                    argsSetup;
+                    withBoxingNonNative {
+                        info;
+                        info.typeModel;
+                        DartInstanceCreationExpression {
+                            false;
+                            // no need to transform the base expression:
+                            dartTypes.dartConstructorName {
+                                info;
+                                invokedDeclaration;
+                            };
+                            DartArgumentList {
+                                concatenate {
+                                    captureArguments,
+                                    argumentList.arguments
+                                };
                             };
                         };
                     };
@@ -1122,19 +1130,27 @@ class ExpressionTransformer(CompilationContext ctx)
             "We only handle topelevel classes for now"
             assert (invoked.receiverExpression is BaseExpression);
 
-            return
-            withBoxingNonNative {
-                info;
-                info.typeModel;
-                DartInstanceCreationExpression {
-                    false;
-                    dartTypes.dartConstructorName {
+            value [argsSetup, argumentList]
+                =   generateArgumentListFromArguments2 {
                         info;
-                        invokedDeclaration;
-                    };
-                    generateArgumentListFromArguments {
                         that.arguments;
                         invokedInfo.typeModel;
+                        invokedDeclaration.parameterList;
+                    };
+
+            return
+            createExpressionEvaluationWithSetup {
+                argsSetup;
+                withBoxingNonNative {
+                    info;
+                    info.typeModel;
+                    DartInstanceCreationExpression {
+                        false;
+                        dartTypes.dartConstructorName {
+                            info;
+                            invokedDeclaration;
+                        };
+                        argumentList;
                     };
                 };
             };
