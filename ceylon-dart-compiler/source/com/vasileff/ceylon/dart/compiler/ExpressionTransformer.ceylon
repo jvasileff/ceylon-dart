@@ -715,10 +715,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // Ok, not empty, create a Sequential or a Tuple
         value sequenceArgument = that.argumentList.sequenceArgument;
-        //if (sequenceArgument is Comprehension) {
-        //    throw CompilerBug(that, "Comprehension for Tuple not suported");
-        //}
-        //assert (!is Comprehension sequenceArgument);
 
         if (that.argumentList.listedArguments.empty) {
             "Not Empty and no listed arguments; a sequence argument must exist."
@@ -760,8 +756,8 @@ class ExpressionTransformer(CompilationContext ctx)
                         case (is Comprehension | SpreadArgument)
                             // Whatever Iterable type we come up with is surely correct.
                             withLhsDenotable {
-                                ceylonTypes.iterableDeclaration;
-                                () => sequenceArgument.transform(this);
+                                ceylonTypes.sequentialDeclaration;
+                                () => generateSequentialFromArgument(sequenceArgument);
                             }
                         case (is Null)
                             DartNullLiteral()
