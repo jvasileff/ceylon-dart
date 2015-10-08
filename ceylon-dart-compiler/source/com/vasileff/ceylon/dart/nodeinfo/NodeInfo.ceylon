@@ -302,12 +302,12 @@ class ArgumentListInfo(ArgumentList astNode)
     shared actual default ArgumentList node => astNode;
 
     // This is probably only Tree.SequenceEnumeration for empty iterables {}
-    value tcNode =
-            assertedTcNode<Tree.SequencedArgument | Tree.SequenceEnumeration>(astNode);
-
-    if (is Tree.SequenceEnumeration tcNode) {
-        if (1==1) {throw;}
-    }
+    //
+    // It can be Tree.NamedArgumentList for NamedArguments.iterableArgument when
+    // no iterableArgument exists.
+    value tcNode = assertedTcNode<Tree.SequencedArgument
+                                    | Tree.SequenceEnumeration
+                                    | Tree.NamedArgumentList>(astNode);
 
     "The [[ParameterModel]], if this argument list is used as a parameter (e.g. within
      [[ceylon.ast.core::NamedArguments]])."

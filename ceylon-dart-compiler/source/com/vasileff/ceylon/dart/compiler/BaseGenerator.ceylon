@@ -57,6 +57,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     SetterModel=Setter,
+    ParameterListModel=ParameterList,
     Reference
 }
 import com.vasileff.ceylon.dart.ast {
@@ -497,193 +498,22 @@ class BaseGenerator(CompilationContext ctx)
                     => a.transform(expressionTransformer));
         }
         else { // is NamedArguments
-            // Store it in exactly the necessary type, avoid bad boxing.
-
-            value tmpVariable = dartTypes.createTempNameCustom("arg");
-
             "If we have arguments, we'll have a callableType."
             assert (exists callableType);
 
             "If we have arguments, we'll have a function or class."
             assert (is FunctionModel | ClassModel memberDeclaration);
 
-            value argumentTypes
-                =   CeylonList {
-                        ctx.unit.getCallableArgumentTypes(callableType.fullType);
+            value [x, y]
+                =   generateFromNamedArguments {
+                        scope;
+                        a;
+                        callableType;
+                        memberDeclaration.firstParameterList;
                     };
 
-            value parameters
-                =   CeylonList {
-                        memberDeclaration.firstParameterList.parameters;
-                    };//.collect(ParameterModel.model);
-
-            value parameterMap
-                =   ImmutableMap {
-                        for (i->[p,a] in zipPairs(parameters, argumentTypes).indexed)
-                        p -> [i, a, p.model, DartSimpleIdentifier(tmpVariable + "$" + i.string)]
-                    };
-
-            value named = a.namedArguments.collect((argument) {
-                value argumentInfo = namedArgumentInfo(argument);
-                assert (exists details = parameterMap[argumentInfo.parameter]);
-                value [index, typeModel, parameterModelModel, dartIdentifier] = details;
-
-                DartExpression dartExpression;
-
-                switch (argumentInfo)
-                case (is AnonymousArgumentInfo) {
-                    dartExpression
-                        =   withLhs {
-                                typeModel;
-                                parameterModelModel;
-                                () => argumentInfo.node.expression.transform {
-                                    expressionTransformer;
-                                };
-                            };
-                }
-                case (is SpecifiedArgumentInfo) {
-                    // Treating ValueSpecification and LazySpecification identically.
-                    // A lazy function would just be evaluated right away anyway.
-                    dartExpression
-                        =   withLhs {
-                                typeModel;
-                                parameterModelModel;
-                                () => argumentInfo.node.specification.specifier
-                                        .expression.transform {
-                                    expressionTransformer;
-                                };
-                            };
-                }
-                case (is ValueArgumentInfo) {
-                    dartExpression
-                        =   switch (definition = argumentInfo.node.definition)
-                            case (is AnySpecifier)
-                                // As for SpecifiedArgumentInfo, just evaluate the
-                                // expression.
-                                withLhs {
-                                    typeModel;
-                                    parameterModelModel;
-                                    () => definition.expression.transform {
-                                        expressionTransformer;
-                                    };
-                                }
-                            case (is Block)
-                                // TODO split up generateDefinitionForValueModelGetter?
-                                DartFunctionExpressionInvocation {
-                                    DartFunctionExpression {
-                                        dartFormalParameterListEmpty;
-                                        DartBlockFunctionBody {
-                                            null;
-                                            false;
-                                            withReturn {
-                                                parameterModelModel;
-                                                () => statementTransformer.transformBlock {
-                                                    definition;
-                                                }.first;
-                                            };
-                                        };
-                                    };
-                                    DartArgumentList { []; };
-                                };
-                }
-                case (is FunctionArgumentInfo) {
-                    dartExpression
-                        =   withLhs {
-                                typeModel;
-                                null;
-                                () => generateNewCallable {
-                                    argumentInfo;
-                                    argumentInfo.declarationModel;
-                                    generateFunctionExpression(argumentInfo.node);
-                                    0; false;
-                                };
-                            };
-                }
-                case (is ObjectArgumentInfo) {
-                    argumentInfo.node.transform(topLevelVisitor);
-
-                    dartExpression
-                        =   withLhs {
-                                typeModel;
-                                null;
-                                () => generateObjectInstantiation {
-                                    argumentInfo;
-                                    argumentInfo.anonymousClass;
-                                };
-                            };
-                }
-
-                return DartVariableDeclarationStatement {
-                    DartVariableDeclarationList {
-                        null;
-                        dartTypes.dartTypeNameForDeclaration {
-                            scope;
-                            parameterModelModel;
-                        };
-                        [DartVariableDeclaration {
-                            dartIdentifier;
-                            dartExpression;
-                        }];
-                    };
-                };
-            });
-
-            [DartVariableDeclarationStatement] | [] iterableArgument;
-
-            if (a.iterableArgument.children nonempty) {
-                value iterableInfo = ArgumentListInfo(a.iterableArgument);
-                assert (exists parameterModel = iterableInfo.parameter);
-
-                assert (exists details = parameterMap[parameterModel]);
-                value [index, typeModel, parameterModelModel, dartIdentifier] = details;
-
-                iterableArgument
-                    =   [DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    scope;
-                                    parameterModelModel;
-                                };
-                                [DartVariableDeclaration {
-                                    dartIdentifier;
-                                    expressionTransformer.generateIterable {
-                                        scope;
-                                        a.iterableArgument;
-                                    };
-                                }];
-                            };
-                        }];
-            }
-            else {
-                iterableArgument = [];
-            }
-
-            // add iterable
-            value definedParameters
-                =   a.namedArguments
-                        .map(namedArgumentInfo)
-                        .map(NamedArgumentInfo.parameter);
-
-            argsSetup
-                =   concatenate {
-                        named,
-                        iterableArgument
-                    };
-
-            arguments
-                =   parameterMap.collect((entry)
-                    =>  let (parameter -> [index, type, declaration,
-                                           dartIdentifier] = entry) (
-                        () => withBoxing {
-                            scope;
-                            type;
-                            declaration;
-                            //dartIdentifier;
-                            if (definedParameters.contains(parameter))
-                            then dartIdentifier
-                            else dartTypes.dartDefault(scope);
-                        }));
+            argsSetup = x;
+            arguments = y;
         }
 
         // TODO WIP native optimizations
@@ -2852,6 +2682,224 @@ class BaseGenerator(CompilationContext ctx)
             };
         });
         return DartArgumentList(args);
+    }
+
+    shared
+    [[DartStatement*], [DartExpression()*]] generateFromNamedArguments(
+            DScope scope,
+            NamedArguments namedArguments,
+            TypeModel callableType,
+            ParameterListModel parameterList) {
+
+        value tmpVariable
+            =   dartTypes.createTempNameCustom("arg");
+
+        value argumentTypes
+            =   CeylonList {
+                    ctx.unit.getCallableArgumentTypes(callableType.fullType);
+                };
+
+        value parameters
+            =   CeylonList {
+                    parameterList.parameters;
+                };
+
+        value parameterDetails
+            =   ImmutableMap {
+                    for (i->[p,a] in zipPairs(parameters, argumentTypes).indexed)
+                    p -> [i, a, p.model,
+                          DartSimpleIdentifier(tmpVariable + "$" + i.string)]
+                };
+
+        value named
+            =   namedArguments.namedArguments.collect((argument) {
+                    value argumentInfo
+                        =   namedArgumentInfo(argument);
+
+                    assert (exists details
+                        =   parameterDetails[argumentInfo.parameter]);
+
+                    value [index, typeModel, parameterModelModel, dartIdentifier]
+                        =   details;
+
+                    DartExpression dartExpression;
+
+                    switch (argumentInfo)
+                    case (is AnonymousArgumentInfo) {
+                        dartExpression
+                            =   withLhs {
+                                    typeModel;
+                                    parameterModelModel;
+                                    () => argumentInfo.node.expression.transform {
+                                        expressionTransformer;
+                                    };
+                                };
+                    }
+                    case (is SpecifiedArgumentInfo) {
+                        // Treating ValueSpecification and LazySpecification identically.
+                        // A lazy function would just be evaluated right away anyway.
+                        dartExpression
+                            =   withLhs {
+                                    typeModel;
+                                    parameterModelModel;
+                                    () => argumentInfo.node.specification.specifier
+                                            .expression.transform {
+                                        expressionTransformer;
+                                    };
+                                };
+                    }
+                    case (is ValueArgumentInfo) {
+                        dartExpression
+                            =   switch (definition = argumentInfo.node.definition)
+                                case (is AnySpecifier)
+                                    // As for SpecifiedArgumentInfo, just evaluate the
+                                    // expression.
+                                    withLhs {
+                                        typeModel;
+                                        parameterModelModel;
+                                        () => definition.expression.transform {
+                                            expressionTransformer;
+                                        };
+                                    }
+                                case (is Block)
+                                    // TODO split generateDefinitionForValueModelGetter?
+                                    DartFunctionExpressionInvocation {
+                                        DartFunctionExpression {
+                                            dartFormalParameterListEmpty;
+                                            DartBlockFunctionBody {
+                                                null;
+                                                false;
+                                                withReturn {
+                                                    parameterModelModel;
+                                                    () => statementTransformer
+                                                                .transformBlock {
+                                                        definition;
+                                                    }.first;
+                                                };
+                                            };
+                                        };
+                                        DartArgumentList();
+                                    };
+                    }
+                    case (is FunctionArgumentInfo) {
+                        dartExpression
+                            =   withLhs {
+                                    typeModel;
+                                    null;
+                                    () => generateNewCallable {
+                                        argumentInfo;
+                                        argumentInfo.declarationModel;
+                                        generateFunctionExpression(argumentInfo.node);
+                                        0; false;
+                                    };
+                                };
+                    }
+                    case (is ObjectArgumentInfo) {
+                        argumentInfo.node.transform(topLevelVisitor);
+
+                        dartExpression
+                            =   withLhs {
+                                    typeModel;
+                                    null;
+                                    () => generateObjectInstantiation {
+                                        argumentInfo;
+                                        argumentInfo.anonymousClass;
+                                    };
+                                };
+                    }
+
+                    return DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                scope;
+                                parameterModelModel;
+                            };
+                            [DartVariableDeclaration {
+                                dartIdentifier;
+                                dartExpression;
+                            }];
+                        };
+                    };
+                });
+
+        value iterableInfo
+            =   ArgumentListInfo(namedArguments.iterableArgument);
+
+        print(iterableInfo.parameter);
+
+        [DartVariableDeclarationStatement] | [] iterableArgument;
+
+        // FIXME not quite right... if iterableArgument is empty, there still may not be
+        //       a default value, in which case we need to pass `empty` rather than
+        //       $ceylon$language.dart$default.
+        //
+        //       But there really is no `iterableInfo.parameter` sometimes, even for
+        //       non-defaulted iterables. So do we check to see if the parameter is
+        //       defaulted? But which parameter do we even check???
+        //
+        //       Perhaps the first unassigned and non-defaulted Iterable<> parameter?
+
+        if (namedArguments.iterableArgument.children nonempty) {
+            assert (exists parameterModel = iterableInfo.parameter);
+            assert (exists details = parameterDetails[parameterModel]);
+            value [index, typeModel, parameterModelModel, dartIdentifier] = details;
+
+            iterableArgument
+                =   [DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                scope;
+                                parameterModelModel;
+                            };
+                            [DartVariableDeclaration {
+                                dartIdentifier;
+                                expressionTransformer.generateIterable {
+                                    scope;
+                                    namedArguments.iterableArgument;
+                                };
+                            }];
+                        };
+                    }];
+        }
+        else {
+            iterableArgument = [];
+        }
+
+        value definedParameters
+            =   set {
+                    concatenate {
+                        if (nonempty iterableArgument)
+                        then [assertExists(iterableInfo.parameter)]
+                        else [],
+                        namedArguments.namedArguments
+                            .map(namedArgumentInfo)
+                            .map(NamedArgumentInfo.parameter)
+                    };
+                };
+
+        value argsSetup
+            =   concatenate {
+                    named,
+                    iterableArgument
+                };
+
+        value arguments
+            =   parameterDetails.collect((entry)
+                =>  let (parameter -> [index, type, declaration,
+                                       dartIdentifier] = entry) (
+                    () => withBoxing {
+                        scope;
+                        type;
+                        declaration;
+                        //dartIdentifier;
+                        if (definedParameters.contains(parameter))
+                        then dartIdentifier
+                        else dartTypes.dartDefault(scope);
+                    }));
+
+        return [argsSetup, arguments];
     }
 
     shared
