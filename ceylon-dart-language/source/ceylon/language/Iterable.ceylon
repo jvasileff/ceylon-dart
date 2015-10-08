@@ -1458,16 +1458,11 @@ shared interface Iterable<out Element=Anything,
             value it = elements.iterator();
             variable value count = 0;
             
-// FIXME Dart workaround
-//            variable value store 
-//                    = Array.ofSize {
-//                size = 16;
-//                element = null of ElementEntry<Element>?;
-//            };
             variable value store 
-                    = Array.ofSize (
-                16,
-                null of ElementEntry<Element>?);
+                    = Array.ofSize {
+                size = 16;
+                element = null of ElementEntry<Element>?;
+            };
             
             function hash(Element element, Integer size) 
                     => if (exists element) 
@@ -1476,14 +1471,10 @@ shared interface Iterable<out Element=Anything,
             
             function rebuild(Array<ElementEntry<Element>?> store) {
                 value newStore 
-// FIXME Dart workaround
-//                        = Array.ofSize {
-//                    size = store.size*2;
-//                    element = null of ElementEntry<Element>?;
-//                };
-                        = Array.ofSize (
-                    store.size*2,
-                    null of ElementEntry<Element>?);
+                        = Array.ofSize {
+                    size = store.size*2;
+                    element = null of ElementEntry<Element>?;
+                };
                 for (entries in store) {
                     variable value entry = entries;
                     while (exists e = entry) {
@@ -1546,28 +1537,20 @@ shared interface Iterable<out Element=Anything,
                       satisfies Map<Group,[Element+]> {
         
         variable value store 
-// FIXME Dart workaround
-//                = Array.ofSize {
-//            size = 16;
-//            element = null of GroupEntry<Group,Element>?;
-//        };
-                = Array.ofSize (
-            16,
-            null of GroupEntry<Group,Element>?);
+                = Array.ofSize {
+            size = 16;
+            element = null of GroupEntry<Group,Element>?;
+        };
         
         function hash(Object group, Integer size) 
                 => group.hash.magnitude % size;
         
         function rebuild(Array<GroupEntry<Group,Element>?> store) {
             value newStore 
-// FIXME Dart workaround
-//                    = Array.ofSize {
-//                size = store.size*2;
-//                element = null of GroupEntry<Group,Element>?;
-//            };
-                    = Array.ofSize (
-                store.size*2,
-                null of GroupEntry<Group,Element>?);
+                    = Array.ofSize {
+                size = store.size*2;
+                element = null of GroupEntry<Group,Element>?;
+            };
             for (groups in store) {
                 variable value group = groups;
                 while (exists g = group) {
@@ -1678,9 +1661,7 @@ shared interface Iterable<out Element=Anything,
 }
 
 String commaList({Anything*} elements)
-// FIXME Dart workaround
-        => ", ".join({ for (e in elements) stringify(e) });
-//        => ", ".join { for (e in elements) stringify(e) };
+        => ", ".join { for (e in elements) stringify(e) };
 
 class ElementEntry<Element>
 // FIXME Dart workaround

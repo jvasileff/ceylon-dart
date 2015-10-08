@@ -423,8 +423,10 @@ abstract class Category {
                     return false;
                 }
             }
+            {
+                return true;
+            }
         }
-        return true;
     }
     $dart$core.bool containsAny([Iterable elements]);
     static $dart$core.bool $containsAny([final Category $this, Iterable elements]) {{
@@ -436,8 +438,10 @@ abstract class Category {
                     return true;
                 }
             }
+            {
+                return false;
+            }
         }
-        return false;
     }
 }
 class ChainedIterator implements Iterator {
@@ -3497,37 +3501,45 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
     Iterable$distinct$$anonymous$30_$$anonymous$31_([Iterable$distinct$$anonymous$30_ this.$outer$ceylon$language$Iterable$distinct$$anonymous$30_, Iterable this.$capture$$elements]) {
         it = $capture$$elements.iterator();
         count = 0;
-        store = new Array.ofSize(16, null);
+        store = (() {
+            $dart$core.int arg$117$0 = 16;
+            $dart$core.Object arg$117$1 = null;
+            return new Array.ofSize(arg$117$0, arg$117$1);
+        })();
     }
     Iterator it;
     $dart$core.int count;
     Array store;
     $dart$core.int hash([$dart$core.Object element, $dart$core.int size]) => (() {
-        $dart$core.bool doElse$117 = true;
+        $dart$core.bool doElse$118 = true;
         if (!(element == null)) {
-            doElse$117 = false;
+            doElse$118 = false;
             return Integer.nativeValue(Integer.instance(element.hashCode).magnitude.remainder(Integer.instance(size)));
         }
-        if (doElse$117) {
+        if (doElse$118) {
             return 0;
         }
     })();
     Array rebuild([Array store]) {
-        Array newStore = new Array.ofSize(store.size * 2, null);
+        Array newStore = (() {
+            $dart$core.int arg$119$0 = store.size * 2;
+            $dart$core.Object arg$119$1 = null;
+            return new Array.ofSize(arg$119$0, arg$119$1);
+        })();
         {
-            $dart$core.Object element$119;
-            Iterator iterator$118 = store.iterator();
-            while ((element$119 = iterator$118.next()) is !Finished) {
-                ElementEntry entries = element$119 as ElementEntry;
+            $dart$core.Object element$121;
+            Iterator iterator$120 = store.iterator();
+            while ((element$121 = iterator$120.next()) is !Finished) {
+                ElementEntry entries = element$121 as ElementEntry;
                 ElementEntry entry = entries;
                 while (true) {
                     ElementEntry e;
                     {
-                        ElementEntry tmp$120 = entry;
-                        if (tmp$120 == null) {
+                        ElementEntry tmp$122 = entry;
+                        if (tmp$122 == null) {
                             break;
                         }
-                        e = tmp$120;
+                        e = tmp$122;
                     }
                     $dart$core.int index = hash(e.element, newStore.size);
                     newStore.set(index, new ElementEntry(e.element, newStore.get(Integer.instance(index)) as ElementEntry));
@@ -3541,20 +3553,20 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
         while (true) {{
                 $dart$core.Object element = it.next();
                 if (element is Finished) {
-                    Finished element$121;
-                    element$121 = element as Finished;
-                    return element$121;
+                    Finished element$123;
+                    element$123 = element as Finished;
+                    return element$123;
                 } else {
                     $dart$core.int index = hash(element, store.size);
                     ElementEntry entry = store.get(Integer.instance(index)) as ElementEntry;
                     {
-                        $dart$core.bool doElse$122 = true;
+                        $dart$core.bool doElse$124 = true;
                         if (!(entry == null)) {
                             if (entry.has(element)) {
-                                doElse$122 = false;
+                                doElse$124 = false;
                             }
                         }
-                        if (doElse$122) {
+                        if (doElse$124) {
                             store.set(index, new ElementEntry(element, entry));
                             count = Integer.nativeValue(Integer.instance(count).successor);
                             if (count > (store.size * 2)) {
@@ -3639,32 +3651,32 @@ class Iterable$group$$anonymous$32_$$anonymous$33_ implements Iterator {
     $dart$core.int index;
     GroupEntry entry;
     $dart$core.Object next() {{
-            $dart$core.bool doElse$132 = true;
+            $dart$core.bool doElse$136 = true;
             {
-                GroupEntry tmp$133 = entry;
-                if (!(tmp$133 == null)) {
+                GroupEntry tmp$137 = entry;
+                if (!(tmp$137 == null)) {
                     GroupEntry e;
-                    e = tmp$133;
-                    doElse$132 = false;
+                    e = tmp$137;
+                    doElse$136 = false;
                     entry = e.next;
                     return new Entry(e.group, e.elements);
                 }
             }
-            if (doElse$132) {
+            if (doElse$136) {
                 while (true) {
                     if (index >= $outer$ceylon$language$Iterable$group$$anonymous$32_.store.size) {
                         return $package$finished;
                     } else {
                         entry = $outer$ceylon$language$Iterable$group$$anonymous$32_.store.get((() {
-                            Integer tmp$134 = Integer.instance(index);
+                            Integer tmp$138 = Integer.instance(index);
                             Integer.instance(index = Integer.nativeValue(Integer.instance(index).successor));
-                            return tmp$134;
+                            return tmp$138;
                         })()) as GroupEntry;
                         {
-                            GroupEntry tmp$135 = entry;
-                            if (!(tmp$135 == null)) {
+                            GroupEntry tmp$139 = entry;
+                            if (!(tmp$139 == null)) {
                                 GroupEntry e;
-                                e = tmp$135;
+                                e = tmp$139;
                                 entry = e.next;
                                 return new Entry(e.group, e.elements);
                             }
@@ -3679,43 +3691,47 @@ class Iterable$group$$anonymous$32_ implements Map {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$group$grouping;
     Iterable$group$$anonymous$32_([Iterable this.$outer$ceylon$language$Iterable, Callable this.$capture$Iterable$group$grouping]) {
-        store = new Array.ofSize(16, null);
+        store = (() {
+            $dart$core.int arg$125$0 = 16;
+            $dart$core.Object arg$125$1 = null;
+            return new Array.ofSize(arg$125$0, arg$125$1);
+        })();
         _count = 0;
         {
-            $dart$core.Object element$124;
-            Iterator iterator$123 = $outer$ceylon$language$Iterable.iterator();
-            while ((element$124 = iterator$123.next()) is !Finished) {
-                $dart$core.Object element = element$124;
+            $dart$core.Object element$127;
+            Iterator iterator$126 = $outer$ceylon$language$Iterable.iterator();
+            while ((element$127 = iterator$126.next()) is !Finished) {
+                $dart$core.Object element = element$127;
                 $dart$core.Object group = $capture$Iterable$group$grouping.$delegate$(element);
                 $dart$core.int index = hash(group, store.size);
                 GroupEntry newEntry;
                 {
-                    $dart$core.bool doElse$125 = true;
+                    $dart$core.bool doElse$128 = true;
                     {
-                        GroupEntry tmp$126 = store.get(Integer.instance(index)) as GroupEntry;
-                        if (!(tmp$126 == null)) {
+                        GroupEntry tmp$129 = store.get(Integer.instance(index)) as GroupEntry;
+                        if (!(tmp$129 == null)) {
                             GroupEntry entries;
-                            entries = tmp$126;
-                            doElse$125 = false;
+                            entries = tmp$129;
+                            doElse$128 = false;
                             {
-                                $dart$core.bool doElse$127 = true;
+                                $dart$core.bool doElse$130 = true;
                                 {
-                                    GroupEntry tmp$128 = entries.get(group);
-                                    if (!(tmp$128 == null)) {
+                                    GroupEntry tmp$131 = entries.get(group);
+                                    if (!(tmp$131 == null)) {
                                         GroupEntry entry;
-                                        entry = tmp$128;
-                                        doElse$127 = false;
+                                        entry = tmp$131;
+                                        doElse$130 = false;
                                         entry.elements = new ElementEntry(element, entry.elements);
                                         continue;
                                     }
                                 }
-                                if (doElse$127) {
+                                if (doElse$130) {
                                     newEntry = new GroupEntry(group, new ElementEntry(element, null), entries);
                                 }
                             }
                         }
                     }
-                    if (doElse$125) {
+                    if (doElse$128) {
                         newEntry = new GroupEntry(group, new ElementEntry(element, null), null);
                     }
                 }
@@ -3730,21 +3746,25 @@ class Iterable$group$$anonymous$32_ implements Map {
     Array store;
     $dart$core.int hash([$dart$core.Object group, $dart$core.int size]) => Integer.nativeValue(Integer.instance(group.hashCode).magnitude.remainder(Integer.instance(size)));
     Array rebuild([Array store]) {
-        Array newStore = new Array.ofSize(store.size * 2, null);
+        Array newStore = (() {
+            $dart$core.int arg$132$0 = store.size * 2;
+            $dart$core.Object arg$132$1 = null;
+            return new Array.ofSize(arg$132$0, arg$132$1);
+        })();
         {
-            $dart$core.Object element$130;
-            Iterator iterator$129 = store.iterator();
-            while ((element$130 = iterator$129.next()) is !Finished) {
-                GroupEntry groups = element$130 as GroupEntry;
+            $dart$core.Object element$134;
+            Iterator iterator$133 = store.iterator();
+            while ((element$134 = iterator$133.next()) is !Finished) {
+                GroupEntry groups = element$134 as GroupEntry;
                 GroupEntry group = groups;
                 while (true) {
                     GroupEntry g;
                     {
-                        GroupEntry tmp$131 = group;
-                        if (tmp$131 == null) {
+                        GroupEntry tmp$135 = group;
+                        if (tmp$135 == null) {
                             break;
                         }
-                        g = tmp$131;
+                        g = tmp$135;
                     }
                     $dart$core.int index = hash(g.group, newStore.size);
                     newStore.set(index, new GroupEntry(g.group, g.elements, newStore.get(Integer.instance(index)) as GroupEntry));
@@ -4600,51 +4620,54 @@ abstract class Iterable implements Category {
         })();
     })();
 }
-$dart$core.String $package$commaList([Iterable elements]) => String.instance(", ").join(functionIterable(new dart$Callable(() {
-    $dart$core.bool step$0$expired$136 = false;
-    $dart$core.bool step$0$137() {
-        if (step$0$expired$136) {
-            return false;
-        }
-        step$0$expired$136 = true;
-        return true;
-    }
-
-    Iterator iterator_1$138;
-    $dart$core.bool step$1$Init$141() {
-        if (iterator_1$138 != null) {
+$dart$core.String $package$commaList([Iterable elements]) => (() {
+    Iterable arg$140$0 = String.nativeValue(functionIterable(new dart$Callable(() {
+        $dart$core.bool step$0$expired$141 = false;
+        $dart$core.bool step$0$142() {
+            if (step$0$expired$141) {
+                return false;
+            }
+            step$0$expired$141 = true;
             return true;
         }
-        if (!step$0$137()) {
-            return false;
-        }
-        iterator_1$138 = elements.iterator();
-        return true;
-    }
 
-    $dart$core.Object e$139;
-    $dart$core.bool step$1$142() {
-        while (step$1$Init$141()) {
-            $dart$core.Object next$140;
-            if ((next$140 = iterator_1$138.next()) is !Finished) {
-                e$139 = next$140;
+        Iterator iterator_1$143;
+        $dart$core.bool step$1$Init$146() {
+            if (iterator_1$143 != null) {
                 return true;
             }
-            iterator_1$138 = null;
+            if (!step$0$142()) {
+                return false;
+            }
+            iterator_1$143 = elements.iterator();
+            return true;
         }
-        return false;
-    }
 
-    $dart$core.Object step$2$143() {
-        if (!step$1$142()) {
-            return $package$finished;
+        $dart$core.Object e$144;
+        $dart$core.bool step$1$147() {
+            while (step$1$Init$146()) {
+                $dart$core.Object next$145;
+                if ((next$145 = iterator_1$143.next()) is !Finished) {
+                    e$144 = next$145;
+                    return true;
+                }
+                iterator_1$143 = null;
+            }
+            return false;
         }
-        $dart$core.Object e = e$139;
-        return String.instance($package$stringify(e));
-    }
 
-    return new dart$Callable(step$2$143);
-})));
+        $dart$core.Object step$2$148() {
+            if (!step$1$147()) {
+                return $package$finished;
+            }
+            $dart$core.Object e = e$144;
+            return String.instance($package$stringify(e));
+        }
+
+        return new dart$Callable(step$2$148);
+    })));
+    return String.instance(", ").join(arg$140$0);
+})();
 
 $dart$core.String commaList([Iterable elements]) => $package$commaList(elements);
 
@@ -4655,18 +4678,18 @@ class ElementEntry$$anonymous$34_ implements Iterator {
     }
     ElementEntry entry;
     $dart$core.Object next() {{
-            $dart$core.bool doElse$153 = true;
+            $dart$core.bool doElse$158 = true;
             {
-                ElementEntry tmp$154 = entry;
-                if (!(tmp$154 == null)) {
+                ElementEntry tmp$159 = entry;
+                if (!(tmp$159 == null)) {
                     ElementEntry e;
-                    e = tmp$154;
-                    doElse$153 = false;
+                    e = tmp$159;
+                    doElse$158 = false;
                     entry = e.next;
                     return e.element;
                 }
             }
-            if (doElse$153) {
+            if (doElse$158) {
                 return $package$finished;
             }
         }
@@ -4682,28 +4705,28 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry e;
             {
-                ElementEntry tmp$146 = entry;
-                if (tmp$146 == null) {
+                ElementEntry tmp$151 = entry;
+                if (tmp$151 == null) {
                     break;
                 }
-                e = tmp$146;
+                e = tmp$151;
             }
             {
-                $dart$core.bool doElse$144 = true;
+                $dart$core.bool doElse$149 = true;
                 if (!(element == null)) {
-                    doElse$144 = false;
+                    doElse$149 = false;
                     {
-                        $dart$core.Object tmp$145 = e.element;
-                        if (!(tmp$145 == null)) {
+                        $dart$core.Object tmp$150 = e.element;
+                        if (!(tmp$150 == null)) {
                             $dart$core.Object ee;
-                            ee = tmp$145;
+                            ee = tmp$150;
                             if (element.equals(ee)) {
                                 return true;
                             }
                         }
                     }
                 }
-                if (doElse$144) {
+                if (doElse$149) {
                     if (!(!(e.element == null))) {
                         return true;
                     }
@@ -4719,22 +4742,22 @@ class ElementEntry implements Sequence {
         } else {
             ElementEntry entry = this;
             {
-                $dart$core.Object element$148;
-                Iterator iterator$147 = ($package$measure(Integer.instance(0), index) as List).iterator();
-                while ((element$148 = iterator$147.next()) is !Finished) {
-                    Integer i = element$148 as Integer;
+                $dart$core.Object element$153;
+                Iterator iterator$152 = ($package$measure(Integer.instance(0), index) as List).iterator();
+                while ((element$153 = iterator$152.next()) is !Finished) {
+                    Integer i = element$153 as Integer;
                     {
-                        $dart$core.bool doElse$149 = true;
+                        $dart$core.bool doElse$154 = true;
                         {
-                            ElementEntry tmp$150 = entry.next;
-                            if (!(tmp$150 == null)) {
+                            ElementEntry tmp$155 = entry.next;
+                            if (!(tmp$155 == null)) {
                                 ElementEntry next;
-                                next = tmp$150;
-                                doElse$149 = false;
+                                next = tmp$155;
+                                doElse$154 = false;
                                 entry = next;
                             }
                         }
-                        if (doElse$149) {
+                        if (doElse$154) {
                             return null;
                         }
                     }
@@ -4749,11 +4772,11 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry next;
             {
-                ElementEntry tmp$151 = entry.next;
-                if (tmp$151 == null) {
+                ElementEntry tmp$156 = entry.next;
+                if (tmp$156 == null) {
                     break;
                 }
-                next = tmp$151;
+                next = tmp$156;
             }
             entry = next;
         }
@@ -4765,11 +4788,11 @@ class ElementEntry implements Sequence {
         while (true) {
             ElementEntry next;
             {
-                ElementEntry tmp$152 = entry.next;
-                if (tmp$152 == null) {
+                ElementEntry tmp$157 = entry.next;
+                if (tmp$157 == null) {
                     break;
                 }
-                next = tmp$152;
+                next = tmp$157;
             }
             entry = next;
             count = Integer.nativeValue(Integer.instance(count).successor);
@@ -4883,11 +4906,11 @@ class GroupEntry {
         while (true) {
             GroupEntry e;
             {
-                GroupEntry tmp$155 = entry;
-                if (tmp$155 == null) {
+                GroupEntry tmp$160 = entry;
+                if (tmp$160 == null) {
                     break;
                 }
-                e = tmp$155;
+                e = tmp$160;
             }
             if (group.equals(e.group)) {
                 return e;

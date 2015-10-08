@@ -2877,8 +2877,6 @@ class BaseGenerator(CompilationContext ctx)
         value iterableInfo
             =   ArgumentListInfo(namedArguments.iterableArgument);
 
-        print(iterableInfo.parameter);
-
         [DartVariableDeclarationStatement] | [] iterableArgument;
 
         // FIXME not quite right... if iterableArgument is empty, there still may not be
