@@ -905,7 +905,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     else false;
 
 
-            value [argsSetup, args]
+            value [argsSetup, argumentList]
                 =   generateArgumentListFromArguments2 {
                         info;
                         that.arguments;
@@ -937,7 +937,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         DartArgumentList {
                             concatenate {
                                 [thisExpression],
-                                args.arguments
+                                argumentList.arguments
                             };
                         };
                     };
@@ -1006,22 +1006,31 @@ class ExpressionTransformer(CompilationContext ctx)
                     return invocationForCallable();
                 }
                 else {
-                    return withBoxing {
-                        info;
-                        info.typeModel;
-                        // If there are multiple parameter lists, the function returns a
-                        // Callable, not the ultimate return type as advertised by the
-                        // declaration.
-                        invokedDeclaration.parameterLists.size() == 1
-                            then invokedDeclaration;
-                        DartFunctionExpressionInvocation {
-                            dartTypes.expressionForBaseExpression {
+                    value [argsSetup, argumentList]
+                        =   generateArgumentListFromArguments2 {
                                 info;
-                                invokedDeclaration;
-                            }[0]; // never a value, as far as we know!
-                            generateArgumentListFromArguments {
                                 that.arguments;
                                 invokedInfo.typeModel;
+                                invokedDeclaration;
+                            };
+
+                    return
+                    createExpressionEvaluationWithSetup {
+                        argsSetup;
+                        withBoxing {
+                            info;
+                            info.typeModel;
+                            // If there are multiple parameter lists, the function returns a
+                            // Callable, not the ultimate return type as advertised by the
+                            // declaration.
+                            invokedDeclaration.parameterLists.size() == 1
+                                then invokedDeclaration;
+                            DartFunctionExpressionInvocation {
+                                dartTypes.expressionForBaseExpression {
+                                    info;
+                                    invokedDeclaration;
+                                }[0]; // never a value, as far as we know!
+                                argumentList;
                             };
                         };
                     };

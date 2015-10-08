@@ -2756,8 +2756,12 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel callableType,
             ParameterListModel parameterList) {
 
+        variable String? tmpVariableMemo = null;
+
+        // Lazily create the tmpVariable to avoid wasting ids!
         value tmpVariable
-            =   dartTypes.createTempNameCustom("arg");
+            =>  tmpVariableMemo else
+                (tmpVariableMemo = dartTypes.createTempNameCustom("arg"));
 
         value argumentTypes
             =   CeylonList {
