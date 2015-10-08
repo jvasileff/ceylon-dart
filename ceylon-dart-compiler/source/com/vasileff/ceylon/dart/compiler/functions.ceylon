@@ -24,6 +24,7 @@ import com.redhat.ceylon.compiler.typechecker.tree {
 }
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
+    NamedArgumentListModel=NamedArgumentList,
     ConditionScopeModel=ConditionScope,
     UnitModel=Unit,
     PackageModel=Package,
@@ -224,8 +225,21 @@ Boolean isToplevel(DeclarationModel scope)
 Boolean isAnonymousFunctionOrParamOf(FunctionOrValueModel declaration)
     =>  if (is FunctionModel declaration, declaration.anonymous) then
             true
-        else if (declaration.parameter, is FunctionModel f = declaration.container) then
-            f.anonymous
+        else if (declaration.parameter,
+                 is FunctionModel f = declaration.container,
+                 f.anonymous) then
+            true
+        else
+            false;
+
+Boolean isFunctionArgumentOrParamOf(FunctionOrValueModel declaration)
+    =>  if (declaration is FunctionModel
+                && declaration.container is NamedArgumentListModel) then
+            true
+        else if (declaration.parameter,
+                 is FunctionModel f = declaration.container,
+                 f.container is NamedArgumentListModel) then
+            true
         else
             false;
 

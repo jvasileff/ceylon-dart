@@ -56,7 +56,14 @@ import ceylon.ast.core {
     IsCase,
     SpecifiedVariable,
     Comprehension,
-    SpreadArgument
+    SpreadArgument,
+    NamedArgument,
+    AnonymousArgument,
+    SpecifiedArgument,
+    ValueArgument,
+    FunctionArgument,
+    ObjectArgument,
+    InlineDefinitionArgument
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -293,18 +300,134 @@ class ArgumentListInfo(ArgumentList astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ArgumentList node => astNode;
-    value tcNode = assertedTcNode<Tree.SequencedArgument>(astNode);
 
-    // what's this for?
-    shared ParameterModel? parameter => tcNode.parameter;
+    // This is probably only Tree.SequenceEnumeration for empty iterables {}
+    value tcNode =
+            assertedTcNode<Tree.SequencedArgument | Tree.SequenceEnumeration>(astNode);
 
-    // FIXME last argument may be JSpreadArgument or JComprehension
-    // see ceylon.ast.redhat::argumentListToCeylon code
+    if (is Tree.SequenceEnumeration tcNode) {
+        if (1==1) {throw;}
+    }
+
+    "The [[ParameterModel]], if this argument list is used as a parameter (e.g. within
+     [[ceylon.ast.core::NamedArguments]])."
+    shared ParameterModel? parameter
+            =>  if (is Tree.SequencedArgument tcNode)
+                then tcNode.parameter
+                else null;
+
     "A stream of pairs containing each argument's type and corresponding parameter.
      The parameter will be null for invocations on values."
     shared {[TypeModel, ParameterModel?]*} listedArgumentModels
-        =>  CeylonIterable(tcNode.positionalArguments).map((arg)
-                =>  [arg.typeModel, arg.parameter else null]);
+        =>  if (is Tree.SequencedArgument tcNode)
+            then CeylonIterable(tcNode.positionalArguments).map((arg)
+                    // Don't include parameter models for Tree.SpreadArgument and
+                    // Tree.Comprehension which are not included in ceylon.ast's
+                    // ArgumentList.listedArguments.
+                    =>  (arg is Tree.ListedArgument)
+                        then [arg.typeModel, arg.parameter else null]).coalesced
+            else [];
+}
+
+shared
+NamedArgumentInfo namedArgumentInfo(NamedArgument astNode)
+    =>  switch (astNode)
+        case (is AnonymousArgument)
+            AnonymousArgumentInfo(astNode)
+        case (is SpecifiedArgument)
+            SpecifiedArgumentInfo(astNode)
+        case (is ValueArgument)
+            ValueArgumentInfo(astNode)
+        case (is FunctionArgument)
+            FunctionArgumentInfo(astNode)
+        case (is ObjectArgument)
+            ObjectArgumentInfo(astNode);
+
+shared abstract
+class NamedArgumentInfo(NamedArgument astNode)
+        of AnonymousArgumentInfo
+            | SpecifiedArgumentInfo
+            | InlineDefinitionArgumentInfo
+        extends NodeInfo(astNode) {
+
+    shared actual default NamedArgument node
+        =>  astNode;
+
+    shared formal Tree.NamedArgument tcNode;
+        //=>  assertedTcNode<Tree.NamedArgument>(astNode);
+
+    shared ParameterModel parameter => tcNode.parameter;
+}
+
+shared
+class AnonymousArgumentInfo(AnonymousArgument astNode)
+        extends NamedArgumentInfo(astNode) {
+
+    shared actual default AnonymousArgument node
+        =>  astNode;
+
+    shared actual Tree.SpecifiedArgument tcNode
+        =>  assertedTcNode<Tree.SpecifiedArgument>(astNode);
+}
+
+shared
+class SpecifiedArgumentInfo(SpecifiedArgument astNode)
+        extends NamedArgumentInfo(astNode) {
+
+    shared actual default SpecifiedArgument node
+        =>  astNode;
+
+    shared actual Tree.SpecifiedArgument | Tree.AttributeArgument tcNode
+        =>  assertedTcNode<Tree.SpecifiedArgument | Tree.AttributeArgument>(astNode);
+}
+
+shared abstract
+class InlineDefinitionArgumentInfo(InlineDefinitionArgument astNode)
+        of ValueArgumentInfo
+            | FunctionArgumentInfo
+            | ObjectArgumentInfo
+        extends NamedArgumentInfo(astNode) {
+
+    shared actual default InlineDefinitionArgument node
+        =>  astNode;
+}
+
+shared
+class ValueArgumentInfo(ValueArgument astNode)
+        extends InlineDefinitionArgumentInfo(astNode) {
+
+    shared actual default ValueArgument node
+        =>  astNode;
+
+    shared actual Tree.AttributeArgument tcNode
+        =>  assertedTcNode<Tree.AttributeArgument>(astNode);
+}
+
+shared
+class FunctionArgumentInfo(FunctionArgument astNode)
+        extends InlineDefinitionArgumentInfo(astNode) {
+
+    shared actual default FunctionArgument node
+        =>  astNode;
+
+    shared actual Tree.MethodArgument tcNode
+        =>  assertedTcNode<Tree.MethodArgument>(astNode);
+
+    shared FunctionModel declarationModel
+        =>  tcNode.declarationModel;
+}
+
+shared
+class ObjectArgumentInfo(ObjectArgument astNode)
+        extends InlineDefinitionArgumentInfo(astNode) {
+
+    shared actual default ObjectArgument node
+        =>  astNode;
+
+    shared actual Tree.ObjectArgument tcNode
+        =>  assertedTcNode<Tree.ObjectArgument>(astNode);
+
+    shared ClassModel anonymousClass => tcNode.anonymousClass;
 }
 
 shared

@@ -109,7 +109,8 @@ import ceylon.ast.core {
     IfComprehensionClause,
     ExpressionComprehensionClause,
     TypeNameWithTypeArguments,
-    PositionalArguments
+    PositionalArguments,
+    ArgumentList
 }
 import ceylon.collection {
     LinkedList
@@ -769,18 +770,24 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformIterable(Iterable that) {
-        value info = ExpressionInfo(that);
-        value arguments = that.argumentList.listedArguments;
-        value sequenceArgument = that.argumentList.sequenceArgument;
+    DartExpression transformIterable(Iterable that)
+        =>  generateIterable {
+                ExpressionInfo(that);
+                that.argumentList;
+            };
+
+    shared
+    DartExpression generateIterable(DScope scope, ArgumentList argumentList) {
+        value arguments = argumentList.listedArguments;
+        value sequenceArgument = argumentList.sequenceArgument;
 
         if (arguments.empty && !sequenceArgument exists) {
             // Easy; there are no elements.
             return withBoxingNonNative {
-                info;
-                info.typeModel;
+                scope;
+                ceylonTypes.emptyType;
                 dartTypes.dartIdentifierForFunctionOrValue {
-                    info;
+                    scope;
                     ceylonTypes.emptyValueDeclaration;
                     false;
                 }[0];
@@ -798,13 +805,16 @@ class ExpressionTransformer(CompilationContext ctx)
             value indexIdentifier = DartSimpleIdentifier("$i$");
 
             return withBoxingNonNative {
-                info;
-                info.typeModel;
+                scope;
+                // Lazily using '{Anything*}' as the type, since Dart types are not
+                // generic, and therefore we haven't attempted to calculate a proper
+                // type for this DartInstanceCreationExpression base on the arguments.
+                ceylonTypes.iterableAnythingType;
                 DartInstanceCreationExpression {
                     false;
                     DartConstructorName {
                         dartTypes.dartTypeNameForDartModel {
-                            info;
+                            scope;
                             dartTypes.dartLazyIterable;
                         };
                     };
@@ -827,8 +837,14 @@ class ExpressionTransformer(CompilationContext ctx)
                                         indexIdentifier;
                                         // Sequences are generic, so elements must
                                         // not be erased to native.
+
+                                        // Note: lazily using Anything as the LHS type,
+                                        // since we really don't care about the type as
+                                        // long as it's not native. If we had a proper
+                                        // type for the iterable, we could use the type:
+                                        //     ctx.unit.getIteratedType(typeModel);
                                         withLhsNonNative {
-                                            ctx.unit.getIteratedType(info.typeModel);
+                                            ceylonTypes.anythingType;
                                             () => [for (i -> argument
                                                         in arguments.indexed)
                                                 DartSwitchCase {

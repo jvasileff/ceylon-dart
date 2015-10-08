@@ -22,7 +22,8 @@ import ceylon.ast.core {
     ObjectExpression,
     ClassBody,
     Parameters,
-    ExtendedType
+    ExtendedType,
+    ObjectArgument
 }
 import ceylon.interop.java {
     CeylonList
@@ -70,7 +71,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueGetterDefinitionInfo,
     ObjectDefinitionInfo,
     ObjectExpressionInfo,
-    NodeInfo
+    NodeInfo,
+    ObjectArgumentInfo
 }
 
 "For Dart TopLevel declarations."
@@ -283,7 +285,18 @@ class TopLevelVisitor(CompilationContext ctx)
     shared actual
     void visitObjectExpression(ObjectExpression that) {
         value info = ObjectExpressionInfo(that);
-        //super.visitObjectExpression(that);
+
+        addClassDefinition {
+            info;
+            info.anonymousClass;
+            that.body;
+            that.extendedType;
+        };
+    }
+
+    shared actual
+    void visitObjectArgument(ObjectArgument that) {
+        value info = ObjectArgumentInfo(that);
 
         addClassDefinition {
             info;

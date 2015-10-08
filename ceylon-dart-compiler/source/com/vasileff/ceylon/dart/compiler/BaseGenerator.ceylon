@@ -34,7 +34,9 @@ import ceylon.ast.core {
     SpreadArgument,
     AnyMemberOperator,
     MemberOperator,
-    SafeMemberOperator
+    SafeMemberOperator,
+    AnySpecifier,
+    FunctionArgument
 }
 import ceylon.collection {
     LinkedList
@@ -115,7 +117,14 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ObjectDefinitionInfo,
     SpecifiedVariableInfo,
     ComprehensionClauseInfo,
-    NodeInfo
+    NodeInfo,
+    namedArgumentInfo,
+    AnonymousArgumentInfo,
+    SpecifiedArgumentInfo,
+    ValueArgumentInfo,
+    FunctionArgumentInfo,
+    ObjectArgumentInfo,
+    NamedArgumentInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -468,19 +477,210 @@ class BaseGenerator(CompilationContext ctx)
 
         [DartExpression()*] arguments;
 
+        [DartStatement*] argsSetup;
+
         if (is [DartExpression()*] a) {
+            argsSetup = [];
             arguments = a;
         }
         else if (is [Expression*] a) {
+            argsSetup = [];
             arguments = a.collect((a) => ()
                     => a.transform(expressionTransformer));
         }
         else if (is PositionalArguments a) {
+            argsSetup = [];
             arguments = a.argumentList.listedArguments.collect((a) => ()
                     => a.transform(expressionTransformer));
         }
-        else { //(is NamedArguments)
-            throw CompilerBug(scope, "NamedArguments not supported");
+        else { // is NamedArguments
+            // Store it in exactly the necessary type, avoid bad boxing.
+
+            value tmpVariable = dartTypes.createTempNameCustom("arg");
+
+            "If we have arguments, we'll have a callableType."
+            assert (exists callableType);
+
+            "If we have arguments, we'll have a function or class."
+            assert (is FunctionModel | ClassModel memberDeclaration);
+
+            value argumentTypes
+                =   CeylonList {
+                        ctx.unit.getCallableArgumentTypes(callableType.fullType);
+                    };
+
+            value parameters
+                =   CeylonList {
+                        memberDeclaration.firstParameterList.parameters;
+                    };//.collect(ParameterModel.model);
+
+            value parameterMap
+                =   ImmutableMap {
+                        for (i->[p,a] in zipPairs(parameters, argumentTypes).indexed)
+                        p -> [i, a, p.model, DartSimpleIdentifier(tmpVariable + "$" + i.string)]
+                    };
+
+            value named = a.namedArguments.collect((argument) {
+                value argumentInfo = namedArgumentInfo(argument);
+                assert (exists details = parameterMap[argumentInfo.parameter]);
+                value [index, typeModel, parameterModelModel, dartIdentifier] = details;
+
+                DartExpression dartExpression;
+
+                switch (argumentInfo)
+                case (is AnonymousArgumentInfo) {
+                    dartExpression
+                        =   withLhs {
+                                typeModel;
+                                parameterModelModel;
+                                () => argumentInfo.node.expression.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                }
+                case (is SpecifiedArgumentInfo) {
+                    // Treating ValueSpecification and LazySpecification identically.
+                    // A lazy function would just be evaluated right away anyway.
+                    dartExpression
+                        =   withLhs {
+                                typeModel;
+                                parameterModelModel;
+                                () => argumentInfo.node.specification.specifier
+                                        .expression.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                }
+                case (is ValueArgumentInfo) {
+                    dartExpression
+                        =   switch (definition = argumentInfo.node.definition)
+                            case (is AnySpecifier)
+                                // As for SpecifiedArgumentInfo, just evaluate the
+                                // expression.
+                                withLhs {
+                                    typeModel;
+                                    parameterModelModel;
+                                    () => definition.expression.transform {
+                                        expressionTransformer;
+                                    };
+                                }
+                            case (is Block)
+                                // TODO split up generateDefinitionForValueModelGetter?
+                                DartFunctionExpressionInvocation {
+                                    DartFunctionExpression {
+                                        dartFormalParameterListEmpty;
+                                        DartBlockFunctionBody {
+                                            null;
+                                            false;
+                                            withReturn {
+                                                parameterModelModel;
+                                                () => statementTransformer.transformBlock {
+                                                    definition;
+                                                }.first;
+                                            };
+                                        };
+                                    };
+                                    DartArgumentList { []; };
+                                };
+                }
+                case (is FunctionArgumentInfo) {
+                    dartExpression
+                        =   withLhs {
+                                typeModel;
+                                null;
+                                () => generateNewCallable {
+                                    argumentInfo;
+                                    argumentInfo.declarationModel;
+                                    generateFunctionExpression(argumentInfo.node);
+                                    0; false;
+                                };
+                            };
+                }
+                case (is ObjectArgumentInfo) {
+                    argumentInfo.node.transform(topLevelVisitor);
+
+                    dartExpression
+                        =   withLhs {
+                                typeModel;
+                                null;
+                                () => generateObjectInstantiation {
+                                    argumentInfo;
+                                    argumentInfo.anonymousClass;
+                                };
+                            };
+                }
+
+                return DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            scope;
+                            parameterModelModel;
+                        };
+                        [DartVariableDeclaration {
+                            dartIdentifier;
+                            dartExpression;
+                        }];
+                    };
+                };
+            });
+
+            [DartVariableDeclarationStatement] | [] iterableArgument;
+
+            if (a.iterableArgument.children nonempty) {
+                value iterableInfo = ArgumentListInfo(a.iterableArgument);
+                assert (exists parameterModel = iterableInfo.parameter);
+
+                assert (exists details = parameterMap[parameterModel]);
+                value [index, typeModel, parameterModelModel, dartIdentifier] = details;
+
+                iterableArgument
+                    =   [DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    scope;
+                                    parameterModelModel;
+                                };
+                                [DartVariableDeclaration {
+                                    dartIdentifier;
+                                    expressionTransformer.generateIterable {
+                                        scope;
+                                        a.iterableArgument;
+                                    };
+                                }];
+                            };
+                        }];
+            }
+            else {
+                iterableArgument = [];
+            }
+
+            // add iterable
+            value definedParameters
+                =   a.namedArguments
+                        .map(namedArgumentInfo)
+                        .map(NamedArgumentInfo.parameter);
+
+            argsSetup
+                =   concatenate {
+                        named,
+                        iterableArgument
+                    };
+
+            arguments
+                =   parameterMap.collect((entry)
+                    =>  let (parameter -> [index, type, declaration,
+                                           dartIdentifier] = entry) (
+                        () => withBoxing {
+                            scope;
+                            type;
+                            declaration;
+                            //dartIdentifier;
+                            if (definedParameters.contains(parameter))
+                            then dartIdentifier
+                            else dartTypes.dartDefault(scope);
+                        }));
         }
 
         // TODO WIP native optimizations
@@ -787,7 +987,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
             }
             else {
-                invocation
+                value innerInvocation
                     =   if (is DartConstructorName memberIdentifier) then
                             DartInstanceCreationExpression {
                                 false;
@@ -800,6 +1000,31 @@ class BaseGenerator(CompilationContext ctx)
                                 memberIdentifier;
                                 argumentList;
                             };
+
+                if (!nonempty argsSetup) {
+                     invocation = innerInvocation;
+                }
+                else {
+                    invocation
+                        =   DartFunctionExpressionInvocation {
+                                DartFunctionExpression {
+                                    dartFormalParameterListEmpty;
+                                    DartBlockFunctionBody {
+                                        null;
+                                        false;
+                                        DartBlock  {
+                                            concatenate {
+                                                argsSetup,
+                                                [DartReturnStatement {
+                                                    innerInvocation;
+                                                }]
+                                            };
+                                        };
+                                    };
+                                };
+                                DartArgumentList { []; };
+                            };
+                }
             }
         }
         else {
@@ -1714,7 +1939,8 @@ class BaseGenerator(CompilationContext ctx)
             FunctionExpression
                 | FunctionDefinition
                 | FunctionShortcutDefinition
-                | DefaultedCallableParameter that) {
+                | DefaultedCallableParameter
+                | FunctionArgument that) {
 
         FunctionModel functionModel;
         [Parameters+] parameterLists;
@@ -1745,6 +1971,12 @@ class BaseGenerator(CompilationContext ctx)
             definition = that.specifier;
             assert (is FunctionModel m = info.parameterModel.model);
             functionModel = m;
+        }
+        case (is FunctionArgument) {
+            value info = FunctionArgumentInfo(that);
+            parameterLists = that.parameterLists;
+            definition = that.definition;
+            functionModel = info.declarationModel;
         }
 
         return generateFunctionExpressionRaw {
@@ -2551,6 +2783,7 @@ class BaseGenerator(CompilationContext ctx)
         }
         assert (is FunctionOrValueModel targetDeclaration);
 
+        // FIXME handle interface setters (shared and non-shared)
         value [targetIdentifier, targetIsFunction] =
                 dartTypes.dartIdentifierForFunctionOrValue(
                     that, targetDeclaration, true);

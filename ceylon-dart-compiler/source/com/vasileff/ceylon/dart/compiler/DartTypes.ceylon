@@ -1075,6 +1075,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 !ctx.disableErasureToNative.contains(declaration)
                 && !isCallableParameterOrParamOf(declaration)
                 && !isAnonymousFunctionOrParamOf(declaration)
+                && !isFunctionArgumentOrParamOf(declaration)
                 && !isParameterInNonFirstParamList(declaration)
                 && native(formalType(declaration));
 

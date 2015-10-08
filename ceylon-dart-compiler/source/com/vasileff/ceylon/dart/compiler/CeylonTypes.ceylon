@@ -65,6 +65,10 @@ class CeylonTypes(Unit unit) {
     Type identifiableType => unit.identifiableType;
 
     shared
+    Type iterableAnythingType => ModelUtil.appliedType(
+            iterableDeclaration, anythingType, nullType);
+
+    shared
     Type sequenceAnythingType => ModelUtil.appliedType(
             sequenceDeclaration, anythingType);
 
