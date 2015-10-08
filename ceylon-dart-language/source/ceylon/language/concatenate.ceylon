@@ -15,7 +15,7 @@
 see (`function expand`, 
      `function Iterable.chain`,
      `function Sequential.append`)
-native shared Element[] concatenate<Element>(
+shared Element[] concatenate<Element>(
         "The streams to concatenate."
         {Element*}* iterables) 
         => [ for (it in iterables) for (val in it) val ];
