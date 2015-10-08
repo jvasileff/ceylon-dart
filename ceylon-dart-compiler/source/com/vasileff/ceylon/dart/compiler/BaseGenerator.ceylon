@@ -2087,34 +2087,33 @@ class BaseGenerator(CompilationContext ctx)
         value dartParameters = parameterList.collect((parameterModel) {
             value defaulted = parameterModel.defaulted;
 
-                // Use core.Object for defaulted parameters so we can
-                // initialize with `dart$default`
-                value dartParameterType =
-                    if (defaulted)
-                    then dartTypes.dartObject
-                    else dartTypes.dartTypeNameForDeclaration(
-                            scope, parameterModel.model);
+            // Use core.Object for defaulted parameters so we can
+            // initialize with `dart$default`
+            value dartParameterType =
+                if (defaulted)
+                then dartTypes.dartObject
+                else dartTypes.dartTypeNameForDeclaration(
+                        scope, parameterModel.model);
 
-                value dartSimpleParameter =
-                DartSimpleFormalParameter {
-                    false; false;
-                    dartParameterType;
-                    DartSimpleIdentifier {
-                        dartTypes.getName(parameterModel);
-                    };
+            value dartSimpleParameter =
+            DartSimpleFormalParameter {
+                false; false;
+                dartParameterType;
+                DartSimpleIdentifier {
+                    dartTypes.getName(parameterModel);
                 };
+            };
 
-                if (defaulted) {
-                    return
-                    DartDefaultFormalParameter {
-                        dartSimpleParameter;
-                        dartTypes.dartDefault(scope);
-                    };
-                }
-                else {
-                    return dartSimpleParameter;
-                }
-
+            if (defaulted) {
+                return
+                DartDefaultFormalParameter {
+                    dartSimpleParameter;
+                    dartTypes.dartDefault(scope);
+                };
+            }
+            else {
+                return dartSimpleParameter;
+            }
         });
         return DartFormalParameterList {
             positional = true;
