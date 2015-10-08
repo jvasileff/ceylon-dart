@@ -303,6 +303,33 @@ class BaseGenerator(CompilationContext ctx)
                 };
             };
 
+    "Returns an invoked function that executes [[setup]] and returns [[expression]] if
+     [[setup]] is nonempty. Returns [[expression]] otherwise."
+    shared
+    DartExpression createExpressionEvaluationWithSetup(
+            [DartStatement*] setup, DartExpression expression)
+        =>  if (!nonempty setup) then
+                expression
+            else
+                DartFunctionExpressionInvocation {
+                    DartFunctionExpression {
+                        dartFormalParameterListEmpty;
+                        DartBlockFunctionBody {
+                            null;
+                            false;
+                            DartBlock  {
+                                concatenate {
+                                    setup,
+                                    [DartReturnStatement {
+                                        expression;
+                                    }]
+                                };
+                            };
+                        };
+                    };
+                    DartArgumentList { []; };
+                };
+
     shared
     DartFunctionDeclaration generateFunctionDefinition
             (FunctionShortcutDefinition | FunctionDefinition that) {
@@ -780,6 +807,8 @@ class BaseGenerator(CompilationContext ctx)
             }
 
             if (safeMemberOperator) {
+                // FIXME what about argsSetup???
+
                 "Must exist since receiver is never `super` when the safe member
                  operator is used."
                 assert (exists ceylonReceiverDartType);
@@ -820,44 +849,22 @@ class BaseGenerator(CompilationContext ctx)
                         };
             }
             else {
-                value innerInvocation
-                    =   if (is DartConstructorName memberIdentifier) then
-                            DartInstanceCreationExpression {
-                                false;
-                                memberIdentifier;
-                                argumentList;
-                            }
-                        else
-                            DartMethodInvocation {
-                                dartBoxedReceiver;
-                                memberIdentifier;
-                                argumentList;
-                            };
-
-                if (!nonempty argsSetup) {
-                     invocation = innerInvocation;
-                }
-                else {
-                    invocation
-                        =   DartFunctionExpressionInvocation {
-                                DartFunctionExpression {
-                                    dartFormalParameterListEmpty;
-                                    DartBlockFunctionBody {
-                                        null;
-                                        false;
-                                        DartBlock  {
-                                            concatenate {
-                                                argsSetup,
-                                                [DartReturnStatement {
-                                                    innerInvocation;
-                                                }]
-                                            };
-                                        };
-                                    };
+                invocation
+                    =   createExpressionEvaluationWithSetup {
+                            argsSetup;
+                            if (is DartConstructorName memberIdentifier) then
+                                DartInstanceCreationExpression {
+                                    false;
+                                    memberIdentifier;
+                                    argumentList;
+                                }
+                            else
+                                DartMethodInvocation {
+                                    dartBoxedReceiver;
+                                    memberIdentifier;
+                                    argumentList;
                                 };
-                                DartArgumentList { []; };
-                            };
-                }
+                        };
             }
         }
         else {
@@ -2682,6 +2689,50 @@ class BaseGenerator(CompilationContext ctx)
             };
         });
         return DartArgumentList(args);
+    }
+
+    shared
+    [[DartStatement*], DartArgumentList] generateArgumentListFromArguments2(
+            DScope scope,
+            Arguments that,
+            TypeModel callableType,
+            ParameterListModel parameterList,
+            "True if the ArgumentList is for a Callable, even though ParameterModels
+             are available. This is used for invocations on Callable Parameters"
+            Boolean overrideNonCallable = false) {
+        switch (that)
+        case (is PositionalArguments) {
+            return [[], generateArgumentListFromArgumentList(
+                    that.argumentList, callableType, overrideNonCallable)];
+        }
+        case (is NamedArguments) {
+            value [argsSetup, arguments]
+                =   generateFromNamedArguments {
+                        scope;
+                        that;
+                        callableType;
+                        parameterList;
+                    };
+
+            value argumentTypes
+                =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType.fullType));
+
+            value parameterDeclarations
+                =   CeylonList(parameterList.parameters).collect(ParameterModel.model);
+
+            value argumentList
+                =   DartArgumentList {
+                        [for (i -> argument in arguments.indexed)
+                            withLhs {
+                                argumentTypes[i];
+                                parameterDeclarations[i];
+                                argument;
+                            }
+                        ];
+                    };
+
+            return [argsSetup, argumentList];
+        }
     }
 
     shared
