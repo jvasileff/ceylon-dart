@@ -134,6 +134,11 @@ class CeylonTypes(Unit unit) {
     Boolean isCeylonInteger(Type type)
         =>  type.isExactly(integerType);
 
+    "True if [[type]] is a subtype of Iterable<Anything>"
+    shared
+    Boolean isCeylonIterable(Type type)
+        =>  unit.isIterableType(type);
+
     "True if [[type]] is a subtype of Sequential<Anything>"
     shared
     Boolean isCeylonSequential(Type type)
@@ -348,6 +353,10 @@ class CeylonTypes(Unit unit) {
     shared
     Boolean isCallableDeclaration(Declaration declaration)
         =>  equalDeclarations(declaration, callableDeclaration);
+
+    shared
+    Boolean isIterableDeclaration(Declaration declaration)
+        =>  equalDeclarations(declaration, iterableDeclaration);
 
     shared
     Boolean isNullDeclaration(Declaration declaration)

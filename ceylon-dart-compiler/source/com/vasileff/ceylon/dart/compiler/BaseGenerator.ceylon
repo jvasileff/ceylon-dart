@@ -2793,6 +2793,12 @@ class BaseGenerator(CompilationContext ctx)
                     parameterList.parameters;
                 };
 
+        "A map from [[ParameterModel]] to a tuple of
+
+            - [[Integer]] index
+            - [[TypeModel]] type
+            - [[FunctionOrValueModel]] the parameter's declaration
+            - [[DartSimpleIdentifier]] Dart temp variable identifier"
         value parameterDetails
             =   ImmutableMap {
                     for (i->[p,a] in zipPairs(parameters, argumentTypes).indexed)
@@ -2917,16 +2923,6 @@ class BaseGenerator(CompilationContext ctx)
 
         [DartVariableDeclarationStatement] | [] iterableArgument;
 
-        // FIXME not quite right... if iterableArgument is empty, there still may not be
-        //       a default value, in which case we need to pass `empty` rather than
-        //       $ceylon$language.dart$default.
-        //
-        //       But there really is no `iterableInfo.parameter` sometimes, even for
-        //       non-defaulted iterables. So do we check to see if the parameter is
-        //       defaulted? But which parameter do we even check???
-        //
-        //       Perhaps the first unassigned and non-defaulted Iterable<> parameter?
-
         if (namedArguments.iterableArgument.children nonempty) {
             assert (exists parameterModel = iterableInfo.parameter);
             assert (exists details = parameterDetails[parameterModel]);
@@ -2994,8 +2990,20 @@ class BaseGenerator(CompilationContext ctx)
                                 ceylonTypes.emptyValueDeclaration;
                                 false;
                             }[0]
+                        else if (parameter.defaulted) then
+                            dartTypes.dartDefault(scope)
                         else
-                            dartTypes.dartDefault(scope);
+                            ((){
+                                "If not defaulted and not variadic, it must be an
+                                 Iterable."
+                                assert (ceylonTypes.isCeylonIterable(type));
+                                return
+                                dartTypes.dartIdentifierForFunctionOrValue {
+                                    scope;
+                                    ceylonTypes.emptyValueDeclaration;
+                                    false;
+                                }[0];
+                            })();
                     }));
 
         return [argsSetup, arguments];

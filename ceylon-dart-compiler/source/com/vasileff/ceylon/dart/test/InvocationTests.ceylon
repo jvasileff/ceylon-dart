@@ -313,4 +313,60 @@ class InvocationTests() {
              """;
         };
     }
+
+    shared test
+    void namedArgDefaultedIterables() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    value it = [1, 2, 3];
+                    // Non-defaulted iterable
+                    {Integer*} fa({Integer*} xs) => xs;
+                    print(fa { });
+                    print(fa { *it });
+
+                    // Defaulted iterable
+                    {Integer*} fb({Integer*} xs = [1]) => xs;
+                    print(fb { });
+                    print(fb { *it });
+
+                    // Iterable where the declaration is not constrainted to be
+                    // of an Iterable type
+                    print(identity<{Integer*}> { });
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Tuple it = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
+                    $ceylon$language.Iterable fa([$ceylon$language.Iterable xs]) => xs;
+
+                    $ceylon$language.print(fa($ceylon$language.empty));
+                    $ceylon$language.print((() {
+                        $ceylon$language.Iterable arg$1$0 = it;
+                        return fa(arg$1$0);
+                    })());
+                    $ceylon$language.Iterable fb([$dart$core.Object xs = $ceylon$language.dart$default]) {
+                        if ($dart$core.identical(xs, $ceylon$language.dart$default)) {
+                            xs = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)], null);
+                        }
+                        return xs as $ceylon$language.Iterable;
+                    }
+
+                    $ceylon$language.print(fb($ceylon$language.dart$default));
+                    $ceylon$language.print((() {
+                        $dart$core.Object arg$3$0 = it;
+                        return fb(arg$3$0);
+                    })());
+                    $ceylon$language.print($ceylon$language.identity($ceylon$language.empty));
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
 }
