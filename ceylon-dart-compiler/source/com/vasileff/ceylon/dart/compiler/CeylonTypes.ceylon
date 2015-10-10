@@ -73,6 +73,14 @@ class CeylonTypes(Unit unit) {
             sequenceDeclaration, anythingType);
 
     shared
+    Type sequentialAnythingType => ModelUtil.appliedType(
+            sequenceDeclaration, anythingType);
+
+    shared
+    Type tupleAnythingType => ModelUtil.appliedType(
+            tupleDeclaration, anythingType, anythingType, sequentialAnythingType);
+
+    shared
     Type stringType => unit.stringType;
 
     shared

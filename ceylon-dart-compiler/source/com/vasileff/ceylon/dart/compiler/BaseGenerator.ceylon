@@ -99,7 +99,8 @@ import com.vasileff.ceylon.dart.ast {
     DartStatement,
     DartSwitchCase,
     DartIntegerLiteral,
-    DartSwitchStatement
+    DartSwitchStatement,
+    DartListLiteral
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,
@@ -1036,11 +1037,12 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartExpression generateIterable(DScope scope, ArgumentList argumentList) {
-        value arguments = argumentList.listedArguments;
-        value sequenceArgument = argumentList.sequenceArgument;
+    DartExpression generateIterable(
+            DScope scope,
+            [Expression*] listedArguments,
+            SpreadArgument | Comprehension | Null sequenceArgument) {
 
-        if (arguments.empty && !sequenceArgument exists) {
+        if (listedArguments.empty && !sequenceArgument exists) {
             // Easy; there are no elements.
             return withBoxingNonNative {
                 scope;
@@ -1052,7 +1054,7 @@ class BaseGenerator(CompilationContext ctx)
                 }[0];
             };
         }
-        else if (!nonempty arguments) {
+        else if (!nonempty listedArguments) {
             // Just evaluate and return the spread expression. We don't care about the
             // lhs type, which should have already been set by code that does care.
             assert (exists sequenceArgument);
@@ -1078,7 +1080,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
                     DartArgumentList {
-                        [DartIntegerLiteral(arguments.size),
+                        [DartIntegerLiteral(listedArguments.size),
                         DartFunctionExpression {
                             DartFormalParameterList {
                                 false; false;
@@ -1105,7 +1107,7 @@ class BaseGenerator(CompilationContext ctx)
                                         withLhsNonNative {
                                             ceylonTypes.anythingType;
                                             () => [for (i -> argument
-                                                        in arguments.indexed)
+                                                        in listedArguments.indexed)
                                                 DartSwitchCase {
                                                     [];
                                                     DartIntegerLiteral(i);
@@ -1129,6 +1131,104 @@ class BaseGenerator(CompilationContext ctx)
                                 () => sequenceArgument.transform {
                                     expressionTransformer;
                                 };
+                            }
+                        case (is Null)
+                            DartNullLiteral()
+                        ];
+                    };
+                };
+            };
+        }
+    }
+
+    shared
+    DartExpression generateTuple(
+            DScope scope,
+            [Expression*] listedArguments,
+            SpreadArgument | Comprehension | Null sequenceArgument) {
+
+        if (is TypeModel lhs = ctx.lhsTypeTop, ceylonTypes.isCeylonEmpty(lhs)) {
+            // TODO consider lhsDenotableType
+
+            // Slightly dubious, but if we know it's Empty, procedurely determining
+            // the same likely can't have side effects considering the typesystem's
+            // current capabilities:
+            //
+            //     Integer[] x = [ for (i in 1:100) if (false) i];
+
+            // Its empty. Return empty:
+            return
+            withBoxingNonNative {
+                scope;
+                ceylonTypes.emptyType;
+                dartTypes.dartIdentifierForFunctionOrValue {
+                    scope;
+                    ceylonTypes.emptyValueDeclaration;
+                    false;
+                }[0];
+            };
+        }
+
+        if (listedArguments.empty && !sequenceArgument exists) {
+            // Calculated another way, its empty. Return empty:
+            return
+            withBoxingNonNative {
+                scope;
+                ceylonTypes.emptyType;
+                dartTypes.dartIdentifierForFunctionOrValue {
+                    scope;
+                    ceylonTypes.emptyValueDeclaration;
+                    false;
+                }[0];
+            };
+        }
+
+        if (!nonempty listedArguments) {
+            "Not Empty and no listed arguments; a sequence argument must exist."
+            assert (exists sequenceArgument);
+            return generateSequentialFromArgument(sequenceArgument);
+        }
+        else {
+            // Listed arguments, and possibly a spread argument.
+            //
+            // Note: we should really let the typechecker know about our internal/native
+            // elements and use generateInvocation().
+            return
+            withBoxingNonNative {
+                scope;
+                ceylonTypes.tupleAnythingType;
+                DartInstanceCreationExpression {
+                    false;
+                    DartConstructorName {
+                        dartTypes.dartTypeName {
+                            scope;
+                            ceylonTypes.tupleDeclaration.type;
+                            false; false;
+                        };
+                        DartSimpleIdentifier {
+                            "$withList";
+                        };
+                    };
+                    DartArgumentList {
+                        [DartListLiteral {
+                            false;
+                            // Sequences are generic, so elements must
+                            // not be erased to native.
+                            withLhsNonNative {
+                                // if we cared about the type, we'd find the union of all
+                                // of the expression types, to use as the sequence type.
+                                ceylonTypes.anythingType;
+                                () => listedArguments.collect {
+                                    (element) => element.transform(expressionTransformer);
+                                };
+                            };
+                        },
+                        switch (sequenceArgument)
+                        case (is Comprehension | SpreadArgument)
+                            // Whatever Iterable type is calculated is surely correct.
+                            withLhsDenotable {
+                                ceylonTypes.sequentialDeclaration;
+                                () => generateSequentialFromArgument(sequenceArgument);
                             }
                         case (is Null)
                             DartNullLiteral()
@@ -2927,7 +3027,8 @@ class BaseGenerator(CompilationContext ctx)
                                     typeModel;
                                     () => expressionTransformer.generateIterable {
                                         scope;
-                                        namedArguments.iterableArgument;
+                                        namedArguments.iterableArgument.listedArguments;
+                                        namedArguments.iterableArgument.sequenceArgument;
                                     };
                                 };
                             }];

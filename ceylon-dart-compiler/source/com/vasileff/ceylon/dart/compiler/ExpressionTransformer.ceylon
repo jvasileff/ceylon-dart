@@ -696,82 +696,19 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformTuple(Tuple that) {
-        value info = ExpressionInfo(that);
-
-        // We know statically if it's empty
-        if (ceylonTypes.isCeylonEmpty(info.typeModel)) {
-            return withBoxingNonNative {
-                info;
-                info.typeModel;
-                dartTypes.dartIdentifierForFunctionOrValue {
-                    info;
-                    ceylonTypes.emptyValueDeclaration;
-                    false;
-                }[0];
+    DartExpression transformTuple(Tuple that)
+        =>  generateTuple {
+                ExpressionInfo(that);
+                that.argumentList.listedArguments;
+                that.argumentList.sequenceArgument;
             };
-        }
-
-        // Ok, not empty, create a Sequential or a Tuple
-        value sequenceArgument = that.argumentList.sequenceArgument;
-
-        if (that.argumentList.listedArguments.empty) {
-            "Not Empty and no listed arguments; a sequence argument must exist."
-            assert (exists sequenceArgument);
-            return generateSequentialFromArgument(sequenceArgument);
-        }
-        else {
-            // Listed arguments, and possibly a spread argument.
-            // If we ever wire up internal methods and constructors to the metamodel,
-            // we can use generateInvocation() instead.
-            return withBoxingNonNative {
-                info;
-                info.typeModel;
-                DartInstanceCreationExpression {
-                    false;
-                    DartConstructorName {
-                        dartTypes.dartTypeName {
-                            info;
-                            ceylonTypes.tupleDeclaration.type;
-                            false; false;
-                        };
-                        DartSimpleIdentifier {
-                            "$withList";
-                        };
-                    };
-                    DartArgumentList {
-                        [DartListLiteral {
-                            false;
-                            // Sequences are generic, so elements must
-                            // not be erased to native.
-                            withLhsNonNative {
-                                ctx.unit.getIteratedType(info.typeModel);
-                                () => that.argumentList.listedArguments.collect {
-                                    (element) => element.transform(this);
-                                };
-                            };
-                        },
-                        switch (sequenceArgument)
-                        case (is Comprehension | SpreadArgument)
-                            // Whatever Iterable type we come up with is surely correct.
-                            withLhsDenotable {
-                                ceylonTypes.sequentialDeclaration;
-                                () => generateSequentialFromArgument(sequenceArgument);
-                            }
-                        case (is Null)
-                            DartNullLiteral()
-                        ];
-                    };
-                };
-            };
-        }
-    }
 
     shared actual
     DartExpression transformIterable(Iterable that)
         =>  generateIterable {
                 ExpressionInfo(that);
-                that.argumentList;
+                that.argumentList.listedArguments;
+                that.argumentList.sequenceArgument;
             };
 
     shared actual
