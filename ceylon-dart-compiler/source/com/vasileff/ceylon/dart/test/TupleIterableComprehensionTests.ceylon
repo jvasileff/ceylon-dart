@@ -38,12 +38,12 @@ class TupleIterableComprehensionTests() {
 
                 void $package$run() {
                     $ceylon$language.Iterable iter0 = $ceylon$language.empty;
-                    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
-                    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
+                    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+                    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                     $ceylon$language.Sequential x = iter0.sequence();
                     $ceylon$language.Sequential y = iter1.sequence();
                     $ceylon$language.Sequence z = iter2.sequence() as $ceylon$language.Sequence;
-                    $ceylon$language.Tuple a = new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("1"), $ceylon$language.String.instance("2"), $ceylon$language.String.instance("3")], null);
+                    $ceylon$language.Tuple a = new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("1"), $ceylon$language.String.instance("2"), $ceylon$language.String.instance("3")]);
                     $ceylon$language.Empty b = $ceylon$language.empty;
                     $ceylon$language.Tuple c = a;
                     $ceylon$language.Tuple d = new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("4")], a);
@@ -93,8 +93,8 @@ class TupleIterableComprehensionTests() {
 
                 void $package$run() {
                     $ceylon$language.Iterable iter0 = $ceylon$language.empty;
-                    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
-                    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
+                    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+                    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                     $ceylon$language.Iterable x = iter0;
                     $ceylon$language.Iterable y = iter1;
                     $ceylon$language.Iterable z = iter2;
@@ -273,7 +273,7 @@ class TupleIterableComprehensionTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $ceylon$language.Sequential maybeSeq = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)], null);
+                    $ceylon$language.Sequential maybeSeq = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                     $ceylon$language.Tuple x = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3).negated, $ceylon$language.Integer.instance(2).negated, $ceylon$language.Integer.instance(1).negated, $ceylon$language.Integer.instance(0)], $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
                         $dart$core.bool step$0$expired$0 = false;
                         $dart$core.bool step$0$1() {
@@ -442,8 +442,8 @@ class TupleIterableComprehensionTests() {
 
                 void $package$run() {
                     $ceylon$language.print($ceylon$language.String.instance("* comprehensionCaptureTest begin"));
-                    $ceylon$language.Tuple values = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120)], null);
-                    $ceylon$language.Tuple valuesNull = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120), null], null);
+                    $ceylon$language.Tuple values = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120)]);
+                    $ceylon$language.Tuple valuesNull = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120), null]);
                     $ceylon$language.Iterable funcs0 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
                         $dart$core.bool step$0$expired$0 = false;
                         $dart$core.bool step$0$1() {

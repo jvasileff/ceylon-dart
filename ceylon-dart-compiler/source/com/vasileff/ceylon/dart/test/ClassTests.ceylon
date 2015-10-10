@@ -194,7 +194,7 @@ class ClassTests() {
                     $dart$core.int fooMemberInt;
                     $dart$core.String get fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
                     run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
-                    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo.fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo.fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(fooMemberInt))], null);
+                    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo.fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo.fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(fooMemberInt))]);
                 }
                 class run$Foo {
                     $dart$core.String $capture$run$runString1;

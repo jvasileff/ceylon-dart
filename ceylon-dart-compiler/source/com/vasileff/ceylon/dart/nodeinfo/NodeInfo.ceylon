@@ -452,6 +452,14 @@ class SpreadArgumentInfo(SpreadArgument astNode)
 }
 
 shared
+SpreadArgumentInfo | ComprehensionInfo | Null sequenceArgumentInfo
+        (SpreadArgument | Comprehension | Null node)
+    =>  switch (node)
+        case (is SpreadArgument) SpreadArgumentInfo(node)
+        case (is Comprehension) ComprehensionInfo(node)
+        case (is Null) null;
+
+shared
 class FunctionExpressionInfo(FunctionExpression astNode)
         extends ExpressionInfo(astNode) {
 

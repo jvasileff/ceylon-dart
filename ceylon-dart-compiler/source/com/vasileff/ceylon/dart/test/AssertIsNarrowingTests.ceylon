@@ -220,7 +220,7 @@ class AssertIsNarrowingTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 void $package$run() {
-                    $ceylon$language.Sequential ints = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)], null);
+                    $ceylon$language.Sequential ints = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)]);
                     $ceylon$language.Sequence ints2;
                     {
                         $ceylon$language.Sequential tmp$0 = ints;

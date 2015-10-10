@@ -130,7 +130,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ValueArgumentInfo,
     FunctionArgumentInfo,
     ObjectArgumentInfo,
-    NamedArgumentInfo
+    NamedArgumentInfo,
+    SpreadArgumentInfo,
+    ComprehensionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -1193,6 +1195,22 @@ class BaseGenerator(CompilationContext ctx)
             //
             // Note: we should really let the typechecker know about our internal/native
             // elements and use generateInvocation().
+
+            value nonEmptySequenceArg
+                =   switch (sequenceArgument)
+                    case (is SpreadArgument)
+                        if (!ceylonTypes.isCeylonEmpty(
+                                SpreadArgumentInfo(sequenceArgument).typeModel))
+                        then sequenceArgument
+                        else null
+                    case (is Comprehension)
+                        if (!ceylonTypes.isCeylonEmpty(
+                                ComprehensionInfo(sequenceArgument).typeModel))
+                        then sequenceArgument
+                        else null
+                    case (is Null)
+                        null;
+
             return
             withBoxingNonNative {
                 scope;
@@ -1223,16 +1241,17 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                             };
                         },
-                        switch (sequenceArgument)
-                        case (is Comprehension | SpreadArgument)
+                        if (exists nonEmptySequenceArg) then
                             // Whatever Iterable type is calculated is surely correct.
                             withLhsDenotable {
                                 ceylonTypes.sequentialDeclaration;
-                                () => generateSequentialFromArgument(sequenceArgument);
+                                () => generateSequentialFromArgument {
+                                    nonEmptySequenceArg;
+                                };
                             }
-                        case (is Null)
-                            DartNullLiteral()
-                        ];
+                        else
+                            null
+                        ].coalesced.sequence();
                     };
                 };
             };
