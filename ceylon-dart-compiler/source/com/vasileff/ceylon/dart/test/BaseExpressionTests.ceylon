@@ -45,7 +45,7 @@ class BaseExpressionTests() {
 
                 void $package$run() {
                     $ceylon$language.Callable newInteger = new $ceylon$language.dart$Callable(([$ceylon$language.Integer integer]) => new $ceylon$language.Integer($ceylon$language.Integer.nativeValue(integer)));
-                    $dart$core.int five = $ceylon$language.Integer.nativeValue(newInteger.$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
+                    $dart$core.int five = $ceylon$language.Integer.nativeValue(newInteger.f($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -70,7 +70,7 @@ class BaseExpressionTests() {
 
                 void $package$run() {
                     $ceylon$language.Callable newEntry = new $ceylon$language.dart$Callable(([$dart$core.Object key, $dart$core.Object item]) => new $ceylon$language.Entry(key, item));
-                    $ceylon$language.Entry entry = newEntry.$delegate$($ceylon$language.String.instance("d"), null) as $ceylon$language.Entry;
+                    $ceylon$language.Entry entry = newEntry.f($ceylon$language.String.instance("d"), null) as $ceylon$language.Entry;
                     $ceylon$language.print(entry);
                 }
 

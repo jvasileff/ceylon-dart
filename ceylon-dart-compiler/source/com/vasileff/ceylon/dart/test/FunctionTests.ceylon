@@ -38,7 +38,7 @@ class FunctionTests() {
 
                 void $package$simpleFunction() {
                     $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
-                    $ceylon$language.print(anon.$delegate$());
+                    $ceylon$language.print(anon.f());
                 }
 
                 void simpleFunction() => $package$simpleFunction();
@@ -63,7 +63,7 @@ class FunctionTests() {
 
                 void $package$simpleFunction() {
                     $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
-                    $ceylon$language.print(anon.$delegate$());
+                    $ceylon$language.print(anon.f());
                 }
 
                 void simpleFunction() => $package$simpleFunction();
@@ -122,7 +122,7 @@ class FunctionTests() {
 
                     $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(nested1()));
                     $ceylon$language.print($ceylon$language.String.instance(nested1()));
-                    $ceylon$language.print(nested1Ref.$delegate$());
+                    $ceylon$language.print(nested1Ref.f());
                 }
 
                 void simpleFunction() => $package$simpleFunction();

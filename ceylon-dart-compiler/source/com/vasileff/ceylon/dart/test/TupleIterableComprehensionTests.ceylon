@@ -529,7 +529,7 @@ class TupleIterableComprehensionTests() {
                                 return $ceylon$language.finished;
                             }
                             $ceylon$language.Callable f = f$11;
-                            return f.$delegate$();
+                            return f.f();
                         }
 
                         return new $ceylon$language.dart$Callable(step$2$15);
@@ -638,7 +638,7 @@ class TupleIterableComprehensionTests() {
                                 return $ceylon$language.finished;
                             }
                             $ceylon$language.Callable f = f$30;
-                            return f.$delegate$();
+                            return f.f();
                         }
 
                         return new $ceylon$language.dart$Callable(step$2$34);
@@ -747,7 +747,7 @@ class TupleIterableComprehensionTests() {
                                 return $ceylon$language.finished;
                             }
                             $ceylon$language.Callable f = f$49;
-                            return f.$delegate$();
+                            return f.f();
                         }
 
                         return new $ceylon$language.dart$Callable(step$2$53);
@@ -872,7 +872,7 @@ class TupleIterableComprehensionTests() {
                                 return $ceylon$language.finished;
                             }
                             $ceylon$language.Callable f = f$70;
-                            return f.$delegate$();
+                            return f.f();
                         }
 
                         return new $ceylon$language.dart$Callable(step$2$74);

@@ -175,8 +175,8 @@ class QualifiedExpressionTests() {
                         $ceylon$language.String $capturedReceiver$ = $ceylon$language.String.instance(os2$get());
                         return new $ceylon$language.dart$Callable(([$dart$core.Object index]) => (($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst($ceylon$language.Integer.nativeValue(index as $ceylon$language.Integer)))($capturedReceiver$));
                     })();
-                    $ceylon$language.print(fos1.$delegate$($ceylon$language.Integer.instance(0)));
-                    $ceylon$language.print(fos2.$delegate$($ceylon$language.Integer.instance(0)));
+                    $ceylon$language.print(fos1.f($ceylon$language.Integer.instance(0)));
+                    $ceylon$language.print(fos2.f($ceylon$language.Integer.instance(0)));
                     $ceylon$language.print((($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst(0))($ceylon$language.String.instance(os1$get())));
                     $ceylon$language.print((($ceylon$language.String $r$) => $r$ == null ? null : $r$.getFromFirst(0))($ceylon$language.String.instance(os2$get())));
                 }

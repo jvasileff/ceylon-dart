@@ -287,8 +287,8 @@ class ClassTests() {
                     $ceylon$language.Callable $capture$fun$captureMe1;
                     $ceylon$language.Callable $capture$fun$captureMe2;
                     fun$C([$ceylon$language.Callable this.$capture$fun$captureMe1, $ceylon$language.Callable this.$capture$fun$captureMe2]) {
-                        $capture$fun$captureMe1.$delegate$();
-                        $capture$fun$captureMe2.$delegate$();
+                        $capture$fun$captureMe1.f();
+                        $capture$fun$captureMe2.f();
                         cm1 = $capture$fun$captureMe1;
                         cm2 = $capture$fun$captureMe2;
                     }
@@ -663,9 +663,9 @@ class ClassTests() {
                     A() {}
                 }
                 void $package$run() {
-                    $ceylon$language.Callable f = (new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(($r$ as A$B).foo())))).$delegate$(new A$B(new A())) as $ceylon$language.Callable;
-                    $dart$core.String b = $ceylon$language.String.nativeValue((new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => $ceylon$language.String.instance(($r$ as A$B).bar))).$delegate$(new A$B(new A())) as $ceylon$language.String);
-                    $ceylon$language.print(f.$delegate$());
+                    $ceylon$language.Callable f = (new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(($r$ as A$B).foo())))).f(new A$B(new A())) as $ceylon$language.Callable;
+                    $dart$core.String b = $ceylon$language.String.nativeValue((new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => $ceylon$language.String.instance(($r$ as A$B).bar))).f(new A$B(new A())) as $ceylon$language.String);
+                    $ceylon$language.print(f.f());
                     $ceylon$language.print($ceylon$language.String.instance(b));
                 }
 
@@ -850,9 +850,9 @@ class ClassTests() {
 
                     $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C($r$, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer))));
 
-                    I1$I2$C c = (newC$get().$delegate$(i1o$get().i2) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
-                    I1$I2$C c1 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
-                    I1$I2$C c2 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).$delegate$($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c = (newC$get().f(i1o$get().i2) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c1 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c2 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
                     if (!$ceylon$language.String.instance(c.cident).equals($ceylon$language.String.instance("c-1"))) {
                         throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");
                     }
@@ -865,7 +865,7 @@ class ClassTests() {
                     if (!$ceylon$language.String.instance(c.outerIdent).equals($ceylon$language.String.instance("i1o"))) {
                         throw new $ceylon$language.AssertionError("Violated: c.outerIdent == \"i1o\"");
                     }
-                    I1$I2$C cSelfOuter = (newC$get().$delegate$(c) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(2)) as I1$I2$C;
+                    I1$I2$C cSelfOuter = (newC$get().f(c) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(2)) as I1$I2$C;
                     if (!$ceylon$language.String.instance(cSelfOuter.cident).equals($ceylon$language.String.instance("c-2"))) {
                         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.cident == \"c-2\"");
                     }

@@ -5,7 +5,7 @@ import "dart:math" as $dart$math;
 import "dart:mirrors" as $dart$mirrors;
 import "source/ceylon/language/module.dart";
 
-Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) && Boolean.nativeValue(q.$delegate$(val) as Boolean))(val)));
+Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) && Boolean.nativeValue(q.f(val) as Boolean))(val)));
 
 Callable and([Callable p, Callable q]) => $package$and(p, q);
 
@@ -160,7 +160,7 @@ $dart$core.bool $package$any([Iterable values]) {{
 
 $dart$core.bool any([Iterable values]) => $package$any(values);
 
-$dart$core.Object $package$apply([Callable f, $dart$core.Object args]) => $package$unflatten(f).$delegate$(args);
+$dart$core.Object $package$apply([Callable f, $dart$core.Object args]) => $package$unflatten(f).f(args);
 
 $dart$core.Object apply([Callable f, $dart$core.Object args]) => $package$apply(f, args);
 
@@ -371,7 +371,7 @@ abstract class Binary {
     static $dart$core.Object $clear([final Binary $this, $dart$core.int index]) => $this.set(index, false);
     $dart$core.Object flip([$dart$core.int index]);
 }
-Callable $package$byDecreasing([Callable comparable]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) => (comparable.$delegate$(y) as Comparable).compare(comparable.$delegate$(x)));
+Callable $package$byDecreasing([Callable comparable]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) => (comparable.f(y) as Comparable).compare(comparable.f(x)));
 
 Callable byDecreasing([Callable comparable]) => $package$byDecreasing(comparable);
 
@@ -387,7 +387,7 @@ Comparison $package$decreasingItem([Entry x, Entry y]) => (y.item as Comparable)
 
 Comparison decreasingItem([Entry x, Entry y]) => $package$decreasingItem(x, y);
 
-Callable $package$byIncreasing([Callable comparable]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) => (comparable.$delegate$(x) as Comparable).compare(comparable.$delegate$(y)));
+Callable $package$byIncreasing([Callable comparable]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) => (comparable.f(x) as Comparable).compare(comparable.f(y)));
 
 Callable byIncreasing([Callable comparable]) => $package$byIncreasing(comparable);
 
@@ -403,11 +403,11 @@ Comparison $package$increasingItem([Entry x, Entry y]) => (x.item as Comparable)
 
 Comparison increasingItem([Entry x, Entry y]) => $package$increasingItem(x, y);
 
-Callable $package$byItem([Callable comparing]) => new dart$Callable(([Entry x, Entry y]) => comparing.$delegate$(x.item, y.item) as Comparison);
+Callable $package$byItem([Callable comparing]) => new dart$Callable(([Entry x, Entry y]) => comparing.f(x.item, y.item) as Comparison);
 
 Callable byItem([Callable comparing]) => $package$byItem(comparing);
 
-Callable $package$byKey([Callable comparing]) => new dart$Callable(([Entry x, Entry y]) => comparing.$delegate$(x.key, y.key) as Comparison);
+Callable $package$byKey([Callable comparing]) => new dart$Callable(([Entry x, Entry y]) => comparing.f(x.key, y.key) as Comparison);
 
 Callable byKey([Callable comparing]) => $package$byKey(comparing);
 
@@ -505,7 +505,7 @@ Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$da
         Iterator iterator$0 = comparators.iterator();
         while ((element$1 = iterator$0.next()) is !Finished) {
             Callable compare = element$1 as Callable;
-            Comparison comparison = compare.$delegate$(x, y) as Comparison;
+            Comparison comparison = compare.f(x, y) as Comparison;
             if (!comparison.equals($package$equal)) {
                 return comparison;
             }
@@ -518,7 +518,7 @@ Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$da
 
 Callable comparing([Sequential comparators]) => $package$comparing(comparators);
 
-Callable $package$compose([Callable x, Callable y]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => x.$delegate$($package$unflatten(y).$delegate$(args))));
+Callable $package$compose([Callable x, Callable y]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => x.f($package$unflatten(y).f(args))));
 
 Callable compose([Callable x, Callable y]) => $package$compose(x, y);
 
@@ -714,7 +714,7 @@ $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondI
             if (!(first is Finished)) {
                 if (!(second is Finished)) {
                     doElse$1 = false;
-                    if (!Boolean.nativeValue((comparing as Callable).$delegate$(first, second) as Boolean)) {
+                    if (!Boolean.nativeValue((comparing as Callable).f(first, second) as Boolean)) {
                         return false;
                     }
                 }
@@ -745,11 +745,11 @@ $dart$core.int $package$count([Iterable values]) {
 
 $dart$core.int count([Iterable values]) => $package$count(values);
 
-Callable $package$curry([Callable f]) => new dart$Callable(([$dart$core.Object first]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => $package$unflatten(f).$delegate$(new Tuple(first, args)))));
+Callable $package$curry([Callable f]) => new dart$Callable(([$dart$core.Object first]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => $package$unflatten(f).f(new Tuple(first, args)))));
 
 Callable curry([Callable f]) => $package$curry(f);
 
-Callable $package$uncurry([Callable f]) => $package$flatten(new dart$Callable(([Tuple args]) => $package$unflatten(f.$delegate$(args.first) as Callable).$delegate$(args.rest)));
+Callable $package$uncurry([Callable f]) => $package$flatten(new dart$Callable(([Tuple args]) => $package$unflatten(f.f(args.first) as Callable).f(args.rest)));
 
 Callable uncurry([Callable f]) => $package$uncurry(f);
 
@@ -789,10 +789,10 @@ class CycledIterator implements Iterator {
 class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
     functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ this.$outer$ceylon$language$functionIterable$$anonymous$0_]) {
-        n = $outer$ceylon$language$functionIterable$$anonymous$0_.$capture$functionIterable$f.$delegate$() as Callable;
+        n = $outer$ceylon$language$functionIterable$$anonymous$0_.$capture$functionIterable$f.f() as Callable;
     }
     Callable n;
-    $dart$core.Object next() => n.$delegate$();
+    $dart$core.Object next() => n.f();
 }
 class functionIterable$$anonymous$0_ implements Iterable {
     Callable $capture$functionIterable$f;
@@ -969,7 +969,7 @@ class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
                         Character next;
                         next = next$8 as Character;
                         doElse$7 = false;
-                        peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$splitting as Callable).$delegate$(next) as Boolean);
+                        peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
                     }
                 }
                 if (doElse$7) {
@@ -1783,11 +1783,11 @@ final finished_ $package$finished = new finished_();
 
 finished_ get finished => $package$finished;
 
-Callable $package$forItem([Callable resulting]) => new dart$Callable(([Entry entry]) => resulting.$delegate$(entry.item));
+Callable $package$forItem([Callable resulting]) => new dart$Callable(([Entry entry]) => resulting.f(entry.item));
 
 Callable forItem([Callable resulting]) => $package$forItem(resulting);
 
-Callable $package$forKey([Callable resulting]) => new dart$Callable(([Entry entry]) => resulting.$delegate$(entry.key));
+Callable $package$forKey([Callable resulting]) => new dart$Callable(([Entry entry]) => resulting.f(entry.key));
 
 Callable forKey([Callable resulting]) => $package$forKey(resulting);
 
@@ -2597,7 +2597,7 @@ class Iterable$scan$$anonymous$4_$$anonymous$5_ implements Iterator {
                     $dart$core.Object element;
                     element = element$49;
                     doElse$48 = false;
-                    partial = $outer$ceylon$language$Iterable$scan$$anonymous$4_.$capture$Iterable$scan$accumulating.$delegate$(partial, element);
+                    partial = $outer$ceylon$language$Iterable$scan$$anonymous$4_.$capture$Iterable$scan$accumulating.f(partial, element);
                     return partial;
                 }
             }
@@ -2692,7 +2692,7 @@ class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
             {
                 $dart$core.bool doElse$58 = true;
                 if (!(next == null)) {
-                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$locations$$anonymous$6_.$capture$Iterable$locations$selecting.$delegate$(next) as Boolean)) {
+                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$locations$$anonymous$6_.$capture$Iterable$locations$selecting.f(next) as Boolean)) {
                         doElse$58 = false;
                         return new Entry((() {
                             $dart$core.Object tmp$59 = Integer.instance(i);
@@ -2948,7 +2948,7 @@ class Iterable$skipWhile$$anonymous$12_ implements Iterable {
                 }
                 elem = elem$71;
             }
-            if (!Boolean.nativeValue($capture$Iterable$skipWhile$skipping.$delegate$(elem) as Boolean)) {
+            if (!Boolean.nativeValue($capture$Iterable$skipWhile$skipping.f(elem) as Boolean)) {
                 return new Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_(this, elem, iter);
             }
         }
@@ -3022,7 +3022,7 @@ class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
                 if (!(next$72 is Finished)) {
                     $dart$core.Object next;
                     next = next$72;
-                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$takeWhile$$anonymous$14_.$capture$Iterable$takeWhile$taking.$delegate$(next) as Boolean)) {
+                    if (Boolean.nativeValue($outer$ceylon$language$Iterable$takeWhile$$anonymous$14_.$capture$Iterable$takeWhile$taking.f(next) as Boolean)) {
                         return next;
                     } else {
                         alive = false;
@@ -3998,7 +3998,7 @@ class Iterable$group$$anonymous$32_ implements Map {
             Iterator iterator$126 = $outer$ceylon$language$Iterable.iterator();
             while ((element$127 = iterator$126.next()) is !Finished) {
                 $dart$core.Object element = element$127;
-                $dart$core.Object group = $capture$Iterable$group$grouping.$delegate$(element);
+                $dart$core.Object group = $capture$Iterable$group$grouping.f(element);
                 $dart$core.int index = hash(group, store.size);
                 GroupEntry newEntry;
                 {
@@ -4276,7 +4276,7 @@ abstract class Iterable implements Category {
             Iterator iterator$15 = $this.iterator();
             while ((element$16 = iterator$15.next()) is !Finished) {
                 $dart$core.Object element = element$16;
-                step.$delegate$(element);
+                step.f(element);
             }
         }
     }
@@ -4321,7 +4321,7 @@ abstract class Iterable implements Category {
                 return $package$finished;
             }
             $dart$core.Object elem = elem$20;
-            return collecting.$delegate$(elem);
+            return collecting.f(elem);
         }
 
         return new dart$Callable(step$2$24);
@@ -4367,7 +4367,7 @@ abstract class Iterable implements Category {
         $dart$core.bool step$2$32() {
             while (step$1$31()) {
                 $dart$core.Object elem = elem$28;
-                if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                     return true;
                 }
             }
@@ -4449,7 +4449,7 @@ abstract class Iterable implements Category {
             Iterator iterator$43 = $this.iterator();
             while ((element$44 = iterator$43.next()) is !Finished) {
                 $dart$core.Object elem = element$44;
-                partial = accumulating.$delegate$(partial, elem);
+                partial = accumulating.f(partial, elem);
             }
         }
         return partial;
@@ -4475,7 +4475,7 @@ abstract class Iterable implements Category {
                             }
                             next = next$47;
                         }
-                        partial = accumulating.$delegate$(partial, next);
+                        partial = accumulating.f(partial, next);
                     }
                     return partial;
                 }
@@ -4497,7 +4497,7 @@ abstract class Iterable implements Category {
             while ((element$51 = iterator$50.next()) is !Finished) {
                 $dart$core.Object elem = element$51;
                 if (!(elem == null)) {
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return elem;
                     }
                 }
@@ -4514,7 +4514,7 @@ abstract class Iterable implements Category {
             while ((element$53 = iterator$52.next()) is !Finished) {
                 $dart$core.Object elem = element$53;
                 if (!(elem == null)) {
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         last = elem;
                     }
                 }
@@ -4531,7 +4531,7 @@ abstract class Iterable implements Category {
             while ((element$55 = iterator$54.next()) is !Finished) {
                 $dart$core.Object elem = element$55;
                 if (!(elem == null)) {
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return new Entry(Integer.instance(index), elem);
                     }
                 }
@@ -4550,7 +4550,7 @@ abstract class Iterable implements Category {
             while ((element$57 = iterator$56.next()) is !Finished) {
                 $dart$core.Object elem = element$57;
                 if (!(elem == null)) {
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         last = new Entry(Integer.instance(index), elem);
                     }
                 }
@@ -4582,7 +4582,7 @@ abstract class Iterable implements Category {
                             }
                             val = val$63;
                         }
-                        if ((comparing.$delegate$(val, max) as Identifiable).equals($package$larger)) {
+                        if ((comparing.f(val, max) as Identifiable).equals($package$larger)) {
                             max = val;
                         }
                     }
@@ -4619,7 +4619,7 @@ abstract class Iterable implements Category {
             Iterator iterator$64 = $this.iterator();
             while ((element$65 = iterator$64.next()) is !Finished) {
                 $dart$core.Object elem = element$65;
-                if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                     count = Integer.nativeValue(Integer.instance(count).successor);
                 }
             }
@@ -4632,7 +4632,7 @@ abstract class Iterable implements Category {
             Iterator iterator$66 = $this.iterator();
             while ((element$67 = iterator$66.next()) is !Finished) {
                 $dart$core.Object e = element$67;
-                if (Boolean.nativeValue(selecting.$delegate$(e) as Boolean)) {
+                if (Boolean.nativeValue(selecting.f(e) as Boolean)) {
                     return true;
                 }
             }
@@ -4645,7 +4645,7 @@ abstract class Iterable implements Category {
             Iterator iterator$68 = $this.iterator();
             while ((element$69 = iterator$68.next()) is !Finished) {
                 $dart$core.Object e = element$69;
-                if (!Boolean.nativeValue(selecting.$delegate$(e) as Boolean)) {
+                if (!Boolean.nativeValue(selecting.f(e) as Boolean)) {
                     return false;
                 }
             }
@@ -5248,7 +5248,7 @@ class List$collect$list_ implements List {
     $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
-            return $capture$List$collect$collecting.$delegate$(List.$getElement($outer$ceylon$language$List, index));
+            return $capture$List$collect$collecting.f(List.$getElement($outer$ceylon$language$List, index));
         } else {
             return null;
         }
@@ -6483,7 +6483,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 if (!(tmp$15 == null)) {
                     $dart$core.Object elem;
                     elem = tmp$15;
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return elem;
                     }
                 }
@@ -6503,7 +6503,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 if (!(tmp$17 == null)) {
                     $dart$core.Object elem;
                     elem = tmp$17;
-                    if (Boolean.nativeValue(selecting.$delegate$(elem) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return elem;
                     }
                 }
@@ -6845,7 +6845,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     continue;
                 }
                 element = tmp$63;
-                if (!Boolean.nativeValue(selecting.$delegate$(element) as Boolean)) {
+                if (!Boolean.nativeValue(selecting.f(element) as Boolean)) {
                     continue;
                 }
                 element$64 = element;
@@ -6873,7 +6873,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 if (!(tmp$66 == null)) {
                     $dart$core.Object element;
                     element = tmp$66;
-                    if (Boolean.nativeValue(selecting.$delegate$(element) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
                         return index;
                     }
                 }
@@ -6892,7 +6892,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 if (!(tmp$67 == null)) {
                     $dart$core.Object element;
                     element = tmp$67;
-                    if (Boolean.nativeValue(selecting.$delegate$(element) as Boolean)) {
+                    if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
                         return index;
                     }
                 }
@@ -6917,7 +6917,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                         if (!(tmp$71 == null)) {
                             $dart$core.Object elem;
                             elem = tmp$71;
-                            if (!Boolean.nativeValue(trimming.$delegate$(elem) as Boolean)) {
+                            if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
                                 from = Integer.nativeValue(index);
                                 doFail$68 = false;
                                 break;
@@ -6940,7 +6940,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                         if (!(tmp$75 == null)) {
                             $dart$core.Object elem;
                             elem = tmp$75;
-                            if (!Boolean.nativeValue(trimming.$delegate$(elem) as Boolean)) {
+                            if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
                                 to = Integer.nativeValue(index);
                                 doFail$72 = false;
                                 break;
@@ -6971,7 +6971,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                         if (!(tmp$78 == null)) {
                             $dart$core.Object elem;
                             elem = tmp$78;
-                            if (!Boolean.nativeValue(trimming.$delegate$(elem) as Boolean)) {
+                            if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
                                 return $this.span(index, Integer.instance(end));
                             }
                         }
@@ -6995,7 +6995,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                         if (!(tmp$81 == null)) {
                             $dart$core.Object elem;
                             elem = tmp$81;
-                            if (!Boolean.nativeValue(trimming.$delegate$(elem) as Boolean)) {
+                            if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
                                 return $this.span(Integer.instance(0), index);
                             }
                         }
@@ -7094,7 +7094,7 @@ class loop$$anonymous$0_ implements Iterable {
     loop$$anonymous$0_([$dart$core.Object this.$capture$loop$$start, Callable this.$capture$loop$next]) {}
     $dart$core.Object get first => $capture$loop$$start;
     $dart$core.bool get empty => false;
-    $dart$core.Object nextElement([$dart$core.Object element]) => $capture$loop$next.$delegate$(element);
+    $dart$core.Object nextElement([$dart$core.Object element]) => $capture$loop$next.f(element);
     Iterator iterator() => new loop$$anonymous$0_$$anonymous$1_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -7311,7 +7311,7 @@ class Map$mapItems$$anonymous$2_ implements Map {
                         }
                         item = item$18;
                     }
-                    return $capture$Map$mapItems$mapping.$delegate$(key, item);
+                    return $capture$Map$mapItems$mapping.f(key, item);
                 }
             }
             if (doElse$17) {
@@ -7319,7 +7319,7 @@ class Map$mapItems$$anonymous$2_ implements Map {
             }
         }
     }
-    Entry mapEntry([Entry entry]) => new Entry(entry.key, $capture$Map$mapItems$mapping.$delegate$(entry.key, entry.item));
+    Entry mapEntry([Entry entry]) => new Entry(entry.key, $capture$Map$mapItems$mapping.f(entry.key, entry.item));
     Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(mapEntry)).iterator();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     Map clone() => $outer$ceylon$language$Map.clone().mapItems($capture$Map$mapItems$mapping);
@@ -7395,7 +7395,7 @@ class Map$filterKeys$$anonymous$3_ implements Map {
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
         if (true) {
-            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.$delegate$(key) as Boolean)) {
+            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$19 = false;
                 return $outer$ceylon$language$Map.get(key);
             }
@@ -7407,7 +7407,7 @@ class Map$filterKeys$$anonymous$3_ implements Map {
     $dart$core.bool defines([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$20 = true;
         if (true) {
-            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.$delegate$(key) as Boolean)) {
+            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$20 = false;
                 return $outer$ceylon$language$Map.defines(key);
             }
@@ -8191,7 +8191,7 @@ class Measure  extends Range {
             count = Integer.nativeValue(Integer.instance(count).successor);
             return tmp$11;
         })() < size) {
-            step.$delegate$((() {
+            step.f((() {
                 $dart$core.Object tmp$12 = current;
                 current = (current as Enumerable).successor;
                 return tmp$12;
@@ -8321,7 +8321,7 @@ $dart$core.Object $package$min([Iterable values]) {
 
 $dart$core.Object min([Iterable values]) => $package$min(values);
 
-Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.$delegate$(val) as Boolean))(val)));
+Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.f(val) as Boolean))(val)));
 
 Callable not([Callable p]) => $package$not(p);
 
@@ -8364,7 +8364,7 @@ abstract class Obtainable implements Usable {
 }
 abstract class OptionalAnnotation implements ConstrainedAnnotation {
 }
-Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.$delegate$(val) as Boolean) || Boolean.nativeValue(q.$delegate$(val) as Boolean))(val)));
+Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) || Boolean.nativeValue(q.f(val) as Boolean))(val)));
 
 Callable or([Callable p, Callable q]) => $package$or(p, q);
 
@@ -8393,7 +8393,7 @@ class mapPairs$iterable_$iterator$iterator_ implements Iterator {
                             $dart$core.Object second;
                             second = second$2;
                             doElse$0 = false;
-                            return $outer$ceylon$language$mapPairs$iterable_.$capture$mapPairs$collecting.$delegate$(first, second);
+                            return $outer$ceylon$language$mapPairs$iterable_.$capture$mapPairs$collecting.f(first, second);
                         }
                     }
                 }
@@ -8496,7 +8496,7 @@ Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable se
             }
             second = second$4;
         }
-        if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
+        if (Boolean.nativeValue(selecting.f(first, second) as Boolean)) {
             return new Tuple.$withList([first, second], null);
         }
     }
@@ -8525,7 +8525,7 @@ $dart$core.bool $package$everyPair([Callable selecting, Iterable firstIterable, 
             }
             second = second$6;
         }
-        if (!Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
+        if (!Boolean.nativeValue(selecting.f(first, second) as Boolean)) {
             return false;
         }
     }
@@ -8554,7 +8554,7 @@ $dart$core.bool $package$anyPair([Callable selecting, Iterable firstIterable, It
             }
             second = second$8;
         }
-        if (Boolean.nativeValue(selecting.$delegate$(first, second) as Boolean)) {
+        if (Boolean.nativeValue(selecting.f(first, second) as Boolean)) {
             return true;
         }
     }
@@ -8584,7 +8584,7 @@ $dart$core.Object $package$foldPairs([$dart$core.Object initial, Callable accumu
             }
             second = second$10;
         }
-        partial = accumulating.$delegate$(partial, first, second);
+        partial = accumulating.f(partial, first, second);
     }
     return partial;
 }
@@ -9143,7 +9143,7 @@ class Sequence$collect$list_ implements List {
     $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (() {
         if ((index >= 0) && (index < size)) {
-            return $capture$Sequence$collect$collecting.$delegate$(Sequence.$getElement($outer$ceylon$language$Sequence, index));
+            return $capture$Sequence$collect$collecting.f(Sequence.$getElement($outer$ceylon$language$Sequence, index));
         } else {
             return null;
         }
@@ -10003,7 +10003,7 @@ final emptySet_ $package$emptySet = new emptySet_();
 
 emptySet_ get emptySet => $package$emptySet;
 
-Callable $package$shuffle([Callable f]) => $package$flatten(new dart$Callable(([$dart$core.Object secondArgs]) => $package$flatten(new dart$Callable(([$dart$core.Object firstArgs]) => $package$unflatten($package$unflatten(f).$delegate$(firstArgs) as Callable).$delegate$(secondArgs)))));
+Callable $package$shuffle([Callable f]) => $package$flatten(new dart$Callable(([$dart$core.Object secondArgs]) => $package$flatten(new dart$Callable(([$dart$core.Object firstArgs]) => $package$unflatten($package$unflatten(f).f(firstArgs) as Callable).f(secondArgs)))));
 
 Callable shuffle([Callable f]) => $package$shuffle(f);
 
@@ -10089,17 +10089,17 @@ class Singleton implements Sequence {
     $dart$core.Object span([Integer from, Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(((Integer.nativeValue(from) <= 0) && (Integer.nativeValue(to) >= 0)) || ((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= 0)) ? this : null);
     $dart$core.Object spanTo([Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? this : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
     $dart$core.Object spanFrom([Integer from]) => (($dart$core.Object $lhs$) => $lhs$ == null ? this : $lhs$)(Integer.nativeValue(from) > 0 ? $package$empty : null);
-    $dart$core.int count([Callable selecting]) => (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)(Boolean.nativeValue(selecting.$delegate$(element) as Boolean) ? 1 : null);
-    Singleton map([Callable collecting]) => new Singleton(collecting.$delegate$(element));
-    $dart$core.Object filter([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.$delegate$(element) as Boolean) ? this : null);
-    Callable fold([$dart$core.Object initial]) => new dart$Callable(([Callable accumulating]) => accumulating.$delegate$(initial, element));
+    $dart$core.int count([Callable selecting]) => (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)(Boolean.nativeValue(selecting.f(element) as Boolean) ? 1 : null);
+    Singleton map([Callable collecting]) => new Singleton(collecting.f(element));
+    $dart$core.Object filter([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(element) as Boolean) ? this : null);
+    Callable fold([$dart$core.Object initial]) => new dart$Callable(([Callable accumulating]) => accumulating.f(initial, element));
     $dart$core.Object reduce([Callable accumulating]) => element;
-    Singleton collect([Callable collecting]) => new Singleton(collecting.$delegate$(element));
-    $dart$core.Object select([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.$delegate$(element) as Boolean) ? this : null);
+    Singleton collect([Callable collecting]) => new Singleton(collecting.f(element));
+    $dart$core.Object select([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(element) as Boolean) ? this : null);
     $dart$core.Object find([Callable selecting]) => (() {
         $dart$core.bool doElse$5 = true;
         if (!(element == null)) {
-            if (Boolean.nativeValue(selecting.$delegate$(element) as Boolean)) {
+            if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
                 doElse$5 = false;
                 return element;
             }
@@ -10110,8 +10110,8 @@ class Singleton implements Sequence {
     })();
     $dart$core.Object findLast([Callable selecting]) => find(selecting);
     Singleton sort([Callable comparing]) => this;
-    $dart$core.bool any([Callable selecting]) => Boolean.nativeValue(selecting.$delegate$(element) as Boolean);
-    $dart$core.bool every([Callable selecting]) => Boolean.nativeValue(selecting.$delegate$(element) as Boolean);
+    $dart$core.bool any([Callable selecting]) => Boolean.nativeValue(selecting.f(element) as Boolean);
+    $dart$core.bool every([Callable selecting]) => Boolean.nativeValue(selecting.f(element) as Boolean);
     $dart$core.Object skip([$dart$core.int skipping]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(skipping < 1 ? this : null);
     $dart$core.Object take([$dart$core.int taking]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(taking > 0 ? this : null);
     $dart$core.Object get coalesced => (() {
@@ -10125,7 +10125,7 @@ class Singleton implements Sequence {
         }
     })();
     Iterable chain([Iterable other]) => other.follow(element);
-    void each([Callable step]) => step.$delegate$(element);
+    void each([Callable step]) => step.f(element);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);
@@ -10443,7 +10443,7 @@ class Span  extends Range {
         $dart$core.Object element = first;
         $dart$core.int count = 0;
         while (containsElement(element)) {
-            if (Boolean.nativeValue(selecting.$delegate$(element) as Boolean)) {
+            if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
                 count = Integer.nativeValue(Integer.instance(count).successor);
             }
             element = next(element);
@@ -10567,7 +10567,7 @@ class Span  extends Range {
     void each([Callable step]) {
         $dart$core.Object current = first;
         while (true) {
-            step.$delegate$(current);
+            step.f(current);
             if (Integer.instance((current as Enumerable).offset(last)).equals(Integer.instance(0))) {
                 break;
             } else {

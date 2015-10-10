@@ -33,7 +33,7 @@ class MultipleParameterListTests() {
                 void $package$run() {
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => $package$adder($ceylon$language.Integer.nativeValue(x)));
                     $ceylon$language.Callable g = $package$adder(1);
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue($package$adder(1).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue($package$adder(1).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -66,7 +66,7 @@ class MultipleParameterListTests() {
                 void $package$run() {
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => $package$adder($ceylon$language.Integer.nativeValue(x)));
                     $ceylon$language.Callable g = $package$adder(1);
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue($package$adder(1).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue($package$adder(1).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -98,7 +98,7 @@ class MultipleParameterListTests() {
 
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => adder($ceylon$language.Integer.nativeValue(x)));
                     $ceylon$language.Callable g = adder(1);
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue(adder(1).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue(adder(1).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -127,7 +127,7 @@ class MultipleParameterListTests() {
 
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => adder($ceylon$language.Integer.nativeValue(x)));
                     $ceylon$language.Callable g = adder(1);
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue(adder(1).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue(adder(1).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -158,8 +158,8 @@ class MultipleParameterListTests() {
                         return $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + $ceylon$language.Integer.nativeValue(y));
                     }));
                     $ceylon$language.Callable f = adder;
-                    $ceylon$language.Callable g = adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue((adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $ceylon$language.Callable g = adder.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue((adder.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -186,8 +186,8 @@ class MultipleParameterListTests() {
                 void $package$run() {
                     $ceylon$language.Callable adder = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x]) => new $ceylon$language.dart$Callable(([$ceylon$language.Integer y]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(x) + $ceylon$language.Integer.nativeValue(y))));
                     $ceylon$language.Callable f = adder;
-                    $ceylon$language.Callable g = adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
-                    $dart$core.int h = $ceylon$language.Integer.nativeValue((adder.$delegate$($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable).$delegate$($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+                    $ceylon$language.Callable g = adder.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable;
+                    $dart$core.int h = $ceylon$language.Integer.nativeValue((adder.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -231,8 +231,8 @@ class MultipleParameterListTests() {
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer x, $ceylon$language.Integer y = $ceylon$language.dart$default]) => $package$adder($ceylon$language.Integer.nativeValue(x), $dart$core.identical(y, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.Integer.nativeValue(y)));
                     $ceylon$language.Callable g = $package$adder(1);
                     $ceylon$language.Callable h = $package$adder(2, 3);
-                    $dart$core.int i = $ceylon$language.Integer.nativeValue($package$adder(4).$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
-                    $dart$core.int j = $ceylon$language.Integer.nativeValue($package$adder(6, 7).$delegate$($ceylon$language.Integer.instance(8)) as $ceylon$language.Integer);
+                    $dart$core.int i = $ceylon$language.Integer.nativeValue($package$adder(4).f($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
+                    $dart$core.int j = $ceylon$language.Integer.nativeValue($package$adder(6, 7).f($ceylon$language.Integer.instance(8)) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
@@ -277,9 +277,9 @@ class MultipleParameterListTests() {
                     $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer a, $ceylon$language.Integer b = $ceylon$language.dart$default]) => $package$fun($ceylon$language.Integer.nativeValue(a), $dart$core.identical(b, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.Integer.nativeValue(b)));
                     $ceylon$language.Callable g = $package$fun(1);
                     $ceylon$language.Callable h = $package$fun(2, 3);
-                    $ceylon$language.Callable i = $package$fun(4).$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable;
-                    $ceylon$language.Callable j = ($package$fun(4).$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable).$delegate$($ceylon$language.String.instance("s"), $ceylon$language.Float.instance(1.0)) as $ceylon$language.Callable;
-                    $dart$core.int k = $ceylon$language.Integer.nativeValue((($package$fun(4).$delegate$($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable).$delegate$($ceylon$language.String.instance("s"), $ceylon$language.Float.instance(1.0)) as $ceylon$language.Callable).$delegate$($ceylon$language.$true) as $ceylon$language.Integer);
+                    $ceylon$language.Callable i = $package$fun(4).f($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable;
+                    $ceylon$language.Callable j = ($package$fun(4).f($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable).f($ceylon$language.String.instance("s"), $ceylon$language.Float.instance(1.0)) as $ceylon$language.Callable;
+                    $dart$core.int k = $ceylon$language.Integer.nativeValue((($package$fun(4).f($ceylon$language.Integer.instance(5)) as $ceylon$language.Callable).f($ceylon$language.String.instance("s"), $ceylon$language.Float.instance(1.0)) as $ceylon$language.Callable).f($ceylon$language.$true) as $ceylon$language.Integer);
                 }
 
                 void run() => $package$run();
