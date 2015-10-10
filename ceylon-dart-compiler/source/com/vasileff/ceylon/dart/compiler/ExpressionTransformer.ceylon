@@ -828,12 +828,8 @@ class ExpressionTransformer(CompilationContext ctx)
             "NamedArguments not supported for indirect invocations."
             assert (!is NamedArguments arguments = that.arguments);
 
-            value argumentList
-                =   generateArgumentListFromArgumentList {
-                        arguments.argumentList;
-                        invokedInfo.typeModel;
-                        true;
-                    };
+            value [argumentList, hasSpread]
+                =   generateArgumentListForIndirectInvocation(arguments.argumentList);
 
             // Callables (being generic) always erase to `core.Object`.
             // We don't have a declaration to to use, so explicitly
@@ -845,13 +841,15 @@ class ExpressionTransformer(CompilationContext ctx)
                 rhsErasedToNative = false;
                 rhsErasedToObject = true;
                 DartFunctionExpressionInvocation {
-                    // resolve the $delegate$ property of the Callable
+                    // resolve the f/s property of the Callable
                     DartPropertyAccess {
                         withLhsDenotable {
                             ceylonTypes.callableDeclaration;
                             () => that.invoked.transform(this);
                         };
-                        DartSimpleIdentifier("$delegate$");
+                        DartSimpleIdentifier {
+                            if (hasSpread) then "s" else "f";
+                        };
                     };
                     argumentList;
                 };

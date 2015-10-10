@@ -226,21 +226,35 @@ class BaseGenerator(CompilationContext ctx)
     })();
 
     shared
-    DartInstanceCreationExpression createCallable
-            (DScope scope, DartExpression delegateFunction)
-        =>  DartInstanceCreationExpression {
-                false;
-                DartConstructorName {
-                    dartTypes.dartTypeNameForDartModel {
-                        scope;
-                        dartTypes.dartCallableModel;
-                    };
-                    null;
+    DartInstanceCreationExpression createCallable(
+            DScope scope,
+            DartExpression delegateFunction,
+            Integer? variadicParameterIndex = null) {
+
+        if (exists variadicParameterIndex) {
+            assert (!variadicParameterIndex.negative);
+        }
+
+        return
+        DartInstanceCreationExpression {
+            false;
+            DartConstructorName {
+                dartTypes.dartTypeNameForDartModel {
+                    scope;
+                    dartTypes.dartCallableModel;
                 };
-                DartArgumentList {
-                    [delegateFunction];
-                };
+                null;
             };
+            DartArgumentList {
+                {
+                    delegateFunction,
+                    if (exists variadicParameterIndex)
+                    then DartIntegerLiteral(variadicParameterIndex)
+                    else null
+                }.coalesced.sequence();
+            };
+        };
+    }
 
     shared
     DartFunctionExpressionInvocation createInlineDartStatements(
@@ -2392,8 +2406,12 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 };
 
+        value variadicParameterIndex
+            =   (parameters.getFromLast(0)?.sequenced else false)
+                then parameters.size - 1;
+
         // The Callable
-        return createCallable(scope, outerFunction);
+        return createCallable(scope, outerFunction, variadicParameterIndex);
     }
 
     shared
@@ -2594,8 +2612,12 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
+        value variadicParameterIndex
+            =   (parameters.getFromLast(0)?.sequenced else false)
+                then parameters.size - 1;
+
         // create the Callable!
-        return createCallable(scope, outerFunction);
+        return createCallable(scope, outerFunction, variadicParameterIndex);
     }
 
     "Generate a DartExpression for a series of `BooleanCondition`s."
@@ -2668,6 +2690,27 @@ class BaseGenerator(CompilationContext ctx)
         });
         return DartArgumentList(args);
     }
+
+    "Returns the DartArgumentList (with non-native and erased-to-object arguments), and
+     possibly a trailing spread argument. If a spread argument exists, the returned
+     boolean will be true."
+    shared
+    [DartArgumentList, Boolean] generateArgumentListForIndirectInvocation
+            (ArgumentList argumentList)
+        =>  [DartArgumentList {
+                argumentList.children.collect {
+                        (argument)
+                    =>  withLhsNonNative {
+                            ceylonTypes.anythingType;
+                            () => switch (argument)
+                            case (is Expression)
+                                argument.transform(expressionTransformer)
+                            case (is SpreadArgument|Comprehension)
+                                generateSequentialFromArgument(argument);
+                        };
+                };
+            },
+            argumentList.sequenceArgument exists];
 
     shared
     [[DartStatement*], DartArgumentList] generateArgumentListFromArguments(

@@ -51,7 +51,7 @@ class LazyIterator implements Iterator {
 
 $dart$core.Function dartComparator(Callable ceylonComparator) {
   return (var x, var y) {
-    var result = ceylonComparator.$delegate$(x,y);
+    var result = ceylonComparator.f(x,y);
     if (result is $Smaller) {
       return -1;
     }
@@ -188,7 +188,8 @@ const $package$$false = $false;
 
 abstract
 class Callable {
-    $dart$core.Function get $delegate$;
+    $dart$core.Function f;
+    $dart$core.Function s;
 }
 
 //
@@ -1016,7 +1017,7 @@ class Tuple extends impl$BaseSequence {
   final $dart$core.List _list;
   Sequential restSequence;
 
-  Tuple([$dart$core.Object first, Sequential rest = dart$default]) : _list = [] {
+  Tuple([$dart$core.Object first, $dart$core.Object rest = dart$default]) : _list = [] {
     restSequence = rest == dart$default ? $package$empty : rest;
     _list.add(first);
   }
@@ -1035,7 +1036,7 @@ class Tuple extends impl$BaseSequence {
     rest.each(new dart$Callable((e) => _list.add(e)));
   }
 
-  Tuple.$withList([$dart$core.List this._list, Sequential rest = dart$default]) {
+  Tuple.$withList([$dart$core.List this._list, $dart$core.Object rest = dart$default]) {
     if (_list.length == 0) {
       throw new AssertionError("list must not be empty");
     }
@@ -1259,21 +1260,117 @@ class dart$VariableBoxString {
 
 ///////////////////////////////////////
 //
-// Flatten
+// Callable & Flatten
 //
 ///////////////////////////////////////
 
+class dart$Callable implements $dart$core.Function, Callable {
+  final $dart$core.Function _function;
+  final $dart$core.int _variadicIndex;
+
+  dart$Callable([$dart$core.Function this._function, $dart$core.int this._variadicIndex = -1]);
+
+  // for non-spread calls
+  $dart$core.Function get f => _variadicIndex == -1 ? _function : this;
+
+  // for spread calls, always use noSuchMethod.
+  //$dart$core.Function get s => this;
+
+  noSuchMethod($dart$core.Invocation invocation) {
+    if (invocation.memberName == #call) {
+      // There is no spread argument (this is the "f" function)
+
+      var inArgs = invocation.positionalArguments;
+      var outArgs = new $dart$core.List(_variadicIndex + 1);
+
+      var initialLength = $dart$math.min(_variadicIndex, inArgs.length);
+
+      if (initialLength > 0) {
+        outArgs.setRange(0, initialLength, inArgs);
+      }
+
+      if (inArgs.length > initialLength) {
+        // The rest form the variadic parameter
+        outArgs[_variadicIndex] = new Tuple.$withList(inArgs.sublist(initialLength));
+      }
+      else {
+        // Fill with default values
+        outArgs.fillRange(initialLength, _variadicIndex, dart$default);
+        outArgs[_variadicIndex] = empty;
+      }
+      return $dart$core.Function.apply(_function, outArgs, null);
+    }
+    else if (invocation.memberName == #s) {
+      // The last of inArgs is a spread argument
+
+      var inArgs = invocation.positionalArguments;
+
+      if (inArgs.length == _variadicIndex + 1) {
+        // Variadic index lines up with spread index. Simply forward the positional arguments.
+        return $dart$core.Function.apply(_function, invocation.positionalArguments, null);
+      }
+      else {
+        // Populate outArgs for the invocation.
+        var seq = inArgs.last as Sequential;
+        var outArgs = new $dart$core.List(_variadicIndex + 1);
+
+        var initialLength = $dart$math.min(_variadicIndex, inArgs.length - 1);
+
+        if (initialLength > 0) {
+          outArgs.setRange(0, initialLength, inArgs);
+        }
+
+        if (initialLength < _variadicIndex) {
+          var outIndex = initialLength;
+          var seqIndex = 0;
+
+          // Add more from the spread arg
+          while (outIndex < _variadicIndex && seqIndex < seq.size) {
+            outArgs[outIndex] = seq.getFromFirst(seqIndex);
+            outIndex++;
+            seqIndex++;
+          }
+
+          if (seqIndex < seq.size) {
+            // Include the rest in the variadic
+            outArgs[_variadicIndex]
+                = seq.spanFrom(Integer.instance(_variadicIndex - initialLength));
+          }
+          else {
+            // Fill with default values
+            outArgs.fillRange(outIndex, _variadicIndex, dart$default);
+            outArgs[_variadicIndex] = empty;
+          }
+        }
+        else {
+          // Create new tuple with tail of inArgs and entire spread
+          outArgs[_variadicIndex]
+              = new Tuple.$withList(inArgs.sublist(initialLength, inArgs.length - 1), seq);
+        }
+        return $dart$core.Function.apply(_function, outArgs, null);
+      }
+    }
+    else {
+      super.noSuchMethod(invocation);
+    }
+  }
+}
+
+// TODO Support spread (`s`) invocations.
+//      Optimize by calling `s` in unflatten.
+//      Optimize by unwrapping (un)flatten layers when possible.
+
 Callable flatten(Callable tupleFunction) {
-    return new dart$FlatFunction(tupleFunction.$delegate$);
+    return new dart$FlatFunction(tupleFunction.f);
 }
 
 Callable unflatten(Callable flatFunction) {
-    return new dart$UnflatFunction(flatFunction.$delegate$);
+    return new dart$UnflatFunction(flatFunction.f);
 }
 
-class dart$FlatFunction implements $dart$core.Function, dart$Callable {
+class dart$FlatFunction implements $dart$core.Function, Callable {
   final $dart$core.Function tupleFunction;
-  $dart$core.Function get $delegate$ => this;
+  $dart$core.Function get f => this;
   dart$FlatFunction($dart$core.Function this.tupleFunction);
 
   noSuchMethod($dart$core.Invocation invocation) {
@@ -1284,7 +1381,7 @@ class dart$FlatFunction implements $dart$core.Function, dart$Callable {
 
 class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
   final $dart$core.Function flatFunction;
-  $dart$core.Function get $delegate$ => this;
+  $dart$core.Function get f => this;
   dart$UnflatFunction($dart$core.Function this.flatFunction);
 
   noSuchMethod($dart$core.Invocation invocation) {
@@ -1331,18 +1428,4 @@ const dart$default = const dart$Default();
 
 const $package$dart$default = dart$Default;
 
-///////////////////////////////////////
-//
-// Misc
-//
-///////////////////////////////////////
-
-class dart$Callable implements Callable {
-
-  final $dart$core.Function $delegate$;
-
-  dart$Callable($dart$core.Function this.$delegate$);
-}
-
 /////////////////////////////////////////////////////////////////////////////////
-
