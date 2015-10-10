@@ -2984,9 +2984,18 @@ class BaseGenerator(CompilationContext ctx)
                         type;
                         declaration;
                         //dartIdentifier;
-                        if (definedParameters.contains(parameter))
-                        then dartIdentifier
-                        else dartTypes.dartDefault(scope);
+                        if (definedParameters.contains(parameter)) then
+                            dartIdentifier
+                        else if (parameter.sequenced) then
+                            // Per spec 4.3.6: A variadic parameter may not have a
+                            // default argument.
+                            dartTypes.dartIdentifierForFunctionOrValue {
+                                scope;
+                                ceylonTypes.emptyValueDeclaration;
+                                false;
+                            }[0]
+                        else
+                            dartTypes.dartDefault(scope);
                     }));
 
         return [argsSetup, arguments];
