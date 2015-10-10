@@ -69,8 +69,7 @@ import ceylon.ast.redhat {
     primaryToCeylon
 }
 import ceylon.interop.java {
-    CeylonList,
-    CeylonIterable
+    CeylonList
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
@@ -309,24 +308,12 @@ class ArgumentListInfo(ArgumentList astNode)
                                     | Tree.SequenceEnumeration
                                     | Tree.NamedArgumentList>(astNode);
 
-    "The [[ParameterModel]], if this argument list is used as a parameter (e.g. within
+    "The [[ParameterModel]], if this argument list is used as an argument (e.g. within
      [[ceylon.ast.core::NamedArguments]])."
     shared ParameterModel? parameter
             =>  if (is Tree.SequencedArgument tcNode)
                 then tcNode.parameter
                 else null;
-
-    "A stream of pairs containing each argument's type and corresponding parameter.
-     The parameter will be null for invocations on values."
-    shared {[TypeModel, ParameterModel?]*} listedArgumentModels
-        =>  if (is Tree.SequencedArgument tcNode)
-            then CeylonIterable(tcNode.positionalArguments).map((arg)
-                    // Don't include parameter models for Tree.SpreadArgument and
-                    // Tree.Comprehension which are not included in ceylon.ast's
-                    // ArgumentList.listedArguments.
-                    =>  (arg is Tree.ListedArgument)
-                        then [arg.typeModel, arg.parameter else null]).coalesced
-            else [];
 }
 
 shared

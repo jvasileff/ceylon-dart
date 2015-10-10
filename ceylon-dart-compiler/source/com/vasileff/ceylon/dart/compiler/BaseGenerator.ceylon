@@ -2636,58 +2636,38 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartArgumentList generateArgumentListFromArgumentList(
-            ArgumentList that,
+            ArgumentList argumentList,
             TypeModel callableType,
-            "True if the ArgumentList is for a Callable, even though ParameterModels
-             are available. This is used for invocations on Callable Parameters"
-            Boolean overrideNonCallable = false) {
+            ParameterListModel parameterList) {
 
-        if(!that.sequenceArgument is Null) {
-            throw unimplementedError(that, "spread arguments not supported");
+        if (!argumentList.sequenceArgument is Null) {
+            throw unimplementedError(argumentList, "spread arguments not supported");
         }
 
-        value info = ArgumentListInfo(that);
-        value argumentTypes = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
+        value lastIndex = parameterList.parameters.size() - 1;
+        if (lastIndex >= 0 && parameterList.parameters.get(lastIndex).sequenced) {
+            throw unimplementedError(argumentList, "calls to variadics not supported");
+        }
 
-        // NOTE info.listedArgumentModels[x][0] is the argument type model for argument x.
-        //      But, this is actually the type of the expression for the callsite value.
-        //      So, for the `lhs` type, we are instead using argument types obtained from
-        //      callableType, which is what the function actually requires.
+        value argumentTypes
+            =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
-        value args = that.listedArguments.indexed.collect((e) {
-            value i -> expression = e;
+        value args
+            =   argumentList.listedArguments.indexed.collect((e) {
+                    value i -> expression = e;
 
-            assert (is ParameterModel? parameterModel =
-                        if (!overrideNonCallable)
-                        then info.listedArgumentModels.getFromFirst(i)?.get(1)
-                        else null);
+                    "For direct invocactions, a parameter model will always exists."
+                    assert (exists parameterModel = parameterList.parameters.get(i));
 
-            TypeModel? lhsType;
-            FunctionOrValueModel? lhsDeclaration;
+                    assert (exists argumentType = argumentTypes[i]);
 
-            if (exists parameterModel) {
-                // Invoking a real function (not a callable value)
-                // Use the argument type, even though the parameter type should be
-                // sufficient until we add support for generics
+                    return withLhs {
+                        argumentType;
+                        parameterModel.model;
+                        () => expression.transform(expressionTransformer);
+                    };
+                });
 
-                // FIXME fails with varargs. Try "interleave(x, y)"
-                assert (exists argumentType = argumentTypes[i]);
-
-                lhsType = argumentType;
-                lhsDeclaration = parameterModel.model;
-            }
-            else {
-                // Invoking a generic callable; all parameters take `core.Object`
-                lhsType = ceylonTypes.anythingType;
-                lhsDeclaration = null;
-            }
-
-            return withLhs {
-                lhsType;
-                lhsDeclaration;
-                () => expression.transform(expressionTransformer);
-            };
-        });
         return DartArgumentList(args);
     }
 
@@ -2717,29 +2697,34 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Arguments arguments,
             TypeModel callableType,
-            ParameterListModel | FunctionModel| ValueModel
-                    | ClassModel | ConstructorModel declarationOrparameterList,
-            "True if the ArgumentList is for a Callable, even though ParameterModels
-             are available. This is used for invocations on Callable Parameters"
-            Boolean overrideNonCallable = false) {
+            ParameterListModel | FunctionModel | ValueModel
+                    | ClassModel | ConstructorModel declarationOrparameterList) {
+
+
+        if (is ValueModel declarationOrparameterList) {
+            // Values won't have arguments.
+            return [[], DartArgumentList()];
+        }
+
+        value pList
+            =   switch(declarationOrparameterList)
+                case (is ParameterListModel) declarationOrparameterList
+                case (is FunctionModel) declarationOrparameterList.firstParameterList
+                case (is ClassModel) declarationOrparameterList.parameterList
+                case (is ConstructorModel) declarationOrparameterList.parameterList;
 
         switch (arguments)
         case (is PositionalArguments) {
-            return [[], generateArgumentListFromArgumentList(
-                    arguments.argumentList, callableType, overrideNonCallable)];
+            return [
+                [],
+                generateArgumentListFromArgumentList {
+                    arguments.argumentList;
+                    callableType;
+                    pList;
+                }
+            ];
         }
         case (is NamedArguments) {
-            if (is ValueModel declarationOrparameterList) {
-                return [[], DartArgumentList()];
-            }
-
-            value pList
-                =   switch(declarationOrparameterList)
-                    case (is ParameterListModel) declarationOrparameterList
-                    case (is FunctionModel) declarationOrparameterList.firstParameterList
-                    case (is ClassModel) declarationOrparameterList.parameterList
-                    case (is ConstructorModel) declarationOrparameterList.parameterList;
-
             value [argsSetup, argGenerators]
                 =   generateFromNamedArguments {
                         scope;
