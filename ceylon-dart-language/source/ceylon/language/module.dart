@@ -1305,7 +1305,28 @@ class dart$Callable implements $dart$core.Function, Callable {
 
       var inArgs = invocation.positionalArguments;
 
-      if (inArgs.length == _variadicIndex + 1) {
+      if (_variadicIndex == -1) {
+        // Not variadic
+        var seq = inArgs.last as Sequential;
+        var outSize = inArgs.length + seq.size - 1;
+        var initialLength = inArgs.length - 1;
+        var outArgs = new $dart$core.List(outSize);
+
+        outArgs.setRange(0, initialLength, inArgs);
+
+        // Add more from the spread arg
+        var outIndex = initialLength;
+        var seqIndex = 0;
+
+        while (seqIndex < seq.size) {
+          outArgs[outIndex] = seq.getFromFirst(seqIndex);
+          outIndex++;
+          seqIndex++;
+        }
+
+        return $dart$core.Function.apply(_function, outArgs, null);
+      }
+      else if (inArgs.length == _variadicIndex + 1) {
         // Variadic index lines up with spread index. Simply forward the positional arguments.
         return $dart$core.Function.apply(_function, invocation.positionalArguments, null);
       }
@@ -1361,33 +1382,68 @@ class dart$Callable implements $dart$core.Function, Callable {
 //      Optimize by unwrapping (un)flatten layers when possible.
 
 Callable flatten(Callable tupleFunction) {
-    return new dart$FlatFunction(tupleFunction.f);
+    return new dart$FlatFunction(tupleFunction);
 }
 
 Callable unflatten(Callable flatFunction) {
-    return new dart$UnflatFunction(flatFunction.f);
+    return new dart$UnflatFunction(flatFunction);
 }
 
 class dart$FlatFunction implements $dart$core.Function, Callable {
-  final $dart$core.Function tupleFunction;
+  final Callable tupleFunction;
+
+  dart$FlatFunction(Callable this.tupleFunction);
+
+  // for non-spread calls
   $dart$core.Function get f => this;
-  dart$FlatFunction($dart$core.Function this.tupleFunction);
+
+  // for spread calls, always use noSuchMethod.
+  //$dart$core.Function get s => this;
 
   noSuchMethod($dart$core.Invocation invocation) {
-    var tuple = new Tuple.$withList(invocation.positionalArguments, empty);
-    return $dart$core.Function.apply(tupleFunction, [tuple], null);
+    if (invocation.memberName == #call) {
+      // There is no spread argument (this is the "f" function)
+      var tuple = invocation.positionalArguments.length > 0
+          ? new Tuple.$withList(invocation.positionalArguments, empty)
+          : empty;
+
+      return $dart$core.Function.apply(tupleFunction.f, [tuple], null);
+    }
+    else if (invocation.memberName == #s) {
+      // The last of inArgs is a spread argument
+      throw "Spread arguments not yet supported.";
+    }
+    else {
+      super.noSuchMethod(invocation);
+    }
   }
 }
 
 class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
-  final $dart$core.Function flatFunction;
+  final Callable flatFunction;
+
+  dart$UnflatFunction(Callable this.flatFunction);
+
+  // for non-spread calls
   $dart$core.Function get f => this;
-  dart$UnflatFunction($dart$core.Function this.flatFunction);
+
+  // for spread calls, always use noSuchMethod.
+  //$dart$core.Function get s => this;
 
   noSuchMethod($dart$core.Invocation invocation) {
-    var list = [];
-    invocation.positionalArguments[0].each(new dart$Callable((e) => list.add(e)));
-    return $dart$core.Function.apply(flatFunction, list, null);
+    if (invocation.memberName == #call) {
+      // There is no spread argument (this is the "f" function)
+      var list = [];
+      invocation.positionalArguments[0].each(new dart$Callable((e) => list.add(e)));
+      return $dart$core.Function.apply(flatFunction.f, list, null);
+    }
+    else if (invocation.memberName == #s) {
+      // The last of inArgs is a spread argument
+      throw "Spread arguments not yet supported.";
+    }
+    else {
+      super.noSuchMethod(invocation);
+    }
   }
 }
 
