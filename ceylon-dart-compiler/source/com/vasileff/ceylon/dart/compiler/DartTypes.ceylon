@@ -63,6 +63,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }.get;
     })();
 
+    value reservedWords = set {
+        "assert", "break", "case", "catch", "class", "const", "continue",
+        "default", "do", "else", "enum", "extends", "false", "final", "finally",
+        "for", "if", "in", "is", "new", "null", "rethrow", "return", "super",
+        "switch", "this", "throw", "true", "try", "var", "void", "while", "with"
+    };
+
+    // TODO improve this.
+    function sanitizeIdentifier(String id)
+        =>  if (reservedWords.contains(id))
+            then "$" + id
+            else id;
+
     String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
         String classOrObjectShortName(ClassModel declaration)
             =>  if (declaration.anonymous) then
@@ -77,6 +90,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return getUnprefixedName(declaration.getter);
         }
 
+        "Unless a replacement declaration has been made, always use the
+         originalDeclaration to determine the name."
+        DeclarationModel | ParameterModel originalDeclaration;
+
         if (is TypedDeclarationModel declaration) {
             // search for replacement name
             variable value model = declaration;
@@ -90,34 +107,46 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 }
                 break;
             }
+            originalDeclaration = model;
+        }
+        else {
+            originalDeclaration = declaration;
         }
 
-        switch (declaration)
-        case (is ValueModel) {
-            // TODO generalize this Dart reserved word hack
-            return switch (n = declaration.name)
-                case ("true") "$true"
-                case ("false") "$false"
-                else n;
+        function makePrivate(TypedDeclarationModel declaration, String baseName) {
+            // For now, not prefixing toplevels. We *can't* make `$package$element`
+            // identifiers private, since in dev our files aren't always in proper
+            // Dart packages. And for convenience, leaving the non `$package$` qualified
+            // bridges alone.
+            if ((isClassOrInterfaceMember(declaration)) && !declaration.shared) {
+                return "_$" + baseName;
+            }
+            return baseName;
         }
-        case (is FunctionModel) {
-            return declaration.name;
+
+        switch (originalDeclaration)
+        case (is ValueModel | FunctionModel) {
+            return
+            if (originalDeclaration.name == "null"
+                && ceylonTypes.isNullValueDeclaration(originalDeclaration))
+            then "null"
+            else makePrivate {
+                originalDeclaration;
+                sanitizeIdentifier(originalDeclaration.name);
+            };
         }
         case (is ClassModel) {
-            return classOrObjectShortName(declaration);
+            return sanitizeIdentifier(classOrObjectShortName(originalDeclaration));
         }
-        case (is ConstructorModel) {
-            return declaration.name;
-        }
-        case (is InterfaceModel) {
-            return declaration.name;
+        case (is ConstructorModel | InterfaceModel) {
+            return sanitizeIdentifier(originalDeclaration.name);
         }
         case (is ParameterModel) {
-            return declaration.name;
+            return getUnprefixedName(originalDeclaration.model);
         }
         else {
             throw Exception("declaration type not yet supported \
-                             for ``className(declaration)``");
+                             for ``className(originalDeclaration)``");
         }
     }
 
@@ -224,7 +253,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     String getPackagePrefixedName(FunctionOrValueModel declaration) {
         value name = getName(declaration);
         if (declaration.container is PackageModel) {
-            return "$package$"
+            return
+            if (name.startsWith("_$")) then
+                // Not using "_$package$" now since Dart isn't aware that the multiple
+                // files that make up the language module are in the same dart package
+                // during development.
+                "$package$"
+                + identifierPackagePrefix(declaration)
+                + name[2...]
+            else
+                "$package$"
                 + identifierPackagePrefix(declaration)
                 + name;
         }
@@ -235,8 +273,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     String unPackagePrefixify(String identifier) {
-        assert (identifier.startsWith("$package"));
-        return identifier[9...];
+        if (identifier.startsWith("$package")) {
+            return identifier[9...];
+        }
+        else if (identifier.startsWith("_$package")) {
+            return identifier[9...] + "_$";
+        }
+        else {
+            throw AssertionError(
+                "'``identifier``' is not a package prefixed identifier !");
+        }
     }
 
     shared

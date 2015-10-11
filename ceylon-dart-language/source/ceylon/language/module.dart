@@ -114,7 +114,7 @@ class Array extends impl$BaseList {
     else {
       source = this;
     }
-    dartListCopyTo(source, destination, sourcePosition, destinationPosition, length);
+    $package$dartListCopyTo(source, destination, sourcePosition, destinationPosition, length);
   }
 
   // TODO optimize span and measure functions
@@ -599,15 +599,15 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
 
   //  shared native String join({Object*} objects);
   $dart$core.String join(Iterable objects)
-    => dartStringJoin(this._value, objects);
+    => $package$dartStringJoin(this._value, objects);
 
   //  shared {String*} lines
   Iterable get lines
-    => dartStringLines(this._value);
+    => $package$dartStringLines(this._value);
 
   //  shared {String*} linesWithBreaks
   Iterable get linesWithBreaks
-    => dartStringLinesWithBreaks(this._value);
+    => $package$dartStringLinesWithBreaks(this._value);
 
   //  shared String trimmed => trim(Character.whitespace);
   $dart$core.String get trimmed
@@ -899,7 +899,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
           $dart$core.Object sourcePosition = $package$dart$default,
           $dart$core.Object destinationPosition = $package$dart$default,
           $dart$core.Object length = $package$dart$default]) {
-      dartListCopyTo(this, destination, sourcePosition, destinationPosition, length);
+    $package$dartListCopyTo(this, destination, sourcePosition, destinationPosition, length);
   }
 
   // TODO
