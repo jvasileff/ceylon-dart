@@ -960,7 +960,7 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
-            [Expression*] arguments) {
+            [Expression*] | [DartExpression()*] arguments) {
 
         return
         generateInvocationDetailsSynthetic {
@@ -981,7 +981,7 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
-            [Expression*] arguments)
+            [Expression*] | [DartExpression()*] arguments)
         =>  generateInvocationDetailsSynthetic {
                 scope;
                 receiverType;
@@ -1000,7 +1000,7 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
-            [Expression*] arguments) {
+            [Expression*] | [DartExpression()*] arguments) {
 
         // 1. Get a TypedDeclaration for the member
         // 2. Get a TypeDeclaration for the member's container
@@ -2764,7 +2764,7 @@ class BaseGenerator(CompilationContext ctx)
         value scope
             =   dScope(argumentList);
 
-        value argumentTypes
+        value parameterTypes
             =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
         value listedArguments
@@ -2798,11 +2798,11 @@ class BaseGenerator(CompilationContext ctx)
             value dartArguments = LinkedList<DartExpression>();
 
             for (i -> parameter in CeylonIterable(parameterList.parameters).indexed) {
-                assert (exists argumentType = argumentTypes[i]); // the *lhs* type
+                assert (exists parameterType = parameterTypes[i]); // the *lhs* type
                 if (parameter.sequenced) {
                     dartArguments.add {
                         withLhs {
-                            argumentType;
+                            parameterType;
                             parameter.model;
                             () => generateTuple {
                                 scope;
@@ -2816,7 +2816,7 @@ class BaseGenerator(CompilationContext ctx)
                     // Just add the argument, as normal
                     dartArguments.add {
                         withLhs {
-                            argumentType;
+                            parameterType;
                             parameter.model;
                             () => expression.transform(expressionTransformer);
                         };
@@ -2842,8 +2842,245 @@ class BaseGenerator(CompilationContext ctx)
             return [[], DartArgumentList(dartArguments.sequence())];
         }
 
-        throw CompilerBug(scope,
-                "Using a spread argument for listed parameters not yet supported.");
+        value dartStatements = LinkedList<DartStatement>();
+        value dartArguments = LinkedList<DartExpression>();
+
+        value tmpVariablePrefix
+            =  dartTypes.createTempNameCustom("arg") + "$";
+
+        value tmpIdentifierSequence
+            =  DartSimpleIdentifier(tmpVariablePrefix + "s");
+
+        value tmpIdentifierSequenceLength
+            =  DartSimpleIdentifier(tmpVariablePrefix + "l");
+
+        for (i -> argument in listedArguments.indexed) {
+            // Evaluate listed arguments to a variable. Add a statement to
+            // `dartStatements` to declare the variable, and add an expression to
+            // `dartArguments` for the eventual invocation.
+
+            // Note: the listed argument expressions must be evaluated prior to
+            // evaluating the spread argument, since they precede the spread argument
+            // in the source.
+
+            assert (exists parameter = parameterList.parameters.get(i));
+            assert (exists parameterType = parameterTypes[i]);
+
+            value dartIdentifier = DartSimpleIdentifier(tmpVariablePrefix + i.string);
+
+            dartStatements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            scope;
+                            parameter.model;
+                        };
+                        [DartVariableDeclaration {
+                            dartIdentifier;
+                            withLhs {
+                                parameterType;
+                                parameter.model;
+                                () => argument.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                        }];
+                    };
+                };
+            };
+
+            // change to generator (() => boxedExpr) later
+            dartArguments.add(dartIdentifier);
+        }
+
+        "Precondition for branch"
+        assert(exists sequenceArg, exists sequenceArgInfo, exists sequenceArgType);
+
+        value sequenceArgMinimumLength
+            =   ceylonTypes.sequentialMinimumLength(sequenceArgType);
+
+        value sequenceArgMaximumLength
+            =   ceylonTypes.sequentialMaximumLength(
+                    sequenceArgType, listedParameterCount + 1);
+
+        value sequenceArgLengthKnown
+            =   sequenceArgMinimumLength
+                    == sequenceArgMaximumLength;
+
+        value sequenceArgLengthCoversListedParameters
+            =   listedParameterCount
+                    <= sequenceArgMinimumLength + listedArguments.size;
+
+        value variadicDefinitelyEmpty
+            =   listedParameterCount + 1
+                    > listedArguments.size + sequenceArgMaximumLength;
+
+        // Evaluate the sequence argument and assign to `tmpIdentifierSequence`
+        dartStatements.add {
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeName {
+                        scope;
+                        sequenceArgType;
+                        false;
+                        false;
+                    };
+                    [DartVariableDeclaration {
+                        tmpIdentifierSequence;
+                        withLhsNonNative {
+                            sequenceArgType;
+                            () => generateSequentialFromArgument {
+                                sequenceArg;
+                            };
+                        };
+                    }];
+                };
+            };
+        };
+
+        // If the sequence argument length is not statically known, assign its runtime
+        // length to `tmpIdentifierSequenceLength`
+        if (!sequenceArgLengthKnown && !sequenceArgLengthCoversListedParameters) {
+            dartStatements.add {
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartInt;
+                        [DartVariableDeclaration {
+                            tmpIdentifierSequenceLength;
+                            withLhsNative {
+                                ceylonTypes.integerType;
+                                () => generateInvocationSynthetic {
+                                    scope;
+                                    ceylonTypes.sequentialAnythingType;
+                                    () => withBoxing {
+                                        scope;
+                                        sequenceArgType;
+                                        null;
+                                        tmpIdentifierSequence;
+                                    };
+                                    "size";
+                                    [];
+                                };
+                            };
+                        }];
+                    };
+                };
+            };
+        }
+
+        // Generate the remaining arguments
+        for (i -> parameter in CeylonIterable(parameterList.parameters).indexed
+                .skip(listedArguments.size)) {
+
+            assert (exists parameterType = parameterTypes[i]);
+
+            if (parameter.sequenced && !variadicDefinitelyEmpty) {
+                // Use spanFrom to generate an argument for the variadic
+                dartArguments.add {
+                    withLhs {
+                        parameterType;
+                        parameter.model;
+                        () => generateInvocationSynthetic {
+                            scope;
+                            ceylonTypes.sequentialAnythingType;
+                            () => withBoxing {
+                                scope;
+                                sequenceArgType;
+                                null;
+                                tmpIdentifierSequence;
+                            };
+                            "spanFrom";
+                            [() => withBoxing {
+                                scope;
+                                ceylonTypes.integerType;
+                                null;
+                                DartIntegerLiteral {
+                                    listedParameterCount - listedArguments.size;
+                                };
+                            }];
+                        };
+                    };
+                };
+            }
+            else if (parameter.sequenced) {
+                // assert (variadicDefinitelyEmpty)
+                // Long winded way of adding an `[]` argument for the variadic
+                dartArguments.add {
+                    withLhs {
+                        parameterType;
+                        parameter.model;
+                        () => withBoxing {
+                            scope;
+                            ceylonTypes.emptyType;
+                            null;
+                            dartTypes.dartIdentifierForFunctionOrValue {
+                                scope;
+                                ceylonTypes.emptyValueDeclaration;
+                                false;
+                            }[0];
+                        };
+                    };
+                };
+            }
+            else if (i < listedArguments.size + sequenceArgMaximumLength) {
+                // Assign a value from the spread argument to a listed parameter
+                value argumentFromSequence
+                    =   withLhs {
+                            parameterType;
+                            parameter.model;
+                            () => generateInvocationSynthetic {
+                                scope;
+                                ceylonTypes.sequentialAnythingType;
+                                () => withBoxing {
+                                    scope;
+                                    sequenceArgType;
+                                    null;
+                                    tmpIdentifierSequence;
+                                };
+                                "getFromFirst";
+                                [() => withBoxing {
+                                    scope;
+                                    ceylonTypes.integerType;
+                                    null;
+                                    DartIntegerLiteral {
+                                        i - listedArguments.size;
+                                    };
+                                }];
+                            };
+                        };
+
+                if (i < listedArguments.size + sequenceArgMinimumLength) {
+                    // No size check needed
+                    dartArguments.add(argumentFromSequence);
+                }
+                else {
+                    // Size check needed; the sequential may be exhausted
+                    dartArguments.add {
+                        DartConditionalExpression {
+                            DartBinaryExpression {
+                                tmpIdentifierSequenceLength;
+                                ">";
+                                DartIntegerLiteral(i - listedArguments.size);
+                            };
+                            argumentFromSequence;
+                            dartTypes.dartDefault(scope);
+                        };
+                    };
+                }
+            }
+            else {
+                // We're out of arguments.
+                // assert (i >= listedArguments.size + sequenceArgMaximumLength)
+                dartArguments.add {
+                    dartTypes.dartDefault(scope);
+                };
+            }
+        }
+
+        return [dartStatements.sequence(), DartArgumentList(dartArguments.sequence())];
     }
 
     "Returns the DartArgumentList (with non-native and erased-to-object arguments), and

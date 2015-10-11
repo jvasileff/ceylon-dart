@@ -422,6 +422,34 @@ class CeylonTypes(Unit unit) {
     Boolean equalDefiniteTypes(Type first, Type second)
         =>  definiteType(first).isExactly(definiteType(second));
 
+    "Returns the minimum length of the given Sequential type."
+    shared
+    Integer sequentialMinimumLength(Type args)
+        =>  unit.getTupleMinimumLength(args);
+
+    "Returns the smaller of [[upTo]] and the largest possible size of the given
+     Sequential type."
+    shared
+    Integer sequentialMaximumLength(Type args, Integer upTo) {
+        if (args.union) {
+            assert (exists result
+                =   max(CeylonIterable(args.caseTypes).map((t)
+                    =>  sequentialMaximumLength(t, upTo))));
+            return result;
+        }
+
+        if (args.isSubtypeOf(emptyType)) {
+            return 0;
+        }
+
+        if (exists tuple = args.getSupertype(tupleDeclaration)) {
+            return 1 + sequentialMaximumLength(tuple.typeArgumentList.get(2), upTo - 1);
+        }
+
+        // Must be a non-Tuple Sequential or Nothing
+        return upTo;
+    }
+
     "Returns a type that should be denotable on platforms that do not support union and
      intersection types and that treat `null` as the bottom type. This is useful when
      accessing members of [[required]], since [[expressionType]] may translate to a top
