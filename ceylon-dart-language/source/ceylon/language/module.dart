@@ -189,7 +189,7 @@ const $package$$false = $false;
 abstract
 class Callable {
     $dart$core.Function get f;
-    s();
+    $dart$core.Function get s;
 }
 
 //
@@ -1435,22 +1435,19 @@ class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
 
   dart$UnflatFunction(Callable this.flatFunction);
 
-  // for non-spread calls
-  $dart$core.Function get f => this;
+  // for non-spread calls `f()`, always use noSuchMethod.
 
-  // for spread calls, always use noSuchMethod.
-  //$dart$core.Function get s => this;
+  // for spread calls `s()`, always use noSuchMethod.
 
   noSuchMethod($dart$core.Invocation invocation) {
-    if (invocation.memberName == #call) {
+    if (invocation.memberName == #call || invocation.memberName == #f) {
       // There is no spread argument (this is the "f" function)
-      var list = [];
-      invocation.positionalArguments[0].each(new dart$Callable((e) => list.add(e)));
-      return $dart$core.Function.apply(flatFunction.f, list, null);
+      // There will always be exactly one argument, which is a sequence
+      return flatFunction.s(invocation.positionalArguments.first);
     }
     else if (invocation.memberName == #s) {
-      // The last of inArgs is a spread argument
-      throw "Spread arguments not yet supported.";
+      // There will always be exactly one argument, which is a sequence holding a sequential
+      return flatFunction.s(invocation.positionalArguments.first.first);
     }
     else {
       super.noSuchMethod(invocation);
