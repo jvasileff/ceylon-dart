@@ -188,8 +188,8 @@ const $package$$false = $false;
 
 abstract
 class Callable {
-    $dart$core.Function f;
-    $dart$core.Function s;
+    $dart$core.Function get f;
+    s();
 }
 
 //
@@ -1270,11 +1270,10 @@ class dart$Callable implements $dart$core.Function, Callable {
 
   dart$Callable([$dart$core.Function this._function, $dart$core.int this._variadicIndex = -1]);
 
-  // for non-spread calls
+  // for non-spread calls `f()`
   $dart$core.Function get f => _variadicIndex == -1 ? _function : this;
 
-  // for spread calls, always use noSuchMethod.
-  //$dart$core.Function get s => this;
+  // for spread calls `s()`, always use noSuchMethod.
 
   noSuchMethod($dart$core.Invocation invocation) {
     if (invocation.memberName == #call) {
@@ -1298,6 +1297,7 @@ class dart$Callable implements $dart$core.Function, Callable {
         outArgs.fillRange(initialLength, _variadicIndex, dart$default);
         outArgs[_variadicIndex] = empty;
       }
+
       return $dart$core.Function.apply(_function, outArgs, null);
     }
     else if (invocation.memberName == #s) {
@@ -1312,12 +1312,14 @@ class dart$Callable implements $dart$core.Function, Callable {
         var initialLength = inArgs.length - 1;
         var outArgs = new $dart$core.List(outSize);
 
-        outArgs.setRange(0, initialLength, inArgs);
+        // Copy non-spread args
+        if (initialLength > 0) {
+          outArgs.setRange(0, initialLength, inArgs);
+        }
 
         // Add more from the spread arg
         var outIndex = initialLength;
         var seqIndex = 0;
-
         while (seqIndex < seq.size) {
           outArgs[outIndex] = seq.getFromFirst(seqIndex);
           outIndex++;
@@ -1368,6 +1370,7 @@ class dart$Callable implements $dart$core.Function, Callable {
           outArgs[_variadicIndex]
               = new Tuple.$withList(inArgs.sublist(initialLength, inArgs.length - 1), seq);
         }
+
         return $dart$core.Function.apply(_function, outArgs, null);
       }
     }
@@ -1382,11 +1385,11 @@ class dart$Callable implements $dart$core.Function, Callable {
 //      Optimize by unwrapping (un)flatten layers when possible.
 
 Callable flatten(Callable tupleFunction) {
-    return new dart$FlatFunction(tupleFunction);
+  return new dart$FlatFunction(tupleFunction);
 }
 
 Callable unflatten(Callable flatFunction) {
-    return new dart$UnflatFunction(flatFunction);
+  return new dart$UnflatFunction(flatFunction);
 }
 
 class dart$FlatFunction implements $dart$core.Function, Callable {
