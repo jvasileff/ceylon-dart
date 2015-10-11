@@ -369,4 +369,117 @@ class InvocationTests() {
         };
     }
 
+    "Test for scenarios where the spread argument is *not* used for listed parameters."
+    shared test
+    void directWithSpreadSimple() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    // with default
+                    [Integer+] fa(Integer a, Integer b=99, Integer* rest) => [a, b, *rest];
+
+                    print(fa(1));
+                    print(fa(1, *[]));
+                    print(fa(1, 2));
+                    print(fa(1, 2, *[]));
+                    print(fa(1, 2, *[3]));
+                    print(fa(1, 2, 3));
+                    print(fa(1, 2, 3, *[]));
+                    print(fa(1, 2, 3, *[4]));
+                    print(fa(1, 2, 3, *[4, *[]]));
+
+                    // without default
+                    [Integer+] fb(Integer a, Integer b, Integer* rest) => [a, b, *rest];
+
+                    print(fb(1, 2));
+                    print(fb(1, 2, *[]));
+                    print(fb(1, 2, *[3]));
+                    print(fb(1, 2, 3));
+                    print(fb(1, 2, 3, *[]));
+                    print(fb(1, 2, 3, *[4]));
+
+                    // with default, without variadic
+                    [Integer+] fc(Integer a, Integer b=98, Integer c=99) => [a, b, c];
+
+                    print(fc(1));
+                    print(fc(1, 2));
+                    print(fc(1, 2, 3));
+
+                    // with only variadic
+                    [Integer*] fd(Integer* rest) => rest;
+
+                    print(fd());
+                    print(fd(*[]));
+                    print(fd(1));
+                    print(fd(1, *[]));
+                    print(fd(1, 2));
+                    print(fd(1, 2, *[]));
+
+                    // with no params
+                    [Integer*] fe() => [];
+                    print(fe());
+                    print(fe(*[]));
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Sequence fa([$dart$core.int a, $dart$core.Object b = $ceylon$language.dart$default, $ceylon$language.Sequential rest]) {
+                        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+                            b = 99;
+                        }
+                        return new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b as $dart$core.int)], rest);
+                    }
+
+                    $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
+                    $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
+                    $ceylon$language.print(fa(1, 2, $ceylon$language.empty));
+                    $ceylon$language.print(fa(1, 2, $ceylon$language.empty));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
+                    $ceylon$language.Sequence fb([$dart$core.int a, $dart$core.int b, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b)], rest);
+
+                    $ceylon$language.print(fb(1, 2, $ceylon$language.empty));
+                    $ceylon$language.print(fb(1, 2, $ceylon$language.empty));
+                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
+                    $ceylon$language.Sequence fc([$dart$core.int a, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) {
+                        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+                            b = 98;
+                        }
+                        if ($dart$core.identical(c, $ceylon$language.dart$default)) {
+                            c = 99;
+                        }
+                        return new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b as $dart$core.int), $ceylon$language.Integer.instance(c as $dart$core.int)]);
+                    }
+
+                    $ceylon$language.print(fc(1));
+                    $ceylon$language.print(fc(1, 2));
+                    $ceylon$language.print(fc(1, 2, 3));
+                    $ceylon$language.Sequential fd([$ceylon$language.Sequential rest]) => rest;
+
+                    $ceylon$language.print(fd($ceylon$language.empty));
+                    $ceylon$language.print(fd($ceylon$language.empty));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
+                    $ceylon$language.Sequential fe() => $ceylon$language.empty;
+
+                    $ceylon$language.print(fe());
+                    $ceylon$language.print(fe());
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
 }

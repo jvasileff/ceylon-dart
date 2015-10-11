@@ -42,7 +42,8 @@ import ceylon.collection {
     LinkedList
 }
 import ceylon.interop.java {
-    CeylonList
+    CeylonList,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -132,6 +133,7 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ObjectArgumentInfo,
     NamedArgumentInfo,
     SpreadArgumentInfo,
+    sequenceArgumentInfo,
     ComprehensionInfo
 }
 import com.vasileff.jl4c.guava.collect {
@@ -2754,40 +2756,94 @@ class BaseGenerator(CompilationContext ctx)
                 };
 
     shared
-    DartArgumentList generateArgumentListFromArgumentList(
+    [[DartStatement*], DartArgumentList] generateArgumentListFromArgumentList(
             ArgumentList argumentList,
             TypeModel callableType,
             ParameterListModel parameterList) {
 
-        if (!argumentList.sequenceArgument is Null) {
-            throw unimplementedError(argumentList, "spread arguments not supported");
-        }
-
-        value lastIndex = parameterList.parameters.size() - 1;
-        if (lastIndex >= 0 && parameterList.parameters.get(lastIndex).sequenced) {
-            throw unimplementedError(argumentList, "calls to variadics not supported");
-        }
+        value scope
+            =   dScope(argumentList);
 
         value argumentTypes
             =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
-        value args
-            =   argumentList.listedArguments.indexed.collect((e) {
-                    value i -> expression = e;
+        value listedArguments
+            =   argumentList.listedArguments;
 
-                    "For direct invocactions, a parameter model will always exists."
-                    assert (exists parameterModel = parameterList.parameters.get(i));
+        value sequenceArg
+            =   argumentList.sequenceArgument;
 
-                    assert (exists argumentType = argumentTypes[i]);
+        value sequenceArgInfo
+            =   sequenceArgumentInfo(sequenceArg);
 
-                    return withLhs {
-                        argumentType;
-                        parameterModel.model;
-                        () => expression.transform(expressionTransformer);
+        value sequenceArgType
+            =   switch (sequenceArgInfo)
+                case (is SpreadArgumentInfo) sequenceArgInfo.typeModel
+                case (is ComprehensionInfo) sequenceArgInfo.typeModel
+                case (is Null) null;
+
+        value listedParameterCount
+            =   parameterList.parameters.size()
+                    - (if(parameterList.hasSequencedParameter())
+                       then 1 else 0);
+
+        value sequenceArgIsNullOrEmpty
+            =   if (!exists sequenceArgType)
+                then true
+                else ceylonTypes.isCeylonEmpty(sequenceArgType);
+
+        // Handle the easy case where the spread argument, if present, is *not* used for
+        // listed parameters. All arguments can be evaluated inline.
+        if (listedArguments.size >= listedParameterCount || sequenceArgIsNullOrEmpty) {
+            value dartArguments = LinkedList<DartExpression>();
+
+            for (i -> parameter in CeylonIterable(parameterList.parameters).indexed) {
+                assert (exists argumentType = argumentTypes[i]); // the *lhs* type
+                if (parameter.sequenced) {
+                    dartArguments.add {
+                        withLhs {
+                            argumentType;
+                            parameter.model;
+                            () => generateTuple {
+                                scope;
+                                listedArguments[i...]; // may be []
+                                sequenceArg; // may be null
+                            };
+                        };
                     };
-                });
+                }
+                else if (exists expression = listedArguments[i]) {
+                    // Just add the argument, as normal
+                    dartArguments.add {
+                        withLhs {
+                            argumentType;
+                            parameter.model;
+                            () => expression.transform(expressionTransformer);
+                        };
+                    };
+                }
+                else {
+                    // We're out of arguments.
 
-        return DartArgumentList(args);
+                    "Precondition for this branch"
+                    assert (sequenceArgIsNullOrEmpty);
+
+                    if (parameterList.hasSequencedParameter()) {
+                        // Pad with $defaults, so we can add eventually add [] for
+                        // the sequenced parameter, which per spec is never defaulted.
+                        dartArguments.add(dartTypes.dartDefault(scope));
+                    }
+                    else {
+                        // The rest are defaulted. Done.
+                        break;
+                    }
+                }
+            }
+            return [[], DartArgumentList(dartArguments.sequence())];
+        }
+
+        throw CompilerBug(scope,
+                "Using a spread argument for listed parameters not yet supported.");
     }
 
     "Returns the DartArgumentList (with non-native and erased-to-object arguments), and
@@ -2834,14 +2890,12 @@ class BaseGenerator(CompilationContext ctx)
 
         switch (arguments)
         case (is PositionalArguments) {
-            return [
-                [],
-                generateArgumentListFromArgumentList {
-                    arguments.argumentList;
-                    callableType;
-                    pList;
-                }
-            ];
+            return
+            generateArgumentListFromArgumentList {
+                arguments.argumentList;
+                callableType;
+                pList;
+            };
         }
         case (is NamedArguments) {
             value [argsSetup, argGenerators]
