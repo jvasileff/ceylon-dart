@@ -153,27 +153,27 @@ shared annotation DocAnnotation doc(
     String description) => DocAnnotation(description);
 
 "The annotation class for the [[see]] annotation."
-native shared final sealed annotation class SeeAnnotation(
+shared final sealed annotation class SeeAnnotation(
     "The program elements being referred to."
     shared Declaration* programElements)
         satisfies SequencedAnnotation<SeeAnnotation,Annotated> {}
 
 "Annotation to specify references to other program elements
  related to the annotated API."
-native shared annotation SeeAnnotation see(
+shared annotation SeeAnnotation see(
     "The program elements being referred to."
     Declaration* programElements)
         => SeeAnnotation(*programElements);
 
 "The annotation class for the [[by]] annotation."
-native shared final sealed annotation class AuthorsAnnotation(
+shared final sealed annotation class AuthorsAnnotation(
     "The authors, in Markdown syntax, of the annotated 
      program element"
     shared String* authors)
         satisfies OptionalAnnotation<AuthorsAnnotation,Annotated> {}
 
 "Annotation to document the authors of an API."
-native shared annotation AuthorsAnnotation by(
+shared annotation AuthorsAnnotation by(
     "The authors, in Markdown syntax, of the annotated 
      program element"
     String* authors)
@@ -224,13 +224,13 @@ shared annotation DeprecationAnnotation deprecated(
         => DeprecationAnnotation(reason);
 
 "The annotation class for the [[tagged]] annotation."
-native shared final sealed annotation class TagsAnnotation(
+shared final sealed annotation class TagsAnnotation(
     "The tags, in plain text."
     shared String* tags)
         satisfies OptionalAnnotation<TagsAnnotation,Annotated> {}
 
 "Annotation to categorize an API by tag."
-native shared annotation TagsAnnotation tagged(
+shared annotation TagsAnnotation tagged(
     "The tags, in plain text."
     String* tags)
         => TagsAnnotation(*tags);
@@ -269,7 +269,7 @@ shared final sealed annotation class SuppressWarningsAnnotation(
 "Annotation to suppress compilation warnings of the 
  [[specified types|warnings]] when typechecking the 
  annotated program element."
-native shared annotation SuppressWarningsAnnotation suppressWarnings(
+shared annotation SuppressWarningsAnnotation suppressWarnings(
     "The warning types to suppress.
      
      Allowed warning types are:

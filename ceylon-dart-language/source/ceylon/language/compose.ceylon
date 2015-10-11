@@ -11,6 +11,5 @@
 see(`function curry`, `function uncurry`)
 shared X(*Args) compose<X,Y,Args>(X(Y) x, Y(*Args) y) 
         given Args satisfies Anything[]
-// FIXME Dart workaround - swap the commented/uncommented lines
-               //=> flatten((Args args) => x(y(*args)));
-               => flatten((Args args) => x(unflatten(y)(args)));
+               => flatten((Args args) => x(y(*args)));
+               //=> flatten((Args args) => x(unflatten(y)(args)));
