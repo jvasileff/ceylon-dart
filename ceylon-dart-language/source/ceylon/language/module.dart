@@ -1397,11 +1397,10 @@ class dart$FlatFunction implements $dart$core.Function, Callable {
 
   dart$FlatFunction(Callable this.tupleFunction);
 
-  // for non-spread calls
+  // for non-spread calls `f()`
   $dart$core.Function get f => this;
 
-  // for spread calls, always use noSuchMethod.
-  //$dart$core.Function get s => this;
+  // for spread calls `s()`, always use noSuchMethod.
 
   noSuchMethod($dart$core.Invocation invocation) {
     if (invocation.memberName == #call) {
@@ -1413,8 +1412,17 @@ class dart$FlatFunction implements $dart$core.Function, Callable {
       return $dart$core.Function.apply(tupleFunction.f, [tuple], null);
     }
     else if (invocation.memberName == #s) {
-      // The last of inArgs is a spread argument
-      throw "Spread arguments not yet supported.";
+      // Simply create a tuple with all arguments
+      var inArgs = invocation.positionalArguments;
+      if (inArgs.length == 1) {
+        return $dart$core.Function.apply(tupleFunction.f, inArgs, null); 
+      }
+      else {
+        // assert(inArgs > 1)
+        return $dart$core.Function.apply(tupleFunction.f,
+            [new Tuple.$withList(inArgs.sublist(0, inArgs.length - 1),
+              inArgs.last)], null);
+      }
     }
     else {
       super.noSuchMethod(invocation);
