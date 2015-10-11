@@ -1380,15 +1380,17 @@ class dart$Callable implements $dart$core.Function, Callable {
   }
 }
 
-// TODO Support spread (`s`) invocations.
-//      Optimize by calling `s` in unflatten.
-//      Optimize by unwrapping (un)flatten layers when possible.
-
 Callable flatten(Callable tupleFunction) {
+  if (tupleFunction is dart$UnflatFunction) {
+    return tupleFunction.flatFunction;
+  }
   return new dart$FlatFunction(tupleFunction);
 }
 
 Callable unflatten(Callable flatFunction) {
+  if (flatFunction is dart$FlatFunction) {
+    return flatFunction.tupleFunction;
+  }
   return new dart$UnflatFunction(flatFunction);
 }
 
@@ -1397,31 +1399,27 @@ class dart$FlatFunction implements $dart$core.Function, Callable {
 
   dart$FlatFunction(Callable this.tupleFunction);
 
-  // for non-spread calls `f()`
-  $dart$core.Function get f => this;
+  // for non-spread calls `f()`, always use noSuchMethod.
 
   // for spread calls `s()`, always use noSuchMethod.
 
   noSuchMethod($dart$core.Invocation invocation) {
-    if (invocation.memberName == #call) {
-      // There is no spread argument (this is the "f" function)
+    var inArgs = invocation.positionalArguments;
+    if (invocation.memberName == #f) {
       var tuple = invocation.positionalArguments.length > 0
-          ? new Tuple.$withList(invocation.positionalArguments, empty)
-          : empty;
+          ? new Tuple.$withList(inArgs, empty) : empty;
 
-      return $dart$core.Function.apply(tupleFunction.f, [tuple], null);
+      return tupleFunction.f(tuple);
     }
     else if (invocation.memberName == #s) {
       // Simply create a tuple with all arguments
-      var inArgs = invocation.positionalArguments;
       if (inArgs.length == 1) {
-        return $dart$core.Function.apply(tupleFunction.f, inArgs, null); 
+        return tupleFunction.f(inArgs.first);
       }
       else {
         // assert(inArgs > 1)
-        return $dart$core.Function.apply(tupleFunction.f,
-            [new Tuple.$withList(inArgs.sublist(0, inArgs.length - 1),
-              inArgs.last)], null);
+        return tupleFunction.f(new Tuple.$withList(
+                inArgs.sublist(0, inArgs.length - 1), inArgs.last), null);
       }
     }
     else {
@@ -1440,14 +1438,14 @@ class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
   // for spread calls `s()`, always use noSuchMethod.
 
   noSuchMethod($dart$core.Invocation invocation) {
-    if (invocation.memberName == #call || invocation.memberName == #f) {
-      // There is no spread argument (this is the "f" function)
+    var inArgs = invocation.positionalArguments;
+    if (invocation.memberName == #f) {
       // There will always be exactly one argument, which is a sequence
-      return flatFunction.s(invocation.positionalArguments.first);
+      return flatFunction.s(inArgs.first);
     }
     else if (invocation.memberName == #s) {
       // There will always be exactly one argument, which is a sequence holding a sequential
-      return flatFunction.s(invocation.positionalArguments.first.first);
+      return flatFunction.s(inArgs.first.first);
     }
     else {
       super.noSuchMethod(invocation);
