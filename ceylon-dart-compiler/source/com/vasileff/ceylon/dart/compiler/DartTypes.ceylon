@@ -221,6 +221,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     ?.plus("$") else "");
 
     shared
+    String getPackagePrefixedName(FunctionOrValueModel declaration) {
+        value name = getName(declaration);
+        if (declaration.container is PackageModel) {
+            return "$package$"
+                + identifierPackagePrefix(declaration)
+                + name;
+        }
+        else {
+            return name;
+        }
+    }
+
+    shared
+    String unPackagePrefixify(String identifier) {
+        assert (identifier.startsWith("$package"));
+        return identifier[9...];
+    }
+
+    shared
     DartTypeName dartObject
         =   DartTypeName {
                 DartPrefixedIdentifier {
@@ -911,19 +930,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             isDartFunction = mapped[1];
         }
         else {
-            name = getName(declaration);
+            name = getPackagePrefixedName(declaration);
             isDartFunction = declaration is FunctionModel;
         }
 
         switch (container = declaration.container)
         case (is PackageModel) {
-            // qualify toplevel in same module with '$package.'
-            return
-            [DartSimpleIdentifier {
-                "$package$"
-                + identifierPackagePrefix(declaration)
-                + name;
-            }, isDartFunction];
+            return [DartSimpleIdentifier(name), isDartFunction];
         }
         case (is ClassOrInterfaceModel
                     | FunctionOrValueModel
@@ -983,8 +996,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             moduleImportPrefix(declaration);
                         };
                         DartSimpleIdentifier {
-                            // trim leading "$package."
-                            identifier.identifier[9...];
+                            // trim leading "$package." A bit ugly...
+                            unPackagePrefixify(identifier.identifier);
                         };
                     },
                     isDartFunction

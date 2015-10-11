@@ -641,7 +641,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 DartExpressionFunctionBody {
                     async = false;
                     DartSimpleIdentifier {
-                        "$package$" + dartTypes.getName(declarationModel);
+                        dartTypes.getPackagePrefixedName(declarationModel);
                     };
                 };
             };
@@ -671,8 +671,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         async = false;
                         DartAssignmentExpression {
                             DartSimpleIdentifier {
-                                "$package$"
-                                    + dartTypes.getName(declarationModel);
+                                dartTypes.getPackagePrefixedName(declarationModel);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier("value");
@@ -705,6 +704,7 @@ class TopLevelVisitor(CompilationContext ctx)
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
         =>  let (info = AnyFunctionInfo(that),
                 functionName = dartTypes.getName(info.declarationModel),
+                functionPPName = dartTypes.getPackagePrefixedName(info.declarationModel),
                 parameterModels = CeylonList(
                         info.declarationModel.firstParameterList.parameters))
             DartFunctionDeclaration {
@@ -721,7 +721,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         async = false;
                         expression = DartMethodInvocation {
                             target = null;
-                            DartSimpleIdentifier("$package$" + functionName);
+                            DartSimpleIdentifier(functionPPName);
                             DartArgumentList {
                                 parameterModels.collect { (parameterModel) =>
                                     DartSimpleIdentifier {

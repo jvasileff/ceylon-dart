@@ -1750,11 +1750,6 @@ class BaseGenerator(CompilationContext ctx)
         //      Find out where else this could be used, and use it
         //      Combine with similar functionality for declaring functions?
 
-        value packagePrefix =
-                if (declarationModel.container is PackageModel)
-                then "$package$"
-                else "";
-
         return
         DartVariableDeclarationList {
             null;
@@ -1764,7 +1759,7 @@ class BaseGenerator(CompilationContext ctx)
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + dartTypes.getName(declarationModel);
+                    dartTypes.getPackagePrefixedName(declarationModel);
                 };
                 initializer = null;
             }];
@@ -1775,11 +1770,6 @@ class BaseGenerator(CompilationContext ctx)
     DartVariableDeclarationList generateForObjectDefinition(ObjectDefinition that) {
         value info = ObjectDefinitionInfo(that);
 
-        value packagePrefix =
-                if (info.declarationModel.container is PackageModel)
-                then "$package$"
-                else "";
-
         return
         DartVariableDeclarationList {
             "final"; // TODO const for toplevels
@@ -1789,7 +1779,7 @@ class BaseGenerator(CompilationContext ctx)
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + dartTypes.getName(info.declarationModel);
+                    dartTypes.getPackagePrefixedName(info.declarationModel);
                 };
                 withLhs {
                     null;
@@ -1834,11 +1824,6 @@ class BaseGenerator(CompilationContext ctx)
 
         value info = ValueDefinitionInfo(that);
 
-        value packagePrefix =
-                if (info.declarationModel.container is PackageModel)
-                then "$package$"
-                else "";
-
         return
         DartVariableDeclarationList {
             null;
@@ -1848,7 +1833,7 @@ class BaseGenerator(CompilationContext ctx)
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
-                    packagePrefix + dartTypes.getName(info.declarationModel);
+                    dartTypes.getPackagePrefixedName(info.declarationModel);
                 };
                 withLhs {
                     null;
