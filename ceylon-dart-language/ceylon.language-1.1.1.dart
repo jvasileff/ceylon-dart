@@ -965,10 +965,10 @@ Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.i
 
 Iterable dartStringLinesWithBreaks([$dart$core.String val]) => $package$dartStringLinesWithBreaks(val);
 
-class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
-    dartStringSplit$$anonymous$3_ $outer$ceylon$language$dartStringSplit$$anonymous$3_;
-    dartStringSplit$$anonymous$3_$iterator$$anonymous$4_([dartStringSplit$$anonymous$3_ this.$outer$ceylon$language$dartStringSplit$$anonymous$3_]) {
-        seq = String.instance($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$val).sequence();
+class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
+    dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_;
+    dartStringSplit$$anonymous$2_$iterator$$anonymous$3_([dartStringSplit$$anonymous$2_ this.$outer$ceylon$language$dartStringSplit$$anonymous$2_]) {
+        seq = String.instance($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$val).sequence();
         it = seq.iterator();
         index = 0;
         first = true;
@@ -997,7 +997,7 @@ class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
                         Character next;
                         next = next$8 as Character;
                         doElse$7 = false;
-                        peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
+                        peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
                     }
                 }
                 if (doElse$7) {
@@ -1030,10 +1030,10 @@ class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
                 return String.instance("");
             }
             if (eatSeparator()) {
-                if ($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$groupSeparators as $dart$core.bool) {
+                if ($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$groupSeparators as $dart$core.bool) {
                     while (eatSeparator()) {}
                 }
-                if (!($outer$ceylon$language$dartStringSplit$$anonymous$3_.$capture$dartStringSplit$discardSeparators as $dart$core.bool)) {
+                if (!($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$discardSeparators as $dart$core.bool)) {
                     lastWasSeparator = true;
                     return String.instance(substring(start, index));
                 }
@@ -1052,13 +1052,13 @@ class dartStringSplit$$anonymous$3_$iterator$$anonymous$4_ implements Iterator {
         }
     }
 }
-class dartStringSplit$$anonymous$3_ implements Iterable {
+class dartStringSplit$$anonymous$2_ implements Iterable {
     $dart$core.String $capture$dartStringSplit$val;
-    $dart$core.Object $capture$dartStringSplit$splitting;
+    Callable $capture$dartStringSplit$splitting;
     $dart$core.Object $capture$dartStringSplit$groupSeparators;
     $dart$core.Object $capture$dartStringSplit$discardSeparators;
-    dartStringSplit$$anonymous$3_([$dart$core.String this.$capture$dartStringSplit$val, $dart$core.Object this.$capture$dartStringSplit$splitting, $dart$core.Object this.$capture$dartStringSplit$groupSeparators, $dart$core.Object this.$capture$dartStringSplit$discardSeparators]) {}
-    Iterator iterator() => new dartStringSplit$$anonymous$3_$iterator$$anonymous$4_(this);
+    dartStringSplit$$anonymous$2_([$dart$core.String this.$capture$dartStringSplit$val, Callable this.$capture$dartStringSplit$splitting, $dart$core.Object this.$capture$dartStringSplit$groupSeparators, $dart$core.Object this.$capture$dartStringSplit$discardSeparators]) {}
+    Iterator iterator() => new dartStringSplit$$anonymous$2_$iterator$$anonymous$3_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -1128,7 +1128,7 @@ Iterable $package$dartStringSplit([$dart$core.String val, $dart$core.Object spli
         if (String.instance(val).empty) {
             return new Singleton(String.instance(val));
         } else {
-            return new dartStringSplit$$anonymous$3_(val, splitting, groupSeparators, discardSeparators);
+            return new dartStringSplit$$anonymous$2_(val, splitting, groupSeparators, discardSeparators);
         }
     })();
 }

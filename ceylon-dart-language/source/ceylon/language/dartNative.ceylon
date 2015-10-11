@@ -44,9 +44,7 @@ String dartStringJoin(String val, {Object*} objects) {
 
 {String+} dartStringSplit(
         String val,
-        // FIXME capture problem with function param
-        //Boolean splitting(Character ch) => ch.whitespace,
-        Boolean(Character) splitting = (Character ch) => ch.whitespace,
+        Boolean splitting(Character ch) => ch.whitespace,
         Boolean discardSeparators=true,
         Boolean groupSeparators=true)
         => if (val.empty) then Singleton(val) else object
