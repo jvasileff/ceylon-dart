@@ -304,25 +304,25 @@ class QualifiedExpressionTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I {
-                    static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+                    static $ceylon$language.Usable $_$foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run();
                     static void $run([final I $this]) {
-                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo($this, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo($this, u as $ceylon$language.Usable));
                         I ie = $ceylon$language.nothing as I;
                         I il$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo(ie, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo(ie, u as $ceylon$language.Usable));
                         $ceylon$language.Callable fooRefIl = (() {
                             I $capturedReceiver$ = il$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$foo($capturedReceiver$, u as $ceylon$language.Usable));
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo($capturedReceiver$, u as $ceylon$language.Usable));
                         })();
                         I me = $ceylon$language.nothing as I;
                         I ml$get() => $ceylon$language.nothing as I;
 
-                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))(me));
+                        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$_$foo($r$, u as $ceylon$language.Usable))(me));
                         $ceylon$language.Callable fooRefMl$get() => (() {
                             I $capturedReceiver$ = ml$get();
-                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$foo($r$, u as $ceylon$language.Usable))($capturedReceiver$));
+                            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$_$foo($r$, u as $ceylon$language.Usable))($capturedReceiver$));
                         })();
 
                     }
@@ -472,13 +472,13 @@ class QualifiedExpressionTests() {
                     void run();
                     static void $run([final I$J $this]) {
                         $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $this.$outer$default$I.foo(u as $ceylon$language.Usable));
-                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$bar($this.$outer$default$I, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$bar($this.$outer$default$I, u as $ceylon$language.Usable));
                     }
                 }
                 abstract class I {
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]);
                     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
-                    static $ceylon$language.Usable $bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+                    static $ceylon$language.Usable $_$bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                 }
              """;
         };
@@ -512,13 +512,13 @@ class QualifiedExpressionTests() {
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                     void run() {
                         $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $outer$default$I.foo(u as $ceylon$language.Usable));
-                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$bar($outer$default$I, u as $ceylon$language.Usable));
+                        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$bar($outer$default$I, u as $ceylon$language.Usable));
                     }
                 }
                 abstract class I {
                     $ceylon$language.Usable foo([$ceylon$language.Usable u]);
                     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
-                    static $ceylon$language.Usable $bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+                    static $ceylon$language.Usable $_$bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
                 }
              """;
         };
@@ -543,15 +543,15 @@ class QualifiedExpressionTests() {
 
                 class I$J$C {
                     I$J $outer$default$I$J;
-                    I$J$C([I$J this.$outer$default$I$J, $dart$core.String this.s]) {}
-                    $dart$core.String s;
+                    I$J$C([I$J this.$outer$default$I$J, $dart$core.String this._$s]) {}
+                    $dart$core.String _$s;
                 }
                 abstract class I$J {
                     I get $outer$default$I;
                 }
                 abstract class I {
                 }
-                $ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object s]) => new I$J$C($r$, $ceylon$language.String.nativeValue(s as $ceylon$language.String))));
+                $ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object _$s]) => new I$J$C($r$, $ceylon$language.String.nativeValue(_$s as $ceylon$language.String))));
 
                 $ceylon$language.Callable get newC => $package$newC;
              """;

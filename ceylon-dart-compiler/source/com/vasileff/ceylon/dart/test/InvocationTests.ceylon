@@ -78,13 +78,13 @@ class InvocationTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I {
-                    static $dart$core.String $echo([final I $this, $dart$core.String s]) => s;
+                    static $dart$core.String $_$echo([final I $this, $dart$core.String s]) => s;
                     void foo();
                     static void $foo([final I $this]) {
-                        $ceylon$language.print($ceylon$language.String.instance(I.$echo($this, "list")));
+                        $ceylon$language.print($ceylon$language.String.instance(I.$_$echo($this, "list")));
                         $ceylon$language.print((() {
                             $dart$core.String arg$0$0 = "named";
-                            return $ceylon$language.String.instance(I.$echo($this, arg$0$0));
+                            return $ceylon$language.String.instance(I.$_$echo($this, arg$0$0));
                         })());
                     }
                 }

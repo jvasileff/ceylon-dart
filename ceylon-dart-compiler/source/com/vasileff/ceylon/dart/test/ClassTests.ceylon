@@ -31,13 +31,13 @@ class ClassTests() {
                     Foo $outer$default$Foo;
                     Foo$FooMemberClass([Foo this.$outer$default$Foo]) {}
                 }
-                class Foo$fooMethod$ClassInAMethod {
+                class Foo$_$fooMethod$ClassInAMethod {
                     Foo $outer$default$Foo;
-                    Foo$fooMethod$ClassInAMethod([Foo this.$outer$default$Foo]) {}
+                    Foo$_$fooMethod$ClassInAMethod([Foo this.$outer$default$Foo]) {}
                 }
                 class Foo {
                     Foo() {}
-                    void fooMethod() {}
+                    void _$fooMethod() {}
                 }
              """;
         };
@@ -61,22 +61,22 @@ class ClassTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class Foo {
-                    Foo([$dart$core.Object this.si1, $dart$core.Object this.si2, $dart$core.Object this.isf]) {
-                        if (!(si1 is $ceylon$language.String)) {
+                    Foo([$dart$core.Object this._$si1, $dart$core.Object this._$si2, $dart$core.Object this._$isf]) {
+                        if (!(_$si1 is $ceylon$language.String)) {
                             throw new $ceylon$language.AssertionError("Violated: is String si1");
                         }
-                        si1$0 = $ceylon$language.String.nativeValue(si1 as $ceylon$language.String);
-                        if (!(si2 is $ceylon$language.String)) {
+                        si1$0 = $ceylon$language.String.nativeValue(_$si1 as $ceylon$language.String);
+                        if (!(_$si2 is $ceylon$language.String)) {
                             throw new $ceylon$language.AssertionError("Violated: is String si2");
                         }
-                        si2$1 = $ceylon$language.String.nativeValue(si2 as $ceylon$language.String);
-                        if (!((isf is $ceylon$language.String) || (isf is $ceylon$language.Integer))) {
+                        si2$1 = $ceylon$language.String.nativeValue(_$si2 as $ceylon$language.String);
+                        if (!((_$isf is $ceylon$language.String) || (_$isf is $ceylon$language.Integer))) {
                             throw new $ceylon$language.AssertionError("Violated: is String | Integer isf");
                         }
                     }
-                    $dart$core.Object si1;
-                    $dart$core.Object si2;
-                    $dart$core.Object isf;
+                    $dart$core.Object _$si1;
+                    $dart$core.Object _$si2;
+                    $dart$core.Object _$isf;
                     $dart$core.String si1$0;
                     $dart$core.String si2$1;
                 }
@@ -105,9 +105,9 @@ class ClassTests() {
                 }
                 class Foo {
                     Foo() {
-                        x = new Foo$FooMember(this);
+                        _$x = new Foo$FooMember(this);
                     }
-                    Foo$FooMember x;
+                    Foo$FooMember _$x;
                 }
              """;
         };
@@ -136,9 +136,9 @@ class ClassTests() {
                 }
                 class run$Foo {
                     run$Foo() {
-                        x = new run$Foo$FooMember(this);
+                        _$x = new run$Foo$FooMember(this);
                     }
-                    run$Foo$FooMember x;
+                    run$Foo$FooMember _$x;
                 }
                 void $package$run() {}
 
@@ -190,24 +190,24 @@ class ClassTests() {
 
                 class run$Foo$FooMember {
                     run$Foo $outer$default$run$Foo;
-                    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo, $dart$core.int this.fooMemberInt]) {}
-                    $dart$core.int fooMemberInt;
-                    $dart$core.String get fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
+                    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo, $dart$core.int this._$fooMemberInt]) {}
+                    $dart$core.int _$fooMemberInt;
+                    $dart$core.String get _$fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
                     run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
-                    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo.fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo.fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(fooMemberInt))]);
+                    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo._$fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(_$fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo._$fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(_$fooMemberInt))]);
                 }
                 class run$Foo {
                     $dart$core.String $capture$run$runString1;
                     $dart$core.String $capture$run$runString2;
-                    run$Foo([$dart$core.String this.$capture$run$runString1, $dart$core.String this.$capture$run$runString2, $dart$core.int this.fooInt]) {
+                    run$Foo([$dart$core.String this.$capture$run$runString1, $dart$core.String this.$capture$run$runString2, $dart$core.int this._$fooInt]) {
                         x = new run$Foo$FooMember(this, (() {
                             $dart$core.int tmp$0 = $package$counter;
                             $package$counter = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$counter).successor);
                             return tmp$0;
                         })());
                     }
-                    $dart$core.int fooInt;
-                    $dart$core.String get fooString1 => $capture$run$runString1;
+                    $dart$core.int _$fooInt;
+                    $dart$core.String get _$fooString1 => $capture$run$runString1;
                     run$Foo$FooMember x;
                 }
                 void $package$run() {
@@ -289,16 +289,15 @@ class ClassTests() {
                     fun$C([$ceylon$language.Callable this.$capture$fun$captureMe1, $ceylon$language.Callable this.$capture$fun$captureMe2]) {
                         $capture$fun$captureMe1.f();
                         $capture$fun$captureMe2.f();
-                        cm1 = $capture$fun$captureMe1;
-                        cm2 = $capture$fun$captureMe2;
+                        _$cm1 = $capture$fun$captureMe1;
+                        _$cm2 = $capture$fun$captureMe2;
                     }
-                    $ceylon$language.Callable cm1;
-                    $ceylon$language.Callable cm2;
+                    $ceylon$language.Callable _$cm1;
+                    $ceylon$language.Callable _$cm2;
                 }
                 void $package$fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) {}
 
-                void fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) => $package$fun(captureMe1, captureMe2);
-             """;
+                void fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) => $package$fun(captureMe1, captureMe2);             """;
         };
     }
 
@@ -327,10 +326,10 @@ class ClassTests() {
                 class Foo implements I {
                     Foo() {
                         s = "";
-                        x = "";
+                        _$x = "";
                     }
                     $dart$core.String s;
-                    $dart$core.String x;
+                    $dart$core.String _$x;
                 }
              """;
         };
@@ -405,15 +404,15 @@ class ClassTests() {
                         i3 = "i3-2";
                         i4 = "i4-2";
                         c1 = "";
-                        c3 = "";
+                        _$c3 = "";
                         c1 = "c1-1";
                         c2 = "c2-1";
-                        c3 = "c3-1";
-                        c4 = "c4-1";
+                        _$c3 = "c3-1";
+                        _$c4 = "c4-1";
                         c1 = "c1-2";
                         c2 = "c2-2";
-                        c3 = "c3-2";
-                        c4 = "c4-2";
+                        _$c3 = "c3-2";
+                        _$c4 = "c4-2";
                     }
                     $dart$core.String i1;
                     $dart$core.String i2;
@@ -421,8 +420,8 @@ class ClassTests() {
                     $dart$core.String i4;
                     $dart$core.String c1;
                     $dart$core.String c2;
-                    $dart$core.String c3;
-                    $dart$core.String c4;
+                    $dart$core.String _$c3;
+                    $dart$core.String _$c4;
                 }
              """;
         };
@@ -467,15 +466,15 @@ class ClassTests() {
                         i2 = "i2-1";
                         c1 = "";
                         c2 = "c2-1";
-                        c3 = "";
-                        c4 = "c4-1";
+                        _$c3 = "";
+                        _$c4 = "c4-1";
                     }
                     $dart$core.String i1;
                     $dart$core.String i2;
                     $dart$core.String c1;
                     $dart$core.String c2;
-                    $dart$core.String c3;
-                    $dart$core.String c4;
+                    $dart$core.String _$c3;
+                    $dart$core.String _$c4;
                 }
              """;
         };
@@ -522,8 +521,8 @@ class ClassTests() {
                     $dart$core.String get i2 => i1;
                     $dart$core.String get c1 => "";
                     $dart$core.String get c2 => c1;
-                    $dart$core.String get c3 => "";
-                    $dart$core.String get c4 => c3;
+                    $dart$core.String get _$c3 => "";
+                    $dart$core.String get _$c4 => _$c3;
                 }
              """;
         };
@@ -694,8 +693,8 @@ class ClassTests() {
 
                 class C$D {
                     C $outer$default$C;
-                    C$D([C this.$outer$default$C, $dart$core.String this.s]) {}
-                    $dart$core.String s;
+                    C$D([C this.$outer$default$C, $dart$core.String this._$s]) {}
+                    $dart$core.String _$s;
                 }
                 class C {
                     C() {
@@ -738,10 +737,10 @@ class ClassTests() {
 
                 class C$D {
                     C $outer$default$C;
-                    C$D([C this.$outer$default$C, $dart$core.String this.s]) {
-                        $ceylon$language.print($ceylon$language.String.instance(s));
+                    C$D([C this.$outer$default$C, $dart$core.String this._$s]) {
+                        $ceylon$language.print($ceylon$language.String.instance(_$s));
                     }
-                    $dart$core.String s;
+                    $dart$core.String _$s;
                 }
                 class C {
                     C() {}
@@ -814,11 +813,11 @@ class ClassTests() {
                 class I1$I2$C implements I1$I2 {
                     I1$I2 $outer$default$I1$I2;
                     I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
-                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int this.version]) {}
-                    $dart$core.int version;
-                    $dart$core.String get cident => ("c-" + $ceylon$language.Integer.instance(version).toString()) + "";
+                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int this._$version]) {}
+                    $dart$core.int _$version;
+                    $dart$core.String get cident => ("c-" + $ceylon$language.Integer.instance(_$version).toString()) + "";
                     $dart$core.String get couterIdent => $outer$default$I1$I2.ident;
-                    $dart$core.String get ident => ("i2byC-" + $ceylon$language.Integer.instance(version).toString()) + "";
+                    $dart$core.String get ident => ("i2byC-" + $ceylon$language.Integer.instance(_$version).toString()) + "";
                     $dart$core.String get outerIdent => I1$I2.$get$outerIdent(this);
                 }
                 abstract class I1$I2 {
@@ -848,11 +847,11 @@ class ClassTests() {
                 void $package$run() {
                     I1 i1o$get() => new run$i1o$$anonymous$0_();
 
-                    $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C($r$, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer))));
+                    $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object _$version]) => new I1$I2$C($r$, $ceylon$language.Integer.nativeValue(_$version as $ceylon$language.Integer))));
 
                     I1$I2$C c = (newC$get().f(i1o$get().i2) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
-                    I1$I2$C c1 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
-                    I1$I2$C c2 = (new $ceylon$language.dart$Callable(([$dart$core.Object version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c1 = (new $ceylon$language.dart$Callable(([$dart$core.Object _$version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(_$version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
+                    I1$I2$C c2 = (new $ceylon$language.dart$Callable(([$dart$core.Object _$version]) => new I1$I2$C(i1o$get().i2, $ceylon$language.Integer.nativeValue(_$version as $ceylon$language.Integer)))).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
                     if (!$ceylon$language.String.instance(c.cident).equals($ceylon$language.String.instance("c-1"))) {
                         throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");
                     }

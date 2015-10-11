@@ -203,9 +203,9 @@ class ObjectTests() {
                 }
                 class o1_ {
                     o1_() {
-                        o2 = new o1_$o2_(this);
+                        _$o2 = new o1_$o2_(this);
                     }
-                    o1_$o2_ o2;
+                    o1_$o2_ _$o2;
                 }
                 final o1_ $package$o1 = new o1_();
 
@@ -365,12 +365,12 @@ class ObjectTests() {
 
                 class o_ {
                     o_() {
-                        myIterable = "abcd";
+                        _$myIterable = "abcd";
                     }
-                    $dart$core.String myIterable;
+                    $dart$core.String _$myIterable;
                     void run() {{
                             $dart$core.Object element$1;
-                            $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance(myIterable).iterator();
+                            $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance(_$myIterable).iterator();
                             while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
                                 $ceylon$language.Character x = element$1 as $ceylon$language.Character;
                                 $ceylon$language.print(x);

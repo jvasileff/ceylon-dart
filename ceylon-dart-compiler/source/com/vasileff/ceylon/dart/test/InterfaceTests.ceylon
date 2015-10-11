@@ -1054,10 +1054,10 @@ class InterfaceTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 abstract class I1 {
-                    static void $foo([final I1 $this]) {}
+                    static void $_$foo([final I1 $this]) {}
                     void bar();
                     static void $bar([final I1 $this]) {}
-                    static $dart$core.String $get$baz([final I1 $this]) => "";
+                    static $dart$core.String $get$_$baz([final I1 $this]) => "";
                     $dart$core.String get ban;
                     static $dart$core.String $get$ban([final I1 $this]) => "";
                 }

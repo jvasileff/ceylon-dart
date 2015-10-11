@@ -91,7 +91,7 @@ class AssignmentTests() {
                         s = "s2";
                     }
                     $dart$core.String s;
-                    void foo([$dart$core.String s]) {
+                    void _$foo([$dart$core.String s]) {
                         s = "foo's s";
                         this.s = "s3";
                     }
