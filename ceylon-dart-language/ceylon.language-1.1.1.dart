@@ -1440,9 +1440,9 @@ abstract class Empty implements Sequential, Ranged {
     Empty by([$dart$core.int step]);
     static Empty $by([final Empty $this, $dart$core.int step]) => $this;
     Tuple withLeading([$dart$core.Object element]);
-    static Tuple $withLeading([final Empty $this, $dart$core.Object element]) => new Tuple.$withList([element], null);
+    static Tuple $withLeading([final Empty $this, $dart$core.Object element]) => new Tuple.$withList([element]);
     Tuple withTrailing([$dart$core.Object element]);
-    static Tuple $withTrailing([final Empty $this, $dart$core.Object element]) => new Tuple.$withList([element], null);
+    static Tuple $withTrailing([final Empty $this, $dart$core.Object element]) => new Tuple.$withList([element]);
     Sequential append([Sequential elements]);
     static Sequential $append([final Empty $this, Sequential elements]) => elements;
     Sequential prepend([Sequential elements]);
@@ -1479,7 +1479,7 @@ abstract class Empty implements Sequential, Ranged {
     Empty trimTrailing([Callable trimming]);
     static Empty $trimTrailing([final Empty $this, Callable trimming]) => $this;
     Tuple slice([$dart$core.int index]);
-    static Tuple $slice([final Empty $this, $dart$core.int index]) => new Tuple.$withList([$this, $this], null);
+    static Tuple $slice([final Empty $this, $dart$core.int index]) => new Tuple.$withList([$this, $this]);
     void each([Callable step]);
     static void $each([final Empty $this, Callable step]) {}
 }
@@ -1604,7 +1604,7 @@ $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() 
     $dart$core.bool doElse$0 = true;
     if (!(element == null)) {
         doElse$0 = false;
-        return new Tuple.$withList([element], null);
+        return new Tuple.$withList([element]);
     }
     if (doElse$0) {
         return $package$empty;
@@ -1617,7 +1617,7 @@ class Entry {
     Entry([$dart$core.Object this.key, $dart$core.Object this.item]) {}
     $dart$core.Object key;
     $dart$core.Object item;
-    Tuple get pair => new Tuple.$withList([key, item], null);
+    Tuple get pair => new Tuple.$withList([key, item]);
     Entry get coalesced => (() {
         $dart$core.bool doElse$0 = true;
         if (!(item == null)) {
@@ -3343,7 +3343,7 @@ class Iterable$paired$$anonymous$21_$$anonymous$22_ implements Iterator {
                             tip = tip$95;
                             doElse$93 = false;
                             previous = tip;
-                            return new Tuple.$withList([head, tip], null);
+                            return new Tuple.$withList([head, tip]);
                         }
                     }
                 }
@@ -4877,7 +4877,7 @@ abstract class Iterable implements Category {
             }
             $dart$core.Object x = x$103;
             $dart$core.Object y = y$108;
-            return new Tuple.$withList([x, y], null);
+            return new Tuple.$withList([x, y]);
         }
 
         return new dart$Callable(step$3$112);
@@ -7006,7 +7006,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         return $package$empty;
     }
     Tuple slice([$dart$core.int index]);
-    static Tuple $slice([final List $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)), $this.spanFrom(Integer.instance(index))], null);
+    static Tuple $slice([final List $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)), $this.spanFrom(Integer.instance(index))]);
     List initial([$dart$core.int length]);
     static List $initial([final List $this, $dart$core.int length]) => $this.spanTo(Integer.instance(length - 1));
     List terminal([$dart$core.int length]);
@@ -8497,7 +8497,7 @@ Tuple $package$findPair([Callable selecting, Iterable firstIterable, Iterable se
             second = second$4;
         }
         if (Boolean.nativeValue(selecting.f(first, second) as Boolean)) {
-            return new Tuple.$withList([first, second], null);
+            return new Tuple.$withList([first, second]);
         }
     }
     return null;
@@ -9588,7 +9588,7 @@ abstract class Sequence implements Sequential, Iterable {
     $dart$core.Object findLast([Callable selecting]);
     static $dart$core.Object $findLast([final Sequence $this, Callable selecting]) => List.$findLast($this, selecting);
     Tuple slice([$dart$core.int index]);
-    static Tuple $slice([final Sequence $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)), $this.spanFrom(Integer.instance(index))], null);
+    static Tuple $slice([final Sequence $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)), $this.spanFrom(Integer.instance(index))]);
     Sequential measure([Integer from, $dart$core.int length]);
     static Sequential $measure([final Sequence $this, Integer from, $dart$core.int length]) => $this.sublist(Integer.nativeValue(from), (Integer.nativeValue(from) + length) - 1).sequence();
     Sequential span([Integer from, Integer to]);
@@ -9661,7 +9661,7 @@ class JoinedSequence implements Sequence {
     })();
     Tuple slice([$dart$core.int index]) => (() {
         if (Integer.instance(index).equals(Integer.instance(firstSeq.size))) {
-            return new Tuple.$withList([firstSeq, secondSeq], null);
+            return new Tuple.$withList([firstSeq, secondSeq]);
         } else {
             return Sequence.$slice(this, index);
         }
@@ -9814,7 +9814,7 @@ abstract class Sequential implements List, Ranged {
     Sequential trimTrailing([Callable trimming]);
     static Sequential $trimTrailing([final Sequential $this, Callable trimming]) => List.$trimTrailing($this, trimming).sequence();
     Tuple slice([$dart$core.int index]);
-    static Tuple $slice([final Sequential $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)) as Sequential, $this.spanFrom(Integer.instance(index)) as Sequential], null);
+    static Tuple $slice([final Sequential $this, $dart$core.int index]) => new Tuple.$withList([$this.spanTo(Integer.instance(index - 1)), $this.spanFrom(Integer.instance(index))]);
     Tuple withLeading([$dart$core.Object element]);
     Sequence withTrailing([$dart$core.Object element]);
     Sequential append([Sequential elements]);
@@ -10692,15 +10692,15 @@ $dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => 
 
 $dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);
 
-Tuple $package$unzip([Iterable tuples]) => new Tuple.$withList([tuples.map(new dart$Callable(([Tuple tuple]) => tuple.first)), tuples.map(new dart$Callable(([Tuple tuple]) => tuple.rest))], null);
+Tuple $package$unzip([Iterable tuples]) => new Tuple.$withList([tuples.map(new dart$Callable(([Tuple tuple]) => tuple.first)), tuples.map(new dart$Callable(([Tuple tuple]) => tuple.rest))]);
 
 Tuple unzip([Iterable tuples]) => $package$unzip(tuples);
 
-Tuple $package$unzipPairs([Iterable pairs]) => new Tuple.$withList([pairs.map(new dart$Callable(([Tuple pair]) => pair.get(Integer.instance(0)))), pairs.map(new dart$Callable(([Tuple pair]) => pair.get(Integer.instance(1))))], null);
+Tuple $package$unzipPairs([Iterable pairs]) => new Tuple.$withList([pairs.map(new dart$Callable(([Tuple pair]) => pair.get(Integer.instance(0)))), pairs.map(new dart$Callable(([Tuple pair]) => pair.get(Integer.instance(1))))]);
 
 Tuple unzipPairs([Iterable pairs]) => $package$unzipPairs(pairs);
 
-Tuple $package$unzipEntries([Iterable entries]) => new Tuple.$withList([entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)), entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item))], null);
+Tuple $package$unzipEntries([Iterable entries]) => new Tuple.$withList([entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)), entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item))]);
 
 Tuple unzipEntries([Iterable entries]) => $package$unzipEntries(entries);
 
@@ -10710,7 +10710,7 @@ Iterable $package$zipEntries([Iterable keys, Iterable items]) => $package$mapPai
 
 Iterable zipEntries([Iterable keys, Iterable items]) => $package$zipEntries(keys, items);
 
-Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => new Tuple.$withList([first, second], null)), firstElements, secondElements);
+Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => new Tuple.$withList([first, second])), firstElements, secondElements);
 
 Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package$zipPairs(firstElements, secondElements);
 
