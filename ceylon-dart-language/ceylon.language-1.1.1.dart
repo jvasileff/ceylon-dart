@@ -582,6 +582,47 @@ Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$da
 
 Callable comparing([Sequential comparators]) => $package$comparing(comparators);
 
+abstract class Comparison {
+    Comparison([$dart$core.String string]) {
+        this.string = string;
+    }
+    $dart$core.String string;
+    Comparison get reversed;
+    $dart$core.bool equals([$dart$core.Object other]) => (() {
+        $dart$core.bool doElse$0 = true;
+        if (true) {
+            doElse$0 = false;
+            return $dart$core.identical(this, other);
+        }
+        if (doElse$0) {
+            return false;
+        }
+    })();
+}
+class equal_  extends Comparison {
+    equal_() : super("equal") {}
+    Comparison get reversed => this;
+}
+final equal_ $package$equal = new equal_();
+
+equal_ get equal => $package$equal;
+
+class smaller_  extends Comparison {
+    smaller_() : super("smaller") {}
+    Comparison get reversed => $package$larger;
+}
+final smaller_ $package$smaller = new smaller_();
+
+smaller_ get smaller => $package$smaller;
+
+class larger_  extends Comparison {
+    larger_() : super("larger") {}
+    Comparison get reversed => $package$smaller;
+}
+final larger_ $package$larger = new larger_();
+
+larger_ get larger => $package$larger;
+
 Callable $package$compose([Callable x, Callable y]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => x.f(y.s(args))));
 
 Callable compose([Callable x, Callable y]) => $package$compose(x, y);
@@ -1903,26 +1944,24 @@ void $package$noop([Sequential arguments]) {}
 
 void noop([Sequential arguments]) => $package$noop(arguments);
 
-$dart$core.bool $package$identical([Identifiable x, Identifiable y]) => $dart$core.identical(x, y);
+$dart$core.bool $package$identical([$dart$core.Object x, $dart$core.Object y]) => $dart$core.identical(x, y);
 
-$dart$core.bool identical([Identifiable x, Identifiable y]) => $package$identical(x, y);
+$dart$core.bool identical([$dart$core.Object x, $dart$core.Object y]) => $package$identical(x, y);
 
 abstract class Identifiable {
     $dart$core.bool equals([$dart$core.Object that]);
     static $dart$core.bool $equals([final Identifiable $this, $dart$core.Object that]) => (() {
         $dart$core.bool doElse$0 = true;
-        if (that is Identifiable) {
-            Identifiable that$1;
-            that$1 = that as Identifiable;
+        if (true) {
             doElse$0 = false;
-            return $dart$core.identical($this, that$1);
+            return $dart$core.identical($this, that);
         }
         if (doElse$0) {
             return false;
         }
     })();
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this);
+    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this as $dart$core.Object);
 }
 abstract class impl$BaseIterable implements Iterable {
     impl$BaseIterable() {}
@@ -4716,7 +4755,7 @@ abstract class Iterable implements Category {
                             }
                             val = val$63;
                         }
-                        if ((comparing.f(val, max) as Identifiable).equals($package$larger)) {
+                        if ((comparing.f(val, max) as Comparison).equals($package$larger)) {
                             max = val;
                         }
                     }

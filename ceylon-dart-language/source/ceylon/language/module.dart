@@ -52,10 +52,10 @@ class LazyIterator implements Iterator {
 $dart$core.Function dartComparator(Callable ceylonComparator) {
   return (var x, var y) {
     var result = ceylonComparator.f(x,y);
-    if (result is $Smaller) {
+    if (result is smaller_) {
       return -1;
     }
-    if (result is $Equal) {
+    if (result is equal_) {
       return 0;
     }
     return 1;
@@ -278,36 +278,6 @@ class Character implements Comparable {
     return false;
   }
 }
-
-//
-// Comparison.dart
-//
-
-abstract class Comparison {
-  const Comparison();
-  $dart$core.bool equals($dart$core.Object other)
-    =>  ($dart$core.identical(this, other));
-}
-
-class $Larger extends Comparison {
-  const $Larger.value();
-}
-
-class $Smaller extends Comparison {
-  const $Smaller.value();
-}
-
-class $Equal extends Comparison {
-  const $Equal.value();
-}
-
-const larger = const $Larger.value();
-const smaller = const $Smaller.value();
-const equal = const $Equal.value();
-
-const $package$larger = larger;
-const $package$smaller = smaller;
-const $package$equal = equal;
 
 //
 // Exception.dart
