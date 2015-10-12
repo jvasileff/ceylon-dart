@@ -7,7 +7,7 @@ import ceylon.language.meta.model { Class }
      // Does the process declaration have the Shared annotation?
      value isShared = optionalAnnotation(`SharedAnnotation`, `value process`) exists;
  "
-native shared Value? optionalAnnotation<Value, in ProgramElement>(
+shared Value? optionalAnnotation<Value, in ProgramElement>(
             Class<OptionalAnnotation<Value,ProgramElement>> annotationType,
             ProgramElement programElement)
         given Value satisfies OptionalAnnotation<Value,ProgramElement>

@@ -11,7 +11,7 @@ import ceylon.language.meta.model {
    
    A value model can be either a toplevel [[Value]] or a member [[Attribute]].
  """
-native shared sealed interface ValueModel<out Get=Anything, in Set=Nothing>
+shared sealed interface ValueModel<out Get=Anything, in Set=Nothing>
         satisfies Model {
 
     "This value's declaration."

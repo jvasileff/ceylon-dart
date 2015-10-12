@@ -11,7 +11,7 @@ import ceylon.language.meta.model{
     MemberClassValueConstructor
 }
 
-native shared sealed interface CallableConstructorDeclaration 
+shared sealed interface CallableConstructorDeclaration 
         satisfies FunctionalDeclaration & ConstructorDeclaration {
     
     "True if the constructor has an [[abstract|ceylon.language::abstract]] annotation."

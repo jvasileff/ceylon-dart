@@ -4,7 +4,7 @@ import ceylon.language.meta.model {
 }
 
 
-native shared sealed interface MemberClassCallableConstructor<in Container=Nothing, out Type=Object, in Arguments=Nothing>
+shared sealed interface MemberClassCallableConstructor<in Container=Nothing, out Type=Object, in Arguments=Nothing>
         satisfies FunctionModel<Type, Arguments> & Qualified<CallableConstructor<Type, Arguments>, Container>
         given Arguments satisfies Anything[] {
     

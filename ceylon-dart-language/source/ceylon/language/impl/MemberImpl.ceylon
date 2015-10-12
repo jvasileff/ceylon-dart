@@ -7,7 +7,7 @@ import ceylon.language.serialization {
 
 "Implementation of [[Element]], in ceylon.language.impl because although 
  compiled user classes depend on it, it is not part of the public API."
-native shared class MemberImpl(attribute) satisfies Member {
+shared class MemberImpl(attribute) satisfies Member {
     shared actual ValueDeclaration attribute;
     
     shared actual Anything|UninitializedLateValue referred(Object/*<Instance>*/ instance) {

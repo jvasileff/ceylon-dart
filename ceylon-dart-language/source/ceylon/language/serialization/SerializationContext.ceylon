@@ -28,7 +28,7 @@ interface SerializationContext {
     shared formal References references(Anything instance);
 }
 
-native class SerializationContextImpl() satisfies SerializationContext {
+class SerializationContextImpl() satisfies SerializationContext {
     shared actual References references(Anything instance) {
         if (classDeclaration(instance).serializable) {
             return ReferencesImpl(instance);

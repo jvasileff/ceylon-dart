@@ -42,6 +42,13 @@ AbstractAnnotation $package$abstract() => new AbstractAnnotation();
 
 AbstractAnnotation abstract() => $package$abstract();
 
+class FinalAnnotation implements OptionalAnnotation {
+    FinalAnnotation() {}
+}
+FinalAnnotation $package$$final() => new FinalAnnotation();
+
+FinalAnnotation $final() => $package$$final();
+
 class SealedAnnotation implements OptionalAnnotation {
     SealedAnnotation() {}
 }
@@ -62,6 +69,13 @@ class FormalAnnotation implements OptionalAnnotation {
 FormalAnnotation $package$formal() => new FormalAnnotation();
 
 FormalAnnotation formal() => $package$formal();
+
+class DefaultAnnotation implements OptionalAnnotation {
+    DefaultAnnotation() {}
+}
+DefaultAnnotation $package$$default() => new DefaultAnnotation();
+
+DefaultAnnotation $default() => $package$$default();
 
 class LateAnnotation implements OptionalAnnotation {
     LateAnnotation() {}
@@ -2306,6 +2320,67 @@ abstract class impl$BaseSequence implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
+class impl$ElementImpl implements serialization$Element {
+    impl$ElementImpl([$dart$core.int this.index]) {}
+    $dart$core.int index;
+    $dart$core.Object referred([$dart$core.Object instance]) {
+        return $package$impl$reach.getAnything(instance, this);
+    }
+    $dart$core.String toString() => ("Element [index=" + Integer.instance(index).toString()) + "]";
+    $dart$core.int get hashCode => index;
+    $dart$core.bool equals([$dart$core.Object other]) {{
+            $dart$core.bool doElse$0 = true;
+            if (other is impl$ElementImpl) {
+                impl$ElementImpl other$1;
+                other$1 = other as impl$ElementImpl;
+                doElse$0 = false;
+                return $dart$core.identical(this, other$1) || Integer.instance(index).equals(Integer.instance(other$1.index));
+            }
+            if (doElse$0) {
+                return false;
+            }
+        }
+    }
+}
+class impl$MemberImpl implements serialization$Member {
+    impl$MemberImpl([meta$declaration$ValueDeclaration this.attribute]) {}
+    meta$declaration$ValueDeclaration attribute;
+    $dart$core.Object referred([$dart$core.Object instance]) {
+        return $package$impl$reach.getAnything(instance, this);
+    }
+    $dart$core.String toString() => ("Member [attribute=" + attribute.toString()) + "]";
+    $dart$core.int get hashCode => attribute.hashCode;
+    $dart$core.bool equals([$dart$core.Object other]) {{
+            $dart$core.bool doElse$0 = true;
+            if (other is impl$MemberImpl) {
+                impl$MemberImpl other$1;
+                other$1 = other as impl$MemberImpl;
+                doElse$0 = false;
+                return $dart$core.identical(this, other$1) || attribute.equals(other$1.attribute);
+            }
+            if (doElse$0) {
+                return false;
+            }
+        }
+    }
+}
+class impl$outerImpl_ implements serialization$Outer {
+    impl$outerImpl_() {}
+    $dart$core.Object referred([$dart$core.Object instance]) {
+        return $package$impl$reach.getObject(instance, this);
+    }
+    $dart$core.String toString() => "Outer";
+}
+final impl$outerImpl_ $package$impl$outerImpl = new impl$outerImpl_();
+
+impl$outerImpl_ get impl$outerImpl => $package$impl$outerImpl;
+
+void $package$impl$$rethrow([Throwable x]) {
+    throw x;
+}
+
+void impl$$rethrow([Throwable x]) => $package$impl$$rethrow(x);
+
 $dart$core.double $package$infinity = 1.0 / 0.0;
 
 $dart$core.double get infinity => $package$infinity;
@@ -8357,6 +8432,372 @@ $dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size
 
 $dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
 
+abstract class meta$declaration$AliasDeclaration implements meta$declaration$NestableDeclaration, meta$declaration$GenericDeclaration {
+    meta$declaration$OpenType get extendedType;
+}
+abstract class meta$declaration$AnnotatedDeclaration implements meta$declaration$Declaration, Annotated {
+    Sequential annotations();
+}
+abstract class meta$declaration$CallableConstructorDeclaration implements meta$declaration$FunctionalDeclaration, meta$declaration$ConstructorDeclaration {
+    $dart$core.bool get abstract;
+    $dart$core.bool get defaultConstructor;
+    meta$declaration$ClassDeclaration get container;
+    $dart$core.Object invoke([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    $dart$core.Object memberInvoke([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    meta$model$CallableConstructor apply([Sequential typeArguments]);
+    meta$model$MemberClassCallableConstructor memberApply([meta$model$Type containerType, Sequential typeArguments]);
+}
+abstract class meta$declaration$ClassOrInterfaceDeclaration implements meta$declaration$NestableDeclaration, meta$declaration$GenericDeclaration {
+    meta$declaration$OpenClassType get extendedType;
+    Sequential get satisfiedTypes;
+    Sequential get caseTypes;
+    $dart$core.bool get isAlias;
+    Sequential memberDeclarations();
+    Sequential declaredMemberDeclarations();
+    Sequential annotatedMemberDeclarations();
+    Sequential annotatedDeclaredMemberDeclarations();
+    $dart$core.Object getMemberDeclaration([$dart$core.String name]);
+    $dart$core.Object getDeclaredMemberDeclaration([$dart$core.String name]);
+    meta$model$ClassOrInterface apply([Sequential typeArguments]);
+    $dart$core.Object memberApply([meta$model$Type containerType, Sequential typeArguments]);
+}
+abstract class meta$declaration$ConstructorDeclaration implements meta$declaration$NestableDeclaration {
+}
+abstract class meta$declaration$Contained {
+    meta$declaration$Package get containingPackage;
+    meta$declaration$Module get containingModule;
+    $dart$core.Object get container;
+    $dart$core.bool get toplevel;
+}
+abstract class meta$declaration$Declaration {
+    $dart$core.String get name;
+    $dart$core.String get qualifiedName;
+}
+abstract class meta$declaration$FunctionalDeclaration implements meta$declaration$GenericDeclaration {
+    $dart$core.bool get annotation;
+    Sequential get parameterDeclarations;
+    meta$declaration$FunctionOrValueDeclaration getParameterDeclaration([$dart$core.String name]);
+    $dart$core.Object apply([Sequential typeArguments]);
+    $dart$core.Object memberApply([meta$model$Type containerType, Sequential typeArguments]);
+    $dart$core.Object invoke([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $invoke([final meta$declaration$FunctionalDeclaration $this, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
+        if ($dart$core.identical(typeArguments, $package$dart$default)) {
+            typeArguments = $package$empty;
+        }
+        return ($this.apply(typeArguments as Sequential) as meta$model$Applicable).apply();
+    }
+    $dart$core.Object memberInvoke([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+}
+abstract class meta$declaration$FunctionDeclaration implements meta$declaration$FunctionOrValueDeclaration, meta$declaration$FunctionalDeclaration {
+    meta$model$Function apply([Sequential typeArguments]);
+    meta$model$Method memberApply([meta$model$Type containerType, Sequential typeArguments]);
+}
+abstract class meta$declaration$FunctionOrValueDeclaration implements meta$declaration$NestableDeclaration {
+    $dart$core.bool get parameter;
+    $dart$core.bool get defaulted;
+    $dart$core.bool get variadic;
+}
+abstract class meta$declaration$GenericDeclaration {
+    Sequential get typeParameterDeclarations;
+    meta$declaration$TypeParameter getTypeParameterDeclaration([$dart$core.String name]);
+}
+abstract class meta$declaration$InterfaceDeclaration implements meta$declaration$ClassOrInterfaceDeclaration {
+    meta$model$Interface interfaceApply([Sequential typeArguments]);
+    meta$model$MemberInterface memberInterfaceApply([meta$model$Type containerType, Sequential typeArguments]);
+}
+abstract class meta$declaration$Module implements Identifiable, meta$declaration$AnnotatedDeclaration {
+    $dart$core.String get version;
+    Sequential get members;
+    Sequential get dependencies;
+    meta$declaration$Package findPackage([$dart$core.String name]);
+    meta$declaration$Package findImportedPackage([$dart$core.String name]);
+    Resource resourceByPath([$dart$core.String path]);
+}
+abstract class meta$declaration$Import implements Identifiable, Annotated {
+    $dart$core.String get name;
+    $dart$core.String get version;
+    $dart$core.bool get shared;
+    $dart$core.bool get optional;
+    meta$declaration$Module get container;
+}
+abstract class meta$declaration$Package implements Identifiable, meta$declaration$AnnotatedDeclaration {
+    meta$declaration$Module get container;
+    $dart$core.bool get shared;
+    Sequential members();
+    Sequential annotatedMembers();
+    $dart$core.Object getMember([$dart$core.String name]);
+    meta$declaration$ValueDeclaration getValue([$dart$core.String name]);
+    meta$declaration$ClassOrInterfaceDeclaration getClassOrInterface([$dart$core.String name]);
+    meta$declaration$FunctionDeclaration getFunction([$dart$core.String name]);
+    meta$declaration$AliasDeclaration getAlias([$dart$core.String name]);
+}
+abstract class meta$declaration$NestableDeclaration implements meta$declaration$AnnotatedDeclaration, meta$declaration$TypedDeclaration, meta$declaration$Contained {
+    $dart$core.bool get actual;
+    $dart$core.bool get formal;
+    $dart$core.bool get $default;
+    $dart$core.bool get shared;
+}
+class meta$declaration$nothingType_ implements meta$declaration$OpenType {
+    meta$declaration$nothingType_() {}
+    $dart$core.String toString() => "Nothing";
+}
+final meta$declaration$nothingType_ $package$meta$declaration$nothingType = new meta$declaration$nothingType_();
+
+meta$declaration$nothingType_ get meta$declaration$nothingType => $package$meta$declaration$nothingType;
+
+abstract class meta$declaration$OpenClassOrInterfaceType implements meta$declaration$OpenType {
+    meta$declaration$ClassOrInterfaceDeclaration get declaration;
+    meta$declaration$OpenClassType get extendedType;
+    Sequential get satisfiedTypes;
+    Map get typeArguments;
+}
+abstract class meta$declaration$OpenClassType implements meta$declaration$OpenClassOrInterfaceType {
+    meta$declaration$ClassDeclaration get declaration;
+}
+abstract class meta$declaration$OpenInterfaceType implements meta$declaration$OpenClassOrInterfaceType {
+    meta$declaration$InterfaceDeclaration get declaration;
+}
+abstract class meta$declaration$OpenIntersection implements meta$declaration$OpenType {
+    List get satisfiedTypes;
+}
+abstract class meta$declaration$OpenType {
+}
+abstract class meta$declaration$OpenTypeVariable implements meta$declaration$OpenType {
+    meta$declaration$TypeParameter get declaration;
+}
+abstract class meta$declaration$OpenUnion implements meta$declaration$OpenType {
+    List get caseTypes;
+}
+abstract class meta$declaration$ReferenceDeclaration implements meta$declaration$ValueDeclaration {
+}
+abstract class meta$declaration$SetterDeclaration implements meta$declaration$NestableDeclaration {
+    meta$declaration$ValueDeclaration get variable;
+    static $dart$core.bool $get$actual([final meta$declaration$SetterDeclaration $this]) => $this.variable.actual;
+    static $dart$core.bool $get$formal([final meta$declaration$SetterDeclaration $this]) => $this.variable.formal;
+    static $dart$core.bool $get$$default([final meta$declaration$SetterDeclaration $this]) => $this.variable.$default;
+    static $dart$core.bool $get$shared([final meta$declaration$SetterDeclaration $this]) => $this.variable.shared;
+    static meta$declaration$Package $get$containingPackage([final meta$declaration$SetterDeclaration $this]) => $this.variable.containingPackage;
+    static meta$declaration$Module $get$containingModule([final meta$declaration$SetterDeclaration $this]) => $this.variable.containingModule;
+    static $dart$core.Object $get$container([final meta$declaration$SetterDeclaration $this]) => $this.variable.container;
+    static $dart$core.bool $get$toplevel([final meta$declaration$SetterDeclaration $this]) => $this.variable.toplevel;
+}
+abstract class meta$declaration$TypedDeclaration {
+    meta$declaration$OpenType get openType;
+}
+abstract class meta$declaration$TypeParameter implements meta$declaration$Declaration {
+    meta$declaration$NestableDeclaration get container;
+    $dart$core.bool get defaulted;
+    meta$declaration$OpenType get defaultTypeArgument;
+    meta$declaration$Variance get variance;
+    Sequential get satisfiedTypes;
+    Sequential get caseTypes;
+}
+abstract class meta$declaration$ValueableDeclaration {
+    $dart$core.Object apply();
+    $dart$core.Object memberApply([meta$model$Type containerType]);
+    $dart$core.Object get();
+    static $dart$core.Object $get([final meta$declaration$ValueableDeclaration $this]) => ($this.apply() as meta$model$Gettable).get();
+    $dart$core.Object memberGet([$dart$core.Object container]);
+}
+abstract class meta$declaration$Variance {
+}
+class meta$declaration$invariant_ implements meta$declaration$Variance {
+    meta$declaration$invariant_() {}
+    $dart$core.String toString() => "Invariant";
+}
+final meta$declaration$invariant_ $package$meta$declaration$invariant = new meta$declaration$invariant_();
+
+meta$declaration$invariant_ get meta$declaration$invariant => $package$meta$declaration$invariant;
+
+class meta$declaration$covariant_ implements meta$declaration$Variance {
+    meta$declaration$covariant_() {}
+    $dart$core.String toString() => "Covariant";
+}
+final meta$declaration$covariant_ $package$meta$declaration$covariant = new meta$declaration$covariant_();
+
+meta$declaration$covariant_ get meta$declaration$covariant => $package$meta$declaration$covariant;
+
+class meta$declaration$contravariant_ implements meta$declaration$Variance {
+    meta$declaration$contravariant_() {}
+    $dart$core.String toString() => "Contravariant";
+}
+final meta$declaration$contravariant_ $package$meta$declaration$contravariant = new meta$declaration$contravariant_();
+
+meta$declaration$contravariant_ get meta$declaration$contravariant => $package$meta$declaration$contravariant;
+
+abstract class meta$model$Applicable implements Callable {
+    $dart$core.Object apply([Sequential arguments]);
+    $dart$core.Object namedApply([Iterable arguments]);
+}
+abstract class meta$model$Attribute implements meta$model$ValueModel, meta$model$Member {
+    meta$declaration$ValueDeclaration get declaration;
+    meta$model$Value bind([$dart$core.Object container]);
+}
+abstract class meta$model$CallableConstructor implements meta$model$FunctionModel, meta$model$Applicable {
+    meta$declaration$CallableConstructorDeclaration get declaration;
+    meta$model$ClassModel get type;
+    meta$model$ClassModel get container;
+}
+abstract class meta$model$Class implements meta$model$ClassModel, meta$model$Applicable {
+    $dart$core.Object get defaultConstructor;
+    $dart$core.Object getConstructor([$dart$core.String name]);
+}
+abstract class meta$model$ClassModel implements meta$model$ClassOrInterface {
+    meta$declaration$ClassDeclaration get declaration;
+    $dart$core.Object get defaultConstructor;
+    $dart$core.Object getConstructor([$dart$core.String name]);
+    Sequential get constructors;
+    Sequential get declaredConstructors;
+}
+abstract class meta$model$ClassOrInterface implements meta$model$Model, meta$model$Generic, meta$model$Type {
+    meta$declaration$ClassOrInterfaceDeclaration get declaration;
+    meta$model$ClassModel get extendedType;
+    Sequential get satisfiedTypes;
+    Sequential get caseValues;
+    meta$model$Member getClassOrInterface([$dart$core.String name, Sequential types]);
+    meta$model$Member getDeclaredClassOrInterface([$dart$core.String name, Sequential types]);
+    meta$model$MemberClass getClass([$dart$core.String name, Sequential types]);
+    meta$model$MemberClass getDeclaredClass([$dart$core.String name, Sequential types]);
+    meta$model$MemberInterface getInterface([$dart$core.String name, Sequential types]);
+    meta$model$MemberInterface getDeclaredInterface([$dart$core.String name, Sequential types]);
+    meta$model$Method getMethod([$dart$core.String name, Sequential types]);
+    meta$model$Method getDeclaredMethod([$dart$core.String name, Sequential types]);
+    meta$model$Attribute getAttribute([$dart$core.String name]);
+    meta$model$Attribute getDeclaredAttribute([$dart$core.String name]);
+    Sequential getDeclaredAttributes([Sequential annotationTypes]);
+    Sequential getAttributes([Sequential annotationTypes]);
+    Sequential getDeclaredMethods([Sequential annotationTypes]);
+    Sequential getMethods([Sequential annotationTypes]);
+    Sequential getDeclaredClasses([Sequential annotationTypes]);
+    Sequential getClasses([Sequential annotationTypes]);
+    Sequential getDeclaredInterfaces([Sequential annotationTypes]);
+    Sequential getInterfaces([Sequential annotationTypes]);
+}
+abstract class meta$model$Constructor implements meta$model$ConstructorModel, meta$model$Applicable {
+    meta$declaration$ConstructorDeclaration get declaration;
+    meta$model$Class get container;
+}
+abstract class meta$model$ConstructorModel implements meta$model$Functional, meta$model$Declared {
+    meta$model$ClassModel get container;
+}
+abstract class meta$model$Declared {
+    meta$declaration$Declaration get declaration;
+    $dart$core.Object get container;
+}
+abstract class meta$model$Function implements meta$model$FunctionModel, meta$model$Applicable {
+    meta$declaration$FunctionDeclaration get declaration;
+}
+abstract class meta$model$Functional {
+    Sequential get parameterTypes;
+}
+abstract class meta$model$FunctionModel implements meta$model$Model, meta$model$Generic, meta$model$Functional {
+    $dart$core.Object get declaration;
+    meta$model$Type get type;
+}
+abstract class meta$model$Generic {
+    Map get typeArguments;
+    Sequential get typeArgumentList;
+}
+abstract class meta$model$Gettable {
+    $dart$core.Object get();
+    void set([$dart$core.Object newValue]);
+    void setIfAssignable([$dart$core.Object newValue]);
+}
+abstract class meta$model$Interface implements meta$model$InterfaceModel {
+}
+abstract class meta$model$InterfaceModel implements meta$model$ClassOrInterface {
+    meta$declaration$InterfaceDeclaration get declaration;
+}
+abstract class meta$model$IntersectionType implements meta$model$Type {
+    List get satisfiedTypes;
+}
+abstract class meta$model$Member implements meta$model$Qualified {
+    meta$model$Type get declaringType;
+}
+abstract class meta$model$MemberClass implements meta$model$ClassModel, meta$model$Member {
+    meta$model$Class bind([$dart$core.Object container]);
+    $dart$core.Object get defaultConstructor;
+    $dart$core.Object getConstructor([$dart$core.String name]);
+}
+abstract class meta$model$MemberClassCallableConstructor implements meta$model$FunctionModel, meta$model$Qualified {
+    meta$declaration$CallableConstructorDeclaration get declaration;
+    meta$model$MemberClass get type;
+    meta$model$ClassModel get container;
+    meta$model$CallableConstructor bind([$dart$core.Object container]);
+}
+abstract class meta$model$MemberClassConstructor implements meta$model$ConstructorModel, meta$model$Qualified {
+    meta$model$MemberClass get container;
+}
+abstract class meta$model$MemberClassValueConstructor implements meta$model$ValueModel, meta$model$Qualified {
+    meta$declaration$ValueConstructorDeclaration get declaration;
+    meta$model$MemberClass get type;
+    meta$model$ClassModel get container;
+    meta$model$ValueConstructor bind([$dart$core.Object container]);
+}
+abstract class meta$model$MemberInterface implements meta$model$InterfaceModel, meta$model$Member {
+    meta$model$Interface bind([$dart$core.Object container]);
+}
+abstract class meta$model$Method implements meta$model$FunctionModel, meta$model$Member {
+    meta$declaration$FunctionDeclaration get declaration;
+    meta$model$Function bind([$dart$core.Object container]);
+}
+abstract class meta$model$Model implements meta$model$Declared {
+    meta$model$Type get container;
+    meta$declaration$NestableDeclaration get declaration;
+}
+class meta$model$nothingType_ implements meta$model$Type {
+    meta$model$nothingType_() {}
+    $dart$core.String toString() => "Nothing";
+    $dart$core.bool typeOf([$dart$core.Object instance]) => false;
+    $dart$core.bool exactly([meta$model$Type type]) => type.equals($package$meta$model$nothingType);
+    $dart$core.bool supertypeOf([meta$model$Type type]) => exactly(type);
+    $dart$core.bool subtypeOf([meta$model$Type type]) => true;
+    meta$model$Type union([meta$model$Type type]) => type;
+    meta$model$Type intersection([meta$model$Type type]) => this;
+}
+final meta$model$nothingType_ $package$meta$model$nothingType = new meta$model$nothingType_();
+
+meta$model$nothingType_ get meta$model$nothingType => $package$meta$model$nothingType;
+
+abstract class meta$model$Qualified implements Callable {
+    $dart$core.Object bind([$dart$core.Object container]);
+}
+abstract class meta$model$Type {
+    $dart$core.bool typeOf([$dart$core.Object instance]);
+    $dart$core.bool supertypeOf([meta$model$Type type]);
+    $dart$core.bool subtypeOf([meta$model$Type type]);
+    static $dart$core.bool $subtypeOf([final meta$model$Type $this, meta$model$Type type]) => type.supertypeOf($this);
+    $dart$core.bool exactly([meta$model$Type type]);
+    meta$model$Type union([meta$model$Type other]);
+    meta$model$Type intersection([meta$model$Type other]);
+}
+abstract class meta$model$UnionType implements meta$model$Type {
+    List get caseTypes;
+}
+abstract class meta$model$Value implements meta$model$ValueModel, meta$model$Gettable {
+    meta$declaration$ValueDeclaration get declaration;
+}
+abstract class meta$model$ValueConstructor implements meta$model$ValueModel, meta$model$Gettable {
+    meta$declaration$ValueConstructorDeclaration get declaration;
+    meta$model$Class get type;
+    meta$model$Class get container;
+}
+abstract class meta$model$ValueModel implements meta$model$Model {
+    $dart$core.Object get declaration;
+    meta$model$Type get type;
+}
+$dart$core.Object $package$meta$optionalAnnotation([meta$model$Class annotationType, $dart$core.Object programElement]) {
+    return $package$meta$annotations(annotationType, programElement);
+}
+
+$dart$core.Object meta$optionalAnnotation([meta$model$Class annotationType, $dart$core.Object programElement]) => $package$meta$optionalAnnotation(annotationType, programElement);
+
+Sequential $package$meta$sequencedAnnotations([meta$model$Class annotationType, $dart$core.Object programElement]) {
+    return $package$meta$annotations(annotationType, programElement) as Sequential;
+}
+
+Sequential meta$sequencedAnnotations([meta$model$Class annotationType, $dart$core.Object programElement]) => $package$meta$sequencedAnnotations(annotationType, programElement);
+
 $dart$core.Object $package$min([Iterable values]) {
     Iterator it = values.iterator();
     {
@@ -9898,7 +10339,7 @@ abstract class Sequential implements List, Ranged {
 }
 serialization$DeserializationContext $package$serialization$deserialization() => new serialization$DeserializationContextImpl();
 
-serialization$DeserializationContext deserialization() => $package$serialization$deserialization();
+serialization$DeserializationContext serialization$deserialization() => $package$serialization$deserialization();
 
 abstract class serialization$DeserializationContext {
     void instance([$dart$core.Object instanceId, meta$model$ClassModel clazz]);
@@ -9908,6 +10349,232 @@ abstract class serialization$DeserializationContext {
     void instanceValue([$dart$core.Object instanceId, $dart$core.Object instanceValue]);
     $dart$core.Object reconstruct([$dart$core.Object instanceId]);
 }
+class serialization$DeserializationContextImpl implements serialization$DeserializationContext {
+    serialization$DeserializationContextImpl() {
+        _$instances = new serialization$NativeMap();
+        memberTypeCache = new serialization$NativeMap();
+    }
+    serialization$NativeMap _$instances;
+    serialization$NativeMap memberTypeCache;
+    $dart$core.Object leakInstance([$dart$core.Object id]) => _$instances.get(id);
+    void attribute([$dart$core.Object instanceId, meta$declaration$ValueDeclaration attribute, $dart$core.Object attributeValueId]) {
+        _$attributeOrElement(instanceId, new impl$MemberImpl(attribute), attributeValueId);
+    }
+    serialization$DeserializationException alreadyComplete([$dart$core.Object instanceId]) => new serialization$DeserializationException(("instance referred to by id " + instanceId.toString()) + " already complete.");
+    void _$attributeOrElement([$dart$core.Object instanceId, serialization$ReachableReference attributeOrIndex, $dart$core.Object attributeValueId]) {
+        serialization$Partial referring;
+        {
+            $dart$core.Object r = _$instances.get(instanceId);
+            if (r == null) {
+                serialization$PartialImpl p = new serialization$PartialImpl(instanceId);
+                _$instances.put(instanceId, p);
+                referring = p;
+            } else if (r is serialization$Partial) {
+                serialization$Partial r$0;
+                r$0 = r as serialization$Partial;
+                referring = r$0;
+                if (referring.instantiated) {
+                    throw alreadyComplete(instanceId);
+                }
+            } else {
+                throw alreadyComplete(instanceId);
+            }
+        }
+        referring.addState(attributeOrIndex, attributeValueId);
+    }
+    void element([$dart$core.Object instanceId, $dart$core.int index, $dart$core.Object elementValueId]) {
+        _$attributeOrElement(instanceId, new impl$ElementImpl(index), elementValueId);
+    }
+    void instance([$dart$core.Object instanceId, meta$model$ClassModel clazz]) {
+        if (!clazz.declaration.serializable) {
+            throw new serialization$DeserializationException(("not serializable: " + clazz.toString()) + "");
+        }
+        _$getOrCreatePartial(instanceId).clazz = clazz;
+    }
+    serialization$Partial _$getOrCreatePartial([$dart$core.Object instanceId]) {
+        serialization$Partial partial;
+        {
+            $dart$core.Object r = _$instances.get(instanceId);
+            if (r == null) {
+                serialization$PartialImpl p = new serialization$PartialImpl(instanceId);
+                _$instances.put(instanceId, p);
+                partial = p;
+            } else if (r is serialization$Partial) {
+                serialization$Partial r$1;
+                r$1 = r as serialization$Partial;
+                partial = r$1;
+            } else {
+                throw alreadyComplete(instanceId);
+            }
+        }
+        return partial;
+    }
+    void memberInstance([$dart$core.Object containerId, $dart$core.Object instanceId]) {
+        $dart$core.Object container;
+        {
+            $dart$core.Object r = _$instances.get(containerId);
+            if (r == null) {
+                serialization$PartialImpl p = new serialization$PartialImpl(containerId);
+                _$instances.put(containerId, p);
+                container = p;
+            } else {
+                container = r;
+            }
+        }
+        _$getOrCreatePartial(instanceId).container = container;
+    }
+    void instanceValue([$dart$core.Object instanceId, $dart$core.Object instanceValue]) {
+        _$instances.put(instanceId, instanceValue);
+    }
+    $dart$core.Object reconstruct([$dart$core.Object instanceId]) {
+        serialization$NativeDeque deque = new serialization$NativeDeque();
+        $dart$core.Object root = _$instances.get(instanceId);
+        if (!(!(root == null))) {
+            if (_$instances.contains(instanceId)) {
+                $dart$core.Object r;
+                {
+                    $dart$core.Object r$2 = null;
+                    if (!true) {
+                        throw new AssertionError("Violated: is Instance r=null");
+                    }
+                    r = r$2;
+                }
+                return r;
+            } else {
+                throw new serialization$DeserializationException(("unknown id: " + instanceId.toString()) + ".");
+            }
+        }
+        deque.pushFront(_$instances.get(instanceId));
+        while (!deque.empty) {
+            $dart$core.Object r = deque.popFront();
+            {
+                $dart$core.Object switch$3 = r;
+                if (switch$3 == null) {
+                    if (!false) {
+                        throw new AssertionError("Violated: false");
+                    }
+                } else if (switch$3 is serialization$Partial) {
+                    serialization$Partial r$4;
+                    r$4 = r as serialization$Partial;
+                    if (r$4.member) {{
+                            $dart$core.Object container$5 = r$4.container;
+                            if (container$5 is serialization$Partial) {
+                                serialization$Partial container;
+                                container = container$5 as serialization$Partial;
+                                if (!container.instantiated) {
+                                    deque.pushFront(r$4);
+                                    deque.pushFront(container);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    r$4.instantiate();
+                    {
+                        $dart$core.Object element$7;
+                        Iterator iterator$6 = r$4.refersTo.iterator();
+                        while ((element$7 = iterator$6.next()) is !Finished) {
+                            $dart$core.Object referredId = element$7;
+                            if (!true) {
+                                throw new AssertionError("Violated: is Id referredId");
+                            }
+                            $dart$core.Object referred = _$instances.get(referredId);
+                            if (referred is serialization$Partial) {
+                                serialization$Partial referred$8;
+                                referred$8 = referred as serialization$Partial;
+                                if (!referred$8.instantiated) {
+                                    deque.pushFront(referred$8);
+                                }
+                            }
+                        }
+                    }
+                } else {}
+            }
+        }
+        deque.pushFront(_$instances.get(instanceId));
+        while (!deque.empty) {{
+                $dart$core.Object r = deque.popFront();
+                if (r is serialization$Partial) {
+                    serialization$Partial r$9;
+                    r$9 = r as serialization$Partial;
+                    if (r$9.member) {{
+                            $dart$core.Object container$10 = r$9.container;
+                            if (container$10 is serialization$Partial) {
+                                serialization$Partial container;
+                                container = container$10 as serialization$Partial;
+                                if (!container.initialized) {
+                                    deque.pushFront(r$9);
+                                    deque.pushFront(container);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    if (!r$9.initialized) {{
+                            $dart$core.Object element$12;
+                            Iterator iterator$11 = r$9.refersTo.iterator();
+                            while ((element$12 = iterator$11.next()) is !Finished) {
+                                $dart$core.Object referredId = element$12;
+                                if (!true) {
+                                    throw new AssertionError("Violated: is Id referredId");
+                                }
+                                $dart$core.Object referred = _$instances.get(referredId);
+                                if (referred is serialization$Partial) {
+                                    serialization$Partial referred$13;
+                                    referred$13 = referred as serialization$Partial;
+                                    if (!referred$13.initialized) {
+                                        deque.pushFront(referred$13);
+                                    }
+                                }
+                            }
+                        }
+                        if (r$9.member) {{
+                                $dart$core.Object container$14 = r$9.container;
+                                if (container$14 is serialization$Partial) {
+                                    serialization$Partial container;
+                                    container = container$14 as serialization$Partial;
+                                    if (!container.initialized) {
+                                        deque.pushFront(container);
+                                    }
+                                }
+                            }
+                        }
+                        r$9.initialize(this);
+                    }
+                } else {}
+            }
+        }
+        {
+            $dart$core.Object r = _$instances.get(instanceId);
+            if (r is serialization$Partial) {
+                serialization$Partial r$15;
+                r$15 = r as serialization$Partial;
+                $dart$core.Object result = r$15.instance();
+                {
+                    $dart$core.bool doElse$16 = true;
+                    if (true) {
+                        doElse$16 = false;
+                        _$instances.put(instanceId, result);
+                        return result;
+                    }
+                    if (doElse$16) {
+                        throw new serialization$DeserializationException(((((("instance with id " + instanceId.toString()) + " has class ") + $package$meta$type(result).toString()) + " not assignable to given type ") + $package$meta$typeLiteral().toString()) + "");
+                    }
+                }
+            } else {{
+                    $dart$core.bool doElse$17 = true;
+                    if (true) {
+                        doElse$17 = false;
+                        return r;
+                    }
+                    if (doElse$17) {
+                        throw new serialization$DeserializationException(((((("instance with id " + instanceId.toString()) + " has class ") + $package$meta$type(r).toString()) + " not assignable to given type ") + $package$meta$typeLiteral().toString()) + "");
+                    }
+                }
+            }
+        }
+    }
+}
 abstract class serialization$Element implements serialization$ReachableReference {
     $dart$core.int get index;
 }
@@ -9915,8 +10582,64 @@ abstract class serialization$Member implements serialization$ReachableReference 
     meta$declaration$ValueDeclaration get attribute;
     $dart$core.Object referred([$dart$core.Object instance]);
 }
+abstract class serialization$UninitializedLateValue {
+    serialization$UninitializedLateValue() {}
+}
+class serialization$uninitializedLateValue_  extends serialization$UninitializedLateValue {
+    serialization$uninitializedLateValue_() {}
+}
+final serialization$uninitializedLateValue_ $package$serialization$uninitializedLateValue = new serialization$uninitializedLateValue_();
+
+serialization$uninitializedLateValue_ get serialization$uninitializedLateValue => $package$serialization$uninitializedLateValue;
+
 abstract class serialization$Outer implements serialization$ReachableReference {
     $dart$core.Object referred([$dart$core.Object instance]);
+}
+abstract class serialization$Partial {
+    serialization$Partial([$dart$core.Object this.id]) {
+        clazz = null;
+        container = null;
+        instance_ = null;
+        state = new serialization$NativeMap();
+    }
+    $dart$core.Object id;
+    meta$model$ClassModel clazz;
+    $dart$core.Object container;
+    $dart$core.Object instance_;
+    serialization$NativeMap state;
+    void addState([serialization$ReachableReference attrOrIndex, $dart$core.Object partialOrComplete]) {
+        serialization$NativeMap s;
+        {
+            serialization$NativeMap tmp$0 = state;
+            if (tmp$0 == null) {
+                throw new AssertionError("Violated: exists s=state");
+            }
+            s = tmp$0;
+        }
+        s.put(attrOrIndex, partialOrComplete);
+    }
+    void instantiate();
+    void initialize([serialization$DeserializationContextImpl context]);
+    $dart$core.bool get instantiated => !(instance_ == null);
+    $dart$core.bool get initialized => !(!(state == null));
+    $dart$core.bool get member => !(container == null);
+    $dart$core.Object instance() {
+        if (!(instantiated && initialized)) {
+            throw new AssertionError("Violated: instantiated && initialized");
+        }
+        return instance_;
+    }
+    Iterable get refersTo {
+        serialization$NativeMap s;
+        {
+            serialization$NativeMap tmp$1 = state;
+            if (tmp$1 == null) {
+                throw new AssertionError("Violated: exists s=state");
+            }
+            s = tmp$1;
+        }
+        return s.items;
+    }
 }
 abstract class serialization$ReachableReference {
     $dart$core.Object referred([$dart$core.Object instance]);
@@ -9925,12 +10648,178 @@ abstract class serialization$References implements Iterable {
     $dart$core.Object get instance;
     Iterable get references;
 }
+class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator implements Identifiable {
+    serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
+    $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance;
+    ReferencesImpl$iterator$$anonymous$0_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl, $dart$core.Object this.$capture$serialization$ReferencesImpl$iterator$$$instance]) {
+        _$it = $outer$ceylon$language$serialization$ReferencesImpl.references.iterator();
+    }
+    Iterator _$it;
+    $dart$core.Object next() {
+        $dart$core.Object next = _$it.next();
+        {
+            $dart$core.bool doElse$1 = true;
+            if (next is Finished) {
+                Finished next$2;
+                next$2 = next as Finished;
+                doElse$1 = false;
+                return $package$finished;
+            }
+            if (doElse$1) {
+                return new Entry(next, (next as serialization$ReachableReference).referred($capture$serialization$ReferencesImpl$iterator$$$instance));
+            }
+        }
+    }
+}
+class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable implements Identifiable {
+    serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
+    ReferencesImpl$references$$anonymous$1_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl]) {}
+    Iterator iterator() {
+        return $package$impl$reach.references($outer$ceylon$language$serialization$ReferencesImpl.instance);
+    }
+    $dart$core.String toString() => Iterable.$get$string(this);
+    $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
+    $dart$core.bool get empty => Iterable.$get$empty(this);
+    $dart$core.int get size => Iterable.$get$size(this);
+    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
+    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
+    $dart$core.Object get first => Iterable.$get$first(this);
+    $dart$core.Object get last => Iterable.$get$last(this);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
+    Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
+    Iterable get rest => Iterable.$get$rest(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    void each([Callable step]) => Iterable.$each(this, step);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    $dart$core.Object find([Callable selecting]) => Iterable.$find(this, selecting);
+    $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
+    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
+    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
+    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get coalesced => Iterable.$get$coalesced(this);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+}
+class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References, Identifiable {
+    serialization$ReferencesImpl([$dart$core.Object this.instance]) {}
+    $dart$core.Object instance;
+    Iterator iterator() {{
+            $dart$core.bool doElse$0 = true;
+            if (!(instance == null)) {
+                doElse$0 = false;
+                return new ReferencesImpl$iterator$$anonymous$0_(this, instance);
+            }
+            if (doElse$0) {
+                return $package$emptyIterator;
+            }
+        }
+    }
+    Iterable get references {
+        return new ReferencesImpl$references$$anonymous$1_(this);
+    }
+    $dart$core.String toString() => Iterable.$get$string(this);
+    $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
+    $dart$core.bool get empty => Iterable.$get$empty(this);
+    $dart$core.int get size => Iterable.$get$size(this);
+    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
+    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
+    $dart$core.Object get first => Iterable.$get$first(this);
+    $dart$core.Object get last => Iterable.$get$last(this);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
+    Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
+    Iterable get rest => Iterable.$get$rest(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    void each([Callable step]) => Iterable.$each(this, step);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    $dart$core.Object find([Callable selecting]) => Iterable.$find(this, selecting);
+    $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
+    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
+    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
+    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get coalesced => Iterable.$get$coalesced(this);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+}
 serialization$SerializationContext $package$serialization$serialization() => new serialization$SerializationContextImpl();
 
-serialization$SerializationContext serialization() => $package$serialization$serialization();
+serialization$SerializationContext serialization$serialization() => $package$serialization$serialization();
 
 abstract class serialization$SerializationContext {
     serialization$References references([$dart$core.Object instance]);
+}
+class serialization$SerializationContextImpl implements serialization$SerializationContext {
+    serialization$SerializationContextImpl() {}
+    serialization$References references([$dart$core.Object instance]) {
+        if ($package$meta$classDeclaration(instance).serializable) {
+            return new serialization$ReferencesImpl(instance);
+        } else {
+            throw new AssertionError(("instance of non-serializable class: " + $package$meta$type(instance).toString()) + "");
+        }
+    }
 }
 abstract class Set implements Collection {
     $dart$core.bool contains([$dart$core.Object element]);

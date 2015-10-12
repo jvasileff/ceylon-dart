@@ -23,7 +23,7 @@ import ceylon.language.meta.declaration{ValueConstructorDeclaration}
        }
    """
 
-native shared sealed interface MemberClassValueConstructor<in Container=Nothing, out Type=Object, in Set=Nothing>
+shared sealed interface MemberClassValueConstructor<in Container=Nothing, out Type=Object, in Set=Nothing>
         satisfies ValueModel<Type, Set> & Qualified<ValueConstructor<Type, Set>, Container> {
     
     "This value's declaration."

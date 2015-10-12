@@ -150,6 +150,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
+    "The prefix to use for identifiers to simulate Ceylon packages
+     in Dart. This is the part of the Ceylon package name that is not
+     part of the containing module's base package, with `.` replaced
+     by `$`, and a trailing `$` if nonempty."
+    shared
+    String identifierPackagePrefix(DeclarationModel | ParameterModel declaration);
+
+    identifierPackagePrefix
+        =   memoize((DeclarationModel | ParameterModel declaration)
+            =>  if (!is ParameterModel declaration, isToplevel(declaration))
+                then (
+                    CeylonIterable(getPackage(declaration).name)
+                        .skip(getModule(declaration).name.size())
+                        .map(Object.string)
+                        .interpose("$")
+                        .reduce(plus)
+                        ?.plus("$") else "")
+                else "");
+
     shared
     String getName(DeclarationModel|ParameterModel declaration) {
         // TODO it might make sense to make this private, and have callers
@@ -166,10 +185,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         switch (declaration)
         case (is SetterModel | ValueModel | FunctionModel
                 | ConstructorModel | ParameterModel) {
-            return getUnprefixedName(declaration);
+            return identifierPackagePrefix(declaration)
+                    + getUnprefixedName(declaration);
         }
         case (is ClassModel | InterfaceModel) {
-            return classOrInterfacePrefix(declaration)
+            return identifierPackagePrefix(declaration)
+                    + classOrInterfacePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
         else {
@@ -233,38 +254,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     .interpose("$")
                     .fold("$")(plus));
 
-    "The prefix to use for identifiers to simulate Ceylon packages
-     in Dart. This is the part of the Ceylon package name that is not
-     part of the containing module's base package, with `.` replaced
-     by `$`, and a trailing `$` if nonempty."
-    shared
-    String identifierPackagePrefix(ElementModel|UnitModel declaration);
-
-    identifierPackagePrefix
-        =   memoize((ElementModel|UnitModel declaration)
-            =>  CeylonIterable(getPackage(declaration).name)
-                    .skip(getModule(declaration).name.size())
-                    .map(Object.string)
-                    .interpose("$")
-                    .reduce(plus)
-                    ?.plus("$") else "");
-
     shared
     String getPackagePrefixedName(FunctionOrValueModel declaration) {
         value name = getName(declaration);
         if (declaration.container is PackageModel) {
-            return
-            if (name.startsWith("_$")) then
-                // Not using "_$package$" now since Dart isn't aware that the multiple
-                // files that make up the language module are in the same dart package
-                // during development.
-                "$package$"
-                + identifierPackagePrefix(declaration)
-                + name[2...]
-            else
-                "$package$"
-                + identifierPackagePrefix(declaration)
-                + name;
+            return "$package$" + name;
         }
         else {
             return name;
@@ -275,9 +269,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     String unPackagePrefixify(String identifier) {
         if (identifier.startsWith("$package")) {
             return identifier[9...];
-        }
-        else if (identifier.startsWith("_$package")) {
-            return identifier[9...] + "_$";
         }
         else {
             throw AssertionError(
@@ -622,9 +613,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         // not erased
         return
-        DartTypeModel(moduleImportPrefix(definiteType.declaration),
-                identifierPackagePrefix(definiteType.declaration) +
-                    getName(definiteType.declaration));
+        DartTypeModel {
+            moduleImportPrefix(definiteType.declaration);
+            getName(definiteType.declaration);
+        };
     }
 
     "True if [[type]] is denotable in Dart (not Nothing, a type parameter, union type, or
@@ -698,9 +690,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartSimpleIdentifier dartIdentifierForClassOrInterfaceDeclaration
             (ClassOrInterfaceModel declaration)
-        =>  DartSimpleIdentifier {
-                identifierPackagePrefix(declaration) + getName(declaration);
-            };
+        =>  DartSimpleIdentifier(getName(declaration));
 
     shared
     DartSimpleIdentifier expressionForThis(ClassOrInterfaceModel scope)

@@ -12,7 +12,7 @@ import ceylon.language.meta.model { AppliedType = Type }
  - [[IntersectionType]]
  - [[nothingType]]
 "
-native shared sealed
+shared sealed
 interface Type<out Target=Anything> /* of ClassOrInterface
                                         | UnionType
                                         | IntersectionType

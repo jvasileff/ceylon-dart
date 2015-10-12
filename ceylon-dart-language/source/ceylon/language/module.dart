@@ -1258,6 +1258,8 @@ class dart$VariableBoxString {
 //
 ///////////////////////////////////////
 
+abstract class meta$declaration$ValueDeclaration {}
+
 ///////////////////////////////////////
 //
 // Callable & Flatten

@@ -2,7 +2,7 @@
  
  For example, `List<T>` is an open interface type, with a type argument which is the
  [[OpenTypeVariable]] `T`."
-native shared sealed interface OpenClassOrInterfaceType
+shared sealed interface OpenClassOrInterfaceType
     of OpenClassType | OpenInterfaceType
     satisfies OpenType {
     

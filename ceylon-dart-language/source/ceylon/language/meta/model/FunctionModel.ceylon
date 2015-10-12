@@ -13,7 +13,7 @@ import ceylon.language.meta.model {
    a member [[Method]] or [[CallableMemberConstructor|callable constructor]]
    of a member class.
  """
-native shared sealed interface FunctionModel<out Type=Anything, in Arguments=Nothing>
+shared sealed interface FunctionModel<out Type=Anything, in Arguments=Nothing>
         satisfies Model & Generic & Functional
         given Arguments satisfies Anything[] {
 

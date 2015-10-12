@@ -5,7 +5,7 @@ import ceylon.language.meta.model {
 "A partially reconstructed instance: 
  Holds state for reconstructing an instance which is built up 
  progressively by calls to the [[DeserializationContext]]."
-native abstract class Partial(id) {
+abstract class Partial(id) {
     
     "The id"// It's an object rather than an id to save space: we require a lot of partials!
     shared Object id;

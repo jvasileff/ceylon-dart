@@ -1,7 +1,7 @@
 "A declaration which can be contained in a [[Package]] or in another [[NestableDeclaration]].
  
  Functions, values, classes, interfaces and aliases are such declarations."
-native shared sealed interface NestableDeclaration of 
+shared sealed interface NestableDeclaration of 
                                         FunctionOrValueDeclaration |
                                         ClassOrInterfaceDeclaration |
                                         ConstructorDeclaration |

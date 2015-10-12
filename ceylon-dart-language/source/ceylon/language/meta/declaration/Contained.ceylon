@@ -1,4 +1,4 @@
-native shared interface Contained {
+shared interface Contained {
     "This declaration's package container."
     shared formal Package containingPackage;
     

@@ -199,7 +199,7 @@ shared sealed interface Sequence<out Element=Anything>
     shared actual default 
     String string => (super of Sequential<Element>).string;
 
-    
+
     Element getElement(Integer index) {
         if (exists element = getFromFirst(index)) { 
             return element;

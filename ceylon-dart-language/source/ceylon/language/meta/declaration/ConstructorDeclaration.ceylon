@@ -14,7 +14,7 @@ import ceylon.language.meta.model{
 """Abstraction over [[callable constructors|CallableConstructorDeclaration]]
    and [[value constructors|ValueConstructorDeclaration]]
 """
-native shared interface ConstructorDeclaration
+shared interface ConstructorDeclaration
         of CallableConstructorDeclaration|ValueConstructorDeclaration 
         satisfies NestableDeclaration {
     

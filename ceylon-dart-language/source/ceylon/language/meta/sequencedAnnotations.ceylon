@@ -9,7 +9,7 @@ import ceylon.language.meta.model { Class }
  
  The annotations may be returned in any order.
  "
-native shared Value[] sequencedAnnotations<Value, in ProgramElement>(
+shared Value[] sequencedAnnotations<Value, in ProgramElement>(
             Class<SequencedAnnotation<Value,ProgramElement>> annotationType,
             ProgramElement programElement)
         given Value satisfies SequencedAnnotation<Value,ProgramElement>

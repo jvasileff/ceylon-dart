@@ -18,9 +18,9 @@ shared sealed interface Member // or Reference
 }
 
 "The type of [[uninitializedLateValue]]."
-native shared abstract class UninitializedLateValue() of uninitializedLateValue {}
+shared abstract class UninitializedLateValue() of uninitializedLateValue {}
 
 "A singleton used to indicate that a `late` [[Member]] of a particular 
  instance has not been initialized."
-native shared object uninitializedLateValue extends UninitializedLateValue() {}
+shared object uninitializedLateValue extends UninitializedLateValue() {}
 

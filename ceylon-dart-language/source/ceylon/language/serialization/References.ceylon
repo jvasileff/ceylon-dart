@@ -16,7 +16,7 @@ shared sealed interface References/*<Instance>*/
     shared formal Iterable<ReachableReference/*<Instance>*/> references;
 }
 
-native class ReferencesImpl(instance) extends BaseIterable<ReachableReference->Anything, Null>() 
+class ReferencesImpl(instance) extends BaseIterable<ReachableReference->Anything, Null>() 
         satisfies References&Identifiable {
     shared actual Anything instance;
     

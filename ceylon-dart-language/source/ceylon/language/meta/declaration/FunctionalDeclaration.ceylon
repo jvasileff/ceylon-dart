@@ -49,7 +49,7 @@ import ceylon.language.meta.model {
            print(boundMethodModel());
        }
    """
-native shared sealed interface FunctionalDeclaration
+shared sealed interface FunctionalDeclaration
         satisfies GenericDeclaration {
     
     "True if the current declaration is an annotation class or function."

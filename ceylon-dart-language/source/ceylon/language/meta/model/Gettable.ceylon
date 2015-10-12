@@ -1,4 +1,4 @@
-native shared sealed interface Gettable<out Get=Anything, in Set=Nothing> {
+shared sealed interface Gettable<out Get=Anything, in Set=Nothing> {
     
     "Reads the current value for this value binding. Note that in the case of getter
      values, this can throw if the getter throws."

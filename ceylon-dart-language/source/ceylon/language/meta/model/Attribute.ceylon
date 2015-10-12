@@ -20,7 +20,7 @@ import ceylon.language.meta.declaration{
            print(boundAttribute.get());
        }
  """
-native shared sealed interface Attribute<in Container=Nothing, out Get=Anything, in Set=Nothing>
+shared sealed interface Attribute<in Container=Nothing, out Get=Anything, in Set=Nothing>
         satisfies ValueModel<Get,Set> & Member<Container, Value<Get,Set>> {
     
     shared actual formal ValueDeclaration declaration;

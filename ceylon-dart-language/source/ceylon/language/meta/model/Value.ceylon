@@ -14,7 +14,7 @@ import ceylon.language.meta.declaration { ValueDeclaration }
            print(val.get());
        }
  """
-native shared sealed interface Value<out Get=Anything, in Set=Nothing>
+shared sealed interface Value<out Get=Anything, in Set=Nothing>
         satisfies ValueModel<Get, Set>&Gettable<Get, Set> {
 
     "This value's declaration."

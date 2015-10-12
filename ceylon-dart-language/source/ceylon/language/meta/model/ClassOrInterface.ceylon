@@ -9,7 +9,7 @@ import ceylon.language.meta.model {
 "Model of a class or interface that you can inspect.
  
  The models of classes and interfaces are also closed types."
-native shared sealed interface ClassOrInterface<out Type=Anything> 
+shared sealed interface ClassOrInterface<out Type=Anything> 
     of ClassModel<Type, Nothing> | InterfaceModel<Type>
     satisfies Model & Generic & ClosedType<Type> {
     

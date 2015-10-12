@@ -3,5 +3,5 @@ import ceylon.language.meta.declaration {
 }
 
 "A reference value declaration that defines state."
-native shared sealed interface ReferenceDeclaration
+shared sealed interface ReferenceDeclaration
         satisfies ValueDeclaration {}

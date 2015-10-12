@@ -5,7 +5,7 @@ import ceylon.language.meta.model{
 }
 
 """Abstraction over declarations which can be invoked, namely functions, methods and constructors """
-native shared sealed interface FunctionDeclaration
+shared sealed interface FunctionDeclaration
         satisfies FunctionOrValueDeclaration & FunctionalDeclaration {
     
     shared actual formal Function<Return, Arguments> apply<Return=Anything, Arguments=Nothing>(Type<>* typeArguments)

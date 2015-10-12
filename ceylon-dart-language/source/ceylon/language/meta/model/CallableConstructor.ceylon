@@ -31,7 +31,7 @@ import ceylon.language.meta.model {
    [[typeArguments]] and [[typeArgumentList]] refer to the type arguments 
    of the constructor's class.
    """
-native shared sealed interface CallableConstructor<out Type=Object, in Arguments=Nothing>
+shared sealed interface CallableConstructor<out Type=Object, in Arguments=Nothing>
         satisfies FunctionModel<Type, Arguments> & Applicable<Type, Arguments>
         given Arguments satisfies Anything[] {
     
