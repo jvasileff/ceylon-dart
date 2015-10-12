@@ -1564,9 +1564,7 @@ shared interface Iterable<out Element=Anything,
             return newStore;
         }
         
-// FIXME Dart workaround rename "count" due to name conflict with `shared count()`
-//        variable value count = 0;
-        variable value _count = 0;
+        variable value count = 0;
         for (element in outer) {
             value group = grouping(element);
             value index = hash(group, store.size);
@@ -1595,13 +1593,13 @@ shared interface Iterable<out Element=Anything,
                             ElementEntry(element, null), null);
             }
             store.set(index, newEntry);
-            _count++;
-            if (_count>store.size*2) {
+            count++;
+            if (count>store.size*2) {
                 store = rebuild(store);
             }
         }
         
-        size => _count;
+        size => count;
         
         iterator() 
                 => object satisfies Iterator<Group->[Element+]> {
@@ -1631,14 +1629,12 @@ shared interface Iterable<out Element=Anything,
         
         clone() => this;
         
-// FIXME Dart workaround rename group due to name conflict with `shared group()`
-//        function group(Object key) 
-        function group_(Object key) 
+        function group(Object key) 
                 => store[hash(key, store.size)]?.get(key);
         
-        defines(Object key) => group_(key) exists;
+        defines(Object key) => group(key) exists;
         
-        get(Object key) => group_(key)?.elements;
+        get(Object key) => group(key)?.elements;
         
     };
     
