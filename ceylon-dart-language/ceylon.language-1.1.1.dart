@@ -8791,6 +8791,12 @@ abstract class meta$model$Gettable {
     void set([$dart$core.Object newValue]);
     void setIfAssignable([$dart$core.Object newValue]);
 }
+class meta$model$IncompatibleTypeException  extends Exception {
+    meta$model$IncompatibleTypeException([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
+}
 abstract class meta$model$Interface implements meta$model$InterfaceModel {
 }
 abstract class meta$model$InterfaceModel implements meta$model$ClassOrInterface {
@@ -8798,6 +8804,12 @@ abstract class meta$model$InterfaceModel implements meta$model$ClassOrInterface 
 }
 abstract class meta$model$IntersectionType implements meta$model$Type {
     List get satisfiedTypes;
+}
+class meta$model$InvocationException  extends Exception {
+    meta$model$InvocationException([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
 }
 abstract class meta$model$Member implements meta$model$Qualified {
     meta$model$Type get declaringType;
@@ -8833,6 +8845,12 @@ abstract class meta$model$Model implements meta$model$Declared {
     meta$model$Type get container;
     meta$declaration$NestableDeclaration get declaration;
 }
+class meta$model$MutationException  extends Exception {
+    meta$model$MutationException([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
+}
 class meta$model$nothingType_ implements meta$model$Type {
     meta$model$nothingType_() {}
     $dart$core.String toString() => "Nothing";
@@ -8850,6 +8868,12 @@ meta$model$nothingType_ get meta$model$nothingType => $package$meta$model$nothin
 abstract class meta$model$Qualified implements Callable {
     $dart$core.Object bind([$dart$core.Object container]);
 }
+class meta$model$StorageException  extends Exception {
+    meta$model$StorageException([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
+}
 abstract class meta$model$Type {
     $dart$core.bool typeOf([$dart$core.Object instance]);
     $dart$core.bool supertypeOf([meta$model$Type type]);
@@ -8858,6 +8882,12 @@ abstract class meta$model$Type {
     $dart$core.bool exactly([meta$model$Type type]);
     meta$model$Type union([meta$model$Type other]);
     meta$model$Type intersection([meta$model$Type other]);
+}
+class meta$model$TypeApplicationException  extends Exception {
+    meta$model$TypeApplicationException([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
 }
 abstract class meta$model$UnionType implements meta$model$Type {
     List get caseTypes;
