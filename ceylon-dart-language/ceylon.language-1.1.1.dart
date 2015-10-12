@@ -10460,9 +10460,7 @@ class Span  extends Range {
         if (lastIndex < $package$runtime.maxIntegerValue) {
             return lastIndex + 1;
         } else {
-            if (!false) {
-                throw new AssertionError("Violated: false");
-            }
+            throw new OverflowException("size of range");
         }
     }
     $dart$core.bool longerThan([$dart$core.int length]) => (() {

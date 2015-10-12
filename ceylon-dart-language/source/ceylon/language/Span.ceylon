@@ -70,10 +70,7 @@ class Span<Element>(first, last)
             return lastIndex + 1;
         }
         else {
-// FIXME Dart workaround
-//            throw OverflowException("size of range");
-            "size of range"
-            assert(false);
+            throw OverflowException("size of range");
         }
     }
     
