@@ -40,7 +40,9 @@ import com.redhat.ceylon.common.config {
 import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
     AnnotatedToolModel,
-    ToolFactory
+    ToolFactory,
+    option=option__SETTER,
+    description=description__SETTER
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool,
@@ -83,10 +85,14 @@ import java.io {
 }
 import java.lang {
     JString=String,
-    System
+    System,
+    Runnable
 }
 import java.util {
     JList=List
+}
+import com.redhat.ceylon.model.typechecker.context {
+    TypeCache
 }
 
 shared
@@ -120,6 +126,15 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
     JList<JString> moduleOrFile = javaList<JString>([]);
 
+    shared variable option
+    description("Time the compilation phases (results are printed to standard error)")
+    Boolean profile = false;
+
+    shared variable option
+    description("Wrap typeChecker.process() in TypeCache.doWithoutCaching \
+                 (default is false)")
+    Boolean doWithoutCaching = false;
+
     shared actual
     void initialize(CeylonTool? ceylonTool) {}
 
@@ -135,13 +150,23 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
 
     void doRun() {
+        Integer t0;
+        Integer t1;
+        Integer t2;
+        Integer t3;
+        Integer t4;
+
         value roots = DefaultToolOptions.compilerSourceDirs;
         value resources = DefaultToolOptions.compilerResourceDirs;
         value resolver = SourceArgumentsResolver(roots, resources, ".ceylon");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, Backend.\iNone);
 
+        t0 = system.nanoseconds;
+
         value builder = TypeCheckerBuilder();
+
+        builder.statistics(profile);
 
         for (root in CeylonIterable(roots)) {
             builder.addSrcDirectory(root);
@@ -150,14 +175,35 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         builder.setRepositoryManager(repositoryManager);
 
         value typeChecker = builder.typeChecker;
-        typeChecker.process();
+
+        t1 = system.nanoseconds;
+
+        if (doWithoutCaching) {
+            TypeCache.doWithoutCaching(object satisfies Runnable {
+                run() => typeChecker.process();
+            });
+        }
+        else {
+            typeChecker.process();
+        }
+
+        t2 = system.nanoseconds;
 
         value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits);
 
         value moduleMembers =
                 HashMap<ModuleModel, LinkedList<DartCompilationUnitMember>>();
 
+        t3 = system.nanoseconds;
+
         for (phasedUnit in phasedUnits) {
+            if (exists v = verbose,
+                verbose.contains("files")) {
+                process.writeError("compiling "
+                    + (phasedUnit.pathRelativeToSrcDir else "<null>"));
+            }
+            Integer start = system.nanoseconds;
+
             value ctx = CompilationContext(phasedUnit);
 
             value unit = anyCompilationUnitToCeylon {
@@ -181,6 +227,12 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
 
                 ctx.topLevelVisitor.transformCompilationUnit(unit);
                 declarations.addAll(ctx.compilationUnitMembers.sequence());
+            }
+
+            if (exists v = verbose,
+                verbose.contains("files")) {
+                Integer end = system.nanoseconds;
+                process.writeErrorLine(" (``((end-start)/10^6).string``ms)");
             }
         }
 
@@ -223,6 +275,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
             outputRepositoryManager.putArtifact(
                 ArtifactContext(m.nameAsString, m.version, ".dart"),
                 bais);
+        }
+
+        t4 = system.nanoseconds;
+
+        if (profile) {
+            process.writeErrorLine("PROFILING INFORMATION");
+            process.writeErrorLine("TypeChecker creation:   " + ((t1-t0)/10^6).string);
+            process.writeErrorLine("TypeChecker processing: " + ((t2-t1)/10^6).string);
+            process.writeErrorLine("Dart compiler creation: " + ((t3-t2)/10^6).string);
+            process.writeErrorLine("Dart compilation:       " + ((t4-t3)/10^6).string);
         }
     }
 
