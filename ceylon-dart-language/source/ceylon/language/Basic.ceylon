@@ -5,5 +5,5 @@
  equality. Classes which aren't `Identifiable` should 
  directly extend [[Object]]."
 by ("Gavin")
-native shared abstract class Basic() 
+shared abstract class Basic() 
         extends Object() satisfies Identifiable {}

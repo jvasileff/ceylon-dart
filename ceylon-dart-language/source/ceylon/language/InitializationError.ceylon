@@ -7,5 +7,5 @@
  - an initialized `late` but non-`variable` value is
    reassigned."
 see (`function late`)
-native shared class InitializationError(String description)
+shared class InitializationError(String description)
         extends AssertionError(description) {}

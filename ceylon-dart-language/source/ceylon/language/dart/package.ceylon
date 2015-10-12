@@ -1,1 +1,1 @@
-native package ceylon.language.dart;
+package ceylon.language.dart;

@@ -168,6 +168,17 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
+        // skip erased types
+        // TODO Identifiable, but take a look
+        //      at generated code first
+        if (info.declarationModel in [
+                ceylonTypes.anythingDeclaration,
+                ceylonTypes.objectDeclaration,
+                ceylonTypes.basicDeclaration,
+                ceylonTypes.nullDeclaration]) {
+            return;
+        }
+
         addClassDefinition {
             info;
             info.declarationModel;
@@ -316,6 +327,14 @@ class TopLevelVisitor(CompilationContext ctx)
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {
+            return;
+        }
+
+        // skip erased types
+        // TODO Identifiable, but take a look
+        //      at generated code first
+        if (info.declarationModel in [
+                ceylonTypes.nullValueDeclaration]) {
             return;
         }
 

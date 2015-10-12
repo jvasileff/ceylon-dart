@@ -210,6 +210,14 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(getLanguageModuleDeclaration("AssertionError"));
 
     shared
+    Class anythingDeclaration
+        =>  unit.anythingDeclaration;
+
+    shared
+    Class basicDeclaration
+        =>  unit.basicDeclaration;
+
+    shared
     Class booleanDeclaration
         =>  assertClass(unit.booleanDeclaration);
 

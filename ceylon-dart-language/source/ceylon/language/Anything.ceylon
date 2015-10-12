@@ -6,5 +6,5 @@
  Note that the bottom type `Nothing`, representing the 
  intersection of all types, is a subtype of all types."
 by ("Gavin")
-native shared abstract class Anything() 
+shared abstract class Anything() 
         of Object | Null {}

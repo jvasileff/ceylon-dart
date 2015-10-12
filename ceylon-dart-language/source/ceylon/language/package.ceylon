@@ -39,4 +39,4 @@
  [sdk]: https://modules.ceylon-lang.org/categories/SDK"
 by ("Gavin King", "Tom Bentley", "Tako Schotanus", 
     "Stephane Epardaud", "Enrique Zamudio")
-native shared package ceylon.language;
+shared package ceylon.language;

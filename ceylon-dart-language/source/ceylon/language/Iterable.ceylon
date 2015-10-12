@@ -765,7 +765,6 @@ shared interface Iterable<out Element=Anything,
      
          {Boolean+}(Object) fun = (-1..1).spread(Object.equals);
          print(fun(0)); //prints { false, true, false }"
-
     shared default 
     Iterable<Result,Absent>(*Args) 
     spread<Result,Args>(Result(*Args) method(Element element))

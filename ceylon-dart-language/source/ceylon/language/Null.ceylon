@@ -31,10 +31,10 @@
    [[value equality|Object.equals]]."""
 see (`value null`)
 by ("Gavin") 
-native shared abstract class Null() 
+shared abstract class Null() 
         of null
         extends Anything() {}
 
 "The null value."
 by ("Gavin")
-native shared object null extends Null() {}
+shared object null extends Null() {}

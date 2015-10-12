@@ -2455,6 +2455,12 @@ $dart$core.double $package$infinity = 1.0 / 0.0;
 
 $dart$core.double get infinity => $package$infinity;
 
+class InitializationError  extends AssertionError {
+    InitializationError([$dart$core.String _$description]) : super(_$description) {
+        this._$description = _$description;
+    }
+    $dart$core.String _$description;
+}
 abstract class Integral implements Number, Enumerable {
     $dart$core.Object remainder([$dart$core.Object other]);
     $dart$core.bool get zero;
