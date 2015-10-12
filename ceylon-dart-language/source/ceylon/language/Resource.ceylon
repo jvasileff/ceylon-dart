@@ -63,7 +63,9 @@ shared interface Resource {
     "Retrieves the contents of the resource as a [[String]],
      using the specified encoding."
     shared formal String textContent(String encoding="UTF-8");
-    
+
+    // FIXME Dart workaround
     shared actual String string => "``className(this)``[``uri``]";
+    //string => "``className(this)``[``uri``]";
 }
 
