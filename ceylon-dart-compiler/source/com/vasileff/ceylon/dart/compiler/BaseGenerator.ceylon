@@ -938,9 +938,14 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
-            [Expression*] arguments)
+            [Expression*] arguments,
+            "The return type of the invocation, if know. This should be provided when
+             possible, since the type checker may have more specific type information
+             than what could otherwise be determined. For instance, when a subscript
+             operation is performed on a Tuple."
+            TypeModel? returnType = null)
         =>  generateInvocationDetailsFromName(
-                scope, receiver, memberName, arguments)[2]();
+                scope, receiver, memberName, arguments, returnType)[2]();
 
     """Returns a Tuple holding:
 
@@ -960,7 +965,9 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
-            [Expression*] | [DartExpression()*] arguments) {
+            [Expression*] | [DartExpression()*] arguments,
+            "See notes on [[generateInvocationFromName.returnType]]."
+            TypeModel? returnType = null) {
 
         return
         generateInvocationDetailsSynthetic {
@@ -969,6 +976,7 @@ class BaseGenerator(CompilationContext ctx)
             () => receiver.transform(expressionTransformer);
             memberName;
             arguments;
+            returnType;
         };
     }
 
@@ -981,13 +989,16 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
-            [Expression*] | [DartExpression()*] arguments)
+            [Expression*] | [DartExpression()*] arguments,
+            "See notes on [[generateInvocationFromName.returnType]]."
+            TypeModel? returnType = null)
         =>  generateInvocationDetailsSynthetic {
                 scope;
                 receiverType;
                 generateReceiver;
                 memberName;
                 arguments;
+                returnType;
             }[2]();
 
     """The same as [[generateInvocationFromName]], but with parameters that are more
@@ -1000,7 +1011,9 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
-            [Expression*] | [DartExpression()*] arguments) {
+            [Expression*] | [DartExpression()*] arguments,
+            "See notes on [[generateInvocationFromName.returnType]]."
+            TypeModel? returnType = null) {
 
         // 1. Get a TypedDeclaration for the member
         // 2. Get a TypeDeclaration for the member's container
@@ -1015,7 +1028,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value typedReference = receiverType.getTypedMember(memberDeclaration, null);
 
-        value rhsType = typedReference.type;
+        value rhsType = returnType else typedReference.type;
 
         value rhsDeclaration =
                 if (is FunctionModel memberDeclaration,

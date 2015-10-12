@@ -1131,6 +1131,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.primary;
                 "get";
                 [subscript.key];
+                ExpressionInfo(that).typeModel;
             };
         }
         case (is SpanSubscript) {
@@ -1140,6 +1141,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.primary;
                 "span";
                 [subscript.from, subscript.to];
+                ExpressionInfo(that).typeModel;
             };
         }
         case (is MeasureSubscript) {
@@ -1149,6 +1151,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.primary;
                 "measure";
                 [subscript.from, subscript.length];
+                ExpressionInfo(that).typeModel;
             };
         }
         case (is SpanFromSubscript) {
@@ -1158,6 +1161,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.primary;
                 "spanFrom";
                 [subscript.from];
+                ExpressionInfo(that).typeModel;
             };
         }
         case (is SpanToSubscript) {
@@ -1167,6 +1171,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.primary;
                 "spanTo";
                 [subscript.to];
+                ExpressionInfo(that).typeModel;
             };
         }
     }
