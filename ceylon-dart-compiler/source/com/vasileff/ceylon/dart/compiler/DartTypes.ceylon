@@ -626,6 +626,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     Boolean denotable(TypeModel type)
         =>  !type.typeParameter
                 && !ceylonTypes.isCeylonNothing(type)
+                && !ceylonTypes.isCeylonIdentifiable(type)
                 && (let (definiteType = ceylonTypes.definiteType(type))
                    // union types that are booleans are denotable, as bool/Boolean
                    (ceylonTypes.isCeylonBoolean(definiteType)

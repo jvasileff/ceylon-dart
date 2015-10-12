@@ -305,6 +305,13 @@ class CoreGenerator(CompilationContext ctx) {
         if (is NoType effectiveLhs) {
             return dartExpression;
         }
+        if (!dartTypes.denotable(effectiveLhs)) {
+            // TODO make sure this is the best way to do this.
+            // We don't want to cast to "Identifiable" or some other erased type.
+            // The lhsErasedToObject doesn't completely help us, because that is referring
+            // to the source declaration, not the final type.
+            return dartExpression;
+        }
         else if (effectiveLhs.isSubtypeOf(effectiveRhs)
                     && !effectiveLhs.isExactly(effectiveRhs)) {
             // lhs is the result of a narrowing operation

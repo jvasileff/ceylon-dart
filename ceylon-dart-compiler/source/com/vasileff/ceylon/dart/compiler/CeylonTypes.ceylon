@@ -142,6 +142,10 @@ class CeylonTypes(Unit unit) {
         =>  type.isExactly(floatType);
 
     shared
+    Boolean isCeylonIdentifiable(Type type)
+        =>  type.isExactly(identifiableType);
+
+    shared
     Boolean isCeylonInteger(Type type)
         =>  type.isExactly(integerType);
 

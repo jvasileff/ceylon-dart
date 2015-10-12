@@ -1711,6 +1711,15 @@ class BaseGenerator(CompilationContext ctx)
             // This isn't good! But no alternative w/o reified generics
             return DartBooleanLiteral(true);
         }
+        else if (ceylonTypes.isCeylonIdentifiable(isType)) {
+            // TODO don't be so generous!!!
+            return
+            DartBinaryExpression {
+                expressionToCheck;
+                "!=";
+                DartNullLiteral();
+            };
+        }
         else if (ceylonTypes.isCeylonNull(isType)) {
             return
             DartBinaryExpression {
