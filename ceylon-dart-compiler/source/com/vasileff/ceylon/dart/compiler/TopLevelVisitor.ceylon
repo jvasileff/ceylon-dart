@@ -31,6 +31,7 @@ import ceylon.interop.java {
 
 import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
+    ConstructorModel=Constructor,
     ClassModel=Class,
     SetterModel=Setter,
     TypedDeclarationModel=TypedDeclaration,
@@ -61,7 +62,10 @@ import com.vasileff.ceylon.dart.ast {
     DartBlockFunctionBody,
     DartBlock,
     DartMethodDeclaration,
-    DartExtendsClause
+    DartExtendsClause,
+    DartSuperConstructorInvocation,
+    DartExpressionStatement,
+    DartPrefixedIdentifier
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -345,14 +349,6 @@ class TopLevelVisitor(CompilationContext ctx)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
 
-        // TODO extends clause with parameters
-        if (exists extendedTypeNode,
-                exists arguments = extendedTypeNode.target.arguments,
-                !arguments.argumentList.children.empty) {
-            throw CompilerBug(scope, "Classes with extended types with parameters not \
-                                      yet supported.");
-        }
-
         value extendedType
             =   if (exists et = classModel.extendedType,
                     !ceylonTypes.isCeylonBasic(classModel.extendedType)
@@ -384,6 +380,36 @@ class TopLevelVisitor(CompilationContext ctx)
                 return [];
             }
         })();
+
+        "Explicit super call with arguments."
+        [DartSuperConstructorInvocation] | [] extendedArguments;
+
+        if (exists extendedTypeNode,
+                exists arguments = extendedTypeNode.target.arguments,
+                !arguments.argumentList.children.empty) {
+
+            assert (is ClassModel | ConstructorModel etModel
+                =   classModel.extendedType.declaration);
+
+            extendedArguments
+                // Use 'withInExtends' to avoid qualifying parameters with `this` if
+                // used in the extends clause.
+                =   withInExtends {
+                        classModel;
+                        () => [DartSuperConstructorInvocation {
+                            null;
+                            generateArgumentListFromArguments {
+                                        scope;
+                                        arguments;
+                                        classModel.extendedType.fullType;
+                                        etModel;
+                                    }[1];
+                        }];
+                    };
+        }
+        else {
+            extendedArguments = [];
+        }
 
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
@@ -531,25 +557,33 @@ class TopLevelVisitor(CompilationContext ctx)
                     concatenate {
                         outerFieldConstructorParameter,
                         captureConstructorParameters,
-                        standardParameters.map {
-                            // Prepend with "this." for dart. Eventually, we'll
-                            // just do this for the ones we want to capture.
-                            // Not supporting defaulted parameters yet.
-                            (p) => DartFieldFormalParameter {
-                                final = false; // todo final for non-variables
-                                const = false;
-                                type = p.type;
-                                p.identifier;
-                            };
-                        }
+                        standardParameters
                     };
                 };
+                extendedArguments;
                 null;
                 DartBlockFunctionBody {
                     null; false;
                     DartBlock {
                         concatenate {
-                            classBody.transformChildren(classStatementTransformer);
+                            // Assign parameters to corresponding 'this.' members.
+                            // Eventually, we'll just do this for the ones we want to
+                            // capture. Not supporting defaulted parameters yet.
+                            standardParameters.map {
+                                // This might get ugly with replacements like
+                                // string/toString().
+                                (p) => DartExpressionStatement {
+                                    DartAssignmentExpression {
+                                        DartPrefixedIdentifier {
+                                            DartSimpleIdentifier("this");
+                                            p.identifier;
+                                        };
+                                        DartAssignmentOperator.equal;
+                                        p.identifier;
+                                    };
+                                };
+                            },
+                            *classBody.transformChildren(classStatementTransformer)
                         };
                     };
                 };

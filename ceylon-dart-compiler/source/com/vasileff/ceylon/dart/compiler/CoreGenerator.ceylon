@@ -463,4 +463,18 @@ class CoreGenerator(CompilationContext ctx) {
             ctx.returnDeclarationTop = save;
         }
     }
+
+    shared
+    Result withInExtends<Result>(
+            ClassModel classDeclaration,
+            Result fun()) {
+        value save = ctx.withinExtendsClauseTop;
+        try {
+            ctx.withinExtendsClauseTop = classDeclaration;
+            return fun();
+        }
+        finally {
+            ctx.withinExtendsClauseTop = save;
+        }
+    }
 }

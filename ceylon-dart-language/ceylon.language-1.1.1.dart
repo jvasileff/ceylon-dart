@@ -85,7 +85,9 @@ LateAnnotation $package$late() => new LateAnnotation();
 LateAnnotation late() => $package$late();
 
 class NativeAnnotation implements OptionalAnnotation {
-    NativeAnnotation([$dart$core.String this.backend]) {}
+    NativeAnnotation([$dart$core.String backend]) {
+        this.backend = backend;
+    }
     $dart$core.String backend;
 }
 NativeAnnotation $package$native([$dart$core.Object backend = $package$dart$default]) {
@@ -98,7 +100,9 @@ NativeAnnotation $package$native([$dart$core.Object backend = $package$dart$defa
 NativeAnnotation native([$dart$core.Object backend = $package$dart$default]) => $package$native(backend);
 
 class DocAnnotation implements OptionalAnnotation {
-    DocAnnotation([$dart$core.String this.description]) {}
+    DocAnnotation([$dart$core.String description]) {
+        this.description = description;
+    }
     $dart$core.String description;
 }
 DocAnnotation $package$doc([$dart$core.String description]) => new DocAnnotation(description);
@@ -106,7 +110,9 @@ DocAnnotation $package$doc([$dart$core.String description]) => new DocAnnotation
 DocAnnotation doc([$dart$core.String description]) => $package$doc(description);
 
 class SeeAnnotation implements SequencedAnnotation {
-    SeeAnnotation([Sequential this.programElements]) {}
+    SeeAnnotation([Sequential programElements]) {
+        this.programElements = programElements;
+    }
     Sequential programElements;
 }
 SeeAnnotation $package$see([Sequential programElements]) => new SeeAnnotation(programElements);
@@ -114,7 +120,9 @@ SeeAnnotation $package$see([Sequential programElements]) => new SeeAnnotation(pr
 SeeAnnotation see([Sequential programElements]) => $package$see(programElements);
 
 class AuthorsAnnotation implements OptionalAnnotation {
-    AuthorsAnnotation([Sequential this.authors]) {}
+    AuthorsAnnotation([Sequential authors]) {
+        this.authors = authors;
+    }
     Sequential authors;
 }
 AuthorsAnnotation $package$by([Sequential authors]) => new AuthorsAnnotation(authors);
@@ -122,7 +130,10 @@ AuthorsAnnotation $package$by([Sequential authors]) => new AuthorsAnnotation(aut
 AuthorsAnnotation by([Sequential authors]) => $package$by(authors);
 
 class ThrownExceptionAnnotation implements SequencedAnnotation {
-    ThrownExceptionAnnotation([meta$declaration$Declaration this.type, $dart$core.String this.when]) {}
+    ThrownExceptionAnnotation([meta$declaration$Declaration type, $dart$core.String when]) {
+        this.type = type;
+        this.when = when;
+    }
     meta$declaration$Declaration type;
     $dart$core.String when;
 }
@@ -136,7 +147,9 @@ ThrownExceptionAnnotation $package$throws([meta$declaration$Declaration type, $d
 ThrownExceptionAnnotation throws([meta$declaration$Declaration type, $dart$core.Object when = $package$dart$default]) => $package$throws(type, when);
 
 class DeprecationAnnotation implements OptionalAnnotation {
-    DeprecationAnnotation([$dart$core.String this.description]) {}
+    DeprecationAnnotation([$dart$core.String description]) {
+        this.description = description;
+    }
     $dart$core.String description;
     $dart$core.String get reason => !String.instance(this.description).empty ? this.description : null;
 }
@@ -150,7 +163,9 @@ DeprecationAnnotation $package$deprecated([$dart$core.Object reason = $package$d
 DeprecationAnnotation deprecated([$dart$core.Object reason = $package$dart$default]) => $package$deprecated(reason);
 
 class TagsAnnotation implements OptionalAnnotation {
-    TagsAnnotation([Sequential this.tags]) {}
+    TagsAnnotation([Sequential tags]) {
+        this.tags = tags;
+    }
     Sequential tags;
 }
 TagsAnnotation $package$tagged([Sequential tags]) => new TagsAnnotation(tags);
@@ -158,7 +173,9 @@ TagsAnnotation $package$tagged([Sequential tags]) => new TagsAnnotation(tags);
 TagsAnnotation tagged([Sequential tags]) => $package$tagged(tags);
 
 class LicenseAnnotation implements OptionalAnnotation {
-    LicenseAnnotation([$dart$core.String this.description]) {}
+    LicenseAnnotation([$dart$core.String description]) {
+        this.description = description;
+    }
     $dart$core.String description;
 }
 LicenseAnnotation $package$license([$dart$core.String description]) => new LicenseAnnotation(description);
@@ -173,7 +190,9 @@ OptionalImportAnnotation $package$optional() => new OptionalImportAnnotation();
 OptionalImportAnnotation optional() => $package$optional();
 
 class SuppressWarningsAnnotation implements OptionalAnnotation {
-    SuppressWarningsAnnotation([Sequential this._$warnings]) {}
+    SuppressWarningsAnnotation([Sequential _$warnings]) {
+        this._$warnings = _$warnings;
+    }
     Sequential _$warnings;
 }
 SuppressWarningsAnnotation $package$suppressWarnings([Sequential warnings]) => new SuppressWarningsAnnotation(warnings);
@@ -211,7 +230,8 @@ Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => 
 Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
 
 class ArraySequence implements Sequence {
-    ArraySequence([Array this._$array]) {
+    ArraySequence([Array _$array]) {
+        this._$array = _$array;
         if (!(!this._$array.empty)) {
             throw new AssertionError("Violated: !array.empty");
         }
@@ -487,7 +507,9 @@ abstract class Category {
     }
 }
 class ChainedIterator implements Iterator {
-    ChainedIterator([Iterable this._$first, Iterable this._$second]) {
+    ChainedIterator([Iterable _$first, Iterable _$second]) {
+        this._$first = _$first;
+        this._$second = _$second;
         _$iter = this._$first.iterator();
         _$more = true;
     }
@@ -796,7 +818,9 @@ Callable $package$uncurry([Callable f]) => $package$flatten(new dart$Callable(([
 Callable uncurry([Callable f]) => $package$uncurry(f);
 
 class CycledIterator implements Iterator {
-    CycledIterator([Iterable this._$iterable, $dart$core.int this._$times]) {
+    CycledIterator([Iterable _$iterable, $dart$core.int _$times]) {
+        this._$iterable = _$iterable;
+        this._$times = _$times;
         _$iter = $package$emptyIterator;
         _$count = 0;
     }
@@ -1656,7 +1680,10 @@ $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() 
 $dart$core.Object emptyOrSingleton([$dart$core.Object element]) => $package$emptyOrSingleton(element);
 
 class Entry {
-    Entry([$dart$core.Object this.key, $dart$core.Object this.item]) {}
+    Entry([$dart$core.Object key, $dart$core.Object item]) {
+        this.key = key;
+        this.item = item;
+    }
     $dart$core.Object key;
     $dart$core.Object item;
     Tuple get pair => new Tuple.$withList([this.key, this.item]);
@@ -2321,7 +2348,9 @@ abstract class impl$BaseSequence implements Sequence {
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
 class impl$ElementImpl implements serialization$Element {
-    impl$ElementImpl([$dart$core.int this.index]) {}
+    impl$ElementImpl([$dart$core.int index]) {
+        this.index = index;
+    }
     $dart$core.int index;
     $dart$core.Object referred([$dart$core.Object instance]) {
         return $package$impl$reach.getAnything(instance, this);
@@ -2343,7 +2372,9 @@ class impl$ElementImpl implements serialization$Element {
     }
 }
 class impl$MemberImpl implements serialization$Member {
-    impl$MemberImpl([meta$declaration$ValueDeclaration this.attribute]) {}
+    impl$MemberImpl([meta$declaration$ValueDeclaration attribute]) {
+        this.attribute = attribute;
+    }
     meta$declaration$ValueDeclaration attribute;
     $dart$core.Object referred([$dart$core.Object instance]) {
         return $package$impl$reach.getAnything(instance, this);
@@ -5141,7 +5172,10 @@ class ElementEntry$$anonymous$34_ implements Iterator {
     }
 }
 class ElementEntry implements Sequence {
-    ElementEntry([$dart$core.Object this.element, ElementEntry this.next]) {}
+    ElementEntry([$dart$core.Object element, ElementEntry next]) {
+        this.element = element;
+        this.next = next;
+    }
     $dart$core.Object element;
     ElementEntry next;
     $dart$core.Object get first => this.element;
@@ -5342,7 +5376,11 @@ class ElementEntry implements Sequence {
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
 class GroupEntry {
-    GroupEntry([$dart$core.Object this.group, ElementEntry this.elements, GroupEntry this.next]) {}
+    GroupEntry([$dart$core.Object group, ElementEntry elements, GroupEntry next]) {
+        this.group = group;
+        this.elements = elements;
+        this.next = next;
+    }
     $dart$core.Object group;
     ElementEntry elements;
     GroupEntry next;
@@ -5647,7 +5685,8 @@ class List$Rest$$anonymous$2_ implements Iterator {
 }
 class List$Rest implements List {
     List $outer$ceylon$language$List;
-    List$Rest([List this.$outer$ceylon$language$List, $dart$core.int this._$from]) {
+    List$Rest([List this.$outer$ceylon$language$List, $dart$core.int _$from]) {
+        this._$from = _$from;
         if (!(this._$from >= 0)) {
             throw new AssertionError("Violated: from>=0");
         }
@@ -5779,7 +5818,8 @@ class List$Sublist$$anonymous$3_ implements Iterator {
 }
 class List$Sublist implements List {
     List $outer$ceylon$language$List;
-    List$Sublist([List this.$outer$ceylon$language$List, $dart$core.int this._$to]) {
+    List$Sublist([List this.$outer$ceylon$language$List, $dart$core.int _$to]) {
+        this._$to = _$to;
         if (!(this._$to >= 0)) {
             throw new AssertionError("Violated: to>=0");
         }
@@ -5897,7 +5937,9 @@ class List$Sublist implements List {
 }
 class List$Repeat implements List {
     List $outer$ceylon$language$List;
-    List$Repeat([List this.$outer$ceylon$language$List, $dart$core.int this._$times]) {}
+    List$Repeat([List this.$outer$ceylon$language$List, $dart$core.int _$times]) {
+        this._$times = _$times;
+    }
     $dart$core.int _$times;
     $dart$core.int get size => $outer$ceylon$language$List.size * this._$times;
     $dart$core.int get lastIndex => (() {
@@ -6039,7 +6081,10 @@ class List$Patch$$anonymous$4_ implements Iterator {
 }
 class List$Patch implements List {
     List $outer$ceylon$language$List;
-    List$Patch([List this.$outer$ceylon$language$List, List this._$list, $dart$core.int this._$from, $dart$core.int this._$length]) {
+    List$Patch([List this.$outer$ceylon$language$List, List _$list, $dart$core.int _$from, $dart$core.int _$length]) {
+        this._$list = _$list;
+        this._$from = _$from;
+        this._$length = _$length;
         if (!(this._$length >= 0)) {
             throw new AssertionError("Violated: length>=0");
         }
@@ -8145,7 +8190,9 @@ class Measure$By$$anonymous$1_ implements Iterator {
 }
 class Measure$By implements Iterable {
     Measure $outer$ceylon$language$Measure;
-    Measure$By([Measure this.$outer$ceylon$language$Measure, $dart$core.int this._$step]) {}
+    Measure$By([Measure this.$outer$ceylon$language$Measure, $dart$core.int _$step]) {
+        this._$step = _$step;
+    }
     $dart$core.int _$step;
     $dart$core.int get size => 1 + (($outer$ceylon$language$Measure.size - 1) ~/ this._$step);
     $dart$core.Object get first => $outer$ceylon$language$Measure.first;
@@ -8204,7 +8251,9 @@ class Measure$By implements Iterable {
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
 class Measure  extends Range {
-    Measure([$dart$core.Object this.first, $dart$core.int this.size]) {
+    Measure([$dart$core.Object first, $dart$core.int size]) {
+        this.first = first;
+        this.size = size;
         if (!(this.size > 0)) {
             throw new AssertionError("Violated: size > 0");
         }
@@ -9909,7 +9958,8 @@ class Sequence$Reverse implements Sequence {
 }
 class Sequence$Repeat implements Sequence {
     Sequence $outer$ceylon$language$Sequence;
-    Sequence$Repeat([Sequence this.$outer$ceylon$language$Sequence, $dart$core.int this._$times]) {
+    Sequence$Repeat([Sequence this.$outer$ceylon$language$Sequence, $dart$core.int _$times]) {
+        this._$times = _$times;
         if (!(this._$times > 0)) {
             throw new AssertionError("Violated: times>0");
         }
@@ -10157,7 +10207,10 @@ Sequence $package$sequence([Iterable elements]) {{
 Sequence sequence([Iterable elements]) => $package$sequence(elements);
 
 class JoinedSequence implements Sequence {
-    JoinedSequence([Sequence this._$firstSeq, Sequence this._$secondSeq]) {}
+    JoinedSequence([Sequence _$firstSeq, Sequence _$secondSeq]) {
+        this._$firstSeq = _$firstSeq;
+        this._$secondSeq = _$secondSeq;
+    }
     Sequence _$firstSeq;
     Sequence _$secondSeq;
     $dart$core.int get size => this._$firstSeq.size + this._$secondSeq.size;
@@ -10596,7 +10649,8 @@ abstract class serialization$Outer implements serialization$ReachableReference {
     $dart$core.Object referred([$dart$core.Object instance]);
 }
 abstract class serialization$Partial {
-    serialization$Partial([$dart$core.Object this.id]) {
+    serialization$Partial([$dart$core.Object id]) {
+        this.id = id;
         clazz = null;
         container = null;
         instance_ = null;
@@ -10733,7 +10787,9 @@ class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable impleme
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
 class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References, Identifiable {
-    serialization$ReferencesImpl([$dart$core.Object this.instance]) {}
+    serialization$ReferencesImpl([$dart$core.Object instance]) {
+        this.instance = instance;
+    }
     $dart$core.Object instance;
     Iterator iterator() {{
             $dart$core.bool doElse$0 = true;
@@ -10987,7 +11043,9 @@ class Singleton$iterator$$anonymous$0_ implements Iterator {
     $dart$core.String toString() => ("" + $outer$ceylon$language$Singleton.toString()) + ".iterator()";
 }
 class Singleton implements Sequence {
-    Singleton([$dart$core.Object this._$element]) {}
+    Singleton([$dart$core.Object _$element]) {
+        this._$element = _$element;
+    }
     $dart$core.Object _$element;
     $dart$core.Object get first => this._$element;
     $dart$core.Object get last => this._$element;
@@ -11262,7 +11320,9 @@ class Span$By$iterator$$anonymous$2_ implements Iterator {
 }
 class Span$By implements Iterable {
     Span $outer$ceylon$language$Span;
-    Span$By([Span this.$outer$ceylon$language$Span, $dart$core.int this._$step]) {}
+    Span$By([Span this.$outer$ceylon$language$Span, $dart$core.int _$step]) {
+        this._$step = _$step;
+    }
     $dart$core.int _$step;
     $dart$core.int get size => 1 + (($outer$ceylon$language$Span.size - 1) ~/ this._$step);
     $dart$core.Object get first => $outer$ceylon$language$Span.first;
@@ -11327,7 +11387,9 @@ class Span$By implements Iterable {
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
 class Span  extends Range {
-    Span([$dart$core.Object this.first, $dart$core.Object this.last]) {
+    Span([$dart$core.Object first, $dart$core.Object last]) {
+        this.first = first;
+        this.last = last;
         increasing = (this.last as Enumerable).offsetSign(this.first) >= 0;
         _$recursive = ((this.first as Enumerable).offsetSign((this.first as Enumerable).successor) > 0) && (((this.last as Enumerable).predecessor as Enumerable).offsetSign(this.last) > 0);
     }

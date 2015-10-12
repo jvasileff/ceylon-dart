@@ -100,6 +100,9 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared variable
     FunctionOrValueModel? returnDeclarationTop = null;
 
+    shared variable
+    ClassModel? withinExtendsClauseTop = null;
+
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
 
@@ -168,4 +171,11 @@ class CompilationContext(PhasedUnit phasedUnit) {
         assert(exists top = returnDeclarationTop);
         return top;
     }
+
+    shared
+    Boolean withinExtendsFor(ClassOrInterfaceModel classDeclaration)
+        =>  if (exists top = withinExtendsClauseTop,
+                is ClassModel classDeclaration)
+            then ceylonTypes.equalDeclarations(top, classDeclaration)
+            else false;
 }

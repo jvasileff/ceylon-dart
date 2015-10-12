@@ -786,7 +786,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ({ClassOrInterfaceModel+} chain)
         =>  let (isInterface = chain.first is InterfaceModel)
             let (chainSeq = chain.sequence())
-            (if (isInterface) then ["$this"] else if (chainSeq.size == 1) then ["this"] else [])
+            (if (isInterface) then ["$this"]
+             else if (chainSeq.size == 1) then ["this"]
+             else [])
                 .chain(chain.skip(1).map(outerFieldName))
                 .map(DartSimpleIdentifier)
                 .reduce<DartPropertyAccess|DartSimpleIdentifier> {
@@ -843,15 +845,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             // not just the dart constructor. Note: it's "LoneThis" since
                             // we don't need this when referencing outers, like
                             // `this.$outer$ceylon$language$...`.
-                            if (declaration.parameter) then
-                                expressionToThisOrOuterStripNonLoneThis {
+                            //
+                            // We *always* strip this for class or constructor parameters
+                            // that are used within an extends clause (since at that
+                            // point, they are just Dart parameters, not class members.)
+                            if (!declaration.parameter
+                                || ctx.withinExtendsFor(declarationContainer)) then
+                                expressionToThisOrOuterStripThis {
                                     ancestorChainToInheritingDeclaration {
                                         container;
                                         declarationContainer;
                                     };
                                 }
                             else
-                                expressionToThisOrOuterStripThis {
+
+                                expressionToThisOrOuterStripNonLoneThis {
                                     ancestorChainToInheritingDeclaration {
                                         container;
                                         declarationContainer;

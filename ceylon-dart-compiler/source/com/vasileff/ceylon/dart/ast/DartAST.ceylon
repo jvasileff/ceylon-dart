@@ -1071,7 +1071,7 @@ class DartIsExpression
 
 shared
 class DartConstructorDeclaration
-        (const, factory, returnType, name, parameters,
+        (const, factory, returnType, name, parameters, initializers,
          redirectedConstructor, body)
         extends DartClassMember() {
 
@@ -1083,7 +1083,7 @@ class DartConstructorDeclaration
     shared DartIdentifier returnType;
     shared DartSimpleIdentifier? name;
     shared DartFormalParameterList parameters;
-    //shared [DartConstructorInitializer*] initializers;
+    shared [DartConstructorInitializer*] initializers;
     shared DartConstructorName? redirectedConstructor;
     shared DartFunctionBody? body;
 
@@ -1097,6 +1097,20 @@ class DartConstructorDeclaration
             name.write(writer);
         }
         parameters.write(writer);
+
+        if (nonempty initializers) {
+            variable value first = true;
+            for (initializer in initializers) {
+                if (first) {
+                    first = false;
+                    writer.write(" : ");
+                }
+                else {
+                    writer.write(", ");
+                }
+                initializer.write(writer);
+            }
+        }
 
         // TODO redirectedConstructor
 
@@ -1125,6 +1139,40 @@ class DartConstructorName(type, name=null)
             writer.write(".");
             name.write(writer);
         }
+    }
+}
+
+shared abstract
+class DartConstructorInitializer()
+        extends DartNode() {}
+
+"`'super' ('.' [SimpleIdentifier])? [ArgumentList]`"
+shared
+class DartSuperConstructorInvocation(constructorName, argumentList)
+        extends DartConstructorInitializer() {
+
+    shared DartSimpleIdentifier? constructorName;
+    shared DartArgumentList argumentList;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("super");
+        if (exists constructorName) {
+            writer.write(".");
+            constructorName.write(writer);
+        }
+        argumentList.write(writer);
+    }
+}
+
+shared
+class ConstructorFieldInitializer()
+        extends DartConstructorInitializer() {
+
+
+    shared actual
+    void write(CodeWriter writer) {
+        throw;
     }
 }
 
