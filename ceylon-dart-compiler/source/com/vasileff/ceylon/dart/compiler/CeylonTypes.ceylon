@@ -53,6 +53,9 @@ class CeylonTypes(Unit unit) {
     Type characterType => unit.characterType;
 
     shared
+    Type exceptionType => unit.exceptionType;
+
+    shared
     Type emptyType => unit.emptyType;
 
     shared

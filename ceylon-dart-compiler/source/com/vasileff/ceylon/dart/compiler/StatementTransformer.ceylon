@@ -34,7 +34,8 @@ import ceylon.ast.core {
     IsCase,
     MatchCase,
     ElseCaseClause,
-    ExistsOrNonemptyCondition
+    ExistsOrNonemptyCondition,
+    Throw
 }
 import ceylon.collection {
     LinkedList
@@ -846,6 +847,36 @@ class StatementTransformer(CompilationContext ctx)
         assert (nonempty result);
         return result;
     }
+
+    shared actual
+    [DartExpressionStatement] transformThrow(Throw that)
+        =>  if (exists expression = that.result) then
+                [DartExpressionStatement {
+                    DartThrowExpression {
+                        withLhsNoType {
+                            () => expression.transform(expressionTransformer);
+                        };
+                    };
+                }]
+            else
+                // TODO we need to start using generateTopLevelInvocation, and perform
+                //      native replacements there. Also need to make sure `is` checks
+                //      correctly handle replace types.
+                [DartExpressionStatement {
+                    DartThrowExpression {
+                        DartInstanceCreationExpression {
+                            const = false;
+                            DartConstructorName {
+                                dartTypes.dartTypeName {
+                                    dScope(that);
+                                    ceylonTypes.exceptionType;
+                                    false; false;
+                                };
+                            };
+                            DartArgumentList();
+                        };
+                    };
+                }];
 
     shared actual default
     [] transformNode(Node that) {
