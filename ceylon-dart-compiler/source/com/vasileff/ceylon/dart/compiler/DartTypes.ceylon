@@ -774,6 +774,29 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                 };
 
+    """
+       Chain of references to the member:
+            $this ("." $outer$CI)* "." memberName
+
+       If the first declaration in the chain is a class, the leading `this`
+       will be suppressed.
+    """
+    shared
+    DartPropertyAccess | DartSimpleIdentifier? expressionToThisOrOuterStripNonLoneThis
+            ({ClassOrInterfaceModel+} chain)
+        =>  let (isInterface = chain.first is InterfaceModel)
+            let (chainSeq = chain.sequence())
+            (if (isInterface) then ["$this"] else if (chainSeq.size == 1) then ["this"] else [])
+                .chain(chain.skip(1).map(outerFieldName))
+                .map(DartSimpleIdentifier)
+                .reduce<DartPropertyAccess|DartSimpleIdentifier> {
+                    (expression, field) =>
+                    DartPropertyAccess {
+                        expression;
+                        field;
+                    };
+                };
+
     "Returns a tuple containing:
 
      - A Dart expression for the Ceylon FunctionOrValue
@@ -814,12 +837,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                  - the identifier."
                 value dartExpression
                     =   createDartPropertyAccess {
-                            expressionToThisOrOuterStripThis {
-                                ancestorChainToInheritingDeclaration {
-                                    container;
-                                    declarationContainer;
+                            // We need 'this' inside constructors due to name conflicts
+                            // with constructor parameters. This code helps, but includes
+                            // `this.` for parameters *anywhere* in a class's definition,
+                            // not just the dart constructor. Note: it's "LoneThis" since
+                            // we don't need this when referencing outers, like
+                            // `this.$outer$ceylon$language$...`.
+                            if (declaration.parameter) then
+                                expressionToThisOrOuterStripNonLoneThis {
+                                    ancestorChainToInheritingDeclaration {
+                                        container;
+                                        declarationContainer;
+                                    };
+                                }
+                            else
+                                expressionToThisOrOuterStripThis {
+                                    ancestorChainToInheritingDeclaration {
+                                        container;
+                                        declarationContainer;
+                                    };
                                 };
-                            };
                             identifier;
                         };
 
