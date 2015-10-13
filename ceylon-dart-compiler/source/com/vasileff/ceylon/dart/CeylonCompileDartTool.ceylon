@@ -131,6 +131,14 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     Boolean profile = false;
 
     shared variable option
+    description("Print the AST to standard error.")
+    Boolean ast = false;
+
+    shared variable option
+    description("Print the Redhat AST to standard error.")
+    Boolean rhAst = false;
+
+    shared variable option
     description("Wrap typeChecker.process() in TypeCache.doWithoutCaching \
                  (default is false)")
     Boolean doWithoutCaching = false;
@@ -197,11 +205,18 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         t3 = system.nanoseconds;
 
         for (phasedUnit in phasedUnits) {
+            value path => phasedUnit.pathRelativeToSrcDir else "<null>";
+
             if (exists v = verbose,
                 verbose.contains("files")) {
-                process.writeError("compiling "
-                    + (phasedUnit.pathRelativeToSrcDir else "<null>"));
+                process.writeErrorLine("-- begin " + path);
             }
+
+            if (rhAst) {
+                print("-- Redhat AST " + path);
+                print(phasedUnit.compilationUnit);
+            }
+
             Integer start = system.nanoseconds;
 
             value ctx = CompilationContext(phasedUnit);
@@ -210,6 +225,11 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 phasedUnit.compilationUnit;
                 augmentNode;
             };
+
+            if (ast) {
+                print("-- Ceylon AST " + path);
+                print(unit);
+            }
 
             if (is CompilationUnit unit) {
                 // ignore packages and modules for now
@@ -232,7 +252,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
             if (exists v = verbose,
                 verbose.contains("files")) {
                 Integer end = system.nanoseconds;
-                process.writeErrorLine(" (``((end-start)/10^6).string``ms)");
+                process.writeErrorLine("-- end   " + path
+                    + " (``((end-start)/10^6).string``ms)");
             }
         }
 
@@ -280,7 +301,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         t4 = system.nanoseconds;
 
         if (profile) {
-            process.writeErrorLine("PROFILING INFORMATION");
+            process.writeErrorLine("Profiling Information");
+            process.writeErrorLine("---------------------");
             process.writeErrorLine("TypeChecker creation:   " + ((t1-t0)/10^6).string);
             process.writeErrorLine("TypeChecker processing: " + ((t2-t1)/10^6).string);
             process.writeErrorLine("Dart compiler creation: " + ((t3-t2)/10^6).string);
