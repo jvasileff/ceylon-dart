@@ -11,6 +11,7 @@ import ceylon.ast.core {
     ObjectDefinition,
     Statement,
     Specification,
+    TypeAliasDefinition,
     FunctionDeclaration,
     LazySpecification,
     ClassDefinition,
@@ -42,6 +43,11 @@ class ClassStatementTransformer(CompilationContext ctx)
         =>  if (that is Specification && !that is ValueSpecification)
             then super.transformStatement(that)
             else that.transform(statementTransformer);
+
+    "Ignore type aliases for now."
+    shared actual
+    [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
 
     "The value may be a class member. So:
 
