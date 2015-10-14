@@ -543,7 +543,9 @@ class QualifiedExpressionTests() {
 
                 class I$J$C {
                     I$J $outer$default$I$J;
-                    I$J$C([I$J this.$outer$default$I$J, $dart$core.String this._$s]) {}
+                    I$J$C([I$J this.$outer$default$I$J, $dart$core.String _$s]) {
+                        this._$s = _$s;
+                    }
                     $dart$core.String _$s;
                 }
                 abstract class I$J {

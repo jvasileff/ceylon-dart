@@ -61,7 +61,10 @@ class ClassTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class Foo {
-                    Foo([$dart$core.Object this._$si1, $dart$core.Object this._$si2, $dart$core.Object this._$isf]) {
+                    Foo([$dart$core.Object _$si1, $dart$core.Object _$si2, $dart$core.Object _$isf]) {
+                        this._$si1 = _$si1;
+                        this._$si2 = _$si2;
+                        this._$isf = _$isf;
                         if (!(_$si1 is $ceylon$language.String)) {
                             throw new $ceylon$language.AssertionError("Violated: is String si1");
                         }
@@ -190,7 +193,9 @@ class ClassTests() {
 
                 class run$Foo$FooMember {
                     run$Foo $outer$default$run$Foo;
-                    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo, $dart$core.int this._$fooMemberInt]) {}
+                    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo, $dart$core.int _$fooMemberInt]) {
+                        this._$fooMemberInt = _$fooMemberInt;
+                    }
                     $dart$core.int _$fooMemberInt;
                     $dart$core.String get _$fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
                     run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
@@ -199,7 +204,8 @@ class ClassTests() {
                 class run$Foo {
                     $dart$core.String $capture$run$runString1;
                     $dart$core.String $capture$run$runString2;
-                    run$Foo([$dart$core.String this.$capture$run$runString1, $dart$core.String this.$capture$run$runString2, $dart$core.int this._$fooInt]) {
+                    run$Foo([$dart$core.String this.$capture$run$runString1, $dart$core.String this.$capture$run$runString2, $dart$core.int _$fooInt]) {
+                        this._$fooInt = _$fooInt;
                         x = new run$Foo$FooMember(this, (() {
                             $dart$core.int tmp$0 = $package$counter;
                             $package$counter = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$counter).successor);
@@ -693,7 +699,9 @@ class ClassTests() {
 
                 class C$D {
                     C $outer$default$C;
-                    C$D([C this.$outer$default$C, $dart$core.String this._$s]) {}
+                    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+                        this._$s = _$s;
+                    }
                     $dart$core.String _$s;
                 }
                 class C {
@@ -737,8 +745,9 @@ class ClassTests() {
 
                 class C$D {
                     C $outer$default$C;
-                    C$D([C this.$outer$default$C, $dart$core.String this._$s]) {
-                        $ceylon$language.print($ceylon$language.String.instance(_$s));
+                    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+                        this._$s = _$s;
+                        $ceylon$language.print($ceylon$language.String.instance(this._$s));
                     }
                     $dart$core.String _$s;
                 }
@@ -813,7 +822,9 @@ class ClassTests() {
                 class I1$I2$C implements I1$I2 {
                     I1$I2 $outer$default$I1$I2;
                     I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
-                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int this._$version]) {}
+                    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int _$version]) {
+                        this._$version = _$version;
+                    }
                     $dart$core.int _$version;
                     $dart$core.String get cident => ("c-" + $ceylon$language.Integer.instance(_$version).toString()) + "";
                     $dart$core.String get couterIdent => $outer$default$I1$I2.ident;

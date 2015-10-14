@@ -96,7 +96,10 @@ class BaseExpressionTests() {
                 import "package:ceylon/language/language.dart" as $ceylon$language;
 
                 class Foo {
-                    Foo([$dart$core.String this._$s, $ceylon$language.Destroyable this._$d]) {}
+                    Foo([$dart$core.String _$s, $ceylon$language.Destroyable _$d]) {
+                        this._$s = _$s;
+                        this._$d = _$d;
+                    }
                     $dart$core.String _$s;
                     $ceylon$language.Destroyable _$d;
                 }
@@ -130,7 +133,9 @@ class BaseExpressionTests() {
 
                 class C$D {
                     C $outer$default$C;
-                    C$D([C this.$outer$default$C, $dart$core.String this._$s]) {}
+                    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+                        this._$s = _$s;
+                    }
                     $dart$core.String _$s;
                 }
                 class C {
@@ -167,7 +172,9 @@ class BaseExpressionTests() {
                 class C$_$foo$D {
                     C $outer$default$C;
                     $dart$core.String $capture$C$_$foo$captureMe;
-                    C$_$foo$D([C this.$outer$default$C, $dart$core.String this.$capture$C$_$foo$captureMe, $dart$core.String this._$s]) {}
+                    C$_$foo$D([C this.$outer$default$C, $dart$core.String this.$capture$C$_$foo$captureMe, $dart$core.String _$s]) {
+                        this._$s = _$s;
+                    }
                     $dart$core.String _$s;
                     $dart$core.String get _$useCM => $capture$C$_$foo$captureMe;
                 }
@@ -257,7 +264,9 @@ class BaseExpressionTests() {
                 class A$B$C$asdf$D {
                     A$B$C $outer$default$A$B$C;
                     $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1;
-                    A$B$C$asdf$D([A$B$C this.$outer$default$A$B$C, $dart$core.String this.$capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String this._$x]) {}
+                    A$B$C$asdf$D([A$B$C this.$outer$default$A$B$C, $dart$core.String this.$capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String _$x]) {
+                        this._$x = _$x;
+                    }
                     $dart$core.String _$x;
                     $dart$core.String get useit => $capture$A$A$B$A$B$C$asdf$cap1;
                 }
