@@ -4,7 +4,7 @@ import 'dart:core' as $dart$core;
 import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import 'dart:mirrors' as $dart$mirrors;
-import '../../../ceylon.language-1.1.1.dart';
+import '../../../ceylon.language.dart';
 
 class LazyIterable extends impl$BaseIterable {
   $dart$core.int count_;

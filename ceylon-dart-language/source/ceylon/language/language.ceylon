@@ -5,7 +5,7 @@ see (`value process`, `value runtime`, `value system`,
 shared native object language {
     
     "The Ceylon language version."
-    shared String version => "1.1.1";
+    shared String version => "1.2.0";
     
     "The Ceylon language major version."
     shared Integer majorVersion => 1;

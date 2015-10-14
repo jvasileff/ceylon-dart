@@ -91,7 +91,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 
         // TODO separate method for finding module files; proper not found error reporting
         value languageModuleFile = repositoryManager.getArtifact(
-            ArtifactContext("ceylon.language", "1.1.1", ArtifactContext.\iDART));
+            ArtifactContext("ceylon.language", "1.2.0", ArtifactContext.\iDART));
 
         value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
             [moduleName -> programModuleFile,
