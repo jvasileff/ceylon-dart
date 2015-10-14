@@ -225,15 +225,28 @@ class ExpressionTransformer(CompilationContext ctx)
 
         switch (nameAndArgs)
         case (is MemberNameWithTypeArguments) {
-            if (ceylonTypes.isBooleanTrueValueDeclaration(targetDeclaration)) {
+            if (!is ValueModel | FunctionModel targetDeclaration) {
+                throw CompilerBug(that,
+                        "Unexpected declaration type for base expression: \
+                         ``className(targetDeclaration)``");
+            }
+
+            // Be sure to detect *all* true, false, and null literals here, even if they
+            // have been narrowed to something like `Null & Element`. Otherwise,
+            // replacements won't be handled here and we'll end up with too much casting
+            // (true, false, and null don't require casts, so `withBoxing` is not used.)
+            value originalDeclaration
+                =   dartTypes.declarationConsideringElidedReplacements(targetDeclaration);
+
+            if (ceylonTypes.isBooleanTrueValueDeclaration(originalDeclaration)) {
                 return generateBooleanExpression(
                         info, ctx.assertedLhsErasedToNativeTop, true);
             }
-            else if (ceylonTypes.isBooleanFalseValueDeclaration(targetDeclaration)) {
+            else if (ceylonTypes.isBooleanFalseValueDeclaration(originalDeclaration)) {
                 return generateBooleanExpression(
                         info, ctx.assertedLhsErasedToNativeTop, false);
             }
-            else if (ceylonTypes.isNullValueDeclaration(targetDeclaration)) {
+            else if (ceylonTypes.isNullValueDeclaration(originalDeclaration)) {
                 return DartNullLiteral();
             }
 
@@ -291,11 +304,6 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                     };
                 }
-            }
-            else {
-                throw CompilerBug(that,
-                        "Unexpected declaration type for base expression: \
-                         ``className(targetDeclaration)``");
             }
         }
         case (is TypeNameWithTypeArguments) {
