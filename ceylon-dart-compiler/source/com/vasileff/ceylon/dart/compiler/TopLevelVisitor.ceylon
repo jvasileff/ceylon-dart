@@ -411,20 +411,15 @@ class TopLevelVisitor(CompilationContext ctx)
                 =   classModel.extendedType.declaration);
 
             extendedArguments
-                // Use 'withInExtends' to avoid qualifying parameters with `this` if
-                // used in the extends clause.
-                =   withInExtends {
-                        classModel;
-                        () => [DartSuperConstructorInvocation {
-                            null;
-                            generateArgumentListFromArguments {
-                                        scope;
-                                        arguments;
-                                        classModel.extendedType.fullType;
-                                        etModel;
-                                    }[1];
-                        }];
-                    };
+                =   [DartSuperConstructorInvocation {
+                        null;
+                        generateArgumentListFromArguments {
+                                    scope;
+                                    arguments;
+                                    classModel.extendedType.fullType;
+                                    etModel;
+                                }[1];
+                    }];
         }
         else {
             extendedArguments = [];
@@ -602,7 +597,10 @@ class TopLevelVisitor(CompilationContext ctx)
                                     };
                                 };
                             },
-                            *classBody.transformChildren(classStatementTransformer)
+                            *withInConstructor {
+                                classModel;
+                                () => classBody.transformChildren(classStatementTransformer);
+                            }
                         };
                     };
                 };

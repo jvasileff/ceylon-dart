@@ -1,7 +1,8 @@
 import ceylon.collection {
     HashSet,
     LinkedList,
-    HashMap
+    HashMap,
+    MutableSet
 }
 import ceylon.interop.java {
     CeylonList
@@ -100,8 +101,10 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared variable
     FunctionOrValueModel? returnDeclarationTop = null;
 
+    "Indicates all classes for which we are currently generating a Dart constructor, and
+     therefore need to qualify members that are also parameters with `this`"
     shared variable
-    ClassModel? withinExtendsClauseTop = null;
+    MutableSet<ClassModel> withinConstructorSet = HashSet<ClassModel>();
 
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
@@ -173,9 +176,6 @@ class CompilationContext(PhasedUnit phasedUnit) {
     }
 
     shared
-    Boolean withinExtendsFor(ClassOrInterfaceModel classDeclaration)
-        =>  if (exists top = withinExtendsClauseTop,
-                is ClassModel classDeclaration)
-            then ceylonTypes.equalDeclarations(top, classDeclaration)
-            else false;
+    Boolean withinConstructor(ClassOrInterfaceModel classDeclaration)
+        =>  withinConstructorSet.contains(classDeclaration);
 }

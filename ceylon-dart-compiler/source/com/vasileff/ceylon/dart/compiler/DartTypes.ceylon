@@ -840,27 +840,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                  - the identifier."
                 value dartExpression
                     =   createDartPropertyAccess {
-                            // We need 'this' inside constructors due to name conflicts
-                            // with constructor parameters. This code helps, but includes
-                            // `this.` for parameters *anywhere* in a class's definition,
-                            // not just the dart constructor. Note: it's "LoneThis" since
-                            // we don't need this when referencing outers, like
-                            // `this.$outer$ceylon$language$...`.
-                            //
-                            // We *always* strip this for class or constructor parameters
-                            // that are used within an extends clause (since at that
-                            // point, they are just Dart parameters, not class members.)
-                            if (!declaration.parameter
-                                || ctx.withinExtendsFor(declarationContainer)) then
-                                expressionToThisOrOuterStripThis {
+                            // We need to qualify with `this` inside constructors due to
+                            // name conflicts with constructor parameters. Note: using
+                            // `LoneThis()` we don't need `this` when referencing outers,
+                            // like (what would be) `this.$outer$ceylon$language$.cap`.
+                            if (declaration.parameter
+                                && ctx.withinConstructor(declarationContainer)) then
+                                expressionToThisOrOuterStripNonLoneThis {
                                     ancestorChainToInheritingDeclaration {
                                         container;
                                         declarationContainer;
                                     };
                                 }
                             else
-
-                                expressionToThisOrOuterStripNonLoneThis {
+                                expressionToThisOrOuterStripThis {
                                     ancestorChainToInheritingDeclaration {
                                         container;
                                         declarationContainer;
