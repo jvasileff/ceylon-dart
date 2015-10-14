@@ -71,6 +71,10 @@ shared
         shared actual
         String path
             =>  name;
+
+        shared actual
+        Boolean \iexists()
+            =>  true;
     });
 
     value builder = TypeCheckerBuilder();
