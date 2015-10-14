@@ -126,11 +126,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         switch (originalDeclaration)
         case (is ValueModel | FunctionModel) {
-            return
-            if (originalDeclaration.name == "null"
-                && ceylonTypes.isNullValueDeclaration(originalDeclaration))
-            then "null"
-            else makePrivate {
+            return makePrivate {
                 originalDeclaration;
                 sanitizeIdentifier(originalDeclaration.name);
             };
