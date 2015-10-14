@@ -10795,7 +10795,7 @@ class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator implement
                 return $package$finished;
             }
             if (doElse$1) {
-                return new Entry(next, (next as serialization$ReachableReference).referred($capture$serialization$ReferencesImpl$iterator$$$instance));
+                return new Entry(next, (next as serialization$ReachableReference).referred($outer$ceylon$language$serialization$ReferencesImpl.instance));
             }
         }
     }

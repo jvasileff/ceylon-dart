@@ -809,16 +809,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             Boolean setter = false) {
 
         "By definition."
-        assert (is FunctionModel|ValueModel|SetterModel declaration);
+        assert (is FunctionModel | ValueModel | SetterModel declaration);
+
+        // Use the correct original declaration, since we may not have captured
+        // replacement declarations that were elided (did not actually become
+        // replacements in the Dart output)
+        value originalDeclaration =  declarationConsideringElidedReplacements(declaration);
+        // TODO assert shouldn't be necessary
+        assert (is FunctionModel | ValueModel | SetterModel originalDeclaration);
 
         value [identifier, isFunction] = dartIdentifierForFunctionOrValue {
             scope;
-            declaration;
+            originalDeclaration;
             setter;
         };
 
         if (exists container = getContainingClassOrInterface(scope)) {
-            value declarationContainer = getRealContainingScope(declaration);
+            value declarationContainer = getRealContainingScope(originalDeclaration);
 
             "Arguments in named argument lists cannot be referenced."
             assert(!is NamedArgumentListModel declarationContainer);
@@ -840,7 +847,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             // name conflicts with constructor parameters. Note: using
                             // `LoneThis()` we don't need `this` when referencing outers,
                             // like (what would be) `this.$outer$ceylon$language$.cap`.
-                            if (declaration.parameter
+                            if (originalDeclaration.parameter
                                 && ctx.withinConstructor(declarationContainer)) then
                                 expressionToThisOrOuterStripNonLoneThis {
                                     ancestorChainToInheritingDeclaration {
@@ -864,7 +871,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | FunctionOrValueModel | SpecificationModel) {
 
                 value declarationsClassOrInterface
-                    =   getContainingClassOrInterface(declaration);
+                    =   getContainingClassOrInterface(originalDeclaration);
 
                 if (eq(container, declarationsClassOrInterface)) {
                     return [identifier, isFunction];
@@ -882,10 +889,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                 expressionToThisOrOuterStripThis {
                                     ancestorChainToCapturerOfDeclaration {
                                         container;
-                                        declaration;
+                                        originalDeclaration;
                                     };
                                 };
-                                identifierForCapture(declaration);
+                                identifierForCapture(originalDeclaration);
                             };
 
                     return [dartExpression, isFunction];
@@ -1186,6 +1193,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
      This function is used by [[CoreGenerator.withBoxing]]."
     shared
+    // FIXME this belongs in ceylonTypes
     FunctionOrValueModel | Absent declarationConsideringElidedReplacements<Absent>
             (FunctionOrValueModel | Absent declaration)
             given Absent satisfies Null {

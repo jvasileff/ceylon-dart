@@ -657,7 +657,7 @@ class InterfaceTests() {
                 abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
                     void capturesIF();
                     static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
-                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$x;
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$$x;
@@ -805,7 +805,7 @@ class InterfaceTests() {
                 abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
                     void capturesIF();
                     static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
-                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
+                        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
                         $ceylon$language.print(capture);
                     }
                     $dart$core.Object $capture$capturesWithControlBlocks$$$x;
