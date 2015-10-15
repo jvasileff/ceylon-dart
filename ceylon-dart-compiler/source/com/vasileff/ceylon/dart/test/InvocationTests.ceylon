@@ -440,16 +440,16 @@ class InvocationTests() {
                     $ceylon$language.print(fa(1, 2, $ceylon$language.empty));
                     $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
                     $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
-                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], $ceylon$language.empty)));
                     $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
-                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
+                    $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)], $ceylon$language.empty))));
                     $ceylon$language.Sequence fb([$dart$core.int a, $dart$core.int b, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b)], rest);
 
                     $ceylon$language.print(fb(1, 2, $ceylon$language.empty));
                     $ceylon$language.print(fb(1, 2, $ceylon$language.empty));
                     $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
                     $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
-                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
+                    $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], $ceylon$language.empty)));
                     $ceylon$language.print(fb(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)], new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)]))));
                     $ceylon$language.Sequence fc([$dart$core.int a, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) {
                         if ($dart$core.identical(b, $ceylon$language.dart$default)) {
@@ -469,9 +469,9 @@ class InvocationTests() {
                     $ceylon$language.print(fd($ceylon$language.empty));
                     $ceylon$language.print(fd($ceylon$language.empty));
                     $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
-                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)], $ceylon$language.empty)));
                     $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
-                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
+                    $ceylon$language.print(fd(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)], $ceylon$language.empty)));
                     $ceylon$language.Sequential fe() => $ceylon$language.empty;
 
                     $ceylon$language.print(fe());

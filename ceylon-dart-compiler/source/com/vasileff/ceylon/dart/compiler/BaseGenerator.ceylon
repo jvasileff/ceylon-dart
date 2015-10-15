@@ -1085,8 +1085,15 @@ class BaseGenerator(CompilationContext ctx)
             return withBoxingNonNative {
                 scope;
                 // Lazily using '{Anything*}' as the type, since Dart types are not
-                // generic, and therefore we haven't attempted to calculate a proper
-                // type for this DartInstanceCreationExpression base on the arguments.
+                // generic, and we haven't bothered to calculate a proper type for this
+                // DartInstanceCreationExpression base on the arguments.
+                //
+                // If `Iterable` did have a generic supertype, we would need more
+                // specific type information to avoid unecessary casts. Since it
+                // doesn't, all of `Iterable<Nothing>`'s non-`Iterable` supertypes are
+                // also supertypes of `Iterable<Anything>`. And, casting for
+                // `Iterable<Super>` -> `Iterable<Sub>` is already suppressed in
+                // `withCastingLhsRhs`.
                 ceylonTypes.iterableAnythingType;
                 DartInstanceCreationExpression {
                     false;
@@ -1164,30 +1171,8 @@ class BaseGenerator(CompilationContext ctx)
             [Expression*] listedArguments,
             SpreadArgument | Comprehension | Null sequenceArgument) {
 
-        if (is TypeModel lhs = ctx.lhsTypeTop, ceylonTypes.isCeylonEmpty(lhs)) {
-            // TODO consider lhsDenotableType
-
-            // Slightly dubious, but if we know it's Empty, procedurely determining
-            // the same likely can't have side effects considering the typesystem's
-            // current capabilities:
-            //
-            //     Integer[] x = [ for (i in 1:100) if (false) i];
-
-            // Its empty. Return empty:
-            return
-            withBoxingNonNative {
-                scope;
-                ceylonTypes.emptyType;
-                dartTypes.dartIdentifierForFunctionOrValue {
-                    scope;
-                    ceylonTypes.emptyValueDeclaration;
-                    false;
-                }[0];
-            };
-        }
-
         if (listedArguments.empty && !sequenceArgument exists) {
-            // Calculated another way, its empty. Return empty:
+            // If there are no arguments, its empty.
             return
             withBoxingNonNative {
                 scope;
@@ -1211,25 +1196,36 @@ class BaseGenerator(CompilationContext ctx)
             // Note: we should really let the typechecker know about our internal/native
             // elements and use generateInvocation().
 
-            value nonEmptySequenceArg
+            value sequenceArgumentType
                 =   switch (sequenceArgument)
                     case (is SpreadArgument)
-                        if (!ceylonTypes.isCeylonEmpty(
-                                SpreadArgumentInfo(sequenceArgument).typeModel))
-                        then sequenceArgument
-                        else null
+                        SpreadArgumentInfo(sequenceArgument).typeModel
                     case (is Comprehension)
-                        if (!ceylonTypes.isCeylonEmpty(
-                                ComprehensionInfo(sequenceArgument).typeModel))
-                        then sequenceArgument
-                        else null
+                        iterableComprehensionType(sequenceArgument)
                     case (is Null)
                         null;
+
+            "The type of the sequence argument, if any."
+            value restType
+                =   if (exists sequenceArgumentType) then
+                        ceylonTypes.getSequentialTypeForIterable(sequenceArgumentType)
+                    else
+                        null;
+
+            "The type of the tuple that we are instantiating."
+            value tupleType
+                =   ceylonTypes.getTupleType {
+                        listedArguments.collect {
+                            compose(ExpressionInfo.typeModel, ExpressionInfo);
+                        };
+                        firstDefaulted = null;
+                        restType;
+                    };
 
             return
             withBoxingNonNative {
                 scope;
-                ceylonTypes.tupleAnythingType;
+                tupleType;
                 DartInstanceCreationExpression {
                     false;
                     DartConstructorName {
@@ -1256,12 +1252,15 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                             };
                         },
-                        if (exists nonEmptySequenceArg) then
-                            // Whatever Iterable type is calculated is surely correct.
-                            withLhsDenotable {
-                                ceylonTypes.sequentialDeclaration;
+                        if (exists sequenceArgument) then
+                            // Using `sequentialAnythingType` since the non-generic
+                            // Dart function takes a non-generic `Sequential`. If we
+                            // instead used `restType`, there would be some unecessary
+                            // casts from `Sequential` to `Sequence`.
+                            withLhsNonNative {
+                                ceylonTypes.sequentialAnythingType;
                                 () => generateSequentialFromArgument {
-                                    nonEmptySequenceArg;
+                                    sequenceArgument;
                                 };
                             }
                         else

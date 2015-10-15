@@ -47,7 +47,7 @@ class TupleIterableComprehensionTests() {
                     $ceylon$language.Empty b = $ceylon$language.empty;
                     $ceylon$language.Tuple c = a;
                     $ceylon$language.Tuple d = new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("4")], a);
-                    $ceylon$language.Empty e = $ceylon$language.empty;
+                    $ceylon$language.Empty e = b;
                     $ceylon$language.print(a);
                     $ceylon$language.print(b);
                     $ceylon$language.print(c);

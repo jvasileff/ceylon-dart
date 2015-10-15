@@ -1,5 +1,6 @@
 import ceylon.interop.java {
-    CeylonIterable
+    CeylonIterable,
+    JavaList
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -70,6 +71,10 @@ class CeylonTypes(Unit unit) {
     shared
     Type iterableAnythingType => ModelUtil.appliedType(
             iterableDeclaration, anythingType, nullType);
+
+    shared
+    Type iterableNothingType => ModelUtil.appliedType(
+            iterableDeclaration, nothingType, nullType);
 
     shared
     Type sequenceAnythingType => ModelUtil.appliedType(
@@ -421,11 +426,42 @@ class CeylonTypes(Unit unit) {
     Type unionType(Type first, Type second)
         =>  ModelUtil.unionType(first, second, unit);
 
-    "The canonicalized intersection of the given
-     type and Object"
+    "The canonicalized intersection of the given type and Object"
     shared
     Type definiteType(Type type)
         =>  unit.getDefiniteType(type);
+
+    shared
+    Type getTupleType([Type*] elementTypes,
+                        Integer? firstDefaulted,
+                        "- `true` for a non-empty variadic Rest
+                         - `false` for a possibly-empty variadic Rest
+                         - a [[Type]] for an explicitly specified Rest
+                         - `null` if not variadic"
+                        Boolean | Type | Null restType)
+        =>  let (typeList = JavaList(elementTypes)) (
+            switch (restType)
+            case (is Type)
+                unit.getTupleType(typeList, restType, firstDefaulted else -1)
+            case (is Boolean)
+                unit.getTupleType(typeList, true, restType, firstDefaulted else -1)
+            case (is Null)
+                unit.getTupleType(typeList, false, false, firstDefaulted else -1));
+
+    shared
+    Type getSequentialTypeForIterable(Type iterableType) {
+        if (isCeylonSequential(iterableType)) {
+            return iterableType;
+        }
+
+        value iteratedType = unit.getIteratedType(iterableType);
+        if (unit.isNonemptyIterableType(iterableType)) {
+            return unit.getSequenceType(iteratedType);
+        }
+        else {
+            return unit.getSequentialType(iteratedType);
+        }
+    }
 
     shared
     Boolean equalDeclarations(Declaration first, Declaration second)
