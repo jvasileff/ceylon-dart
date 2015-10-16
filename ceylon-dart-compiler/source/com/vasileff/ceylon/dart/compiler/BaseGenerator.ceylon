@@ -2794,8 +2794,10 @@ class BaseGenerator(CompilationContext ctx)
 
         value sequenceArgType
             =   switch (sequenceArgInfo)
-                case (is SpreadArgumentInfo) sequenceArgInfo.typeModel
-                case (is ComprehensionInfo) sequenceArgInfo.typeModel
+                case (is SpreadArgumentInfo)
+                    sequenceArgInfo.typeModel
+                case (is ComprehensionInfo)
+                    iterableComprehensionType(sequenceArgInfo.node)
                 case (is Null) null;
 
         value listedParameterCount
