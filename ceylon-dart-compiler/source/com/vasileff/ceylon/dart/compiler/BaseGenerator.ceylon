@@ -2805,16 +2805,32 @@ class BaseGenerator(CompilationContext ctx)
                     - (if(parameterList.hasSequencedParameter())
                        then 1 else 0);
 
-        value sequenceArgIsNullOrEmpty
-            =   if (!exists sequenceArgType)
-                then true
-                else ceylonTypes.isCeylonEmpty(sequenceArgType);
-
         // Handle the easy case where the spread argument, if present, is *not* used for
         // listed parameters. All arguments can be evaluated inline.
-        if (listedArguments.size >= listedParameterCount || sequenceArgIsNullOrEmpty) {
+        if (listedArguments.size >= listedParameterCount || !sequenceArg exists) {
+            [DartStatement*] dartStatements;
             value dartArguments = LinkedList<DartExpression>();
 
+            // Handle crazy scenario where we have an Empty sequenceArg that must be
+            // evaluated for side effects, but no place to put it.
+            if (listedParameterCount == 0
+                    && !parameterList.hasSequencedParameter(),
+                    exists sequenceArg) {
+
+                dartStatements
+                    =   [DartExpressionStatement {
+                            withLhsNoType {
+                                () => generateSequentialFromArgument {
+                                    sequenceArg;
+                                };
+                            };
+                        }];
+            }
+            else {
+                dartStatements = [];
+            }
+
+            // Main loop to populate dartArguments
             for (i -> parameter in CeylonIterable(parameterList.parameters).indexed) {
                 assert (exists parameterType = parameterTypes[i]); // the *lhs* type
                 if (parameter.sequenced) {
@@ -2826,6 +2842,52 @@ class BaseGenerator(CompilationContext ctx)
                                 scope;
                                 listedArguments[i...]; // may be []
                                 sequenceArg; // may be null
+                            };
+                        };
+                    };
+                }
+                else if (i == listedParameterCount - 1
+                            && !parameterList.hasSequencedParameter(),
+                        exists expression = listedArguments[i],
+                        exists sequenceArg) {
+
+                    // Crazy scenario. There is an "extra" Empty sequence argument that
+                    // doesn't have a matching parameter, but must be evaluated for
+                    // side effects.
+
+                    "Identifier for variable to hold the final listed argument"
+                    value tmpVariable
+                        =   DartSimpleIdentifier(dartTypes.createTempNameCustom());
+
+                    dartArguments.add {
+                        withLhs {
+                            parameterType;
+                            parameter.model;
+                            () => createExpressionEvaluationWithSetup {
+                                // Save the argument to a variable
+                                [DartVariableDeclarationStatement {
+                                    DartVariableDeclarationList {
+                                        null;
+                                        dartTypes.dartTypeNameForDeclaration {
+                                            scope;
+                                            parameter.model;
+                                        };
+                                        [DartVariableDeclaration  {
+                                            tmpVariable;
+                                            expression.transform(expressionTransformer);
+                                        }];
+                                    };
+                                },
+                                // Evaluate the Empty sequenceArg for side effects
+                                DartExpressionStatement {
+                                    withLhsNoType {
+                                        () => generateSequentialFromArgument {
+                                            sequenceArg;
+                                        };
+                                    };
+                                }];
+                                // Return the argument
+                                tmpVariable;
                             };
                         };
                     };
@@ -2844,7 +2906,7 @@ class BaseGenerator(CompilationContext ctx)
                     // We're out of arguments.
 
                     "Precondition for this branch"
-                    assert (sequenceArgIsNullOrEmpty);
+                    assert (!sequenceArg exists);
 
                     if (parameterList.hasSequencedParameter()) {
                         // Pad with $defaults, so we can add eventually add [] for
@@ -2857,7 +2919,7 @@ class BaseGenerator(CompilationContext ctx)
                     }
                 }
             }
-            return [[], DartArgumentList(dartArguments.sequence())];
+            return [dartStatements, DartArgumentList(dartArguments.sequence())];
         }
 
         value dartStatements = LinkedList<DartStatement>();

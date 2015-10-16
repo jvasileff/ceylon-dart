@@ -435,7 +435,11 @@ class InvocationTests() {
                     }
 
                     $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
-                    $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
+                    $ceylon$language.print((() {
+                        $dart$core.int arg$0$0 = 1;
+                        $ceylon$language.Empty arg$0$s = $ceylon$language.empty;
+                        return fa(arg$0$0, $ceylon$language.dart$default, $ceylon$language.empty);
+                    })());
                     $ceylon$language.print(fa(1, 2, $ceylon$language.empty));
                     $ceylon$language.print(fa(1, 2, $ceylon$language.empty));
                     $ceylon$language.print(fa(1, 2, new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
@@ -475,7 +479,10 @@ class InvocationTests() {
                     $ceylon$language.Sequential fe() => $ceylon$language.empty;
 
                     $ceylon$language.print(fe());
-                    $ceylon$language.print(fe());
+                    $ceylon$language.print((() {
+                        $ceylon$language.empty;
+                        return fe();
+                    })());
                 }
 
                 void run() => $package$run();
@@ -558,50 +565,54 @@ class InvocationTests() {
                         return fa($ceylon$language.Integer.nativeValue(arg$3$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$3$s.getFromFirst(1) as $ceylon$language.Integer), arg$3$s.spanFrom($ceylon$language.Integer.instance(2)));
                     })());
                     $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
-                    $ceylon$language.print(fa(1, $ceylon$language.dart$default, $ceylon$language.empty));
                     $ceylon$language.print((() {
                         $dart$core.int arg$4$0 = 1;
-                        $ceylon$language.Tuple arg$4$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
-                        return fa(arg$4$0, $ceylon$language.Integer.nativeValue(arg$4$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
+                        $ceylon$language.Empty arg$4$s = $ceylon$language.empty;
+                        return fa(arg$4$0, $ceylon$language.dart$default, $ceylon$language.empty);
                     })());
                     $ceylon$language.print((() {
                         $dart$core.int arg$5$0 = 1;
-                        $ceylon$language.Tuple arg$5$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
-                        return fa(arg$5$0, $ceylon$language.Integer.nativeValue(arg$5$s.getFromFirst(0) as $ceylon$language.Integer), arg$5$s.spanFrom($ceylon$language.Integer.instance(1)));
+                        $ceylon$language.Tuple arg$5$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
+                        return fa(arg$5$0, $ceylon$language.Integer.nativeValue(arg$5$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
                     })());
                     $ceylon$language.print((() {
                         $dart$core.int arg$6$0 = 1;
-                        $ceylon$language.Tuple arg$6$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        $ceylon$language.Tuple arg$6$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                         return fa(arg$6$0, $ceylon$language.Integer.nativeValue(arg$6$s.getFromFirst(0) as $ceylon$language.Integer), arg$6$s.spanFrom($ceylon$language.Integer.instance(1)));
+                    })());
+                    $ceylon$language.print((() {
+                        $dart$core.int arg$7$0 = 1;
+                        $ceylon$language.Tuple arg$7$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        return fa(arg$7$0, $ceylon$language.Integer.nativeValue(arg$7$s.getFromFirst(0) as $ceylon$language.Integer), arg$7$s.spanFrom($ceylon$language.Integer.instance(1)));
                     })());
                     $ceylon$language.Sequence fb([$dart$core.int a, $dart$core.int b, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b)], rest);
 
                     $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$7$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
-                        return fb($ceylon$language.Integer.nativeValue(arg$7$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$7$s.getFromFirst(1) as $ceylon$language.Integer), $ceylon$language.empty);
+                        $ceylon$language.Tuple arg$8$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
+                        return fb($ceylon$language.Integer.nativeValue(arg$8$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$8$s.getFromFirst(1) as $ceylon$language.Integer), $ceylon$language.empty);
                     })());
                     $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$8$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
-                        return fb($ceylon$language.Integer.nativeValue(arg$8$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$8$s.getFromFirst(1) as $ceylon$language.Integer), arg$8$s.spanFrom($ceylon$language.Integer.instance(2)));
-                    })());
-                    $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$9$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        $ceylon$language.Tuple arg$9$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                         return fb($ceylon$language.Integer.nativeValue(arg$9$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$9$s.getFromFirst(1) as $ceylon$language.Integer), arg$9$s.spanFrom($ceylon$language.Integer.instance(2)));
                     })());
                     $ceylon$language.print((() {
-                        $dart$core.int arg$10$0 = 1;
-                        $ceylon$language.Tuple arg$10$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
-                        return fb(arg$10$0, $ceylon$language.Integer.nativeValue(arg$10$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
+                        $ceylon$language.Tuple arg$10$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        return fb($ceylon$language.Integer.nativeValue(arg$10$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$10$s.getFromFirst(1) as $ceylon$language.Integer), arg$10$s.spanFrom($ceylon$language.Integer.instance(2)));
                     })());
                     $ceylon$language.print((() {
                         $dart$core.int arg$11$0 = 1;
-                        $ceylon$language.Tuple arg$11$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
-                        return fb(arg$11$0, $ceylon$language.Integer.nativeValue(arg$11$s.getFromFirst(0) as $ceylon$language.Integer), arg$11$s.spanFrom($ceylon$language.Integer.instance(1)));
+                        $ceylon$language.Tuple arg$11$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
+                        return fb(arg$11$0, $ceylon$language.Integer.nativeValue(arg$11$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
                     })());
                     $ceylon$language.print((() {
                         $dart$core.int arg$12$0 = 1;
-                        $ceylon$language.Tuple arg$12$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        $ceylon$language.Tuple arg$12$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
                         return fb(arg$12$0, $ceylon$language.Integer.nativeValue(arg$12$s.getFromFirst(0) as $ceylon$language.Integer), arg$12$s.spanFrom($ceylon$language.Integer.instance(1)));
+                    })());
+                    $ceylon$language.print((() {
+                        $dart$core.int arg$13$0 = 1;
+                        $ceylon$language.Tuple arg$13$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)]);
+                        return fb(arg$13$0, $ceylon$language.Integer.nativeValue(arg$13$s.getFromFirst(0) as $ceylon$language.Integer), arg$13$s.spanFrom($ceylon$language.Integer.instance(1)));
                     })());
                     $ceylon$language.Sequence fc([$dart$core.int a, $dart$core.Object b = $ceylon$language.dart$default]) {
                         if ($dart$core.identical(b, $ceylon$language.dart$default)) {
@@ -611,28 +622,28 @@ class InvocationTests() {
                     }
 
                     $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$13$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)]);
-                        return fc($ceylon$language.Integer.nativeValue(arg$13$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.dart$default);
+                        $ceylon$language.Tuple arg$14$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)]);
+                        return fc($ceylon$language.Integer.nativeValue(arg$14$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.dart$default);
                     })());
                     $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$14$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
-                        return fc($ceylon$language.Integer.nativeValue(arg$14$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$14$s.getFromFirst(1) as $ceylon$language.Integer));
+                        $ceylon$language.Tuple arg$15$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
+                        return fc($ceylon$language.Integer.nativeValue(arg$15$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$15$s.getFromFirst(1) as $ceylon$language.Integer));
                     })());
                     $ceylon$language.print((() {
-                        $dart$core.int arg$15$0 = 1;
-                        $ceylon$language.Tuple arg$15$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
-                        return fc(arg$15$0, $ceylon$language.Integer.nativeValue(arg$15$s.getFromFirst(0) as $ceylon$language.Integer));
+                        $dart$core.int arg$16$0 = 1;
+                        $ceylon$language.Tuple arg$16$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
+                        return fc(arg$16$0, $ceylon$language.Integer.nativeValue(arg$16$s.getFromFirst(0) as $ceylon$language.Integer));
                     })());
                     $ceylon$language.Sequence fd([$dart$core.int a, $dart$core.int b]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b)]);
 
                     $ceylon$language.print((() {
-                        $ceylon$language.Tuple arg$16$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
-                        return fd($ceylon$language.Integer.nativeValue(arg$16$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$16$s.getFromFirst(1) as $ceylon$language.Integer));
+                        $ceylon$language.Tuple arg$17$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)]);
+                        return fd($ceylon$language.Integer.nativeValue(arg$17$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.Integer.nativeValue(arg$17$s.getFromFirst(1) as $ceylon$language.Integer));
                     })());
                     $ceylon$language.print((() {
-                        $dart$core.int arg$17$0 = 1;
-                        $ceylon$language.Tuple arg$17$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
-                        return fd(arg$17$0, $ceylon$language.Integer.nativeValue(arg$17$s.getFromFirst(0) as $ceylon$language.Integer));
+                        $dart$core.int arg$18$0 = 1;
+                        $ceylon$language.Tuple arg$18$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)]);
+                        return fd(arg$18$0, $ceylon$language.Integer.nativeValue(arg$18$s.getFromFirst(0) as $ceylon$language.Integer));
                     })());
                 }
 
@@ -770,6 +781,86 @@ class InvocationTests() {
                         $dart$core.Object arg$5$s = opt123;
                         return fb($ceylon$language.Integer.nativeValue((arg$5$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$5$s as $ceylon$language.Tuple).spanFrom($ceylon$language.Integer.instance(1)));
                     })());
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void spreadEmptyWithSideEffects() {
+        compileAndCompare {
+             """
+                variable Integer i = 0;
+                [] emptyIncrementI { i = i + 1; return []; }
+
+                void fa() {}
+                Integer fb(Integer i) { return i; }
+
+                shared void run() {
+                    i = 0;
+                    fa(*emptyIncrementI);
+                    assert(i == 1);
+
+                    i = 0;
+                    value result = fb(++i, *emptyIncrementI);
+                    assert (result == 1);
+                    assert (i == 2);
+
+                    print("done");
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                $dart$core.int $package$i = 0;
+
+                $dart$core.int get i => $package$i;
+
+                set i($dart$core.int value) => $package$i = value;
+
+                $ceylon$language.Empty get $package$emptyIncrementI {
+                    $package$i = $package$i + 1;
+                    return $ceylon$language.empty;
+                }
+
+                $ceylon$language.Empty get emptyIncrementI => $package$emptyIncrementI;
+
+                void $package$fa() {}
+
+                void fa() => $package$fa();
+
+                $dart$core.int $package$fb([$dart$core.int i]) {
+                    return i;
+                }
+
+                $dart$core.int fb([$dart$core.int i]) => $package$fb(i);
+
+                void $package$run() {
+                    $package$i = 0;
+                    (() {
+                        $package$emptyIncrementI;
+                        return $package$fa();
+                    })();
+                    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(1))) {
+                        throw new $ceylon$language.AssertionError("Violated: i == 1");
+                    }
+                    $package$i = 0;
+                    $dart$core.int result = $package$fb((() {
+                        $dart$core.int tmp$0 = $package$i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$i).successor);
+                        $package$emptyIncrementI;
+                        return tmp$0;
+                    })());
+                    if (!$ceylon$language.Integer.instance(result).equals($ceylon$language.Integer.instance(1))) {
+                        throw new $ceylon$language.AssertionError("Violated: result == 1");
+                    }
+                    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(2))) {
+                        throw new $ceylon$language.AssertionError("Violated: i == 2");
+                    }
+                    $ceylon$language.print($ceylon$language.String.instance("done"));
                 }
 
                 void run() => $package$run();
