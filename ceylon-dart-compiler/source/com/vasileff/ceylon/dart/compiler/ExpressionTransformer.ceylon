@@ -1458,10 +1458,10 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // Determine Enumerable type (Enumerable<T>)
         value enumerableType =
-            ceylonTypes.union(
+            ceylonTypes.union {
                 firstInfo.typeModel,
                 lastInfo.typeModel
-            ).getSupertype(ceylonTypes.enumerableDeclaration);
+            }.getSupertype(ceylonTypes.enumerableDeclaration);
 
         // Determine element type (the `T`)
         assert(exists elementType = ceylonTypes.typeArgument(enumerableType));
@@ -1625,22 +1625,57 @@ class ExpressionTransformer(CompilationContext ctx)
             };
 
     shared actual
-    DartExpression transformElseOperation(ElseOperation that)
-        =>  let (info = NodeInfo(that),
-                 parameterIdentifier = DartSimpleIdentifier("$lhs$"))
-            createNullSafeExpression {
-                parameterIdentifier;
-                // the result of the leftOperand transformation should be this:
-                dartTypes.dartTypeName {
-                    info;
-                    ctx.assertedLhsTypeTop;
-                    ctx.assertedLhsErasedToNativeTop;
-                    ctx.assertedLhsErasedToObjectTop;
+    DartExpression transformElseOperation(ElseOperation that) {
+        // The current `ctx.lhsTypeTop` or `ctx.lhsDenotableTop` is non-Null, given
+        // that this is an else operation. But our left operand is potentially null.
+
+        // It's true that Dart doesn't have null safe types, but evaluating the left
+        // operand with a non-nullable lhsType may result in unnecessary casting from
+        // Sub? to Super, in some cases.
+
+        value info
+            =   ExpressionInfo(that);
+
+        // Find out what type the result of this elseOperation will be assigned to
+        value [lhsType, lhsNative, lhsObject]
+            =   contextLhsTypeForRhs(info.typeModel);
+
+        "A Nullable version of the ultimate type of this elseOperation to use as the
+         result type of the left operand expression (which of course may be null)"
+        value nullableLhsType
+            =   switch (lhsType)
+                case (is NoType)
+                    lhsType
+                case (is  TypeModel)
+                    ceylonTypes.union {
+                        lhsType,
+                        ceylonTypes.nullType
                 };
-                maybeNullExpression = that.leftOperand.transform(this);
-                ifNullExpression = that.rightOperand.transform(this);
-                ifNotNullExpression = parameterIdentifier;
+
+        value parameterIdentifier
+            =   DartSimpleIdentifier("$lhs$");
+
+        return
+        createNullSafeExpression {
+            parameterIdentifier;
+            // The result of the leftOperand transformation should be this type:
+            parameterType = dartTypes.dartTypeName {
+                info;
+                nullableLhsType;
+                lhsNative;
+                lhsObject;
             };
+            maybeNullExpression = withLhsCustom {
+                nullableLhsType;
+                lhsNative;
+                lhsObject;
+                () => that.leftOperand.transform(this);
+            };
+            // The current withLhs context is fine for the right operand
+            ifNullExpression = that.rightOperand.transform(this);
+            ifNotNullExpression = parameterIdentifier;
+        };
+    }
 
     shared actual
     DartExpression transformAssignOperation(AssignOperation that) {

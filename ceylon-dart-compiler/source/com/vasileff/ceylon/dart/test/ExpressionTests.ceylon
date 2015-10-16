@@ -164,4 +164,157 @@ class ExpressionTests() {
              """;
          };
     }
+
+    shared test
+    void elseOp() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    interface A {}
+                    interface B satisfies A & Identifiable {}
+
+                    B? x => nothing;
+                    A y = x else (nothing of A);
+
+                    print(y);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class run$A {
+                }
+                abstract class run$B implements run$A, $ceylon$language.Identifiable {
+                }
+                void $package$run() {
+                    run$B x$get() => $ceylon$language.nothing as run$B;
+
+                    run$A y = ((run$A $lhs$) => $lhs$ == null ? $ceylon$language.nothing as run$A : $lhs$)(x$get());
+                    $ceylon$language.print(y);
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
+    shared test
+    void elseOpGeneric() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    interface A {}
+                    interface B satisfies A & Identifiable {}
+
+                    B? x => nothing;
+                    A y = identity(x else (nothing of A));
+
+                    print(y);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                abstract class run$A {
+                }
+                abstract class run$B implements run$A, $ceylon$language.Identifiable {
+                }
+                void $package$run() {
+                    run$B x$get() => $ceylon$language.nothing as run$B;
+
+                    run$A y = $ceylon$language.identity((($dart$core.Object $lhs$) => $lhs$ == null ? $ceylon$language.nothing : $lhs$)(x$get())) as run$A;
+                    $ceylon$language.print(y);
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
+    shared test
+    void elseOpPrimitive() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String? x => null;
+                    String y = x else "default";
+
+                    print(y);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.String x$get() => null;
+
+                    $dart$core.String y = (($dart$core.String $lhs$) => $lhs$ == null ? "default" : $lhs$)(x$get());
+                    $ceylon$language.print($ceylon$language.String.instance(y));
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
+    shared test
+    void elseOpPrimitiveGeneric() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    String? x => null;
+                    String y = identity(x else "default");
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $dart$core.String x$get() => null;
+
+                    $dart$core.String y = $ceylon$language.String.nativeValue($ceylon$language.identity((($dart$core.Object $lhs$) => $lhs$ == null ? $ceylon$language.String.instance("default") : $lhs$)($ceylon$language.String.instance(x$get()))) as $ceylon$language.String);
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
+    shared test
+    void elseOpDenotableLhs() {
+        compileAndCompare {
+             """
+                shared void run() {
+                    Comparison? a = larger;
+                    Comparison b = larger;
+                    value bool = (a else b) === b;
+
+                    print(bool);
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                void $package$run() {
+                    $ceylon$language.Comparison a = $ceylon$language.larger;
+                    $ceylon$language.Comparison b = $ceylon$language.larger;
+                    $dart$core.bool bool = $dart$core.identical((($ceylon$language.Identifiable $lhs$) => $lhs$ == null ? b : $lhs$)(a), b);
+                    $ceylon$language.print($ceylon$language.Boolean.instance(bool));
+                }
+
+                void run() => $package$run();
+             """;
+         };
+    }
+
 }

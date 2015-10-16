@@ -276,9 +276,13 @@ class BaseGenerator(CompilationContext ctx)
                 DartArgumentList([]);
             };
 
-    "Note: technically callers should cast the returned DartExpression to the desired
-     lhs type, since Dart appears to treat the result of anonymous function invocations
-     as `var`. So type information is lost. But lets not get too pedantic."
+    "Create a null safe expression. This function performs no explicit boxing or casting,
+     as is obvious by the fact that the input expression parameters are not callables.
+
+     Note: technically the invocation should be cast to the expected lhs type, since Dart
+     appears to treat the result of anonymous function invocations as `var`. Regular
+     boxing won't work, since we can't claim to be returning `Anything`; we may actually
+     be returning an erasedToNative value. So lets not get too pedantic."
     shared
     DartExpression createNullSafeExpression(
             "Identifier for result of [[maybeNullExpression]]"

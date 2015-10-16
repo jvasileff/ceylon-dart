@@ -417,7 +417,7 @@ class CeylonTypes(Unit unit) {
     "Form the union of the given types, without
      eliminating duplicates."
     shared
-    Type union(Type *types)
+    Type union({Type*} types)
         =>  ModelUtil.union(javaList(types), unit);
 
     "Form the union of the given types, without

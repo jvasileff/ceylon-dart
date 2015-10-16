@@ -393,7 +393,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     Result withLhsCustom<Result>(
-            TypeModel lhsType, Boolean lhsErasedToNative,
+            TypeOrNoType lhsType, Boolean lhsErasedToNative,
             Boolean lhsErasedToObject, Result fun())
         =>  withLhsValues {
                 lhsType;
@@ -483,4 +483,21 @@ class CoreGenerator(CompilationContext ctx) {
             ctx.withinConstructorSet.remove(classDeclaration);
         }
     }
+
+    shared
+    [TypeOrNoType, Boolean, Boolean] contextLhsTypeForRhs(TypeModel rhsType)
+        =>  if (exists denotable = ctx.lhsDenotableTop) then
+                [ceylonTypes.denotableType(rhsType, denotable),
+                 ctx.assertedLhsErasedToNativeTop,
+                 ctx.assertedLhsErasedToObjectTop]
+            else (
+                switch (lhsTop = ctx.assertedLhsTypeTop)
+                case (is Null | NoType)
+                    [noType,
+                     ctx.assertedLhsErasedToNativeTop,
+                     ctx.assertedLhsErasedToObjectTop]
+                case (is TypeModel)
+                    [lhsTop,
+                     ctx.assertedLhsErasedToNativeTop,
+                     ctx.assertedLhsErasedToObjectTop]);
 }
