@@ -292,42 +292,34 @@ class CoreGenerator(CompilationContext ctx) {
 
         DartTypeModel castType;
 
+        // Don't cast if the type doesn't matter
+        if (is NoType lhsType) {
+            return dartExpression;
+        }
+
         value effectiveLhs =
-                if(lhsErasedToObject)
+                if(lhsErasedToObject || !dartTypes.denotable(lhsType))
                 then ceylonTypes.anythingType
                 else lhsType;
 
+        // We'll never cast to $dart$core.Object; don't bother with the rest
+        if (ceylonTypes.isCeylonAnything(effectiveLhs)) {
+            return dartExpression;
+        }
+
         value effectiveRhs =
-                if(rhsErasedToObject)
+                if(rhsErasedToObject || !dartTypes.denotable(rhsType))
                 then ceylonTypes.anythingType
                 else rhsType;
 
-        if (is NoType effectiveLhs) {
-            return dartExpression;
-        }
-        if (!dartTypes.denotable(effectiveLhs)) {
-            // TODO make sure this is the best way to do this.
-            // We don't want to cast to "Identifiable" or some other erased type.
-            // The lhsErasedToObject doesn't completely help us, because that is referring
-            // to the source declaration, not the final type.
-            return dartExpression;
-        }
-        else if (effectiveLhs.isSubtypeOf(effectiveRhs)
-                    && !effectiveLhs.isExactly(effectiveRhs)) {
-            // lhs is the result of a narrowing operation
-            castType = dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
-        }
-        else if (!dartTypes.denotable(effectiveRhs)) {
-            // may be narrowing the Dart static type
-            castType = dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
-        }
-        else {
-            // narrowing neither the Ceylon type nor the Dart type; avoid unnecessary
-            // widening casts
+        // Don't cast if we are not narrowing the type
+        if (effectiveRhs.isSubtypeOf(effectiveLhs)) {
             return dartExpression;
         }
 
-        // the rhs may still have the same Dart type
+        castType = dartTypes.dartTypeModel(effectiveLhs, erasedToNative);
+
+        // Don't cast if the *Dart* types are the same, like List<T> and List<U>
         if (castType == dartTypes.dartTypeModel(effectiveRhs, erasedToNative)) {
             return dartExpression;
         }
