@@ -1023,6 +1023,20 @@ class BaseGenerator(CompilationContext ctx)
         //      - Invoke with each argument boxed as necessary
         //      - Box and return
 
+        // Note: `memberDeclaration` will be some refinement, not necessarily the original
+        // declaration available with `memberDeclaration.refined`. This seems to work well
+        // with Dart, since the most refined declaration will have the most refined
+        // covariant returns, which is what we want, especially since we are not
+        // supporting generics in Dart.
+        //
+        // For example, for `Sequential.spanFrom()`, we'll get `List.spanFrom()` that
+        // returns `List<Element>`, rather than `Ranged.spanFrom()` that returns the
+        // generic type `Subrange`, which, for us, would be erased-to-Object.
+        //
+        // What's not clear, is how we could get a TypedReference for
+        // `Sequential.spanFrom()`, which would have the most precise return type,
+        // since in this case, the realzation of `Ranged.spanFrom()` is `[Element*]`
+        // rather than `List<Element>`.
         assert (is FunctionOrValueModel memberDeclaration =
                     receiverType.declaration.getMember(memberName, null, false));
 
