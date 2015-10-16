@@ -2934,6 +2934,10 @@ class BaseGenerator(CompilationContext ctx)
             =   listedParameterCount + 1
                     > listedArguments.size + sequenceArgMaximumLength;
 
+        "The expected type from calling `sequence()` on `sequenceArg`"
+        value sequenceArgSequentialType
+            =   ceylonTypes.getSequentialTypeForIterable(sequenceArgType);
+
         // Evaluate the sequence argument and assign to `tmpIdentifierSequence`
         dartStatements.add {
             DartVariableDeclarationStatement {
@@ -2941,14 +2945,14 @@ class BaseGenerator(CompilationContext ctx)
                     null;
                     dartTypes.dartTypeName {
                         scope;
-                        sequenceArgType;
+                        sequenceArgSequentialType;
                         false;
                         false;
                     };
                     [DartVariableDeclaration {
                         tmpIdentifierSequence;
                         withLhsNonNative {
-                            sequenceArgType;
+                            sequenceArgSequentialType;
                             () => generateSequentialFromArgument {
                                 sequenceArg;
                             };
@@ -2972,10 +2976,10 @@ class BaseGenerator(CompilationContext ctx)
                                 ceylonTypes.integerType;
                                 () => generateInvocationSynthetic {
                                     scope;
-                                    ceylonTypes.sequentialAnythingType;
+                                    sequenceArgSequentialType;
                                     () => withBoxing {
                                         scope;
-                                        sequenceArgType;
+                                        sequenceArgSequentialType;
                                         null;
                                         tmpIdentifierSequence;
                                     };
@@ -3001,12 +3005,16 @@ class BaseGenerator(CompilationContext ctx)
                     withLhs {
                         parameterType;
                         parameter.model;
+                        // Note: casts here when the sequence arg may be `empty` are'
+                        // normal and safe. Sequential does not refine `spanFrom`, but
+                        // it does require Sequential returns based on it's
+                        // parameterization of `Ranged`.
                         () => generateInvocationSynthetic {
                             scope;
-                            ceylonTypes.sequentialAnythingType;
+                            sequenceArgSequentialType;
                             () => withBoxing {
                                 scope;
-                                sequenceArgType;
+                                sequenceArgSequentialType;
                                 null;
                                 tmpIdentifierSequence;
                             };
@@ -3051,10 +3059,10 @@ class BaseGenerator(CompilationContext ctx)
                             parameter.model;
                             () => generateInvocationSynthetic {
                                 scope;
-                                ceylonTypes.sequentialAnythingType;
+                                sequenceArgSequentialType;
                                 () => withBoxing {
                                     scope;
-                                    sequenceArgType;
+                                    sequenceArgSequentialType;
                                     null;
                                     tmpIdentifierSequence;
                                 };

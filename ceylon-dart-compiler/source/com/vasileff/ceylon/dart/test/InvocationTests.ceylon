@@ -743,18 +743,18 @@ class InvocationTests() {
 
                     $ceylon$language.print((() {
                         $dart$core.Object arg$0$s = opt01;
-                        $dart$core.int arg$0$l = (arg$0$s as $ceylon$language.Sequence).size;
-                        return fa(arg$0$l > 0 ? $ceylon$language.Integer.nativeValue((arg$0$s as $ceylon$language.Iterable).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, $ceylon$language.empty);
+                        $dart$core.int arg$0$l = (arg$0$s as $ceylon$language.Sequential).size;
+                        return fa(arg$0$l > 0 ? $ceylon$language.Integer.nativeValue((arg$0$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, $ceylon$language.empty);
                     })());
                     $ceylon$language.print((() {
                         $dart$core.Object arg$1$s = opt012;
-                        $dart$core.int arg$1$l = (arg$1$s as $ceylon$language.Sequence).size;
-                        return fa(arg$1$l > 0 ? $ceylon$language.Integer.nativeValue((arg$1$s as $ceylon$language.Iterable).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$1$s as $ceylon$language.Sequence).spanFrom($ceylon$language.Integer.instance(1)));
+                        $dart$core.int arg$1$l = (arg$1$s as $ceylon$language.Sequential).size;
+                        return fa(arg$1$l > 0 ? $ceylon$language.Integer.nativeValue((arg$1$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$1$s as $ceylon$language.List).spanFrom($ceylon$language.Integer.instance(1)) as $ceylon$language.Sequential);
                     })());
                     $ceylon$language.print((() {
                         $dart$core.Object arg$2$s = opt0123;
-                        $dart$core.int arg$2$l = (arg$2$s as $ceylon$language.Sequence).size;
-                        return fa(arg$2$l > 0 ? $ceylon$language.Integer.nativeValue((arg$2$s as $ceylon$language.Iterable).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$2$s as $ceylon$language.Sequence).spanFrom($ceylon$language.Integer.instance(1)));
+                        $dart$core.int arg$2$l = (arg$2$s as $ceylon$language.Sequential).size;
+                        return fa(arg$2$l > 0 ? $ceylon$language.Integer.nativeValue((arg$2$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$2$s as $ceylon$language.List).spanFrom($ceylon$language.Integer.instance(1)) as $ceylon$language.Sequential);
                     })());
                     $ceylon$language.Sequence fb([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a)], rest);
 
@@ -764,11 +764,11 @@ class InvocationTests() {
                     })());
                     $ceylon$language.print((() {
                         $dart$core.Object arg$4$s = opt12;
-                        return fb($ceylon$language.Integer.nativeValue((arg$4$s as $ceylon$language.Iterable).getFromFirst(0) as $ceylon$language.Integer), (arg$4$s as $ceylon$language.Sequence).spanFrom($ceylon$language.Integer.instance(1)));
+                        return fb($ceylon$language.Integer.nativeValue((arg$4$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$4$s as $ceylon$language.Tuple).spanFrom($ceylon$language.Integer.instance(1)));
                     })());
                     $ceylon$language.print((() {
                         $dart$core.Object arg$5$s = opt123;
-                        return fb($ceylon$language.Integer.nativeValue((arg$5$s as $ceylon$language.Iterable).getFromFirst(0) as $ceylon$language.Integer), (arg$5$s as $ceylon$language.Sequence).spanFrom($ceylon$language.Integer.instance(1)));
+                        return fb($ceylon$language.Integer.nativeValue((arg$5$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$5$s as $ceylon$language.Tuple).spanFrom($ceylon$language.Integer.instance(1)));
                     })());
                 }
 
