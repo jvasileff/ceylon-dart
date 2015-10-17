@@ -1698,21 +1698,14 @@ class BaseGenerator(CompilationContext ctx)
             then DartPrefixExpression("!", expression)
             else expression;
 
-// FIXME Document that the expression must not be of a native type, check usage
-//       Likely problem would be `is Integer` for an `Integer|Null`.
-//       Best may be to take a `DartExpression()` that boxes...
-//       Another idea: if we knew the *current* type, we could optimize the
-//       is check for `primitive|Null`s. We need this info anyway for other optimzns.
     shared
     DartExpression generateIsExpression(
             DScope scope,
             DartExpression expressionToCheck,
             TypeModel isType) {
 
-        // TODO warn if non-denotable (for which we are currently returning true!)
-        //      - take the type we are narrowing, and warn if non-reified checks are not
-        //        sufficient
-        //      - reified generics...
+        // TODO Warn if non-denotable or if non-reified checks are not sufficient.
+        //      We need a parameter for the existing rhs type for these calcs.
 
         if (isType.union) {
             value result = CeylonList(isType.caseTypes).reversed
@@ -1734,32 +1727,7 @@ class BaseGenerator(CompilationContext ctx)
             assert (exists result);
             return result;
         }
-        else if (ceylonTypes.isCeylonNothing(isType)) {
-            return DartBooleanLiteral(false);
-        }
-        else if (!dartTypes.denotable(isType)) {
-            // FIXME we should at least check for null/not-null
-            // This isn't good! But no alternative w/o reified generics
-            return DartBooleanLiteral(true);
-        }
-        else if (ceylonTypes.isCeylonIdentifiable(isType)) {
-            // TODO don't be so generous!!!
-            return
-            DartBinaryExpression {
-                expressionToCheck;
-                "!=";
-                DartNullLiteral();
-            };
-        }
-        else if (ceylonTypes.isCeylonObject(isType)
-                  || ceylonTypes.isCeylonBasic(isType)) {
-            return
-            DartBinaryExpression {
-                expressionToCheck;
-                "!=";
-                DartNullLiteral();
-            };
-        }
+        // Non-denotable types we can handle
         else if (ceylonTypes.isCeylonNull(isType)) {
             return
             DartBinaryExpression {
@@ -1768,8 +1736,26 @@ class BaseGenerator(CompilationContext ctx)
                 DartNullLiteral();
             };
         }
+        else if (ceylonTypes.isCeylonNothing(isType)) {
+            return DartBooleanLiteral(false);
+        }
+        else if (!dartTypes.denotable(isType)) {
+            // This isn't good! But no alternative w/o reified generics
+            // TODO check satisfied types && isType.isSubtypeOf(ceylonTypes.nullType)
+            if (isType.isSubtypeOf(ceylonTypes.objectType)) {
+                return
+                DartBinaryExpression {
+                    expressionToCheck;
+                    "!=";
+                    DartNullLiteral();
+                };
+            }
+            else {
+                return DartBooleanLiteral(true);
+            }
+        }
         else {
-            // we'll assume eraseToNative is false; otherwise, test should not compile
+            // Assume eraseToNative is false; otherwise, test should not have typechecked.
             value dartType = dartTypes.dartTypeName(scope, isType, false);
 
             return

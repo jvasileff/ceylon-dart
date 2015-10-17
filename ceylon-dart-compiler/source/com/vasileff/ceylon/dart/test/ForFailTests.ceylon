@@ -147,8 +147,7 @@ class ForFailTests() {
 
     shared test
     void iterableOfNulls() {
-        // FIXME unnecessary casting, maybe Null erasure issue.
-        // NOTE: the iteration variable is of type Finished!
+        // Note: the iteration variable is of type Finished, of course!
         compileAndCompare {
              """
                 {Null*} myIterable = nothing;
@@ -171,7 +170,7 @@ class ForFailTests() {
                         $ceylon$language.Finished element$1;
                         $ceylon$language.Iterator iterator$0 = $package$myIterable.iterator();
                         while ((element$1 = iterator$0.next() as $ceylon$language.Finished) is !$ceylon$language.Finished) {
-                            $dart$core.Object x = element$1 as $dart$core.Object;
+                            $dart$core.Object x = element$1;
                             $ceylon$language.print(x);
                         }
                     }

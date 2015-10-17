@@ -590,7 +590,7 @@ abstract class Comparison {
     Comparison get reversed;
     $dart$core.bool equals([$dart$core.Object other]) => (() {
         $dart$core.bool doElse$0 = true;
-        if (true) {
+        if (other != null) {
             doElse$0 = false;
             return $dart$core.identical(this, other);
         }
@@ -1952,7 +1952,7 @@ abstract class Identifiable {
     $dart$core.bool equals([$dart$core.Object that]);
     static $dart$core.bool $equals([final Identifiable $this, $dart$core.Object that]) => (() {
         $dart$core.bool doElse$0 = true;
-        if (true) {
+        if (that != null) {
             doElse$0 = false;
             return $dart$core.identical($this, that);
         }
@@ -7539,7 +7539,7 @@ class Map$mapItems$$anonymous$2_ implements Map {
     $dart$core.bool defines([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
     $dart$core.Object get([$dart$core.Object key]) {{
             $dart$core.bool doElse$17 = true;
-            if (true) {
+            if (key != null) {
                 if (defines(key)) {
                     doElse$17 = false;
                     $dart$core.Object item;
@@ -7633,7 +7633,7 @@ class Map$filterKeys$$anonymous$3_ implements Map {
     Map$filterKeys$$anonymous$3_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$filterKeys$filtering]) {}
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
-        if (true) {
+        if (key != null) {
             if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$19 = false;
                 return $outer$ceylon$language$Map.get(key);
@@ -7645,7 +7645,7 @@ class Map$filterKeys$$anonymous$3_ implements Map {
     })();
     $dart$core.bool defines([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$20 = true;
-        if (true) {
+        if (key != null) {
             if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$20 = false;
                 return $outer$ceylon$language$Map.defines(key);
@@ -9632,7 +9632,7 @@ abstract class Range implements Sequence {
     $dart$core.bool includesRange([Range range]);
     $dart$core.bool contains([$dart$core.Object element]) => (() {
         $dart$core.bool doElse$0 = true;
-        if (true) {
+        if (element != null) {
             doElse$0 = false;
             return containsElement(element);
         }
@@ -9642,7 +9642,7 @@ abstract class Range implements Sequence {
     })();
     $dart$core.bool occurs([$dart$core.Object element]) => (() {
         $dart$core.bool doElse$1 = true;
-        if (true) {
+        if (element != null) {
             doElse$1 = false;
             return containsElement(element);
         }
@@ -10603,7 +10603,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
                         Iterator iterator$6 = r$4.refersTo.iterator();
                         while ((element$7 = iterator$6.next()) is !Finished) {
                             $dart$core.Object referredId = element$7;
-                            if (!true) {
+                            if (!(referredId != null)) {
                                 throw new AssertionError("Violated: is Id referredId");
                             }
                             $dart$core.Object referred = _$instances.get(referredId);
@@ -10643,7 +10643,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
                             Iterator iterator$11 = r$9.refersTo.iterator();
                             while ((element$12 = iterator$11.next()) is !Finished) {
                                 $dart$core.Object referredId = element$12;
-                                if (!true) {
+                                if (!(referredId != null)) {
                                     throw new AssertionError("Violated: is Id referredId");
                                 }
                                 $dart$core.Object referred = _$instances.get(referredId);
@@ -11377,7 +11377,7 @@ class Span$By$iterator$$anonymous$2_ implements Iterator {
             return _$current;
         } else {{
                 $dart$core.Object c$11 = _$current;
-                if (true) {
+                if (c$11 != null) {
                     $dart$core.Object c;
                     c = c$11;
                     $dart$core.Object r = $outer$ceylon$language$Span$By.$outer$ceylon$language$Span._$nextStep(c, $outer$ceylon$language$Span$By._$step);

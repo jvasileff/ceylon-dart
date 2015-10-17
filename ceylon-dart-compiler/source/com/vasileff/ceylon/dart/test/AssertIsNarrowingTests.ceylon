@@ -122,7 +122,7 @@ class AssertIsNarrowingTests() {
 
     shared test
     void narrowToGenericTypeWithErasure() {
-        // FIXME the (!true) test isn't great.
+        // FIXME the (!(s != null)) test isn't great.
         //       When we find a type parameter, should we replace it with its
         //       constraints at least?
         compileAndCompare {
@@ -145,7 +145,7 @@ class AssertIsNarrowingTests() {
                 $dart$core.Object $package$echoString([$dart$core.Object t]) {
                     $dart$core.String s = $ceylon$language.String.nativeValue(t as $ceylon$language.String);
                     $dart$core.Object s$0;
-                    if (!true) {
+                    if (!(s != null)) {
                         throw new $ceylon$language.AssertionError("Violated: is T s");
                     }
                     s$0 = $ceylon$language.String.instance(s);
