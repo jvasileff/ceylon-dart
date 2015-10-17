@@ -1961,7 +1961,7 @@ abstract class Identifiable {
         }
     })();
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this as $dart$core.Object);
+    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this);
 }
 abstract class impl$BaseIterable implements Iterable {
     impl$BaseIterable() {}
