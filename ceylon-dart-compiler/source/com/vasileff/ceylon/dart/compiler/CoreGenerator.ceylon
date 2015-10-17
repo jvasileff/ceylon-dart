@@ -350,6 +350,18 @@ class CoreGenerator(CompilationContext ctx) {
     shared
     Result withLhs<Result>(
             TypeModel? lhsType,
+            "For the Value, or the return type of the Function.
+
+             Regarding callable parameters:
+
+             - For Functions that are callable parameters, the lhsType will be defaulted
+               to the type of the function (`d.typedReference.fullType`) rather than the
+               return type (`d.type`). This supports the idea that callable parameters
+               act as *values*.
+
+             - But, when using `withLhs` when generating a default value for a callable
+               parameter, what's needed is the *return* type of the function. For this,
+               callers *must* provide `lhsType = functionDeclaration.type`."
             FunctionOrValueModel? lhsDeclaration,
             Result fun()) {
 

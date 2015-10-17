@@ -2136,7 +2136,7 @@ class BaseGenerator(CompilationContext ctx)
                     }
                     case (is LazySpecifier) {
                         body = DartExpressionFunctionBody(false, withLhs(
-                            null,
+                            functionModel.type,
                             functionModel,
                             () => definition.expression
                                     .transform(expressionTransformer)));
@@ -2150,13 +2150,11 @@ class BaseGenerator(CompilationContext ctx)
             else {
                 // defaulted parameters exist
                 value statements = LinkedList<DartStatement>();
-
                 for (param in defaultedParameters) {
                     value parameterInfo = ParameterInfo(param);
                     value parameterModelModel = parameterInfo.parameterModel.model;
                     value paramName = DartSimpleIdentifier(
                             dartTypes.getName(parameterInfo.parameterModel));
-
                     statements.add {
                         DartIfStatement {
                             // if (parm === default)
