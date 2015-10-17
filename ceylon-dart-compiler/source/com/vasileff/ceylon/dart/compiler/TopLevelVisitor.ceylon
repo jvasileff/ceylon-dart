@@ -230,6 +230,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value implementsTypes
             =   sequence(CeylonList(info.declarationModel.satisfiedTypes)
+                        .filter(dartTypes.denotable)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(info, satisfiedType, false)));
 
@@ -365,6 +366,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value satisifesTypes
             =   sequence(CeylonList(classModel.satisfiedTypes)
+                        .filter(dartTypes.denotable)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
 

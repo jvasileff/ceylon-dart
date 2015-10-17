@@ -186,7 +186,7 @@ class ExpressionTests() {
 
                 abstract class run$A {
                 }
-                abstract class run$B implements run$A, $ceylon$language.Identifiable {
+                abstract class run$B implements run$A {
                 }
                 void $package$run() {
                     run$B x$get() => $ceylon$language.nothing as run$B;
@@ -221,7 +221,7 @@ class ExpressionTests() {
 
                 abstract class run$A {
                 }
-                abstract class run$B implements run$A, $ceylon$language.Identifiable {
+                abstract class run$B implements run$A {
                 }
                 void $package$run() {
                     run$B x$get() => $ceylon$language.nothing as run$B;

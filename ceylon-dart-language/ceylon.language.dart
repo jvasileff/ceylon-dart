@@ -8599,7 +8599,7 @@ abstract class meta$declaration$InterfaceDeclaration implements meta$declaration
     meta$model$Interface interfaceApply([Sequential typeArguments]);
     meta$model$MemberInterface memberInterfaceApply([meta$model$Type containerType, Sequential typeArguments]);
 }
-abstract class meta$declaration$Module implements Identifiable, meta$declaration$AnnotatedDeclaration {
+abstract class meta$declaration$Module implements meta$declaration$AnnotatedDeclaration {
     $dart$core.String get version;
     Sequential get members;
     Sequential get dependencies;
@@ -8607,14 +8607,14 @@ abstract class meta$declaration$Module implements Identifiable, meta$declaration
     meta$declaration$Package findImportedPackage([$dart$core.String name]);
     Resource resourceByPath([$dart$core.String path]);
 }
-abstract class meta$declaration$Import implements Identifiable, Annotated {
+abstract class meta$declaration$Import implements Annotated {
     $dart$core.String get name;
     $dart$core.String get version;
     $dart$core.bool get shared;
     $dart$core.bool get optional;
     meta$declaration$Module get container;
 }
-abstract class meta$declaration$Package implements Identifiable, meta$declaration$AnnotatedDeclaration {
+abstract class meta$declaration$Package implements meta$declaration$AnnotatedDeclaration {
     meta$declaration$Module get container;
     $dart$core.bool get shared;
     Sequential members();
@@ -10777,7 +10777,7 @@ abstract class serialization$References implements Iterable {
     $dart$core.Object get instance;
     Iterable get references;
 }
-class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator implements Identifiable {
+class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
     $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance;
     ReferencesImpl$iterator$$anonymous$0_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl, $dart$core.Object this.$capture$serialization$ReferencesImpl$iterator$$$instance]) {
@@ -10800,7 +10800,7 @@ class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator implement
         }
     }
 }
-class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable implements Identifiable {
+class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
     ReferencesImpl$references$$anonymous$1_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl]) {}
     Iterator iterator() {
@@ -10861,7 +10861,7 @@ class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable impleme
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References, Identifiable {
+class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References {
     serialization$ReferencesImpl([$dart$core.Object instance]) {
         this.instance = instance;
     }
