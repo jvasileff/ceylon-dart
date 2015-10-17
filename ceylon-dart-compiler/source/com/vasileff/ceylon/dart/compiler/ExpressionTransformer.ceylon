@@ -1645,7 +1645,7 @@ class ExpressionTransformer(CompilationContext ctx)
         value nullableLhsType
             =   switch (lhsType)
                 case (is NoType)
-                    lhsType
+                    ceylonTypes.anythingType
                 case (is  TypeModel)
                     ceylonTypes.union {
                         lhsType,

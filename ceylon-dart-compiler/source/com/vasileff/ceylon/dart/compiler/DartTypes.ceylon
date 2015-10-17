@@ -403,15 +403,17 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeName dartTypeName(
             DScope scope,
-            TypeOrNoType type,
-            Boolean eraseToNative,
+            TypeModel type,
+            Boolean eraseToNative = true,
             Boolean eraseToObject = false)
-        =>  if (eraseToObject) then
-                dartTypeNameForDartModel(scope, dartObjectModel)
-            else if (is NoType type) then
-                dartTypeNameForDartModel(scope, dartObjectModel)
-            else
-                dartTypeNameForDartModel(scope, dartTypeModel(type, eraseToNative));
+        =>  dartTypeNameForDartModel {
+                scope;
+                dartTypeModel {
+                    type;
+                    eraseToNative;
+                    eraseToObject;
+                };
+            };
 
     shared
     DartTypeName dartTypeNameForDartModel(
@@ -445,17 +447,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             DScope scope,
             FunctionOrValueModel declaration) {
 
-        value dartModel =
-            switch (declaration)
-            case (is FunctionModel)
-                // code path for Callable parameters, other?
-                dartTypeModel {
-                    declaration.typedReference.fullType;
-                    false; false;
-                }
-            else //case (is ValueModel | SetterModel)
-                dartTypeModelForDeclaration(declaration);
-        value fromDartPrefix = moduleImportPrefix(scope);
+        "By definition."
+        assert (is FunctionModel | ValueModel | SetterModel declaration);
+
+        value dartModel
+            =   switch (declaration)
+                case (is FunctionModel)
+                    // Code path for Callable parameters, other?
+
+                    // Returning a callable without worrying about type arguments.
+                    // If we *did* want to worry about type arguments, we'd have to
+                    // recursively process them to handle erasure, replacements, etc.,
+                    // when crafting the Dart type.
+                    dartTypeModel(ceylonTypes.callableAnythingType)
+                case (is ValueModel | SetterModel)
+                    dartTypeModelForDeclaration(declaration);
+
+        value fromDartPrefix
+            =   moduleImportPrefix(scope);
+
         if (dartModel.dartModule == fromDartPrefix) {
             return
             DartTypeName {
@@ -479,11 +489,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             DScope scope,
             FunctionModel|ValueModel declaration) {
 
-        value dartModel = dartTypeModel {
-            declaration.type;
-            erasedToNative(declaration);
-            erasedToObject(declaration);
-        };
+        value dartModel = dartTypeModelForDeclaration(declaration);
         value fromDartPrefix = moduleImportPrefix(scope);
         if (dartModel.dartModule == fromDartPrefix) {
             return
@@ -547,29 +553,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeModel dartTypeModel(
             TypeModel type,
-            "Don't erase `Boolean`, `Integer`, `Float`,
-             and `String` to native types."
-            Boolean eraseToNative,
-            "Treat all generic types as `core.Object`.
-
-             NOTE: callers should set eraseToObject to true for defaulted parameters."
-            Boolean eraseToObject = type.typeParameter) {
+            "Erase `Boolean`, `Integer`, `Float`, and `String` to native types."
+            Boolean eraseToNative = true,
+            "Force return of $dart$core.Object. Note: eraseToObject must be true for
+             defaulted parameters."
+            Boolean eraseToObject = false) {
 
         if (eraseToObject) {
             return dartObjectModel;
         }
 
+        "The intersection of the type & Object"
         value definiteType = ceylonTypes.definiteType(type);
 
-        // Tricky: Element|Absent is not caught in the first type.typeParameter test
-        if (definiteType.typeParameter) {
+        // Test against `definiteType` instead of `type` as a likely optimization
+        if (!denotable(definiteType)) {
             return dartObjectModel;
         }
 
-        // handle well known types first, before giving up
-        // on unions and intersections
-
-        // these types are erased when statically known
+        // Erased native types when statically known
         if (eraseToNative) {
             if (ceylonTypes.isCeylonBoolean(definiteType)) {
                 return dartBoolModel;
@@ -585,29 +587,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
         }
 
-        // types like Anything and Object are _always_ erased
+        // Replace Anything with $dart$core.Object
         if (ceylonTypes.isCeylonAnything(definiteType)) {
             return dartObjectModel;
         }
-        if (ceylonTypes.isCeylonNothing(definiteType)) {
-            // this handles the `Null` case too,
-            // since Null & Object = Nothing
-            return dartObjectModel;
-        }
-        if (ceylonTypes.isCeylonObject(definiteType)) {
-            return dartObjectModel;
-        }
-        if (ceylonTypes.isCeylonBasic(definiteType)) {
-            return dartObjectModel;
-        }
 
-        // at this point, settle for Object for other
-        // unions and intersections
-        if (definiteType.union || definiteType.intersection) {
-            return dartObjectModel;
-        }
-
-        // not erased
+        // Not erased
         return
         DartTypeModel {
             moduleImportPrefix(definiteType.declaration);
@@ -1185,8 +1170,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // parameters that may be defaulted, where the erasure of the parameter
         // itself has no bearing on the erasure of the actual function return type
         // TODO shouldn't we always return `true` for FunctionModels that are parameters?
-        =>  ((!declaration is FunctionModel)
-                && (declaration.initializerParameter?.defaulted else false))
+        =>  (
+                !declaration is FunctionModel
+                && (declaration.initializerParameter?.defaulted else false)
+            )
             || !denotable(declaration.type);
 
     "For a given Ceylon declaration, the closest original declaration that was actually

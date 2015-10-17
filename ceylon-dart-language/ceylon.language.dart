@@ -1950,7 +1950,7 @@ $dart$core.bool identical([$dart$core.Object x, $dart$core.Object y]) => $packag
 
 abstract class Identifiable {
     $dart$core.bool equals([$dart$core.Object that]);
-    static $dart$core.bool $equals([final Identifiable $this, $dart$core.Object that]) => (() {
+    static $dart$core.bool $equals([final $dart$core.Object $this, $dart$core.Object that]) => (() {
         $dart$core.bool doElse$0 = true;
         if (that != null) {
             doElse$0 = false;
@@ -1961,7 +1961,7 @@ abstract class Identifiable {
         }
     })();
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Identifiable $this]) => $package$identityHash($this);
+    static $dart$core.int $get$hash([final $dart$core.Object $this]) => $package$identityHash($this);
 }
 abstract class impl$BaseIterable implements Iterable {
     impl$BaseIterable() {}

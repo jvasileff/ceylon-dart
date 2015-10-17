@@ -308,7 +308,7 @@ class ExpressionTests() {
                 void $package$run() {
                     $ceylon$language.Comparison a = $ceylon$language.larger;
                     $ceylon$language.Comparison b = $ceylon$language.larger;
-                    $dart$core.bool bool = $dart$core.identical((($ceylon$language.Identifiable $lhs$) => $lhs$ == null ? b : $lhs$)(a), b);
+                    $dart$core.bool bool = $dart$core.identical((($dart$core.Object $lhs$) => $lhs$ == null ? b : $lhs$)(a), b);
                     $ceylon$language.print($ceylon$language.Boolean.instance(bool));
                 }
 

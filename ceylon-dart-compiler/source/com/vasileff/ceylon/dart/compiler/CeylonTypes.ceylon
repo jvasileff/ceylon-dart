@@ -51,6 +51,10 @@ class CeylonTypes(Unit unit) {
     Type byteType => unit.byteType;
 
     shared
+    Type callableAnythingType => ModelUtil.appliedType(
+            callableDeclaration, nothingType, sequentialAnythingType);
+
+    shared
     Type characterType => unit.characterType;
 
     shared
