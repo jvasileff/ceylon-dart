@@ -39,7 +39,7 @@ shared native object system {
     
     string => "system";
 }
-/*
+
 shared native("jvm") object system {
     
     shared native("jvm") Integer milliseconds =>
@@ -99,4 +99,3 @@ shared native("js") object system {
             "UTF-16"; //JavaScript always uses UTF-16
     
 }
-*/

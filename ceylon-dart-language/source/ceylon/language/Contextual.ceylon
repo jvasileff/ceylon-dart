@@ -121,3 +121,35 @@ shared class Contextual<Element>() {
     }
 }
 
+native("dart")
+shared class Contextual<Element>() {
+    variable Element? val = null;
+    
+    native("dart") shared Element get() {
+        assert (exists result = val);
+        return result;
+    }
+    
+    native("dart") shared class Using(Element|Element() newValue)
+            satisfies Obtainable {
+        variable Element? previous = null; 
+        
+        shared actual void obtain() {
+            previous = val;
+            if (is Element() newValue) {
+                val = newValue();    
+            } else {
+                val = newValue;
+            }
+        }
+        
+        shared actual void release(Throwable? error) {
+            if (exists p=previous) {
+                val = p;
+            } else {
+                val = null;
+            }
+        }
+    }
+}
+

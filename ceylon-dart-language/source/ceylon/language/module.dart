@@ -1150,18 +1150,6 @@ const runtime = const runtime_.$value$();
 
 const $package$runtime = runtime;
 
-// operatingSystem
-
-class operatingSystem_ {
-  const operatingSystem_.$value$();
-
-  $dart$core.String get newline => "\n";
-}
-
-const operatingSystem = const operatingSystem_.$value$();
-
-const $package$operatingSystem = operatingSystem;
-
 // system
 
 class system_ {

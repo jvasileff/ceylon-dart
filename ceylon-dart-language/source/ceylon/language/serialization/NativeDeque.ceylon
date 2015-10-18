@@ -8,7 +8,7 @@ native class NativeDeque() {
     shared native Boolean empty;
     shared actual native String string;
 }
-/*
+
 native("jvm") class NativeDeque() {
     Deque<Anything> deque = ArrayDeque<Anything>();
     shared native("jvm") void pushFront(Anything element) {
@@ -72,4 +72,3 @@ native("js") class NativeDeque() {
         return sb.string;
     }
 }
-*/

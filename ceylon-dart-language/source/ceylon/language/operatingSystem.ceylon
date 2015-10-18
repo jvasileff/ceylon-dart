@@ -53,7 +53,7 @@ shared native object operatingSystem {
     
     string => "operating system [``name`` / ``version``]";
 }
-/*
+
 shared native("jvm") object operatingSystem {
     
     shared native("jvm") String version =>
@@ -72,4 +72,8 @@ shared native("js") object operatingSystem {
     }
     
 }
-*/
+
+shared native("dart") object operatingSystem {
+    shared native("dart") String version => "Unknown";
+    shared native("dart") String newline => "\n";
+}

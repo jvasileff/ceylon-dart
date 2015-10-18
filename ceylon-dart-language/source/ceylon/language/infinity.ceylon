@@ -11,11 +11,10 @@ import java.lang { Double { POSITIVE_INFINITY } }
  computation that yields a negative value whose magnitude is
  too large to be represented as a `Float` is \"rounded down\" 
  to `-infinity`."
-// FIXME Dart workaround
-//native shared Float infinity;
+native shared Float infinity;
 
-//native("jvm") shared Float infinity { return \iPOSITIVE_INFINITY; }
+native("jvm") shared Float infinity { return \iPOSITIVE_INFINITY; }
 
-//native("js") shared Float infinity { dynamic { return \iInfinity; } }
+native("js") shared Float infinity { dynamic { return \iInfinity; } }
 
-shared Float infinity = 1.0/0.0;
+native("dart") shared Float infinity = 1.0/0.0;

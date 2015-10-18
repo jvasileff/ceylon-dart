@@ -15,7 +15,7 @@ native class NativeMap<Key,Element>() {
     shared native actual String string;
 }
 
-/*
+
 native("jvm") class NativeMap<Key,Element>() {
     
     native("jvm") HashMap<Key, Element> m = HashMap<Key, Element>();
@@ -209,4 +209,3 @@ native("js") class NativeMap<Key,Element>() {
         return sb.string;
     }
 }
-*/
