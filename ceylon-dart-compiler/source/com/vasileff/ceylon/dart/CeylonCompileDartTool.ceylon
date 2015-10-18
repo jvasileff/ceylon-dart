@@ -158,6 +158,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
 
     void doRun() {
+        Backend.registerBackend("Dart", "dart");
+
         Integer t0;
         Integer t1;
         Integer t2;
