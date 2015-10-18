@@ -1,5 +1,5 @@
 import java.lang { ThreadLocal }
-/*
+
 """Stores values local to the current thread of execution
    meaning that each thread or process that accesses these
    values get to see their own copy. If the underlying
@@ -120,4 +120,4 @@ shared class Contextual<Element>() {
         }
     }
 }
-*/
+

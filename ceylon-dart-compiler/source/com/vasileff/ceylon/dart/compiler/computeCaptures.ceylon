@@ -1,7 +1,8 @@
 import ceylon.ast.core {
     Visitor,
     BaseExpression,
-    CompilationUnit
+    CompilationUnit,
+    Declaration
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -30,6 +31,15 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         shared actual
         void visitCompilationUnit(CompilationUnit that) {
             super.visitCompilationUnit(that);
+        }
+
+        shared actual
+        void visitDeclaration(Declaration that) {
+            // skip native declarations entirely, for now
+            if (!isForDartBackend(that)) {
+                return;
+            }
+            super.visitDeclaration(that);
         }
 
         shared actual
