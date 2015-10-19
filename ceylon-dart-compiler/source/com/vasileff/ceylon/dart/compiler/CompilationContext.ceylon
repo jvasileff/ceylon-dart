@@ -101,10 +101,15 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared variable
     FunctionOrValueModel? returnDeclarationTop = null;
 
-    "Indicates all classes for which we are currently generating a Dart constructor, and
-     therefore need to qualify members that are also parameters with `this`"
+    "Classes for which we are currently generating a Dart constructor, and therefore need
+     to qualify members that are also parameters with `this`"
     shared variable
     MutableSet<ClassModel> withinConstructorSet = HashSet<ClassModel>();
+
+    "Classes for which we are currently calculating default values for parameters of a
+     Dart constructor, and therefore need to consider erased to $dart$core.Object."
+    shared variable
+    MutableSet<ClassModel> withinConstructorDefaultsSet = HashSet<ClassModel>();
 
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);

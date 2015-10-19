@@ -318,12 +318,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     shared
+    DartTypeName dartList
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("List");
+                };
+            };
+
+    shared
     DartTypeName dartString
         =   DartTypeName {
                 DartPrefixedIdentifier {
                     DartSimpleIdentifier("$dart$core");
                     DartSimpleIdentifier("String");
                 };
+            };
+
+    shared
+    DartIdentifier dartIdentical
+        =   DartPrefixedIdentifier {
+                DartSimpleIdentifier("$dart$core");
+                DartSimpleIdentifier("identical");
             };
 
     shared
@@ -1172,7 +1188,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // TODO shouldn't we always return `true` for FunctionModels that are parameters?
         =>  (
                 !declaration is FunctionModel
-                && (declaration.initializerParameter?.defaulted else false)
+                && (// defaulted parameters are erased, *except* class initializer
+                    // parameters
+                    (!declaration.container is ClassModel
+                        || ctx.withinConstructorDefaultsSet.contains
+                                        (declaration.container))
+                    && (declaration.initializerParameter?.defaulted else false))
             )
             || !denotable(declaration.type);
 

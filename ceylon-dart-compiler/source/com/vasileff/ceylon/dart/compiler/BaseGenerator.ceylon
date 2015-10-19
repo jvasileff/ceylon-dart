@@ -91,7 +91,6 @@ import com.vasileff.ceylon.dart.ast {
     DartBlock,
     DartDefaultFormalParameter,
     DartExpressionFunctionBody,
-    DartPrefixedIdentifier,
     DartBlockFunctionBody,
     DartBooleanLiteral,
     DartExpressionStatement,
@@ -1852,6 +1851,61 @@ class BaseGenerator(CompilationContext ctx)
             };
 
     shared
+    [DartStatement*] generateDefaultValueAssignments
+            (DScope scope, {DefaultedParameter*} defaultedParameters)
+        =>  defaultedParameters.collect((param) {
+                value parameterInfo
+                    =   ParameterInfo(param);
+
+                value parameterModelModel
+                    =   parameterInfo.parameterModel.model;
+
+                value paramName
+                    =   DartSimpleIdentifier {
+                            dartTypes.getName(parameterInfo.parameterModel);
+                        };
+
+                return
+                DartIfStatement {
+                    // If (parm === default)
+                    DartFunctionExpressionInvocation {
+                        dartTypes.dartIdentical;
+                        DartArgumentList {
+                            [paramName, dartTypes.dartDefault(scope)];
+                        };
+                    };
+                    // Then set to default expression
+                    DartExpressionStatement {
+                        DartAssignmentExpression {
+                            paramName;
+                            DartAssignmentOperator.equal;
+                            if (is DefaultedCallableParameter param,
+                                is FunctionModel parameterModelModel) then
+                                // Generate a Callable for the default function value
+                                withLhs {
+                                    null;
+                                    parameterModelModel;
+                                    () => generateNewCallable {
+                                        scope;
+                                        parameterModelModel;
+                                        generateFunctionExpression(param);
+                                        0; false;
+                                    };
+                                }
+                            else
+                                // Simple ValueModel default value
+                                withLhs {
+                                    null;
+                                    parameterModelModel;
+                                    () => param.specifier.expression
+                                            .transform(expressionTransformer);
+                                };
+                        };
+                    };
+                };
+            });
+
+    shared
     DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {
         if (!that.definition is Specifier) {
             throw CompilerBug(that, "LazySpecifier not supported");
@@ -2135,57 +2189,18 @@ class BaseGenerator(CompilationContext ctx)
             }
             else {
                 // defaulted parameters exist
+
                 value statements = LinkedList<DartStatement>();
-                for (param in defaultedParameters) {
-                    value parameterInfo = ParameterInfo(param);
-                    value parameterModelModel = parameterInfo.parameterModel.model;
-                    value paramName = DartSimpleIdentifier(
-                            dartTypes.getName(parameterInfo.parameterModel));
-                    statements.add {
-                        DartIfStatement {
-                            // if (parm === default)
-                            DartFunctionExpressionInvocation {
-                                DartPrefixedIdentifier {
-                                    DartSimpleIdentifier("$dart$core");
-                                    DartSimpleIdentifier("identical");
-                                };
-                                DartArgumentList {
-                                    [paramName,
-                                     dartTypes.dartDefault(scope)];
-                                };
-                            };
-                            // then set to default expression
-                            DartExpressionStatement {
-                                DartAssignmentExpression {
-                                    paramName;
-                                    DartAssignmentOperator.equal;
-                                    if (is DefaultedCallableParameter param,
-                                        is FunctionModel parameterModelModel) then
-                                        // Generate a Callable for the default function
-                                        // value
-                                        withLhs {
-                                            null;
-                                            parameterModelModel;
-                                            () => generateNewCallable {
-                                                scope;
-                                                parameterModelModel;
-                                                generateFunctionExpression(param);
-                                                0; false;
-                                            };
-                                        }
-                                    else
-                                        // Simple ValueModel default value
-                                        withLhs {
-                                            null;
-                                            parameterModelModel;
-                                            () => param.specifier.expression
-                                                    .transform(expressionTransformer);
-                                        };
-                                };
-                            };
-                        };
+
+                // assign default values to defaulted arguments
+                statements.addAll {
+                    generateDefaultValueAssignments {
+                        scope;
+                        defaultedParameters;
                     };
-                }
+                };
+
+                // the rest of the dart function body
                 if (i == parameterLists.size - 1) {
                     // the actual function body
                     switch (definition)
@@ -2212,6 +2227,7 @@ class BaseGenerator(CompilationContext ctx)
                     assert(exists previous = result);
                     statements.add(DartReturnStatement(previous));
                 }
+
                 body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
             }
             result = DartFunctionExpression {
@@ -2224,8 +2240,12 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartFormalParameterList generateFormalParameterList
-            (DScope scope, Parameters|{ParameterModel*} parameters) {
+    DartFormalParameterList generateFormalParameterList(
+            DScope scope,
+            Parameters|{ParameterModel*} parameters,
+            "For parameters, disregard parameterModel.defaulted when determining if the
+             type should be erased-to-object."
+            Boolean noDefaults=false) {
 
         value parameterList
             =   if (is Parameters parameters)
@@ -2243,7 +2263,7 @@ class BaseGenerator(CompilationContext ctx)
             // Use core.Object for defaulted parameters so we can
             // initialize with `dart$default`
             value dartParameterType =
-                if (defaulted)
+                if (defaulted && !noDefaults)
                 then dartTypes.dartObject
                 else dartTypes.dartTypeNameForDeclaration(
                         scope, parameterModel.model);
@@ -2257,7 +2277,7 @@ class BaseGenerator(CompilationContext ctx)
                 };
             };
 
-            if (defaulted) {
+            if (defaulted && !noDefaults) {
                 return
                 DartDefaultFormalParameter {
                     dartSimpleParameter;

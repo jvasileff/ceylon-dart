@@ -466,6 +466,22 @@ shared abstract
 class DartIdentifier()
         extends DartExpression() {}
 
+shared
+class DartIndexExpression(target, index)
+        extends DartExpression() {
+
+    shared DartExpression target;
+    shared DartExpression index;
+
+    shared actual
+    void write(CodeWriter writer) {
+        target.write(writer);
+        writer.write("[");
+        index.write(writer);
+        writer.write("]");
+    }
+}
+
 "A list of arguments in the invocation of an executable element
  (that is, a function, method, or constructor)."
 shared
@@ -1144,9 +1160,13 @@ class DartConstructorName(type, name=null)
 
 shared abstract
 class DartConstructorInitializer()
+        of DartSuperConstructorInvocation
+            | DartRedirectingConstructorInvocation
+            | ConstructorFieldInitializer
         extends DartNode() {}
 
-"`'super' ('.' [SimpleIdentifier])? [ArgumentList]`"
+"The invocation of a superclass' constructor from within a constructor's initialization
+ list"
 shared
 class DartSuperConstructorInvocation(constructorName, argumentList)
         extends DartConstructorInitializer() {
@@ -1165,10 +1185,30 @@ class DartSuperConstructorInvocation(constructorName, argumentList)
     }
 }
 
+"The invocation of a constructor in the same class from within a constructor's
+ initialization list."
+shared
+class DartRedirectingConstructorInvocation(constructorName, argumentList)
+        extends DartConstructorInitializer() {
+
+    shared DartSimpleIdentifier? constructorName;
+    shared DartArgumentList argumentList;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("this");
+        if (exists constructorName) {
+            writer.write(".");
+            constructorName.write(writer);
+        }
+        argumentList.write(writer);
+    }
+}
+
+"The initialization of a field within a constructor's initialization list."
 shared
 class ConstructorFieldInitializer()
         extends DartConstructorInitializer() {
-
 
     shared actual
     void write(CodeWriter writer) {

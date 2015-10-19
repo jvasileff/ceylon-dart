@@ -23,7 +23,8 @@ import ceylon.ast.core {
     ClassBody,
     Parameters,
     ExtendedType,
-    ObjectArgument
+    ObjectArgument,
+    DefaultedParameter
 }
 import ceylon.interop.java {
     CeylonList
@@ -65,7 +66,12 @@ import com.vasileff.ceylon.dart.ast {
     DartExtendsClause,
     DartSuperConstructorInvocation,
     DartExpressionStatement,
-    DartPrefixedIdentifier
+    DartPrefixedIdentifier,
+    DartDefaultFormalParameter,
+    DartRedirectingConstructorInvocation,
+    DartIntegerLiteral,
+    DartIndexExpression,
+    DartListLiteral
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -76,7 +82,8 @@ import com.vasileff.ceylon.dart.nodeinfo {
     ObjectDefinitionInfo,
     ObjectExpressionInfo,
     NodeInfo,
-    ObjectArgumentInfo
+    ObjectArgumentInfo,
+    ParameterInfo
 }
 
 "For Dart TopLevel declarations."
@@ -387,23 +394,23 @@ class TopLevelVisitor(CompilationContext ctx)
                     }
                 else null;
 
-        // TODO consolidate with very similar visitInterfaceDefinition code
-        // TODO toplevels objects should be constants
+        // TODO consolidate with similar visitInterfaceDefinition code?
 
         "Class initializer parameters."
-        value standardParameters = (() {
-            if (exists parameters, !parameters.children.empty) {
-                value list = generateFormalParameterList(scope, parameters);
-                if (!list.parameters.every((p) => p is DartSimpleFormalParameter)) {
-                    throw CompilerBug(parameters,
-                        "Initializer parameters with default values not yet supported.");
-                }
-                return list.parameters.narrow<DartSimpleFormalParameter>();
-            }
-            else {
-                return [];
-            }
-        })();
+        value standardParameters
+            =   if (exists parameters, !parameters.children.empty)
+                then generateFormalParameterList(scope, parameters).parameters
+                else [];
+
+        value hasDefaultedParameter
+            =   standardParameters.any((p) => p is DartDefaultFormalParameter);
+
+        "Non-defaulted class initializer parameters."
+        value standardParametersNonDefaulted
+            =   hasDefaultedParameter then (
+                if (exists parameters, !parameters.children.empty)
+                then generateFormalParameterList(scope, parameters, true).parameters
+                else []);
 
         "Explicit super call with arguments."
         [DartSuperConstructorInvocation] | [] extendedArguments;
@@ -430,18 +437,34 @@ class TopLevelVisitor(CompilationContext ctx)
             extendedArguments = [];
         }
 
+        "A sequence of Tuples of each parameter's Dart type name and Dart identifier."
+        value parameterDetails
+            =   if (exists parameters) then
+                    parameters.parameters.collect {
+                        (parameter) =>
+                        let (model = ParameterInfo(parameter).parameterModel)
+                        [dartTypes.dartTypeNameForDeclaration {
+                            scope;
+                            model.model;
+                        },
+                        DartSimpleIdentifier {
+                            dartTypes.getName(model);
+                        }];
+                    }
+                else [];
+
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
         value fieldsForInitializerParameters
-            =   (standardParameters).map {
-                    (parameter) =>
+            =   parameterDetails.map {
+                    (details) =>
                     DartFieldDeclaration {
                         false;
                             DartVariableDeclarationList {
                                 null;
-                                parameter.type;
+                                details[0];
                                 [DartVariableDeclaration {
-                                    parameter.identifier;
+                                    details[1];
                                     initializer = null;
                                 }];
                             };
@@ -565,52 +588,163 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        value constructors = [
-            DartConstructorDeclaration {
-                const = false;
-                factory = false;
-                returnType = identifier;
-                null;
-                DartFormalParameterList {
-                    true; false;
-                    concatenate {
-                        outerFieldConstructorParameter,
-                        captureConstructorParameters,
-                        standardParameters
-                    };
-                };
-                extendedArguments;
-                null;
-                DartBlockFunctionBody {
-                    null; false;
-                    DartBlock {
-                        concatenate {
-                            // Assign parameters to corresponding 'this.' members.
-                            // Eventually, we'll just do this for the ones we want to
-                            // capture. Not supporting defaulted parameters yet.
-                            standardParameters.map {
-                                // This might get ugly with replacements like
-                                // string/toString().
-                                (p) => DartExpressionStatement {
-                                    DartAssignmentExpression {
-                                        DartPrefixedIdentifier {
-                                            DartSimpleIdentifier("this");
-                                            p.identifier;
-                                        };
-                                        DartAssignmentOperator.equal;
-                                        p.identifier;
+        value argsIdentifier
+            =   DartSimpleIdentifier("a");
+
+        value spreadConstructorName
+            =   DartSimpleIdentifier("$s");
+
+        value workerConstructorName
+            =   hasDefaultedParameter then DartSimpleIdentifier("$w");
+
+        function createSimpleFromFieldParameter(DartFieldFormalParameter p)
+            =>  DartSimpleFormalParameter(p.const, p.final, p.type, p.identifier);
+
+        "Resolves arguments against default value expressions, redirects to 'spread'
+         constructor."
+        value defaultsConstructor
+            =   hasDefaultedParameter then (
+                withInConstructorDefaults {
+                    classModel;
+                    () => DartConstructorDeclaration {
+                        const = false;
+                        factory = false;
+                        returnType = identifier;
+                        // The "defaults" constructor gets a `null` name; it is the public
+                        // facing constructor
+                        null;
+                        DartFormalParameterList {
+                            true; false;
+                            concatenate {
+                                // "redirecting" constructors cannot initialize fields,
+                                // so remove "this." from the outer and capture
+                                // parameters. (They will be initialized by the ultimate
+                                // constructor).
+                                outerFieldConstructorParameter
+                                        .map(createSimpleFromFieldParameter),
+                                captureConstructorParameters
+                                        .map(createSimpleFromFieldParameter),
+                                standardParameters
+                            };
+                        };
+                        [DartRedirectingConstructorInvocation {
+                            spreadConstructorName;
+                            DartArgumentList {
+                                [createExpressionEvaluationWithSetup {
+                                    generateDefaultValueAssignments {
+                                        scope;
+                                        parameters
+                                            ?.parameters
+                                            ?.narrow<DefaultedParameter>() else [];
                                     };
-                                };
-                            },
-                            *withInConstructor {
-                                classModel;
-                                () => classBody.transformChildren(classStatementTransformer);
-                            }
+                                    DartListLiteral {
+                                        false;
+                                        concatenate {
+                                            outerFieldConstructorParameter.map {
+                                                DartFieldFormalParameter.identifier;
+                                            },
+                                            captureConstructorParameters.map {
+                                                DartFieldFormalParameter.identifier;
+                                            },
+                                            parameterDetails.collect((d) => d[1])
+                                        };
+                                    };
+                                }];
+                            };
+                        }];
+                        null;
+                        null;
+                    };
+                });
+
+        "'Spread' constructor. Simply takes a dart Object[], and delegates to
+         the 'worker' constructor"
+        value spreadConstructor
+            =   hasDefaultedParameter then (
+                DartConstructorDeclaration {
+                    const = false;
+                    factory = false;
+                    returnType = identifier;
+                    spreadConstructorName;
+                    DartFormalParameterList {
+                        true; false;
+                        [DartSimpleFormalParameter {
+                            false; false;
+                            dartTypes.dartList;
+                            argsIdentifier;
+                        }];
+                    };
+                    [DartRedirectingConstructorInvocation {
+                        workerConstructorName;
+                        DartArgumentList {
+                            [ for (i in 0:(outerFieldConstructorParameter.size +
+                                            captureConstructorParameters.size +
+                                            standardParameters.size))
+                                DartIndexExpression {
+                                    argsIdentifier;
+                                    DartIntegerLiteral(i);
+                                }
+                            ];
+                        };
+                    }];
+                    null;
+                    null;
+                });
+
+        "Constructor that does all the work. This constructor will have a private name if
+         there are defaulted parameters."
+        value workerConstructor
+            =   DartConstructorDeclaration {
+                    const = false;
+                    factory = false;
+                    returnType = identifier;
+                    workerConstructorName;
+                    DartFormalParameterList {
+                        true; false;
+                        concatenate {
+                            outerFieldConstructorParameter,
+                            captureConstructorParameters,
+                            // this constructor never handles defaulted parameters
+                            standardParametersNonDefaulted else standardParameters
+                        };
+                    };
+                    extendedArguments;
+                    null;
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            concatenate {
+                                // Assign parameters to corresponding 'this.' members.
+                                // Eventually, we'll just do this for the ones we want to
+                                // capture. Not supporting defaulted parameters yet.
+                                parameterDetails.map {
+                                    // This might get ugly with replacements like
+                                    // string/toString().
+                                    (d) => DartExpressionStatement {
+                                        DartAssignmentExpression {
+                                            DartPrefixedIdentifier {
+                                                DartSimpleIdentifier("this");
+                                                d[1];
+                                            };
+                                            DartAssignmentOperator.equal;
+                                            d[1];
+                                        };
+                                    };
+                                },
+                                *withInConstructor {
+                                    classModel;
+                                    () => classBody.transformChildren {
+                                        classStatementTransformer;
+                                    };
+                                }
+                            };
                         };
                     };
                 };
-            }
-        ];
+
+        value constructors
+            =   [defaultsConstructor, spreadConstructor, workerConstructor]
+                        .coalesced.sequence();
 
         "Class members. Statements (aside from Specifiction and Assertion statements) do
          not introduce members and are therefore not supported by

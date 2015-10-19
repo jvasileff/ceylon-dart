@@ -489,6 +489,19 @@ class CoreGenerator(CompilationContext ctx) {
     }
 
     shared
+    Result withInConstructorDefaults<Result>(
+            ClassModel classDeclaration,
+            Result fun()) {
+        try {
+            ctx.withinConstructorDefaultsSet.add(classDeclaration);
+            return fun();
+        }
+        finally {
+            ctx.withinConstructorDefaultsSet.remove(classDeclaration);
+        }
+    }
+
+    shared
     [TypeOrNoType, Boolean, Boolean] contextLhsTypeForRhs(TypeModel rhsType)
         =>  if (exists denotable = ctx.lhsDenotableTop) then
                 [ceylonTypes.denotableType(rhsType, denotable),
