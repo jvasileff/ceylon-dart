@@ -126,6 +126,7 @@ shared
             try {
                 value ctx = CompilationContext(phasedUnit);
 
+                unit.visit(debugVisitor);
                 computeCaptures(unit, ctx);
                 computeClassCaptures(unit, ctx);
 

@@ -63,7 +63,8 @@ import ceylon.ast.core {
     ValueArgument,
     FunctionArgument,
     ObjectArgument,
-    InlineDefinitionArgument
+    InlineDefinitionArgument,
+    CompilationUnit
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -93,6 +94,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ScopeModel=Scope
 }
+import com.redhat.ceylon.compiler.typechecker.context {
+    TypecheckerUnit
+}
 import com.vasileff.ceylon.dart.compiler {
     DScope,
     augmentNode,
@@ -115,6 +119,8 @@ class NodeInfo(Node astNode) satisfies DScope {
     shared Token token => tcNode.token;
     shared Token endToken => tcNode.endToken;
 
+    shared TypecheckerUnit typecheckerUnit = tcNode.unit;
+
     // FIXME location and filename doesn't work for ArgumentListInfo
     // https://github.com/ceylon/ceylon-spec/issues/1385
     shared actual String location => tcNode.location;
@@ -136,6 +142,14 @@ class ExpressionInfo(Expression astNode)
 
     "The type of this expression"
     shared TypeModel typeModel => tcNode.typeModel;
+}
+
+shared
+class CompilationUnitInfo(CompilationUnit astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default CompilationUnit node => astNode;
+    shared Tree.CompilationUnit tcNode = assertedTcNode<Tree.CompilationUnit>(astNode);
 }
 
 shared
