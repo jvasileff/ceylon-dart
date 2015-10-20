@@ -1,6 +1,5 @@
 import ceylon.test {
-    test,
-    ignore
+    test
 }
 
 shared
@@ -425,8 +424,7 @@ class ErasureTests() {
          };
     }
 
-    // TODO remove ignore once varidics are supported (noop())
-    shared test ignore
+    shared test
     void shortcutRefinementParameterErasure() {
         compileAndCompare {
              """
@@ -448,7 +446,7 @@ class ErasureTests() {
                 }
                 class J implements I {
                     J() {}
-                    void foo([$ceylon$language.Integer i]) => $ceylon$language.noop();
+                    void foo([$ceylon$language.Integer i]) => $ceylon$language.noop($ceylon$language.empty);
                 }
              """;
          };
