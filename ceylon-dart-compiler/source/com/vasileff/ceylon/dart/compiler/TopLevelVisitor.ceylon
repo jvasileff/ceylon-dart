@@ -378,7 +378,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     DartClassDeclaration generateClassDefinition(
             DScope scope, ClassModel classModel, ClassBody classBody,
-            ExtendedType? extendedTypeNode, Parameters? parameters = null) {
+            ExtendedType? extendedType, Parameters? parameters = null) {
 
         value identifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
@@ -389,18 +389,17 @@ class TopLevelVisitor(CompilationContext ctx)
                         .map((satisfiedType)
                 =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
 
-        value extendedType
+        value extendsClause
             =   if (exists et = classModel.extendedType,
                     !ceylonTypes.isCeylonBasic(classModel.extendedType)
                     && !ceylonTypes.isCeylonObject(classModel.extendedType))
-                then dartTypes.dartTypeName(scope, classModel.extendedType, false)
-                else null;
-
-        value extendsClause
-            =   if (exists extendedType) then
-                    DartExtendsClause {
-                        extendedType;
-                    }
+                then  DartExtendsClause {
+                    dartTypes.dartTypeName {
+                        scope;
+                        classModel.extendedType;
+                        false;
+                    };
+                }
                 else null;
 
         // TODO consolidate with similar visitInterfaceDefinition code?
@@ -520,7 +519,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     scope;
                     classModel;
                     classBody;
-                    extendedTypeNode;
+                    extendedType;
                     parameters?.parameters else [];
                 }
                 else [];
@@ -580,7 +579,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     [DartConstructorDeclaration*] generateInitializerConstructors(
             DScope scope, ClassModel classModel, ClassBody classBody,
-            ExtendedType? extendedTypeNode, [Parameter*] parameters) {
+            ExtendedType? extendedType, [Parameter*] parameters) {
 
         value identifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
@@ -603,8 +602,8 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "Explicit super call with arguments."
         [DartSuperConstructorInvocation] | [] superInvocation;
-        if (exists extendedTypeNode,
-                exists arguments = extendedTypeNode.target.arguments,
+        if (exists extendedType,
+                exists arguments = extendedType.target.arguments,
                 !arguments.argumentList.children.empty) {
 
             assert (is ClassModel | ConstructorModel etModel
