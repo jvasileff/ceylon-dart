@@ -938,4 +938,209 @@ class ClassTests() {
         };
     }
 
+    shared test
+    void defaultedParameter() {
+        compileAndCompare {
+             """
+                class C(Integer a = 5) {
+                    print(a);
+                }
+                shared void run() { C(); }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C {
+                    C([$dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
+                        if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
+                            _$a = 5;
+                        }
+                        return [_$a];
+                    })());
+                    C.$s([$dart$core.List a]) : this.$w(a[0]);
+                    C.$w([$dart$core.int _$a]) {
+                        this._$a = _$a;
+                        $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
+                    }
+                    $dart$core.int _$a;
+                }
+                void $package$run() {
+                    new C();
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void defaultedCallableParameter() {
+        // TODO this has an ugly cast `this._$f as $ceylon$language.Callable`
+        compileAndCompare {
+             """
+                class C(void f(Integer i) => print(i)) {
+                    f(5);
+                }
+                shared void run() { C(); }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class C {
+                    C([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
+                        if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
+                            _$f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.print(i));
+                        }
+                        return [_$f];
+                    })());
+                    C.$s([$dart$core.List a]) : this.$w(a[0]);
+                    C.$w([$ceylon$language.Callable _$f]) {
+                        this._$f = _$f;
+                        (this._$f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(5));
+                    }
+                    $ceylon$language.Callable _$f;
+                }
+                void $package$run() {
+                    new C();
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void defaultedWithCapture() {
+        compileAndCompare {
+             """
+                class Sup(Integer a) {
+                    print(a);
+                }
+
+                shared void run() {
+                    value x = 5;
+                    class Sub(Integer b = x, Integer c = b + 1) extends Sup(c) {}
+                    Sub();
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class Sup {
+                    Sup([$dart$core.int _$a]) {
+                        this._$a = _$a;
+                        $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
+                    }
+                    $dart$core.int _$a;
+                }
+                class run$Sub  extends Sup {
+                    $dart$core.int $capture$run$x;
+                    run$Sub([$dart$core.int $capture$run$x, $dart$core.Object _$b = $ceylon$language.dart$default, $dart$core.Object _$c = $ceylon$language.dart$default]) : this.$s((() {
+                        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
+                            _$b = $capture$run$x;
+                        }
+                        if ($dart$core.identical(_$c, $ceylon$language.dart$default)) {
+                            _$c = (_$b as $dart$core.int) + 1;
+                        }
+                        return [$capture$run$x, _$b, _$c];
+                    })());
+                    run$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
+                    run$Sub.$w([$dart$core.int this.$capture$run$x, $dart$core.int _$b, $dart$core.int _$c]) : super(_$c) {
+                        this._$b = _$b;
+                        this._$c = _$c;
+                    }
+                    $dart$core.int _$b;
+                    $dart$core.int _$c;
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                    new run$Sub(x);
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
+
+    shared test
+    void defaultedMemberWithCapture() {
+        compileAndCompare {
+             """
+                class Sup(Integer a) {
+                    print(a);
+                }
+
+                shared void run() {
+                    value x = 5;
+                    class Outer(Integer b = x) {
+                        class Sub(Integer b = outer.b, Integer c = b + 1) extends Sup(c) {
+                            print(x);
+                        }
+                        Sub();
+                    }
+                    Outer();
+                }
+             """;
+
+             """
+                import "dart:core" as $dart$core;
+                import "package:ceylon/language/language.dart" as $ceylon$language;
+
+                class Sup {
+                    Sup([$dart$core.int _$a]) {
+                        this._$a = _$a;
+                        $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
+                    }
+                    $dart$core.int _$a;
+                }
+                class run$Outer$Sub  extends Sup {
+                    run$Outer $outer$default$run$Outer;
+                    run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object _$b = $ceylon$language.dart$default, $dart$core.Object _$c = $ceylon$language.dart$default]) : this.$s((() {
+                        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
+                            _$b = $outer$default$run$Outer._$b;
+                        }
+                        if ($dart$core.identical(_$c, $ceylon$language.dart$default)) {
+                            _$c = (_$b as $dart$core.int) + 1;
+                        }
+                        return [$outer$default$run$Outer, _$b, _$c];
+                    })());
+                    run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
+                    run$Outer$Sub.$w([run$Outer this.$outer$default$run$Outer, $dart$core.int _$b, $dart$core.int _$c]) : super(_$c) {
+                        this._$b = _$b;
+                        this._$c = _$c;
+                        $ceylon$language.print($ceylon$language.Integer.instance($outer$default$run$Outer.$capture$run$x));
+                    }
+                    $dart$core.int _$b;
+                    $dart$core.int _$c;
+                }
+                class run$Outer {
+                    $dart$core.int $capture$run$x;
+                    run$Outer([$dart$core.int $capture$run$x, $dart$core.Object _$b = $ceylon$language.dart$default]) : this.$s((() {
+                        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
+                            _$b = $capture$run$x;
+                        }
+                        return [$capture$run$x, _$b];
+                    })());
+                    run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+                    run$Outer.$w([$dart$core.int this.$capture$run$x, $dart$core.int _$b]) {
+                        this._$b = _$b;
+                        new run$Outer$Sub(this);
+                    }
+                    $dart$core.int _$b;
+                }
+                void $package$run() {
+                    $dart$core.int x = 5;
+                    new run$Outer(x);
+                }
+
+                void run() => $package$run();
+             """;
+        };
+    }
 }
