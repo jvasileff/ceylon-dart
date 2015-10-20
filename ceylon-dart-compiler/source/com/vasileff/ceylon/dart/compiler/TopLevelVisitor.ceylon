@@ -185,12 +185,14 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        addClassDefinition {
-            info;
-            info.declarationModel;
-            that.body;
-            that.extendedType;
-            that.parameters;
+        add {
+            generateClassDefinition {
+                info;
+                info.declarationModel;
+                that.body;
+                that.extendedType;
+                that.parameters;
+            };
         };
     }
 
@@ -313,11 +315,13 @@ class TopLevelVisitor(CompilationContext ctx)
     void visitObjectExpression(ObjectExpression that) {
         value info = ObjectExpressionInfo(that);
 
-        addClassDefinition {
-            info;
-            info.anonymousClass;
-            that.body;
-            that.extendedType;
+        add {
+            generateClassDefinition {
+                info;
+                info.anonymousClass;
+                that.body;
+                that.extendedType;
+            };
         };
     }
 
@@ -325,11 +329,13 @@ class TopLevelVisitor(CompilationContext ctx)
     void visitObjectArgument(ObjectArgument that) {
         value info = ObjectArgumentInfo(that);
 
-        addClassDefinition {
-            info;
-            info.anonymousClass;
-            that.body;
-            that.extendedType;
+        add {
+            generateClassDefinition {
+                info;
+                info.anonymousClass;
+                that.body;
+                that.extendedType;
+            };
         };
     }
 
@@ -350,11 +356,13 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        addClassDefinition {
-            info;
-            info.anonymousClass;
-            that.body;
-            that.extendedType;
+        add {
+            generateClassDefinition {
+                info;
+                info.anonymousClass;
+                that.body;
+                that.extendedType;
+            };
         };
 
         if (isToplevel(info.declarationModel)) {
@@ -368,7 +376,7 @@ class TopLevelVisitor(CompilationContext ctx)
         }
     }
 
-    void addClassDefinition(
+    DartClassDeclaration generateClassDefinition(
             DScope scope, ClassModel classModel, ClassBody classBody,
             ExtendedType? extendedTypeNode, Parameters? parameters = null) {
 
@@ -517,7 +525,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 }
                 else [];
 
-        "Class members. Statements (aside from Specifiction and Assertion statements) do
+        "Class members. Statements (aside from Specification and Assertion statements) do
          not introduce members and are therefore not supported by
          [[ClassMemberTransformer]]."
         value members
@@ -549,24 +557,23 @@ class TopLevelVisitor(CompilationContext ctx)
             =   declarationsToBridge.map((f)
                 =>  generateBridgeMethodOrField(scope, f));
 
-        add {
-            DartClassDeclaration {
-                classModel.abstract;
-                identifier;
-                extendsClause;
-                implementsClause =
-                    if (exists satisifesTypes)
-                    then DartImplementsClause(satisifesTypes)
-                    else null;
-                concatenate {
-                    outerField,
-                    outerForwarders,
-                    captureFields,
-                    constructors,
-                    fieldsForInitializerParameters,
-                    members,
-                    bridgeFunctions
-                };
+        return
+        DartClassDeclaration {
+            classModel.abstract;
+            identifier;
+            extendsClause;
+            implementsClause =
+                if (exists satisifesTypes)
+                then DartImplementsClause(satisifesTypes)
+                else null;
+            concatenate {
+                outerField,
+                outerForwarders,
+                captureFields,
+                constructors,
+                fieldsForInitializerParameters,
+                members,
+                bridgeFunctions
             };
         };
     }
