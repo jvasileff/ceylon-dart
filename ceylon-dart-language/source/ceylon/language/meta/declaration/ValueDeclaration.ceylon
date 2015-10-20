@@ -44,7 +44,7 @@ import ceylon.language.meta.model {
            print(boundValueModel.get());
        }
    """
-native shared sealed interface ValueDeclaration
+shared sealed interface ValueDeclaration
         satisfies FunctionOrValueDeclaration & NestableDeclaration & ValueableDeclaration {
     
     "True if this declaration is annotated with [[late|ceylon.language::late]]."

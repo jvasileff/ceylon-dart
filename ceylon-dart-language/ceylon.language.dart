@@ -8361,6 +8361,53 @@ abstract class meta$declaration$CallableConstructorDeclaration implements meta$d
     meta$model$CallableConstructor apply([Sequential typeArguments]);
     meta$model$MemberClassCallableConstructor memberApply([meta$model$Type containerType, Sequential typeArguments]);
 }
+abstract class meta$declaration$ClassDeclaration implements meta$declaration$ClassOrInterfaceDeclaration {
+    $dart$core.bool get annotation;
+    Sequential get parameterDeclarations;
+    meta$declaration$FunctionOrValueDeclaration getParameterDeclaration([$dart$core.String name]);
+    $dart$core.bool get abstract;
+    $dart$core.bool get serializable;
+    $dart$core.bool get anonymous;
+    meta$declaration$ValueDeclaration get objectValue;
+    $dart$core.bool get $final;
+    meta$model$Class classApply([Sequential typeArguments]);
+    meta$model$MemberClass memberClassApply([meta$model$Type containerType, Sequential typeArguments]);
+    $dart$core.Object instantiate([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $instantiate([final meta$declaration$ClassDeclaration $this, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
+        if ($dart$core.identical(typeArguments, $package$dart$default)) {
+            typeArguments = $package$empty;
+        }
+        return $this.classApply(typeArguments as Sequential).apply();
+    }
+    $dart$core.Object memberInstantiate([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $memberInstantiate([final meta$declaration$ClassDeclaration $this, $dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
+        if ($dart$core.identical(typeArguments, $package$dart$default)) {
+            typeArguments = $package$empty;
+        }
+        return $this.memberClassApply(throw new AssertionError("Meta expressions unsupported at 'ClassDeclaration.ceylon: 103:54-103:62'"), typeArguments as Sequential).bind(container).apply();
+    }
+    $dart$core.Object getConstructorDeclaration([$dart$core.String name]);
+    Sequential constructorDeclarations();
+    Sequential annotatedConstructorDeclarations();
+}
+abstract class meta$declaration$ClassWithInitializerDeclaration implements meta$declaration$ClassDeclaration {
+    Empty constructorDeclarations();
+    static Empty $constructorDeclarations([final meta$declaration$ClassWithInitializerDeclaration $this]) => $package$empty;
+    $dart$core.Object getConstructorDeclaration([$dart$core.String name]);
+    static $dart$core.Object $getConstructorDeclaration([final meta$declaration$ClassWithInitializerDeclaration $this, $dart$core.String name]) => null;
+    Empty annotatedConstructorDeclarations();
+    static Empty $annotatedConstructorDeclarations([final meta$declaration$ClassWithInitializerDeclaration $this]) => $package$empty;
+}
+abstract class meta$declaration$ClassWithConstructorsDeclaration implements meta$declaration$ClassDeclaration {
+    $dart$core.Object instantiate([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $instantiate([final meta$declaration$ClassWithConstructorsDeclaration $this, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
+        throw new meta$model$IncompatibleTypeException("class has constructors");
+    }
+    $dart$core.Object memberInstantiate([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $memberInstantiate([final meta$declaration$ClassWithConstructorsDeclaration $this, $dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
+        throw new meta$model$IncompatibleTypeException("class has constructors");
+    }
+}
 abstract class meta$declaration$ClassOrInterfaceDeclaration implements meta$declaration$NestableDeclaration, meta$declaration$GenericDeclaration {
     meta$declaration$OpenClassType get extendedType;
     Sequential get satisfiedTypes;
@@ -8512,6 +8559,31 @@ abstract class meta$declaration$ValueableDeclaration {
     $dart$core.Object get();
     static $dart$core.Object $get([final meta$declaration$ValueableDeclaration $this]) => ($this.apply() as meta$model$Gettable).get();
     $dart$core.Object memberGet([$dart$core.Object container]);
+}
+abstract class meta$declaration$ValueConstructorDeclaration implements meta$declaration$ValueableDeclaration, meta$declaration$ConstructorDeclaration {
+    meta$declaration$ClassDeclaration get container;
+    meta$model$ValueConstructor apply();
+    meta$model$MemberClassValueConstructor memberApply([meta$model$Type containerType]);
+    $dart$core.Object get();
+    static $dart$core.Object $get([final meta$declaration$ValueConstructorDeclaration $this]) => $this.apply().get();
+    $dart$core.Object memberGet([$dart$core.Object container]);
+    static $dart$core.Object $memberGet([final meta$declaration$ValueConstructorDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions unsupported at 'ValueConstructorDeclaration.ceylon: 35:44-35:52'")).bind(container).get();
+}
+abstract class meta$declaration$ValueDeclaration implements meta$declaration$FunctionOrValueDeclaration, meta$declaration$NestableDeclaration, meta$declaration$ValueableDeclaration {
+    $dart$core.bool get late;
+    $dart$core.bool get variable;
+    $dart$core.bool get objectValue;
+    meta$declaration$ClassDeclaration get objectClass;
+    meta$model$Value apply();
+    meta$model$Attribute memberApply([meta$model$Type containerType]);
+    $dart$core.Object get();
+    static $dart$core.Object $get([final meta$declaration$ValueDeclaration $this]) => $this.apply().get();
+    $dart$core.Object memberGet([$dart$core.Object container]);
+    static $dart$core.Object $memberGet([final meta$declaration$ValueDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions unsupported at 'ValueDeclaration.ceylon: 81:55-81:63'")).bind(container).get();
+    void set([$dart$core.Object newValue]);
+    static void $set([final meta$declaration$ValueDeclaration $this, $dart$core.Object newValue]) => $this.apply().setIfAssignable(newValue);
+    void memberSet([$dart$core.Object container, $dart$core.Object newValue]);
+    meta$declaration$SetterDeclaration get setter;
 }
 abstract class meta$declaration$Variance {
 }

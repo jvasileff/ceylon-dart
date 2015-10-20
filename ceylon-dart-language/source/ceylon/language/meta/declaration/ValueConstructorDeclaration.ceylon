@@ -13,7 +13,7 @@ import ceylon.language.meta.model{
 }
 
 
-native shared sealed interface ValueConstructorDeclaration 
+shared sealed interface ValueConstructorDeclaration 
         satisfies ValueableDeclaration & ConstructorDeclaration {
     
     "The class this constructor constructs"

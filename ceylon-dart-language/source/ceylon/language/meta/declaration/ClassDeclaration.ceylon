@@ -49,7 +49,7 @@ import ceylon.language.meta.model {
            print(boundMemberClassModel());
        }
    """
-native shared sealed interface ClassDeclaration 
+shared sealed interface ClassDeclaration 
         of ClassWithInitializerDeclaration | ClassWithConstructorsDeclaration
         satisfies ClassOrInterfaceDeclaration {
     "True if the current declaration is an annotation class or function."
@@ -117,7 +117,7 @@ native shared sealed interface ClassDeclaration
             given Annotation satisfies AnnotationType;
 }
 
-native shared sealed interface ClassWithInitializerDeclaration 
+shared sealed interface ClassWithInitializerDeclaration 
         satisfies ClassDeclaration {
     shared actual default [] constructorDeclarations() => [];
     shared actual default Null getConstructorDeclaration(String name) => null;
@@ -125,7 +125,7 @@ native shared sealed interface ClassWithInitializerDeclaration
             given Annotation satisfies AnnotationType => [];
 }
 
-native shared sealed interface ClassWithConstructorsDeclaration 
+shared sealed interface ClassWithConstructorsDeclaration 
         satisfies ClassDeclaration {
     shared actual default Nothing instantiate(AppliedType<>[] typeArguments, Anything* arguments) {
         throw IncompatibleTypeException("class has constructors");
