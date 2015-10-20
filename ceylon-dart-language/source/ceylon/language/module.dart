@@ -1216,7 +1216,36 @@ class dart$VariableBoxString {
 //
 ///////////////////////////////////////
 
-abstract class meta$declaration$ValueDeclaration {}
+class serialization$NativeDeque {
+  void pushFront(element) {}
+  void pushBack(element) {}
+  popFront() {}
+  $dart$core.bool empty;
+  $dart$core.String string;
+}
+
+class serialization$PartialImpl implements serialization$Partial {
+  serialization$PartialImpl(x) {}
+}
+
+class serialization$NativeMap {
+  get(id) {}
+  void put(id, instanceOrPartial) {}
+  contains(id) {}
+  Iterable keys;
+  Iterable items;
+  Integer size;
+  String string;
+}
+
+$package$className(var x) {}
+$package$meta$type(var x) {}
+$package$meta$annotations([var x, var y]) {}
+$package$meta$classDeclaration(var x) {}
+$package$meta$typeLiteral() {}
+
+final $package$impl$reach = null;
+
 
 ///////////////////////////////////////
 //
