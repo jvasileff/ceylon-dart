@@ -1578,18 +1578,14 @@ shared interface Iterable<out Element=Anything,
                 else {
                     newEntry 
                             = GroupEntry(group, 
-// FIXME Dart workaround
-//                                ElementEntry(element), 
-                                ElementEntry(element, null), 
+                                ElementEntry(element), 
                                     entries);
                 }
             }
             else {
                 newEntry 
                         = GroupEntry(group,
-// FIXME Dart workaround
-//                            ElementEntry(element));
-                            ElementEntry(element, null), null);
+                            ElementEntry(element));
             }
             store.set(index, newEntry);
             count++;
@@ -1658,9 +1654,7 @@ String commaList({Anything*} elements)
         => ", ".join { for (e in elements) stringify(e) };
 
 class ElementEntry<Element>
-// FIXME Dart workaround
-//        (element, next)
-        (element, next)
+        (element, next = null)
         extends Object()
         satisfies [Element+] {
     
@@ -1743,9 +1737,7 @@ class ElementEntry<Element>
 }
 
 class GroupEntry<Group,Element>
-// FIXME Dart workaround
-//        (group, elements, next = null)
-        (group, elements, next)
+        (group, elements, next = null)
         given Group satisfies Object {
     
     shared Group group;

@@ -4007,13 +4007,13 @@ class Iterable$group$$anonymous$32_ implements Map {
                                     }
                                 }
                                 if (doElse$138) {
-                                    newEntry = new GroupEntry(group, new ElementEntry(element, null), entries);
+                                    newEntry = new GroupEntry(group, new ElementEntry(element), entries);
                                 }
                             }
                         }
                     }
                     if (doElse$136) {
-                        newEntry = new GroupEntry(group, new ElementEntry(element, null), null);
+                        newEntry = new GroupEntry(group, new ElementEntry(element));
                     }
                 }
                 _$store.set(index, newEntry);
@@ -5023,7 +5023,14 @@ class ElementEntry$$anonymous$34_ implements Iterator {
     }
 }
 class ElementEntry implements Sequence {
-    ElementEntry([$dart$core.Object element, ElementEntry next]) {
+    ElementEntry([$dart$core.Object element, $dart$core.Object next = $package$dart$default]) : this.$s((() {
+        if ($dart$core.identical(next, $package$dart$default)) {
+            next = null;
+        }
+        return [element, next];
+    })());
+    ElementEntry.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+    ElementEntry.$w([$dart$core.Object element, ElementEntry next]) {
         this.element = element;
         this.next = next;
     }
@@ -5227,7 +5234,14 @@ class ElementEntry implements Sequence {
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
 class GroupEntry {
-    GroupEntry([$dart$core.Object group, ElementEntry elements, GroupEntry next]) {
+    GroupEntry([$dart$core.Object group, ElementEntry elements, $dart$core.Object next = $package$dart$default]) : this.$s((() {
+        if ($dart$core.identical(next, $package$dart$default)) {
+            next = null;
+        }
+        return [group, elements, next];
+    })());
+    GroupEntry.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
+    GroupEntry.$w([$dart$core.Object group, ElementEntry elements, GroupEntry next]) {
         this.group = group;
         this.elements = elements;
         this.next = next;
@@ -8826,6 +8840,19 @@ abstract class Ordinal {
     $dart$core.Object get successor;
     $dart$core.Object get predecessor;
 }
+class OverflowException  extends Exception {
+    OverflowException([$dart$core.Object _$message = $package$dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$message, $package$dart$default)) {
+            _$message = "Numeric overflow";
+        }
+        return [_$message];
+    })());
+    OverflowException.$s([$dart$core.List a]) : this.$w(a[0]);
+    OverflowException.$w([$dart$core.String _$message]) : super(_$message) {
+        this._$message = _$message;
+    }
+    $dart$core.String _$message;
+}
 class mapPairs$iterable_$iterator$iterator_ implements Iterator {
     mapPairs$iterable_ $outer$ceylon$language$mapPairs$iterable_;
     mapPairs$iterable_$iterator$iterator_([mapPairs$iterable_ this.$outer$ceylon$language$mapPairs$iterable_]) {
@@ -10517,6 +10544,21 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
             }
         }
     }
+}
+class serialization$DeserializationException  extends Exception {
+    serialization$DeserializationException([$dart$core.String _$message, $dart$core.Object _$cause = $package$dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$cause, $package$dart$default)) {
+            _$cause = null;
+        }
+        return [_$message, _$cause];
+    })());
+    serialization$DeserializationException.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+    serialization$DeserializationException.$w([$dart$core.String _$message, Throwable _$cause]) : super(_$message, _$cause) {
+        this._$message = _$message;
+        this._$cause = _$cause;
+    }
+    $dart$core.String _$message;
+    Throwable _$cause;
 }
 abstract class serialization$Element implements serialization$ReachableReference {
     $dart$core.int get index;
