@@ -110,7 +110,8 @@ import ceylon.ast.core {
     ExpressionComprehensionClause,
     TypeNameWithTypeArguments,
     PositionalArguments,
-    NamedArguments
+    NamedArguments,
+    Meta
 }
 import ceylon.collection {
     LinkedList
@@ -2818,6 +2819,28 @@ class ExpressionTransformer(CompilationContext ctx)
                 outerIdentifier;
         };
     }
+
+    shared actual
+    DartExpression transformMeta(Meta that)
+        =>  let(info = ExpressionInfo(that))
+            DartThrowExpression {
+                DartInstanceCreationExpression {
+                    const = false;
+                    DartConstructorName {
+                        dartTypes.dartTypeName {
+                            info;
+                            ceylonTypes.assertionErrorType;
+                            false; false;
+                        };
+                    };
+                    DartArgumentList {
+                        [DartSimpleStringLiteral {
+                            "Meta expressions unsupported at \
+                             '``info.filename``: ``info.location``'";
+                        }];
+                    };
+                };
+            };
 
     shared actual default
     DartExpression transformNode(Node that) {
