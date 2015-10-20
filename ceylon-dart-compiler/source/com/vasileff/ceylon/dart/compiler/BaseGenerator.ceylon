@@ -36,7 +36,8 @@ import ceylon.ast.core {
     MemberOperator,
     SafeMemberOperator,
     AnySpecifier,
-    FunctionArgument
+    FunctionArgument,
+    Parameter
 }
 import ceylon.collection {
     LinkedList
@@ -2242,14 +2243,17 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartFormalParameterList generateFormalParameterList(
             DScope scope,
-            Parameters|{ParameterModel*} parameters,
+            Parameters|{Parameter*}|{ParameterModel*} parameters,
             "For parameters, disregard parameterModel.defaulted when determining if the
              type should be erased-to-object."
             Boolean noDefaults=false) {
 
         value parameterList
-            =   if (is Parameters parameters)
-                then parameters.parameters.map(
+            =   if (is Parameters parameters) then
+                    parameters.parameters.map(
+                        compose(ParameterInfo.parameterModel, ParameterInfo))
+                else if (is {Parameter*} parameters) then
+                    parameters.map(
                         compose(ParameterInfo.parameterModel, ParameterInfo))
                 else parameters;
 

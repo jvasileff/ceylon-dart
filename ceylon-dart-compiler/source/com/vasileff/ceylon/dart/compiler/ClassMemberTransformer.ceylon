@@ -20,7 +20,8 @@ import ceylon.ast.core {
     Assertion,
     ExistsOrNonemptyCondition,
     IsCondition,
-    ValueSpecification
+    ValueSpecification,
+    ConstructorDefinition
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -65,6 +66,11 @@ shared
 class ClassMemberTransformer(CompilationContext ctx)
         extends BaseGenerator(ctx)
         satisfies WideningTransformer<[DartClassMember*]> {
+
+    "Don't transform Constructors; they are handled elsewhere."
+    shared actual
+    [] transformConstructorDefinition(ConstructorDefinition that)
+        =>  [];
 
     shared actual
     DartClassMember[] transformLazySpecification(LazySpecification that) {

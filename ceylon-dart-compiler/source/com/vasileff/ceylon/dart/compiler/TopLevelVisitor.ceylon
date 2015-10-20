@@ -24,7 +24,8 @@ import ceylon.ast.core {
     Parameters,
     ExtendedType,
     ObjectArgument,
-    DefaultedParameter
+    DefaultedParameter,
+    Parameter
 }
 import ceylon.interop.java {
     CeylonList
@@ -396,75 +397,24 @@ class TopLevelVisitor(CompilationContext ctx)
 
         // TODO consolidate with similar visitInterfaceDefinition code?
 
-        "Class initializer parameters."
-        value standardParameters
-            =   if (exists parameters, !parameters.children.empty)
-                then generateFormalParameterList(scope, parameters).parameters
-                else [];
-
-        value hasDefaultedParameter
-            =   standardParameters.any((p) => p is DartDefaultFormalParameter);
-
-        "Non-defaulted class initializer parameters."
-        value standardParametersNonDefaulted
-            =   hasDefaultedParameter then (
-                if (exists parameters, !parameters.children.empty)
-                then generateFormalParameterList(scope, parameters, true).parameters
-                else []);
-
-        "Explicit super call with arguments."
-        [DartSuperConstructorInvocation] | [] extendedArguments;
-
-        if (exists extendedTypeNode,
-                exists arguments = extendedTypeNode.target.arguments,
-                !arguments.argumentList.children.empty) {
-
-            assert (is ClassModel | ConstructorModel etModel
-                =   classModel.extendedType.declaration);
-
-            extendedArguments
-                =   [DartSuperConstructorInvocation {
-                        null;
-                        generateArgumentListFromArguments {
-                                    scope;
-                                    arguments;
-                                    classModel.extendedType.fullType;
-                                    etModel;
-                                }[1];
-                    }];
-        }
-        else {
-            extendedArguments = [];
-        }
-
-        "A sequence of Tuples of each parameter's Dart type name and Dart identifier."
-        value parameterDetails
-            =   if (exists parameters) then
-                    parameters.parameters.collect {
-                        (parameter) =>
-                        let (model = ParameterInfo(parameter).parameterModel)
-                        [dartTypes.dartTypeNameForDeclaration {
-                            scope;
-                            model.model;
-                        },
-                        DartSimpleIdentifier {
-                            dartTypes.getName(model);
-                        }];
-                    }
-                else [];
-
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
         value fieldsForInitializerParameters
-            =   parameterDetails.map {
-                    (details) =>
+            =   (parameters?.parameters else []).collect {
+                    (parameter) =>
+                    let (model = ParameterInfo(parameter).parameterModel)
                     DartFieldDeclaration {
                         false;
                             DartVariableDeclarationList {
                                 null;
-                                details[0];
+                                dartTypes.dartTypeNameForDeclaration {
+                                    scope;
+                                    model.model;
+                                };
                                 [DartVariableDeclaration {
-                                    details[1];
+                                    DartSimpleIdentifier {
+                                        dartTypes.getName(model);
+                                    };
                                     initializer = null;
                                 }];
                             };
@@ -533,23 +483,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        "An $outer parameter, if there is an outer class or interface"
-        value outerFieldConstructorParameter
-            =   outerDeclarations.take(1).map {
-                    (declaration) =>
-                    DartFieldFormalParameter {
-                        false; false;
-                        dartTypes.dartTypeName {
-                            scope;
-                            declaration.type;
-                            false; false;
-                        };
-                        dartTypes.identifierForOuter {
-                            declaration;
-                        };
-                    };
-                };
-
         "declarations for captures we must hold references to."
         value captureDeclarations
             =   [*dartTypes.captureDeclarationsForClass(classModel)];
@@ -572,6 +505,154 @@ class TopLevelVisitor(CompilationContext ctx)
                         };
                     };
                 };
+
+        value constructors
+            =   if (!classModel.hasConstructors())
+                then generateInitializerConstructors {
+                    scope;
+                    classModel;
+                    classBody;
+                    extendedTypeNode;
+                    parameters?.parameters else [];
+                }
+                else [];
+
+        "Class members. Statements (aside from Specifiction and Assertion statements) do
+         not introduce members and are therefore not supported by
+         [[ClassMemberTransformer]]."
+        value members
+            =   classBody.children
+                    .narrow<Declaration|Specification|Assertion>()
+                    .flatMap((d)
+                        =>  d.transform(classMemberTransformer));
+
+        "Functions and values for which the most refined member is contained by
+         an Interface."
+        value declarationsToBridge
+            // Shouldn't there be a better way?
+            =   supertypeDeclarations(classModel)
+                    .flatMap((d) => CeylonList(d.members))
+                    .narrow<FunctionOrValueModel>()
+                    .filter(FunctionOrValueModel.shared)
+                    .map(curry(mostRefined)(classModel))
+                    .distinct
+                    .map((m) => assertExists(m,
+                        "Surely a most-refined implementation exists."))
+                    .filter((m) => container(m) is InterfaceModel)
+                    .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
+                    .map((m) => asserted<FunctionOrValueModel>(m,
+                        "Most refined function or value should be a function or value."))
+                    .filter(not(FunctionOrValueModel.formal))
+                    .sequence();
+
+        value bridgeFunctions
+            =   declarationsToBridge.map((f)
+                =>  generateBridgeMethodOrField(scope, f));
+
+        add {
+            DartClassDeclaration {
+                classModel.abstract;
+                identifier;
+                extendsClause;
+                implementsClause =
+                    if (exists satisifesTypes)
+                    then DartImplementsClause(satisifesTypes)
+                    else null;
+                concatenate {
+                    outerField,
+                    outerForwarders,
+                    captureFields,
+                    constructors,
+                    fieldsForInitializerParameters,
+                    members,
+                    bridgeFunctions
+                };
+            };
+        };
+    }
+
+    [DartConstructorDeclaration*] generateInitializerConstructors(
+            DScope scope, ClassModel classModel, ClassBody classBody,
+            ExtendedType? extendedTypeNode, [Parameter*] parameters) {
+
+        value identifier
+            =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
+
+        "Class initializer parameters."
+        value standardParameters
+            =   if (!parameters.empty)
+                then generateFormalParameterList(scope, parameters).parameters
+                else [];
+
+        value hasDefaultedParameter
+            =   standardParameters.any((p) => p is DartDefaultFormalParameter);
+
+        "Non-defaulted class initializer parameters."
+        value standardParametersNonDefaulted
+            =   hasDefaultedParameter then (
+                if (!parameters.empty)
+                then generateFormalParameterList(scope, parameters, true).parameters
+                else []);
+
+        "Explicit super call with arguments."
+        [DartSuperConstructorInvocation] | [] superInvocation;
+        if (exists extendedTypeNode,
+                exists arguments = extendedTypeNode.target.arguments,
+                !arguments.argumentList.children.empty) {
+
+            assert (is ClassModel | ConstructorModel etModel
+                =   classModel.extendedType.declaration);
+
+            superInvocation
+                =   [DartSuperConstructorInvocation {
+                        null;
+                        generateArgumentListFromArguments {
+                            scope;
+                            arguments;
+                            classModel.extendedType.fullType;
+                            etModel;
+                        }[1];
+                    }];
+        }
+        else {
+            superInvocation = [];
+        }
+
+        "Dart identifiers for each parameter."
+        value parameterIdentifiers
+            =   parameters.collect {
+                    (p) => DartSimpleIdentifier {
+                        dartTypes.getName {
+                            ParameterInfo(p).parameterModel;
+                        };
+                    };
+                };
+
+        "Declarations for outer containers. We'll hold a reference to our immediate
+         container, and access the rest through that."
+        value outerDeclarations
+            =   [*dartTypes.outerDeclarationsForClass(classModel)];
+
+        "An $outer parameter, if there is an outer class or interface"
+        value outerFieldConstructorParameter
+            =   outerDeclarations.take(1).map {
+                    (declaration) =>
+                    DartFieldFormalParameter {
+                        false; false;
+                        dartTypes.dartTypeName {
+                            scope;
+                            declaration.type;
+                            false; false;
+                        };
+                        dartTypes.identifierForOuter {
+                            declaration;
+                        };
+                    };
+                };
+
+        "declarations for captures we must hold references to."
+        value captureDeclarations
+            =   [*dartTypes.captureDeclarationsForClass(classModel)];
 
         value captureConstructorParameters
             =   captureDeclarations.map {
@@ -633,9 +714,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 [createExpressionEvaluationWithSetup {
                                     generateDefaultValueAssignments {
                                         scope;
-                                        parameters
-                                            ?.parameters
-                                            ?.narrow<DefaultedParameter>() else [];
+                                        parameters.narrow<DefaultedParameter>();
                                     };
                                     DartListLiteral {
                                         false;
@@ -646,7 +725,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                             captureConstructorParameters.map {
                                                 DartFieldFormalParameter.identifier;
                                             },
-                                            parameterDetails.collect((d) => d[1])
+                                            parameterIdentifiers
                                         };
                                     };
                                 }];
@@ -708,7 +787,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             standardParametersNonDefaulted else standardParameters
                         };
                     };
-                    extendedArguments;
+                    superInvocation;
                     null;
                     DartBlockFunctionBody {
                         null; false;
@@ -717,17 +796,17 @@ class TopLevelVisitor(CompilationContext ctx)
                                 // Assign parameters to corresponding 'this.' members.
                                 // Eventually, we'll just do this for the ones we want to
                                 // capture. Not supporting defaulted parameters yet.
-                                parameterDetails.map {
+                                parameterIdentifiers.map {
                                     // This might get ugly with replacements like
                                     // string/toString().
-                                    (d) => DartExpressionStatement {
+                                    (id) => DartExpressionStatement {
                                         DartAssignmentExpression {
                                             DartPrefixedIdentifier {
                                                 DartSimpleIdentifier("this");
-                                                d[1];
+                                                id;
                                             };
                                             DartAssignmentOperator.equal;
-                                            d[1];
+                                            id;
                                         };
                                     };
                                 },
@@ -742,62 +821,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        value constructors
-            =   [defaultsConstructor, spreadConstructor, workerConstructor]
-                        .coalesced.sequence();
-
-        "Class members. Statements (aside from Specifiction and Assertion statements) do
-         not introduce members and are therefore not supported by
-         [[ClassMemberTransformer]]."
-        value members
-            =   classBody.children
-                    .narrow<Declaration|Specification|Assertion>()
-                    .flatMap((d)
-                        =>  d.transform(classMemberTransformer));
-
-        "Functions and values for which the most refined member is contained by
-         an Interface."
-        value declarationsToBridge
-            // Shouldn't there be a better way?
-            =   supertypeDeclarations(classModel)
-                    .flatMap((d) => CeylonList(d.members))
-                    .narrow<FunctionOrValueModel>()
-                    .filter(FunctionOrValueModel.shared)
-                    .map(curry(mostRefined)(classModel))
-                    .distinct
-                    .map((m) => assertExists(m,
-                        "Surely a most-refined implementation exists."))
-                    .filter((m) => container(m) is InterfaceModel)
-                    .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
-                    .map((m) => asserted<FunctionOrValueModel>(m,
-                        "Most refined function or value should be a function or value."))
-                    .filter(not(FunctionOrValueModel.formal))
-                    .sequence();
-
-        value bridgeFunctions
-            =   declarationsToBridge.map((f)
-                =>  generateBridgeMethodOrField(scope, f));
-
-        add {
-            DartClassDeclaration {
-                classModel.abstract;
-                identifier;
-                extendsClause;
-                implementsClause =
-                    if (exists satisifesTypes)
-                    then DartImplementsClause(satisifesTypes)
-                    else null;
-                concatenate {
-                    outerField,
-                    outerForwarders,
-                    captureFields,
-                    constructors,
-                    fieldsForInitializerParameters,
-                    members,
-                    bridgeFunctions
-                };
-            };
-        };
+        return
+        [defaultsConstructor, spreadConstructor, workerConstructor].coalesced.sequence();
     }
 
     shared actual

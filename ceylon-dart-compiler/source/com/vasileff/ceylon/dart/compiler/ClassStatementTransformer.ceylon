@@ -17,7 +17,8 @@ import ceylon.ast.core {
     ClassDefinition,
     ValueSpecification,
     ValueSetterDefinition,
-    InterfaceDefinition
+    InterfaceDefinition,
+    ConstructorDefinition
 }
 
 import com.vasileff.ceylon.dart.ast {
@@ -47,6 +48,11 @@ class ClassStatementTransformer(CompilationContext ctx)
     "Ignore type aliases for now."
     shared actual
     [] transformTypeAliasDefinition(TypeAliasDefinition that)
+        =>  [];
+
+    "Don't transform Constructors; they are handled elsewhere."
+    shared actual
+    [] transformConstructorDefinition(ConstructorDefinition that)
         =>  [];
 
     "The value may be a class member. So:
