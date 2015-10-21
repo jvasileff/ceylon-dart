@@ -64,7 +64,11 @@ import ceylon.ast.core {
     FunctionArgument,
     ObjectArgument,
     InlineDefinitionArgument,
-    CompilationUnit
+    CompilationUnit,
+    ConstructorDefinition,
+    ExtensionOrConstruction,
+    Extension,
+    Construction
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -91,8 +95,10 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     SetterModel=Setter,
     TypedReferenceModel=TypedReference,
+    ReferenceModel=Reference,
     ControlBlockModel=ControlBlock,
-    ScopeModel=Scope
+    ScopeModel=Scope,
+    ConstructorModel=Constructor
 }
 import com.redhat.ceylon.compiler.typechecker.context {
     TypecheckerUnit
@@ -100,7 +106,8 @@ import com.redhat.ceylon.compiler.typechecker.context {
 import com.vasileff.ceylon.dart.compiler {
     DScope,
     augmentNode,
-    asserted
+    asserted,
+    assertExists
 }
 
 import org.antlr.runtime {
@@ -842,6 +849,76 @@ class AnyClassInfo(AnyClass astNode)
         assert (is ClassModel result = super.declarationModel);
         return result;
     }
+}
+
+shared
+class ConstructorInfo(ConstructorDefinition astNode)
+        extends DeclarationInfo(astNode) {
+
+    shared actual default ConstructorDefinition node => astNode;
+
+    value tcNode = assertedTcNode<Tree.Constructor>(astNode);
+
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
+
+    shared ConstructorModel constructorModel => tcNode.constructor;
+}
+
+shared
+class ExtensionOrConstructionInfo(ExtensionOrConstruction astNode)
+        extends NodeInfo(astNode) {
+
+    shared actual default ExtensionOrConstruction node => astNode;
+
+    value tcNode = assertedTcNode<Tree.InvocationExpression | Tree.SimpleType>(astNode);
+
+    value tcExtendedTypeExpression
+        =   if (is Tree.InvocationExpression tcNode)
+            then asserted<Tree.ExtendedTypeExpression>(tcNode.primary)
+            else null;
+
+    shared TypeModel | TypedReferenceModel? target
+        =>  asserted<TypeModel | TypedReferenceModel>(tcExtendedTypeExpression?.target);
+
+    // we *could* fall back to SimpleType.declarationModel, for class extends clauses for
+    // classes w/constructors.
+    shared default ClassModel | ConstructorModel | Null declaration
+        =>  asserted<ClassModel | ConstructorModel | Null>
+                (tcExtendedTypeExpression?.declaration);
+
+    shared default {TypeModel*}? signature
+        =>  if (exists s = tcExtendedTypeExpression?.signature)
+            then CeylonList(s)
+            else null;
+
+    "Appears to be the same as `target.fullType`; a Callable."
+    shared default TypeModel? typeModel
+        =>  tcExtendedTypeExpression?.typeModel;
+}
+
+shared
+class ExtensionInfo(Extension astNode)
+        extends ExtensionOrConstructionInfo(astNode) {
+
+    shared actual default Extension node => astNode;
+
+    shared actual ClassModel? declaration => asserted<ClassModel?>(super.declaration);
+}
+
+shared
+class ConstructionInfo(Construction astNode)
+        extends ExtensionOrConstructionInfo(astNode) {
+
+    shared actual Construction node => astNode;
+
+    shared actual ConstructorModel declaration
+        =>  asserted<ConstructorModel>(super.declaration);
+
+    shared actual {TypeModel*} signature
+        =>  assertExists(super.signature);
+
+    shared actual TypeModel typeModel
+        =>  assertExists(super.typeModel);
 }
 
 shared

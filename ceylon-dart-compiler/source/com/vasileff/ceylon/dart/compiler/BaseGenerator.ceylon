@@ -3222,22 +3222,24 @@ class BaseGenerator(CompilationContext ctx)
     [[DartStatement*], DartArgumentList] generateArgumentListFromArguments(
             DScope scope,
             Arguments arguments,
+            // TODO accept {TypeModel*} signature instead
             TypeModel callableType,
             ParameterListModel | FunctionModel | ValueModel
-                    | ClassModel | ConstructorModel declarationOrparameterList) {
+                    | ClassModel | ConstructorModel declarationOrParameterList) {
 
-
-        if (is ValueModel declarationOrparameterList) {
+        if (is ValueModel declarationOrParameterList) {
             // Values won't have arguments.
             return [[], DartArgumentList()];
         }
 
         value pList
-            =   switch(declarationOrparameterList)
-                case (is ParameterListModel) declarationOrparameterList
-                case (is FunctionModel) declarationOrparameterList.firstParameterList
-                case (is ClassModel) declarationOrparameterList.parameterList
-                case (is ConstructorModel) declarationOrparameterList.parameterList;
+            =   switch(declarationOrParameterList)
+                case (is ParameterListModel) declarationOrParameterList
+                case (is FunctionModel) declarationOrParameterList.firstParameterList
+                // FIXME parameterList may be null here...
+                case (is ClassModel) declarationOrParameterList.parameterList
+                // FIXME parameterList may be null here...
+                case (is ConstructorModel) declarationOrParameterList.parameterList;
 
         switch (arguments)
         case (is PositionalArguments) {
