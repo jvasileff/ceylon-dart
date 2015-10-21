@@ -8533,13 +8533,21 @@ abstract class meta$declaration$ReferenceDeclaration implements meta$declaration
 }
 abstract class meta$declaration$SetterDeclaration implements meta$declaration$NestableDeclaration {
     meta$declaration$ValueDeclaration get variable;
+    $dart$core.bool get actual;
     static $dart$core.bool $get$actual([final meta$declaration$SetterDeclaration $this]) => $this.variable.actual;
+    $dart$core.bool get formal;
     static $dart$core.bool $get$formal([final meta$declaration$SetterDeclaration $this]) => $this.variable.formal;
+    $dart$core.bool get $default;
     static $dart$core.bool $get$$default([final meta$declaration$SetterDeclaration $this]) => $this.variable.$default;
+    $dart$core.bool get shared;
     static $dart$core.bool $get$shared([final meta$declaration$SetterDeclaration $this]) => $this.variable.shared;
+    meta$declaration$Package get containingPackage;
     static meta$declaration$Package $get$containingPackage([final meta$declaration$SetterDeclaration $this]) => $this.variable.containingPackage;
+    meta$declaration$Module get containingModule;
     static meta$declaration$Module $get$containingModule([final meta$declaration$SetterDeclaration $this]) => $this.variable.containingModule;
+    $dart$core.Object get container;
     static $dart$core.Object $get$container([final meta$declaration$SetterDeclaration $this]) => $this.variable.container;
+    $dart$core.bool get toplevel;
     static $dart$core.bool $get$toplevel([final meta$declaration$SetterDeclaration $this]) => $this.variable.toplevel;
 }
 abstract class meta$declaration$TypedDeclaration {
