@@ -507,7 +507,7 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.Object get fractionalPart => new Integer(0);
   $dart$core.Object get wholePart => this;
 
-  $dart$core.bool get even => 2 % _value == 0;
+  $dart$core.bool get even => _value % 2 == 0;
 
   // Dart runtime
 
