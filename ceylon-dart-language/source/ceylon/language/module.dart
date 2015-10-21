@@ -416,54 +416,58 @@ class Integer implements Integral, Exponentiable, Binary {
 
   // Binary
 
-  // FIXME fix bugs and simulate 64bits using `toSigned`
+  // FIXME fix bugs and simulate 32bits using `toSigned`
 
-  Integer rightLogicalShift([$dart$core.int shift]) => new Integer(this._value >> shift);
-  Integer leftLogicalShift([$dart$core.int shift]) => new Integer(this._value << shift);
+  // Treat as unsigned to match javascript's Unsigned Right Shift Operator >>>
+  Integer rightLogicalShift([$dart$core.int shift])
+    => new Integer(((_value & 0xFFFFFFFF) >> (shift%32)).toUnsigned(32));
 
-  Integer rightArithmeticShift([$dart$core.int shift]) => new Integer(this._value >> shift);
-  Integer leftArithmeticShift([$dart$core.int shift]) => new Integer(this._value << shift);
+  Integer leftLogicalShift([$dart$core.int shift])
+    => new Integer((_value << (shift%32)).toSigned(32));
+
+  Integer rightArithmeticShift([$dart$core.int shift])
+    => new Integer((_value.toSigned(32) >> (shift%32)).toSigned(32));
 
   $dart$core.bool get([$dart$core.int index]) {
-    if (index < 0 || index > 63) {
+    if (index < 0 || index > 31) {
       return false;
     }
-    return _value.toSigned(64) & (1<<index) == 0;
+    return _value.toSigned(32) & (1<<index) == 0;
   }
 
   Integer set([$dart$core.int index, $dart$core.bool bit]) {
-    if (index < 0 || index > 63) {
-      return new Integer(_value.toSigned(64));
+    if (index < 0 || index > 31) {
+      return new Integer(_value.toSigned(32));
     }
-    $dart$core.int mask = (1 << index).toSigned(64);
+    $dart$core.int mask = (1 << index).toSigned(32);
     if (bit) {
-      return new Integer(_value.toSigned(64) | mask);
+      return new Integer(_value.toSigned(32) | mask);
     }
     else {
-      return new Integer(_value.toSigned(64) & ~mask);
+      return new Integer(_value.toSigned(32) & ~mask);
     }
   }
 
   Integer flip([$dart$core.int index, $dart$core.bool bit]) {
-    if (index < 0 || index > 63) {
-      return new Integer(_value.toSigned(64));
+    if (index < 0 || index > 31) {
+      return new Integer(_value.toSigned(32));
     }
-    $dart$core.int mask = (1 << index).toSigned(64);
-    return new Integer(_value.toSigned(64) ^ mask);
+    $dart$core.int mask = (1 << index).toSigned(32);
+    return new Integer(_value.toSigned(32) ^ mask);
   }
 
   Integer clear([$dart$core.int index]) => set(index, false);
 
   Integer or([Integer other])
-    =>  new Integer(_value.toSigned(64) | other._value.toSigned(64));
+    =>  new Integer(_value.toSigned(32) | other._value.toSigned(32));
 
   Integer and([Integer other])
-    =>  new Integer(_value.toSigned(64) & other._value.toSigned(64));
+    =>  new Integer(_value.toSigned(32) & other._value.toSigned(32));
 
   Integer xor([Integer other])
-    =>  new Integer(_value.toSigned(64) ^ other._value.toSigned(64));
+    =>  new Integer(_value.toSigned(32) ^ other._value.toSigned(32));
 
-  Integer get not => new Integer(~_value.toSigned(64));
+  Integer get not => new Integer(~_value.toSigned(32));
 
   // Enumerable
   Integer neighbour([$dart$core.int offset]) => new Integer(this._value + offset);
@@ -1152,7 +1156,7 @@ class runtime_ {
 
   // just making stuff up...
   final $dart$core.int integerSize = 64;
-  final $dart$core.int integerAddressableSize = 64;
+  final $dart$core.int integerAddressableSize = 32;
   $dart$core.int get maxIntegerValue => $dart$math.pow(2, 63) - 1;
   $dart$core.int get minIntegerValue => -$dart$math.pow(2, 63);
   $dart$core.int get maxArraySize => $dart$math.pow(2, 63) - 1;
