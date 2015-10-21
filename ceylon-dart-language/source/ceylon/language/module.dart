@@ -493,6 +493,18 @@ class Integer implements Integral, Exponentiable, Binary {
   @$dart$core.override
   $dart$core.bool notSmallerThan([Integer other]) => _value >= other._value;
 
+  // Number
+
+  $dart$core.int get sign
+    => _value < 0 ? -1 : (_value > 0 ? 1 : 0);
+
+  $dart$core.bool get positive => _value > 0;
+  $dart$core.bool get negative => _value < 0;
+  $dart$core.Object get fractionalPart => new Integer(0);
+  $dart$core.Object get wholePart => this;
+
+  $dart$core.bool get even => 2 % _value == 0;
+
   // Dart runtime
 
   static Integer instance($dart$core.int value)
