@@ -77,6 +77,9 @@ import ceylon.interop.java {
     CeylonList
 }
 
+import com.redhat.ceylon.compiler.typechecker.context {
+    TypecheckerUnit
+}
 import com.redhat.ceylon.compiler.typechecker.tree {
     TcNode=Node,
     Tree,
@@ -95,13 +98,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     SetterModel=Setter,
     TypedReferenceModel=TypedReference,
-    ReferenceModel=Reference,
     ControlBlockModel=ControlBlock,
     ScopeModel=Scope,
     ConstructorModel=Constructor
-}
-import com.redhat.ceylon.compiler.typechecker.context {
-    TypecheckerUnit
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
