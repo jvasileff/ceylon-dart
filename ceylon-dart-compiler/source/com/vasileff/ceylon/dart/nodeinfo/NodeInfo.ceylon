@@ -187,6 +187,7 @@ class BaseExpressionInfo(BaseExpression astNode)
 
     shared TypedReferenceModel? targetParameter => tcNode.targetParameter;
     shared TypeModel? parameterType => tcNode.parameterType;
+    shared Boolean staticMethodReference => tcNode.staticMethodReference;
 }
 
 shared

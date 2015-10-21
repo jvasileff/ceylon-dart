@@ -1094,12 +1094,10 @@ class ExpressionTransformer(CompilationContext ctx)
                     "Invocations of constructors of member classes not yet supported.");
             }
 
-            "that.invoked is a QualifiedExpression, even for constructors of
-             topelevel classes"
-            assert (is QualifiedExpression invoked = that.invoked);
-
-            "We only handle topelevel classes for now"
-            assert (invoked.receiverExpression is BaseExpression);
+            "that.invoked will be a BaseExpression or QualifiedExpression, even for
+             constructors of toplevel classes, where a BaseExpression may be used for
+             the constructor from within the class."
+            assert (is BaseExpression | QualifiedExpression invoked = that.invoked);
 
             value [argsSetup, argumentList]
                 =   generateArgumentListFromArguments {
