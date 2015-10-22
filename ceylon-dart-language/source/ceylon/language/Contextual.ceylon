@@ -52,8 +52,8 @@ shared class Contextual<Element>() {
     "Used to set a value for this `Contextual`"
     native shared class Using(Element|Element() newValue)
             satisfies Obtainable {
-        shared actual void obtain() {}
-        shared actual void release(Throwable? error) {}
+        native shared actual void obtain() {}
+        native shared actual void release(Throwable? error) {}
     }
 }
 
@@ -70,7 +70,7 @@ shared class Contextual<Element>() {
             satisfies Obtainable {
         variable Element? previous = null; 
         
-        shared actual void obtain() {
+        native("jvm") shared actual void obtain() {
             previous = threadLocal.get();
             if (is Element() newValue) {
                 threadLocal.set(newValue());    
@@ -79,7 +79,7 @@ shared class Contextual<Element>() {
             }
         }
         
-        shared actual void release(Throwable? error) {
+        native("jvm") shared actual void release(Throwable? error) {
             if (exists p=previous) {
                 threadLocal.set(p);
             } else {
@@ -102,7 +102,7 @@ shared class Contextual<Element>() {
             satisfies Obtainable {
         variable Element? previous = null; 
         
-        shared actual void obtain() {
+        native("js") shared actual void obtain() {
             previous = val;
             if (is Element() newValue) {
                 val = newValue();    
@@ -111,7 +111,7 @@ shared class Contextual<Element>() {
             }
         }
         
-        shared actual void release(Throwable? error) {
+        native("js") shared actual void release(Throwable? error) {
             if (exists p=previous) {
                 val = p;
             } else {
@@ -124,26 +124,26 @@ shared class Contextual<Element>() {
 native("dart")
 shared class Contextual<Element>() {
     variable Element? val = null;
-    
+
     native("dart") shared Element get() {
         assert (exists result = val);
         return result;
     }
-    
+
     native("dart") shared class Using(Element|Element() newValue)
             satisfies Obtainable {
-        variable Element? previous = null; 
-        
-        shared actual void obtain() {
+        variable Element? previous = null;
+
+        native("dart") shared actual void obtain() {
             previous = val;
             if (is Element() newValue) {
-                val = newValue();    
+                val = newValue();
             } else {
                 val = newValue;
             }
         }
-        
-        shared actual void release(Throwable? error) {
+
+        native("dart") shared actual void release(Throwable? error) {
             if (exists p=previous) {
                 val = p;
             } else {
