@@ -177,8 +177,11 @@ class BaseExpressionInfo(BaseExpression astNode)
     "The declaration of the target of the BaseExpression"
     shared DeclarationModel declaration => tcNode.declaration;
 
+    "If being invoked, the signature (arguments). This is based on the call-site, so
+     type information matches the argument expressions, not the expected types. And,
+     arguments not provided (for defaulted params) are not included."
     shared
-    {TypeModel*}? signature
+    List<TypeModel>? signature
         =>  if (exists sig = tcNode.signature)
             then CeylonList(sig)
             else null;
@@ -209,9 +212,11 @@ class QualifiedExpressionInfo(QualifiedExpression astNode)
     "The declaration of the target of the QualifiedExpression"
     shared DeclarationModel declaration => tcNode.declaration;
 
-    "If being invoked, the signature (parameters)."
+    "If being invoked, the signature (arguments). This is based on the call-site, so
+     type information matches the argument expressions, not the expected types. And,
+     arguments not provided (for defaulted params) are not included."
     shared
-    {TypeModel*}? signature
+    List<TypeModel>? signature
         =>  if (exists sig = tcNode.signature)
             then CeylonList(sig)
             else null;
@@ -796,7 +801,7 @@ class InvocationInfo(Invocation astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default Invocation node => astNode;
-    //value tcNode = assertedTcNode<Tree.InvocationExpression>(node);
+    //value tcNode = assertedTcNode<Tree.InvocationExpression>(astNode);
 }
 
 shared
@@ -886,7 +891,7 @@ class ExtensionOrConstructionInfo(ExtensionOrConstruction astNode)
         =>  asserted<ClassModel | ConstructorModel | Null>
                 (tcExtendedTypeExpression?.declaration);
 
-    shared default {TypeModel*}? signature
+    shared default List<TypeModel>? signature
         =>  if (exists s = tcExtendedTypeExpression?.signature)
             then CeylonList(s)
             else null;
@@ -914,7 +919,7 @@ class ConstructionInfo(Construction astNode)
     shared actual ConstructorModel declaration
         =>  asserted<ConstructorModel>(super.declaration);
 
-    shared actual {TypeModel*} signature
+    shared actual List<TypeModel> signature
         =>  assertExists(super.signature);
 
     shared actual TypeModel typeModel

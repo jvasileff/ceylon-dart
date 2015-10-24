@@ -116,6 +116,9 @@ import ceylon.ast.core {
 import ceylon.collection {
     LinkedList
 }
+import ceylon.interop.java {
+    CeylonList
+}
 import ceylon.language.meta {
     type
 }
@@ -188,9 +191,6 @@ import com.vasileff.ceylon.dart.nodeinfo {
     UnspecifiedVariableInfo,
     NodeInfo,
     TypeNameWithTypeArgumentsInfo
-}
-import com.vasileff.jl4c.guava.collect {
-    javaList
 }
 
 shared
@@ -741,7 +741,15 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformInvocation(Invocation that) {
         value info = InvocationInfo(that);
-        value invokedInfo = ExpressionInfo(that.invoked);
+
+        value invokedInfo
+            =   switch (invoked = that.invoked)
+                case (is BaseExpression)
+                    BaseExpressionInfo(invoked)
+                case (is QualifiedExpression)
+                    QualifiedExpressionInfo(invoked)
+                else
+                    ExpressionInfo(invoked);
 
         DeclarationModel? invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
@@ -807,9 +815,14 @@ class ExpressionTransformer(CompilationContext ctx)
                     | Null invokedDeclaration);
 
         value invokedDeclarationContainer
-            =  if (exists invokedDeclaration)
-               then getContainingClassOrInterface(invokedDeclaration)
-               else null;
+            =   if (exists invokedDeclaration)
+                then getContainingClassOrInterface(invokedDeclaration)
+                else null;
+
+        value signature
+            =   CeylonList {
+                    ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
+                };
 
         if (is FunctionModel | ValueModel invokedDeclaration,
                 !invokedDeclaration.shared,
@@ -855,12 +868,11 @@ class ExpressionTransformer(CompilationContext ctx)
                     then invokedDeclaration.parameterLists.size() > 1
                     else false;
 
-
             value [argsSetup, argumentList]
                 =   generateArgumentListFromArguments {
                         info;
                         that.arguments;
-                        invokedInfo.typeModel;
+                        signature;
                         invokedDeclaration;
                     };
 
@@ -914,8 +926,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     superType;
                     null;
                     invokedDeclaration;
-                    callableTypeAndArguments = [
-                        invokedInfo.typeModel,
+                    signatureAndArguments = [
+                        signature,
                         that.arguments
                     ];
                     invoked.memberOperator;
@@ -944,8 +956,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     receiverInfo.typeModel;
                     () => receiverInfo.node.transform(this);
                     invokedDeclaration;
-                    callableTypeAndArguments = [
-                        invokedInfo.typeModel,
+                    signatureAndArguments = [
+                        signature,
                         that.arguments
                     ];
                     invoked.memberOperator;
@@ -962,7 +974,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         =   generateArgumentListFromArguments {
                                 info;
                                 that.arguments;
-                                invokedInfo.typeModel;
+                                signature;
                                 invokedDeclaration;
                             };
 
@@ -1040,8 +1052,8 @@ class ExpressionTransformer(CompilationContext ctx)
                         receiverInfo.typeModel;
                         () => invoked.receiverExpression.transform(expressionTransformer);
                         invokedDeclaration;
-                        callableTypeAndArguments = [
-                            invokedInfo.typeModel,
+                        signatureAndArguments = [
+                            signature,
                             that.arguments
                         ];
                         invoked.memberOperator;
@@ -1059,7 +1071,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     =   generateArgumentListFromArguments {
                             info;
                             that.arguments;
-                            invokedInfo.typeModel;
+                            signature;
                             invokedDeclaration;
                         };
 
@@ -1103,7 +1115,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 =   generateArgumentListFromArguments {
                         info;
                         that.arguments;
-                        invokedInfo.typeModel;
+                        signature;
                         invokedDeclaration;
                     };
 
@@ -1465,18 +1477,14 @@ class ExpressionTransformer(CompilationContext ctx)
         // Determine element type (the `T`)
         assert(exists elementType = ceylonTypes.typeArgument(enumerableType));
 
-        // Callable type for `span<T>`
-        value callableType = ceylonTypes
-                .spanFunctionDeclaration
-                .appliedTypedReference(null,
-                    javaList { elementType })
-                .fullType;
+        // Signature type for `span<elementType>`
+        value signature = [elementType, elementType];
 
         return generateTopLevelInvocation {
             info;
             info.typeModel;
             ceylonTypes.spanFunctionDeclaration;
-            [callableType, [that.first, that.last]];
+            [signature, [that.first, that.last]];
         };
     }
 
@@ -1492,18 +1500,14 @@ class ExpressionTransformer(CompilationContext ctx)
         // Determine element type (the `T`)
         assert(exists elementType = ceylonTypes.typeArgument(enumerableType));
 
-        // Callable type for `measure<T>`
-        value callableType = ceylonTypes
-                .measureFunctionDeclaration
-                .appliedTypedReference(null,
-                    javaList { elementType })
-                .fullType;
+        // Signature type for `measure<elementType>`
+        value signature = [elementType, ceylonTypes.integerType];
 
         return generateTopLevelInvocation {
             info;
             info.typeModel;
             ceylonTypes.measureFunctionDeclaration;
-            [callableType, [that.first, that.size]];
+            [signature, [that.first, that.size]];
         };
     }
 

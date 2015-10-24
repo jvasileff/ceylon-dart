@@ -1102,13 +1102,18 @@ class TopLevelVisitor(CompilationContext ctx)
                 assert (exists callableType
                     =   extensionOrConstructionInfo.typeModel);
 
+                value signature
+                    =   CeylonList {
+                            ctx.unit.getCallableArgumentTypes(callableType.fullType);
+                        };
+
                 return
                 DartSuperConstructorInvocation {
                     null;
                     generateArgumentListFromArguments {
                         extensionOrConstructionInfo;
                         arguments;
-                        callableType;
+                        signature;
                         parameterList;
                     }[1];
                 };

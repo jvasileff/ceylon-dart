@@ -415,8 +415,8 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             TypeModel resultType,
             FunctionOrValueModel memberDeclaration,
-            [TypeModel, [Expression*] | PositionalArguments]?
-                    callableTypeAndArguments = null) {
+            [List<TypeModel>, [Expression*] | PositionalArguments]?
+                    signatureAndArguments = null) {
 
         "Only toplevels are supported; declaration's container must be a package."
         assert (memberDeclaration.container is PackageModel);
@@ -426,7 +426,7 @@ class BaseGenerator(CompilationContext ctx)
         //
         // NOTE not yet used for values
 
-        value [callableType, a] = callableTypeAndArguments else [null, []];
+        value [signature, a] = signatureAndArguments else [null, []];
 
         [Expression*] arguments;
         switch (a)
@@ -454,11 +454,8 @@ class BaseGenerator(CompilationContext ctx)
              translate to a Dart function"
             assert (is FunctionModel memberDeclaration, isFunction);
 
-            "If we have arguments, we'll have a callableType."
-            assert (exists callableType);
-
-            value argumentTypes = CeylonList(ctx.unit
-                    .getCallableArgumentTypes(callableType.fullType));
+            "If we have arguments, we'll have a signature."
+            assert (exists signature);
 
             value parameterDeclarations = CeylonList(
                     memberDeclaration.firstParameterList.parameters)
@@ -470,7 +467,7 @@ class BaseGenerator(CompilationContext ctx)
                 DartArgumentList {
                     [for (i -> argument in arguments.indexed)
                         withLhs {
-                            argumentTypes[i];
+                            signature[i];
                             parameterDeclarations[i];
                             () => argument.transform(expressionTransformer);
                         }
@@ -501,7 +498,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateInvocation(
             DScope scope,
-            "The return type of the invocation. If [[callableTypeAndArguments]]
+            "The return type of the invocation. If [[signatureAndArguments]]
              is also provided, the [[resultType]] should match exactly the
              return type of the given callable type."
             TypeModel resultType,
@@ -515,9 +512,9 @@ class BaseGenerator(CompilationContext ctx)
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
             FunctionOrValueModel | ClassModel memberDeclaration,
-            [TypeModel,   [DartExpression()*]
+            [List<TypeModel>, [DartExpression()*]
                         | [Expression*]
-                        | Arguments]? callableTypeAndArguments = null,
+                        | Arguments]? signatureAndArguments = null,
             AnyMemberOperator? memberOperator = null) {
 
         "By definition."
@@ -528,7 +525,7 @@ class BaseGenerator(CompilationContext ctx)
         assert (is Null | MemberOperator | SafeMemberOperator memberOperator);
         value safeMemberOperator = memberOperator is SafeMemberOperator;
 
-        value [callableType, a] = callableTypeAndArguments else [null, []];
+        value [signature, a] = signatureAndArguments else [null, []];
 
         [DartExpression()*] arguments;
 
@@ -549,8 +546,8 @@ class BaseGenerator(CompilationContext ctx)
                     => a.transform(expressionTransformer));
         }
         else { // is NamedArguments
-            "If we have arguments, we'll have a callableType."
-            assert (exists callableType);
+            "If we have arguments, we'll have a signature."
+            assert (exists signature);
 
             "If we have arguments, we'll have a function or class."
             assert (is FunctionModel | ClassModel memberDeclaration);
@@ -559,7 +556,7 @@ class BaseGenerator(CompilationContext ctx)
                 =   generateArgumentGeneratorsFromNamedArguments {
                         scope;
                         a;
-                        callableType;
+                        signature;
                         memberDeclaration.firstParameterList;
                     };
 
@@ -796,13 +793,10 @@ class BaseGenerator(CompilationContext ctx)
              constructor."
             assert (is FunctionModel | ClassModel memberDeclaration, isFunction);
 
-            "If we have arguments, we'll have a callableType."
-            assert (exists callableType);
+            "If we have arguments, we'll have a signature."
+            assert (exists signature);
 
             value argumentList {
-                value argumentTypes = CeylonList(ctx.unit
-                        .getCallableArgumentTypes(callableType.fullType));
-
                 value parameterDeclarations = CeylonList(
                         memberDeclaration.firstParameterList.parameters)
                         .collect(ParameterModel.model);
@@ -821,7 +815,7 @@ class BaseGenerator(CompilationContext ctx)
                         dartThisArgument,
                         [for (i -> argument in arguments.indexed)
                             withLhs {
-                                argumentTypes[i];
+                                signature[i];
                                 parameterDeclarations[i];
                                 argument;
                             }
@@ -1067,6 +1061,10 @@ class BaseGenerator(CompilationContext ctx)
 
         value typedReference = receiverType.getTypedMember(memberDeclaration, null);
 
+        value signature = CeylonList {
+            ctx.unit.getCallableArgumentTypes(typedReference.fullType);
+        };
+
         value rhsType = returnType else typedReference.type;
 
         value rhsDeclaration =
@@ -1087,7 +1085,7 @@ class BaseGenerator(CompilationContext ctx)
                 generateReceiver;
                 memberDeclaration;
                 (arguments nonempty) then
-                    [typedReference.fullType, arguments];
+                    [signature, arguments];
             }
         ];
     }
@@ -2492,6 +2490,9 @@ class BaseGenerator(CompilationContext ctx)
         "The actual return type given the receiver's parameterization"
         value resultType = ctx.unit.getCallableReturnType(callableType);
 
+        "The actual signature given the receiver's parameterization"
+        value signature = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
+
         "Dart parameters for the *outer* function–the one with the public facing
          signature."
         value outerParameters = parameters.collect((parameterModel) {
@@ -2571,7 +2572,7 @@ class BaseGenerator(CompilationContext ctx)
                         receiverType;
                         generateReceiver;
                         memberDeclaration;
-                        [callableType, innerArguments];
+                        [signature, innerArguments];
                         memberOperator;
                     };
                 };
@@ -2821,14 +2822,11 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [[DartStatement*], DartArgumentList] generateArgumentListFromArgumentList(
             ArgumentList argumentList,
-            TypeModel callableType,
+            List<TypeModel> signature,
             ParameterListModel parameterList) {
 
         value scope
             =   dScope(argumentList);
-
-        value parameterTypes
-            =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
         value listedArguments
             =   argumentList.listedArguments;
@@ -2879,7 +2877,7 @@ class BaseGenerator(CompilationContext ctx)
 
             // Main loop to populate dartArguments
             for (i -> parameter in CeylonIterable(parameterList.parameters).indexed) {
-                assert (exists parameterType = parameterTypes[i]); // the *lhs* type
+                assert (exists parameterType = signature[i]); // the *lhs* type
                 if (parameter.sequenced) {
                     dartArguments.add {
                         withLhs {
@@ -2991,7 +2989,7 @@ class BaseGenerator(CompilationContext ctx)
             // in the source.
 
             assert (exists parameter = parameterList.parameters.get(i));
-            assert (exists parameterType = parameterTypes[i]);
+            assert (exists parameterType = signature[i]);
 
             value dartIdentifier = DartSimpleIdentifier(tmpVariablePrefix + i.string);
 
@@ -3106,7 +3104,7 @@ class BaseGenerator(CompilationContext ctx)
         for (i -> parameter in CeylonIterable(parameterList.parameters).indexed
                 .skip(listedArguments.size)) {
 
-            assert (exists parameterType = parameterTypes[i]);
+            assert (exists parameterType = signature[i]);
 
             if (parameter.sequenced && !variadicDefinitelyEmpty) {
                 // Use spanFrom to generate an argument for the variadic
@@ -3244,7 +3242,7 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Arguments arguments,
             // TODO accept {TypeModel*} signature instead
-            TypeModel callableType,
+            List<TypeModel> signature,
             ParameterListModel | FunctionModel | ValueModel
                     | ClassModel | ConstructorModel declarationOrParameterList) {
 
@@ -3267,7 +3265,7 @@ class BaseGenerator(CompilationContext ctx)
             return
             generateArgumentListFromArgumentList {
                 arguments.argumentList;
-                callableType;
+                signature;
                 pList;
             };
         }
@@ -3276,12 +3274,9 @@ class BaseGenerator(CompilationContext ctx)
                 =   generateArgumentGeneratorsFromNamedArguments {
                         scope;
                         arguments;
-                        callableType;
+                        signature;
                         pList;
                     };
-
-            value argumentTypes
-                =   CeylonList(ctx.unit.getCallableArgumentTypes(callableType.fullType));
 
             value parameterDeclarations
                 =   CeylonList(pList.parameters).collect(ParameterModel.model);
@@ -3290,7 +3285,7 @@ class BaseGenerator(CompilationContext ctx)
                 =   DartArgumentList {
                         [for (i -> argument in argGenerators.indexed)
                             withLhs {
-                                argumentTypes[i];
+                                signature[i];
                                 parameterDeclarations[i];
                                 argument;
                             }
@@ -3305,7 +3300,7 @@ class BaseGenerator(CompilationContext ctx)
     [[DartStatement*], [DartExpression()*]] generateArgumentGeneratorsFromNamedArguments(
             DScope scope,
             NamedArguments namedArguments,
-            TypeModel callableType,
+            List<TypeModel> signature,
             ParameterListModel parameterList) {
 
         variable String? tmpVariableMemo = null;
@@ -3314,11 +3309,6 @@ class BaseGenerator(CompilationContext ctx)
         value tmpVariable
             =>  tmpVariableMemo else
                 (tmpVariableMemo = dartTypes.createTempNameCustom("arg"));
-
-        value argumentTypes
-            =   CeylonList {
-                    ctx.unit.getCallableArgumentTypes(callableType.fullType);
-                };
 
         value parameters
             =   CeylonList {
@@ -3333,7 +3323,7 @@ class BaseGenerator(CompilationContext ctx)
             - [[DartSimpleIdentifier]] Dart temp variable identifier"
         value parameterDetails
             =   ImmutableMap {
-                    for (i->[p,a] in zipPairs(parameters, argumentTypes).indexed)
+                    for (i->[p,a] in zipPairs(parameters, signature).indexed)
                     p -> [i, a, p.model,
                           DartSimpleIdentifier(tmpVariable + "$" + i.string)]
                 };
