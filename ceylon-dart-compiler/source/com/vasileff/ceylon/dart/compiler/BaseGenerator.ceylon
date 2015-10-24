@@ -494,6 +494,48 @@ class BaseGenerator(CompilationContext ctx)
         };
     }
 
+    [[DartStatement*], [DartExpression*]] generateArguments(
+            DScope scope,
+            List<TypeModel> signature,
+            ParameterListModel parameterList,
+            [DartExpression()*] | [Expression*] | Arguments arguments) {
+
+        if (is PositionalArguments | NamedArguments arguments) {
+            value [a, b]
+                =   generateArgumentListFromArguments {
+                        scope;
+                        arguments;
+                        signature;
+                        parameterList;
+                    };
+            return [a, b.arguments];
+        }
+
+        [DartStatement*] argsSetup;
+        [DartExpression()*] argGenerators;
+
+        if (is [DartExpression()*] arguments) {
+            argsSetup = [];
+            argGenerators = arguments;
+        }
+        else { // is [Expression*]
+            argsSetup = [];
+            argGenerators = arguments.collect((a) => ()
+                    => a.transform(expressionTransformer));
+        }
+
+        value argExpressions
+            =   [for (i -> argument in argGenerators.indexed)
+                    withLhs {
+                        signature[i];
+                        parameterList.parameters.get(i)?.model;
+                        argument;
+                    }
+                ];
+
+        return [argsSetup, argExpressions];
+    }
+
     "Generate an invocation or propery access expression."
     shared
     DartExpression generateInvocation(
@@ -527,47 +569,37 @@ class BaseGenerator(CompilationContext ctx)
 
         value [signature, a] = signatureAndArguments else [null, []];
 
-        [DartExpression()*] arguments;
+        [[DartStatement*], [DartExpression*]] argsSetupAndExpressions;
 
-        [DartStatement*] argsSetup;
-
-        if (is [DartExpression()*] a) {
-            argsSetup = [];
-            arguments = a;
-        }
-        else if (is [Expression*] a) {
-            argsSetup = [];
-            arguments = a.collect((a) => ()
-                    => a.transform(expressionTransformer));
-        }
-        else if (is PositionalArguments a) {
-            argsSetup = [];
-            arguments = a.argumentList.listedArguments.collect((a) => ()
-                    => a.transform(expressionTransformer));
-        }
-        else { // is NamedArguments
-            "If we have arguments, we'll have a signature."
-            assert (exists signature);
-
-            "If we have arguments, we'll have a function or class."
-            assert (is FunctionModel | ClassModel memberDeclaration);
-
-            value [x, y]
-                =   generateArgumentGeneratorsFromNamedArguments {
-                        scope;
-                        a;
-                        signature;
-                        memberDeclaration.firstParameterList;
-                    };
-
-            argsSetup = x;
-            arguments = y;
+        function standardArgs() {
+            if (!exists signatureAndArguments) {
+                return [[], []];
+            }
+            assert (!is ValueModel | SetterModel memberDeclaration);
+            return generateArguments {
+                scope;
+                signatureAndArguments[0];
+                memberDeclaration.firstParameterList;
+                a;
+            };
         }
 
         // TODO WIP native optimizations
         if (exists generateReceiver, // No optimizations for `super` receiver
             exists optimization = nativeBinaryFunctions(memberDeclaration)) {
-            assert (exists rightOperandArgument = arguments[0]);
+
+            value rightOperandArgument
+                =   if (is [DartExpression()*] a) then
+                        a[0]
+                    else if (is [Expression*] a) then
+                        (() => a[0].transform(expressionTransformer))
+                    else if (is PositionalArguments a) then
+                        (() => assertExists(a.argumentList.listedArguments[0])
+                            .transform(expressionTransformer))
+                    else
+                        null;
+
+            assert (exists rightOperandArgument);
 
             value [type, leftOperandType, operand, rightOperandType] = optimization;
 
@@ -626,6 +658,9 @@ class BaseGenerator(CompilationContext ctx)
                         generateReceiver;
                     }];
 
+            argsSetupAndExpressions
+                =   standardArgs();
+
             isFunction
                 =   true; // Constructor, really
 
@@ -666,6 +701,9 @@ class BaseGenerator(CompilationContext ctx)
 
                 thisArgument = [dartTypes.expressionForThis(scopeContainer)];
 
+                argsSetupAndExpressions
+                    =   standardArgs();
+
                 isFunction = true; // Static interface functions are... functions
 
                 // Note: It's nice that we have the declaration pointed to by
@@ -693,8 +731,15 @@ class BaseGenerator(CompilationContext ctx)
             }
             else {
                 // super refers to the superclass
-                thisArgument = [];
-                dartBoxedReceiver = DartSimpleIdentifier("super");
+                thisArgument
+                        =   [];
+
+                argsSetupAndExpressions
+                        =   standardArgs();
+
+                dartBoxedReceiver
+                        =   DartSimpleIdentifier("super");
+
                 value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     memberDeclaration;
@@ -713,6 +758,9 @@ class BaseGenerator(CompilationContext ctx)
                         memberContainer;
                         generateReceiver;
                     }];
+
+            argsSetupAndExpressions
+                =   standardArgs();
 
             isFunction
                 =   true; // Static interface functions are... functions
@@ -743,7 +791,12 @@ class BaseGenerator(CompilationContext ctx)
         else {
             // receiver is not `super`
 
-            thisArgument = [];
+            thisArgument
+                =   [];
+
+            argsSetupAndExpressions
+                =   standardArgs();
+
             value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                 scope;
                 memberDeclaration;
@@ -787,20 +840,18 @@ class BaseGenerator(CompilationContext ctx)
                 else memberDeclaration;
 
         DartExpression invocation;
-        if (arguments nonempty || memberIdentifier is DartConstructorName) {
+        if (argsSetupAndExpressions[1] nonempty
+                || memberIdentifier is DartConstructorName) {
+
             "If there are arguments, the member is a FunctionModel and will translate
              to a Dart function, or it's a ClassModel, and will translate to a Dart
              constructor."
             assert (is FunctionModel | ClassModel memberDeclaration, isFunction);
 
-            "If we have arguments, we'll have a signature."
-            assert (exists signature);
+            //"If we have arguments, we'll have a signature."
+            //assert (exists signature);
 
             value argumentList {
-                value parameterDeclarations = CeylonList(
-                        memberDeclaration.firstParameterList.parameters)
-                        .collect(ParameterModel.model);
-
                 "Actual `$this` argument which may be the parameter to an anonymous
                  function for the null safe operator."
                 value dartThisArgument
@@ -813,13 +864,7 @@ class BaseGenerator(CompilationContext ctx)
                 DartArgumentList {
                     concatenate {
                         dartThisArgument,
-                        [for (i -> argument in arguments.indexed)
-                            withLhs {
-                                signature[i];
-                                parameterDeclarations[i];
-                                argument;
-                            }
-                        ]
+                        argsSetupAndExpressions[1]
                     };
                 };
             }
@@ -890,7 +935,7 @@ class BaseGenerator(CompilationContext ctx)
             else {
                 invocation
                     =   createExpressionEvaluationWithSetup {
-                            argsSetup;
+                            argsSetupAndExpressions[0];
                             if (is DartConstructorName memberIdentifier) then
                                 DartInstanceCreationExpression {
                                     false;
