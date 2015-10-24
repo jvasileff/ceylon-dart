@@ -837,40 +837,61 @@ class BaseGenerator(CompilationContext ctx)
                  operator is used."
                 assert (exists ceylonReceiverDartType);
 
-                invocation
-                    =   createNullSafeExpression {
-                            parameterIdentifier = DartSimpleIdentifier("$r$");
-                            parameterType = ceylonReceiverDartType;
-                            // For static invocations, the possibly null value is the
-                            // $this argument
-                            maybeNullExpression
-                                =   if (nonempty thisArgument)
-                                    then thisArgument.first
-                                    else dartBoxedReceiver;
-                            ifNullExpression = DartNullLiteral();
-                            ifNotNullExpression =
-                                if (is DartConstructorName memberIdentifier) then
-                                    DartInstanceCreationExpression {
-                                        false;
+                if (nonempty thisArgument) {
+                    // Static invocation (Dart interface static method or member class
+                    // constructor).
+
+                    invocation
+                        =   createNullSafeExpression {
+                                parameterIdentifier = DartSimpleIdentifier("$r$");
+                                parameterType = ceylonReceiverDartType;
+                                // Static invocation: the possibly null value is the
+                                // $this argument
+                                maybeNullExpression = thisArgument.first;
+                                ifNullExpression = DartNullLiteral();
+                                ifNotNullExpression =
+                                    if (is DartConstructorName memberIdentifier) then
+                                        DartInstanceCreationExpression {
+                                            false;
+                                            memberIdentifier;
+                                            argumentList;
+                                        }
+                                    else
+                                        DartFunctionExpressionInvocation {
+                                            DartPropertyAccess {
+                                                // Static invocation: the dart receiver
+                                                // is the static method's containing
+                                                // interface, which is represented by
+                                                // `dartBoxedReceiver`
+                                                // (`dartBoxedReceiver` is *not* the
+                                                // potential null in this case)
+                                                dartBoxedReceiver;
+                                                memberIdentifier;
+                                            };
+                                            argumentList;
+                                        };
+                            };
+                }
+                else {
+                    // Non-static invocation on an (possibly null) object receiver
+
+                    "Construction of member classes will always involve a $this argument."
+                    assert (!is DartConstructorName memberIdentifier);
+
+                    invocation
+                        =   createNullSafeExpression {
+                                parameterIdentifier = DartSimpleIdentifier("$r$");
+                                parameterType = ceylonReceiverDartType;
+                                maybeNullExpression = dartBoxedReceiver;
+                                ifNullExpression = DartNullLiteral();
+                                ifNotNullExpression =
+                                    DartMethodInvocation {
+                                        DartSimpleIdentifier("$r$");
                                         memberIdentifier;
                                         argumentList;
-                                    }
-                                else
-                                    DartFunctionExpressionInvocation {
-                                        DartPropertyAccess {
-                                            // For static invocations, the dart receiver
-                                            // is the static methods containing interface,
-                                            // which is represented by `dartBoxedReceiver`
-                                            // (`dartBoxedReceiver` is not the expression
-                                            // that might be null in this case)
-                                            if (thisArgument nonempty)
-                                            then dartBoxedReceiver
-                                            else DartSimpleIdentifier("$r$");
-                                            memberIdentifier;
-                                        };
-                                        argumentList;
                                     };
-                        };
+                            };
+                }
             }
             else {
                 invocation
