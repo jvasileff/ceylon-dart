@@ -349,7 +349,7 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     Result withLhs<Result>(
-            TypeModel? lhsType,
+            TypeModel | TypeDetails | Null lhsType,
             "For the Value, or the return type of the Function.
 
              Regarding callable parameters:
@@ -364,6 +364,16 @@ class CoreGenerator(CompilationContext ctx) {
                callers *must* provide `lhsType = functionDeclaration.type`."
             FunctionOrValueModel? lhsDeclaration,
             Result fun()) {
+
+        if (is TypeDetails lhsType) {
+            // TypeDetals overrides everything
+            return withLhsValues {
+                lhsType.type;
+                lhsType.erasedToNative;
+                lhsType.erasedToObject;
+                fun;
+            };
+        }
 
         if (exists lhsDeclaration, isCallableParameterOrParamOf(lhsDeclaration)) {
             // Callable parameters are `Callable` values and are never erased to native
@@ -432,9 +442,14 @@ class CoreGenerator(CompilationContext ctx) {
     "Never erase to native (always box)"
     shared
     Result withLhsNonNative<Result>(
-            TypeModel lhsType,
+            TypeModel | TypeDetails lhsType,
             Result fun())
-        =>  withLhsValues(lhsType, false, false, fun);
+        =>  withLhsValues {
+                switch (lhsType)
+                case (is TypeDetails) lhsType.type
+                case (is TypeModel) lhsType;
+                false; false; fun;
+            };
 
     Result withLhsValues<Result>(
             TypeOrNoType? lhsType,

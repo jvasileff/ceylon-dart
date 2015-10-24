@@ -496,7 +496,7 @@ class BaseGenerator(CompilationContext ctx)
 
     [[DartStatement*], [DartExpression*]] generateArguments(
             DScope scope,
-            List<TypeModel> signature,
+            List<TypeModel | TypeDetails> signature,
             ParameterListModel parameterList,
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
@@ -2867,7 +2867,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [[DartStatement*], [DartExpression*]] generateArgumentsFromPositionalArguments(
             PositionalArguments positionalArguments,
-            List<TypeModel> signature,
+            List<TypeModel | TypeDetails> signature,
             ParameterListModel parameterList) {
 
         value scope
@@ -3290,7 +3290,7 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Arguments arguments,
             // TODO accept {TypeModel*} signature instead
-            List<TypeModel> signature,
+            List<TypeModel | TypeDetails> signature,
             ParameterListModel | FunctionModel | ValueModel
                     | ClassModel | ConstructorModel declarationOrParameterList) {
 
@@ -3334,7 +3334,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     [[DartStatement*], [DartExpression*]] generateArgumentsFromNamedArguments(
             NamedArguments namedArguments,
-            List<TypeModel> signature,
+            List<TypeModel | TypeDetails> signature,
             ParameterListModel parameterList) {
 
         value scope = NodeInfo(namedArguments);
@@ -3550,7 +3550,12 @@ class BaseGenerator(CompilationContext ctx)
                         ((){
                             "If not defaulted and not variadic, it must be an
                              Iterable."
-                            assert (ceylonTypes.isCeylonIterable(type));
+                            assert (ceylonTypes.isCeylonIterable {
+                                switch(type)
+                                case (is TypeDetails) type.type
+                                case (is TypeModel) type;
+                            });
+
                             return
                             dartTypes.dartIdentifierForFunctionOrValue {
                                 scope;

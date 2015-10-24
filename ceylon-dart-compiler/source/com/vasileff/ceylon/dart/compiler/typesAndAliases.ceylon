@@ -30,6 +30,11 @@ shared object noType satisfies NoType {}
 
 shared alias TypeOrNoType => TypeModel | NoType;
 
+shared class TypeDetails(
+        shared TypeModel type,
+        shared Boolean erasedToNative,
+        shared Boolean erasedToObject) {}
+
 shared alias LocalNonInitializerScope
     =>  ConstructorModel
         | ControlBlockModel
