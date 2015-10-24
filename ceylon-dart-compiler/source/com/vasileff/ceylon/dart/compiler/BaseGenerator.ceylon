@@ -586,35 +586,39 @@ class BaseGenerator(CompilationContext ctx)
 
         // TODO WIP native optimizations
         if (exists generateReceiver, // No optimizations for `super` receiver
-            exists optimization = nativeBinaryFunctions(memberDeclaration)) {
+                exists optimization = nativeBinaryFunctions(memberDeclaration)) {
 
-            value rightOperandArgument
-                =   if (is [DartExpression()*] a) then
-                        a[0]
-                    else if (is [Expression*] a) then
-                        (() => a[0].transform(expressionTransformer))
-                    else if (is PositionalArguments a) then
-                        (() => assertExists(a.argumentList.listedArguments[0])
-                            .transform(expressionTransformer))
-                    else
-                        null;
+            assert (!is ValueModel | SetterModel memberDeclaration);
 
-            assert (exists rightOperandArgument);
+            value [type, leftOperandType, operand, rightOperandType]
+                =   optimization;
 
-            value [type, leftOperandType, operand, rightOperandType] = optimization;
+            value rightOperandTypeDetail
+                =   TypeDetails(rightOperandType, true, false);
+
+            value [argsSetup, argsExpressions]
+                =   generateArguments {
+                        scope;
+                        [rightOperandTypeDetail];
+                        memberDeclaration.firstParameterList;
+                        a;
+                    };
+
+            assert (exists rightOperandArgument
+                =   argsExpressions[0]);
 
             return withBoxingCustom {
                 scope;
                 type;
                 true; false;
-                DartBinaryExpression {
-                    leftOperand = withLhsNative {
-                        leftOperandType;
-                        generateReceiver;
-                    };
-                    operator = operand;
-                    rightOperand = withLhsNative {
-                        rightOperandType;
+                createExpressionEvaluationWithSetup {
+                    argsSetup;
+                    DartBinaryExpression {
+                        withLhsNative {
+                            leftOperandType;
+                            generateReceiver;
+                        };
+                        operand;
                         rightOperandArgument;
                     };
                 };
@@ -3467,6 +3471,7 @@ class BaseGenerator(CompilationContext ctx)
                             dartTypes.dartTypeNameForDeclaration {
                                 scope;
                                 parameterModelModel;
+                                typeModel;
                             };
                             [DartVariableDeclaration {
                                 dartIdentifier;

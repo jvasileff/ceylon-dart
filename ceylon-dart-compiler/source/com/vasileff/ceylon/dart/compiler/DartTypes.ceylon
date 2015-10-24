@@ -461,7 +461,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeName dartTypeNameForDeclaration(
             DScope scope,
-            FunctionOrValueModel declaration) {
+            FunctionOrValueModel declaration,
+            TypeModel | TypeDetails | Null type = null) {
 
         "By definition."
         assert (is FunctionModel | ValueModel | SetterModel declaration);
@@ -477,7 +478,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // when crafting the Dart type.
                     dartTypeModel(ceylonTypes.callableAnythingType)
                 case (is ValueModel | SetterModel)
-                    dartTypeModelForDeclaration(declaration);
+                    dartTypeModelForDeclaration(declaration, type);
 
         value fromDartPrefix
             =   moduleImportPrefix(scope);
@@ -558,12 +559,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeModel dartTypeModelForDeclaration(
-            FunctionOrValueModel declaration)
-        =>  dartTypeModel {
-                declaration.type;
-                erasedToNative(declaration);
-                erasedToObject(declaration);
-            };
+            FunctionOrValueModel declaration,
+            TypeModel | TypeDetails | Null type = null)
+        =>  if (is TypeDetails type) then
+                dartTypeModel {
+                    type.type;
+                    type.erasedToNative;
+                    type.erasedToObject;
+                }
+            else
+                dartTypeModel {
+                    type else declaration.type;
+                    erasedToNative(declaration);
+                    erasedToObject(declaration);
+                };
 
     "Obtain the [[DartTypeModel]] that will be used for the given [[TypeModel]]."
     shared
