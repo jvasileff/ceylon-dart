@@ -2865,13 +2865,16 @@ class BaseGenerator(CompilationContext ctx)
                 };
 
     shared
-    [[DartStatement*], DartArgumentList] generateArgumentListFromArgumentList(
-            ArgumentList argumentList,
+    [[DartStatement*], [DartExpression*]] generateArgumentsFromPositionalArguments(
+            PositionalArguments positionalArguments,
             List<TypeModel> signature,
             ParameterListModel parameterList) {
 
         value scope
-            =   dScope(argumentList);
+            =   dScope(positionalArguments);
+
+        value argumentList
+            =   positionalArguments.argumentList;
 
         value listedArguments
             =   argumentList.listedArguments;
@@ -3009,7 +3012,7 @@ class BaseGenerator(CompilationContext ctx)
                     }
                 }
             }
-            return [dartStatements, DartArgumentList(dartArguments.sequence())];
+            return [dartStatements, dartArguments.sequence()];
         }
 
         value dartStatements = LinkedList<DartStatement>();
@@ -3258,7 +3261,7 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
 
-        return [dartStatements.sequence(), DartArgumentList(dartArguments.sequence())];
+        return [dartStatements.sequence(), dartArguments.sequence()];
     }
 
     "Returns the DartArgumentList (with non-native and erased-to-object arguments), and
@@ -3307,46 +3310,34 @@ class BaseGenerator(CompilationContext ctx)
 
         switch (arguments)
         case (is PositionalArguments) {
-            return
-            generateArgumentListFromArgumentList {
-                arguments.argumentList;
-                signature;
-                pList;
-            };
-        }
-        case (is NamedArguments) {
-            value [argsSetup, argGenerators]
-                =   generateArgumentGeneratorsFromNamedArguments {
-                        scope;
+            value [argsSetup, argExpressions]
+                =   generateArgumentsFromPositionalArguments {
                         arguments;
                         signature;
                         pList;
                     };
 
-            value parameterDeclarations
-                =   CeylonList(pList.parameters).collect(ParameterModel.model);
-
-            value argumentList
-                =   DartArgumentList {
-                        [for (i -> argument in argGenerators.indexed)
-                            withLhs {
-                                signature[i];
-                                parameterDeclarations[i];
-                                argument;
-                            }
-                        ];
+            return [argsSetup, DartArgumentList(argExpressions)];
+        }
+        case (is NamedArguments) {
+            value [argsSetup, argExpressions]
+                =   generateArgumentsFromNamedArguments {
+                        arguments;
+                        signature;
+                        pList;
                     };
 
-            return [argsSetup, argumentList];
+            return [argsSetup, DartArgumentList(argExpressions)];
         }
     }
 
     shared
-    [[DartStatement*], [DartExpression()*]] generateArgumentGeneratorsFromNamedArguments(
-            DScope scope,
+    [[DartStatement*], [DartExpression*]] generateArgumentsFromNamedArguments(
             NamedArguments namedArguments,
             List<TypeModel> signature,
             ParameterListModel parameterList) {
+
+        value scope = NodeInfo(namedArguments);
 
         variable String? tmpVariableMemo = null;
 
@@ -3543,36 +3534,30 @@ class BaseGenerator(CompilationContext ctx)
             =   parameterDetails.collect((entry)
                 =>  let (parameter -> [index, type, declaration,
                                        dartIdentifier] = entry) (
-                    () => withBoxing {
-                        scope;
-                        type;
-                        declaration;
-                        //dartIdentifier;
-                        if (definedParameters.contains(parameter)) then
-                            dartIdentifier
-                        else if (parameter.sequenced) then
-                            // Per spec 4.3.6: A variadic parameter may not have a
-                            // default argument.
+                    if (definedParameters.contains(parameter)) then
+                        dartIdentifier
+                    else if (parameter.sequenced) then
+                        // Per spec 4.3.6: A variadic parameter may not have a
+                        // default argument.
+                        dartTypes.dartIdentifierForFunctionOrValue {
+                            scope;
+                            ceylonTypes.emptyValueDeclaration;
+                            false;
+                        }[0]
+                    else if (parameter.defaulted) then
+                        dartTypes.dartDefault(scope)
+                    else
+                        ((){
+                            "If not defaulted and not variadic, it must be an
+                             Iterable."
+                            assert (ceylonTypes.isCeylonIterable(type));
+                            return
                             dartTypes.dartIdentifierForFunctionOrValue {
                                 scope;
                                 ceylonTypes.emptyValueDeclaration;
                                 false;
-                            }[0]
-                        else if (parameter.defaulted) then
-                            dartTypes.dartDefault(scope)
-                        else
-                            ((){
-                                "If not defaulted and not variadic, it must be an
-                                 Iterable."
-                                assert (ceylonTypes.isCeylonIterable(type));
-                                return
-                                dartTypes.dartIdentifierForFunctionOrValue {
-                                    scope;
-                                    ceylonTypes.emptyValueDeclaration;
-                                    false;
-                                }[0];
-                            })();
-                    }));
+                            }[0];
+                        })()));
 
         return [argsSetup, arguments];
     }
