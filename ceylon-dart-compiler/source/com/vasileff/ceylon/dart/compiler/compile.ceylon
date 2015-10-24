@@ -35,16 +35,14 @@ import java.io {
 import java.util {
     List
 }
-import com.redhat.ceylon.common {
-    Backend
-}
 
 shared
 [DartCompilationUnit*] compile(Boolean verbose=false, {String*} listings = {}) {
 
     // TODO this function is becoming a mess
 
-    Backend.registerBackend("Dart", "dart");
+    // make sure Dart backend is registered
+    noop(dartBackend);
 
     value virtualFiles = listings.indexed.map((listing) => object
             satisfies VirtualFile {

@@ -31,9 +31,6 @@ import com.redhat.ceylon.cmr.api {
 import com.redhat.ceylon.cmr.ceylon {
     OutputRepoUsingTool
 }
-import com.redhat.ceylon.common {
-    Backend
-}
 import com.redhat.ceylon.common.config {
     DefaultToolOptions
 }
@@ -51,6 +48,9 @@ import com.redhat.ceylon.common.tools {
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
+}
+import com.redhat.ceylon.model.typechecker.context {
+    TypeCache
 }
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module
@@ -74,7 +74,8 @@ import com.vasileff.ceylon.dart.compiler {
     CompilationContext,
     CompilerBug,
     computeCaptures,
-    computeClassCaptures
+    computeClassCaptures,
+    dartBackend
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -90,9 +91,6 @@ import java.lang {
 }
 import java.util {
     JList=List
-}
-import com.redhat.ceylon.model.typechecker.context {
-    TypeCache
 }
 
 shared
@@ -158,7 +156,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
 
     void doRun() {
-        Backend.registerBackend("Dart", "dart");
+        // make sure Dart backend is registered
+        noop(dartBackend);
 
         Integer t0;
         Integer t1;
@@ -170,7 +169,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         value resources = DefaultToolOptions.compilerResourceDirs;
         value resolver = SourceArgumentsResolver(roots, resources, ".ceylon");
 
-        resolver.cwd(cwd).expandAndParse(moduleOrFile, Backend.\iNone);
+        resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
 
         t0 = system.nanoseconds;
 

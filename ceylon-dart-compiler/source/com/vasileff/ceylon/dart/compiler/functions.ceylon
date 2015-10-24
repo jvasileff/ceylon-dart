@@ -46,6 +46,9 @@ import com.vasileff.ceylon.dart.nodeinfo {
     DeclarationInfo,
     keys
 }
+import com.redhat.ceylon.common {
+    Backends
+}
 
 void printNodeAsCode(Node node) {
     TCNode tcNode(Node node)
@@ -265,25 +268,21 @@ Boolean isCallableParameterOrParamOf(FunctionOrValueModel declaration)
         else
             false;
 
-"Returns the name of the backend for declarations marked `native` with a Ceylon
- implementation for a specific backend, the empty String (\"\") for declarations marked
- native without specifying a backend, or null for non-`native` declarations."
-String? getNative(Declaration|DeclarationInfo|DeclarationModel that)
+"Returns the [[Backends]] object for the declaration."
+Backends getNativeBackends(Declaration|DeclarationInfo|DeclarationModel that)
     =>  switch (that)
         case (is Declaration)
-            DeclarationInfo(that).declarationModel.nativeBackend
+            DeclarationInfo(that).declarationModel.nativeBackends
         case (is DeclarationInfo)
-            that.declarationModel.nativeBackend
+            that.declarationModel.nativeBackends
         case (is DeclarationModel)
-            that.nativeBackend;
+            that.nativeBackends;
 
 "Returns true if the declaration is not marked `native`, or if it is marked `native`
  with a Ceylon implementation for the Dart backend."
 Boolean isForDartBackend(Declaration|DeclarationInfo|DeclarationModel that)
-    =>  if (exists native=getNative(that))
-        then native.equals("dart")
-        else true;
-
+    =>  let (backends = getNativeBackends(that))
+        backends.none() || backends.supports(dartBackend);
 
 shared
 SetterModel|FunctionModel|ValueModel? mostRefined

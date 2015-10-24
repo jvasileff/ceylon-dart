@@ -1,3 +1,6 @@
+import com.redhat.ceylon.common {
+    Backend
+}
 import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ConstructorModel=Constructor,
@@ -54,3 +57,6 @@ shared class VariableTriple(
  - conditionExpression"
 shared alias ConditionCodeTuple
     =>  [DartVariableDeclarationStatement?, DartExpression, VariableTriple*];
+
+shared Backend dartBackend
+    =   Backend.registerBackend("Dart", "dart");
