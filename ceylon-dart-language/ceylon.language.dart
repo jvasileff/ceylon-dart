@@ -8377,14 +8377,14 @@ abstract class meta$declaration$ClassDeclaration implements meta$declaration$Cla
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
             typeArguments = $package$empty;
         }
-        return $this.classApply(typeArguments as Sequential).apply();
+        return $this.classApply(typeArguments as Sequential).apply(arguments);
     }
     $dart$core.Object memberInstantiate([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
     static $dart$core.Object $memberInstantiate([final meta$declaration$ClassDeclaration $this, $dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
             typeArguments = $package$empty;
         }
-        return $this.memberClassApply(throw new AssertionError("Meta expressions unsupported at 'ClassDeclaration.ceylon: 103:54-103:62'"), typeArguments as Sequential).bind(container).apply();
+        return $this.memberClassApply(throw new AssertionError("Meta expressions unsupported at 'ClassDeclaration.ceylon: 103:54-103:62'"), typeArguments as Sequential).bind(container).apply(arguments);
     }
     $dart$core.Object getConstructorDeclaration([$dart$core.String name]);
     Sequential constructorDeclarations();
@@ -8445,7 +8445,7 @@ abstract class meta$declaration$FunctionalDeclaration implements meta$declaratio
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
             typeArguments = $package$empty;
         }
-        return ($this.apply(typeArguments as Sequential) as meta$model$Applicable).apply();
+        return ($this.apply(typeArguments as Sequential) as meta$model$Applicable).apply(arguments);
     }
     $dart$core.Object memberInvoke([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
 }
