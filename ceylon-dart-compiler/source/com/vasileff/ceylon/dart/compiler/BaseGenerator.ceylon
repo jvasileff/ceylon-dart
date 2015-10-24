@@ -584,46 +584,7 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        // TODO WIP native optimizations
-        if (exists generateReceiver, // No optimizations for `super` receiver
-                exists optimization = nativeBinaryFunctions(memberDeclaration)) {
-
-            assert (!is ValueModel | SetterModel memberDeclaration);
-
-            value [type, leftOperandType, operand, rightOperandType]
-                =   optimization;
-
-            value rightOperandTypeDetail
-                =   TypeDetails(rightOperandType, true, false);
-
-            value [argsSetup, argsExpressions]
-                =   generateArguments {
-                        scope;
-                        [rightOperandTypeDetail];
-                        memberDeclaration.firstParameterList;
-                        a;
-                    };
-
-            assert (exists rightOperandArgument
-                =   argsExpressions[0]);
-
-            return withBoxingCustom {
-                scope;
-                type;
-                true; false;
-                createExpressionEvaluationWithSetup {
-                    argsSetup;
-                    DartBinaryExpression {
-                        withLhsNative {
-                            leftOperandType;
-                            generateReceiver;
-                        };
-                        operand;
-                        rightOperandArgument;
-                    };
-                };
-            };
-        }
+        DartExpression(DartExpression)? optimizedExpression;
 
         "An optional `$this` argument, for use with static invocations and constructors."
         [DartExpression]|[] thisArgument;
@@ -655,6 +616,9 @@ class BaseGenerator(CompilationContext ctx)
              or interface."
             assert (is ClassOrInterfaceModel memberContainer
                  =  getContainingClassOrInterface(memberDeclaration.container));
+
+            optimizedExpression
+                =   null;
 
             thisArgument
                 =   [withLhsDenotable {
@@ -705,6 +669,9 @@ class BaseGenerator(CompilationContext ctx)
 
                 thisArgument = [dartTypes.expressionForThis(scopeContainer)];
 
+                optimizedExpression
+                    =   null;
+
                 argsSetupAndExpressions
                     =   standardArgs();
 
@@ -735,6 +702,10 @@ class BaseGenerator(CompilationContext ctx)
             }
             else {
                 // super refers to the superclass
+
+                optimizedExpression
+                        =   null;
+
                 thisArgument
                         =   [];
 
@@ -756,7 +727,12 @@ class BaseGenerator(CompilationContext ctx)
         else if (!memberDeclaration.shared,
                  is InterfaceModel memberContainer
                          =  getContainingClassOrInterface(memberDeclaration)) {
+
             // Invoking private interface member; must call static implementation method.
+
+            optimizedExpression
+                =   null;
+
             thisArgument
                 =   [withLhsDenotable {
                         memberContainer;
@@ -795,44 +771,110 @@ class BaseGenerator(CompilationContext ctx)
         else {
             // receiver is not `super`
 
-            thisArgument
-                =   [];
+            // TODO WIP native optimizations
+            if (exists optimization = nativeBinaryFunctions(memberDeclaration)) {
 
-            argsSetupAndExpressions
-                =   standardArgs();
+                assert (!is ValueModel | SetterModel memberDeclaration);
 
-            value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                scope;
-                memberDeclaration;
-                false;
-            };
-            memberIdentifier = m;
-            isFunction = f;
+                value [type, leftOperandType, operand, rightOperandType]
+                    =   optimization;
 
-            // Determine usable receiver type. `withLhsDenotable` would be simpler, but
-            // we may need the type (for safeMemberOperator code)
-            assert (is ClassOrInterfaceModel container
-                =   container(memberDeclaration));
+                value rightOperandTypeDetail
+                    =   TypeDetails(rightOperandType, true, false);
 
-            value receiverDenotableType
-                =   ceylonTypes.denotableType {
-                        receiverType;
-                        container;
-                    };
+                value [argsSetup, argsExpressions]
+                    =   generateArguments {
+                            scope;
+                            [rightOperandTypeDetail];
+                            memberDeclaration.firstParameterList;
+                            a;
+                        };
 
-            ceylonReceiverDartType
-                =   dartTypes.dartTypeName {
-                        scope;
-                        receiverDenotableType;
-                        eraseToNative = false;
-                    };
+                // very ugly, but won't be used
+                memberIdentifier = DartSimpleIdentifier("null");
+                thisArgument = [];
+                isFunction = true;
 
-            dartBoxedReceiver
-                =   withLhsCustom {
-                        receiverDenotableType;
-                        false; false;
-                        generateReceiver;
-                    };
+                ceylonReceiverDartType
+                    =   dartTypes.dartTypeName {
+                            scope;
+                            leftOperandType;
+                            eraseToNative = true;
+                        };
+
+                dartBoxedReceiver
+                    =   withLhsNative {
+                            leftOperandType;
+                            generateReceiver;
+                        };
+
+                // TODO Make sure we evaluate args for side-effects w/null-safe
+                //      invocations.
+
+                argsSetupAndExpressions = [argsSetup, []];
+
+                assert (exists rightOperandArgument
+                    =   argsExpressions[0]);
+
+                optimizedExpression
+                    =   (DartExpression leftOperand)
+                        =>  withBoxingCustom {
+                            scope;
+                            type;
+                            true; false;
+                            createExpressionEvaluationWithSetup {
+                                argsSetup;
+                                DartBinaryExpression {
+                                    leftOperand;
+                                    operand;
+                                    rightOperandArgument;
+                                };
+                            };
+                        };
+            }
+            else {
+                thisArgument
+                    =   [];
+
+                optimizedExpression
+                    =   null;
+
+                argsSetupAndExpressions
+                    =   standardArgs();
+
+                value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    scope;
+                    memberDeclaration;
+                    false;
+                };
+                memberIdentifier = m;
+                isFunction = f;
+
+                // Determine usable receiver type. `withLhsDenotable` would be simpler, but
+                // we may need the type (for safeMemberOperator code)
+                assert (is ClassOrInterfaceModel container
+                    =   container(memberDeclaration));
+
+                value receiverDenotableType
+                    =   ceylonTypes.denotableType {
+                            receiverType;
+                            container;
+                        };
+
+                ceylonReceiverDartType
+                    =   dartTypes.dartTypeName {
+                            scope;
+                            receiverDenotableType;
+                            eraseToNative = false;
+                        };
+
+                dartBoxedReceiver
+                    =   withLhsCustom {
+                            receiverDenotableType;
+                            false; false;
+                            generateReceiver;
+                        };
+            }
         }
 
         value resultDeclaration
@@ -844,8 +886,9 @@ class BaseGenerator(CompilationContext ctx)
                 else memberDeclaration;
 
         DartExpression invocation;
-        if (argsSetupAndExpressions[1] nonempty
-                || memberIdentifier is DartConstructorName) {
+        if (!optimizedExpression exists
+                && (argsSetupAndExpressions[1] nonempty
+                    || memberIdentifier is DartConstructorName)) {
 
             "If there are arguments, the member is a FunctionModel and will translate
              to a Dart function, or it's a ClassModel, and will translate to a Dart
@@ -960,15 +1003,18 @@ class BaseGenerator(CompilationContext ctx)
             assert (!is DartConstructorName memberIdentifier);
 
             function valueAccess(DartExpression receiver)
-                =>  if (!isFunction)
-                    then DartPropertyAccess(receiver, memberIdentifier)
-                    else DartMethodInvocation {
-                        receiver;
-                        memberIdentifier;
-                        DartArgumentList {
-                            thisArgument; // possibly empty
+                =>  if (exists optimizedExpression) then
+                        optimizedExpression(receiver)
+                    else if (!isFunction) then
+                        DartPropertyAccess(receiver, memberIdentifier)
+                    else
+                        DartMethodInvocation {
+                            receiver;
+                            memberIdentifier;
+                            DartArgumentList {
+                                thisArgument; // possibly empty
+                            };
                         };
-                    };
 
             if (safeMemberOperator) {
                 "Must exist since receiver is never `super` when the safe member
@@ -993,7 +1039,9 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         return
-        withBoxing {
+        if (exists optimizedExpression)
+        then invocation
+        else withBoxing {
             scope;
             resultType;
             resultDeclaration;
