@@ -556,7 +556,7 @@ class BaseGenerator(CompilationContext ctx)
             assert (is FunctionModel | ClassModel memberDeclaration);
 
             value [x, y]
-                =   generateFromNamedArguments {
+                =   generateArgumentGeneratorsFromNamedArguments {
                         scope;
                         a;
                         callableType;
@@ -3273,7 +3273,7 @@ class BaseGenerator(CompilationContext ctx)
         }
         case (is NamedArguments) {
             value [argsSetup, argGenerators]
-                =   generateFromNamedArguments {
+                =   generateArgumentGeneratorsFromNamedArguments {
                         scope;
                         arguments;
                         callableType;
@@ -3302,7 +3302,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    [[DartStatement*], [DartExpression()*]] generateFromNamedArguments(
+    [[DartStatement*], [DartExpression()*]] generateArgumentGeneratorsFromNamedArguments(
             DScope scope,
             NamedArguments namedArguments,
             TypeModel callableType,
