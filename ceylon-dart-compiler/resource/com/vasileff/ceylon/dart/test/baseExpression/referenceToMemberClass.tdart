@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C$D {
+    C $outer$default$C;
+    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+        this._$s = _$s;
+    }
+    $dart$core.String _$s;
+}
+class C {
+    C() {}
+    void foo() {
+        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String _$s]) => new C$D(this, $ceylon$language.String.nativeValue(_$s)));
+        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$D(this, $ceylon$language.String.nativeValue(s)));
+    }
+}

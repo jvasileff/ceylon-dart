@@ -1,0 +1,11 @@
+Integer adder(Integer x, Integer y = 10)(Integer z) {
+    return x + y + z;
+}
+
+shared void run() {
+    value f = adder;
+    value g = adder(1);
+    value h = adder(2, 3);
+    value i = adder(4)(5);
+    value j = adder(6, 7)(8);
+}

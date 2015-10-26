@@ -1,0 +1,6 @@
+shared void run() {
+    [Integer*] f2(Integer a, Integer b, Integer* xs) => [a, b, *xs];
+
+    print(f2 { 1; 2; [3]; }); // arg for variadic
+    print(f2 { 1; 2; });      // no arg for variadic
+}

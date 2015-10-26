@@ -1,0 +1,9 @@
+interface I {
+    shared formal String s;
+}
+
+class Foo() satisfies I {
+    s = ""; // shortcut refinement
+    String x;
+    x = ""; // not shortcut refinement
+}

@@ -1,0 +1,19 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I$J$K {
+    I$J get $outer$default$I$J;
+    $dart$core.String fki();
+    static $dart$core.String $fki([final I$J$K $this]) => $this.$outer$default$I$J.$outer$default$I.fi();
+    $dart$core.String fkj();
+    static $dart$core.String $fkj([final I$J$K $this]) => $this.$outer$default$I$J.fj();
+}
+abstract class I$J {
+    I get $outer$default$I;
+    $dart$core.String fj();
+    static $dart$core.String $fj([final I$J $this]) => $this.$outer$default$I.fi();
+}
+abstract class I {
+    $dart$core.String fi();
+    static $dart$core.String $fi([final I $this]) => "";
+}

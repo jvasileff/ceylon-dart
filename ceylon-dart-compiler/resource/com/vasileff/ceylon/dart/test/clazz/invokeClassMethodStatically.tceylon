@@ -1,0 +1,13 @@
+class A() {
+    shared class B() {
+        shared String foo() => "foo";
+        shared String bar => "bar";
+    }
+}
+shared void run() {
+    String() f = A.B.foo(A().B());
+    String b = A.B.bar(A().B());
+
+    print(f());
+    print(b);
+}

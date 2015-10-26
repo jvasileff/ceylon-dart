@@ -1,0 +1,2 @@
+String a { return ""; }
+String b = a;

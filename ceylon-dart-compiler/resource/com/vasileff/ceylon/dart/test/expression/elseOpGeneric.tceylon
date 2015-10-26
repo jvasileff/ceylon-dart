@@ -1,0 +1,9 @@
+shared void run() {
+    interface A {}
+    interface B satisfies A & Identifiable {}
+
+    B? x => nothing;
+    A y = identity(x else (nothing of A));
+
+    print(y);
+}

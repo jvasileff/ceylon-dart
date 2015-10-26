@@ -1,0 +1,11 @@
+void run() {
+    Integer x = 5;
+    interface I1 {
+        interface I2 {
+            shared Integer i2capturedX => x;
+            interface I3 {
+                shared Integer i3capturedX => x;
+            }
+        }
+    }
+}

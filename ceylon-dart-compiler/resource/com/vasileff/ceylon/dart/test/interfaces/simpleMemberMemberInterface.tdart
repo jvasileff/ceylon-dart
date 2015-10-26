@@ -1,0 +1,12 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I$J$K {
+    I$J get $outer$default$I$J;
+    $dart$core.String fun();
+}
+abstract class I$J {
+    I get $outer$default$I;
+}
+abstract class I {
+}

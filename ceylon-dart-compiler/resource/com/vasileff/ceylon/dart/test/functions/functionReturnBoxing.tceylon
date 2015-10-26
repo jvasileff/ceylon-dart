@@ -1,0 +1,4 @@
+void simpleFunction() {
+    Anything() anon = () => "result";
+    print(anon());
+}

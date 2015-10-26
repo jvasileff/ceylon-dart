@@ -1,0 +1,9 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Callable newInteger = new $ceylon$language.dart$Callable(([$ceylon$language.Integer _$integer]) => new $ceylon$language.Integer($ceylon$language.Integer.nativeValue(_$integer)));
+    $dart$core.int five = $ceylon$language.Integer.nativeValue(newInteger.f($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
+}
+
+void run() => $package$run();

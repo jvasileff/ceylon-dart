@@ -1,0 +1,6 @@
+interface I {
+    shared formal String fun();
+}
+interface J satisfies I {
+    shared default String funJ() => fun();
+}

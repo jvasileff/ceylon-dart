@@ -1,0 +1,15 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$simpleFunction() {
+    $dart$core.String nested1() => "result1";
+
+    $dart$core.Object nested2() {
+        return $ceylon$language.String.instance("result2");
+    }
+
+    $ceylon$language.print($ceylon$language.String.instance(nested1()));
+    $ceylon$language.print(nested2());
+}
+
+void simpleFunction() => $package$simpleFunction();

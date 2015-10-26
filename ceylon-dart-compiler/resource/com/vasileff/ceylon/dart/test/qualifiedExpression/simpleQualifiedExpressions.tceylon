@@ -1,0 +1,8 @@
+void run() {
+    variable String s = "-";
+    print(s.size);
+    print("".size);
+    Object o = s.size;
+    value f1 = "".contains;
+    value b = "".contains("apples");
+}

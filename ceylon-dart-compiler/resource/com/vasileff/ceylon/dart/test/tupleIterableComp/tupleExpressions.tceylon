@@ -1,0 +1,21 @@
+shared void run() {
+    {Integer*} iter0 = [];
+    {Integer*} iter1 = [1,2,3];
+    {Integer+} iter2 = [1,2,3];
+
+    value x = [*iter0];
+    value y = [*iter1];
+    value z = [*iter2];
+
+    value a = ["1", "2", "3"];
+    value b = [];
+    value c = [*a];
+    value d = ["4", *a];
+    value e = [*b];
+
+    print(a);
+    print(b);
+    print(c);
+    print(d);
+    print(e);
+}

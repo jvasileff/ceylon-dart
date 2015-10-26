@@ -1,0 +1,43 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get i1;
+    $dart$core.String get i2;
+    $dart$core.String get i3;
+    set i3($dart$core.String i3);
+    $dart$core.String get i4;
+    set i4($dart$core.String i4);
+}
+class C implements I {
+    C() {
+        i1 = "";
+        i3 = "";
+        i1 = "i1-1";
+        i2 = "i2-1";
+        i3 = "i3-1";
+        i4 = "i4-1";
+        i1 = "i1-2";
+        i2 = "i2-2";
+        i3 = "i3-2";
+        i4 = "i4-2";
+        c1 = "";
+        _$c3 = "";
+        c1 = "c1-1";
+        c2 = "c2-1";
+        _$c3 = "c3-1";
+        _$c4 = "c4-1";
+        c1 = "c1-2";
+        c2 = "c2-2";
+        _$c3 = "c3-2";
+        _$c4 = "c4-2";
+    }
+    $dart$core.String i1;
+    $dart$core.String i2;
+    $dart$core.String i3;
+    $dart$core.String i4;
+    $dart$core.String c1;
+    $dart$core.String c2;
+    $dart$core.String _$c3;
+    $dart$core.String _$c4;
+}

@@ -1,0 +1,5 @@
+shared void run() {
+    Destroyable? u1 => nothing;
+
+    value destroy = u1?.destroy;
+}

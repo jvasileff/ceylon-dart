@@ -1,0 +1,6 @@
+class Foo(String s, Destroyable d) {}
+
+shared void run() {
+    value newFoo1 = Foo;
+    value newFoo2 = package.Foo;
+}

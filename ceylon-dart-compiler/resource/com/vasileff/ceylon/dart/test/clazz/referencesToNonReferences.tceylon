@@ -1,0 +1,12 @@
+class C() {
+    shared default String c1 = "";
+    shared default variable String c2 = "";
+}
+
+class D() extends C() {
+    shared actual String c1 => "";
+    assign c1 { print("assigning c1 to: " + c1); }
+
+    shared actual String c2 => "";
+    assign c2 { print("assigning c2 to: " + c2); }
+}

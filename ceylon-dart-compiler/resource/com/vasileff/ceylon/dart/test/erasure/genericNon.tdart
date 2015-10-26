@@ -1,0 +1,21 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.Object $package$generic([$dart$core.Object x]) {
+    return x;
+}
+
+$dart$core.Object generic([$dart$core.Object x]) => $package$generic(x);
+
+$dart$core.String $package$nonGeneric([$dart$core.String x]) {
+    return x;
+}
+
+$dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
+
+void $package$run() {
+    $dart$core.String myString1 = $ceylon$language.String.nativeValue($package$generic($ceylon$language.String.instance("true")) as $ceylon$language.String);
+    $dart$core.String myString2 = $package$nonGeneric("true");
+}
+
+void run() => $package$run();

@@ -1,0 +1,9 @@
+void run() {
+    interface I1 {
+        interface I2 satisfies I1 {}
+        interface I3 satisfies I2 {}
+        shared default void foo() {
+            object o satisfies I3 {}
+        }
+    }
+}

@@ -1,0 +1,10 @@
+class C() {
+    void foo() {
+        String captureMe = "";
+        class D(String s) {
+            String useCM => captureMe;
+        }
+        value newD1 = D;
+        value newD2 = (String s) => D(s);
+    }
+}

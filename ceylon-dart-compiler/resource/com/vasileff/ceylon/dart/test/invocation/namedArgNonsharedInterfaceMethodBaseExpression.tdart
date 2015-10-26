@@ -1,0 +1,23 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    static $dart$core.String $_$echo([final I $this, $dart$core.String s]) => s;
+    void foo();
+    static void $foo([final I $this]) {
+        $ceylon$language.print($ceylon$language.String.instance(I.$_$echo($this, "list")));
+        $ceylon$language.print((() {
+            $dart$core.String arg$0$0 = "named";
+            return $ceylon$language.String.instance(I.$_$echo($this, arg$0$0));
+        })());
+    }
+}
+class run$$anonymous$0_ implements I {
+    run$$anonymous$0_() {}
+    void foo() => I.$foo(this);
+}
+void $package$run() {
+    (new run$$anonymous$0_()).foo();
+}
+
+void run() => $package$run();

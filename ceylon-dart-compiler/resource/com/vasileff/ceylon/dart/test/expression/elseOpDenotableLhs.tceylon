@@ -1,0 +1,7 @@
+shared void run() {
+    Comparison? a = larger;
+    Comparison b = larger;
+    value bool = (a else b) === b;
+
+    print(bool);
+}

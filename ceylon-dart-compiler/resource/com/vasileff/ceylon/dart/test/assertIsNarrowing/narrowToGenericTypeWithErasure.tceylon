@@ -1,0 +1,9 @@
+shared T echoString<T>(T t) given T satisfies String {
+    String s = t;
+    assert (is T s);
+    return s;
+}
+
+shared void run() {
+    String myString1 = echoString("x");
+}

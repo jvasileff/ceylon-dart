@@ -1,0 +1,42 @@
+interface I1 {
+    shared default String ident => "i1";
+    shared interface I2 {
+        shared default String ident => "i2";
+        shared default String outerIdent => outer.ident;
+        shared class C(Integer version) satisfies I2 {
+            shared default String cident => "c-``version``";
+            shared default String couterIdent => outer.ident;
+            shared actual String ident => "i2byC-``version``";
+        }
+    }
+    shared formal I2 i2;
+}
+
+shared void run() {
+    I1 i1o => object satisfies I1 {
+        shared actual String ident => "i1o";
+        shared actual I2 i2 => object satisfies I1.I2 {
+            shared actual String ident => "i2o";
+            shared actual String outerIdent => outer.ident;
+        };
+    };
+
+    I1.I2.C(Integer)(I1.I2) newC => I1.I2.C;
+
+    value c = newC(i1o.i2)(1);
+    value c1 = I1.I2.C(i1o.i2)(1);
+    value c2 = I1.I2.C(i1o.i2)(1);
+
+    assert(c.cident == "c-1");
+    assert(c.couterIdent == "i2o");
+    assert(c.ident == "i2byC-1");
+    assert(c.outerIdent == "i1o");
+
+    value cSelfOuter = newC(c)(2);
+    assert(cSelfOuter.cident == "c-2");
+    assert(cSelfOuter.couterIdent == "i2byC-1");
+    assert(cSelfOuter.ident == "i2byC-2");
+    assert(cSelfOuter.outerIdent == "i1o");
+
+    print("done");
+}

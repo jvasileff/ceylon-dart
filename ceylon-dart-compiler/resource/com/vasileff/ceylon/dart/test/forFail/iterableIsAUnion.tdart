@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.Object $package$myIterable = $ceylon$language.nothing;
+
+$dart$core.Object get myIterable => $package$myIterable;
+
+void $package$run() {{
+        $dart$core.Object element$1;
+        $ceylon$language.Iterator iterator$0 = ($package$myIterable as $ceylon$language.Iterable).iterator();
+        while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
+            $dart$core.Object x = element$1;
+            $ceylon$language.print(x);
+        }
+    }
+}
+
+void run() => $package$run();

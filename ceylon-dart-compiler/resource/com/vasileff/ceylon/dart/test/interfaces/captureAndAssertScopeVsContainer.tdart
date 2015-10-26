@@ -1,0 +1,23 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class capturesWithControlBlocks$Bar {
+    void foo();
+    static void $foo([final capturesWithControlBlocks$Bar $this]) {
+        $dart$core.int captureX = $this.$capture$capturesWithControlBlocks$$x$0;
+        $dart$core.int captureY = $this.$capture$capturesWithControlBlocks$y;
+    }
+    $dart$core.int $capture$capturesWithControlBlocks$$x$0;
+    $dart$core.int $capture$capturesWithControlBlocks$y;
+}
+void $package$capturesWithControlBlocks() {
+    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+    $dart$core.int x$0;
+    if (!(x is $ceylon$language.Integer)) {
+        throw new $ceylon$language.AssertionError("Violated: is Integer x");
+    }
+    x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+    $dart$core.int y = 5;
+}
+
+void capturesWithControlBlocks() => $package$capturesWithControlBlocks();

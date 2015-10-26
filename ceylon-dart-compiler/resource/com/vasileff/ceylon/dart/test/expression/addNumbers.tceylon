@@ -1,0 +1,5 @@
+shared void run() {
+    Integer i = 1;
+    Integer j = i + 1 + 1;
+    Object k = i + 1 + 1;
+}

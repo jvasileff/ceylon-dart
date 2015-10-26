@@ -1,0 +1,29 @@
+void capturesWithControlBlocks() {
+    Integer|Float|String x = 5;
+    interface Bar {
+        shared void capturesIFS() {
+            Integer|Float|String capture = x;
+            print(capture);
+        }
+    }
+    if (is Integer|Float x) {
+        interface Baz satisfies Bar {
+            shared void capturesIF() {
+                Integer|Float capture = x;
+                print(capture);
+            }
+        }
+        if (is Integer x) {
+            interface Ban satisfies Baz {
+                shared void capturesI() {
+                    Integer capture = x;
+                    print(capture);
+                }
+            }
+            //object b satisfies Ban {}
+            //b.capturesI();
+            //b.capturesIF();
+            //b.capturesIFS();
+        }
+    }
+}

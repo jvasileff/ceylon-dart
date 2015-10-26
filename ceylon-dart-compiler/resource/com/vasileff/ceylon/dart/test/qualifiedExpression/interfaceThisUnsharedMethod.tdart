@@ -1,0 +1,27 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    static $ceylon$language.Usable $_$foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    void run();
+    static void $run([final I $this]) {
+        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo($this, u as $ceylon$language.Usable));
+        I ie = $ceylon$language.nothing as I;
+        I il$get() => $ceylon$language.nothing as I;
+
+        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo(ie, u as $ceylon$language.Usable));
+        $ceylon$language.Callable fooRefIl = (() {
+            I $capturedReceiver$ = il$get();
+            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$foo($capturedReceiver$, u as $ceylon$language.Usable));
+        })();
+        I me = $ceylon$language.nothing as I;
+        I ml$get() => $ceylon$language.nothing as I;
+
+        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$_$foo($r$, u as $ceylon$language.Usable))(me));
+        $ceylon$language.Callable fooRefMl$get() => (() {
+            I $capturedReceiver$ = ml$get();
+            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : I.$_$foo($r$, u as $ceylon$language.Usable))($capturedReceiver$));
+        })();
+
+    }
+}

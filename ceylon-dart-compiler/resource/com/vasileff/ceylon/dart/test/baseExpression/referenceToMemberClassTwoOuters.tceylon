@@ -1,0 +1,11 @@
+interface I1 {
+    interface I2 {
+        class C() satisfies I2 {}
+        value newC1 => C;
+        value newC2 => () => C();
+        void foo() {
+            value newC3 => C;
+            value newC4 => () => C();
+        }
+    }
+}

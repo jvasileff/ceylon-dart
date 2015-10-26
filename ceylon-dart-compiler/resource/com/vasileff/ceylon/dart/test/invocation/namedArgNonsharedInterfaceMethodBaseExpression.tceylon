@@ -1,0 +1,11 @@
+interface I {
+    String echo(String s) => s;
+
+    shared void foo() {
+        print(echo("list"));
+        print(echo { "named"; });
+    }
+}
+shared void run() {
+    object satisfies I {}.foo();
+}

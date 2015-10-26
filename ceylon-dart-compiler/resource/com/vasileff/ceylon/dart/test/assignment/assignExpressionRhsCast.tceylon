@@ -1,0 +1,7 @@
+interface SomeInt {
+    shared formal variable Object someObject;
+}
+
+void run(SomeInt si) {
+    value y = si.someObject = "";
+}

@@ -1,0 +1,9 @@
+void run() {
+    Integer x = 5;
+    interface I1 {
+        shared Integer i1capturedX => x;
+    }
+    interface I2 satisfies I1 {
+        shared Integer i2capturedX => x;
+    }
+}

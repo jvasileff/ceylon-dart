@@ -1,0 +1,14 @@
+interface Top {
+    shared default String fun() => "";
+}
+interface Left satisfies Top {
+    shared actual default String fun() => "";
+}
+interface Right satisfies Top {
+    shared actual default String fun() => "";
+}
+interface Right2 satisfies Right {
+}
+interface Bottom satisfies Left & Right2 {
+    shared actual default String fun() => (super of Right2).fun();
+}

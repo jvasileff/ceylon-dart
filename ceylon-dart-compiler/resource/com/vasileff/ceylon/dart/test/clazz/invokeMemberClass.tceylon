@@ -1,0 +1,8 @@
+shared class C() {
+    shared class D(String s) {}
+    shared D d1 = D("d1");
+    shared D d2 = C().D("d2");
+}
+shared void run() {
+    value d3 = C().D("d3");
+}

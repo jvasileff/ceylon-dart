@@ -1,0 +1,5 @@
+void assertions() {
+    Object obj = 1.0;
+    assert (is Float f = obj);
+    Float g = f;
+}

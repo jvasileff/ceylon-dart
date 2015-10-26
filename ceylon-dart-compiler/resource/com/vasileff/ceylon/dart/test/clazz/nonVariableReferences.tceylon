@@ -1,0 +1,19 @@
+interface I {
+    shared formal String i1;
+    shared formal String i2;
+}
+
+class C() satisfies I {
+    shared actual String i1 = "";
+    i2 = "i2-1"; // shortcut refinement
+
+    shared String c1 = "";
+    shared String c2;
+
+    c2 = "c2-1";
+
+    String c3 = "";
+    String c4;
+
+    c4 = "c4-1";
+}

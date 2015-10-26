@@ -1,0 +1,6 @@
+void run() {
+    String|Integer|Float sif = 1.0;
+    while (is String sif) {
+        assert(false);
+    }
+}

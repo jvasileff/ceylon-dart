@@ -1,0 +1,7 @@
+class Foo(String | Integer si1,
+          String | Integer si2,
+          String | Integer | Float isf) {
+    assert (is String si1);
+    assert (is String si2);
+    assert (is String | Integer isf);
+}

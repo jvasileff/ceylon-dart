@@ -1,0 +1,14 @@
+shared void run() {
+    value s1 = "";
+    interface I1 {
+        shared default String i1s1 => s1;
+        interface I2 satisfies I1 {
+            shared void i2Foo() {
+                value i2foo = "";
+                object o satisfies I2 {
+                    shared String i2fooo => i2foo;
+                }
+            }
+        }
+    }
+}

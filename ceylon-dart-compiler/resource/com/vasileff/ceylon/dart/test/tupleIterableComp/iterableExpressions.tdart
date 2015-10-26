@@ -1,0 +1,37 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Iterable iter0 = $ceylon$language.empty;
+    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+    $ceylon$language.Iterable x = iter0;
+    $ceylon$language.Iterable y = iter1;
+    $ceylon$language.Iterable z = iter2;
+    $ceylon$language.Iterable a = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
+        switch ($i$) {
+        case 0 :
+        return $ceylon$language.String.instance("1");
+        case 1 :
+        return $ceylon$language.String.instance("2");
+        case 2 :
+        return $ceylon$language.String.instance("3");
+        }
+    }, null);
+    $ceylon$language.Iterable b = $ceylon$language.empty;
+    $ceylon$language.Iterable c = a;
+    $ceylon$language.Iterable d = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+        switch ($i$) {
+        case 0 :
+        return $ceylon$language.String.instance("4");
+        }
+    }, a);
+    $ceylon$language.Iterable e = b;
+    $ceylon$language.print(a);
+    $ceylon$language.print(b);
+    $ceylon$language.print(c);
+    $ceylon$language.print(d);
+    $ceylon$language.print(e);
+}
+
+void run() => $package$run();

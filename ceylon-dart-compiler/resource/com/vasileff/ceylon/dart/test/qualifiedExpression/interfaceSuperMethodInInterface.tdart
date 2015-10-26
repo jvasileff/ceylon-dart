@@ -1,0 +1,27 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class Top {
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final Top $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    $ceylon$language.Usable bar([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $bar([final Top $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+}
+abstract class Left implements Top {
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final Left $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+}
+abstract class Right implements Top {
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final Right $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+}
+abstract class Bottom implements Left, Right {
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final Bottom $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    void run();
+    static void $run([final Bottom $this]) {
+        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Top.$bar($this, u as $ceylon$language.Usable));
+        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Left.$foo($this, u as $ceylon$language.Usable));
+        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Right.$foo($this, u as $ceylon$language.Usable));
+    }
+}

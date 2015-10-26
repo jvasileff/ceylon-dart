@@ -1,0 +1,19 @@
+shared void run() {
+    []|[Integer] opt01 = [1];
+    []|[Integer]|[Integer,Integer] opt012 = [1,2];
+    []|[Integer]|[Integer,Integer]|[Integer,Integer,Integer] opt0123 = [1,2,3];
+
+    [Integer] opt1 = [1];
+    [Integer]|[Integer,Integer] opt12 = [1,2];
+    [Integer]|[Integer,Integer]|[Integer,Integer,Integer] opt123 = [1,2,3];
+
+    [Integer+] fa(Integer a=99, Integer* rest) => [a, *rest];
+    print(fa(*opt01));
+    print(fa(*opt012));
+    print(fa(*opt0123));
+
+    [Integer+] fb(Integer a, Integer* rest) => [a, *rest];
+    print(fb(*opt1));
+    print(fb(*opt12));
+    print(fb(*opt123));
+}

@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.String $package$f1() => "x";
+
+$dart$core.String f1() => $package$f1();
+
+$dart$core.String $package$f2() => "x";
+
+$dart$core.String f2() => $package$f2();
+
+$dart$core.Object $package$f3() => $ceylon$language.String.instance("x");
+
+$dart$core.Object f3() => $package$f3();
+
+$dart$core.Object $package$f4() => $ceylon$language.String.instance("x");
+
+$dart$core.Object f4() => $package$f4();

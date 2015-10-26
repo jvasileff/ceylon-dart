@@ -1,0 +1,6 @@
+void run() {
+    String|Integer|Float? sif = null;
+    while (exists sif) {
+        assert(false);
+    }
+}

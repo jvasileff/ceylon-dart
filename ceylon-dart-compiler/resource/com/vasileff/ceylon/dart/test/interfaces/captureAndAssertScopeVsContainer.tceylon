@@ -1,0 +1,13 @@
+void capturesWithControlBlocks() {
+
+    Integer|Float x = 5;    // 1
+    assert (is Integer x);  // 2
+    Integer y = 5;          // 3
+
+    interface Bar {
+        shared void foo() {
+            Integer captureX = x;
+            Integer captureY = y;
+        }
+    }
+}

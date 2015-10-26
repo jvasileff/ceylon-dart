@@ -1,0 +1,7 @@
+interface I<in T> {
+    shared formal void foo(T o);
+}
+
+class J() satisfies I<Integer> {
+    foo(Integer i) => noop();
+}

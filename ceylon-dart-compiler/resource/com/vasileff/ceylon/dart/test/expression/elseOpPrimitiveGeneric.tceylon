@@ -1,0 +1,4 @@
+shared void run() {
+    String? x => null;
+    String y = identity(x else "default");
+}

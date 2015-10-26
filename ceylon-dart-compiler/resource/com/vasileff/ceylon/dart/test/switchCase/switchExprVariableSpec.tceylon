@@ -1,0 +1,8 @@
+shared void run() {
+    String|Integer si = "";
+    value a =
+        switch (newVar = si)
+        case (is String) "string" + newVar.size.string
+        case (is Integer) "integer";
+    print(a);
+}

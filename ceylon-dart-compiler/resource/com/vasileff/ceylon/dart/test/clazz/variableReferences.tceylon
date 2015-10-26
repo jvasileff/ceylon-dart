@@ -1,0 +1,38 @@
+interface I {
+    shared formal String i1;
+    shared formal String i2;
+    shared formal variable String i3;
+    shared formal variable String i4;
+}
+
+class C() satisfies I {
+    shared actual variable String i1 = "";
+    shared actual variable String i2;
+    shared actual variable String i3 = "";
+    shared actual variable String i4;
+
+    i1 = "i1-1";
+    i2 = "i2-1";
+    i3 = "i3-1";
+    i4 = "i4-1";
+
+    i1 = "i1-2";
+    i2 = "i2-2";
+    i3 = "i3-2";
+    i4 = "i4-2";
+
+    shared variable String c1 = "";
+    shared variable String c2;
+    variable String c3 = "";
+    variable String c4;
+
+    c1 = "c1-1";
+    c2 = "c2-1";
+    c3 = "c3-1";
+    c4 = "c4-1";
+
+    c1 = "c1-2";
+    c2 = "c2-2";
+    c3 = "c3-2";
+    c4 = "c4-2";
+}

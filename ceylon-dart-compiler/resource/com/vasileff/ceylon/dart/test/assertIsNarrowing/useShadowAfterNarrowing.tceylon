@@ -1,0 +1,5 @@
+void assertions() {
+    Object obj = true;
+    assert (is Boolean obj);
+    Boolean bool = obj;
+}

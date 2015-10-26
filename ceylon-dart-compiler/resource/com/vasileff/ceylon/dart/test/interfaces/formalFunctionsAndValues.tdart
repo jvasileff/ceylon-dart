@@ -1,0 +1,9 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void f1();
+    $dart$core.String f2();
+    $dart$core.String f3([$dart$core.String a, $dart$core.String b]);
+    $dart$core.String get v1;
+}

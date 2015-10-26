@@ -1,0 +1,5 @@
+shared void run() {
+   object o1 {
+       shared String s1 => "";
+   }
+}

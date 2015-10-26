@@ -1,0 +1,5 @@
+shared void run() {
+    String|Integer si = "abc";
+    if (is Integer si) { return; }
+    print(si.size);
+}

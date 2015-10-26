@@ -1,0 +1,8 @@
+object o {
+    String myIterable = "abcd";
+    shared void run() {
+        for (x in myIterable) {
+            print(x);
+        }
+    }
+}

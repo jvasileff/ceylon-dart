@@ -1,0 +1,114 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Sequential maybeSeq = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+    $ceylon$language.Tuple x = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3).negated, $ceylon$language.Integer.instance(2).negated, $ceylon$language.Integer.instance(1).negated, $ceylon$language.Integer.instance(0)], $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+        $dart$core.bool step$0$expired$0 = false;
+        $dart$core.bool step$0$1() {
+            if (step$0$expired$0) {
+                return false;
+            }
+            step$0$expired$0 = true;
+            return true;
+        }
+
+        $ceylon$language.Sequential seq$4;
+        $dart$core.bool step$1$2() {
+            while (step$0$1()) {
+                $ceylon$language.Sequential seq;
+                $ceylon$language.Sequential tmp$3 = maybeSeq;
+                if (!(!(tmp$3 == null))) {
+                    continue;
+                }
+                seq = tmp$3;
+                seq$4 = seq;
+                return true;
+            }
+            return false;
+        }
+
+        $ceylon$language.Iterator iterator_2$5;
+        $dart$core.bool step$2$Init$8() {
+            if (iterator_2$5 != null) {
+                return true;
+            }
+            if (!step$1$2()) {
+                return false;
+            }
+            $ceylon$language.Sequential seq = seq$4;
+            iterator_2$5 = seq.iterator();
+            return true;
+        }
+
+        $ceylon$language.Integer i$6;
+        $dart$core.bool step$2$9() {
+            while (step$2$Init$8()) {
+                $ceylon$language.Sequential seq = seq$4;
+                $dart$core.Object next$7;
+                if ((next$7 = iterator_2$5.next()) is !$ceylon$language.Finished) {
+                    i$6 = next$7 as $ceylon$language.Integer;
+                    return true;
+                }
+                iterator_2$5 = null;
+            }
+            return false;
+        }
+
+        $ceylon$language.Iterator iterator_3$10;
+        $dart$core.bool step$3$Init$13() {
+            if (iterator_3$10 != null) {
+                return true;
+            }
+            if (!step$2$9()) {
+                return false;
+            }
+            $ceylon$language.Sequential seq = seq$4;
+            $ceylon$language.Integer i = i$6;
+            iterator_3$10 = seq.iterator();
+            return true;
+        }
+
+        $ceylon$language.Integer j$11;
+        $dart$core.bool step$3$14() {
+            while (step$3$Init$13()) {
+                $ceylon$language.Sequential seq = seq$4;
+                $ceylon$language.Integer i = i$6;
+                $dart$core.Object next$12;
+                if ((next$12 = iterator_3$10.next()) is !$ceylon$language.Finished) {
+                    j$11 = next$12 as $ceylon$language.Integer;
+                    return true;
+                }
+                iterator_3$10 = null;
+            }
+            return false;
+        }
+
+        $dart$core.bool step$4$15() {
+            while (step$3$14()) {
+                $ceylon$language.Sequential seq = seq$4;
+                $ceylon$language.Integer i = i$6;
+                $ceylon$language.Integer j = j$11;
+                if (($ceylon$language.Integer.nativeValue(i) > 1) && ($ceylon$language.Integer.nativeValue(j) > 2)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        $dart$core.Object step$5$16() {
+            if (!step$4$15()) {
+                return $ceylon$language.finished;
+            }
+            $ceylon$language.Sequential seq = seq$4;
+            $ceylon$language.Integer i = i$6;
+            $ceylon$language.Integer j = j$11;
+            return $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) + $ceylon$language.Integer.nativeValue(j));
+        }
+
+        return new $ceylon$language.dart$Callable(step$5$16);
+    })).sequence());
+    $ceylon$language.printAll(x);
+}
+
+void run() => $package$run();

@@ -1,0 +1,9 @@
+abstract class AbstractFoo() {}
+
+class Foo() {
+    class FooMemberClass() {}
+    void fooMethod() {
+        class ClassInAMethod() {
+        }
+    }
+}

@@ -1,0 +1,10 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String fun();
+}
+abstract class J implements I {
+    $dart$core.String funJ();
+    static $dart$core.String $funJ([final J $this]) => $this.fun();
+}

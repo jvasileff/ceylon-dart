@@ -1,0 +1,13 @@
+shared void run() {
+    {Integer*} unbounded0 = {};
+    {Integer*} unbounded1 = {1};
+    {Integer*} unbounded2 = {1,2};
+
+    [Integer+] fa(Integer a, Integer* rest) => [a, *rest];
+    print(fa(*[0, *unbounded2]));
+
+    [Integer*] fb(Integer* rest) => rest;
+    print(fb(*unbounded0));
+    print(fb(*unbounded1));
+    print(fb(*unbounded2));
+}

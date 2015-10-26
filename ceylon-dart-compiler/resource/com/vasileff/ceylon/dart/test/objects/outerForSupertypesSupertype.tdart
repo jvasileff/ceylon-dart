@@ -1,0 +1,23 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$I1$I2 implements run$I1 {
+    run$I1 get $outer$default$run$I1;
+}
+abstract class run$I1$I3 implements run$I1$I2 {
+    run$I1 get $outer$default$run$I1;
+}
+class run$I1$foo$o_ implements run$I1$I3 {
+    run$I1 $outer$default$run$I1;
+    run$I1$foo$o_([run$I1 this.$outer$default$run$I1]) {}
+    void foo() => run$I1.$foo(this);
+}
+abstract class run$I1 {
+    void foo();
+    static void $foo([final run$I1 $this]) {
+        final run$I1$foo$o_ o = new run$I1$foo$o_($this);
+    }
+}
+void $package$run() {}
+
+void run() => $package$run();

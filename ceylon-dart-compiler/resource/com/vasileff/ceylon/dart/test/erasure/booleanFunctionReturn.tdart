@@ -1,0 +1,46 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.bool $package$f1() => true;
+
+$dart$core.bool f1() => $package$f1();
+
+$dart$core.bool $package$f2() => true;
+
+$dart$core.bool f2() => $package$f2();
+
+$dart$core.Object $package$f3() => $ceylon$language.$true;
+
+$dart$core.Object f3() => $package$f3();
+
+$dart$core.Object $package$f4() => $ceylon$language.$true;
+
+$dart$core.Object f4() => $package$f4();
+
+$dart$core.bool $package$f5() => true;
+
+$dart$core.bool f5() => $package$f5();
+
+$dart$core.bool $package$f6() => true;
+
+$dart$core.bool f6() => $package$f6();
+
+$dart$core.bool $package$f7() => false;
+
+$dart$core.bool f7() => $package$f7();
+
+$dart$core.bool $package$f8() => false;
+
+$dart$core.bool f8() => $package$f8();
+
+$dart$core.bool $package$f9() => true;
+
+$dart$core.bool f9() => $package$f9();
+
+$dart$core.bool $package$f10() => true;
+
+$dart$core.bool f10() => $package$f10();
+
+$dart$core.bool $package$f11() => true;
+
+$dart$core.bool f11() => $package$f11();

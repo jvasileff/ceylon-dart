@@ -1,0 +1,105 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Iterable iter0 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+        $dart$core.bool step$0$expired$0 = false;
+        $dart$core.bool step$0$1() {
+            if (step$0$expired$0) {
+                return false;
+            }
+            step$0$expired$0 = true;
+            return true;
+        }
+
+        $ceylon$language.Iterator iterator_1$2;
+        $dart$core.bool step$1$Init$5() {
+            if (iterator_1$2 != null) {
+                return true;
+            }
+            if (!step$0$1()) {
+                return false;
+            }
+            iterator_1$2 = ($ceylon$language.measure($ceylon$language.Integer.instance(0), 10) as $ceylon$language.List).iterator();
+            return true;
+        }
+
+        $ceylon$language.Integer i$3;
+        $dart$core.bool step$1$6() {
+            while (step$1$Init$5()) {
+                $dart$core.Object next$4;
+                if ((next$4 = iterator_1$2.next()) is !$ceylon$language.Finished) {
+                    i$3 = next$4 as $ceylon$language.Integer;
+                    return true;
+                }
+                iterator_1$2 = null;
+            }
+            return false;
+        }
+
+        $dart$core.Object step$2$7() {
+            if (!step$1$6()) {
+                return $ceylon$language.finished;
+            }
+            $ceylon$language.Integer i = i$3;
+            return i;
+        }
+
+        return new $ceylon$language.dart$Callable(step$2$7);
+    }));
+    $ceylon$language.Iterable iter1 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+        $dart$core.bool step$0$expired$8 = false;
+        $dart$core.bool step$0$9() {
+            if (step$0$expired$8) {
+                return false;
+            }
+            step$0$expired$8 = true;
+            return true;
+        }
+
+        $ceylon$language.Iterator iterator_1$10;
+        $dart$core.bool step$1$Init$13() {
+            if (iterator_1$10 != null) {
+                return true;
+            }
+            if (!step$0$9()) {
+                return false;
+            }
+            iterator_1$10 = ($ceylon$language.measure($ceylon$language.Integer.instance(0), 10) as $ceylon$language.List).iterator();
+            return true;
+        }
+
+        $ceylon$language.Integer i$11;
+        $dart$core.bool step$1$14() {
+            while (step$1$Init$13()) {
+                $dart$core.Object next$12;
+                if ((next$12 = iterator_1$10.next()) is !$ceylon$language.Finished) {
+                    i$11 = next$12 as $ceylon$language.Integer;
+                    return true;
+                }
+                iterator_1$10 = null;
+            }
+            return false;
+        }
+
+        $dart$core.Object step$2$15() {
+            if (!step$1$14()) {
+                return $ceylon$language.finished;
+            }
+            $ceylon$language.Integer i = i$11;
+            return (() {
+                if ($ceylon$language.Integer.instance(2).divides(i)) {
+                    return i;
+                } else {
+                    return $ceylon$language.String.instance("nope");
+                }
+            })();
+        }
+
+        return new $ceylon$language.dart$Callable(step$2$15);
+    }));
+    $ceylon$language.printAll(iter0);
+    $ceylon$language.printAll(iter1);
+}
+
+void run() => $package$run();

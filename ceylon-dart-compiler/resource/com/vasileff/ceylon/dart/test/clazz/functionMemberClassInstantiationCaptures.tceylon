@@ -1,0 +1,25 @@
+variable Integer counter = 0;
+
+shared void run() {
+    value runString1 = "runString1";
+    value runString2 = "runString2";
+    class Foo(Integer fooInt) {
+        value fooString1 => runString1;
+        shared class FooMember(Integer fooMemberInt) {
+            value fooMemberString2 => runString2;
+            shared Foo fooMemberHoldsAFooLazily => Foo(11);
+            shared {<String-><String|Integer>>*} data => [
+                "fooString1" -> fooString1,
+                "fooMemberString2" -> fooMemberString2,
+                "fooInt" -> fooInt,
+                "fooMemberInt" -> fooMemberInt
+            ];
+        }
+        shared FooMember x = FooMember(counter++);
+    }
+    value runFoo = Foo(33);
+    printAll(runFoo.x.data);
+    printAll(runFoo.x.data);
+    printAll(runFoo.x.fooMemberHoldsAFooLazily.x.data);
+    printAll(runFoo.x.fooMemberHoldsAFooLazily.x.data);
+}

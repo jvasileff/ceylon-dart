@@ -1,0 +1,6 @@
+shared void run() {
+    String? x => null;
+    String y = x else "default";
+
+    print(y);
+}

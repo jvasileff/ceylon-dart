@@ -1,0 +1,8 @@
+shared void run() {
+    value a =
+        switch (1+1)
+        case (1 | 2) "one or two"
+        case (3) "three"
+        else "else";
+    print(a);
+}

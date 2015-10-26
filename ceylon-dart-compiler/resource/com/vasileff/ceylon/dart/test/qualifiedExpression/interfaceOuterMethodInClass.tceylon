@@ -1,0 +1,12 @@
+interface I {
+    shared default Usable foo(Usable u) => nothing;
+    Usable bar(Usable u) => nothing;
+
+    class C() {
+        shared default Usable foo(Usable u) => nothing;
+        shared void run() {
+            value iFoo = outer.foo;
+            value iBar = outer.bar;
+        }
+    }
+}

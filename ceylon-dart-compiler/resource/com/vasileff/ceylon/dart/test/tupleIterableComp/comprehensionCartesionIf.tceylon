@@ -1,0 +1,11 @@
+shared void run() {
+    [Integer*]? maybeSeq = [1,2,3];
+    value x = [ -3,-2,-1,0,
+        if (exists seq = maybeSeq)
+        for (i in seq)
+        for (j in seq)
+        if (i > 1, j > 2)
+        i+j
+    ];
+    printAll(x);
+}

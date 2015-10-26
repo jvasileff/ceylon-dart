@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$assertions() {
+    $dart$core.Object obj = $ceylon$language.Float.instance(1.0);
+    $dart$core.double f;
+    {
+        $dart$core.Object f$0 = obj;
+        if (!(f$0 is $ceylon$language.Float)) {
+            throw new $ceylon$language.AssertionError("Violated: is Float f = obj");
+        }
+        f = $ceylon$language.Float.nativeValue(f$0 as $ceylon$language.Float);
+    }
+    $dart$core.double g = f;
+}
+
+void assertions() => $package$assertions();

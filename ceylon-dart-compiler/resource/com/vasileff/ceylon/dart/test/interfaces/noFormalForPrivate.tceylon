@@ -1,0 +1,7 @@
+interface I1 {
+    void foo() {}
+    shared void bar() {}
+
+    String baz => "";
+    shared String ban => "";
+}

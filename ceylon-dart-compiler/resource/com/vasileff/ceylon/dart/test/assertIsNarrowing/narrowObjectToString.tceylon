@@ -1,0 +1,4 @@
+void assertions() {
+    Object obj = "x";
+    assert (is String obj);
+}

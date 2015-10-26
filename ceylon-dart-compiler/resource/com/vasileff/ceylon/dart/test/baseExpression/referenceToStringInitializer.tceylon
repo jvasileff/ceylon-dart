@@ -1,0 +1,4 @@
+void run() {
+    value newString1 = String;
+    value newString2 = ({Character*} characters) => String(characters);
+}

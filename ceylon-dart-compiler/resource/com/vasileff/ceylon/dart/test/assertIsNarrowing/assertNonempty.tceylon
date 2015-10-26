@@ -1,0 +1,7 @@
+shared void run() {
+    [Integer*] ints = [1];
+    assert(nonempty ints2 = ints);
+    print(ints2);
+    assert(nonempty ints);
+    print(ints);
+}

@@ -1,0 +1,6 @@
+interface I {
+    shared formal void f1();
+    shared formal String f2();
+    shared formal String f3(String a, String b);
+    shared formal String v1;
+}

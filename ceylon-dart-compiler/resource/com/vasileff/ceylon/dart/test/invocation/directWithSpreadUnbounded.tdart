@@ -1,0 +1,33 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Iterable unbounded0 = $ceylon$language.empty;
+    $ceylon$language.Iterable unbounded1 = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+        switch ($i$) {
+        case 0 :
+        return $ceylon$language.Integer.instance(1);
+        }
+    }, null);
+    $ceylon$language.Iterable unbounded2 = new $ceylon$language.LazyIterable(2, (final $dart$core.int $i$) {
+        switch ($i$) {
+        case 0 :
+        return $ceylon$language.Integer.instance(1);
+        case 1 :
+        return $ceylon$language.Integer.instance(2);
+        }
+    }, null);
+    $ceylon$language.Sequence fa([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a)], rest);
+
+    $ceylon$language.print((() {
+        $ceylon$language.Tuple arg$0$s = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(0)], unbounded2.sequence());
+        return fa($ceylon$language.Integer.nativeValue(arg$0$s.getFromFirst(0) as $ceylon$language.Integer), arg$0$s.spanFrom($ceylon$language.Integer.instance(1)));
+    })());
+    $ceylon$language.Sequential fb([$ceylon$language.Sequential rest]) => rest;
+
+    $ceylon$language.print(fb(unbounded0.sequence()));
+    $ceylon$language.print(fb(unbounded1.sequence()));
+    $ceylon$language.print(fb(unbounded2.sequence()));
+}
+
+void run() => $package$run();

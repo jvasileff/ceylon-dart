@@ -1,0 +1,10 @@
+interface I {
+    shared interface J {
+        shared class C() {}
+    }
+    shared J j => object satisfies J {};
+}
+
+I.J j = object satisfies I {}.j;
+
+I.J.C() newC = I.J.C(j);

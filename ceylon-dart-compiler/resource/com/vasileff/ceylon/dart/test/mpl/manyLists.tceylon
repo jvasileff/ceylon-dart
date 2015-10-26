@@ -1,0 +1,12 @@
+Integer fun(Integer a, Integer b = 10)(Integer c)(String d, Float e)(Boolean f) {
+    return a + b + c;
+}
+
+shared void run() {
+    value f = fun;
+    value g = fun(1);
+    value h = fun(2, 3);
+    value i = fun(4)(5);
+    value j = fun(4)(5)("s", 1.0);
+    value k = fun(4)(5)("s", 1.0)(true);
+}

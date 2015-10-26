@@ -1,0 +1,6 @@
+// the narrowing doesn't affect the Dart type,
+// so a new variable declaration is not required
+void assertions() {
+    String|Integer|Float obj = "x";
+    assert (!is String obj);
+}

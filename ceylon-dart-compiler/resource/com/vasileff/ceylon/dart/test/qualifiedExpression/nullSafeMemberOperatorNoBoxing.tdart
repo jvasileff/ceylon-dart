@@ -1,0 +1,13 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Destroyable u1$get() => $ceylon$language.nothing as $ceylon$language.Destroyable;
+
+    $ceylon$language.Callable destroy = (() {
+        $ceylon$language.Destroyable $capturedReceiver$ = u1$get();
+        return new $ceylon$language.dart$Callable(([$dart$core.Object error]) => (($ceylon$language.Destroyable $r$) => $r$ == null ? null : $r$.destroy(error as $ceylon$language.Throwable))($capturedReceiver$));
+    })();
+}
+
+void run() => $package$run();

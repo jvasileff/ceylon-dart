@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I$J implements I {
+    I get $outer$default$I;
+    $dart$core.String f();
+    static $dart$core.String $f([final I$J $this]) => "D.f()";
+    void testResolution();
+    static void $testResolution([final I$J $this]) {
+        $ceylon$language.print($ceylon$language.String.instance($this.f()));
+        $ceylon$language.print($ceylon$language.String.instance($this.$outer$default$I.f()));
+    }
+}
+abstract class I {
+    $dart$core.String f();
+    static $dart$core.String $f([final I $this]) => "C.f()";
+}

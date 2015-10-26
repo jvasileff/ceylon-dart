@@ -1,0 +1,38 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class capturesWithControlBlocks$Bar {
+    void capturesIFS();
+    static void $capturesIFS([final capturesWithControlBlocks$Bar $this]) {
+        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+        $ceylon$language.print(capture);
+    }
+    $dart$core.Object $capture$capturesWithControlBlocks$x;
+}
+abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
+    void capturesIF();
+    static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
+        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+        $ceylon$language.print(capture);
+    }
+    $dart$core.Object $capture$capturesWithControlBlocks$$$x;
+}
+abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlocks$Baz {
+    void capturesI();
+    static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
+        $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
+        $ceylon$language.print($ceylon$language.Integer.instance(capture));
+    }
+    $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
+}
+void $package$capturesWithControlBlocks() {
+    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+    if ((x is $ceylon$language.Integer) || (x is $ceylon$language.Float)) {
+        if (x is $ceylon$language.Integer) {
+            $dart$core.int x$0;
+            x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+        }
+    }
+}
+
+void capturesWithControlBlocks() => $package$capturesWithControlBlocks();

@@ -1,0 +1,15 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$A {
+}
+abstract class run$B implements run$A {
+}
+void $package$run() {
+    run$B x$get() => $ceylon$language.nothing as run$B;
+
+    run$A y = $ceylon$language.identity((($dart$core.Object $lhs$) => $lhs$ == null ? $ceylon$language.nothing : $lhs$)(x$get())) as run$A;
+    $ceylon$language.print(y);
+}
+
+void run() => $package$run();

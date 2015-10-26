@@ -1,0 +1,5 @@
+class C() {
+    shared String|Integer x = "";
+    assert (is String x);
+    shared String y => x;
+}

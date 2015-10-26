@@ -1,0 +1,10 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run([$dart$core.Object f = $ceylon$language.dart$default]) {
+    if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+        f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    }
+}
+
+void run([$dart$core.Object f = $ceylon$language.dart$default]) => $package$run(f);

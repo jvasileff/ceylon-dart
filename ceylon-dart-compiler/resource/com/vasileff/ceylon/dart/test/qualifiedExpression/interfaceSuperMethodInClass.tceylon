@@ -1,0 +1,18 @@
+interface Top {
+    shared default Usable foo(Usable u) => nothing;
+    shared default Usable bar(Usable u) => nothing;
+}
+interface Left satisfies Top {
+    shared actual default Usable foo(Usable u) => nothing;
+}
+interface Right satisfies Top {
+    shared actual default Usable foo(Usable u) => nothing;
+}
+class C() satisfies Left & Right {
+    shared actual default Usable foo(Usable u) => nothing;
+    shared void run() {
+        value sBar = super.bar;
+        value lFoo = (super of Left).foo;
+        value rFoo = (super of Right).foo;
+    }
+}

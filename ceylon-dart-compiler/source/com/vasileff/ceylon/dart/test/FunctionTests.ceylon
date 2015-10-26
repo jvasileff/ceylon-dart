@@ -3,285 +3,48 @@ import ceylon.test {
 }
 
 shared
-class FunctionTests() {
+object functions {
 
     shared test
-    void voidFunctionTest() {
-        compileAndCompare {
-             """void simpleFunction() { return; }
-             """;
-
-             """import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$simpleFunction() {
-                    return;
-                }
-
-                void simpleFunction() => $package$simpleFunction();
-             """;
-        };
-    }
+    void voidFunction()
+        =>  compileAndCompare2("functions/voidFunction");
 
     shared test
-    void anonymousFunctionTest() {
-        compileAndCompare {
-             """void simpleFunction() {
-                    String() anon = () => "result";
-                    print(anon());
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$simpleFunction() {
-                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
-                    $ceylon$language.print(anon.f());
-                }
-
-                void simpleFunction() => $package$simpleFunction();
-             """;
-        };
-    }
+    void anonymousFunction()
+        =>  compileAndCompare2("functions/anonymousFunction");
 
     shared test
-    void functionReturnBoxingTest() {
-        // Note: prior to `suppressErasure`, this was a better test of
-        //       unboxing capabilities of generateCallable
-        compileAndCompare {
-             """void simpleFunction() {
-                    Anything() anon = () => "result";
-                    print(anon());
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$simpleFunction() {
-                    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
-                    $ceylon$language.print(anon.f());
-                }
-
-                void simpleFunction() => $package$simpleFunction();
-             """;
-        };
-    }
+    void functionReturnBoxing()
+        =>  compileAndCompare2("functions/functionReturnBoxing");
 
     shared test
-    void nestedFunctionTest() {
-        compileAndCompare {
-             """void simpleFunction() {
-                    String nested1() => "result1";
-                    Object nested2() { return "result2"; }
-                    print(nested1());
-                    print(nested2());
-                }
-             """;
-
-             """import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$simpleFunction() {
-                    $dart$core.String nested1() => "result1";
-
-                    $dart$core.Object nested2() {
-                        return $ceylon$language.String.instance("result2");
-                    }
-
-                    $ceylon$language.print($ceylon$language.String.instance(nested1()));
-                    $ceylon$language.print(nested2());
-                }
-
-                void simpleFunction() => $package$simpleFunction();
-             """;
-        };
-    }
+    void nestedFunction()
+        =>  compileAndCompare2("functions/nestedFunction");
 
     shared test
-    void functionReferenceTest() {
-        compileAndCompare {
-             """
-                void simpleFunction() {
-                    String nested1() => "result1";
-                    value nested1Ref = nested1;
-                    print(nested1());
-                    print(nested1Ref());
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$simpleFunction() {
-                    $dart$core.String nested1() => "result1";
-
-                    $ceylon$language.Callable nested1Ref = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(nested1()));
-                    $ceylon$language.print($ceylon$language.String.instance(nested1()));
-                    $ceylon$language.print(nested1Ref.f());
-                }
-
-                void simpleFunction() => $package$simpleFunction();
-             """;
-        };
-    }
+    void functionReference()
+        =>  compileAndCompare2("functions/functionReference");
 
     shared test
-    void functionDefaultedParameters() {
-        compileAndCompare {
-             """shared Integer withDefaults(Integer x = 1, Integer y = 2) {
-                    return y;
-                }
-
-                shared void run() {
-                    withDefaults(3);
-                    withDefaults(4, 5);
-                }
-             """;
-
-             """import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                $dart$core.int $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) {
-                    if ($dart$core.identical(x, $ceylon$language.dart$default)) {
-                        x = 1;
-                    }
-                    if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-                        y = 2;
-                    }
-                    return y as $dart$core.int;
-                }
-
-                $dart$core.int withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
-
-                void $package$run() {
-                    $package$withDefaults(3);
-                    $package$withDefaults(4, 5);
-                }
-
-                void run() => $package$run();
-             """;
-         };
-    }
+    void functionDefaultedParameters()
+        =>  compileAndCompare2("functions/functionDefaultedParameters");
 
     shared test
-    void functionDefaultedParameters2() {
-        compileAndCompare {
-             """
-                shared Integer withDefaults(Integer x = 1, Integer y = x + 1 + 1) {
-                    return y;
-                }
-
-                shared void run() {
-                    withDefaults();
-                    withDefaults(1);
-                    withDefaults(2, 3);
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                $dart$core.int $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) {
-                    if ($dart$core.identical(x, $ceylon$language.dart$default)) {
-                        x = 1;
-                    }
-                    if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-                        y = ((x as $dart$core.int) + 1) + 1;
-                    }
-                    return y as $dart$core.int;
-                }
-
-                $dart$core.int withDefaults([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object y = $ceylon$language.dart$default]) => $package$withDefaults(x, y);
-
-                void $package$run() {
-                    $package$withDefaults();
-                    $package$withDefaults(1);
-                    $package$withDefaults(2, 3);
-                }
-
-                void run() => $package$run();
-             """;
-        };
-    }
+    void functionDefaultedParameters2()
+        =>  compileAndCompare2("functions/functionDefaultedParameters2");
 
     shared test
-    void functionDefaultedBoolean() {
-        compileAndCompare {
-             """
-                shared Boolean withDefaults(Boolean x = true) {
-                    return x;
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                $dart$core.bool $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) {
-                    if ($dart$core.identical(x, $ceylon$language.dart$default)) {
-                        x = true;
-                    }
-                    return x as $dart$core.bool;
-                }
-
-                $dart$core.bool withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) => $package$withDefaults(x);
-             """;
-        };
-    }
+    void functionDefaultedBoolean()
+        =>  compileAndCompare2("functions/functionDefaultedBoolean");
 
     shared test
-    void functionDefaultedFloat() {
-        compileAndCompare {
-             """
-                shared Float withDefaults(Float x = 1.0) {
-                    return x;
-                }
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                $dart$core.double $package$withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) {
-                    if ($dart$core.identical(x, $ceylon$language.dart$default)) {
-                        x = 1.0;
-                    }
-                    return x as $dart$core.double;
-                }
-
-                $dart$core.double withDefaults([$dart$core.Object x = $ceylon$language.dart$default]) => $package$withDefaults(x);
-             """;
-        };
-    }
+    void functionDefaultedFloat()
+        =>  compileAndCompare2("functions/functionDefaultedFloat");
 
     "Return and parameter types of callable parameters should not be erased to native.
      Otherwise, boxing/unboxing wrapper functions would be necessary when generating
      Callables to hold them."
     shared test
-    void dontEraseForCallableParameters() {
-        compileAndCompare {
-             """
-                shared void run(String f(String s) => s) {}
-             """;
-
-             """
-                import "dart:core" as $dart$core;
-                import "package:ceylon/language/language.dart" as $ceylon$language;
-
-                void $package$run([$dart$core.Object f = $ceylon$language.dart$default]) {
-                    if ($dart$core.identical(f, $ceylon$language.dart$default)) {
-                        f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-                    }
-                }
-
-                void run([$dart$core.Object f = $ceylon$language.dart$default]) => $package$run(f);
-             """;
-        };
-    }
+    void dontEraseForCallableParameters()
+        =>  compileAndCompare2("functions/dontEraseForCallableParameters");
 }

@@ -1,0 +1,10 @@
+interface I {
+    shared formal String f1();
+    shared formal String f2();
+}
+interface J satisfies I {
+    shared actual default String f1() => "";
+    shared actual default String f2() { return ""; }
+    shared default String fj1() => f1();
+    shared default String fj2() { return f2(); }
+}

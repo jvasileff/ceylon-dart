@@ -1,0 +1,8 @@
+String echo(String s) => s;
+
+shared void run() {
+    print(echo("list"));
+    print(package.echo("list"));
+    print(echo { "named"; });
+    print(package.echo { "named"; });
+}

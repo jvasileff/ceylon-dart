@@ -1,0 +1,43 @@
+shared void run() {
+    print("* comprehensionCaptureTest begin");
+
+    value values = [ 100, 110, 120 ];
+    value valuesNull = [ 100, 110, 120, null ];
+
+    // capture test 0
+    value funcs0 = {
+        for (v in values)
+        ()=>v
+    };
+    //printAll({ for (f in funcs0.sequence()) f() });
+    assert({ for (f in funcs0.sequence()) f() }.sequence().equals(values));
+
+    // capture test 1
+    value funcs1 = {
+        for (v in valuesNull)
+        if (exists w=v)
+        ()=>w
+    };
+    //printAll({ for (f in funcs1.sequence()) f() });
+    assert({ for (f in funcs1.sequence()) f() }.sequence().equals(values));
+
+    // capture test 2
+    value funcs2 = {
+        for (v in values)
+        if (exists w = true then (()=>v))
+        w
+    };
+    //printAll({ for (f in funcs2.sequence()) f() });
+    assert({ for (f in funcs2.sequence()) f() }.sequence().equals(values));
+
+    // capture test 3
+    value funcs3 = {
+        for (v in values)
+        for (w in { ()=>v })
+        w
+    };
+    //printAll({ for (f in funcs3.sequence()) f() });
+    assert({ for (f in funcs3.sequence()) f() }.sequence().equals(values));
+
+    print("* comprehensionCaptureTest end");
+}

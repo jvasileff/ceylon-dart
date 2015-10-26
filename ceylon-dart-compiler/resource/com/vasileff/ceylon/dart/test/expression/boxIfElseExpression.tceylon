@@ -1,0 +1,8 @@
+shared void run() {
+    Integer x = 1;
+    Integer y = 1;
+    Integer z = if (x > y) then x else y;
+    Object o = if (x > y) then x else y;
+    Object p = if (x > y) then x else "";
+    Object q = if (x > y) then x else o;
+}

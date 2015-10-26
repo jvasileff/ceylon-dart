@@ -1,0 +1,5 @@
+class Foo() {
+    class FooMember() {
+    }
+    value x = FooMember();
+}

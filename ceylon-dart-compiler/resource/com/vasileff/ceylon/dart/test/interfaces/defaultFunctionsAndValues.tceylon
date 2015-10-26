@@ -1,0 +1,10 @@
+interface I {
+    shared default void f1() {}
+    shared default void f2() => print("");
+    shared default String f3() { return ""; }
+    shared default String f4() => "";
+    shared default String f5(String a, String b) { return ""; }
+    shared default String f6(String a, String b) => "";
+    shared default String v1 { return ""; }
+    shared default String v2 => "";
+}

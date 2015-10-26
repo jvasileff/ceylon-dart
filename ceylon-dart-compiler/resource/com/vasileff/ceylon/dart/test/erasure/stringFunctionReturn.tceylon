@@ -1,0 +1,4 @@
+String f1() => "x";
+String? f2() => "x";
+Object f3() => "x";
+Object? f4() => "x";

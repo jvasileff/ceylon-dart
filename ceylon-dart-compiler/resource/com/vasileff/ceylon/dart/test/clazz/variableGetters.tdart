@@ -1,0 +1,25 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get i1;
+    set i1($dart$core.String i1);
+}
+class C implements I {
+    C() {
+        i1 = "i1-1";
+        i1 = "i1-2";
+        $ceylon$language.print($ceylon$language.String.instance(i1));
+        c1 = "c1-1";
+        c1 = "c1-2";
+        $ceylon$language.print($ceylon$language.String.instance(c1));
+    }
+    $dart$core.String get i1 => "";
+    void set i1($dart$core.String i1) {
+        $ceylon$language.print($ceylon$language.String.instance("Setting i1 to: " + i1));
+    }
+    $dart$core.String get c1 => "";
+    void set c1($dart$core.String c1) {
+        $ceylon$language.print($ceylon$language.String.instance("Setting c1 to: " + c1));
+    }
+}

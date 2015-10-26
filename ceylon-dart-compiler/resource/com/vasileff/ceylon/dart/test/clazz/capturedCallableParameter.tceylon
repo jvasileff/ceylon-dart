@@ -1,0 +1,9 @@
+shared void fun(String captureMe1(), String() captureMe2) {
+    class C() {
+        captureMe1();
+        captureMe2();
+
+        value cm1 = captureMe1;
+        value cm2 = captureMe2;
+    }
+}

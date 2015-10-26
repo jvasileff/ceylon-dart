@@ -1,0 +1,6 @@
+{String|Integer*} myIterable = nothing;
+shared void run() {
+    for (x in myIterable) {
+        print(x);
+    }
+}

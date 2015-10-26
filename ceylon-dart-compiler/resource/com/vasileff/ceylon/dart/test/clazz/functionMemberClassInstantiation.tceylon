@@ -1,0 +1,7 @@
+shared void run() {
+    class Foo() {
+        class FooMember() {
+        }
+        value x = FooMember();
+    }
+}

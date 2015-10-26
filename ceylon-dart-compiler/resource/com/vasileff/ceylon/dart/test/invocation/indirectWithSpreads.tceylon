@@ -1,0 +1,60 @@
+shared void run() {
+    [Integer*](Integer, Integer, Integer*) f2 = (Integer a, Integer b, Integer* xs) => [a, b, *xs];
+    [Integer*](Integer, Integer*) f1 = (Integer a, Integer* xs) => [a, *xs];
+    [Integer*](Integer*) f0 = (Integer* xs) => xs;
+
+    print(f0(*{1, 2, 3, 4}));   // spread iterable (compiler must add .sequence())
+
+    print("");
+    print(f2(1, 2, 3, 4));      // tests (f) using regular as variadic
+    print(f2(1, 2, 3));         // tests (f) using regular as variadic
+    print(f2(1, 2));            // tests (f)
+
+    print("");
+    print(f2(1, 2, 3, *[4]));   // tests (s) using regular as variadic join
+    print(f2(1, 2, 3, *[]));    // tests (s) using regular as variadic join empty
+
+    print("");
+    print(f2(1, 2, *[3, 4]));   // tests (s) pass-through
+    print(f2(1, 2, *[3]));      // tests (s) pass-through
+    print(f2(1, 2, *[]));       // tests (s) pass-through
+
+    print("");
+    print(f2(1, *[2, 3, 4]));   // tests (s) splitting spread
+    print(f2(1, *[2, 3]));      // tests (s) splitting spread
+    print(f2(1, *[2]));         // tests (s) using spread as regular
+    print(f2(*[1, 2]));         // tests (s) using spread as regular
+
+    print("");
+    print(f1(1, 2, 3));         // tests (f) using regular as variadic
+    print(f1(1, 2));            // tests (f) using regular as variadic
+    print(f1(1));               // tests (f)
+
+    print("");
+    print(f1(1, 2, *[3]));      // tests (s) using regular as variadic join
+    print(f1(1, 2, *[]));       // tests (s) using regular as variadic join empty
+
+    print("");
+    print(f1(1, *[2, 3]));      // tests pass-through
+    print(f1(1, *[2]));         // tests pass-through
+    print(f1(1, *[]));          // tests pass-through
+
+    print("");
+    print(f1(*[1, 2, 3]));      // tests splitting spread
+    print(f1(*[1, 2]));         // tests splitting spread
+    print(f1(*[1]));            // tests using spread as regular
+
+    print("");
+    print(f0(1, 2));            // tests (f) using regular as variadic
+    print(f0(1));               // tests (f) using regular as variadic
+    print(f0());                // tests (f) empty variadic
+
+    print("");
+    print(f0(1, *[2]));      // tests (s) using regular as variadic join
+    print(f0(1, *[]));          // tests (s) using regular as variadic join empty
+
+    print("");
+    print(f0(*[1, 2]));         // tests pass-through
+    print(f0(*[1]));            // tests pass-through
+    print(f0(*[]));             // tests pass-through
+}

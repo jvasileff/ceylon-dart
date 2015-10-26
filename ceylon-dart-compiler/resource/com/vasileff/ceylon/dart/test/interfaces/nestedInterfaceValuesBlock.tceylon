@@ -1,0 +1,10 @@
+interface I {
+    shared default String fi { return ""; }
+    interface J {
+        shared default String fj { return fi; }
+        interface K {
+            shared default String fki { return fi; }
+            shared default String fkj { return fj; }
+        }
+    }
+}

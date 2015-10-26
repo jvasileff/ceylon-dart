@@ -1,0 +1,1 @@
+shared void run(String f(String s) => s) {}

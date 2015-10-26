@@ -1,0 +1,11 @@
+interface I {
+    shared default void foo0() {}
+    shared default void foo1() {}
+    shared formal void foo2();
+    shared formal void foo3();
+}
+
+abstract class C() satisfies I {
+    shared actual formal void foo1();
+    shared actual formal void foo3();
+}

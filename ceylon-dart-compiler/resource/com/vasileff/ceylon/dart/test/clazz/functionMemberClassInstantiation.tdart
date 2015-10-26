@@ -1,0 +1,16 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$Foo$FooMember {
+    run$Foo $outer$default$run$Foo;
+    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo]) {}
+}
+class run$Foo {
+    run$Foo() {
+        _$x = new run$Foo$FooMember(this);
+    }
+    run$Foo$FooMember _$x;
+}
+void $package$run() {}
+
+void run() => $package$run();

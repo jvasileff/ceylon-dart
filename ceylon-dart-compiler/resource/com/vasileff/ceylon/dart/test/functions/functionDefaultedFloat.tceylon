@@ -1,0 +1,3 @@
+shared Float withDefaults(Float x = 1.0) {
+    return x;
+}

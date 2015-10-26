@@ -1,0 +1,10 @@
+interface I {
+    shared default String fi => "";
+    interface J {
+        shared default String fj => fi;
+        interface K {
+            shared default String fki => fi;
+            shared default String fkj => fj;
+        }
+    }
+}

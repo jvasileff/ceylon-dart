@@ -1,0 +1,4 @@
+Float f1() => 1.0;
+Float? f2() => 1.0;
+Object f3() => 1.0;
+Object? f4() => 1.0;

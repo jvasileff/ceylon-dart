@@ -1,0 +1,12 @@
+shared void run() {
+    switch (1+1)
+    case (1 | 2) {
+        print("one or two");
+    }
+    case (3) {
+        print("three");
+    }
+    else {
+        print("else");
+    }
+}

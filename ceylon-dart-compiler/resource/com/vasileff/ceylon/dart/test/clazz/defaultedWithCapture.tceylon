@@ -1,0 +1,9 @@
+class Sup(Integer a) {
+    print(a);
+}
+
+shared void run() {
+    value x = 5;
+    class Sub(Integer b = x, Integer c = b + 1) extends Sup(c) {}
+    Sub();
+}

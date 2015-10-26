@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class fun$C {
+    $ceylon$language.Callable $capture$fun$captureMe1;
+    $ceylon$language.Callable $capture$fun$captureMe2;
+    fun$C([$ceylon$language.Callable this.$capture$fun$captureMe1, $ceylon$language.Callable this.$capture$fun$captureMe2]) {
+        $capture$fun$captureMe1.f();
+        $capture$fun$captureMe2.f();
+        _$cm1 = $capture$fun$captureMe1;
+        _$cm2 = $capture$fun$captureMe2;
+    }
+    $ceylon$language.Callable _$cm1;
+    $ceylon$language.Callable _$cm2;
+}
+void $package$fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) {}
+
+void fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) => $package$fun(captureMe1, captureMe2);

@@ -1,0 +1,22 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
+            _$f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.print(i));
+        }
+        return [_$f];
+    })());
+    C.$s([$dart$core.List a]) : this.$w(a[0]);
+    C.$w([$ceylon$language.Callable _$f]) {
+        this._$f = _$f;
+        (this._$f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(5));
+    }
+    $ceylon$language.Callable _$f;
+}
+void $package$run() {
+    new C();
+}
+
+void run() => $package$run();

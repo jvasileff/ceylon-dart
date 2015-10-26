@@ -1,0 +1,13 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class Foo$FooMember {
+    Foo $outer$default$Foo;
+    Foo$FooMember([Foo this.$outer$default$Foo]) {}
+}
+class Foo {
+    Foo() {
+        _$x = new Foo$FooMember(this);
+    }
+    Foo$FooMember _$x;
+}

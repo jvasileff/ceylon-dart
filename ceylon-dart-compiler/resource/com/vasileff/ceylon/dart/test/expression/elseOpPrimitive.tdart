@@ -1,0 +1,11 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.String x$get() => null;
+
+    $dart$core.String y = (($dart$core.String $lhs$) => $lhs$ == null ? "default" : $lhs$)(x$get());
+    $ceylon$language.print($ceylon$language.String.instance(y));
+}
+
+void run() => $package$run();

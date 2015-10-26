@@ -1,0 +1,46 @@
+shared void run() {
+    // with default
+    [Integer+] fa(Integer a, Integer b=99, Integer* rest) => [a, b, *rest];
+
+    print(fa(1));
+    print(fa(1, *[]));
+    print(fa(1, 2));
+    print(fa(1, 2, *[]));
+    print(fa(1, 2, *[3]));
+    print(fa(1, 2, 3));
+    print(fa(1, 2, 3, *[]));
+    print(fa(1, 2, 3, *[4]));
+    print(fa(1, 2, 3, *[4, *[]]));
+
+    // without default
+    [Integer+] fb(Integer a, Integer b, Integer* rest) => [a, b, *rest];
+
+    print(fb(1, 2));
+    print(fb(1, 2, *[]));
+    print(fb(1, 2, *[3]));
+    print(fb(1, 2, 3));
+    print(fb(1, 2, 3, *[]));
+    print(fb(1, 2, 3, *[4]));
+
+    // with default, without variadic
+    [Integer+] fc(Integer a, Integer b=98, Integer c=99) => [a, b, c];
+
+    print(fc(1));
+    print(fc(1, 2));
+    print(fc(1, 2, 3));
+
+    // with only variadic
+    [Integer*] fd(Integer* rest) => rest;
+
+    print(fd());
+    print(fd(*[]));
+    print(fd(1));
+    print(fd(1, *[]));
+    print(fd(1, 2));
+    print(fd(1, 2, *[]));
+
+    // with no params
+    [Integer*] fe() => [];
+    print(fe());
+    print(fe(*[]));
+}

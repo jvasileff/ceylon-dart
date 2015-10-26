@@ -1,0 +1,19 @@
+interface I {
+    shared formal variable String i1;
+}
+
+class C() satisfies I {
+    shared actual String i1 => "";
+    assign i1 { print("Setting i1 to: " + i1); }
+
+    i1 = "i1-1";
+    i1 = "i1-2";
+    print(i1);
+
+    shared String c1 => "";
+    assign c1 { print("Setting c1 to: " + c1); }
+
+    c1 = "c1-1";
+    c1 = "c1-2";
+    print(c1);
+}

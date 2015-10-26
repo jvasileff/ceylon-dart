@@ -1,0 +1,26 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class o1_ {
+    o1_() {}
+    $dart$core.String get s1 => "";
+    $dart$core.String get s2 {
+        return "";
+    }
+    $dart$core.String s3() => "";
+    $dart$core.String s4() {
+        return "";
+    }
+}
+final o1_ $package$o1 = new o1_();
+
+o1_ get o1 => $package$o1;
+
+void $package$run() {
+    $ceylon$language.print($ceylon$language.String.instance($package$o1.s1));
+    $ceylon$language.print($ceylon$language.String.instance($package$o1.s2));
+    $ceylon$language.print($ceylon$language.String.instance($package$o1.s3()));
+    $ceylon$language.print($ceylon$language.String.instance($package$o1.s4()));
+}
+
+void run() => $package$run();

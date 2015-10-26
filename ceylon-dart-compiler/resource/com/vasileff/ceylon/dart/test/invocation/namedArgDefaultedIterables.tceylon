@@ -1,0 +1,16 @@
+shared void run() {
+    value it = [1, 2, 3];
+    // Non-defaulted iterable
+    {Integer*} fa({Integer*} xs) => xs;
+    print(fa { });
+    print(fa { *it });
+
+    // Defaulted iterable
+    {Integer*} fb({Integer*} xs = [1]) => xs;
+    print(fb { });
+    print(fb { *it });
+
+    // Iterable where the declaration is not constrainted to be
+    // of an Iterable type
+    print(identity<{Integer*}> { });
+}

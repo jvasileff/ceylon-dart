@@ -1,0 +1,4 @@
+Integer f1() => 1;
+Integer? f2() => 1;
+Object f3() => 1;
+Object? f4() => 1;

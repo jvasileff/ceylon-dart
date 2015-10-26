@@ -1,0 +1,9 @@
+Object o = object {
+    shared void foo() {
+        String s = "s";
+        Object o2 = object {
+            print(s);
+        };
+    }
+    foo();
+};

@@ -1,0 +1,9 @@
+shared Integer withDefaults(Integer x = 1, Integer y = x + 1 + 1) {
+    return y;
+}
+
+shared void run() {
+    withDefaults();
+    withDefaults(1);
+    withDefaults(2, 3);
+}

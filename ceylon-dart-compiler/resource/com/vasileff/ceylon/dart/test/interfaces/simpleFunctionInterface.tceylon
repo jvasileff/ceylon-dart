@@ -1,0 +1,5 @@
+void f() {
+    interface I {
+        shared formal String fun();
+    }
+}

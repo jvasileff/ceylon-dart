@@ -1,0 +1,14 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get s;
+}
+class Foo implements I {
+    Foo() {
+        s = "";
+        _$x = "";
+    }
+    $dart$core.String s;
+    $dart$core.String _$x;
+}

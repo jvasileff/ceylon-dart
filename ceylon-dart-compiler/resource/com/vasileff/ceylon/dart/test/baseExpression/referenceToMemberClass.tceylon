@@ -1,0 +1,8 @@
+class C() {
+    class D(String s) {
+    }
+    shared void foo() {
+        value newD1 = D;
+        value newD2 = (String s) => D(s);
+    }
+}

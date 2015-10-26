@@ -1,0 +1,5 @@
+shared void run() {
+    value newEntry = Entry<String, Destroyable?>;
+    value entry = newEntry("d", null);
+    print(entry);
+}

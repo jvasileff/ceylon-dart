@@ -1,0 +1,6 @@
+shared void run() {
+    {Integer*} iter0 = { for (i in 0:10) i };
+    {Integer|String*} iter1 = { for (i in 0:10) if (2.divides(i)) then i else "nope" };
+    printAll(iter0);
+    printAll(iter1);
+}

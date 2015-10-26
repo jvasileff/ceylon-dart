@@ -1,0 +1,19 @@
+interface I {
+    shared Usable foo(Usable u) => nothing;
+
+    shared void run() {
+        value fooRef = this.foo;
+
+        // private with non-this receiver:
+        I ie = nothing;
+        I il => nothing;
+        value fooRefIe = ie.foo;
+        value fooRefIl = il.foo;
+
+        // private with null safe operator
+        I? me = nothing;
+        I? ml => nothing;
+        value fooRefMe = me?.foo;
+        value fooRefMl = ml?.foo;
+    }
+}

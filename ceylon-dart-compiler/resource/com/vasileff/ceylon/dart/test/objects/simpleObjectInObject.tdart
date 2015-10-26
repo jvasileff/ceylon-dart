@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class o1_$o2_ {
+    o1_ $outer$default$o1_;
+    o1_$o2_([o1_ this.$outer$default$o1_]) {}
+    $dart$core.String get s1 => "";
+}
+class o1_ {
+    o1_() {
+        _$o2 = new o1_$o2_(this);
+    }
+    o1_$o2_ _$o2;
+}
+final o1_ $package$o1 = new o1_();
+
+o1_ get o1 => $package$o1;

@@ -1,0 +1,21 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class I1$I2$C implements I1$I2 {
+    I1$I2 $outer$default$I1$I2;
+    I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
+    I1$I2$C([I1$I2 this.$outer$default$I1$I2]) {}
+}
+abstract class I1$I2 {
+    I1 get $outer$default$I1;
+    static $ceylon$language.Callable $get$_$newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    static $ceylon$language.Callable $get$_$newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    static void $_$foo([final I1$I2 $this]) {
+        $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+
+        $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+
+    }
+}
+abstract class I1 {
+}

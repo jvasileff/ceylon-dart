@@ -1,0 +1,10 @@
+interface I {
+    shared formal String v1;
+    shared formal String v2;
+}
+interface J satisfies I {
+    shared actual default String v1 => "";
+    shared actual default String v2 { return ""; }
+    shared default String vj1 => v1;
+    shared default String vj2 { return v2; }
+}

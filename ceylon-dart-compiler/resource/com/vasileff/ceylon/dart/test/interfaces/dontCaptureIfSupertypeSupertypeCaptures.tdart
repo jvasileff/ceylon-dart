@@ -1,0 +1,19 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$I1 {
+    $dart$core.int get i1capturedX;
+    static $dart$core.int $get$i1capturedX([final run$I1 $this]) => $this.$capture$run$x;
+    $dart$core.int $capture$run$x;
+}
+abstract class run$I2 implements run$I1 {
+}
+abstract class run$I3 implements run$I2 {
+    $dart$core.int get i3capturedX;
+    static $dart$core.int $get$i3capturedX([final run$I3 $this]) => $this.$capture$run$x;
+}
+void $package$run() {
+    $dart$core.int x = 5;
+}
+
+void run() => $package$run();

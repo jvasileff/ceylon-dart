@@ -1,0 +1,10 @@
+interface I {
+    shared default String f() => "C.f()";
+    shared interface J satisfies I {
+        shared actual default String f() => "D.f()";
+        shared void testResolution() {
+            print(f());
+            print(outer.f());
+        }
+    }
+}

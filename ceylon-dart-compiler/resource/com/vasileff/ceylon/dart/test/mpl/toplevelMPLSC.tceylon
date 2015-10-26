@@ -1,0 +1,8 @@
+Integer adder(Integer x)(Integer y)
+    =>  x + y;
+
+shared void run() {
+    value f = adder;
+    value g = adder(1);
+    value h = adder(1)(2);
+}

@@ -1,0 +1,6 @@
+String echoString(String s) => s;
+
+shared void run() {
+    value ref = echoString;
+    value result = ref(".");
+}

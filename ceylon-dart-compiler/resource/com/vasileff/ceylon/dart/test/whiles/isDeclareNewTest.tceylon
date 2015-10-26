@@ -1,0 +1,6 @@
+void run() {
+    variable Integer|String isv = 0;
+    while (is Integer i = isv) {
+        isv = "";
+    }
+}

@@ -1,0 +1,6 @@
+void simpleFunction() {
+    String nested1() => "result1";
+    Object nested2() { return "result2"; }
+    print(nested1());
+    print(nested2());
+}

@@ -1,0 +1,23 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C$D {
+    C $outer$default$C;
+    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+        this._$s = _$s;
+    }
+    $dart$core.String _$s;
+}
+class C {
+    C() {
+        d1 = new C$D(this, "d1");
+        d2 = new C$D(new C(), "d2");
+    }
+    C$D d1;
+    C$D d2;
+}
+void $package$run() {
+    C$D d3 = new C$D(new C(), "d3");
+}
+
+void run() => $package$run();

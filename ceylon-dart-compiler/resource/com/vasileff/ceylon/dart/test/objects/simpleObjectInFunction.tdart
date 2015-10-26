@@ -1,0 +1,12 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$o1_ {
+    run$o1_() {}
+    $dart$core.String get s1 => "";
+}
+void $package$run() {
+    final run$o1_ o1 = new run$o1_();
+}
+
+void run() => $package$run();

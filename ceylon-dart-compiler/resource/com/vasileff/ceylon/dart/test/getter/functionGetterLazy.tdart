@@ -1,0 +1,10 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$f() {
+    $dart$core.String a$get() => "";
+
+    $dart$core.String b = a$get();
+}
+
+void f() => $package$f();

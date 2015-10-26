@@ -1,0 +1,12 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class SomeInt {
+    $dart$core.Object get someObject;
+    set someObject($dart$core.Object someObject);
+}
+void $package$run([SomeInt si]) {
+    $dart$core.String y = $ceylon$language.String.nativeValue((si.someObject = $ceylon$language.String.instance("")) as $ceylon$language.String);
+}
+
+void run([SomeInt si]) => $package$run(si);

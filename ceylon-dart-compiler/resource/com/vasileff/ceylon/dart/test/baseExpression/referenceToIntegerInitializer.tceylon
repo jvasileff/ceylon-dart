@@ -1,0 +1,4 @@
+void run() {
+    value newInteger = Integer;
+    value five = newInteger(5);
+}

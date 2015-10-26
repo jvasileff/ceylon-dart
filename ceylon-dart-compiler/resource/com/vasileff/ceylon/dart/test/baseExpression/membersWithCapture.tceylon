@@ -1,0 +1,18 @@
+class A() {
+    class B() {
+        A.B()(A) newB1 = A.B;
+        A.B() newB2 = B;
+        class C() {
+            A.B.C()(A.B) newB1 = A.B.C;
+            A.B.C()(A.B) newB2 = B.C;
+            A.B.C() newB3 = C;
+            shared void asdf() {
+                String cap1 = "";
+                class D(String x) {
+                    shared String useit => cap1;
+                }
+                value newd = D;
+            }
+        }
+    }
+}

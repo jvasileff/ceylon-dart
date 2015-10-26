@@ -1,0 +1,21 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.String $package$echo([$dart$core.String s]) => s;
+
+$dart$core.String echo([$dart$core.String s]) => $package$echo(s);
+
+void $package$run() {
+    $ceylon$language.print($ceylon$language.String.instance($package$echo("list")));
+    $ceylon$language.print($ceylon$language.String.instance($package$echo("list")));
+    $ceylon$language.print((() {
+        $dart$core.String arg$0$0 = "named";
+        return $ceylon$language.String.instance($package$echo(arg$0$0));
+    })());
+    $ceylon$language.print((() {
+        $dart$core.String arg$1$0 = "named";
+        return $ceylon$language.String.instance($package$echo(arg$1$0));
+    })());
+}
+
+void run() => $package$run();

@@ -1,0 +1,5 @@
+interface I {
+    interface J {
+        shared formal String fun();
+    }
+}

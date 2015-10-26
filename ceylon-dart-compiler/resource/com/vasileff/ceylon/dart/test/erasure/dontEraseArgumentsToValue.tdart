@@ -1,0 +1,13 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.String $package$echoString([$dart$core.String s]) => s;
+
+$dart$core.String echoString([$dart$core.String s]) => $package$echoString(s);
+
+void $package$run() {
+    $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($package$echoString($ceylon$language.String.nativeValue(s))));
+    $dart$core.String result = $ceylon$language.String.nativeValue(ref.f($ceylon$language.String.instance(".")) as $ceylon$language.String);
+}
+
+void run() => $package$run();

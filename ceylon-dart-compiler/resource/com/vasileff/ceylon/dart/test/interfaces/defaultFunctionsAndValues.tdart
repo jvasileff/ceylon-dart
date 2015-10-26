@@ -1,0 +1,27 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void f1();
+    static void $f1([final I $this]) {}
+    void f2();
+    static void $f2([final I $this]) => $ceylon$language.print($ceylon$language.String.instance(""));
+    $dart$core.String f3();
+    static $dart$core.String $f3([final I $this]) {
+        return "";
+    }
+    $dart$core.String f4();
+    static $dart$core.String $f4([final I $this]) => "";
+    $dart$core.String f5([$dart$core.String a, $dart$core.String b]);
+    static $dart$core.String $f5([final I $this, $dart$core.String a, $dart$core.String b]) {
+        return "";
+    }
+    $dart$core.String f6([$dart$core.String a, $dart$core.String b]);
+    static $dart$core.String $f6([final I $this, $dart$core.String a, $dart$core.String b]) => "";
+    $dart$core.String get v1;
+    static $dart$core.String $get$v1([final I $this]) {
+        return "";
+    }
+    $dart$core.String get v2;
+    static $dart$core.String $get$v2([final I $this]) => "";
+}

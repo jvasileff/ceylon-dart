@@ -1,0 +1,6 @@
+void simpleFunction() {
+    String nested1() => "result1";
+    value nested1Ref = nested1;
+    print(nested1());
+    print(nested1Ref());
+}

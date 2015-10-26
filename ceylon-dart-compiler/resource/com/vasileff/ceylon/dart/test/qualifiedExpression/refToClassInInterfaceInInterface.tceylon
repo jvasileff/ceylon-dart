@@ -1,0 +1,7 @@
+interface I {
+    shared interface J {
+        shared class C(String s) {}
+    }
+}
+
+I.J.C(String)(I.J) newC = I.J.C;

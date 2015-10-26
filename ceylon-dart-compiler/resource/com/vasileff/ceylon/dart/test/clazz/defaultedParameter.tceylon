@@ -1,0 +1,4 @@
+class C(Integer a = 5) {
+    print(a);
+}
+shared void run() { C(); }

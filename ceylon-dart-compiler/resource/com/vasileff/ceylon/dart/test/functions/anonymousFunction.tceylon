@@ -1,0 +1,4 @@
+void simpleFunction() {
+    String() anon = () => "result";
+    print(anon());
+}

@@ -1,0 +1,8 @@
+shared Integer withDefaults(Integer x = 1, Integer y = 2) {
+    return y;
+}
+
+shared void run() {
+    withDefaults(3);
+    withDefaults(4, 5);
+}

@@ -1,0 +1,51 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.int $package$i = 0;
+
+$dart$core.int get i => $package$i;
+
+set i($dart$core.int value) => $package$i = value;
+
+$ceylon$language.Empty get $package$emptyIncrementI {
+    $package$i = $package$i + 1;
+    return $ceylon$language.empty;
+}
+
+$ceylon$language.Empty get emptyIncrementI => $package$emptyIncrementI;
+
+void $package$fa() {}
+
+void fa() => $package$fa();
+
+$dart$core.int $package$fb([$dart$core.int i]) {
+    return i;
+}
+
+$dart$core.int fb([$dart$core.int i]) => $package$fb(i);
+
+void $package$run() {
+    $package$i = 0;
+    (() {
+        $package$emptyIncrementI;
+        return $package$fa();
+    })();
+    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(1))) {
+        throw new $ceylon$language.AssertionError("Violated: i == 1");
+    }
+    $package$i = 0;
+    $dart$core.int result = $package$fb((() {
+        $dart$core.int tmp$0 = $package$i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$i).successor);
+        $package$emptyIncrementI;
+        return tmp$0;
+    })());
+    if (!$ceylon$language.Integer.instance(result).equals($ceylon$language.Integer.instance(1))) {
+        throw new $ceylon$language.AssertionError("Violated: result == 1");
+    }
+    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(2))) {
+        throw new $ceylon$language.AssertionError("Violated: i == 2");
+    }
+    $ceylon$language.print($ceylon$language.String.instance("done"));
+}
+
+void run() => $package$run();

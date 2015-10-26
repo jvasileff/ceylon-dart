@@ -1,0 +1,10 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void foo([$dart$core.Object o]);
+}
+class J implements I {
+    J() {}
+    void foo([$ceylon$language.Integer i]) => $ceylon$language.noop($ceylon$language.empty);
+}

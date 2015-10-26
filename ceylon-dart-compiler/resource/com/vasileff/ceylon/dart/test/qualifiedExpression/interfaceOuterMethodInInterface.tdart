@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I$J {
+    I get $outer$default$I;
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final I$J $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    void run();
+    static void $run([final I$J $this]) {
+        $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $this.$outer$default$I.foo(u as $ceylon$language.Usable));
+        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => I.$_$bar($this.$outer$default$I, u as $ceylon$language.Usable));
+    }
+}
+abstract class I {
+    $ceylon$language.Usable foo([$ceylon$language.Usable u]);
+    static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    static $ceylon$language.Usable $_$bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+}

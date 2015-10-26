@@ -1,0 +1,13 @@
+List&Usable somethingE = nothing;
+List&Usable somethingL => nothing;
+
+void run() {
+    value ce = somethingE.contains;
+    value cl = somethingL.contains;
+
+    somethingE.contains("x");
+    print(somethingE.contains("x"));
+
+    somethingL.contains("x");
+    print(somethingL.contains("x"));
+}

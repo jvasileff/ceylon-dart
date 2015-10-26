@@ -1,0 +1,78 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$f1([$dart$core.bool x]) {}
+
+void f1([$dart$core.bool x]) => $package$f1(x);
+
+void $package$f2([$dart$core.bool x]) {}
+
+void f2([$dart$core.bool x]) => $package$f2(x);
+
+void $package$f3([$dart$core.Object x]) {}
+
+void f3([$dart$core.Object x]) => $package$f3(x);
+
+void $package$f4([$dart$core.Object x]) {}
+
+void f4([$dart$core.Object x]) => $package$f4(x);
+
+void $package$f5([$dart$core.bool x]) {}
+
+void f5([$dart$core.bool x]) => $package$f5(x);
+
+void $package$f6([$dart$core.bool x]) {}
+
+void f6([$dart$core.bool x]) => $package$f6(x);
+
+void $package$f7([$dart$core.bool x]) {}
+
+void f7([$dart$core.bool x]) => $package$f7(x);
+
+void $package$f8([$dart$core.bool x]) {}
+
+void f8([$dart$core.bool x]) => $package$f8(x);
+
+void $package$f9([$dart$core.bool x]) {}
+
+void f9([$dart$core.bool x]) => $package$f9(x);
+
+void $package$f10([$dart$core.bool x]) {}
+
+void f10([$dart$core.bool x]) => $package$f10(x);
+
+void $package$f11([$dart$core.bool x]) {}
+
+void f11([$dart$core.bool x]) => $package$f11(x);
+
+$dart$core.bool $package$booleanBoolean = true;
+
+$dart$core.bool get booleanBoolean => $package$booleanBoolean;
+
+$dart$core.Object $package$booleanObject = $ceylon$language.$true;
+
+$dart$core.Object get booleanObject => $package$booleanObject;
+
+void $package$callFunctions() {
+    $package$f1($package$booleanBoolean);
+    $package$f2($package$booleanBoolean);
+    $package$f2(null);
+    $package$f3($ceylon$language.Boolean.instance($package$booleanBoolean));
+    $package$f3($package$booleanObject);
+    $package$f4($ceylon$language.Boolean.instance($package$booleanBoolean));
+    $package$f4($package$booleanObject);
+    $package$f4(null);
+    $package$f5(true);
+    $package$f6(true);
+    $package$f6(null);
+    $package$f7(false);
+    $package$f8(false);
+    $package$f8(null);
+    $package$f9(true);
+    $package$f10($package$booleanBoolean);
+    $package$f10($package$booleanBoolean);
+    $package$f11($package$booleanBoolean);
+    $package$f11($package$booleanBoolean);
+}
+
+void callFunctions() => $package$callFunctions();

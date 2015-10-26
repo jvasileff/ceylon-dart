@@ -1,0 +1,5 @@
+object o1 {
+    object o2 {
+        shared String s1 => "";
+    }
+}

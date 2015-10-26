@@ -1,0 +1,26 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class Foo {
+    Foo([$dart$core.Object _$si1, $dart$core.Object _$si2, $dart$core.Object _$isf]) {
+        this._$si1 = _$si1;
+        this._$si2 = _$si2;
+        this._$isf = _$isf;
+        if (!(_$si1 is $ceylon$language.String)) {
+            throw new $ceylon$language.AssertionError("Violated: is String si1");
+        }
+        si1$0 = $ceylon$language.String.nativeValue(_$si1 as $ceylon$language.String);
+        if (!(_$si2 is $ceylon$language.String)) {
+            throw new $ceylon$language.AssertionError("Violated: is String si2");
+        }
+        si2$1 = $ceylon$language.String.nativeValue(_$si2 as $ceylon$language.String);
+        if (!((_$isf is $ceylon$language.String) || (_$isf is $ceylon$language.Integer))) {
+            throw new $ceylon$language.AssertionError("Violated: is String | Integer isf");
+        }
+    }
+    $dart$core.Object _$si1;
+    $dart$core.Object _$si2;
+    $dart$core.Object _$isf;
+    $dart$core.String si1$0;
+    $dart$core.String si2$1;
+}

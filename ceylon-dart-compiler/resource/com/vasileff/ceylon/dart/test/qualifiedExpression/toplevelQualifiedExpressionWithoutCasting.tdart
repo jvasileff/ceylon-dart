@@ -1,0 +1,21 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$ceylon$language.List $package$somethingE = $ceylon$language.nothing as $ceylon$language.List;
+
+$ceylon$language.List get somethingE => $package$somethingE;
+
+$ceylon$language.List $package$somethingL = $ceylon$language.nothing as $ceylon$language.List;
+
+$ceylon$language.List get somethingL => $package$somethingL;
+
+void $package$run() {
+    $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($package$somethingE.contains(element)));
+    $ceylon$language.Callable cl = new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($package$somethingL.contains(element)));
+    $package$somethingE.contains($ceylon$language.String.instance("x"));
+    $ceylon$language.print($ceylon$language.Boolean.instance($package$somethingE.contains($ceylon$language.String.instance("x"))));
+    $package$somethingL.contains($ceylon$language.String.instance("x"));
+    $ceylon$language.print($ceylon$language.Boolean.instance($package$somethingL.contains($ceylon$language.String.instance("x"))));
+}
+
+void run() => $package$run();

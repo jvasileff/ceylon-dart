@@ -1,0 +1,14 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$assertions() {
+    $dart$core.Object obj = $ceylon$language.$true;
+    $dart$core.bool obj$0;
+    if (!(obj is $ceylon$language.Boolean)) {
+        throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
+    }
+    obj$0 = $ceylon$language.Boolean.nativeValue(obj as $ceylon$language.Boolean);
+    $dart$core.bool bool = obj$0;
+}
+
+void assertions() => $package$assertions();

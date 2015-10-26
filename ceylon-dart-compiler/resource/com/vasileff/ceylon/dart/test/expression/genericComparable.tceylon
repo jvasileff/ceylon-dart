@@ -1,0 +1,3 @@
+shared Element smallest<Element>(Element x, Element y)
+        given Element satisfies Comparable<Element>
+    =>  if (x<y) then x else y;

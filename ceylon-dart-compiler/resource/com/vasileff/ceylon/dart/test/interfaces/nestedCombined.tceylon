@@ -1,0 +1,37 @@
+interface Outer {
+    shared formal String outerValue;
+    shared String outerFn() {
+        return "outerFn";
+    }
+    shared void useFns() {
+        value a = outerValue;
+        value b = outerFn();
+    }
+    interface Inner {
+        shared formal String innerValue;
+        shared String innerFn() {
+            return "innerFn";
+        }
+        shared void useFns() {
+            value a = outerValue;
+            value b = outerFn();
+            value c = innerValue;
+            value d = innerFn();
+        }
+        interface Innest {
+            shared formal String innestValue;
+            shared String innestFn() {
+                return "innestFn";
+            }
+            shared void useFns() {
+                value a = outerValue;
+                value b = outerFn();
+                value c = innerValue;
+                value d = innerFn();
+                value e = innestValue;
+                value f = innestFn();
+                value g = string;
+            }
+        }
+    }
+}

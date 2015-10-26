@@ -1,0 +1,11 @@
+shared void run() {
+    String|Integer si = "";
+    switch (si)
+    case (is String) {
+        print("string");
+        print(si.size);
+    }
+    case (is Integer) {
+        print("integer");
+    }
+}

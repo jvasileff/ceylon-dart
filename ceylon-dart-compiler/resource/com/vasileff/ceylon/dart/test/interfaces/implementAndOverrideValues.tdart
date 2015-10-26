@@ -1,0 +1,21 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get v1;
+    $dart$core.String get v2;
+}
+abstract class J implements I {
+    $dart$core.String get v1;
+    static $dart$core.String $get$v1([final J $this]) => "";
+    $dart$core.String get v2;
+    static $dart$core.String $get$v2([final J $this]) {
+        return "";
+    }
+    $dart$core.String get vj1;
+    static $dart$core.String $get$vj1([final J $this]) => $this.v1;
+    $dart$core.String get vj2;
+    static $dart$core.String $get$vj2([final J $this]) {
+        return $this.v2;
+    }
+}

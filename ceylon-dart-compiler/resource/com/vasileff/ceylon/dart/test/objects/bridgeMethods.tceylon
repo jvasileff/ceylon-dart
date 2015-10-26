@@ -1,0 +1,15 @@
+interface I {
+    shared String s1 => "";
+    shared String s2 { return ""; }
+    shared String s3() => "";
+    shared String s4() { return ""; }
+
+    assign s1 {
+        print("Setting s1");
+    }
+    assign s2 {
+        print("Setting s2");
+    }
+}
+
+object o satisfies I {}

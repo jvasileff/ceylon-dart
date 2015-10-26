@@ -1,0 +1,4 @@
+shared void run() {
+    value i = let (x = 1) x;
+    print(i);
+}

@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void foo0();
+    static void $foo0([final I $this]) {}
+    void foo1();
+    static void $foo1([final I $this]) {}
+    void foo2();
+    void foo3();
+}
+abstract class C implements I {
+    C() {}
+    void foo1();
+    void foo3();
+    void foo0() => I.$foo0(this);
+}

@@ -1,0 +1,9 @@
+shared void run() {
+    String|Integer si = "";
+    value a =
+        switch (si)
+        case (is String) "string" + si.size.string
+        case (is Integer) "integer"
+        else "fallback else";
+    print(a);
+}

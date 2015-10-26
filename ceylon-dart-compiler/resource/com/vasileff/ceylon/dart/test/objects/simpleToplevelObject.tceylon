@@ -1,0 +1,13 @@
+object o1 {
+    shared String s1 => "";
+    shared String s2 { return ""; }
+    shared String s3() => "";
+    shared String s4() { return ""; }
+}
+
+shared void run() {
+    print(o1.s1);
+    print(o1.s2);
+    print(o1.s3());
+    print(o1.s4());
+}

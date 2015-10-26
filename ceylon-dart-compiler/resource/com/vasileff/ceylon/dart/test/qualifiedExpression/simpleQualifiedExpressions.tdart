@@ -1,0 +1,16 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.String s = "-";
+    $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(s).size));
+    $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance("").size));
+    $dart$core.Object o = $ceylon$language.Integer.instance($ceylon$language.String.instance(s).size);
+    $ceylon$language.Callable f1 = (() {
+        $ceylon$language.String $capturedReceiver$ = $ceylon$language.String.instance("");
+        return new $ceylon$language.dart$Callable(([$dart$core.Object element]) => $ceylon$language.Boolean.instance($capturedReceiver$.contains(element)));
+    })();
+    $dart$core.bool b = $ceylon$language.String.instance("").contains($ceylon$language.String.instance("apples"));
+}
+
+void run() => $package$run();

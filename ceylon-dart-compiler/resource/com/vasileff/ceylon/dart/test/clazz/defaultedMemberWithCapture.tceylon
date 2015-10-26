@@ -1,0 +1,14 @@
+class Sup(Integer a) {
+    print(a);
+}
+
+shared void run() {
+    value x = 5;
+    class Outer(Integer b = x) {
+        class Sub(Integer b = outer.b, Integer c = b + 1) extends Sup(c) {
+            print(x);
+        }
+        Sub();
+    }
+    Outer();
+}

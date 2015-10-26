@@ -1,0 +1,16 @@
+shared void run() {
+    String? os1 => "os1";
+    String? os2 => null;
+
+    print(os1?.size);
+    print(os2?.size);
+
+    value fos1 = os1?.getFromFirst;
+    value fos2 = os2?.getFromFirst;
+
+    print(fos1(0));
+    print(fos2(0));
+
+    print(os1?.getFromFirst(0));
+    print(os2?.getFromFirst(0));
+}

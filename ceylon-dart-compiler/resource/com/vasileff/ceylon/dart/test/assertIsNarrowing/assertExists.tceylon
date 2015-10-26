@@ -1,0 +1,7 @@
+shared void run() {
+    String? s = "";
+    assert(exists s);
+    print(s);
+    assert(exists s2 = true then s);
+    print(s2);
+}

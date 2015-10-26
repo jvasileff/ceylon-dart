@@ -1,0 +1,12 @@
+shared void run() {
+    value two = 2;
+    value a = 2.0 * two;
+    value b = 2.0 * 2;
+
+    value c = 2 * 2.0;
+    value d = two * 2.0;
+}
+shared void foo(Integer i = 2) {
+    value e = 2.0 * i;
+    value f = i * 2.0;
+}

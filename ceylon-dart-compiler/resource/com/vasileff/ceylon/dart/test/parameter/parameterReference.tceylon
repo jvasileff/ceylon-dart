@@ -1,0 +1,5 @@
+void foo(arg1, arg2=5, arg3="v3") {
+    String arg1;
+    Integer arg2;
+    String arg3;
+}

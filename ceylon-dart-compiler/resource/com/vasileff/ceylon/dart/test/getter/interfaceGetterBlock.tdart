@@ -1,0 +1,9 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get a;
+    static $dart$core.String $get$a([final I $this]) {
+        return "";
+    }
+}

@@ -1,0 +1,20 @@
+interface I {
+    shared formal String i1;
+    shared formal String i2;
+}
+
+class C() satisfies I {
+    shared actual String i1 => "";
+    i2 => i1;
+
+    shared String c1 => "";
+    shared String c2 => c1;
+
+    String c3 => "";
+    String c4 => c3;
+
+    // TODO LazySpecifications that are not shortcut refinements
+    //      are not yet supported.
+    //shared String c5;
+    //c5 => "c5-1";
+}

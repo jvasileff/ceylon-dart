@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.String a = (() {
+        $dart$core.int switch$0 = 1 + 1;
+        if ($ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(1)) || $ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(2))) {
+            return "one or two";
+        } else if ($ceylon$language.Integer.instance(switch$0).equals($ceylon$language.Integer.instance(3))) {
+            return "three";
+        } else {
+            return "else";
+        }
+    })();
+    $ceylon$language.print($ceylon$language.String.instance(a));
+}
+
+void run() => $package$run();

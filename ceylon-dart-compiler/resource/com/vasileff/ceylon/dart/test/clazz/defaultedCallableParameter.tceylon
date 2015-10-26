@@ -1,0 +1,4 @@
+class C(void f(Integer i) => print(i)) {
+    f(5);
+}
+shared void run() { C(); }

@@ -1,0 +1,12 @@
+shared class C() {
+    shared class D(String s) {
+        print(s);
+    }
+}
+shared void run() {
+    C? c1 = C();
+    C? c2 = null;
+
+    c1?.D("Test1");
+    c2?.D("Test2");
+}
