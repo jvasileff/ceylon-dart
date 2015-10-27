@@ -1,17 +1,34 @@
 # Dart backend for Ceylon
 
-### Why?
+### Status Update (10/27)
 
-The best answer is probably, why not?
+Quite a bit of the core of the backend has been completed:
 
-A primary goal is to get started writing *some* backend in Ceylon, or at least
-a reasonable portion of one, with the idea to pivot to something really useful.
-Or at least try to explore and work through issues involved with writing a
-backend in Ceylon to help lay the groundwork for others.
+- The Ceylon language module compiles with very few changes.
+- A first cut of much of the native Dart code necessary for the main package of
+  the Ceylon language module has been written.
+- Fairly complex CLI programs can now be compiled and run using the standard
+  Ceylon commandline interface (i.e. `ceylon compile-dart com.example.module`
+  and `ceylon run-dart com.example.module`).
 
-That's not to say that a Dart backend may not be valuable. The Dart VM
-certainly appears to be fast, and the Dart language seems very suitable for use
-as a transpiler target.
+Soon, installation instructions and easy to run code samples will be posted.
+
+Some small, but mostly "big" tasks that remain:
+
+- Improve and complete native Dart code for the core part of the language
+  module.
+- Improve tools, including performance, warning and error reporting, and CLI
+  options.
+- Round out support for core language features–destructuring, capture of
+  `variable`s, certain uses of specification statements, constructor
+  delegation, class aliases, etc.
+- Compile `ceylon.collection`
+- Add a model loader and support module imports. (Aside from the implicit
+  language module import, which works today.)
+- Implement the metamodel (`ceylon.language.meta` and meta expressions)
+- Support Annotations
+- Implement reified generics
+- Develop an interop story (calling Dart libraries from Ceylon)
 
 ### Approach
 
@@ -27,72 +44,7 @@ as a transpiler target.
   plus closures. Or, put another way, Java 8 without generics and inner classes
   and interfaces. Covariant generics may be added.
 
-### Short Term, Course Grained Goals
-
-- Round out support for simple functions
-- Chip away at compiling language module functions
-- Simple Interfaces & Classes
-- CLI and proper compilation of source files (currently, programs are Strings
-  in a run function.)
-- Model loader of some sort. Maybe just hardcoded stuff
-
-### Short Term, Fine Grained Tasks
-
-Checked items are complete in the sense that they at least offer basic
-functionality.
-
-- [x] Use compiler for language module Interfaces: ~~Annotated~~,
-  ~~Annotation~~, ~~Binary~~, ~~Category~~, ~~Comparable~~,
-  ~~ConstrainedAnnotation~~, ~~Destroyable~~, ~~Exponentiable~~, ~~Iterator~~,
-  ~~Numeric~~, ~~Obtainable~~, ~~OptionalAnnotation~~, ~~Ordinal~~, ~~Ranged~~,
-  ~~Scalable~~, ~~SequencedAnnotation~~, ~~Summable~~, ~~Usable~~
-- [x] Use compiler for language module functions: ~~and~~, ~~anyPair~~,
-  ~~any~~, ~~apply~~, ~~arrayOfSize~~, ~~byDecreasing~~, ~~byIncreasing~~,
-  ~~byItem~~, ~~byKey~~, ~~count~~, ~~curry~~, ~~decreasing~~, ~~everyPair~~,
-  ~~every~~, ~~findPair~~, ~~foldPairs~~, ~~forItem~~, ~~forKey~~,
-  ~~formatInteger~~, ~~identical~~, ~~identity~~, ~~increasing~~, ~~infinity~~,
-  ~~largest~~, ~~maximumIntegerExponent~~, ~~not~~, ~~or~~, ~~plus~~,
-  ~~printAll~~, ~~print~~, ~~product~~, ~~shuffle~~, ~~smallest~~, ~~sort~~,
-  ~~sum~~, ~~times~~, ~~uncurry~~, ~~unzip~~, ~~zipPairs~~
-- [ ] Use compiler for more language module functions: annotations, apply,
-  comparing, compose, concatenate, corresponding, emptyOrSingleton, expand,
-  noop, interleave, max, min, nothing, mapPairs, unzipPairs, unzipEntries,
-  digitOrSign
-- [x] Multiple parameter lists
-- [x] Null safe member operator
-- [ ] Remaining parameter types (variadic, callable)
-- [ ] `of` operation
-- [x] More work on `assert`
-- [ ] `is` narrowing for `if`, attempt at generalization
-- [x] Erasure for covariant returns (use the `formal` return type for erasure/boxing)
-- [ ] Named argument invocations (and... transition to Dart named parameters, ugh)
-- [x] Remove hard-coded `DartTypeName`s. Calculate them instead, as we do for
-  Ceylon types. (We can't compile the language module using the prefixed
-  `$dart$core.int` for example.)
-- [x] Map members like `toString()`, `hash`, etc.
-- [ ] Statements: ~~for~~, ~~if~~, while
-- [x] Expressions: ~~if~~, ~~then~~, ~~else~~
-- [ ] Integer -> Float conversion issues?
-- [ ] Standalone declarations
-- [x] Tuple and Iterable expressions
-- [x] Optimizations for invocations on native Integer, Float, and String
-- [ ] More optimizations for native values
-
-A few recently completed items:
-
-- [x] Base expressions
-- [x] Qualified expressions
-- [x] Take references to functions and methods
-- [x] Wrap Dart `Function`s in `Callable`s, when necessary!
-- [x] Parameter references
-- [x] Emit `$package$` aliases for toplevels
-- [x] Change type of defaulted parameters to `$dart$core.Object`, since their
-  default value is a placeholder value
-- [x] Use `as` for invocations when the Dart static type requires narrowing.
-- [x] Use `as` whenever defaulted parameters are used (since they are now just Objects)
-- [x] Use `as` everywhere it's needed, always.
-
-## License
+### License
 
 The content of this repository is released under the ASL v2.0 as provided in
 the LICENSE file that accompanied this code.
