@@ -65,3 +65,27 @@ shared alias ConditionCodeTuple
 
 shared Backend dartBackend
     =   Backend.registerBackend("Dart", "dart");
+
+shared abstract
+class DartElementType() of
+    dartValue | dartFunction | DartOperator {}
+
+shared abstract
+class DartOperator()
+    of dartPrefixOperator | dartInfixOperator | dartListAccess
+    extends DartElementType() {}
+
+shared
+object dartValue extends DartElementType() {}
+
+shared
+object dartFunction extends DartElementType() {}
+
+shared
+object dartPrefixOperator extends DartOperator() {}
+
+shared
+object dartInfixOperator extends DartOperator() {}
+
+shared
+object dartListAccess extends DartOperator() {}
