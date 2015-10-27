@@ -11,12 +11,13 @@ import ceylon.test {
 import com.vasileff.ceylon.dart.ast {
     CodeWriter
 }
-import com.vasileff.ceylon.dart.compiler {
-    compile
-}
+
 
 import java.nio.file {
     JFiles=Files
+}
+import com.vasileff.ceylon.dart {
+    compile
 }
 
 void compileAndCompare(String ceylon, String expected) {
@@ -33,8 +34,8 @@ void compileAndCompare(String ceylon, String expected) {
 }
 
 void compileAndCompare2(String key) {
-    value ceylonPathPart = "test/" + key +  ".tceylon";
-    value dartPathPart = "test/" + key +  ".tdart";
+    value ceylonPathPart = "compiler/" + key +  ".tceylon";
+    value dartPathPart = "compiler/" + key +  ".tdart";
 
     assert (exists ceylonResource = `module`.resourceByPath(ceylonPathPart));
 

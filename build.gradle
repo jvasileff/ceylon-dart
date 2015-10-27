@@ -54,8 +54,8 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "com.vasileff.ceylon.dart"
-        test "com.vasileff.ceylon.dart.test"
+        module "test.com.vasileff.ceylon.dart"
+        test "test.com.vasileff.ceylon.dart.compiler"
     }
 
     task install(type: Copy) {

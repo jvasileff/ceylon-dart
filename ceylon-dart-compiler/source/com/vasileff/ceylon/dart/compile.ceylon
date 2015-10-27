@@ -35,6 +35,16 @@ import java.io {
 import java.util {
     List
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilationContext,
+    augmentNode,
+    dartBackend,
+    debugVisitor,
+    computeCaptures,
+    computeClassCaptures,
+    CompilerBug,
+    hasError
+}
 
 shared
 [DartCompilationUnit*] compile(Boolean verbose=false, {String*} listings = {}) {

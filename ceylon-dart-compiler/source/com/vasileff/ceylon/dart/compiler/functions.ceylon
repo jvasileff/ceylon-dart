@@ -67,6 +67,7 @@ String location(Node that) {
     return location;
 }
 
+shared
 Boolean hasError(Node that)
     =>  that.transform(hasErrorTransformer);
 

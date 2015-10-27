@@ -1,6 +1,4 @@
-import com.vasileff.ceylon.dart.compiler {
-    compile
-}
+
 import com.vasileff.ceylon.dart.ast {
     CodeWriter
 }
