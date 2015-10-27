@@ -89,20 +89,20 @@ shared class Contextual<Element>() {
     }
 }
 
-native("js")
+native("js", "dart")
 shared class Contextual<Element>() {
     variable Element? val = null;
     
-    native("js") shared Element get() {
+    native("js", "dart") shared Element get() {
         assert (exists result = val);
         return result;
     }
     
-    native("js") shared class Using(Element|Element() newValue)
+    native("js", "dart") shared class Using(Element|Element() newValue)
             satisfies Obtainable {
         variable Element? previous = null; 
         
-        native("js") shared actual void obtain() {
+        native("js", "dart") shared actual void obtain() {
             previous = val;
             if (is Element() newValue) {
                 val = newValue();    
@@ -111,39 +111,7 @@ shared class Contextual<Element>() {
             }
         }
         
-        native("js") shared actual void release(Throwable? error) {
-            if (exists p=previous) {
-                val = p;
-            } else {
-                val = null;
-            }
-        }
-    }
-}
-
-native("dart")
-shared class Contextual<Element>() {
-    variable Element? val = null;
-
-    native("dart") shared Element get() {
-        assert (exists result = val);
-        return result;
-    }
-
-    native("dart") shared class Using(Element|Element() newValue)
-            satisfies Obtainable {
-        variable Element? previous = null;
-
-        native("dart") shared actual void obtain() {
-            previous = val;
-            if (is Element() newValue) {
-                val = newValue();
-            } else {
-                val = newValue;
-            }
-        }
-
-        native("dart") shared actual void release(Throwable? error) {
+        native("js", "dart") shared actual void release(Throwable? error) {
             if (exists p=previous) {
                 val = p;
             } else {
