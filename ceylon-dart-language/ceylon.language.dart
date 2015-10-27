@@ -85,19 +85,14 @@ LateAnnotation $package$late() => new LateAnnotation();
 LateAnnotation late() => $package$late();
 
 class NativeAnnotation implements OptionalAnnotation {
-    NativeAnnotation([$dart$core.String backend]) {
-        this.backend = backend;
+    NativeAnnotation([Sequential backends]) {
+        this.backends = backends;
     }
-    $dart$core.String backend;
+    Sequential backends;
 }
-NativeAnnotation $package$native([$dart$core.Object backend = $package$dart$default]) {
-    if ($dart$core.identical(backend, $package$dart$default)) {
-        backend = "";
-    }
-    return new NativeAnnotation(backend as $dart$core.String);
-}
+NativeAnnotation $package$native([Sequential backends]) => new NativeAnnotation(backends);
 
-NativeAnnotation native([$dart$core.Object backend = $package$dart$default]) => $package$native(backend);
+NativeAnnotation native([Sequential backends]) => $package$native(backends);
 
 class DocAnnotation implements OptionalAnnotation {
     DocAnnotation([$dart$core.String description]) {
