@@ -288,6 +288,15 @@ Boolean isForDartBackend(Declaration|DeclarationInfo|DeclarationModel that)
 shared
 SetterModel|FunctionModel|ValueModel? mostRefined
         (ClassOrInterfaceModel bottom, FunctionOrValueModel declaration) {
+    if (!declaration.name exists) {
+        // Nameless constructors appear (as annoying?) class members of the
+        // form: `function C.() => C.null`
+
+        "Functions models for nameless constructors are Function models"
+        assert (is FunctionModel declaration);
+        return declaration;
+    }
+
     // getMember by name turns setters into getters!
     value setter = declaration is SetterModel;
     DeclarationModel? result = bottom.getMember(declaration.name, null, false);
