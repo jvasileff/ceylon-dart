@@ -1,0 +1,27 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$I {
+    $dart$core.String get accessVal;
+    static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val();
+    $dart$core.Function $capture$run$val;
+}
+class run$C implements run$I {
+    $dart$core.Function $capture$run$val;
+    run$C([$dart$core.Function this.$capture$run$val]) {}
+    $dart$core.String get accessVal => $capture$run$val();
+}
+class run$D implements run$I {
+    $dart$core.Function $capture$run$val;
+    run$D([$dart$core.Function this.$capture$run$val]) {}
+    run$D.create([$dart$core.Function this.$capture$run$val]) {}
+    $dart$core.String get accessVal => $capture$run$val();
+}
+void $package$run() {
+    $dart$core.String val$get() => "hello";
+
+    $ceylon$language.print($ceylon$language.String.instance((new run$C(val$get)).accessVal));
+    $ceylon$language.print($ceylon$language.String.instance((new run$D(val$get)).accessVal));
+}
+
+void run() => $package$run();

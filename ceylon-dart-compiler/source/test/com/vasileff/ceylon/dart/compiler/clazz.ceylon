@@ -103,4 +103,7 @@ object clazz {
     void capturedFunction()
         =>  compileAndCompare2("clazz/capturedFunction");
 
+    shared test
+    void capturedGetter()
+        =>  compileAndCompare2("clazz/capturedGetter");
 }

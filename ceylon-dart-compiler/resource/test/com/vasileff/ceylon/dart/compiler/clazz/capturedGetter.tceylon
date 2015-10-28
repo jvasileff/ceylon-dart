@@ -1,0 +1,17 @@
+shared void run() {
+    String val => "hello";
+    interface I {
+        shared default String accessVal => val;
+    }
+    class C() satisfies I {
+        shared actual String accessVal => val;
+    }
+    class D satisfies I {
+        shared new () {}
+        shared new create() {}
+        shared actual String accessVal => val;
+    }
+    print(C().accessVal);
+    print(D().accessVal);
+    //print(D.create().accessVal);
+}

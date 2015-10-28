@@ -1,7 +1,17 @@
 shared void run() {
     void fun() { print("hello"); }
-    class C() {
-        shared void callFun() => fun();
+    interface I {
+        shared default void callFun() => fun();
+    }
+    class C() satisfies I {
+        shared actual void callFun() => fun();
+    }
+    class D satisfies I {
+        shared new () {}
+        shared new create() {}
+        shared actual void callFun() => fun();
     }
     C().callFun();
+    D().callFun();
+    //D.create().callFun();
 }
