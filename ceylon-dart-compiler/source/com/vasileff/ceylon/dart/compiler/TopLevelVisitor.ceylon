@@ -933,7 +933,9 @@ class TopLevelVisitor(CompilationContext ctx)
             =   dartTypes.getName(constructorModel);
 
         value constructorName
-            =   DartSimpleIdentifier(constructorPrefix);
+            // default constructors will have name of ""
+            =   !constructorPrefix.empty
+                then DartSimpleIdentifier(constructorPrefix);
 
         value spreadConstructorName
             =   DartSimpleIdentifier(constructorPrefix + "$s");
