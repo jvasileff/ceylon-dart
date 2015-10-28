@@ -286,7 +286,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         false;
                         DartVariableDeclarationList {
                             null;
-                            dartTypes.dartTypeNameForDeclaration {
+                            dartTypes.dartCaptureTypeNameForDeclaration {
                                 info;
                                 capture;
                             };
@@ -505,7 +505,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         false;
                         DartVariableDeclarationList {
                             null;
-                            dartTypes.dartTypeNameForDeclaration {
+                            dartTypes.dartCaptureTypeNameForDeclaration {
                                 scope;
                                 capture;
                             };
@@ -653,7 +653,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     (declaration) =>
                     DartFieldFormalParameter {
                         false; false;
-                        dartTypes.dartTypeNameForDeclaration {
+                        dartTypes.dartCaptureTypeNameForDeclaration {
                             scope;
                             declaration;
                         };
@@ -916,7 +916,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     (declaration) =>
                     DartFieldFormalParameter {
                         false; false;
-                        dartTypes.dartTypeNameForDeclaration {
+                        dartTypes.dartCaptureTypeNameForDeclaration {
                             scope;
                             declaration;
                         };

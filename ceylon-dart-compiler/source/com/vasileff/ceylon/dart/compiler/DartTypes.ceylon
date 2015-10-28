@@ -179,8 +179,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 else "";
 
         switch (declaration)
-        case (is SetterModel | ValueModel | FunctionModel
-                | ConstructorModel | ParameterModel) {
+        case (is ConstructorModel) {
+            if (!declaration.name exists) {
+                return "";
+            }
+            return identifierPackagePrefix(declaration)
+                    + getUnprefixedName(declaration);
+        }
+        case (is SetterModel | ValueModel | FunctionModel | ParameterModel) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
@@ -457,81 +463,62 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    "For the `Value`, or a `Callable` if the declaration is a `Function`, or, as a
-     special case, `$dart$core.Function` for `Function`s that *are not* parameters.
-
-     The special case is used for the Dart type of captured functions, which are not
-     boxed by a `Callable`."
+    "The Dart implementation type for the Declaration. This is useful for captures where
+     Dart functions are captured as `$dart$core$Function`s rather than wrapped as
+     `Callable`s."
     shared
-    DartTypeName dartTypeNameForDeclaration(
+    see(`function dartIdentifierForFunctionOrValueDeclaration`)
+    see(`function dartTypeNameForDeclaration`)
+    DartTypeName dartCaptureTypeNameForDeclaration(
             DScope scope,
             FunctionOrValueModel declaration,
             TypeModel | TypeDetails | Null type = null) {
 
-        "By definition."
-        assert (is FunctionModel | ValueModel | SetterModel declaration);
+        // Determine if `declaration` is implemented as a Dart function, and if
+        // so, return $dart$core.Function. Otherwise, return the type of the Dart value.
 
-        if (!declaration.parameter && declaration is FunctionModel) {
+        if (exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
+                mapped[1]) {
+            // Explicitly mapped/specified, may not follow normal conventions
+            return ctx.dartTypes.dartFunction;
+        }
+
+        if (is ValueModel | SetterModel declaration,
+                useGetterSetterMethods(declaration)) {
+            return ctx.dartTypes.dartFunction;
+        }
+
+        if (declaration is FunctionModel && !declaration.parameter) {
+            // A Ceylon function that is *not* a callable parameter
             return ctx.dartTypes.dartFunction;
         }
 
         value dartModel
-            =   switch (declaration)
-                case (is FunctionModel)
-                    // Code path for Callable parameters
+            =   if (declaration is FunctionModel) // Callable parameter
+                then dartTypeModel(ceylonTypes.callableAnythingType)
+                else dartTypeModelForDeclaration(declaration, type);
 
-                    // Returning a callable without worrying about type arguments.
-                    // If we *did* want to worry about type arguments, we'd have to
-                    // recursively process them to handle erasure, replacements, etc.,
-                    // when crafting the Dart type.
-                    dartTypeModel(ceylonTypes.callableAnythingType)
-                case (is ValueModel | SetterModel)
-                    dartTypeModelForDeclaration(declaration, type);
-
-        value fromDartPrefix
-            =   moduleImportPrefix(scope);
-
-        if (dartModel.dartModule == fromDartPrefix) {
-            return
-            DartTypeName {
-                DartSimpleIdentifier(dartModel.name);
-            };
-        }
-        else {
-            return
-            DartTypeName {
-                DartPrefixedIdentifier {
-                    DartSimpleIdentifier(dartModel.dartModule);
-                    DartSimpleIdentifier(dartModel.name);
-                };
-            };
-        }
+        return dartTypeNameForDartModel(scope, dartModel);
     }
+
+    "For the Value, or the return type of the Function, or Callable for
+     callable parameters."
+    shared
+    DartTypeName dartTypeNameForDeclaration(
+            DScope scope, FunctionOrValueModel declaration,
+            TypeModel | TypeDetails | Null type = null)
+        =>  let (dartModel
+                =   if (declaration is FunctionModel, declaration.parameter)
+                    then dartTypeModel(ceylonTypes.callableAnythingType)
+                    else dartTypeModelForDeclaration(declaration, type))
+            dartTypeNameForDartModel(scope, dartModel);
 
     "For the Value, or the return type of the Function"
     shared
     DartTypeName dartReturnTypeNameForDeclaration(
-            DScope scope,
-            FunctionModel|ValueModel declaration) {
-
-        value dartModel = dartTypeModelForDeclaration(declaration);
-        value fromDartPrefix = moduleImportPrefix(scope);
-        if (dartModel.dartModule == fromDartPrefix) {
-            return
-            DartTypeName {
-                DartSimpleIdentifier(dartModel.name);
-            };
-        }
-        else {
-            return
-            DartTypeName {
-                DartPrefixedIdentifier {
-                    DartSimpleIdentifier(dartModel.dartModule);
-                    DartSimpleIdentifier(dartModel.name);
-                };
-            };
-        }
-    }
+            DScope scope, FunctionModel|ValueModel declaration)
+        =>  let(dartModel = dartTypeModelForDeclaration(declaration))
+            dartTypeNameForDartModel(scope, dartModel);
 
     function refinedParameter(FunctionOrValueModel declaration) {
         // FIXME This is a bit sloppy and trusting, and needs review
