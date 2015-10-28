@@ -401,10 +401,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ClassModel|ConstructorModel declaration) {
         switch (declaration)
         case (is ClassModel) {
-            //"Only toplevel classes supported for now"
-            //assert(withinPackage(declaration));
-            // TODO above assertion uncommented; was there a reason for the restriction?
-
             return DartConstructorName {
                 dartTypeName(scope, declaration.type, false, false);
                 null;
@@ -412,9 +408,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
         case (is ConstructorModel) {
             assert (is ClassModel container = declaration.container);
-            "Only toplevel classes supported for now"
-            assert(withinPackage(container));
-
             return DartConstructorName {
                 dartTypeName(scope, container.type, false, false);
                 DartSimpleIdentifier(getName(declaration));

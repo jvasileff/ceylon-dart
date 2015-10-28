@@ -1,0 +1,24 @@
+class A() {
+    shared class B {
+        shared new create() {}
+        value b1 => create();
+        //A.B b2 => let (c = (B.create)) c(); // FIXME
+        //A.B b3 => let (c = (create)) c();   // FIXME
+        shared class C {
+            shared new create() {}
+            print("Created C");
+        }
+        print("Created B");
+    }
+    A.B b => B.create();
+    shared A.B.C() cFactory => B.C.create(b); //haha
+
+    print("Created A");
+}
+
+A.B val = A().B.create();
+A.B() abFactory = A.B.create(A()); // good
+
+shared void run() {
+    print(A().cFactory());
+}

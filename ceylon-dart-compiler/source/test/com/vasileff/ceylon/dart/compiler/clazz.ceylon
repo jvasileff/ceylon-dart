@@ -106,4 +106,8 @@ object clazz {
     shared test
     void capturedGetter()
         =>  compileAndCompare2("clazz/capturedGetter");
+
+    shared test
+    void constructorsCombined()
+        =>  compileAndCompare2("clazz/constructorsCombined");
 }

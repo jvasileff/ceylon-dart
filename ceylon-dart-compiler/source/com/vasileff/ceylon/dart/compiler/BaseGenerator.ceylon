@@ -553,14 +553,15 @@ class BaseGenerator(CompilationContext ctx)
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
-            FunctionOrValueModel | ClassModel memberDeclaration,
+            FunctionOrValueModel | ClassModel | ConstructorModel memberDeclaration,
             [List<TypeModel>, [DartExpression()*]
                         | [Expression*]
                         | Arguments]? signatureAndArguments = null,
             AnyMemberOperator? memberOperator = null) {
 
         "By definition."
-        assert (is FunctionModel | ValueModel | SetterModel | ClassModel
+        assert (is FunctionModel | ValueModel | SetterModel
+                    | ClassModel | ConstructorModel
                 memberDeclaration);
 
         "SpreadMemberOperator not yet supported."
@@ -603,10 +604,10 @@ class BaseGenerator(CompilationContext ctx)
          the receiver to be an interface for a static method invocation."
         DartTypeName? ceylonReceiverDartType;
 
-        if (is ClassModel memberDeclaration) {
+        if (is ClassModel | ConstructorModel memberDeclaration) {
             if (!exists generateReceiver) {
                 throw CompilerBug(scope,
-                        "Member class invocations on super not supported.");
+                    "Member class and constructor invocations on super not supported.");
             }
 
             // Invoking a member class; must call the statically known Dart constructor,
@@ -615,7 +616,13 @@ class BaseGenerator(CompilationContext ctx)
             "The container of a member class invoked with a receiver must be a class
              or interface."
             assert (is ClassOrInterfaceModel memberContainer
-                 =  getContainingClassOrInterface(memberDeclaration.container));
+                 =  getContainingClassOrInterface {
+                        switch (memberDeclaration)
+                        case (is ClassModel)
+                            memberDeclaration.container
+                        case (is ConstructorModel)
+                            memberDeclaration.container.container;
+                    });
 
             optimizedExpression
                 =   null;
@@ -893,7 +900,8 @@ class BaseGenerator(CompilationContext ctx)
             "If there are arguments, the member is a FunctionModel and will translate
              to a Dart function, or it's a ClassModel, and will translate to a Dart
              constructor."
-            assert (is FunctionModel | ClassModel memberDeclaration, isFunction);
+            assert (is FunctionModel | ClassModel | ConstructorModel memberDeclaration,
+                    isFunction);
 
             //"If we have arguments, we'll have a signature."
             //assert (exists signature);
@@ -2567,7 +2575,7 @@ class BaseGenerator(CompilationContext ctx)
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
-            FunctionModel | ClassModel memberDeclaration,
+            FunctionModel | ClassModel | ConstructorModel memberDeclaration,
             TypeModel callableType,
             AnyMemberOperator? memberOperator = null) {
 

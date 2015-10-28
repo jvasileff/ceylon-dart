@@ -6,6 +6,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
     ClassModel=Class,
+    ConstructorModel=Constructor,
     ClassOrInterfaceModel=ClassOrInterface
 }
 import com.vasileff.ceylon.dart.ast {
@@ -85,10 +86,17 @@ class CoreGenerator(CompilationContext ctx) {
              If a declaration is not provided, boxing will erase to native if possible,
              and casting will *not* assume erased to Object (except for non-denotable
              [[rhsType]]s, as always.)"
-            FunctionOrValueModel? | ClassModel rhsDeclaration,
+            FunctionOrValueModel? | ClassModel | ConstructorModel rhsDeclaration,
             DartExpression dartExpression)
         =>  switch (rhsDeclaration)
             case (is ClassModel)
+                // Result of a constructor invocation is never native
+                withBoxingNonNative {
+                    scope;
+                    rhsType;
+                    dartExpression;
+                }
+            case (is ConstructorModel)
                 // Result of a constructor invocation is never native
                 withBoxingNonNative {
                     scope;

@@ -1004,67 +1004,47 @@ class ExpressionTransformer(CompilationContext ctx)
         case (is ValueModel?) {
             return indirectInvocationOnCallable();
         }
-        case (is ClassModel) {
-            "If the declaration is ClassModel, the expression must be a base
-             expression or a qualified expression"
-            assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
+        case (is ClassModel | ConstructorModel) {
+            assert (is ClassModel classModel
+                =   switch (invokedDeclaration)
+                    case (is ClassModel) invokedDeclaration
+                    case (is ConstructorModel) invokedDeclaration.container);
 
-            switch (invoked)
-            case (is QualifiedExpression) {
-                value invokedQEInfo = QualifiedExpressionInfo(invoked);
+            "that.invoked will be a BaseExpression or QualifiedExpression, even for
+             constructors of toplevel classes, where a BaseExpression may be used for
+             the constructor from within the class."
+            assert (is BaseExpression | QualifiedExpression invoked = that.invoked);
 
-                if (invokedQEInfo.staticMethodReference,
-                    is TypeModel containerType = invokedQEInfo.target) {
+            // Peel back a layer if this is a constructor invocation; invoked.receiver
+            // for constructor invocations is basically the same as invoked for class
+            // initializer invocations.
 
-                    // Invoking a member class, statically. Just return a callable. It's
-                    // possible that the callable we return will immediately be called
-                    // with args to construct the class. Not optimizing this now.
-                    "Named arguments not allowed for indirect invocations per spec."
-                    assert (is PositionalArguments positionalArguments = that.arguments);
+            "The invoked expression will always be a BaseExpression
+             or QualifiedExpression"
+            assert (is BaseExpression | QualifiedExpression | Null classInvoked
+                =   switch (invokedDeclaration)
+                    case (is ClassModel)
+                        invoked
+                    case (is ConstructorModel)
+                        if (is QualifiedExpression invoked)
+                        then invoked.receiverExpression
+                        else null);
 
-                    if (positionalArguments.argumentList.sequenceArgument exists) {
-                        // TODO support sequence argument (a single element Tuple...)
-                        throw CompilerBug(that, "Sequence arguments not yet supported");
-                    }
+            if (is BaseExpression? classInvoked) {
+                // Handle the following cases:
+                //
+                // - Constructor called from within the class (Null case), or
+                // - Constructor of a toplevel class, or
+                // - Constructor of member class called from within
+                //   scope of `outer`, so no explicit receiver, or
+                // - Class initializer of a toplevel class, or
+                // - Class initializer of member class called from within
+                //   scope of `outer`, so no explicit receiver.
 
-                    "There must be a single argument for the container."
-                    assert (exists argument
-                        =   positionalArguments.argumentList.listedArguments.first);
-
-                    return
-                    generateNewCallableForQualifiedExpression {
-                        info;
-                        containerType;
-                        () => argument.transform(expressionTransformer);
-                        invokedDeclaration;
-                        info.typeModel;
-                        null;
-                    };
-                }
-                else {
-                    // Normal case, receiver is an object.
-
-                    value receiverInfo = ExpressionInfo(invoked.receiverExpression);
-
-                    return generateInvocation {
-                        info;
-                        info.typeModel;
-                        receiverInfo.typeModel;
-                        () => invoked.receiverExpression.transform(expressionTransformer);
-                        invokedDeclaration;
-                        signatureAndArguments = [
-                            signature,
-                            that.arguments
-                        ];
-                        invoked.memberOperator;
-                    };
-                }
-            }
-            case (is BaseExpression) {
                 value captureArguments
                     =   generateArgumentsForOuterAndCaptures {
                             info;
-                            invokedDeclaration;
+                            classModel;
                         };
 
                 value [argsSetup, argumentList]
@@ -1083,7 +1063,6 @@ class ExpressionTransformer(CompilationContext ctx)
                         info.typeModel;
                         DartInstanceCreationExpression {
                             false;
-                            // no need to transform the base expression:
                             dartTypes.dartConstructorName {
                                 info;
                                 invokedDeclaration;
@@ -1098,42 +1077,56 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             }
-        }
-        case (is ConstructorModel) {
-            assert (is ClassModel clazzModel = invokedDeclaration.container);
-            if (!withinPackage(clazzModel)) {
-                throw CompilerBug(that,
-                    "Invocations of constructors of member classes not yet supported.");
+
+            "We already handled the BaseExpression cases."
+            assert (!is BaseExpression invoked);
+
+            value invokedQEInfo = QualifiedExpressionInfo(classInvoked);
+
+            if (invokedQEInfo.staticMethodReference,
+                    is TypeModel containerType = invokedQEInfo.target) {
+
+                // Invoking a member class, statically. Just return a callable. It's
+                // possible that the callable we return will immediately be called
+                // with args to construct the class. Not optimizing this now.
+                "Named arguments not allowed for indirect invocations per spec."
+                assert (is PositionalArguments positionalArguments = that.arguments);
+
+                if (positionalArguments.argumentList.sequenceArgument exists) {
+                    // TODO support sequence argument (a single element Tuple...)
+                    throw CompilerBug(that, "Sequence arguments not yet supported");
+                }
+
+                "There must be a single argument for the container."
+                assert (exists argument
+                    =   positionalArguments.argumentList.listedArguments.first);
+
+                return
+                generateNewCallableForQualifiedExpression {
+                    info;
+                    containerType;
+                    () => argument.transform(expressionTransformer);
+                    invokedDeclaration;
+                    info.typeModel;
+                    null;
+                };
             }
 
-            "that.invoked will be a BaseExpression or QualifiedExpression, even for
-             constructors of toplevel classes, where a BaseExpression may be used for
-             the constructor from within the class."
-            assert (is BaseExpression | QualifiedExpression invoked = that.invoked);
+            // Normal case, receiver is an object.
 
-            value [argsSetup, argumentList]
-                =   generateArgumentListFromArguments {
-                        info;
-                        that.arguments;
-                        signature;
-                        invokedDeclaration;
-                    };
+            value receiverInfo = ExpressionInfo(invoked.receiverExpression);
 
-            return
-            createExpressionEvaluationWithSetup {
-                argsSetup;
-                withBoxingNonNative {
-                    info;
-                    info.typeModel;
-                    DartInstanceCreationExpression {
-                        false;
-                        dartTypes.dartConstructorName {
-                            info;
-                            invokedDeclaration;
-                        };
-                        argumentList;
-                    };
-                };
+            return generateInvocation {
+                info;
+                info.typeModel;
+                receiverInfo.typeModel;
+                () => classInvoked.receiverExpression.transform(expressionTransformer);
+                invokedDeclaration;
+                signatureAndArguments = [
+                    signature,
+                    that.arguments
+                ];
+                invoked.memberOperator;
             };
         }
     }

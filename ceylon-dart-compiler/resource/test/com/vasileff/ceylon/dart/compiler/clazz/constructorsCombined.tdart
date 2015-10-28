@@ -1,0 +1,36 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class A$B$C {
+    A$B $outer$default$A$B;
+    A$B$C.create([A$B this.$outer$default$A$B]) {
+        $ceylon$language.print($ceylon$language.String.instance("Created C"));
+    }
+}
+class A$B {
+    A $outer$default$A;
+    A$B.create([A this.$outer$default$A]) {
+        $ceylon$language.print($ceylon$language.String.instance("Created B"));
+    }
+    A$B get _$b1 => new A$B.create(this.$outer$default$A);
+}
+class A {
+    A() {
+        $ceylon$language.print($ceylon$language.String.instance("Created A"));
+    }
+    A$B get _$b => new A$B.create(this);
+    $ceylon$language.Callable get cFactory => new $ceylon$language.dart$Callable(() => new A$B$C.create(_$b));
+}
+A$B $package$val = new A$B.create(new A());
+
+A$B get val => $package$val;
+
+$ceylon$language.Callable $package$abFactory = new $ceylon$language.dart$Callable(() => new A$B.create(new A()));
+
+$ceylon$language.Callable get abFactory => $package$abFactory;
+
+void $package$run() {
+    $ceylon$language.print((new A()).cFactory.f());
+}
+
+void run() => $package$run();
