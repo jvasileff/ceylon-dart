@@ -22,6 +22,7 @@ void $package$run() {
 
     $ceylon$language.print($ceylon$language.String.instance((new run$C(val$get)).accessVal));
     $ceylon$language.print($ceylon$language.String.instance((new run$D(val$get)).accessVal));
+    $ceylon$language.print($ceylon$language.String.instance((new run$D.create(val$get)).accessVal));
 }
 
 void run() => $package$run();

@@ -24,6 +24,7 @@ void $package$run() {
 
     (new run$C(fun)).callFun();
     (new run$D(fun)).callFun();
+    (new run$D.create(fun)).callFun();
 }
 
 void run() => $package$run();

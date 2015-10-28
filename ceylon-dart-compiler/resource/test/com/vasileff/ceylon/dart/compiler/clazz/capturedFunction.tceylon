@@ -13,5 +13,5 @@ shared void run() {
     }
     C().callFun();
     D().callFun();
-    //D.create().callFun();
+    D.create().callFun();
 }

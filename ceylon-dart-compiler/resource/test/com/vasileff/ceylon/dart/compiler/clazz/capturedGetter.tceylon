@@ -13,5 +13,5 @@ shared void run() {
     }
     print(C().accessVal);
     print(D().accessVal);
-    //print(D.create().accessVal);
+    print(D.create().accessVal);
 }
