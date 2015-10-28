@@ -47,11 +47,11 @@ void compileAndCompare2(String key) {
         writeNewTempFile(dartPathPart, dartCode);
     }
 
-    assert (exists dartResource = `module`.resourceByPath(dartPathPart));
+    value dartText = `module`.resourceByPath(dartPathPart)?.textContent() else "";
 
     assertEquals {
         actual = dartCode;
-        expected =  dartResource.textContent().trimmed;
+        expected =  dartText.trimmed;
     };
 }
 

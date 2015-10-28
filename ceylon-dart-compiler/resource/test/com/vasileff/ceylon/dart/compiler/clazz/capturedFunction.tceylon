@@ -1,0 +1,7 @@
+shared void run() {
+    void fun() { print("hello"); }
+    class C() {
+        shared void callFun() => fun();
+    }
+    C().callFun();
+}

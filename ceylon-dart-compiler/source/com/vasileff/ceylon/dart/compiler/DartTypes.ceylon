@@ -457,7 +457,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    "For the `Value`, or a `Callable` if the declaration is a `Function`."
+    "For the `Value`, or a `Callable` if the declaration is a `Function`, or, as a
+     special case, `$dart$core.Function` for `Function`s that *are not* parameters.
+
+     The special case is used for the Dart type of captured functions, which are not
+     boxed by a `Callable`."
     shared
     DartTypeName dartTypeNameForDeclaration(
             DScope scope,
@@ -467,10 +471,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         "By definition."
         assert (is FunctionModel | ValueModel | SetterModel declaration);
 
+        if (!declaration.parameter && declaration is FunctionModel) {
+            return ctx.dartTypes.dartFunction;
+        }
+
         value dartModel
             =   switch (declaration)
                 case (is FunctionModel)
-                    // Code path for Callable parameters, other?
+                    // Code path for Callable parameters
 
                     // Returning a callable without worrying about type arguments.
                     // If we *did* want to worry about type arguments, we'd have to

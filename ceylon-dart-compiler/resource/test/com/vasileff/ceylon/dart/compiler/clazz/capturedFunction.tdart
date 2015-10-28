@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$C {
+    $dart$core.Function $capture$run$fun;
+    run$C([$dart$core.Function this.$capture$run$fun]) {}
+    void callFun() => $capture$run$fun();
+}
+void $package$run() {
+    void fun() {
+        $ceylon$language.print($ceylon$language.String.instance("hello"));
+    }
+
+    (new run$C(fun)).callFun();
+}
+
+void run() => $package$run();

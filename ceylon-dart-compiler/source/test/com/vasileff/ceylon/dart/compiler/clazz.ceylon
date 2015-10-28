@@ -98,4 +98,9 @@ object clazz {
     shared test
     void defaultedMemberWithCapture()
         =>  compileAndCompare2("clazz/defaultedMemberWithCapture");
+
+    shared test
+    void capturedFunction()
+        =>  compileAndCompare2("clazz/capturedFunction");
+
 }
