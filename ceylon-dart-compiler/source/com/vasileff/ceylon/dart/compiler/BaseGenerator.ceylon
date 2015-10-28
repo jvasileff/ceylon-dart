@@ -2424,11 +2424,13 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     [DartExpression*] generateArgumentsForOuterAndCaptures
-            (DScope scope, ClassModel declaration) {
+            (DScope scope, ClassModel | ConstructorModel declaration) {
+
+        value classModel = getClassModelForConstructor(declaration);
 
         // FIXME setters?
         value captureExpressions
-            =   dartTypes.captureDeclarationsForClass(declaration)
+            =   dartTypes.captureDeclarationsForClass(classModel)
                     .map((capture)
                         =>  dartTypes.expressionForBaseExpression(scope, capture, false))
                     // Workaround https://github.com/ceylon/ceylon-compiler/issues/2293
@@ -2436,7 +2438,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value outerExpression
             =   if (exists container = getContainingClassOrInterface(scope),
-                    exists outerCI = getContainingClassOrInterface(declaration.container))
+                    exists outerCI = getContainingClassOrInterface(classModel.container))
                 then [dartTypes.expressionToOuter(container, outerCI)]
                 else []; // No outer if no containing class or interface.
 
@@ -2707,7 +2709,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartInstanceCreationExpression generateNewCallable(
             DScope scope,
-            FunctionModel | ClassModel functionModel,
+            FunctionModel | ClassModel | ConstructorModel functionModel,
             DartExpression? delegateFunction = null,
             Integer parameterListNumber = 0,
             Boolean delegateReturnsCallable =
@@ -2721,7 +2723,7 @@ class BaseGenerator(CompilationContext ctx)
         DartExpression outerFunction;
 
         TypeModel returnType;
-        FunctionOrValueModel | ClassModel? returnDeclaration;
+        FunctionOrValueModel | ClassModel | ConstructorModel? returnDeclaration;
         if (delegateReturnsCallable) {
             returnType = ceylonTypes.callableDeclaration.type;
             returnDeclaration = null;
@@ -2737,7 +2739,7 @@ class BaseGenerator(CompilationContext ctx)
         "True if boxing is required. If `true`, an extra outer function will be created
          to handle boxing and null safety."
         value needsWrapperFunction =
-                functionModel is ClassModel
+                functionModel is ClassModel | ConstructorModel
                 || (!delegateReturnsCallable
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
@@ -2791,7 +2793,7 @@ class BaseGenerator(CompilationContext ctx)
 
             "Extra leading arguments for non-toplevel classes."
             value outerAndCaptureArguments
-                =   if (is ClassModel functionModel) then
+                =   if (is ClassModel | ConstructorModel functionModel) then
                         generateArgumentsForOuterAndCaptures {
                             scope;
                             functionModel;
@@ -2858,7 +2860,7 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
             }
-            case (is ClassModel) {
+            case (is ClassModel | ConstructorModel) {
                 invocation
                     =   DartInstanceCreationExpression {
                             false;

@@ -31,6 +31,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ElementModel=Element,
     ModuleModel=Module,
     ClassModel=Class,
+    ConstructorModel=Constructor,
     InterfaceModel=Interface,
     ClassOrInterfaceModel=ClassOrInterface,
     ScopeModel=Scope,
@@ -174,6 +175,23 @@ getRealScope(ElementModel scope) {
 
     return result;
 }
+
+ClassModel getClassModelForConstructor(ClassModel | ConstructorModel model)
+    =>  switch (model)
+        case (is ClassModel) model
+        case (is ConstructorModel) asserted<ClassModel>(model.container);
+
+ConstructorModel? getConstructor(FunctionModel model)
+    =>  if (is ConstructorModel c = model.type.declaration)
+        then c
+        else null;
+
+ConstructorModel|Declaration replaceFunctionWithConstructor<Declaration>
+        (Declaration model)
+    =>  if (is FunctionModel model,
+            is ConstructorModel c = (model of FunctionModel).type.declaration)
+        then c
+        else model;
 
 "The nearest containing scope that is not a [[ConditionScopeModel]]. This differs from
  [[ScopeModel.container]] in that the latter does not exclude [[ConditionScopeModel]]s

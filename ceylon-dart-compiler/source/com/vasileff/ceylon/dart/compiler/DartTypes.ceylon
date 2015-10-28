@@ -1157,9 +1157,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      - They may also appear as the rhs type (when taking a reference to a Function), in
        which case they are treated as `Callable` values, which of course are not erased."
     shared
-    Boolean erasedToNative(FunctionOrValueModel | ClassModel declaration)
+    Boolean erasedToNative
+            (FunctionOrValueModel | ClassModel | ConstructorModel declaration)
         =>  switch (declaration)
-            case (is ClassModel)
+            case (is ClassModel | ConstructorModel)
                 false
             case (is FunctionOrValueModel)
                 !ctx.disableErasureToNative.contains(declaration)

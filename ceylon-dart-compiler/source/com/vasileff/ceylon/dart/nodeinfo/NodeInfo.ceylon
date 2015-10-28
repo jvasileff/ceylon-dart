@@ -163,7 +163,7 @@ class BaseExpressionInfo(BaseExpression astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default BaseExpression node => astNode;
-    value tcNode = assertedTcNode<Tree.StaticMemberOrTypeExpression>(astNode);
+    shared Tree.StaticMemberOrTypeExpression tcNode = assertedTcNode<Tree.StaticMemberOrTypeExpression>(astNode);
 
     // MemberOrTypeExpression
 

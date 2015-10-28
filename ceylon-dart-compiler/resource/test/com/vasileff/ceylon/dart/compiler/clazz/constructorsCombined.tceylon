@@ -1,24 +1,148 @@
 class A() {
-    shared class B {
-        shared new create() {}
-        value b1 => create();
-        //A.B b2 => let (c = (B.create)) c(); // FIXME
-        //A.B b3 => let (c = (create)) c();   // FIXME
-        shared class C {
-            shared new create() {}
-            print("Created C");
-        }
-        print("Created B");
-    }
-    A.B b => B.create();
-    shared A.B.C() cFactory => B.C.create(b); //haha
+    shared actual String string => "Class A";
 
-    print("Created A");
+    // B w/outer = this
+    shared A.B b01 => B.createB();
+    shared A.B b02 => A.B.createB(this)();
+
+    // Factory for B w/outer = this
+    shared A.B() bFactory03 => B.createB;
+    shared A.B() bFactory04 => A.B.createB(this);
+
+    // Factory for B
+    shared A.B()(A) bFactory05 => A.B.createB;
+
+    // C w/outer = supplied
+    shared A.B.C c06 => B.C.createC(B.createB())();
+    shared A.B.C c07 => A.B.C.createC(B.createB())();
+
+    // Factory for C w/outer = supplied
+    shared A.B.C() cFactory08 => B.C.createC(B.createB());
+    shared A.B.C() cFactory09 => A.B.C.createC(B.createB());
+
+    // Factory for C
+    shared A.B.C()(A.B) cFactory10 => B.C.createC;
+    shared A.B.C()(A.B) cFactory11 => A.B.C.createC;
+
+    shared class B {
+        shared new createB() {}
+        shared A bOuter => outer;
+        shared actual String string => "Class B";
+
+        // B w/outer = outer
+        shared A.B b12 => createB();
+        shared A.B b13 => B.createB();
+        shared A.B b14 => A.B.createB(outer)();
+
+        // Factory for B w/outer = outer
+        shared A.B() bFactory15 => createB;
+        shared A.B() bFactory16 => B.createB;
+        shared A.B() bFactory17 => A.B.createB(outer);
+
+        // Factory for B
+        shared A.B()(A) bFactory18 => A.B.createB;
+
+        // C w/outer = this
+        shared A.B.C c19 => C.createC();
+        shared A.B.C c20 => B.C.createC(this)();
+        shared A.B.C c21 => A.B.C.createC(this)();
+
+        // Factory for C w/outer = this
+        shared A.B.C() cFactory22 => C.createC;
+        shared A.B.C() cFactory23 => B.C.createC(this);
+        shared A.B.C() cFactory24 => A.B.C.createC(this);
+
+        // Factory for C
+        shared A.B.C()(A.B) cFactory25 => B.C.createC;
+        shared A.B.C()(A.B) cFactory26 => A.B.C.createC;
+
+        shared class C {
+            shared new createC() {}
+            shared actual String string => "Class C";
+
+            // B w/outer = outer.outer
+            shared A.B b27 => createB();
+            shared A.B b28 => B.createB();
+            shared A.B b29 => A.B.createB(bOuter)();
+
+            // Factory for B w/outer = outer.outer
+            shared A.B() bFactory30 => createB;
+            shared A.B() bFactory31 => B.createB;
+            shared A.B() bFactory32 => A.B.createB(bOuter);
+
+            // Factory for B
+            shared A.B()(A) bFactory33 => A.B.createB;
+
+            // C w/outer = outer
+            shared A.B.C c34 => createC();
+            shared A.B.C c35 => C.createC();
+            shared A.B.C c36 => B.C.createC(outer)();
+            shared A.B.C c37 => A.B.C.createC(outer)();
+
+            // Factory for C w/outer = outer
+            shared A.B.C() cFactory38 => createC;
+            shared A.B.C() cFactory39 => C.createC;
+            shared A.B.C() cFactory40 => B.C.createC(outer);
+            shared A.B.C() cFactory41 => A.B.C.createC(outer);
+
+            // Factory for C
+            shared A.B.C()(A.B) cFactory42 => B.C.createC;
+            shared A.B.C()(A.B) cFactory43 => A.B.C.createC;
+        }
+    }
 }
 
-A.B val = A().B.create();
-A.B() abFactory = A.B.create(A()); // good
+A.B val = A().B.createB();
+A.B() abFactory = A.B.createB(A()); // good
 
 shared void run() {
-    print(A().cFactory());
+    value a = A();
+    value b = a.B.createB();
+    value c = b.C.createC();
+
+    print(a.b01);
+    print(a.b02);
+    print(a.bFactory03());
+    print(a.bFactory04());
+    print(a.bFactory05(a)());
+    print(a.c06);
+    print(a.c07);
+    print(a.cFactory08());
+    print(a.cFactory09());
+    print(a.cFactory10(b)());
+    print(a.cFactory11(b)());
+
+    print(b.b12);
+    print(b.b13);
+    print(b.b14);
+    print(b.bFactory15());
+    print(b.bFactory16());
+    print(b.bFactory17());
+    print(b.bFactory18(a)());
+    print(b.c19);
+    print(b.c20);
+    print(b.c21);
+    print(b.cFactory22());
+    print(b.cFactory23());
+    print(b.cFactory24());
+    print(b.cFactory25(b)());
+    print(b.cFactory26(b)());
+
+    print(c.b27);
+    print(c.b28);
+    print(c.b29);
+    print(c.bFactory30());
+    print(c.bFactory31());
+    print(c.bFactory32());
+    print(c.bFactory33(a)());
+    print(c.c34);
+    print(c.c35);
+    print(c.c36);
+    print(c.c37);
+    print(c.cFactory38());
+    print(c.cFactory39());
+    print(c.cFactory40());
+    print(c.cFactory41());
+    print(c.cFactory42(b)());
+    print(c.cFactory43(b)());
 }

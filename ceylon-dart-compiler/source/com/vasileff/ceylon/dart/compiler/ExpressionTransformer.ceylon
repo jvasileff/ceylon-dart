@@ -218,7 +218,7 @@ class ExpressionTransformer(CompilationContext ctx)
             };
 
     DartExpression generateForBaseExpression(
-            Expression that,
+            BaseExpression | QualifiedExpression that,
             NameWithTypeArguments nameAndArgs,
             DeclarationModel targetDeclaration) {
 
@@ -230,6 +230,20 @@ class ExpressionTransformer(CompilationContext ctx)
                 throw CompilerBug(that,
                         "Unexpected declaration type for base expression: \
                          ``className(targetDeclaration)``");
+            }
+
+            // Is this a Function that's really a Constructor?
+            if (is FunctionModel targetDeclaration,
+                exists constructorModel = getConstructor(targetDeclaration)) {
+                // generateNewCallable() can handle constructors and will take care
+                // of the implicit `outer` argument if the constructor's class is a
+                // member class.
+
+                // Return a Callable that returns an instance of a class:
+                return generateNewCallable {
+                    info;
+                    constructorModel;
+                };
             }
 
             // Be sure to detect *all* true, false, and null literals here, even if they
@@ -337,30 +351,48 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
 
-        value info = QualifiedExpressionInfo(that);
-
         if (that.memberOperator is SpreadMemberOperator) {
             throw CompilerBug(that,
                     "Member operator not yet supported: \
                      '``that.memberOperator.text``'");
         }
 
-        value memberDeclaration = info.declaration;
-        value memberContainer = memberDeclaration.container;
+        value info
+            =   QualifiedExpressionInfo(that);
 
-        "Maybe this is a type alias?"
-        assert (is ClassOrInterfaceModel memberContainer);
+        value receiverInfo
+            =   switch (receiver = that.receiverExpression)
+                case (is BaseExpression) BaseExpressionInfo(receiver)
+                case (is QualifiedExpression) QualifiedExpressionInfo(receiver)
+                else ExpressionInfo(receiver);
 
-        function getTarget(BaseExpression | QualifiedExpression expression)
-            =>  switch (expression)
-                case (is BaseExpression) BaseExpressionInfo(expression).target
-                case (is QualifiedExpression) QualifiedExpressionInfo(expression).target;
+        value memberDeclaration
+            =   if (is FunctionModel d = info.declaration,
+                    is ConstructorModel constructor = d.type.declaration) then
+                    // Constructors are presented as Functions, but lets use the
+                    // Constructor declaration instead.
+                    constructor
+                else
+                    info.declaration;
 
-        if (is BaseExpression | QualifiedExpression
-                    receiverExpression = that.receiverExpression,
-            is TypeModel containerType = getTarget(receiverExpression)) {
+        value memberContainer
+            =   memberDeclaration.container;
 
-            // The QualifiedExpression expression is a static member reference
+        "What else would the container be than a Class or Interface?"
+        assert (is ClassModel | InterfaceModel memberContainer);
+
+        if (info.staticMethodReference) {
+            "The receiver of a qualified expression that is a static reference will
+             be a BaseExpression or QualifiedExpression."
+            assert (is BaseExpressionInfo | QualifiedExpressionInfo receiverInfo);
+
+            "The target of the receiver expression of a qualified expression that is
+             a static member reference will be a Type, since the receiver is a class or
+             interface."
+            assert (is TypeModel containerType
+                =   switch (receiverInfo)
+                    case (is BaseExpressionInfo) receiverInfo.target
+                    case (is QualifiedExpressionInfo) receiverInfo.target);
 
             switch (memberDeclaration)
             case (is ValueModel) {
@@ -414,7 +446,29 @@ class ExpressionTransformer(CompilationContext ctx)
                 // The Callable that takes a `containerType`
                 return createCallable(info, outerFunction);
             }
-            case (is FunctionModel | ClassModel) {
+            case (is FunctionModel | ClassModel | ConstructorModel) {
+                if (is ConstructorModel memberDeclaration,
+                    is BaseExpressionInfo receiverInfo) {
+
+                    // The receiver is a BaseExpression, which is *never* itself a
+                    // staticMethodReference, and can therefore provide its own `outer`
+                    // if it is a member class. (Something like `Foo.create`, and if
+                    // `Foo` is a member class, the expression will be in the scope of
+                    // the container to use for the `Foo`.)
+
+                    // So, this is a staticMethodReference to the *Constructor*, but it
+                    // is not a static reference to the constructor's container.
+
+                    // GenerateNewCallable will provide the necessary `outer` reference.
+                    // The returned value will be a Callable for the constructor,
+                    // rather than a Callable that takes an `outer` and returns a
+                    // callable for the constructor.
+                    return generateNewCallable {
+                        info;
+                        memberDeclaration;
+                    };
+                }
+
                 // Return a `Callable` that takes a `containerType` and returns a
                 // `Callable` that can be used to invoke the `memberDeclaration`
 
@@ -467,9 +521,6 @@ class ExpressionTransformer(CompilationContext ctx)
         }
 
         // The QualifiedExpression expression is *not* a static member reference
-
-        value receiverInfo = ExpressionInfo(that.receiverExpression);
-
         switch (memberDeclaration)
         case (is ValueModel) {
             // Return an expression that will yield the value
@@ -759,14 +810,9 @@ class ExpressionTransformer(CompilationContext ctx)
                                 QualifiedExpressionInfo(invoked).declaration
                            else
                                 null) // some other expression that yields a Callable
-
-                if (is FunctionModel d,
-                    is ConstructorModel constructor = d.type.declaration) then
-                    // Constructor invocations present the invoked as a Function,
-                    // but let's use the Constructor declaration.
-                    constructor
-                else
-                    d;
+                // Constructor invocations present the invoked as a Function,
+                // but let's use the Constructor declaration.
+                replaceFunctionWithConstructor(d);
 
         "Generate an invocation on `ValueModel`s, or `FunctionModel`s for Callable
          parameters, which are implemented as Callable values. This function is called
@@ -1083,8 +1129,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
             value invokedQEInfo = QualifiedExpressionInfo(classInvoked);
 
-            if (invokedQEInfo.staticMethodReference,
-                    is TypeModel containerType = invokedQEInfo.target) {
+            if (invokedQEInfo.staticMethodReference) {
+                "The target of a qualified expression for a class with be a Type."
+                assert (is TypeModel containerType = invokedQEInfo.target);
 
                 // Invoking a member class, statically. Just return a callable. It's
                 // possible that the callable we return will immediately be called
@@ -1097,7 +1144,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     throw CompilerBug(that, "Sequence arguments not yet supported");
                 }
 
-                "There must be a single argument for the container."
+                "There must be a single argument, which is the container (outer)."
                 assert (exists argument
                     =   positionalArguments.argumentList.listedArguments.first);
 
