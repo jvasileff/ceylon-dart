@@ -5,8 +5,8 @@ void $package$run() {
     $ceylon$language.Destroyable u1$get() => $ceylon$language.nothing as $ceylon$language.Destroyable;
 
     $ceylon$language.Callable destroy = (() {
-        $ceylon$language.Destroyable $capturedReceiver$ = u1$get();
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.Destroyable $r$) => $r$ == null ? null : $r$.destroy($0 as $ceylon$language.Throwable))($capturedReceiver$));
+        $ceylon$language.Destroyable $r = u1$get();
+        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.Destroyable $r) => $r == null ? null : $r.destroy($0 as $ceylon$language.Throwable))($r));
     })();
 }
 

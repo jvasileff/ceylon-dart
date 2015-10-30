@@ -1065,18 +1065,18 @@ $dart$core.String $package$dartStringJoin([$dart$core.String val, Iterable objec
 $dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $package$dartStringJoin(val, objects);
 
 Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
-    Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
+    Character $r = new Character.$fromInt(10);
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
 })(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
-    Character $capturedReceiver$ = new Character.$fromInt(13);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
+    Character $r = new Character.$fromInt(13);
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
 })())));
 
 Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
 
 Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
-    Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
+    Character $r = new Character.$fromInt(10);
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
 })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
     $dart$core.String br = String.nativeValue(lineWithBreak.get(Integer.instance(1)) as String);
@@ -1591,7 +1591,7 @@ class Entry {
             }
         }
     }
-    $dart$core.int get hashCode => ((31 + key.hashCode) * 31) + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.hashCode)(item));
+    $dart$core.int get hashCode => ((31 + key.hashCode) * 31) + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.hashCode)(item));
     $dart$core.String toString() => ((("" + key.toString()) + "->") + $package$stringify(item)) + "";
 }
 abstract class Enumerable implements Ordinal {
@@ -4054,9 +4054,9 @@ class Iterable$group$$anonymous$32_ implements Map {
     $dart$core.int get size => _$count;
     Iterator iterator() => new Iterable$group$$anonymous$32_$$anonymous$33_(this);
     Map clone() => this;
-    GroupEntry _$group([$dart$core.Object key]) => ((GroupEntry $r$) => $r$ == null ? null : $r$.get(key))(_$store.get(Integer.instance(_$hash(key, _$store.size))) as GroupEntry);
+    GroupEntry _$group([$dart$core.Object key]) => ((GroupEntry $r) => $r == null ? null : $r.get(key))(_$store.get(Integer.instance(_$hash(key, _$store.size))) as GroupEntry);
     $dart$core.bool defines([$dart$core.Object key]) => !(_$group(key) == null);
-    Sequence get([$dart$core.Object key]) => ((GroupEntry $r$) => $r$ == null ? null : $r$.elements)(_$group(key));
+    Sequence get([$dart$core.Object key]) => ((GroupEntry $r) => $r == null ? null : $r.elements)(_$group(key));
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
@@ -7214,7 +7214,7 @@ class Map$keys$$anonymous$0_ implements Collection {
     Map $outer$ceylon$language$Map;
     Map$keys$$anonymous$0_([Map this.$outer$ceylon$language$Map]) {}
     $dart$core.bool contains([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
-    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)).iterator();
+    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).key)).iterator();
     Collection clone() => this.sequence();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     $dart$core.String toString() => Collection.$get$string(this);
@@ -7291,7 +7291,7 @@ class Map$items$$anonymous$1_ implements Collection {
             }
         }
     }
-    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item)).iterator();
+    Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item)).iterator();
     Collection clone() => this.sequence();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     $dart$core.String toString() => Collection.$get$string(this);
@@ -9190,7 +9190,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                 {
                     $dart$core.bool doElse$2 = true;
                     {
-                        $dart$core.int tmp$3 = String.instance(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).letter)));
+                        $dart$core.int tmp$3 = String.instance(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).letter)));
                         if (!(tmp$3 == null)) {
                             $dart$core.int mag;
                             mag = tmp$3;
@@ -9209,7 +9209,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
         if (doElse$0) {{
                 $dart$core.bool doElse$4 = true;
                 {
-                    $dart$core.int tmp$5 = String.instance(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).letter)));
+                    $dart$core.int tmp$5 = String.instance(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).letter)));
                     if (!(tmp$5 == null)) {
                         $dart$core.int mag;
                         mag = tmp$5;
@@ -9226,7 +9226,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
             fractionalPart = "0";
         }
     }
-    if ((!String.instance(wholePart).every(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit)))) || (!String.instance(fractionalPart).every(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit))))) {
+    if ((!String.instance(wholePart).every(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).digit)))) || (!String.instance(fractionalPart).every(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).digit))))) {
         return null;
     }
     {
@@ -9325,9 +9325,9 @@ $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
 
 $dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseFloatExponent(string);
 
-Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit)), (() {
-    String $capturedReceiver$ = String.instance("+-");
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.contains($0)));
+Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).digit)), (() {
+    String $r = String.instance("+-");
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.contains($0)));
 })());
 
 Callable get digitOrSign => $package$digitOrSign;
@@ -9524,7 +9524,7 @@ void $package$printAll([Iterable values, $dart$core.Object separator = $package$
 
 void printAll([Iterable values, $dart$core.Object separator = $package$dart$default]) => $package$printAll(values, separator);
 
-$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.toString())(val));
+$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.toString())(val));
 
 $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
 
@@ -11112,7 +11112,7 @@ class Singleton implements Sequence {
             }
         }
     }
-    $dart$core.int get hashCode => 31 + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r$) => $r$ == null ? null : $r$.hashCode)(_$element));
+    $dart$core.int get hashCode => 31 + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.hashCode)(_$element));
     $dart$core.Object measure([Integer from, $dart$core.int length]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)((Integer.nativeValue(from) <= 0) && ((Integer.nativeValue(from) + length) > 0) ? this : null);
     $dart$core.Object span([Integer from, Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(((Integer.nativeValue(from) <= 0) && (Integer.nativeValue(to) >= 0)) || ((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= 0)) ? this : null);
     $dart$core.Object spanTo([Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? this : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
@@ -11966,7 +11966,7 @@ Tuple $package$unzipPairs([Iterable pairs]) => new Tuple.$withList([pairs.map(ne
 
 Tuple unzipPairs([Iterable pairs]) => $package$unzipPairs(pairs);
 
-Tuple $package$unzipEntries([Iterable entries]) => new Tuple.$withList([entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).key)), entries.map(new dart$Callable(([$dart$core.Object $r$]) => ($r$ as Entry).item))]);
+Tuple $package$unzipEntries([Iterable entries]) => new Tuple.$withList([entries.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).key)), entries.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item))]);
 
 Tuple unzipEntries([Iterable entries]) => $package$unzipEntries(entries);
 
