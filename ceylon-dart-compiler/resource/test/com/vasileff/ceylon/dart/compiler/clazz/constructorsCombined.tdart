@@ -1,119 +1,146 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
+$dart$core.int $package$i = 1;
+
+$dart$core.int get i => $package$i;
+
+class d_ implements $ceylon$language.Destroyable {
+    d_() {}
+    void destroy([$ceylon$language.Throwable error]) {}
+}
+final d_ $package$d = new d_();
+
+d_ get d => $package$d;
+
 class A$B$C {
     A$B $outer$default$A$B;
-    A$B$C.createC([A$B this.$outer$default$A$B]) {}
-    $dart$core.String toString() => "Class C";
-    A$B get b27 => new A$B.createB(this.$outer$default$A$B.$outer$default$A);
-    A$B get b28 => new A$B.createB(this.$outer$default$A$B.$outer$default$A);
-    A$B get b29 => (new $ceylon$language.dart$Callable(() => new A$B.createB($outer$default$A$B.bOuter))).f() as A$B;
-    $ceylon$language.Callable get bFactory30 => new $ceylon$language.dart$Callable(() => new A$B.createB(this.$outer$default$A$B.$outer$default$A));
-    $ceylon$language.Callable get bFactory31 => new $ceylon$language.dart$Callable(() => new A$B.createB(this.$outer$default$A$B.$outer$default$A));
-    $ceylon$language.Callable get bFactory32 => new $ceylon$language.dart$Callable(() => new A$B.createB($outer$default$A$B.bOuter));
-    $ceylon$language.Callable get bFactory33 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B.createB($r$)));
-    A$B$C get c34 => new A$B$C.createC(this.$outer$default$A$B);
-    A$B$C get c35 => new A$B$C.createC(this.$outer$default$A$B);
-    A$B$C get c36 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC($outer$default$A$B))).f() as A$B$C;
-    A$B$C get c37 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC($outer$default$A$B))).f() as A$B$C;
-    $ceylon$language.Callable get cFactory38 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(this.$outer$default$A$B));
-    $ceylon$language.Callable get cFactory39 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(this.$outer$default$A$B));
-    $ceylon$language.Callable get cFactory40 => new $ceylon$language.dart$Callable(() => new A$B$C.createC($outer$default$A$B));
-    $ceylon$language.Callable get cFactory41 => new $ceylon$language.dart$Callable(() => new A$B$C.createC($outer$default$A$B));
-    $ceylon$language.Callable get cFactory42 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
-    $ceylon$language.Callable get cFactory43 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
+    A$B$C.createC([A$B this.$outer$default$A$B, $dart$core.int i, $ceylon$language.Destroyable d]) {
+        this._$i = i;
+        this._$d = d;
+    }
+    $dart$core.int _$i;
+    $ceylon$language.Destroyable _$d;
+    $dart$core.String toString() => ("Class C " + $ceylon$language.Boolean.instance($ceylon$language.Integer.instance(_$i).equals($ceylon$language.Integer.instance(1))).toString()) + "";
+    A$B get b27 => new A$B.createB(this.$outer$default$A$B.$outer$default$A, _$i, _$d);
+    A$B get b28 => new A$B.createB(this.$outer$default$A$B.$outer$default$A, _$i, _$d);
+    A$B get b29 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($outer$default$A$B.bOuter, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B;
+    $ceylon$language.Callable get bFactory30 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B.createB(this.$outer$default$A$B.$outer$default$A, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get bFactory31 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B.createB(this.$outer$default$A$B.$outer$default$A, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get bFactory32 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($outer$default$A$B.bOuter, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get bFactory33 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    A$B$C get c34 => new A$B$C.createC(this.$outer$default$A$B, _$i, _$d);
+    A$B$C get c35 => new A$B$C.createC(this.$outer$default$A$B, _$i, _$d);
+    A$B$C get c36 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($outer$default$A$B, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    A$B$C get c37 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($outer$default$A$B, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    $ceylon$language.Callable get cFactory38 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B$C.createC(this.$outer$default$A$B, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get cFactory39 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B$C.createC(this.$outer$default$A$B, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get cFactory40 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($outer$default$A$B, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory41 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($outer$default$A$B, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory42 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    $ceylon$language.Callable get cFactory43 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
 }
 class A$B {
     A $outer$default$A;
-    A$B.createB([A this.$outer$default$A]) {}
+    A$B.createB([A this.$outer$default$A, $dart$core.int i, $ceylon$language.Destroyable d]) {
+        this._$i = i;
+        this._$d = d;
+    }
+    $dart$core.int _$i;
+    $ceylon$language.Destroyable _$d;
     A get bOuter => $outer$default$A;
-    $dart$core.String toString() => "Class B";
-    A$B get b12 => new A$B.createB(this.$outer$default$A);
-    A$B get b13 => new A$B.createB(this.$outer$default$A);
-    A$B get b14 => (new $ceylon$language.dart$Callable(() => new A$B.createB($outer$default$A))).f() as A$B;
-    $ceylon$language.Callable get bFactory15 => new $ceylon$language.dart$Callable(() => new A$B.createB(this.$outer$default$A));
-    $ceylon$language.Callable get bFactory16 => new $ceylon$language.dart$Callable(() => new A$B.createB(this.$outer$default$A));
-    $ceylon$language.Callable get bFactory17 => new $ceylon$language.dart$Callable(() => new A$B.createB($outer$default$A));
-    $ceylon$language.Callable get bFactory18 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B.createB($r$)));
-    A$B$C get c19 => new A$B$C.createC(this);
-    A$B$C get c20 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC(this))).f() as A$B$C;
-    A$B$C get c21 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC(this))).f() as A$B$C;
-    $ceylon$language.Callable get cFactory22 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(this));
-    $ceylon$language.Callable get cFactory23 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(this));
-    $ceylon$language.Callable get cFactory24 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(this));
-    $ceylon$language.Callable get cFactory25 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
-    $ceylon$language.Callable get cFactory26 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
+    $dart$core.String toString() => ("Class B " + $ceylon$language.Boolean.instance($ceylon$language.Integer.instance(_$i).equals($ceylon$language.Integer.instance(1))).toString()) + "";
+    A$B get b12 => new A$B.createB(this.$outer$default$A, _$i, _$d);
+    A$B get b13 => new A$B.createB(this.$outer$default$A, _$i, _$d);
+    A$B get b14 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($outer$default$A, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B;
+    $ceylon$language.Callable get bFactory15 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B.createB(this.$outer$default$A, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get bFactory16 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B.createB(this.$outer$default$A, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get bFactory17 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($outer$default$A, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get bFactory18 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    A$B$C get c19 => new A$B$C.createC(this, _$i, _$d);
+    A$B$C get c20 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    A$B$C get c21 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    $ceylon$language.Callable get cFactory22 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B$C.createC(this, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get cFactory23 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory24 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory25 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    $ceylon$language.Callable get cFactory26 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
 }
 class A {
-    A() {}
-    $dart$core.String toString() => "Class A";
-    A$B get b01 => new A$B.createB(this);
-    A$B get b02 => (new $ceylon$language.dart$Callable(() => new A$B.createB(this))).f() as A$B;
-    $ceylon$language.Callable get bFactory03 => new $ceylon$language.dart$Callable(() => new A$B.createB(this));
-    $ceylon$language.Callable get bFactory04 => new $ceylon$language.dart$Callable(() => new A$B.createB(this));
-    $ceylon$language.Callable get bFactory05 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B.createB($r$)));
-    A$B$C get c06 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC(new A$B.createB(this)))).f() as A$B$C;
-    A$B$C get c07 => (new $ceylon$language.dart$Callable(() => new A$B$C.createC(new A$B.createB(this)))).f() as A$B$C;
-    $ceylon$language.Callable get cFactory08 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(new A$B.createB(this)));
-    $ceylon$language.Callable get cFactory09 => new $ceylon$language.dart$Callable(() => new A$B$C.createC(new A$B.createB(this)));
-    $ceylon$language.Callable get cFactory10 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
-    $ceylon$language.Callable get cFactory11 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(() => new A$B$C.createC($r$)));
+    A([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
+        this._$i = _$i;
+        this._$d = _$d;
+    }
+    $dart$core.int _$i;
+    $ceylon$language.Destroyable _$d;
+    $dart$core.String toString() => ("Class A " + $ceylon$language.Boolean.instance($ceylon$language.Integer.instance(_$i).equals($ceylon$language.Integer.instance(1))).toString()) + "";
+    A$B get b01 => new A$B.createB(this, _$i, _$d);
+    A$B get b02 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B;
+    $ceylon$language.Callable get bFactory03 => new $ceylon$language.dart$Callable(([$ceylon$language.Integer i, $ceylon$language.Destroyable d]) => new A$B.createB(this, $ceylon$language.Integer.nativeValue(i), d));
+    $ceylon$language.Callable get bFactory04 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB(this, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get bFactory05 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    A$B$C get c06 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(new A$B.createB(this, _$i, _$d), $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    A$B$C get c07 => (new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(new A$B.createB(this, _$i, _$d), $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable))).f($ceylon$language.Integer.instance(_$i), _$d) as A$B$C;
+    $ceylon$language.Callable get cFactory08 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(new A$B.createB(this, _$i, _$d), $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory09 => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC(new A$B.createB(this, _$i, _$d), $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
+    $ceylon$language.Callable get cFactory10 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
+    $ceylon$language.Callable get cFactory11 => new $ceylon$language.dart$Callable(([$dart$core.Object $r$]) => new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B$C.createC($r$, $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable)));
 }
-A$B $package$val = new A$B.createB(new A());
+A$B $package$val = new A$B.createB(new A($package$i, $package$d), $package$i, $package$d);
 
 A$B get val => $package$val;
 
-$ceylon$language.Callable $package$abFactory = new $ceylon$language.dart$Callable(() => new A$B.createB(new A()));
+$ceylon$language.Callable $package$abFactory = new $ceylon$language.dart$Callable(([$dart$core.Object i, $dart$core.Object d]) => new A$B.createB(new A($package$i, $package$d), $ceylon$language.Integer.nativeValue(i as $ceylon$language.Integer), d as $ceylon$language.Destroyable));
 
 $ceylon$language.Callable get abFactory => $package$abFactory;
 
 void $package$run() {
-    A a = new A();
-    A$B b = new A$B.createB(a);
-    A$B$C c = new A$B$C.createC(b);
+    A a = new A($package$i, $package$d);
+    A$B b = new A$B.createB(a, $package$i, $package$d);
+    A$B$C c = new A$B$C.createC(b, $package$i, $package$d);
     $ceylon$language.print(a.b01);
     $ceylon$language.print(a.b02);
-    $ceylon$language.print(a.bFactory03.f());
-    $ceylon$language.print(a.bFactory04.f());
-    $ceylon$language.print((a.bFactory05.f(a) as $ceylon$language.Callable).f());
+    $ceylon$language.print(a.bFactory03.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(a.bFactory04.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((a.bFactory05.f(a) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
     $ceylon$language.print(a.c06);
     $ceylon$language.print(a.c07);
-    $ceylon$language.print(a.cFactory08.f());
-    $ceylon$language.print(a.cFactory09.f());
-    $ceylon$language.print((a.cFactory10.f(b) as $ceylon$language.Callable).f());
-    $ceylon$language.print((a.cFactory11.f(b) as $ceylon$language.Callable).f());
+    $ceylon$language.print(a.cFactory08.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(a.cFactory09.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((a.cFactory10.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((a.cFactory11.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
     $ceylon$language.print(b.b12);
     $ceylon$language.print(b.b13);
     $ceylon$language.print(b.b14);
-    $ceylon$language.print(b.bFactory15.f());
-    $ceylon$language.print(b.bFactory16.f());
-    $ceylon$language.print(b.bFactory17.f());
-    $ceylon$language.print((b.bFactory18.f(a) as $ceylon$language.Callable).f());
+    $ceylon$language.print(b.bFactory15.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(b.bFactory16.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(b.bFactory17.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((b.bFactory18.f(a) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
     $ceylon$language.print(b.c19);
     $ceylon$language.print(b.c20);
     $ceylon$language.print(b.c21);
-    $ceylon$language.print(b.cFactory22.f());
-    $ceylon$language.print(b.cFactory23.f());
-    $ceylon$language.print(b.cFactory24.f());
-    $ceylon$language.print((b.cFactory25.f(b) as $ceylon$language.Callable).f());
-    $ceylon$language.print((b.cFactory26.f(b) as $ceylon$language.Callable).f());
+    $ceylon$language.print(b.cFactory22.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(b.cFactory23.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(b.cFactory24.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((b.cFactory25.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((b.cFactory26.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
     $ceylon$language.print(c.b27);
     $ceylon$language.print(c.b28);
     $ceylon$language.print(c.b29);
-    $ceylon$language.print(c.bFactory30.f());
-    $ceylon$language.print(c.bFactory31.f());
-    $ceylon$language.print(c.bFactory32.f());
-    $ceylon$language.print((c.bFactory33.f(a) as $ceylon$language.Callable).f());
+    $ceylon$language.print(c.bFactory30.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(c.bFactory31.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(c.bFactory32.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((c.bFactory33.f(a) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
     $ceylon$language.print(c.c34);
     $ceylon$language.print(c.c35);
     $ceylon$language.print(c.c36);
     $ceylon$language.print(c.c37);
-    $ceylon$language.print(c.cFactory38.f());
-    $ceylon$language.print(c.cFactory39.f());
-    $ceylon$language.print(c.cFactory40.f());
-    $ceylon$language.print(c.cFactory41.f());
-    $ceylon$language.print((c.cFactory42.f(b) as $ceylon$language.Callable).f());
-    $ceylon$language.print((c.cFactory43.f(b) as $ceylon$language.Callable).f());
+    $ceylon$language.print(c.cFactory38.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(c.cFactory39.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(c.cFactory40.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print(c.cFactory41.f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((c.cFactory42.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
+    $ceylon$language.print((c.cFactory43.f(b) as $ceylon$language.Callable).f($ceylon$language.Integer.instance($package$i), $package$d));
 }
 
 void run() => $package$run();
