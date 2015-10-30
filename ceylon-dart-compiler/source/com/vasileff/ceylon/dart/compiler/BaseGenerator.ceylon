@@ -335,23 +335,13 @@ class BaseGenerator(CompilationContext ctx)
         =>  if (!nonempty setup) then
                 expression
             else
-                DartFunctionExpressionInvocation {
-                    DartFunctionExpression {
-                        dartFormalParameterListEmpty;
-                        DartBlockFunctionBody {
-                            null;
-                            false;
-                            DartBlock  {
-                                concatenate {
-                                    setup,
-                                    [DartReturnStatement {
-                                        expression;
-                                    }]
-                                };
-                            };
-                        };
+                createInlineDartStatements {
+                    concatenate {
+                        setup,
+                        [DartReturnStatement {
+                            expression;
+                        }]
                     };
-                    DartArgumentList { []; };
                 };
 
     shared
@@ -2566,7 +2556,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared see(`function generateInvocation`)
-    DartInstanceCreationExpression generateNewCallableForQualifiedExpression(
+    DartExpression generateNewCallableForQualifiedExpression(
             DScope scope,
             "The type of the receiver, which may be:
              -  the type of an expression if [[generateReceiver]] is not null, or
@@ -2577,6 +2567,9 @@ class BaseGenerator(CompilationContext ctx)
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
+            "Must be true if the receiver is not a constant, and therefore should be
+             eagerly evaluated to avoid re-evaluation each time the Callable is invoked."
+            Boolean eagerlyEvaluateReceiver,
             FunctionModel | ClassModel | ConstructorModel memberDeclaration,
             TypeModel callableType,
             AnyMemberOperator? memberOperator = null) {
@@ -2673,24 +2666,22 @@ class BaseGenerator(CompilationContext ctx)
             };
         });
 
-        "The invocation wrapped by the `Callable`, returning a boxed result."
-        value invocation
-            =   withLhsNonNative {
-                    lhsType = resultType;
-                    () => generateInvocation {
-                        scope;
-                        resultType;
-                        receiverType;
-                        generateReceiver;
-                        memberDeclaration;
-                        [signature, innerArguments];
-                        memberOperator;
-                    };
+        // memberContainer and receiverDenotableType are really only needed if
+        // eagerlyEvaluateReceiver & exists generateReceiver.
+
+        "What else would the container be than a Class or Interface?"
+        assert (is ClassModel | InterfaceModel memberContainer
+            =   container(memberDeclaration));
+
+        value receiverDenotableType
+            =   ceylonTypes.denotableType {
+                    receiverType;
+                    memberContainer;
                 };
 
-        "The outer function, serving as the delegate for the `Callable`. This function
+        "The outer function, serving as the delegate for the Callable. This function
          accepts and returns non-erased types."
-        DartFunctionExpression outerFunction
+        value outerFunction
             =   DartFunctionExpression {
                     DartFormalParameterList {
                         true; false;
@@ -2698,7 +2689,34 @@ class BaseGenerator(CompilationContext ctx)
                     };
                     DartExpressionFunctionBody {
                         false;
-                        invocation;
+                        withLhsNonNative {
+                            lhsType = resultType;
+                            () => generateInvocation {
+                                scope;
+                                resultType;
+                                receiverType;
+                                if (!eagerlyEvaluateReceiver
+                                    || !generateReceiver exists) then
+                                    // The receiver is a constant so the expression
+                                    // produced by generateReceiver is safe to
+                                    // re-evaluate on each invocation of the Callable.
+                                    generateReceiver
+                                else
+                                    // We have to eagerly evaluate the expression that
+                                    // produces the receiver in an outer closure. It will
+                                    // be assigned to $r.
+                                    (() => withBoxingNonNative {
+                                        scope;
+                                        receiverDenotableType;
+                                        DartSimpleIdentifier {
+                                            "$capturedReceiver$";
+                                        };
+                                    });
+                                memberDeclaration;
+                                [signature, innerArguments];
+                                memberOperator;
+                            };
+                        };
                     };
                 };
 
@@ -2706,8 +2724,36 @@ class BaseGenerator(CompilationContext ctx)
             =   (parameters.getFromLast(0)?.sequenced else false)
                 then parameters.size - 1;
 
-        // The Callable
-        return createCallable(scope, outerFunction, variadicParameterIndex);
+        value callable
+            =   createCallable(scope, outerFunction, variadicParameterIndex);
+
+        // Eagerly evaluate the receiver, if necessary
+        if (eagerlyEvaluateReceiver, exists generateReceiver) {
+            return
+            createExpressionEvaluationWithSetup {
+                [DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeName {
+                            scope;
+                            receiverDenotableType;
+                            eraseToNative = false;
+                        };
+                        [DartVariableDeclaration {
+                            DartSimpleIdentifier {
+                                "$capturedReceiver$";
+                            };
+                            withLhsNonNative {
+                                receiverDenotableType;
+                                generateReceiver;
+                            };
+                        }];
+                    };
+                }];
+                callable;
+            };
+        }
+        return callable;
     }
 
     shared

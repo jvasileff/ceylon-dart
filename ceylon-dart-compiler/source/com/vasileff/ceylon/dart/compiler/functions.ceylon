@@ -1,6 +1,10 @@
 import ceylon.ast.core {
     Node,
-    Declaration
+    Declaration,
+    This,
+    BaseExpression,
+    Expression,
+    Outer
 }
 import ceylon.ast.redhat {
     RedHatTransformer,
@@ -45,7 +49,8 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.nodeinfo {
     NodeInfo,
     DeclarationInfo,
-    keys
+    keys,
+    BaseExpressionInfo
 }
 import com.redhat.ceylon.common {
     Backends
@@ -286,6 +291,16 @@ Boolean isCallableParameterOrParamOf(FunctionOrValueModel declaration)
             true
         else
             false;
+
+"Does the expression represent a constant. That is, `outer`, `this`, or a base expression
+ to a non-transient, non-variable, non-formal & non-default value."
+Boolean isConstant(Expression e) {
+    if (is BaseExpression be = e,
+        is ValueModel vm = BaseExpressionInfo(be).declaration) {
+        return !vm.transient && !vm.variable && !vm.formal && !vm.default;
+    }
+    return e is Outer|This;
+}
 
 "Returns the [[Backends]] object for the declaration."
 Backends getNativeBackends(Declaration|DeclarationInfo|DeclarationModel that)

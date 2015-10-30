@@ -471,7 +471,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 // Return a `Callable` that takes a `containerType` and returns a
                 // `Callable` that can be used to invoke the `memberDeclaration`
-
                 "A Callable that invokes `memberDeclaration`."
                 value innerCallable
                     =   generateNewCallableForQualifiedExpression {
@@ -484,6 +483,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                         ceylonTypes.anythingType;
                                         DartSimpleIdentifier("$r$");
                                     };
+                            false;
                             memberDeclaration;
                             info.target.fullType;
                             that.memberOperator;
@@ -512,7 +512,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 // The Callable that takes a `containerType`
                 return createCallable(info, outerFunction);
             }
-            //case (is ConstructorModel) {}
             else {
                 throw CompilerBug (that,
                     "Unsupported type member type for qualified expression: "
@@ -560,6 +559,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     superType;
                     null;
+                    false;
                     memberDeclaration;
                     info.typeModel;
                     that.memberOperator;
@@ -567,111 +567,14 @@ class ExpressionTransformer(CompilationContext ctx)
             }
 
             // QualifiedExpression with a non-`super` receiver
-            //
-            // The receiver must be captured to avoid re-evaluating the expression for
-            // the receiver each time Callable is invoked.
-            //
-            // So:
-            //
-            // - Create a closure that
-            //      - Declares a variable holding the evaluated receiver (1)
-            //      - Returns a new Callable that captures the variable (2)
-            //
-            // - Invoke the closure to obtain the Callable (3)
-
-
-            // Attempt optimization: avoid the extra closure for receivers that are
-            // constants and therefore can be evaluated when the Callable is invoked.
-            function isConstant(Expression e) {
-                if (is BaseExpression be = e,
-                    is ValueModel vm = BaseExpressionInfo(be).declaration) {
-                    return !vm.transient && !vm.variable && !vm.formal;
-                }
-                return e is Outer|This;
-            }
-
-            if (isConstant(that.receiverExpression)) {
-                return generateNewCallableForQualifiedExpression {
-                    info;
-                    receiverInfo.typeModel;
-                    () => that.receiverExpression.transform(this);
-                    memberDeclaration;
-                    info.typeModel;
-                    that.memberOperator;
-                };
-            }
-
-            // Ok, we really do to evaluate and capture the receiver.
-            value receiverDenotableType
-                =   ceylonTypes.denotableType {
-                        receiverInfo.typeModel;
-                        memberContainer;
-                    };
-
-            value receiverDartType
-                =   dartTypes.dartTypeName {
-                        info;
-                        receiverDenotableType;
-                        eraseToNative = false;
-                    };
-
-            value receiverDartExpression
-                =   withLhsNonNative {
-                        receiverDenotableType;
-                        () => that.receiverExpression.transform(this);
-                    };
-
-            value newCallableDartExpression
-                =   generateNewCallableForQualifiedExpression {
-                        info;
-                        receiverInfo.typeModel;
-                        // receiverDartExpression was generated with lhsNonNative
-                        () => withBoxingNonNative {
-                            info;
-                            receiverDenotableType;
-                            DartSimpleIdentifier {
-                                "$capturedReceiver$";
-                            };
-                        };
-                        memberDeclaration;
-                        info.typeModel;
-                        that.memberOperator;
-                    };
-
-            value unboxed
-                =   DartFunctionExpressionInvocation { // (3)
-                        DartFunctionExpression {
-                            DartFormalParameterList();
-                            DartBlockFunctionBody {
-                                null; false;
-                                DartBlock {
-                                    [DartVariableDeclarationStatement {
-                                        DartVariableDeclarationList {
-                                            null;
-                                            receiverDartType;
-                                            [DartVariableDeclaration { // (1)
-                                                DartSimpleIdentifier {
-                                                    "$capturedReceiver$";
-                                                };
-                                                receiverDartExpression;
-                                            }];
-                                        };
-                                    },
-                                    DartReturnStatement { // (2)
-                                        newCallableDartExpression;
-                                    }];
-                                };
-                            };
-                        };
-                        DartArgumentList(); // (3)
-                    };
-
-            // A new Callable, so never erased to native
-            return
-            withBoxingNonNative {
+            return generateNewCallableForQualifiedExpression {
                 info;
+                receiverInfo.typeModel;
+                () => that.receiverExpression.transform(this);
+                !isConstant(that.receiverExpression);
+                memberDeclaration;
                 info.typeModel;
-                unboxed;
+                that.memberOperator;
             };
         }
         else {
@@ -1153,6 +1056,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     containerType;
                     () => argument.transform(expressionTransformer);
+                    false; // FIXME WIP !isConstant(argument);
                     invokedDeclaration;
                     info.typeModel;
                     null;
