@@ -3,7 +3,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class o1_$o2_ {
     o1_ $outer$default$o1_;
-    o1_$o2_([o1_ this.$outer$default$o1_]) {}
+    o1_$o2_([o1_ $outer$default$o1_]) {
+        this.$outer$default$o1_ = $outer$default$o1_;
+    }
     $dart$core.String get s1 => "";
 }
 class o1_ {

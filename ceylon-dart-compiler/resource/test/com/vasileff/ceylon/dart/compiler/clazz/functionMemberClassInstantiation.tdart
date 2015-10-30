@@ -3,7 +3,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class run$Foo$FooMember {
     run$Foo $outer$default$run$Foo;
-    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo]) {}
+    run$Foo$FooMember([run$Foo $outer$default$run$Foo]) {
+        this.$outer$default$run$Foo = $outer$default$run$Foo;
+    }
 }
 class run$Foo {
     run$Foo() {

@@ -8,13 +8,19 @@ abstract class run$I {
 }
 class run$C implements run$I {
     $dart$core.Function $capture$run$val;
-    run$C([$dart$core.Function this.$capture$run$val]) {}
+    run$C([$dart$core.Function $capture$run$val]) {
+        this.$capture$run$val = $capture$run$val;
+    }
     $dart$core.String get accessVal => $capture$run$val();
 }
 class run$D implements run$I {
     $dart$core.Function $capture$run$val;
-    run$D([$dart$core.Function this.$capture$run$val]) {}
-    run$D.create([$dart$core.Function this.$capture$run$val]) {}
+    run$D([$dart$core.Function $capture$run$val]) {
+        this.$capture$run$val = $capture$run$val;
+    }
+    run$D.create([$dart$core.Function $capture$run$val]) {
+        this.$capture$run$val = $capture$run$val;
+    }
     $dart$core.String get accessVal => $capture$run$val();
 }
 void $package$run() {

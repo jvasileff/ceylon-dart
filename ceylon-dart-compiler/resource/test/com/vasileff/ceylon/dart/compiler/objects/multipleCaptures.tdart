@@ -6,7 +6,11 @@ class run$I1$I2$i2Foo$o_ implements run$I1$I2 {
     run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2.$outer$default$run$I1;
     $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
     $dart$core.String $capture$run$s1;
-    run$I1$I2$i2Foo$o_([run$I1$I2 this.$outer$default$run$I1$I2, $dart$core.String this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String this.$capture$run$s1]) {}
+    run$I1$I2$i2Foo$o_([run$I1$I2 $outer$default$run$I1$I2, $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String $capture$run$s1]) {
+        this.$outer$default$run$I1$I2 = $outer$default$run$I1$I2;
+        this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo = $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
+        this.$capture$run$s1 = $capture$run$s1;
+    }
     $dart$core.String get i2fooo => $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
     void i2Foo() => run$I1$I2.$i2Foo(this);
     $dart$core.String get i1s1 => run$I1.$get$i1s1(this);

@@ -9,7 +9,8 @@ set counter($dart$core.int value) => $package$counter = value;
 
 class run$Foo$FooMember {
     run$Foo $outer$default$run$Foo;
-    run$Foo$FooMember([run$Foo this.$outer$default$run$Foo, $dart$core.int _$fooMemberInt]) {
+    run$Foo$FooMember([run$Foo $outer$default$run$Foo, $dart$core.int _$fooMemberInt]) {
+        this.$outer$default$run$Foo = $outer$default$run$Foo;
         this._$fooMemberInt = _$fooMemberInt;
     }
     $dart$core.int _$fooMemberInt;
@@ -20,7 +21,9 @@ class run$Foo$FooMember {
 class run$Foo {
     $dart$core.String $capture$run$runString1;
     $dart$core.String $capture$run$runString2;
-    run$Foo([$dart$core.String this.$capture$run$runString1, $dart$core.String this.$capture$run$runString2, $dart$core.int _$fooInt]) {
+    run$Foo([$dart$core.String $capture$run$runString1, $dart$core.String $capture$run$runString2, $dart$core.int _$fooInt]) {
+        this.$capture$run$runString1 = $capture$run$runString1;
+        this.$capture$run$runString2 = $capture$run$runString2;
         this._$fooInt = _$fooInt;
         x = new run$Foo$FooMember(this, (() {
             $dart$core.int tmp$0 = $package$counter;

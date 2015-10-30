@@ -4,7 +4,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class o$$anonymous$0_$foo$o2$$anonymous$1_ {
     o$$anonymous$0_ $outer$default$o$$anonymous$0_;
     $dart$core.String $capture$o$o$$anonymous$0_$foo$s;
-    o$$anonymous$0_$foo$o2$$anonymous$1_([o$$anonymous$0_ this.$outer$default$o$$anonymous$0_, $dart$core.String this.$capture$o$o$$anonymous$0_$foo$s]) {
+    o$$anonymous$0_$foo$o2$$anonymous$1_([o$$anonymous$0_ $outer$default$o$$anonymous$0_, $dart$core.String $capture$o$o$$anonymous$0_$foo$s]) {
+        this.$outer$default$o$$anonymous$0_ = $outer$default$o$$anonymous$0_;
+        this.$capture$o$o$$anonymous$0_$foo$s = $capture$o$o$$anonymous$0_$foo$s;
         $ceylon$language.print($ceylon$language.String.instance($capture$o$o$$anonymous$0_$foo$s));
     }
 }

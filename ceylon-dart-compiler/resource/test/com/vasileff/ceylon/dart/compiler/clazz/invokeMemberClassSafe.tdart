@@ -3,7 +3,8 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C$D {
     C $outer$default$C;
-    C$D([C this.$outer$default$C, $dart$core.String _$s]) {
+    C$D([C $outer$default$C, $dart$core.String _$s]) {
+        this.$outer$default$C = $outer$default$C;
         this._$s = _$s;
         $ceylon$language.print($ceylon$language.String.instance(this._$s));
     }

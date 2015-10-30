@@ -20,7 +20,8 @@ class run$Outer$Sub  extends Sup {
         return [$outer$default$run$Outer, _$b, _$c];
     })());
     run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
-    run$Outer$Sub.$w([run$Outer this.$outer$default$run$Outer, $dart$core.int _$b, $dart$core.int _$c]) : super(_$c) {
+    run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int _$b, $dart$core.int _$c]) : super(_$c) {
+        this.$outer$default$run$Outer = $outer$default$run$Outer;
         this._$b = _$b;
         this._$c = _$c;
         $ceylon$language.print($ceylon$language.Integer.instance($outer$default$run$Outer.$capture$run$x));
@@ -37,7 +38,8 @@ class run$Outer {
         return [$capture$run$x, _$b];
     })());
     run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    run$Outer.$w([$dart$core.int this.$capture$run$x, $dart$core.int _$b]) {
+    run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int _$b]) {
+        this.$capture$run$x = $capture$run$x;
         this._$b = _$b;
         new run$Outer$Sub(this);
     }

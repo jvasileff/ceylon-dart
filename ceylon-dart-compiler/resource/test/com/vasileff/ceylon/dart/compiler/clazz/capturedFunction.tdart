@@ -8,13 +8,19 @@ abstract class run$I {
 }
 class run$C implements run$I {
     $dart$core.Function $capture$run$fun;
-    run$C([$dart$core.Function this.$capture$run$fun]) {}
+    run$C([$dart$core.Function $capture$run$fun]) {
+        this.$capture$run$fun = $capture$run$fun;
+    }
     void callFun() => $capture$run$fun();
 }
 class run$D implements run$I {
     $dart$core.Function $capture$run$fun;
-    run$D([$dart$core.Function this.$capture$run$fun]) {}
-    run$D.create([$dart$core.Function this.$capture$run$fun]) {}
+    run$D([$dart$core.Function $capture$run$fun]) {
+        this.$capture$run$fun = $capture$run$fun;
+    }
+    run$D.create([$dart$core.Function $capture$run$fun]) {
+        this.$capture$run$fun = $capture$run$fun;
+    }
     void callFun() => $capture$run$fun();
 }
 void $package$run() {

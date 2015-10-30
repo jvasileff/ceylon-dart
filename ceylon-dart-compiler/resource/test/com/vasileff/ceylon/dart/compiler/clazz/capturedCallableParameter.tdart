@@ -4,7 +4,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class fun$C {
     $ceylon$language.Callable $capture$fun$captureMe1;
     $ceylon$language.Callable $capture$fun$captureMe2;
-    fun$C([$ceylon$language.Callable this.$capture$fun$captureMe1, $ceylon$language.Callable this.$capture$fun$captureMe2]) {
+    fun$C([$ceylon$language.Callable $capture$fun$captureMe1, $ceylon$language.Callable $capture$fun$captureMe2]) {
+        this.$capture$fun$captureMe1 = $capture$fun$captureMe1;
+        this.$capture$fun$captureMe2 = $capture$fun$captureMe2;
         $capture$fun$captureMe1.f();
         $capture$fun$captureMe2.f();
         _$cm1 = $capture$fun$captureMe1;

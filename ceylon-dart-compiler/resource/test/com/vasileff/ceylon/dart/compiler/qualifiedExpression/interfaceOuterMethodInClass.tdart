@@ -3,7 +3,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$C {
     I $outer$default$I;
-    I$C([I this.$outer$default$I]) {}
+    I$C([I $outer$default$I]) {
+        this.$outer$default$I = $outer$default$I;
+    }
     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
     void run() {
         $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $outer$default$I.foo($0 as $ceylon$language.Usable));

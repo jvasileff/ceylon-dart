@@ -3,14 +3,18 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$J$C {
     I$J $outer$default$I$J;
-    I$J$C([I$J this.$outer$default$I$J]) {}
+    I$J$C([I$J $outer$default$I$J]) {
+        this.$outer$default$I$J = $outer$default$I$J;
+    }
 }
 abstract class I$J {
     I get $outer$default$I;
 }
 class I$j$$anonymous$0_ implements I$J {
     I $outer$default$I;
-    I$j$$anonymous$0_([I this.$outer$default$I]) {}
+    I$j$$anonymous$0_([I $outer$default$I]) {
+        this.$outer$default$I = $outer$default$I;
+    }
 }
 abstract class I {
     I$J get j;

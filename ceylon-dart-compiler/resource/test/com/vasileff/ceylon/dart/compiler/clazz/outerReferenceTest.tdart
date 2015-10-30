@@ -4,7 +4,8 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class I1$I2$C implements I1$I2 {
     I1$I2 $outer$default$I1$I2;
     I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
-    I1$I2$C([I1$I2 this.$outer$default$I1$I2, $dart$core.int _$version]) {
+    I1$I2$C([I1$I2 $outer$default$I1$I2, $dart$core.int _$version]) {
+        this.$outer$default$I1$I2 = $outer$default$I1$I2;
         this._$version = _$version;
     }
     $dart$core.int _$version;
@@ -28,7 +29,9 @@ abstract class I1 {
 class run$i1o$$anonymous$0_$i2$$anonymous$1_ implements I1$I2 {
     run$i1o$$anonymous$0_ $outer$default$run$i1o$$anonymous$0_;
     I1 get $outer$default$I1 => $outer$default$run$i1o$$anonymous$0_;
-    run$i1o$$anonymous$0_$i2$$anonymous$1_([run$i1o$$anonymous$0_ this.$outer$default$run$i1o$$anonymous$0_]) {}
+    run$i1o$$anonymous$0_$i2$$anonymous$1_([run$i1o$$anonymous$0_ $outer$default$run$i1o$$anonymous$0_]) {
+        this.$outer$default$run$i1o$$anonymous$0_ = $outer$default$run$i1o$$anonymous$0_;
+    }
     $dart$core.String get ident => "i2o";
     $dart$core.String get outerIdent => $outer$default$run$i1o$$anonymous$0_.ident;
 }

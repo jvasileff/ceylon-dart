@@ -6,11 +6,15 @@ abstract class AbstractFoo {
 }
 class Foo$FooMemberClass {
     Foo $outer$default$Foo;
-    Foo$FooMemberClass([Foo this.$outer$default$Foo]) {}
+    Foo$FooMemberClass([Foo $outer$default$Foo]) {
+        this.$outer$default$Foo = $outer$default$Foo;
+    }
 }
 class Foo$_$fooMethod$ClassInAMethod {
     Foo $outer$default$Foo;
-    Foo$_$fooMethod$ClassInAMethod([Foo this.$outer$default$Foo]) {}
+    Foo$_$fooMethod$ClassInAMethod([Foo $outer$default$Foo]) {
+        this.$outer$default$Foo = $outer$default$Foo;
+    }
 }
 class Foo {
     Foo() {}
