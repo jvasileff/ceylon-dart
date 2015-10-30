@@ -902,7 +902,7 @@ class BaseGenerator(CompilationContext ctx)
                 value dartThisArgument
                     =   if (thisArgument nonempty // Dart receiver is a static function
                                 && safeMemberOperator) // Ceylon receiver may be null
-                        then [DartSimpleIdentifier("$r$")]
+                        then [DartSimpleIdentifier("$r")]
                         else thisArgument;
 
                 return
@@ -927,7 +927,7 @@ class BaseGenerator(CompilationContext ctx)
 
                     invocation
                         =   createNullSafeExpression {
-                                parameterIdentifier = DartSimpleIdentifier("$r$");
+                                parameterIdentifier = DartSimpleIdentifier("$r");
                                 parameterType = ceylonReceiverDartType;
                                 // Static invocation: the possibly null value is the
                                 // $this argument
@@ -964,13 +964,13 @@ class BaseGenerator(CompilationContext ctx)
 
                     invocation
                         =   createNullSafeExpression {
-                                parameterIdentifier = DartSimpleIdentifier("$r$");
+                                parameterIdentifier = DartSimpleIdentifier("$r");
                                 parameterType = ceylonReceiverDartType;
                                 maybeNullExpression = dartBoxedReceiver;
                                 ifNullExpression = DartNullLiteral();
                                 ifNotNullExpression =
                                     DartMethodInvocation {
-                                        DartSimpleIdentifier("$r$");
+                                        DartSimpleIdentifier("$r");
                                         memberIdentifier;
                                         argumentList;
                                     };
@@ -1021,12 +1021,12 @@ class BaseGenerator(CompilationContext ctx)
 
                 invocation
                     =   createNullSafeExpression {
-                            parameterIdentifier = DartSimpleIdentifier("$r$");
+                            parameterIdentifier = DartSimpleIdentifier("$r");
                             parameterType = ceylonReceiverDartType;
                             maybeNullExpression = dartBoxedReceiver;
                             ifNullExpression = DartNullLiteral();
                             ifNotNullExpression = valueAccess {
-                                DartSimpleIdentifier("$r$");
+                                DartSimpleIdentifier("$r");
                             };
                         };
             }
@@ -2709,7 +2709,7 @@ class BaseGenerator(CompilationContext ctx)
                                         scope;
                                         receiverDenotableType;
                                         DartSimpleIdentifier {
-                                            "$capturedReceiver$";
+                                            "$r";
                                         };
                                     });
                                 memberDeclaration;
@@ -2741,7 +2741,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
                         [DartVariableDeclaration {
                             DartSimpleIdentifier {
-                                "$capturedReceiver$";
+                                "$r";
                             };
                             withLhsNonNative {
                                 receiverDenotableType;

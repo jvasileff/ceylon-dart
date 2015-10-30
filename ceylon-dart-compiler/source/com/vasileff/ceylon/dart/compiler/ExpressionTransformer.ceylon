@@ -403,7 +403,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 value memberReturnType
                     =   info.target.type;
 
-                "The invocation of `memberDeclaration` on `$r$` which is the
+                "The invocation of `memberDeclaration` on `$r` which is the
                  parameter to the `Callable`."
                 value invocation
                     =   withLhsNonNative {
@@ -417,7 +417,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                             info;
                                             // Callable argument; erasedToObject
                                             ceylonTypes.anythingType;
-                                            DartSimpleIdentifier("$r$");
+                                            DartSimpleIdentifier("$r");
                                         };
                                 memberDeclaration;
                             };
@@ -434,7 +434,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                     false; false;
                                     // dartObject since Callable is generic
                                     dartTypes.dartObject;
-                                    DartSimpleIdentifier("$r$");
+                                    DartSimpleIdentifier("$r");
                                 }];
                             };
                             DartExpressionFunctionBody {
@@ -481,7 +481,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                         info;
                                         // Callable argument; erasedToObject
                                         ceylonTypes.anythingType;
-                                        DartSimpleIdentifier("$r$");
+                                        DartSimpleIdentifier("$r");
                                     };
                             false;
                             memberDeclaration;
@@ -500,7 +500,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                     false; false;
                                     // dartObject since Callable is generic
                                     dartTypes.dartObject;
-                                    DartSimpleIdentifier("$r$");
+                                    DartSimpleIdentifier("$r");
                                 }];
                             };
                             DartExpressionFunctionBody {
