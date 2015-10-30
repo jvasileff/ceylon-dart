@@ -2600,6 +2600,14 @@ class BaseGenerator(CompilationContext ctx)
         "The actual signature given the receiver's parameterization"
         value signature = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
 
+        "Identifiers to use for the outer callable."
+        DartSimpleIdentifier(ParameterModel) outerParameterIdentifier
+            =   compose {
+                    assertExists<DartSimpleIdentifier?>;
+                    map(parameters.indexed.collect((e)
+                        =>  e.item -> DartSimpleIdentifier("$``e.key``"))).get;
+                };
+
         "Dart parameters for the *outer* function–the one with the public facing
          signature."
         value outerParameters = parameters.collect((parameterModel) {
@@ -2609,9 +2617,7 @@ class BaseGenerator(CompilationContext ctx)
                         // $dart$core.Object for the type of all parameters since
                         // `Callable` is generic
                         dartTypes.dartObject;
-                        DartSimpleIdentifier {
-                            dartTypes.getName(parameterModel);
-                        };
+                        outerParameterIdentifier(parameterModel);
                     };
 
             if (parameterModel.defaulted) {
@@ -2633,8 +2639,6 @@ class BaseGenerator(CompilationContext ctx)
          for determining lhs types. But, we must by-pass boxing at runtime for default
          value indicator values."
         value innerArguments = parameters.collect((parameterModel) {
-            value parameterName = dartTypes.getName(parameterModel);
-            value parameterIdentifier = DartSimpleIdentifier(parameterName);
             return () {
                 "The caller is responsible for `withLhs`."
                 value boxed
@@ -2643,7 +2647,7 @@ class BaseGenerator(CompilationContext ctx)
                             // Parameters for Callables are always `core.Object`
                             rhsType = ceylonTypes.anythingType;
                             rhsDeclaration = null;
-                            parameterIdentifier;
+                            outerParameterIdentifier(parameterModel);
                         };
 
                 if (parameterModel.defaulted) {
@@ -2653,7 +2657,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartFunctionExpressionInvocation {
                             dartDCIdentical;
                             DartArgumentList {
-                                [parameterIdentifier,
+                                [outerParameterIdentifier(parameterModel),
                                  dartTypes.dartDefault(scope)];
                             };
                         };
@@ -2756,6 +2760,14 @@ class BaseGenerator(CompilationContext ctx)
                     }[0];
         }
         else {
+            "Identifiers to use for the outer callable."
+            DartSimpleIdentifier(ParameterModel) outerParameterIdentifier
+                =   compose {
+                        assertExists<DartSimpleIdentifier?>;
+                        map(parameters.indexed.collect((e)
+                            =>  e.item -> DartSimpleIdentifier("$``e.key``"))).get;
+                    };
+
             // Generate outerFunction to handle boxing and/or call to constructor
             value outerParameters = parameters.collect((parameterModel) {
                 value dartSimpleParameter =
@@ -2774,9 +2786,7 @@ class BaseGenerator(CompilationContext ctx)
                                 eraseToNative = false;
                                 eraseToObject = false;
                             };
-                            DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel);
-                            };
+                            outerParameterIdentifier(parameterModel);
                         };
 
                 if (parameterModel.defaulted) {
@@ -2803,9 +2813,6 @@ class BaseGenerator(CompilationContext ctx)
             "Arguments that are part of the public signature for the class or function.
              They have corresponding parameters in the generated Callable."
             value innerArguments = parameters.collect((parameterModel) {
-                value parameterName = dartTypes.getName(parameterModel);
-                value parameterIdentifier = DartSimpleIdentifier(parameterName);
-
                 value unboxed = withLhs {
                     null;
                     // "lhs" is the inner function's parameter
@@ -2815,7 +2822,7 @@ class BaseGenerator(CompilationContext ctx)
                     () => withBoxingNonNative {
                         scope;
                         rhsType = parameterModel.type;
-                        parameterIdentifier;
+                        outerParameterIdentifier(parameterModel);
                     };
                 };
 
@@ -2826,7 +2833,7 @@ class BaseGenerator(CompilationContext ctx)
                         DartFunctionExpressionInvocation {
                             dartDCIdentical;
                             DartArgumentList {
-                                [parameterIdentifier,
+                                [outerParameterIdentifier(parameterModel),
                                  dartTypes.dartDefault(scope)];
                             };
                         };
