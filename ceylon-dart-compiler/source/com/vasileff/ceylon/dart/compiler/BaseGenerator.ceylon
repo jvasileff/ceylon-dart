@@ -2666,17 +2666,23 @@ class BaseGenerator(CompilationContext ctx)
             };
         });
 
-        // memberContainer and receiverDenotableType are really only needed if
-        // eagerlyEvaluateReceiver & exists generateReceiver.
+        // memberContainer, receiverModel, and receiverDenotableType are really only
+        // needed if eagerlyEvaluateReceiver & exists generateReceiver.
 
         "What else would the container be than a Class or Interface?"
         assert (is ClassModel | InterfaceModel memberContainer
             =   container(memberDeclaration));
 
+        "What else would the receiver be than a Class or Interface?"
+        assert (is ClassModel | InterfaceModel receiverModel
+            =   if (is ConstructorModel memberDeclaration)
+                then container(memberContainer)
+                else memberContainer);
+
         value receiverDenotableType
             =   ceylonTypes.denotableType {
                     receiverType;
-                    memberContainer;
+                    receiverModel;
                 };
 
         "The outer function, serving as the delegate for the Callable. This function

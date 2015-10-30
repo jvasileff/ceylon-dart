@@ -1033,9 +1033,6 @@ class ExpressionTransformer(CompilationContext ctx)
             value invokedQEInfo = QualifiedExpressionInfo(classInvoked);
 
             if (invokedQEInfo.staticMethodReference) {
-                "The target of a qualified expression for a class with be a Type."
-                assert (is TypeModel containerType = invokedQEInfo.target);
-
                 // Invoking a member class, statically. Just return a callable. It's
                 // possible that the callable we return will immediately be called
                 // with args to construct the class. Not optimizing this now.
@@ -1054,7 +1051,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 return
                 generateNewCallableForQualifiedExpression {
                     info;
-                    containerType;
+                    ExpressionInfo(argument).typeModel;
                     () => argument.transform(expressionTransformer);
                     !isConstant(argument);
                     invokedDeclaration;
