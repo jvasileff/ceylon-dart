@@ -702,7 +702,8 @@ abstract class ConstrainedAnnotation implements Annotation {
 }
 class Contextual$Using implements Obtainable {
     Contextual $outer$ceylon$language$Contextual;
-    Contextual$Using([Contextual this.$outer$ceylon$language$Contextual, $dart$core.Object _$newValue]) {
+    Contextual$Using([Contextual $outer$ceylon$language$Contextual, $dart$core.Object _$newValue]) {
+        this.$outer$ceylon$language$Contextual = $outer$ceylon$language$Contextual;
         this._$newValue = _$newValue;
         _$previous = null;
     }
@@ -759,7 +760,9 @@ class Contextual {
 }
 class Correspondence$keys$$anonymous$0_ implements Category {
     Correspondence $outer$ceylon$language$Correspondence;
-    Correspondence$keys$$anonymous$0_([Correspondence this.$outer$ceylon$language$Correspondence]) {}
+    Correspondence$keys$$anonymous$0_([Correspondence $outer$ceylon$language$Correspondence]) {
+        this.$outer$ceylon$language$Correspondence = $outer$ceylon$language$Correspondence;
+    }
     $dart$core.bool contains([$dart$core.Object key]) => $outer$ceylon$language$Correspondence.defines(key);
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
@@ -947,7 +950,8 @@ class CycledIterator implements Iterator {
 }
 class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
-    functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ this.$outer$ceylon$language$functionIterable$$anonymous$0_]) {
+    functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_]) {
+        this.$outer$ceylon$language$functionIterable$$anonymous$0_ = $outer$ceylon$language$functionIterable$$anonymous$0_;
         _$n = $outer$ceylon$language$functionIterable$$anonymous$0_.$capture$functionIterable$f.f() as Callable;
     }
     Callable _$n;
@@ -955,7 +959,9 @@ class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
 }
 class functionIterable$$anonymous$0_ implements Iterable {
     Callable $capture$functionIterable$f;
-    functionIterable$$anonymous$0_([Callable this.$capture$functionIterable$f]) {}
+    functionIterable$$anonymous$0_([Callable $capture$functionIterable$f]) {
+        this.$capture$functionIterable$f = $capture$functionIterable$f;
+    }
     Iterator iterator() => new functionIterable$$anonymous$0_$$anonymous$1_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -1098,7 +1104,8 @@ Iterable dartStringLinesWithBreaks([$dart$core.String val]) => $package$dartStri
 
 class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
     dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_;
-    dartStringSplit$$anonymous$2_$iterator$$anonymous$3_([dartStringSplit$$anonymous$2_ this.$outer$ceylon$language$dartStringSplit$$anonymous$2_]) {
+    dartStringSplit$$anonymous$2_$iterator$$anonymous$3_([dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_]) {
+        this.$outer$ceylon$language$dartStringSplit$$anonymous$2_ = $outer$ceylon$language$dartStringSplit$$anonymous$2_;
         _$seq = String.instance($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$val).sequence();
         _$it = _$seq.iterator();
         _$index = 0;
@@ -1188,7 +1195,12 @@ class dartStringSplit$$anonymous$2_ implements Iterable {
     Callable $capture$dartStringSplit$splitting;
     $dart$core.Object $capture$dartStringSplit$groupSeparators;
     $dart$core.Object $capture$dartStringSplit$discardSeparators;
-    dartStringSplit$$anonymous$2_([$dart$core.String this.$capture$dartStringSplit$val, Callable this.$capture$dartStringSplit$splitting, $dart$core.Object this.$capture$dartStringSplit$groupSeparators, $dart$core.Object this.$capture$dartStringSplit$discardSeparators]) {}
+    dartStringSplit$$anonymous$2_([$dart$core.String $capture$dartStringSplit$val, Callable $capture$dartStringSplit$splitting, $dart$core.Object $capture$dartStringSplit$groupSeparators, $dart$core.Object $capture$dartStringSplit$discardSeparators]) {
+        this.$capture$dartStringSplit$val = $capture$dartStringSplit$val;
+        this.$capture$dartStringSplit$splitting = $capture$dartStringSplit$splitting;
+        this.$capture$dartStringSplit$groupSeparators = $capture$dartStringSplit$groupSeparators;
+        this.$capture$dartStringSplit$discardSeparators = $capture$dartStringSplit$discardSeparators;
+    }
     Iterator iterator() => new dartStringSplit$$anonymous$2_$iterator$$anonymous$3_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -2271,7 +2283,8 @@ abstract class Integral implements Number, Enumerable {
 }
 class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
     interleave$$anonymous$0_ $outer$ceylon$language$interleave$$anonymous$0_;
-    interleave$$anonymous$0_$$anonymous$1_([interleave$$anonymous$0_ this.$outer$ceylon$language$interleave$$anonymous$0_]) {
+    interleave$$anonymous$0_$$anonymous$1_([interleave$$anonymous$0_ $outer$ceylon$language$interleave$$anonymous$0_]) {
+        this.$outer$ceylon$language$interleave$$anonymous$0_ = $outer$ceylon$language$interleave$$anonymous$0_;
         _$iterators = $outer$ceylon$language$interleave$$anonymous$0_.$capture$interleave$iterables.collect(new dart$Callable(([Iterable it]) => it.iterator()));
         _$which = 0;
     }
@@ -2308,7 +2321,9 @@ class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
 }
 class interleave$$anonymous$0_ implements Iterable {
     Sequence $capture$interleave$iterables;
-    interleave$$anonymous$0_([Sequence this.$capture$interleave$iterables]) {}
+    interleave$$anonymous$0_([Sequence $capture$interleave$iterables]) {
+        this.$capture$interleave$iterables = $capture$interleave$iterables;
+    }
     $dart$core.int get size => (() {
         Iterable arg$0$0 = functionIterable(new dart$Callable(() {
             $dart$core.bool step$0$expired$1 = false;
@@ -2471,7 +2486,9 @@ abstract class Invertible implements Summable {
 class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements Iterator {
     Iterable$exceptLast$$anonymous$2_ $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_;
     Iterator $capture$$iter;
-    Iterable$exceptLast$$anonymous$2_$$anonymous$3_([Iterable$exceptLast$$anonymous$2_ this.$outer$ceylon$language$Iterable$exceptLast$$anonymous$2_, Iterator this.$capture$$iter]) {
+    Iterable$exceptLast$$anonymous$2_$$anonymous$3_([Iterable$exceptLast$$anonymous$2_ $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$exceptLast$$anonymous$2_ = $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_;
+        this.$capture$$iter = $capture$$iter;
         _$current = $capture$$iter.next();
     }
     $dart$core.Object _$current;
@@ -2496,7 +2513,9 @@ class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements Iterator {
 }
 class Iterable$exceptLast$$anonymous$2_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
-    Iterable$exceptLast$$anonymous$2_([Iterable this.$outer$ceylon$language$Iterable]) {}
+    Iterable$exceptLast$$anonymous$2_([Iterable $outer$ceylon$language$Iterable]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+    }
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$exceptLast$$anonymous$2_$$anonymous$3_(this, iter);
@@ -2559,7 +2578,9 @@ class Iterable$exceptLast$$anonymous$2_ implements Iterable {
 class Iterable$scan$$anonymous$4_$$anonymous$5_ implements Iterator {
     Iterable$scan$$anonymous$4_ $outer$ceylon$language$Iterable$scan$$anonymous$4_;
     Iterator $capture$$iter;
-    Iterable$scan$$anonymous$4_$$anonymous$5_([Iterable$scan$$anonymous$4_ this.$outer$ceylon$language$Iterable$scan$$anonymous$4_, Iterator this.$capture$$iter]) {
+    Iterable$scan$$anonymous$4_$$anonymous$5_([Iterable$scan$$anonymous$4_ $outer$ceylon$language$Iterable$scan$$anonymous$4_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$scan$$anonymous$4_ = $outer$ceylon$language$Iterable$scan$$anonymous$4_;
+        this.$capture$$iter = $capture$$iter;
         _$returnInitial = true;
         _$partial = $outer$ceylon$language$Iterable$scan$$anonymous$4_.$capture$Iterable$scan$initial;
     }
@@ -2592,7 +2613,11 @@ class Iterable$scan$$anonymous$4_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.Object $capture$Iterable$scan$initial;
     Callable $capture$Iterable$scan$accumulating;
-    Iterable$scan$$anonymous$4_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.Object this.$capture$Iterable$scan$initial, Callable this.$capture$Iterable$scan$accumulating]) {}
+    Iterable$scan$$anonymous$4_([Iterable $outer$ceylon$language$Iterable, $dart$core.Object $capture$Iterable$scan$initial, Callable $capture$Iterable$scan$accumulating]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$scan$initial = $capture$Iterable$scan$initial;
+        this.$capture$Iterable$scan$accumulating = $capture$Iterable$scan$accumulating;
+    }
     $dart$core.bool get empty => false;
     $dart$core.Object get first => $capture$Iterable$scan$initial;
     $dart$core.int get size => 1 + $outer$ceylon$language$Iterable.size;
@@ -2655,7 +2680,9 @@ class Iterable$scan$$anonymous$4_ implements Iterable {
 class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
     Iterable$locations$$anonymous$6_ $outer$ceylon$language$Iterable$locations$$anonymous$6_;
     Iterator $capture$$iter;
-    Iterable$locations$$anonymous$6_$$anonymous$7_([Iterable$locations$$anonymous$6_ this.$outer$ceylon$language$Iterable$locations$$anonymous$6_, Iterator this.$capture$$iter]) {
+    Iterable$locations$$anonymous$6_$$anonymous$7_([Iterable$locations$$anonymous$6_ $outer$ceylon$language$Iterable$locations$$anonymous$6_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$locations$$anonymous$6_ = $outer$ceylon$language$Iterable$locations$$anonymous$6_;
+        this.$capture$$iter = $capture$$iter;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -2693,7 +2720,10 @@ class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
 class Iterable$locations$$anonymous$6_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$locations$selecting;
-    Iterable$locations$$anonymous$6_([Iterable this.$outer$ceylon$language$Iterable, Callable this.$capture$Iterable$locations$selecting]) {}
+    Iterable$locations$$anonymous$6_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$locations$selecting]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$locations$selecting = $capture$Iterable$locations$selecting;
+    }
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$locations$$anonymous$6_$$anonymous$7_(this, iter);
@@ -2756,7 +2786,10 @@ class Iterable$locations$$anonymous$6_ implements Iterable {
 class Iterable$skip$$anonymous$9_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$skip$skipping;
-    Iterable$skip$$anonymous$9_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$skip$skipping]) {}
+    Iterable$skip$$anonymous$9_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$skip$skipping]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$skip$skipping = $capture$Iterable$skip$skipping;
+    }
     Iterator iterator() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         $dart$core.int i = 0;
@@ -2825,7 +2858,9 @@ class Iterable$skip$$anonymous$9_ implements Iterable {
 class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements Iterator {
     Iterable$take$$anonymous$10_ $outer$ceylon$language$Iterable$take$$anonymous$10_;
     Iterator $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter;
-    Iterable$take$$anonymous$10_$iterator$$anonymous$11_([Iterable$take$$anonymous$10_ this.$outer$ceylon$language$Iterable$take$$anonymous$10_, Iterator this.$capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter]) {
+    Iterable$take$$anonymous$10_$iterator$$anonymous$11_([Iterable$take$$anonymous$10_ $outer$ceylon$language$Iterable$take$$anonymous$10_, Iterator $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter]) {
+        this.$outer$ceylon$language$Iterable$take$$anonymous$10_ = $outer$ceylon$language$Iterable$take$$anonymous$10_;
+        this.$capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter = $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -2835,7 +2870,10 @@ class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements Iterator {
 class Iterable$take$$anonymous$10_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$take$taking;
-    Iterable$take$$anonymous$10_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$take$taking]) {}
+    Iterable$take$$anonymous$10_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$take$taking]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$take$taking = $capture$Iterable$take$taking;
+    }
     Iterator iterator() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$take$$anonymous$10_$iterator$$anonymous$11_(this, iter);
@@ -2899,7 +2937,10 @@ class Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_ implements Itera
     Iterable$skipWhile$$anonymous$12_ $outer$ceylon$language$Iterable$skipWhile$$anonymous$12_;
     $dart$core.Object $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem;
     Iterator $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter;
-    Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_([Iterable$skipWhile$$anonymous$12_ this.$outer$ceylon$language$Iterable$skipWhile$$anonymous$12_, $dart$core.Object this.$capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem, Iterator this.$capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter]) {
+    Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_([Iterable$skipWhile$$anonymous$12_ $outer$ceylon$language$Iterable$skipWhile$$anonymous$12_, $dart$core.Object $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem, Iterator $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter]) {
+        this.$outer$ceylon$language$Iterable$skipWhile$$anonymous$12_ = $outer$ceylon$language$Iterable$skipWhile$$anonymous$12_;
+        this.$capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem = $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem;
+        this.$capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter = $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter;
         _$first = true;
     }
     $dart$core.bool _$first;
@@ -2916,7 +2957,10 @@ class Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_ implements Itera
 class Iterable$skipWhile$$anonymous$12_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$skipWhile$skipping;
-    Iterable$skipWhile$$anonymous$12_([Iterable this.$outer$ceylon$language$Iterable, Callable this.$capture$Iterable$skipWhile$skipping]) {}
+    Iterable$skipWhile$$anonymous$12_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$skipWhile$skipping]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$skipWhile$skipping = $capture$Iterable$skipWhile$skipping;
+    }
     Iterator iterator() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         while (true) {
@@ -2992,7 +3036,9 @@ class Iterable$skipWhile$$anonymous$12_ implements Iterable {
 class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
     Iterable$takeWhile$$anonymous$14_ $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_;
     Iterator $capture$$iter;
-    Iterable$takeWhile$$anonymous$14_$$anonymous$15_([Iterable$takeWhile$$anonymous$14_ this.$outer$ceylon$language$Iterable$takeWhile$$anonymous$14_, Iterator this.$capture$$iter]) {
+    Iterable$takeWhile$$anonymous$14_$$anonymous$15_([Iterable$takeWhile$$anonymous$14_ $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$takeWhile$$anonymous$14_ = $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_;
+        this.$capture$$iter = $capture$$iter;
         _$alive = true;
     }
     $dart$core.bool _$alive;
@@ -3017,7 +3063,10 @@ class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
 class Iterable$takeWhile$$anonymous$14_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$takeWhile$taking;
-    Iterable$takeWhile$$anonymous$14_([Iterable this.$outer$ceylon$language$Iterable, Callable this.$capture$Iterable$takeWhile$taking]) {}
+    Iterable$takeWhile$$anonymous$14_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$takeWhile$taking]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$takeWhile$taking = $capture$Iterable$takeWhile$taking;
+    }
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$takeWhile$$anonymous$14_$$anonymous$15_(this, iter);
@@ -3080,7 +3129,10 @@ class Iterable$takeWhile$$anonymous$14_ implements Iterable {
 class Iterable$repeat$$anonymous$16_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$repeat$times;
-    Iterable$repeat$$anonymous$16_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$repeat$times]) {}
+    Iterable$repeat$$anonymous$16_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$repeat$times]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$repeat$times = $capture$Iterable$repeat$times;
+    }
     $dart$core.int get size => $capture$Iterable$repeat$times * $outer$ceylon$language$Iterable.size;
     $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").repeat(") + Integer.instance($capture$Iterable$repeat$times).toString()) + ")";
     Iterator iterator() => new CycledIterator($outer$ceylon$language$Iterable, $capture$Iterable$repeat$times);
@@ -3140,7 +3192,10 @@ class Iterable$repeat$$anonymous$16_ implements Iterable {
 class Iterable$by$$anonymous$17_$$anonymous$18_ implements Iterator {
     Iterable$by$$anonymous$17_ $outer$ceylon$language$Iterable$by$$anonymous$17_;
     Iterator $capture$$iter;
-    Iterable$by$$anonymous$17_$$anonymous$18_([Iterable$by$$anonymous$17_ this.$outer$ceylon$language$Iterable$by$$anonymous$17_, Iterator this.$capture$$iter]) {}
+    Iterable$by$$anonymous$17_$$anonymous$18_([Iterable$by$$anonymous$17_ $outer$ceylon$language$Iterable$by$$anonymous$17_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$by$$anonymous$17_ = $outer$ceylon$language$Iterable$by$$anonymous$17_;
+        this.$capture$$iter = $capture$$iter;
+    }
     $dart$core.Object next() {
         $dart$core.Object next = $capture$$iter.next();
         $dart$core.int i = 0;
@@ -3152,7 +3207,10 @@ class Iterable$by$$anonymous$17_$$anonymous$18_ implements Iterator {
 class Iterable$by$$anonymous$17_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$by$step;
-    Iterable$by$$anonymous$17_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$by$step]) {}
+    Iterable$by$$anonymous$17_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$by$step]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$by$step = $capture$Iterable$by$step;
+    }
     $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").by(") + Integer.instance($capture$Iterable$by$step).toString()) + ")";
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
@@ -3215,7 +3273,9 @@ class Iterable$by$$anonymous$17_ implements Iterable {
 class Iterable$indexed$$anonymous$19_$$anonymous$20_ implements Iterator {
     Iterable$indexed$$anonymous$19_ $outer$ceylon$language$Iterable$indexed$$anonymous$19_;
     Iterator $capture$$iter;
-    Iterable$indexed$$anonymous$19_$$anonymous$20_([Iterable$indexed$$anonymous$19_ this.$outer$ceylon$language$Iterable$indexed$$anonymous$19_, Iterator this.$capture$$iter]) {
+    Iterable$indexed$$anonymous$19_$$anonymous$20_([Iterable$indexed$$anonymous$19_ $outer$ceylon$language$Iterable$indexed$$anonymous$19_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$indexed$$anonymous$19_ = $outer$ceylon$language$Iterable$indexed$$anonymous$19_;
+        this.$capture$$iter = $capture$$iter;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -3242,7 +3302,9 @@ class Iterable$indexed$$anonymous$19_$$anonymous$20_ implements Iterator {
 }
 class Iterable$indexed$$anonymous$19_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
-    Iterable$indexed$$anonymous$19_([Iterable this.$outer$ceylon$language$Iterable]) {}
+    Iterable$indexed$$anonymous$19_([Iterable $outer$ceylon$language$Iterable]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+    }
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$indexed$$anonymous$19_$$anonymous$20_(this, iter);
@@ -3305,7 +3367,9 @@ class Iterable$indexed$$anonymous$19_ implements Iterable {
 class Iterable$paired$$anonymous$21_$$anonymous$22_ implements Iterator {
     Iterable$paired$$anonymous$21_ $outer$ceylon$language$Iterable$paired$$anonymous$21_;
     Iterator $capture$$iter;
-    Iterable$paired$$anonymous$21_$$anonymous$22_([Iterable$paired$$anonymous$21_ this.$outer$ceylon$language$Iterable$paired$$anonymous$21_, Iterator this.$capture$$iter]) {
+    Iterable$paired$$anonymous$21_$$anonymous$22_([Iterable$paired$$anonymous$21_ $outer$ceylon$language$Iterable$paired$$anonymous$21_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$paired$$anonymous$21_ = $outer$ceylon$language$Iterable$paired$$anonymous$21_;
+        this.$capture$$iter = $capture$$iter;
         _$previous = $capture$$iter.next();
     }
     $dart$core.Object _$previous;
@@ -3336,7 +3400,9 @@ class Iterable$paired$$anonymous$21_$$anonymous$22_ implements Iterator {
 }
 class Iterable$paired$$anonymous$21_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
-    Iterable$paired$$anonymous$21_([Iterable this.$outer$ceylon$language$Iterable]) {}
+    Iterable$paired$$anonymous$21_([Iterable $outer$ceylon$language$Iterable]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+    }
     $dart$core.int get size => (() {
         $dart$core.int size = $outer$ceylon$language$Iterable.size - 1;
         return (() {
@@ -3408,7 +3474,10 @@ class Iterable$paired$$anonymous$21_ implements Iterable {
 class Iterable$partition$$anonymous$23_$$anonymous$24_ implements Iterator {
     Iterable$partition$$anonymous$23_ $outer$ceylon$language$Iterable$partition$$anonymous$23_;
     Iterator $capture$$iter;
-    Iterable$partition$$anonymous$23_$$anonymous$24_([Iterable$partition$$anonymous$23_ this.$outer$ceylon$language$Iterable$partition$$anonymous$23_, Iterator this.$capture$$iter]) {}
+    Iterable$partition$$anonymous$23_$$anonymous$24_([Iterable$partition$$anonymous$23_ $outer$ceylon$language$Iterable$partition$$anonymous$23_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$partition$$anonymous$23_ = $outer$ceylon$language$Iterable$partition$$anonymous$23_;
+        this.$capture$$iter = $capture$$iter;
+    }
     $dart$core.Object next() {{
             $dart$core.bool doElse$104 = true;
             {
@@ -3447,7 +3516,10 @@ class Iterable$partition$$anonymous$23_$$anonymous$24_ implements Iterator {
 class Iterable$partition$$anonymous$23_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$partition$length;
-    Iterable$partition$$anonymous$23_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.int this.$capture$Iterable$partition$length]) {}
+    Iterable$partition$$anonymous$23_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$partition$length]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$partition$length = $capture$Iterable$partition$length;
+    }
     $dart$core.int get size => (() {
         $dart$core.int outerSize = $outer$ceylon$language$Iterable.size;
         $dart$core.int quotient = outerSize ~/ $capture$Iterable$partition$length;
@@ -3520,7 +3592,10 @@ class Iterable$partition$$anonymous$23_ implements Iterable {
 class Iterable$chain$$anonymous$25_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable $capture$Iterable$chain$other;
-    Iterable$chain$$anonymous$25_([Iterable this.$outer$ceylon$language$Iterable, Iterable this.$capture$Iterable$chain$other]) {}
+    Iterable$chain$$anonymous$25_([Iterable $outer$ceylon$language$Iterable, Iterable $capture$Iterable$chain$other]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$chain$other = $capture$Iterable$chain$other;
+    }
     Iterator iterator() => new ChainedIterator($outer$ceylon$language$Iterable, $capture$Iterable$chain$other);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -3579,7 +3654,8 @@ class Iterable$chain$$anonymous$25_ implements Iterable {
 }
 class Iterable$cycled$$anonymous$26_$$anonymous$27_ implements Iterator {
     Iterable$cycled$$anonymous$26_ $outer$ceylon$language$Iterable$cycled$$anonymous$26_;
-    Iterable$cycled$$anonymous$26_$$anonymous$27_([Iterable$cycled$$anonymous$26_ this.$outer$ceylon$language$Iterable$cycled$$anonymous$26_]) {
+    Iterable$cycled$$anonymous$26_$$anonymous$27_([Iterable$cycled$$anonymous$26_ $outer$ceylon$language$Iterable$cycled$$anonymous$26_]) {
+        this.$outer$ceylon$language$Iterable$cycled$$anonymous$26_ = $outer$ceylon$language$Iterable$cycled$$anonymous$26_;
         _$iter = $package$emptyIterator;
     }
     Iterator _$iter;
@@ -3604,7 +3680,9 @@ class Iterable$cycled$$anonymous$26_$$anonymous$27_ implements Iterator {
 }
 class Iterable$cycled$$anonymous$26_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
-    Iterable$cycled$$anonymous$26_([Iterable this.$outer$ceylon$language$Iterable]) {}
+    Iterable$cycled$$anonymous$26_([Iterable $outer$ceylon$language$Iterable]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+    }
     Iterable get _$orig => $outer$ceylon$language$Iterable;
     $dart$core.String toString() => ("(" + $outer$ceylon$language$Iterable.toString()) + ").cycled";
     $dart$core.int get size {
@@ -3669,7 +3747,9 @@ class Iterable$cycled$$anonymous$26_ implements Iterable {
 class Iterable$interpose$$anonymous$28_$$anonymous$29_ implements Iterator {
     Iterable$interpose$$anonymous$28_ $outer$ceylon$language$Iterable$interpose$$anonymous$28_;
     Iterator $capture$$iter;
-    Iterable$interpose$$anonymous$28_$$anonymous$29_([Iterable$interpose$$anonymous$28_ this.$outer$ceylon$language$Iterable$interpose$$anonymous$28_, Iterator this.$capture$$iter]) {
+    Iterable$interpose$$anonymous$28_$$anonymous$29_([Iterable$interpose$$anonymous$28_ $outer$ceylon$language$Iterable$interpose$$anonymous$28_, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$Iterable$interpose$$anonymous$28_ = $outer$ceylon$language$Iterable$interpose$$anonymous$28_;
+        this.$capture$$iter = $capture$$iter;
         _$current = $capture$$iter.next();
         _$count = 0;
     }
@@ -3702,7 +3782,11 @@ class Iterable$interpose$$anonymous$28_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.Object $capture$Iterable$interpose$step;
     $dart$core.Object $capture$Iterable$interpose$element;
-    Iterable$interpose$$anonymous$28_([Iterable this.$outer$ceylon$language$Iterable, $dart$core.Object this.$capture$Iterable$interpose$step, $dart$core.Object this.$capture$Iterable$interpose$element]) {}
+    Iterable$interpose$$anonymous$28_([Iterable $outer$ceylon$language$Iterable, $dart$core.Object $capture$Iterable$interpose$step, $dart$core.Object $capture$Iterable$interpose$element]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$interpose$step = $capture$Iterable$interpose$step;
+        this.$capture$Iterable$interpose$element = $capture$Iterable$interpose$element;
+    }
     $dart$core.int get size {
         $dart$core.int outerSize = $outer$ceylon$language$Iterable.size;
         return (() {
@@ -3774,7 +3858,9 @@ class Iterable$interpose$$anonymous$28_ implements Iterable {
 class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
     Iterable$distinct$$anonymous$30_ $outer$ceylon$language$Iterable$distinct$$anonymous$30_;
     Iterable $capture$$elements;
-    Iterable$distinct$$anonymous$30_$$anonymous$31_([Iterable$distinct$$anonymous$30_ this.$outer$ceylon$language$Iterable$distinct$$anonymous$30_, Iterable this.$capture$$elements]) {
+    Iterable$distinct$$anonymous$30_$$anonymous$31_([Iterable$distinct$$anonymous$30_ $outer$ceylon$language$Iterable$distinct$$anonymous$30_, Iterable $capture$$elements]) {
+        this.$outer$ceylon$language$Iterable$distinct$$anonymous$30_ = $outer$ceylon$language$Iterable$distinct$$anonymous$30_;
+        this.$capture$$elements = $capture$$elements;
         _$it = $capture$$elements.iterator();
         _$count = 0;
         _$store = (() {
@@ -3858,7 +3944,9 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
 }
 class Iterable$distinct$$anonymous$30_ implements Iterable {
     Iterable $outer$ceylon$language$Iterable;
-    Iterable$distinct$$anonymous$30_([Iterable this.$outer$ceylon$language$Iterable]) {}
+    Iterable$distinct$$anonymous$30_([Iterable $outer$ceylon$language$Iterable]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+    }
     Iterator iterator() => (() {
         Iterable elements = $outer$ceylon$language$Iterable;
         return new Iterable$distinct$$anonymous$30_$$anonymous$31_(this, elements);
@@ -3920,7 +4008,8 @@ class Iterable$distinct$$anonymous$30_ implements Iterable {
 }
 class Iterable$group$$anonymous$32_$$anonymous$33_ implements Iterator {
     Iterable$group$$anonymous$32_ $outer$ceylon$language$Iterable$group$$anonymous$32_;
-    Iterable$group$$anonymous$32_$$anonymous$33_([Iterable$group$$anonymous$32_ this.$outer$ceylon$language$Iterable$group$$anonymous$32_]) {
+    Iterable$group$$anonymous$32_$$anonymous$33_([Iterable$group$$anonymous$32_ $outer$ceylon$language$Iterable$group$$anonymous$32_]) {
+        this.$outer$ceylon$language$Iterable$group$$anonymous$32_ = $outer$ceylon$language$Iterable$group$$anonymous$32_;
         _$index = 0;
         _$entry = null;
     }
@@ -3966,7 +4055,9 @@ class Iterable$group$$anonymous$32_$$anonymous$33_ implements Iterator {
 class Iterable$group$$anonymous$32_ implements Map {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$group$grouping;
-    Iterable$group$$anonymous$32_([Iterable this.$outer$ceylon$language$Iterable, Callable this.$capture$Iterable$group$grouping]) {
+    Iterable$group$$anonymous$32_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$group$grouping]) {
+        this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
+        this.$capture$Iterable$group$grouping = $capture$Iterable$group$grouping;
         _$store = (() {
             $dart$core.int arg$133$0 = 16;
             $dart$core.Object arg$133$1 = null;
@@ -4995,7 +5086,8 @@ $dart$core.String commaList([Iterable elements]) => $package$commaList(elements)
 
 class ElementEntry$$anonymous$34_ implements Iterator {
     ElementEntry $outer$ceylon$language$ElementEntry;
-    ElementEntry$$anonymous$34_([ElementEntry this.$outer$ceylon$language$ElementEntry]) {
+    ElementEntry$$anonymous$34_([ElementEntry $outer$ceylon$language$ElementEntry]) {
+        this.$outer$ceylon$language$ElementEntry = $outer$ceylon$language$ElementEntry;
         _$entry = $outer$ceylon$language$ElementEntry;
     }
     ElementEntry _$entry;
@@ -5272,7 +5364,8 @@ $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $packag
 
 class List$iterator$$anonymous$0_ implements Iterator {
     List $outer$ceylon$language$List;
-    List$iterator$$anonymous$0_([List this.$outer$ceylon$language$List]) {
+    List$iterator$$anonymous$0_([List $outer$ceylon$language$List]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
         _$index = 0;
         _$size = $outer$ceylon$language$List.size;
     }
@@ -5288,7 +5381,9 @@ class List$iterator$$anonymous$0_ implements Iterator {
 class List$collect$list_ implements List {
     List $outer$ceylon$language$List;
     Callable $capture$List$collect$collecting;
-    List$collect$list_([List this.$outer$ceylon$language$List, Callable this.$capture$List$collect$collecting]) {
+    List$collect$list_([List $outer$ceylon$language$List, Callable $capture$List$collect$collecting]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
+        this.$capture$List$collect$collecting = $capture$List$collect$collecting;
         size = $outer$ceylon$language$List.size;
     }
     $dart$core.int get lastIndex => $outer$ceylon$language$List.lastIndex;
@@ -5397,7 +5492,8 @@ class List$collect$list_ implements List {
 }
 class List$Indexes$$anonymous$1_ implements Iterator {
     List$Indexes $outer$ceylon$language$List$Indexes;
-    List$Indexes$$anonymous$1_([List$Indexes this.$outer$ceylon$language$List$Indexes]) {
+    List$Indexes$$anonymous$1_([List$Indexes $outer$ceylon$language$List$Indexes]) {
+        this.$outer$ceylon$language$List$Indexes = $outer$ceylon$language$List$Indexes;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -5410,7 +5506,9 @@ class List$Indexes$$anonymous$1_ implements Iterator {
 }
 class List$Indexes implements List {
     List $outer$ceylon$language$List;
-    List$Indexes([List this.$outer$ceylon$language$List]) {}
+    List$Indexes([List $outer$ceylon$language$List]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
+    }
     $dart$core.int get lastIndex => $outer$ceylon$language$List.lastIndex;
     Integer getFromFirst([$dart$core.int index]) => defines(Integer.instance(index)) ? Integer.instance(index) : null;
     List clone() => $package$measure(Integer.instance(0), size) as List;
@@ -5526,7 +5624,9 @@ class List$Indexes implements List {
 class List$Rest$$anonymous$2_ implements Iterator {
     List$Rest $outer$ceylon$language$List$Rest;
     List $capture$$o;
-    List$Rest$$anonymous$2_([List$Rest this.$outer$ceylon$language$List$Rest, List this.$capture$$o]) {
+    List$Rest$$anonymous$2_([List$Rest $outer$ceylon$language$List$Rest, List $capture$$o]) {
+        this.$outer$ceylon$language$List$Rest = $outer$ceylon$language$List$Rest;
+        this.$capture$$o = $capture$$o;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -5545,7 +5645,8 @@ class List$Rest$$anonymous$2_ implements Iterator {
 }
 class List$Rest implements List {
     List $outer$ceylon$language$List;
-    List$Rest([List this.$outer$ceylon$language$List, $dart$core.int _$from]) {
+    List$Rest([List $outer$ceylon$language$List, $dart$core.int _$from]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
         this._$from = _$from;
         if (!(this._$from >= 0)) {
             throw new AssertionError("Violated: from>=0");
@@ -5665,7 +5766,9 @@ class List$Rest implements List {
 class List$Sublist$$anonymous$3_ implements Iterator {
     List$Sublist $outer$ceylon$language$List$Sublist;
     Iterator $capture$$iter;
-    List$Sublist$$anonymous$3_([List$Sublist this.$outer$ceylon$language$List$Sublist, Iterator this.$capture$$iter]) {
+    List$Sublist$$anonymous$3_([List$Sublist $outer$ceylon$language$List$Sublist, Iterator $capture$$iter]) {
+        this.$outer$ceylon$language$List$Sublist = $outer$ceylon$language$List$Sublist;
+        this.$capture$$iter = $capture$$iter;
         _$i = 0;
     }
     $dart$core.int _$i;
@@ -5678,7 +5781,8 @@ class List$Sublist$$anonymous$3_ implements Iterator {
 }
 class List$Sublist implements List {
     List $outer$ceylon$language$List;
-    List$Sublist([List this.$outer$ceylon$language$List, $dart$core.int _$to]) {
+    List$Sublist([List $outer$ceylon$language$List, $dart$core.int _$to]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
         this._$to = _$to;
         if (!(this._$to >= 0)) {
             throw new AssertionError("Violated: to>=0");
@@ -5797,7 +5901,8 @@ class List$Sublist implements List {
 }
 class List$Repeat implements List {
     List $outer$ceylon$language$List;
-    List$Repeat([List this.$outer$ceylon$language$List, $dart$core.int _$times]) {
+    List$Repeat([List $outer$ceylon$language$List, $dart$core.int _$times]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
         this._$times = _$times;
     }
     $dart$core.int _$times;
@@ -5915,7 +6020,10 @@ class List$Patch$$anonymous$4_ implements Iterator {
     List$Patch $outer$ceylon$language$List$Patch;
     Iterator $capture$$iter;
     Iterator $capture$$patchIter;
-    List$Patch$$anonymous$4_([List$Patch this.$outer$ceylon$language$List$Patch, Iterator this.$capture$$iter, Iterator this.$capture$$patchIter]) {
+    List$Patch$$anonymous$4_([List$Patch $outer$ceylon$language$List$Patch, Iterator $capture$$iter, Iterator $capture$$patchIter]) {
+        this.$outer$ceylon$language$List$Patch = $outer$ceylon$language$List$Patch;
+        this.$capture$$iter = $capture$$iter;
+        this.$capture$$patchIter = $capture$$patchIter;
         _$index = Integer.nativeValue(Integer.instance(1).negated);
     }
     $dart$core.int _$index;
@@ -5941,7 +6049,8 @@ class List$Patch$$anonymous$4_ implements Iterator {
 }
 class List$Patch implements List {
     List $outer$ceylon$language$List;
-    List$Patch([List this.$outer$ceylon$language$List, List _$list, $dart$core.int _$from, $dart$core.int _$length]) {
+    List$Patch([List $outer$ceylon$language$List, List _$list, $dart$core.int _$from, $dart$core.int _$length]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
         this._$list = _$list;
         this._$from = _$from;
         this._$length = _$length;
@@ -6075,7 +6184,9 @@ class List$Patch implements List {
 class List$Reversed$$anonymous$5_ implements Iterator {
     List$Reversed $outer$ceylon$language$List$Reversed;
     List $capture$$outerList;
-    List$Reversed$$anonymous$5_([List$Reversed this.$outer$ceylon$language$List$Reversed, List this.$capture$$outerList]) {
+    List$Reversed$$anonymous$5_([List$Reversed $outer$ceylon$language$List$Reversed, List $capture$$outerList]) {
+        this.$outer$ceylon$language$List$Reversed = $outer$ceylon$language$List$Reversed;
+        this.$capture$$outerList = $capture$$outerList;
         _$index = $capture$$outerList.size - 1;
     }
     $dart$core.int _$index;
@@ -6088,7 +6199,9 @@ class List$Reversed$$anonymous$5_ implements Iterator {
 }
 class List$Reversed implements List {
     List $outer$ceylon$language$List;
-    List$Reversed([List this.$outer$ceylon$language$List]) {}
+    List$Reversed([List $outer$ceylon$language$List]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
+    }
     $dart$core.int get lastIndex => $outer$ceylon$language$List.lastIndex;
     $dart$core.int get size => $outer$ceylon$language$List.size;
     $dart$core.Object get first => $outer$ceylon$language$List.last;
@@ -6226,7 +6339,9 @@ class List$Reversed implements List {
 class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
     List$permutations$$anonymous$6_ $outer$ceylon$language$List$permutations$$anonymous$6_;
     List $capture$$list;
-    List$permutations$$anonymous$6_$$anonymous$7_([List$permutations$$anonymous$6_ this.$outer$ceylon$language$List$permutations$$anonymous$6_, List this.$capture$$list]) {
+    List$permutations$$anonymous$6_$$anonymous$7_([List$permutations$$anonymous$6_ $outer$ceylon$language$List$permutations$$anonymous$6_, List $capture$$list]) {
+        this.$outer$ceylon$language$List$permutations$$anonymous$6_ = $outer$ceylon$language$List$permutations$$anonymous$6_;
+        this.$capture$$list = $capture$$list;
         _$length = $capture$$list.size;
         _$permutation = new Array($package$measure(Integer.instance(0), _$length) as Iterable);
         _$indexes = new Array($package$measure(Integer.instance(0), _$length) as Iterable);
@@ -6314,7 +6429,9 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
 }
 class List$permutations$$anonymous$6_ implements Iterable {
     List $outer$ceylon$language$List;
-    List$permutations$$anonymous$6_([List this.$outer$ceylon$language$List]) {}
+    List$permutations$$anonymous$6_([List $outer$ceylon$language$List]) {
+        this.$outer$ceylon$language$List = $outer$ceylon$language$List;
+    }
     Iterator iterator() => (() {
         List list = $outer$ceylon$language$List;
         return new List$permutations$$anonymous$6_$$anonymous$7_(this, list);
@@ -7120,7 +7237,8 @@ abstract class List implements Collection, Correspondence, Ranged {
 }
 class loop$$anonymous$0_$$anonymous$1_ implements Iterator {
     loop$$anonymous$0_ $outer$ceylon$language$loop$$anonymous$0_;
-    loop$$anonymous$0_$$anonymous$1_([loop$$anonymous$0_ this.$outer$ceylon$language$loop$$anonymous$0_]) {
+    loop$$anonymous$0_$$anonymous$1_([loop$$anonymous$0_ $outer$ceylon$language$loop$$anonymous$0_]) {
+        this.$outer$ceylon$language$loop$$anonymous$0_ = $outer$ceylon$language$loop$$anonymous$0_;
         _$current = $outer$ceylon$language$loop$$anonymous$0_.$capture$loop$$start;
     }
     $dart$core.Object _$current;
@@ -7145,7 +7263,10 @@ class loop$$anonymous$0_$$anonymous$1_ implements Iterator {
 class loop$$anonymous$0_ implements Iterable {
     $dart$core.Object $capture$loop$$start;
     Callable $capture$loop$next;
-    loop$$anonymous$0_([$dart$core.Object this.$capture$loop$$start, Callable this.$capture$loop$next]) {}
+    loop$$anonymous$0_([$dart$core.Object $capture$loop$$start, Callable $capture$loop$next]) {
+        this.$capture$loop$$start = $capture$loop$$start;
+        this.$capture$loop$next = $capture$loop$next;
+    }
     $dart$core.Object get first => $capture$loop$$start;
     $dart$core.bool get empty => false;
     $dart$core.Object _$nextElement([$dart$core.Object element]) => $capture$loop$next.f(element);
@@ -7212,7 +7333,9 @@ Callable loop([$dart$core.Object first]) => $package$loop(first);
 
 class Map$keys$$anonymous$0_ implements Collection {
     Map $outer$ceylon$language$Map;
-    Map$keys$$anonymous$0_([Map this.$outer$ceylon$language$Map]) {}
+    Map$keys$$anonymous$0_([Map $outer$ceylon$language$Map]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+    }
     $dart$core.bool contains([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
     Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).key)).iterator();
     Collection clone() => this.sequence();
@@ -7272,7 +7395,9 @@ class Map$keys$$anonymous$0_ implements Collection {
 }
 class Map$items$$anonymous$1_ implements Collection {
     Map $outer$ceylon$language$Map;
-    Map$items$$anonymous$1_([Map this.$outer$ceylon$language$Map]) {}
+    Map$items$$anonymous$1_([Map $outer$ceylon$language$Map]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+    }
     $dart$core.bool contains([$dart$core.Object item]) {{
             $dart$core.Object element$7;
             Iterator iterator$6 = $outer$ceylon$language$Map.iterator();
@@ -7350,7 +7475,10 @@ class Map$items$$anonymous$1_ implements Collection {
 class Map$mapItems$$anonymous$2_ implements Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$mapItems$mapping;
-    Map$mapItems$$anonymous$2_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$mapItems$mapping]) {}
+    Map$mapItems$$anonymous$2_([Map $outer$ceylon$language$Map, Callable $capture$Map$mapItems$mapping]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+        this.$capture$Map$mapItems$mapping = $capture$Map$mapItems$mapping;
+    }
     $dart$core.bool defines([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
     $dart$core.Object get([$dart$core.Object key]) {{
             $dart$core.bool doElse$17 = true;
@@ -7445,7 +7573,10 @@ class Map$mapItems$$anonymous$2_ implements Map {
 class Map$filterKeys$$anonymous$3_ implements Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$filterKeys$filtering;
-    Map$filterKeys$$anonymous$3_([Map this.$outer$ceylon$language$Map, Callable this.$capture$Map$filterKeys$filtering]) {}
+    Map$filterKeys$$anonymous$3_([Map $outer$ceylon$language$Map, Callable $capture$Map$filterKeys$filtering]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+        this.$capture$Map$filterKeys$filtering = $capture$Map$filterKeys$filtering;
+    }
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
         if (key != null) {
@@ -7541,7 +7672,10 @@ class Map$filterKeys$$anonymous$3_ implements Map {
 class Map$patch$$anonymous$4_ implements Map {
     Map $outer$ceylon$language$Map;
     Map $capture$Map$patch$other;
-    Map$patch$$anonymous$4_([Map this.$outer$ceylon$language$Map, Map this.$capture$Map$patch$other]) {}
+    Map$patch$$anonymous$4_([Map $outer$ceylon$language$Map, Map $capture$Map$patch$other]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+        this.$capture$Map$patch$other = $capture$Map$patch$other;
+    }
     $dart$core.Object get([$dart$core.Object key]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $outer$ceylon$language$Map.get(key) : $lhs$)($capture$Map$patch$other.get(key));
     Map clone() => $outer$ceylon$language$Map.clone().patch($capture$Map$patch$other.clone());
     $dart$core.bool defines([$dart$core.Object key]) => $capture$Map$patch$other.defines(key) || $outer$ceylon$language$Map.defines(key);
@@ -7625,7 +7759,9 @@ class Map$patch$$anonymous$4_ implements Map {
 }
 class Map$coalescedMap$$anonymous$5_ implements Map {
     Map $outer$ceylon$language$Map;
-    Map$coalescedMap$$anonymous$5_([Map this.$outer$ceylon$language$Map]) {}
+    Map$coalescedMap$$anonymous$5_([Map $outer$ceylon$language$Map]) {
+        this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
+    }
     $dart$core.bool defines([$dart$core.Object key]) => !($outer$ceylon$language$Map.get(key) == null);
     $dart$core.Object get([$dart$core.Object key]) => $outer$ceylon$language$Map.get(key);
     Iterator iterator() => functionIterable(new dart$Callable(() {
@@ -8001,7 +8137,8 @@ $dart$core.Object max([Iterable values]) => $package$max(values);
 
 class Measure$$anonymous$0_ implements Iterator {
     Measure $outer$ceylon$language$Measure;
-    Measure$$anonymous$0_([Measure this.$outer$ceylon$language$Measure]) {
+    Measure$$anonymous$0_([Measure $outer$ceylon$language$Measure]) {
+        this.$outer$ceylon$language$Measure = $outer$ceylon$language$Measure;
         _$count = 0;
         _$current = $outer$ceylon$language$Measure.first;
     }
@@ -8024,7 +8161,8 @@ class Measure$$anonymous$0_ implements Iterator {
 }
 class Measure$By$$anonymous$1_ implements Iterator {
     Measure$By $outer$ceylon$language$Measure$By;
-    Measure$By$$anonymous$1_([Measure$By this.$outer$ceylon$language$Measure$By]) {
+    Measure$By$$anonymous$1_([Measure$By $outer$ceylon$language$Measure$By]) {
+        this.$outer$ceylon$language$Measure$By = $outer$ceylon$language$Measure$By;
         _$count = 0;
         _$current = $outer$ceylon$language$Measure$By.first;
     }
@@ -8050,7 +8188,8 @@ class Measure$By$$anonymous$1_ implements Iterator {
 }
 class Measure$By implements Iterable {
     Measure $outer$ceylon$language$Measure;
-    Measure$By([Measure this.$outer$ceylon$language$Measure, $dart$core.int _$step]) {
+    Measure$By([Measure $outer$ceylon$language$Measure, $dart$core.int _$step]) {
+        this.$outer$ceylon$language$Measure = $outer$ceylon$language$Measure;
         this._$step = _$step;
     }
     $dart$core.int _$step;
@@ -8930,7 +9069,8 @@ class OverflowException  extends Exception {
 }
 class mapPairs$iterable_$iterator$iterator_ implements Iterator {
     mapPairs$iterable_ $outer$ceylon$language$mapPairs$iterable_;
-    mapPairs$iterable_$iterator$iterator_([mapPairs$iterable_ this.$outer$ceylon$language$mapPairs$iterable_]) {
+    mapPairs$iterable_$iterator$iterator_([mapPairs$iterable_ $outer$ceylon$language$mapPairs$iterable_]) {
+        this.$outer$ceylon$language$mapPairs$iterable_ = $outer$ceylon$language$mapPairs$iterable_;
         _$firstIter = $outer$ceylon$language$mapPairs$iterable_.$capture$mapPairs$firstIterable.iterator();
         _$secondIter = $outer$ceylon$language$mapPairs$iterable_.$capture$mapPairs$secondIterable.iterator();
     }
@@ -8965,7 +9105,11 @@ class mapPairs$iterable_ implements Iterable {
     Iterable $capture$mapPairs$firstIterable;
     Iterable $capture$mapPairs$secondIterable;
     Callable $capture$mapPairs$collecting;
-    mapPairs$iterable_([Iterable this.$capture$mapPairs$firstIterable, Iterable this.$capture$mapPairs$secondIterable, Callable this.$capture$mapPairs$collecting]) {}
+    mapPairs$iterable_([Iterable $capture$mapPairs$firstIterable, Iterable $capture$mapPairs$secondIterable, Callable $capture$mapPairs$collecting]) {
+        this.$capture$mapPairs$firstIterable = $capture$mapPairs$firstIterable;
+        this.$capture$mapPairs$secondIterable = $capture$mapPairs$secondIterable;
+        this.$capture$mapPairs$collecting = $capture$mapPairs$collecting;
+    }
     Iterator iterator() {
         final mapPairs$iterable_$iterator$iterator_ iterator = new mapPairs$iterable_$iterator$iterator_(this);
         return iterator;
@@ -9692,7 +9836,9 @@ abstract class Scalable {
 class Sequence$collect$list_ implements List {
     Sequence $outer$ceylon$language$Sequence;
     Callable $capture$Sequence$collect$collecting;
-    Sequence$collect$list_([Sequence this.$outer$ceylon$language$Sequence, Callable this.$capture$Sequence$collect$collecting]) {
+    Sequence$collect$list_([Sequence $outer$ceylon$language$Sequence, Callable $capture$Sequence$collect$collecting]) {
+        this.$outer$ceylon$language$Sequence = $outer$ceylon$language$Sequence;
+        this.$capture$Sequence$collect$collecting = $capture$Sequence$collect$collecting;
         size = $outer$ceylon$language$Sequence.size;
     }
     $dart$core.int get lastIndex => $outer$ceylon$language$Sequence.lastIndex;
@@ -9802,7 +9948,9 @@ class Sequence$collect$list_ implements List {
 class Sequence$Reverse$$anonymous$0_ implements Iterator {
     Sequence$Reverse $outer$ceylon$language$Sequence$Reverse;
     Sequence $capture$$outerList;
-    Sequence$Reverse$$anonymous$0_([Sequence$Reverse this.$outer$ceylon$language$Sequence$Reverse, Sequence this.$capture$$outerList]) {
+    Sequence$Reverse$$anonymous$0_([Sequence$Reverse $outer$ceylon$language$Sequence$Reverse, Sequence $capture$$outerList]) {
+        this.$outer$ceylon$language$Sequence$Reverse = $outer$ceylon$language$Sequence$Reverse;
+        this.$capture$$outerList = $capture$$outerList;
         _$index = $capture$$outerList.size - 1;
     }
     $dart$core.int _$index;
@@ -9815,7 +9963,9 @@ class Sequence$Reverse$$anonymous$0_ implements Iterator {
 }
 class Sequence$Reverse implements Sequence {
     Sequence $outer$ceylon$language$Sequence;
-    Sequence$Reverse([Sequence this.$outer$ceylon$language$Sequence]) {}
+    Sequence$Reverse([Sequence $outer$ceylon$language$Sequence]) {
+        this.$outer$ceylon$language$Sequence = $outer$ceylon$language$Sequence;
+    }
     $dart$core.int get size => $outer$ceylon$language$Sequence.size;
     $dart$core.Object get first => $outer$ceylon$language$Sequence.last;
     $dart$core.Object get last => $outer$ceylon$language$Sequence.first;
@@ -9950,7 +10100,8 @@ class Sequence$Reverse implements Sequence {
 }
 class Sequence$Repeat implements Sequence {
     Sequence $outer$ceylon$language$Sequence;
-    Sequence$Repeat([Sequence this.$outer$ceylon$language$Sequence, $dart$core.int _$times]) {
+    Sequence$Repeat([Sequence $outer$ceylon$language$Sequence, $dart$core.int _$times]) {
+        this.$outer$ceylon$language$Sequence = $outer$ceylon$language$Sequence;
         this._$times = _$times;
         if (!(this._$times > 0)) {
             throw new AssertionError("Violated: times>0");
@@ -10712,7 +10863,9 @@ abstract class serialization$References implements Iterable {
 class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
     $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance;
-    ReferencesImpl$iterator$$anonymous$0_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl, $dart$core.Object this.$capture$serialization$ReferencesImpl$iterator$$$instance]) {
+    ReferencesImpl$iterator$$anonymous$0_([serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl, $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance]) {
+        this.$outer$ceylon$language$serialization$ReferencesImpl = $outer$ceylon$language$serialization$ReferencesImpl;
+        this.$capture$serialization$ReferencesImpl$iterator$$$instance = $capture$serialization$ReferencesImpl$iterator$$$instance;
         _$it = $outer$ceylon$language$serialization$ReferencesImpl.references.iterator();
     }
     Iterator _$it;
@@ -10734,7 +10887,9 @@ class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator {
 }
 class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
-    ReferencesImpl$references$$anonymous$1_([serialization$ReferencesImpl this.$outer$ceylon$language$serialization$ReferencesImpl]) {}
+    ReferencesImpl$references$$anonymous$1_([serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl]) {
+        this.$outer$ceylon$language$serialization$ReferencesImpl = $outer$ceylon$language$serialization$ReferencesImpl;
+    }
     Iterator iterator() {
         return $package$impl$reach.references($outer$ceylon$language$serialization$ReferencesImpl.instance);
     }
@@ -11035,7 +11190,8 @@ Callable shuffle([Callable f]) => $package$shuffle(f);
 
 class Singleton$iterator$$anonymous$0_ implements Iterator {
     Singleton $outer$ceylon$language$Singleton;
-    Singleton$iterator$$anonymous$0_([Singleton this.$outer$ceylon$language$Singleton]) {
+    Singleton$iterator$$anonymous$0_([Singleton $outer$ceylon$language$Singleton]) {
+        this.$outer$ceylon$language$Singleton = $outer$ceylon$language$Singleton;
         _$done = false;
     }
     $dart$core.bool _$done;
@@ -11240,7 +11396,8 @@ Sequential sort([Iterable elements]) => $package$sort(elements);
 
 class Span$iterator$$anonymous$0_ implements Iterator {
     Span $outer$ceylon$language$Span;
-    Span$iterator$$anonymous$0_([Span this.$outer$ceylon$language$Span]) {
+    Span$iterator$$anonymous$0_([Span $outer$ceylon$language$Span]) {
+        this.$outer$ceylon$language$Span = $outer$ceylon$language$Span;
         _$firstTime = true;
         _$element = $outer$ceylon$language$Span.first;
     }
@@ -11278,7 +11435,8 @@ class Span$iterator$$anonymous$0_ implements Iterator {
 }
 class Span$By$iterator$$anonymous$1_ implements Iterator {
     Span$By $outer$ceylon$language$Span$By;
-    Span$By$iterator$$anonymous$1_([Span$By this.$outer$ceylon$language$Span$By]) {
+    Span$By$iterator$$anonymous$1_([Span$By $outer$ceylon$language$Span$By]) {
+        this.$outer$ceylon$language$Span$By = $outer$ceylon$language$Span$By;
         _$count = 0;
         _$current = $outer$ceylon$language$Span$By.first;
     }
@@ -11297,7 +11455,8 @@ class Span$By$iterator$$anonymous$1_ implements Iterator {
 }
 class Span$By$iterator$$anonymous$2_ implements Iterator {
     Span$By $outer$ceylon$language$Span$By;
-    Span$By$iterator$$anonymous$2_([Span$By this.$outer$ceylon$language$Span$By]) {
+    Span$By$iterator$$anonymous$2_([Span$By $outer$ceylon$language$Span$By]) {
+        this.$outer$ceylon$language$Span$By = $outer$ceylon$language$Span$By;
         _$current = $outer$ceylon$language$Span$By.first;
         _$firstTime = true;
     }
@@ -11327,7 +11486,8 @@ class Span$By$iterator$$anonymous$2_ implements Iterator {
 }
 class Span$By implements Iterable {
     Span $outer$ceylon$language$Span;
-    Span$By([Span this.$outer$ceylon$language$Span, $dart$core.int _$step]) {
+    Span$By([Span $outer$ceylon$language$Span, $dart$core.int _$step]) {
+        this.$outer$ceylon$language$Span = $outer$ceylon$language$Span;
         this._$step = _$step;
     }
     $dart$core.int _$step;
