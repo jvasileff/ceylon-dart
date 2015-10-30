@@ -1056,7 +1056,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     containerType;
                     () => argument.transform(expressionTransformer);
-                    false; // FIXME WIP !isConstant(argument);
+                    !isConstant(argument);
                     invokedDeclaration;
                     info.typeModel;
                     null;
