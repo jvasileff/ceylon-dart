@@ -1,0 +1,145 @@
+Integer i = 1;
+object d satisfies Destroyable {
+    shared actual void destroy(Throwable? error) {}
+}
+
+class A(Integer i, Destroyable d) {
+    shared actual String string => "Class A ``i==1``";
+
+    // B w/outer = this
+    shared A.B b01 => B(i, d);
+    shared A.B b02 => A.B(this)(i, d);
+
+    // Factory for B w/outer = this
+    shared A.B(Integer, Destroyable) bFactory03 => B;
+    shared A.B(Integer, Destroyable) bFactory04 => A.B(this);
+
+    // Factory for B
+    shared A.B(Integer, Destroyable)(A) bFactory05 => A.B;
+
+    // C w/outer = supplied
+    shared A.B.C c06 => B.C(B(i, d))(i, d);
+    shared A.B.C c07 => A.B.C(B(i, d))(i, d);
+
+    // Factory for C w/outer = supplied
+    shared A.B.C(Integer, Destroyable) cFactory08 => B.C(B(i, d));
+    shared A.B.C(Integer, Destroyable) cFactory09 => A.B.C(B(i, d));
+
+    // Factory for C
+    shared A.B.C(Integer, Destroyable)(A.B) cFactory10 => B.C;
+    shared A.B.C(Integer, Destroyable)(A.B) cFactory11 => A.B.C;
+
+    shared class B(Integer i, Destroyable d) {
+        shared A bOuter => outer;
+        shared actual String string => "Class B ``i==1``";
+
+        // B w/outer = outer
+        shared A.B b13 => B(i, d);
+        shared A.B b14 => A.B(outer)(i, d);
+
+        // Factory for B w/outer = outer
+        shared A.B(Integer, Destroyable) bFactory16 => B;
+        shared A.B(Integer, Destroyable) bFactory17 => A.B(outer);
+
+        // Factory for B
+        shared A.B(Integer, Destroyable)(A) bFactory18 => A.B;
+
+        // C w/outer = this
+        shared A.B.C c19 => C(i, d);
+        shared A.B.C c20 => B.C(this)(i, d);
+        shared A.B.C c21 => A.B.C(this)(i, d);
+
+        // Factory for C w/outer = this
+        shared A.B.C(Integer, Destroyable) cFactory22 => C;
+        shared A.B.C(Integer, Destroyable) cFactory23 => B.C(this);
+        shared A.B.C(Integer, Destroyable) cFactory24 => A.B.C(this);
+
+        // Factory for C
+        shared A.B.C(Integer, Destroyable)(A.B) cFactory25 => B.C;
+        shared A.B.C(Integer, Destroyable)(A.B) cFactory26 => A.B.C;
+
+        shared class C(Integer i, Destroyable d) {
+            shared actual String string => "Class C ``i==1``";
+
+            // B w/outer = outer.outer
+            shared A.B b28 => B(i, d);
+            shared A.B b29 => A.B(bOuter)(i, d);
+
+            // Factory for B w/outer = outer.outer
+            shared A.B(Integer, Destroyable) bFactory31 => B;
+            shared A.B(Integer, Destroyable) bFactory32 => A.B(bOuter);
+
+            // Factory for B
+            shared A.B(Integer, Destroyable)(A) bFactory33 => A.B;
+
+            // C w/outer = outer
+            shared A.B.C c35 => C(i, d);
+            shared A.B.C c36 => B.C(outer)(i, d);
+            shared A.B.C c37 => A.B.C(outer)(i, d);
+
+            // Factory for C w/outer = outer
+            shared A.B.C(Integer, Destroyable) cFactory39 => C;
+            shared A.B.C(Integer, Destroyable) cFactory40 => B.C(outer);
+            shared A.B.C(Integer, Destroyable) cFactory41 => A.B.C(outer);
+
+            // Factory for C
+            shared A.B.C(Integer, Destroyable)(A.B) cFactory42 => B.C;
+            shared A.B.C(Integer, Destroyable)(A.B) cFactory43 => A.B.C;
+        }
+    }
+}
+
+A.B val = A(i, d).B(i, d);
+A.B(Integer, Destroyable) abFactory = A.B(A(i, d));
+
+shared void run() {
+    value a = A(i, d);
+    value b = a.B(i, d);
+    value c = b.C(i, d);
+
+    print(a.b01);
+    print(a.b02);
+    print(a.bFactory03(i, d));
+    print(a.bFactory04(i, d));
+    print(a.bFactory05(a)(i, d));
+    print(a.c06);
+    print(a.c07);
+    print(a.cFactory08(i, d));
+    print(a.cFactory09(i, d));
+    print(a.cFactory10(b)(i, d));
+    print(a.cFactory11(b)(i, d));
+
+    //12 (only in constructors test)
+    print(b.b13);
+    print(b.b14);
+    //15 (only in constructors test)
+    print(b.bFactory16(i, d));
+    print(b.bFactory17(i, d));
+    print(b.bFactory18(a)(i, d));
+    print(b.c19);
+    print(b.c20);
+    print(b.c21);
+    print(b.cFactory22(i, d));
+    print(b.cFactory23(i, d));
+    print(b.cFactory24(i, d));
+    print(b.cFactory25(b)(i, d));
+    print(b.cFactory26(b)(i, d));
+
+    //27 (only in constructors test)
+    print(c.b28);
+    print(c.b29);
+    //30 (only in constructors test)
+    print(c.bFactory31(i, d));
+    print(c.bFactory32(i, d));
+    print(c.bFactory33(a)(i, d));
+    //34 (only in constructors test)
+    print(c.c35);
+    print(c.c36);
+    print(c.c37);
+    //38 (only in constructors test)
+    print(c.cFactory39(i, d));
+    print(c.cFactory40(i, d));
+    print(c.cFactory41(i, d));
+    print(c.cFactory42(b)(i, d));
+    print(c.cFactory43(b)(i, d));
+}

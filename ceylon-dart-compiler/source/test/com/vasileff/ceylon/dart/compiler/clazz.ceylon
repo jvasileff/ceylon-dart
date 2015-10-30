@@ -110,4 +110,8 @@ object clazz {
     shared test
     void constructorsCombined()
         =>  compileAndCompare2("clazz/constructorsCombined");
+
+    shared test
+    void initializersCombined()
+        =>  compileAndCompare2("clazz/initializersCombined");
 }
