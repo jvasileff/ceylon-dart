@@ -931,21 +931,30 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        will be of the form:
 
             $this ("." $outer$ref)*
+
+       For class scopes, `this` will not be included unless [[outerDeclaration]]
+       is the same as [[scope]].
     """
     shared
     DartExpression expressionToOuter(
             ClassOrInterfaceModel scope,
             ClassOrInterfaceModel outerDeclaration)
-        =>  classOrInterfaceContainerPath(scope, outerDeclaration.equals)
+        =>  (let (thisExpression = if (scope is InterfaceModel)
+                                  then [thisReference(scope)]
+                                  else [])
+            thisExpression.chain {
+                classOrInterfaceContainerPath(scope, outerDeclaration.equals)
                 .skip(1) // don't include scope; will be $this instead
                 .map(outerFieldName)
-                .map(DartSimpleIdentifier)
-                .follow(thisReference(scope))
-                .reduce((DartExpression expression, field)
+                .map(DartSimpleIdentifier);
+            }.reduce {
+                (DartExpression expression, field)
                     =>  DartPropertyAccess {
                             expression;
                             field;
-                        });
+                        };
+            })
+            else thisReference(scope);
 
     "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype

@@ -36,6 +36,7 @@ import ceylon.interop.java {
 import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     ClassModel=Class,
+    ConstructorModel=Constructor,
     SetterModel=Setter,
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
@@ -60,7 +61,6 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationList,
     DartVariableDeclaration,
     DartFieldDeclaration,
-    DartFieldFormalParameter,
     DartConstructorDeclaration,
     DartBlockFunctionBody,
     DartBlock,
@@ -640,7 +640,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value outerFieldConstructorParameter
             =   outerDeclarations.take(1).map {
                     (declaration) =>
-                    DartFieldFormalParameter {
+                    DartSimpleFormalParameter {
                         false; false;
                         dartTypes.dartTypeName {
                             scope;
@@ -660,7 +660,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value captureConstructorParameters
             =   captureDeclarations.map {
                     (declaration) =>
-                    DartFieldFormalParameter {
+                    DartSimpleFormalParameter {
                         false; false;
                         dartTypes.dartCaptureTypeNameForDeclaration {
                             scope;
@@ -693,9 +693,6 @@ class TopLevelVisitor(CompilationContext ctx)
                 then DartSimpleIdentifier(constructorPrefix + "$w")
                 else constructorName;
 
-        function createSimpleFromFieldParameter(DartFieldFormalParameter p)
-            =>  DartSimpleFormalParameter(p.const, p.final, p.type, p.identifier);
-
         "Resolves arguments against default value expressions, redirects to 'spread'
          constructor."
         value defaultsConstructor
@@ -711,14 +708,8 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartFormalParameterList {
                             true; false;
                             concatenate {
-                                // "redirecting" constructors cannot initialize fields,
-                                // so remove "this." from the outer and capture
-                                // parameters. (They will be initialized by the ultimate
-                                // constructor).
-                                outerFieldConstructorParameter
-                                        .map(createSimpleFromFieldParameter),
-                                captureConstructorParameters
-                                        .map(createSimpleFromFieldParameter),
+                                outerFieldConstructorParameter,
+                                captureConstructorParameters,
                                 standardParameters
                             };
                         };
@@ -734,10 +725,10 @@ class TopLevelVisitor(CompilationContext ctx)
                                         false;
                                         concatenate {
                                             outerFieldConstructorParameter.map {
-                                                DartFieldFormalParameter.identifier;
+                                                DartSimpleFormalParameter.identifier;
                                             },
                                             captureConstructorParameters.map {
-                                                DartFieldFormalParameter.identifier;
+                                                DartSimpleFormalParameter.identifier;
                                             },
                                             parameterIdentifiers
                                         };
@@ -784,23 +775,43 @@ class TopLevelVisitor(CompilationContext ctx)
                     null;
                 });
 
+        value outerAndCaptureMemberInitializers
+            =   outerFieldConstructorParameter
+                    .chain(captureConstructorParameters)
+                    .map { DartSimpleFormalParameter.identifier; }
+                    .map {
+                        (id) => DartExpressionStatement {
+                            DartAssignmentExpression {
+                                DartPrefixedIdentifier {
+                                    DartSimpleIdentifier("this");
+                                    id;
+                                };
+                                DartAssignmentOperator.equal;
+                                id;
+                            };
+                        };
+                    };
+
         value constructorBody
             =   if (exists constructor) then
                     DartBlock {
-                        classBody.children.takeWhile {
-                            not(constructor.equals);
-                        }.chain {
-                            constructor.block.children;
-                        }.chain {
-                            classBody.children.skipWhile {
+                        concatenate {
+                            outerAndCaptureMemberInitializers,
+                            classBody.children.takeWhile {
                                 not(constructor.equals);
-                            };
-                        }.flatMap((s)
-                            =>  s.transform(classStatementTransformer)).sequence();
+                            }.chain {
+                                constructor.block.children;
+                            }.chain {
+                                classBody.children.skipWhile {
+                                    not(constructor.equals);
+                                };
+                            }.flatMap((s) => s.transform(classStatementTransformer))
+                        };
                     }
                 else
                     DartBlock {
                         concatenate {
+                            outerAndCaptureMemberInitializers,
                             // Assign parameters to corresponding 'this.' members.
                             // Eventually, we'll just do this for the ones we want to
                             // capture. Not supporting defaulted parameters yet.
@@ -871,10 +882,19 @@ class TopLevelVisitor(CompilationContext ctx)
             "Arguments must exist for constructor or ininitializer extends"
             assert (exists arguments = extensionOrConstruction.arguments);
 
-            if (!arguments.argumentList.children.empty) {
+            value extensionOrConstructionInfo
+                =   ExtensionOrConstructionInfo(extensionOrConstruction);
 
-                value extensionOrConstructionInfo
-                    =   ExtensionOrConstructionInfo(extensionOrConstruction);
+            value outerAndCaptureArguments
+                =   switch (extendedClass = extensionOrConstructionInfo.declaration)
+                    case (is ClassModel)
+                        generateArgumentsForOuterAndCaptures {
+                            NodeInfo(extendedType);
+                            extendedClass;
+                        }
+                    case (is ConstructorModel | Null) []; // TODO
+
+            if (!arguments.argumentList.children.empty) {
 
                 assert (exists parameterList
                     =   extensionOrConstructionInfo.declaration?.firstParameterList);
@@ -890,12 +910,17 @@ class TopLevelVisitor(CompilationContext ctx)
                 return
                 DartSuperConstructorInvocation {
                     null;
-                    generateArgumentListFromArguments {
-                        extensionOrConstructionInfo;
-                        arguments;
-                        signature;
-                        parameterList;
-                    }[1];
+                    DartArgumentList {
+                        concatenate {
+                            outerAndCaptureArguments,
+                            generateArgumentListFromArguments {
+                                extensionOrConstructionInfo;
+                                arguments;
+                                signature;
+                                parameterList;
+                            }[1].arguments
+                        };
+                    };
                 };
             }
         }
