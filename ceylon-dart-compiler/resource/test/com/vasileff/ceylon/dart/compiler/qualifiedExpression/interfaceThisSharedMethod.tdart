@@ -6,22 +6,22 @@ abstract class I {
     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
     void run();
     static void $run([final I $this]) {
-        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $this.foo(u as $ceylon$language.Usable));
+        $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $this.foo($0 as $ceylon$language.Usable));
         I ie = $ceylon$language.nothing as I;
         I il$get() => $ceylon$language.nothing as I;
 
-        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ie.foo(u as $ceylon$language.Usable));
+        $ceylon$language.Callable fooRefIe = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ie.foo($0 as $ceylon$language.Usable));
         $ceylon$language.Callable fooRefIl = (() {
             I $capturedReceiver$ = il$get();
-            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => $capturedReceiver$.foo(u as $ceylon$language.Usable));
+            return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $capturedReceiver$.foo($0 as $ceylon$language.Usable));
         })();
         I me = $ceylon$language.nothing as I;
         I ml$get() => $ceylon$language.nothing as I;
 
-        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))(me));
+        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r$) => $r$ == null ? null : $r$.foo($0 as $ceylon$language.Usable))(me));
         $ceylon$language.Callable fooRefMl = (() {
             I $capturedReceiver$ = ml$get();
-            return new $ceylon$language.dart$Callable(([$dart$core.Object u]) => ((I $r$) => $r$ == null ? null : $r$.foo(u as $ceylon$language.Usable))($capturedReceiver$));
+            return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r$) => $r$ == null ? null : $r$.foo($0 as $ceylon$language.Usable))($capturedReceiver$));
         })();
     }
 }

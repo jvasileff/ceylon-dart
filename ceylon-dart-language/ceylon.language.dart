@@ -5,7 +5,7 @@ import "dart:math" as $dart$math;
 import "dart:mirrors" as $dart$mirrors;
 import "source/ceylon/language/module.dart";
 
-Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) && Boolean.nativeValue(q.f(val) as Boolean))(val)));
+Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object $0]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) && Boolean.nativeValue(q.f(val) as Boolean))($0)));
 
 Callable and([Callable p, Callable q]) => $package$and(p, q);
 
@@ -1066,17 +1066,17 @@ $dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $
 
 Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
     Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
 })(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
     Character $capturedReceiver$ = new Character.$fromInt(13);
-    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
 })())));
 
 Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
 
 Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
     Character $capturedReceiver$ = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object that]) => Boolean.instance($capturedReceiver$.equals(that)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.equals($0)));
 })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
     $dart$core.String br = String.nativeValue(lineWithBreak.get(Integer.instance(1)) as String);
@@ -7557,8 +7557,8 @@ class Map$patch$$anonymous$4_ implements Map {
             return false;
         }
     })();
-    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object key]) => Boolean.instance($outer$ceylon$language$Map.defines(key)))));
-    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object entry]) => Boolean.instance($capture$Map$patch$other.contains(entry))))));
+    $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($outer$ceylon$language$Map.defines($0)))));
+    Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capture$Map$patch$other.contains($0))))));
     $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
@@ -8855,7 +8855,7 @@ $dart$core.Object $package$min([Iterable values]) {
 
 $dart$core.Object min([Iterable values]) => $package$min(values);
 
-Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.f(val) as Boolean))(val)));
+Callable $package$not([Callable p]) => new dart$Callable(([$dart$core.Object $0]) => Boolean.instance((([$dart$core.Object val]) => !Boolean.nativeValue(p.f(val) as Boolean))($0)));
 
 Callable not([Callable p]) => $package$not(p);
 
@@ -8907,7 +8907,7 @@ operatingSystem_ get operatingSystem => $package$operatingSystem;
 
 abstract class OptionalAnnotation implements ConstrainedAnnotation {
 }
-Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object val]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) || Boolean.nativeValue(q.f(val) as Boolean))(val)));
+Callable $package$or([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object $0]) => Boolean.instance((([$dart$core.Object val]) => Boolean.nativeValue(p.f(val) as Boolean) || Boolean.nativeValue(q.f(val) as Boolean))($0)));
 
 Callable or([Callable p, Callable q]) => $package$or(p, q);
 
@@ -9327,7 +9327,7 @@ $dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseF
 
 Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r$]) => Boolean.instance(($r$ as Character).digit)), (() {
     String $capturedReceiver$ = String.instance("+-");
-    return new dart$Callable(([$dart$core.Object element]) => Boolean.instance($capturedReceiver$.contains(element)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capturedReceiver$.contains($0)));
 })());
 
 Callable get digitOrSign => $package$digitOrSign;
@@ -11972,7 +11972,7 @@ Tuple unzipEntries([Iterable entries]) => $package$unzipEntries(entries);
 
 abstract class Usable {
 }
-Iterable $package$zipEntries([Iterable keys, Iterable items]) => $package$mapPairs(new dart$Callable(([$dart$core.Object key, $dart$core.Object item]) => new Entry(key, item)), keys, items);
+Iterable $package$zipEntries([Iterable keys, Iterable items]) => $package$mapPairs(new dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => new Entry($0, $1)), keys, items);
 
 Iterable zipEntries([Iterable keys, Iterable items]) => $package$zipEntries(keys, items);
 
@@ -11980,7 +11980,7 @@ Iterable $package$zipPairs([Iterable firstElements, Iterable secondElements]) =>
 
 Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package$zipPairs(firstElements, secondElements);
 
-Iterable $package$zip([Iterable heads, Iterable tails]) => $package$mapPairs(new dart$Callable(([$dart$core.Object first, $dart$core.Object rest]) => new Tuple(first, rest)), heads, tails);
+Iterable $package$zip([Iterable heads, Iterable tails]) => $package$mapPairs(new dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => new Tuple($0, $1)), heads, tails);
 
 Iterable zip([Iterable heads, Iterable tails]) => $package$zip(heads, tails);
 

@@ -14,7 +14,7 @@ class C {
     C() {}
     void _$foo() {
         $dart$core.String captureMe = "";
-        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String _$s]) => new C$_$foo$D(this, captureMe, $ceylon$language.String.nativeValue(_$s)));
+        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new C$_$foo$D(this, captureMe, $ceylon$language.String.nativeValue($0)));
         $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$_$foo$D(this, captureMe, $ceylon$language.String.nativeValue(s)));
     }
 }

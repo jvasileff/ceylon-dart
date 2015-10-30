@@ -20,8 +20,8 @@ abstract class Bottom implements Left, Right {
     static $ceylon$language.Usable $foo([final Bottom $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
     void run();
     static void $run([final Bottom $this]) {
-        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Top.$bar($this, u as $ceylon$language.Usable));
-        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Left.$foo($this, u as $ceylon$language.Usable));
-        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object u]) => Right.$foo($this, u as $ceylon$language.Usable));
+        $ceylon$language.Callable sBar = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => Top.$bar($this, $0 as $ceylon$language.Usable));
+        $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => Left.$foo($this, $0 as $ceylon$language.Usable));
+        $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => Right.$foo($this, $0 as $ceylon$language.Usable));
     }
 }
