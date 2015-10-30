@@ -352,10 +352,7 @@ class TopLevelVisitor(CompilationContext ctx)
         }
 
         // skip erased types
-        // TODO Identifiable, but take a look
-        //      at generated code first
-        if (info.declarationModel in [
-                ceylonTypes.nullValueDeclaration]) {
+        if (info.declarationModel == ceylonTypes.nullValueDeclaration) {
             return;
         }
 
@@ -404,8 +401,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 }
                 else null;
-
-        // TODO consolidate with similar visitInterfaceDefinition code?
 
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
