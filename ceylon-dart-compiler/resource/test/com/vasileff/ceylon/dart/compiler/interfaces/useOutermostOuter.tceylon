@@ -1,4 +1,4 @@
-shared void run(){
+shared void run() {
     interface I {
         shared default String fooI => "fooI";
         shared interface J {

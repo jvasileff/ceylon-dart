@@ -3,7 +3,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class run$I1$I2$i2Foo$o_ implements run$I1$I2 {
     run$I1$I2 $outer$default$run$I1$I2;
-    run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2.$outer$default$run$I1;
+    run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2;
     $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
     $dart$core.String $capture$run$s1;
     run$I1$I2$i2Foo$o_([run$I1$I2 $outer$default$run$I1$I2, $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String $capture$run$s1]) {
