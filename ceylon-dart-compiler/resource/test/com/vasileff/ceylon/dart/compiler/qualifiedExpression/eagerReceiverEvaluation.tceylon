@@ -1,0 +1,41 @@
+variable Integer aCount = 0;
+shared void run() {
+    // (++i) must be eagerly evaluated
+    variable value i = 0;
+    value p = (++i).plus;
+    assert (p(0) == 1);
+    assert (p(0) == 1);
+
+    // A() must be eagerly evaluated
+    class A() {
+        shared Integer x = ++aCount;
+        shared class B() {
+            shared Integer x = outer.x;
+        }
+    }
+    value newB = A.B(A());
+    assert (newB().x == 1);
+    assert (newB().x == 1);
+
+    // eager not required; should be optimized
+    value other = 1;
+    value q = other.plus;
+    assert (q(0) == 1);
+
+    // tricky non-eager: looks like a constant, locally
+    class C() {
+        shared default Integer other = 1;
+        shared void foo() {
+            value q = other.plus;
+            assert (q(0) == 1);
+            assert (q(0) == 1);
+        }
+    }
+    class D() extends C() {
+        variable Integer i = 0;
+        shared actual Integer other => ++i;
+    }
+    D().foo();
+
+    print("done");
+}

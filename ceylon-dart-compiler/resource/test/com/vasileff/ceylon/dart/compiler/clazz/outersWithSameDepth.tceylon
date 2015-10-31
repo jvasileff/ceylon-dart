@@ -1,0 +1,18 @@
+shared void run() {
+    interface I {
+        shared Integer a => 1;
+        shared interface J {
+            shared Integer a => outer.a;
+        }
+    }
+    class C() satisfies I {
+        shared Integer b => 2;
+        shared class D() satisfies J {
+            shared Integer b => outer.b;
+        }
+    }
+    assert(C().D().a == 1);
+    assert(C().D().b == 2);
+    print("done");
+}
+

@@ -1,0 +1,20 @@
+shared void run() {
+    interface I {
+        shared Integer a => 1;
+        shared interface J {
+            shared Integer oa => outer.a;
+        }
+    }
+    class C() satisfies I {
+        shared Integer b => 2;
+        shared class Middle() {
+            shared class D() satisfies J {
+                shared Integer ob => b;
+            }
+        }
+    }
+    assert(C().Middle().D().oa == 1);
+    assert(C().Middle().D().ob == 2);
+    print("done");
+}
+

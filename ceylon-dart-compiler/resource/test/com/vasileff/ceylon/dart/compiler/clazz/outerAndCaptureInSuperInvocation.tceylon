@@ -1,0 +1,11 @@
+shared void run() {
+    void foo() {}
+    class A(String s) {
+        shared void myFoo() => foo();
+        shared class B(String s) {
+            shared class C() extends B("") {}
+        }
+        shared class D() extends B("") {}
+        shared class E() extends A("") {}
+    }
+}

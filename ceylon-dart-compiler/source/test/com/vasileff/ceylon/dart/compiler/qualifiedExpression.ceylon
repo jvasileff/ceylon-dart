@@ -55,4 +55,8 @@ object qualifiedExpression {
     shared test
     void refToClassInInterfaceInInterface()
         =>  compileAndCompare2("qualifiedExpression/refToClassInInterfaceInInterface");
+
+    shared test
+    void eagerReceiverEvaluation()
+        =>  compileAndCompare2("qualifiedExpression/eagerReceiverEvaluation");
 }

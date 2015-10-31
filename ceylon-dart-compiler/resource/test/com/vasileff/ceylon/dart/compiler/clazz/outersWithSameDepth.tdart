@@ -1,0 +1,37 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$I$J {
+    run$I get $outer$default$run$I;
+    $dart$core.int get a;
+    static $dart$core.int $get$a([final run$I$J $this]) => $this.$outer$default$run$I.a;
+}
+abstract class run$I {
+    $dart$core.int get a;
+    static $dart$core.int $get$a([final run$I $this]) => 1;
+}
+class run$C$D implements run$I$J {
+    run$C $outer$default$run$C;
+    run$I get $outer$default$run$I => $outer$default$run$C;
+    run$C$D([run$C $outer$default$run$C]) {
+        this.$outer$default$run$C = $outer$default$run$C;
+    }
+    $dart$core.int get b => $outer$default$run$C.b;
+    $dart$core.int get a => run$I$J.$get$a(this);
+}
+class run$C implements run$I {
+    run$C() {}
+    $dart$core.int get b => 2;
+    $dart$core.int get a => run$I.$get$a(this);
+}
+void $package$run() {
+    if (!$ceylon$language.Integer.instance((new run$C$D(new run$C())).a).equals($ceylon$language.Integer.instance(1))) {
+        throw new $ceylon$language.AssertionError("Violated: C().D().a == 1");
+    }
+    if (!$ceylon$language.Integer.instance((new run$C$D(new run$C())).b).equals($ceylon$language.Integer.instance(2))) {
+        throw new $ceylon$language.AssertionError("Violated: C().D().b == 2");
+    }
+    $ceylon$language.print($ceylon$language.String.instance("done"));
+}
+
+void run() => $package$run();

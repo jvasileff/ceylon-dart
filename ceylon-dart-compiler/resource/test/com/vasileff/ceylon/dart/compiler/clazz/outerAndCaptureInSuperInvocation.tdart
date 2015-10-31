@@ -1,0 +1,47 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$A$B$C  extends run$A$B {
+    run$A$B $outer$default$run$A$B;
+    run$A get $outer$default$run$A => $outer$default$run$A$B.$outer$default$run$A;
+    run$A$B$C([run$A$B $outer$default$run$A$B]) : super($outer$default$run$A$B.$outer$default$run$A, "") {
+        this.$outer$default$run$A$B = $outer$default$run$A$B;
+    }
+}
+class run$A$B {
+    run$A $outer$default$run$A;
+    run$A$B([run$A $outer$default$run$A, $dart$core.String _$s]) {
+        this.$outer$default$run$A = $outer$default$run$A;
+        this._$s = _$s;
+    }
+    $dart$core.String _$s;
+}
+class run$A$D  extends run$A$B {
+    run$A $outer$default$run$A;
+    run$A$D([run$A $outer$default$run$A]) : super($outer$default$run$A, "") {
+        this.$outer$default$run$A = $outer$default$run$A;
+    }
+}
+class run$A$E  extends run$A {
+    run$A $outer$default$run$A;
+    $dart$core.Function $capture$run$foo;
+    run$A$E([run$A $outer$default$run$A, $dart$core.Function $capture$run$foo]) : super($capture$run$foo, "") {
+        this.$outer$default$run$A = $outer$default$run$A;
+        this.$capture$run$foo = $capture$run$foo;
+    }
+}
+class run$A {
+    $dart$core.Function $capture$run$foo;
+    run$A([$dart$core.Function $capture$run$foo, $dart$core.String _$s]) {
+        this.$capture$run$foo = $capture$run$foo;
+        this._$s = _$s;
+    }
+    $dart$core.String _$s;
+    void myFoo() => $capture$run$foo();
+}
+void $package$run() {
+    void foo() {}
+
+}
+
+void run() => $package$run();

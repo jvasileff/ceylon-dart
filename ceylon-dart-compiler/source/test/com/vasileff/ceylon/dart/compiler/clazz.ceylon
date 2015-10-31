@@ -114,4 +114,16 @@ object clazz {
     shared test
     void initializersCombined()
         =>  compileAndCompare2("clazz/initializersCombined");
+
+    shared test
+    void outersWithSameDepth()
+        =>  compileAndCompare2("clazz/outersWithSameDepth");
+
+    shared test
+    void outersWithMixedDepth()
+        =>  compileAndCompare2("clazz/outersWithMixedDepth");
+
+    shared test
+    void outerAndCaptureInSuperInvocation()
+        =>  compileAndCompare2("clazz/outerAndCaptureInSuperInvocation");
 }
