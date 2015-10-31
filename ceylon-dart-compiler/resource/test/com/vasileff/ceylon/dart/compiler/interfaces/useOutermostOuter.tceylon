@@ -1,0 +1,17 @@
+shared void run(){
+    interface I {
+        shared default String fooI => "fooI";
+        shared interface J {
+            shared default String fooIJ => outer.fooI;
+        }
+    }
+    class C() satisfies I {
+        shared actual String fooI => "fooI from C";
+        shared class Middle() satisfies I {
+            shared class D() satisfies I.J {}
+        }
+    }
+    // `Middle()` should be the `outer` for `D`'s `I.J`, not the instance of `C`.
+    assert (C().Middle().D().fooIJ == "fooI");
+    print("done.");
+}

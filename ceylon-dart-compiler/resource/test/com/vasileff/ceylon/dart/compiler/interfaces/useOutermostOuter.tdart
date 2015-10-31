@@ -1,0 +1,39 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class run$I$J {
+    run$I get $outer$default$run$I;
+    $dart$core.String get fooIJ;
+    static $dart$core.String $get$fooIJ([final run$I$J $this]) => $this.$outer$default$run$I.fooI;
+}
+abstract class run$I {
+    $dart$core.String get fooI;
+    static $dart$core.String $get$fooI([final run$I $this]) => "fooI";
+}
+class run$C$Middle$D implements run$I$J {
+    run$C$Middle $outer$default$run$C$Middle;
+    run$I get $outer$default$run$I => $outer$default$run$C$Middle;
+    run$C$Middle$D([run$C$Middle $outer$default$run$C$Middle]) {
+        this.$outer$default$run$C$Middle = $outer$default$run$C$Middle;
+    }
+    $dart$core.String get fooIJ => run$I$J.$get$fooIJ(this);
+}
+class run$C$Middle implements run$I {
+    run$C $outer$default$run$C;
+    run$C$Middle([run$C $outer$default$run$C]) {
+        this.$outer$default$run$C = $outer$default$run$C;
+    }
+    $dart$core.String get fooI => run$I.$get$fooI(this);
+}
+class run$C implements run$I {
+    run$C() {}
+    $dart$core.String get fooI => "fooI from C";
+}
+void $package$run() {
+    if (!$ceylon$language.String.instance((new run$C$Middle$D(new run$C$Middle(new run$C()))).fooIJ).equals($ceylon$language.String.instance("fooI"))) {
+        throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
+    }
+    $ceylon$language.print($ceylon$language.String.instance("done."));
+}
+
+void run() => $package$run();

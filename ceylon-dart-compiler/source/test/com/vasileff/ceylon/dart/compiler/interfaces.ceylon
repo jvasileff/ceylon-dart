@@ -1,5 +1,6 @@
 import ceylon.test {
-    test
+    test,
+    ignore
 }
 
 shared
@@ -124,4 +125,8 @@ object interfaces {
     shared test
     void noFormalForPrivate()
         =>  compileAndCompare2("interfaces/noFormalForPrivate");
+
+    shared test ignore
+    void useOutermostOuter()
+        =>  compileAndCompare2("interfaces/useOutermostOuter");
 }
