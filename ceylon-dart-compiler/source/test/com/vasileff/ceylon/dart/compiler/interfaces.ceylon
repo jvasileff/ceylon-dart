@@ -129,4 +129,12 @@ object interfaces {
     shared test ignore
     void useOutermostOuter()
         =>  compileAndCompare2("interfaces/useOutermostOuter");
+
+    shared test ignore
+    void useOutermostOuter2()
+        =>  compileAndCompare2("interfaces/useOutermostOuter2");
+
+    shared test ignore
+    void useOutermostOuter3()
+        =>  compileAndCompare2("interfaces/useOutermostOuter3");
 }

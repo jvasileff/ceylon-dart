@@ -1,0 +1,31 @@
+// For InnerClass instances, all ways to `InnerInterface.outer` should lead to the
+// instance of `MiddleClass`.
+
+// For non-InnerClass instances of MiddleClass, all ways to `InnerInterface.outer` should
+// lead to the instance of `OuterClass`.
+shared void run() {
+    interface OuterInterface {
+        shared default String outerInterfaceIdent => "OuterInterface; OuterInterface impl";
+
+        shared interface InnerInterface {
+            shared default String outerIdent => outer.outerInterfaceIdent;
+        }
+    }
+
+    class OuterClass() satisfies OuterInterface {
+        shared actual String outerInterfaceIdent => "OuterInterface; OuterClass impl";
+
+        shared class MiddleClass() satisfies OuterInterface & OuterInterface.InnerInterface {
+            shared String outerIdentFromMiddle => outerIdent;
+            shared actual String outerInterfaceIdent => "OuterInterface; MiddleClass impl";
+
+            shared class InnerClass() extends MiddleClass() satisfies OuterInterface.InnerInterface {
+            }
+        }
+    }
+    print(OuterClass().MiddleClass().InnerClass().outerIdent); // should print "MiddleClass impl"
+    print(OuterClass().MiddleClass().InnerClass().outerIdentFromMiddle); // should print "MiddleClass impl"
+
+    print(OuterClass().MiddleClass().outerIdent); // should print "OuterInterface impl"
+    print(OuterClass().MiddleClass().outerIdentFromMiddle); // should print "OuterInterface impl"
+}

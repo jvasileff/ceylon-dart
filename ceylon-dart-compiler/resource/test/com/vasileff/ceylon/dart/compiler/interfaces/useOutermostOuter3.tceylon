@@ -1,0 +1,80 @@
+// TODO uncomment some lines when reified generics are ready.
+shared void run() {
+
+    interface OuterInterface<out T> {
+
+        //shared default String outerInterfaceT => "OuterInterface.T = " + `T`.string;
+        shared default String outerInterfaceIdent => "OuterInterface.ident, OuterInterface impl";
+
+        shared formal T t;
+
+        shared interface InnerInterface<out U> {
+
+            //shared default String innerInterfaceT => "InnerInterface.T = " + `T`.string;
+            //shared default String innerInterfaceU => "InnerInterface.U = " + `U`.string;
+
+            shared default T outerT => outer.t;
+
+            //shared default String outerInterfaceTFromInnerInterface => outer.outerInterfaceT;
+            shared default String outerIdentFromInnerInterface => outer.outerInterfaceIdent;
+        }
+    }
+
+    class OuterClass() satisfies OuterInterface<Anything> {
+
+        shared actual Anything t => null;
+        shared actual String outerInterfaceIdent => "OuterInterface.ident; OuterClass impl";
+
+        shared class MiddleClass() satisfies OuterInterface<Object> & OuterInterface<Anything>.InnerInterface<Object> {
+
+            shared actual Object t => object {};
+            shared actual String outerInterfaceIdent => "OuterInterface.ident; MiddleClass impl";
+
+            // `t` should be an Anything from OuterClass's InnerInterface conformance
+            shared default Anything someT => outerT;
+
+            shared class InnerClass() extends MiddleClass() satisfies OuterInterface<Object>.InnerInterface<String> {
+                // `t` should be an Object from MiddleClass's InnerInterface conformance,
+                // not Anything from OuterClass's InnerInterface conformance
+                shared actual Object someT => outerT;
+            }
+        }
+    }
+
+    // "Object" (correct), from MiddleClass satisfying OuterInterface
+    //print(OuterClass().MiddleClass().InnerClass().outerInterfaceT);
+
+    // "Anything" (wrong), this is what we'd expect from MiddleClass's InnerInterface.outer,
+    // but InnerClass's InnerInterface.outer should produce `Object`.
+    //print(OuterClass().MiddleClass().InnerClass().outerInterfaceTFromInnerInterface);
+
+    // "...MiddleClass impl" (correct), from MiddleClass's override
+    print(OuterClass().MiddleClass().InnerClass().outerInterfaceIdent);
+
+    // "...OuterClass impl" (wrong), again what we'd expect from  MiddleClass's InnerInterface.outer
+    print(OuterClass().MiddleClass().InnerClass().outerIdentFromInnerInterface);
+
+    // "String" (correct), showing InnerClass actually does acknowledge the
+    // refined satisfaction of InnerInterface, sometimes.
+    //print(OuterClass().MiddleClass().InnerClass().innerInterfaceU);
+
+    // "Anything" (wrong), T==Anything is never paired with U==String
+    //print(OuterClass().MiddleClass().InnerClass().innerInterfaceT);
+
+    // "<null>" (wrong, **Objects aren't Null!**)
+    print(OuterClass().MiddleClass().InnerClass().someT of Object);
+
+
+    // These are all normal and correct:
+
+    //print(OuterClass().MiddleClass().outerInterfaceT); // Object
+    //print(OuterClass().MiddleClass().outerInterfaceTFromInnerInterface); // Anything
+
+    print(OuterClass().MiddleClass().outerInterfaceIdent); // MiddleClass impl
+    print(OuterClass().MiddleClass().outerIdentFromInnerInterface); // OuterClass impl
+
+    //print(OuterClass().MiddleClass().innerInterfaceT); // Anything
+    //print(OuterClass().MiddleClass().innerInterfaceU); // Object
+
+    print(OuterClass().MiddleClass().someT of Anything); // Null
+}
