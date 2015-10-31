@@ -457,8 +457,6 @@ class TopLevelVisitor(CompilationContext ctx)
         "$outer getters for $outers that may be required by satisfied interfaces.
          Access through *our* outer."
         value outerForwarders
-            // TODO We may also be picking up $outers handled by extended classes;
-            //      if so, we should filter those out...
             =   outerDeclarations.skip(1).map {
                     (outerDeclaration) =>
                     DartMethodDeclaration {
