@@ -719,6 +719,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             takeUntil(ancestorChain(scope))((c)
                 =>  c.inherits(inheritedDeclaration));
 
+    "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in
+     the case that `this` satisfies [[inheritedDeclaration]]."
+    shared
+    {ClassOrInterfaceModel+} ancestorChainToOuterInheritingDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel inheritedDeclaration)
+        =>  // up to and including a declarations that inherits inheritedDeclaration
+            ancestorChainToInheritingDeclaration {
+                assertExists(getContainingClassOrInterface(container(scope)));
+                inheritedDeclaration;
+            }.follow(scope);
+
     shared
     {ClassOrInterfaceModel+} ancestorChainToCapturerOfDeclaration(
             ClassModel|InterfaceModel scope,

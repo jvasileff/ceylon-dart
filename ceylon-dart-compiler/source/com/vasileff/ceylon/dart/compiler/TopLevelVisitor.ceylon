@@ -478,7 +478,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             false;
                             assertExists {
                                 dartTypes.expressionToThisOrOuterStripThis {
-                                    dartTypes.ancestorChainToExactDeclaration {
+                                    dartTypes.ancestorChainToOuterInheritingDeclaration {
                                         classModel;
                                         outerDeclaration;
                                     };
