@@ -136,4 +136,8 @@ object interfaces {
     shared test
     void useOutermostOuter3()
         =>  compileAndCompare2("interfaces/useOutermostOuter3");
+
+    shared test
+    void outerInterfaceSandwich()
+        =>  compileAndCompare2("interfaces/outerInterfaceSandwich");
 }

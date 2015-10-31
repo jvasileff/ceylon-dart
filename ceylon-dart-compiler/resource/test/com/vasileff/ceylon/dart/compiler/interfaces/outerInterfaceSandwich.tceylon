@@ -1,0 +1,23 @@
+shared class A() {
+    shared String s => "s";
+    shared interface I {
+        shared String si => s;
+        shared class B() {
+            shared String sba => s;
+            shared String sbi => si;
+        }
+    }
+    shared object i satisfies I {}
+}
+
+shared void run() {
+    value a = A();
+    value i = a.i;
+    value b = A.I.B(i)();
+
+    assert (a.s == "s");
+    assert (i.si == "s");
+    assert (b.sba == "s");
+    assert (b.sbi == "s");
+    print("done.");
+}

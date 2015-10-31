@@ -1,0 +1,50 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class A$I$B {
+    A$I $outer$default$A$I;
+    A$I$B([A$I $outer$default$A$I]) {
+        this.$outer$default$A$I = $outer$default$A$I;
+    }
+    $dart$core.String get sba => $outer$default$A$I.$outer$default$A.s;
+    $dart$core.String get sbi => $outer$default$A$I.si;
+}
+abstract class A$I {
+    A get $outer$default$A;
+    $dart$core.String get si;
+    static $dart$core.String $get$si([final A$I $this]) => $this.$outer$default$A.s;
+}
+class A$i_ implements A$I {
+    A $outer$default$A;
+    A$i_([A $outer$default$A]) {
+        this.$outer$default$A = $outer$default$A;
+    }
+    $dart$core.String get si => A$I.$get$si(this);
+}
+class A {
+    A() {
+        i = new A$i_(this);
+    }
+    $dart$core.String get s => "s";
+    A$i_ i;
+}
+void $package$run() {
+    A a = new A();
+    $dart$core.Object i = a.i;
+    A$I$B b = (new $ceylon$language.dart$Callable(() => new A$I$B(i as A$I))).f() as A$I$B;
+    if (!$ceylon$language.String.instance(a.s).equals($ceylon$language.String.instance("s"))) {
+        throw new $ceylon$language.AssertionError("Violated: a.s == \"s\"");
+    }
+    if (!$ceylon$language.String.instance((i as A$I).si).equals($ceylon$language.String.instance("s"))) {
+        throw new $ceylon$language.AssertionError("Violated: i.si == \"s\"");
+    }
+    if (!$ceylon$language.String.instance(b.sba).equals($ceylon$language.String.instance("s"))) {
+        throw new $ceylon$language.AssertionError("Violated: b.sba == \"s\"");
+    }
+    if (!$ceylon$language.String.instance(b.sbi).equals($ceylon$language.String.instance("s"))) {
+        throw new $ceylon$language.AssertionError("Violated: b.sbi == \"s\"");
+    }
+    $ceylon$language.print($ceylon$language.String.instance("done."));
+}
+
+void run() => $package$run();
