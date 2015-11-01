@@ -101,7 +101,9 @@ import com.vasileff.ceylon.dart.ast {
     DartSwitchCase,
     DartIntegerLiteral,
     DartSwitchStatement,
-    DartListLiteral
+    DartListLiteral,
+    createNullSafeExpression,
+    createExpressionEvaluationWithSetup
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,
@@ -262,89 +264,6 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartFunctionExpressionInvocation createInlineDartStatements(
-            "Zero or more statements, followed by a Return"
-            [DartStatement*] statements)
-        =>  DartFunctionExpressionInvocation {
-                DartFunctionExpression {
-                    dartFormalParameterListEmpty;
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock(statements);
-                    };
-                };
-                DartArgumentList([]);
-            };
-
-    "Create a null safe expression. This function performs no explicit boxing or casting,
-     as is obvious by the fact that the input expression parameters are not callables.
-
-     Note: technically the invocation should be cast to the expected lhs type, since Dart
-     appears to treat the result of anonymous function invocations as `var`. Regular
-     boxing won't work, since we can't claim to be returning `Anything`; we may actually
-     be returning an erasedToNative value. So lets not get too pedantic."
-    shared
-    DartExpression createNullSafeExpression(
-            "Identifier for result of [[maybeNullExpression]]"
-            DartSimpleIdentifier parameterIdentifier,
-            "The type of the [[maybeNullExpression]] that will be exposed as
-             [[parameterIdentifier]]"
-            DartTypeName parameterType,
-            "Evaluate, test for null, and make available as [[parameterIdentifier]].
-             Must be of [[parameterType]]."
-            DartExpression maybeNullExpression,
-            "Only evaluate if maybeNullExpression is null"
-            DartExpression ifNullExpression,
-            "Only evaluate if maybeNullExpression is not null"
-            DartExpression ifNotNullExpression)
-        =>  DartFunctionExpressionInvocation {
-                DartFunctionExpression {
-                    DartFormalParameterList {
-                        positional = false;
-                        named = false;
-                        [DartSimpleFormalParameter {
-                            false;
-                            false;
-                            parameterType;
-                            parameterIdentifier;
-                        }];
-                    };
-                    body = DartExpressionFunctionBody {
-                        async = false;
-                        DartConditionalExpression {
-                            DartBinaryExpression {
-                                parameterIdentifier;
-                                "==";
-                                DartNullLiteral();
-                            };
-                            ifNullExpression;
-                            ifNotNullExpression;
-                        };
-                    };
-                };
-                DartArgumentList {
-                    [maybeNullExpression];
-                };
-            };
-
-    "Returns an invoked function that executes [[setup]] and returns [[expression]] if
-     [[setup]] is nonempty. Returns [[expression]] otherwise."
-    shared
-    DartExpression createExpressionEvaluationWithSetup(
-            [DartStatement*] setup, DartExpression expression)
-        =>  if (!nonempty setup) then
-                expression
-            else
-                createInlineDartStatements {
-                    concatenate {
-                        setup,
-                        [DartReturnStatement {
-                            expression;
-                        }]
-                    };
-                };
-
-    shared
     DartFunctionDeclaration generateFunctionDefinition
             (FunctionShortcutDefinition | FunctionDefinition that) {
 
@@ -427,8 +346,9 @@ class BaseGenerator(CompilationContext ctx)
             arguments = a.argumentList.listedArguments;
         }
 
-        value [functionOrValueIdentifier, isFunction] = dartTypes
-                    .dartIdentifierForFunctionOrValue(scope, memberDeclaration, false);
+        value [functionOrValueIdentifier, dartElementType]
+            =   dartTypes.dartIdentifierForFunctionOrValue(
+                    scope, memberDeclaration, false);
 
         value resultDeclaration =
                 if (is FunctionModel memberDeclaration,
@@ -442,7 +362,8 @@ class BaseGenerator(CompilationContext ctx)
         if (arguments nonempty) {
             "If there are arguments, the member is surely a FunctionModel and must
              translate to a Dart function"
-            assert (is FunctionModel memberDeclaration, isFunction);
+            assert (is FunctionModel memberDeclaration,
+                    dartElementType == dartFunction);
 
             "If we have arguments, we'll have a signature."
             assert (exists signature);
@@ -466,13 +387,13 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
         else {
-            invocation =
-                if (!isFunction)
-                then functionOrValueIdentifier
-                else DartFunctionExpressionInvocation {
-                    functionOrValueIdentifier;
-                    DartArgumentList();
-                };
+            invocation
+                =   if (dartElementType != dartFunction)
+                    then functionOrValueIdentifier
+                    else DartFunctionExpressionInvocation {
+                        functionOrValueIdentifier;
+                        DartArgumentList();
+                    };
         }
 
         return
@@ -585,7 +506,7 @@ class BaseGenerator(CompilationContext ctx)
         DartExpression dartBoxedReceiver;
 
         "Are we invoking a Dart function or constructor? (As opposed to a Dart value)"
-        Boolean isFunction;
+        DartElementType dartElementType;
 
         "The Dart identifier for the function, value, or constructor"
         DartSimpleIdentifier | DartConstructorName memberIdentifier;
@@ -626,8 +547,8 @@ class BaseGenerator(CompilationContext ctx)
             argsSetupAndExpressions
                 =   standardArgs();
 
-            isFunction
-                =   true; // Constructor, really
+            dartElementType
+                =   dartFunction; // Constructor, really
 
             dartBoxedReceiver // Very ugly. But won't be used.
                 =   DartNullLiteral();
@@ -672,7 +593,8 @@ class BaseGenerator(CompilationContext ctx)
                 argsSetupAndExpressions
                     =   standardArgs();
 
-                isFunction = true; // Static interface functions are... functions
+                dartElementType
+                    =   dartFunction; // Static interface functions are... functions
 
                 // Note: It's nice that we have the declaration pointed to by
                 //       referenced by `super`, but it's also completely useless.
@@ -712,13 +634,15 @@ class BaseGenerator(CompilationContext ctx)
                 dartBoxedReceiver
                         =   DartSimpleIdentifier("super");
 
-                value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                value [m, t] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     memberDeclaration;
                     false;
                 };
+
                 memberIdentifier = m;
-                isFunction = f;
+
+                dartElementType = t;
             }
         }
         else if (!memberDeclaration.shared,
@@ -739,8 +663,8 @@ class BaseGenerator(CompilationContext ctx)
             argsSetupAndExpressions
                 =   standardArgs();
 
-            isFunction
-                =   true; // Static interface functions are... functions
+            dartElementType
+                =   dartFunction; // Static interface functions are... functions
 
             dartBoxedReceiver
                 =   dartTypes.dartIdentifierForClassOrInterface {
@@ -788,9 +712,15 @@ class BaseGenerator(CompilationContext ctx)
                         };
 
                 // very ugly, but won't be used
-                memberIdentifier = DartSimpleIdentifier("null");
-                thisArgument = [];
-                isFunction = true;
+                memberIdentifier
+                    =   DartSimpleIdentifier("null");
+
+                // very ugly, but won't be used
+                dartElementType
+                    =   dartFunction;
+
+                thisArgument
+                    =   [];
 
                 ceylonReceiverDartType
                     =   dartTypes.dartTypeName {
@@ -808,7 +738,8 @@ class BaseGenerator(CompilationContext ctx)
                 // TODO Make sure we evaluate args for side-effects w/null-safe
                 //      invocations.
 
-                argsSetupAndExpressions = [argsSetup, []];
+                argsSetupAndExpressions
+                    =   [argsSetup, []];
 
                 assert (exists rightOperandArgument
                     =   argsExpressions[0]);
@@ -839,13 +770,18 @@ class BaseGenerator(CompilationContext ctx)
                 argsSetupAndExpressions
                     =   standardArgs();
 
-                value [m, f] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    scope;
-                    memberDeclaration;
-                    false;
-                };
-                memberIdentifier = m;
-                isFunction = f;
+                value [m, t]
+                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                            scope;
+                            memberDeclaration;
+                            false;
+                        };
+
+                memberIdentifier
+                    =   m;
+
+                dartElementType
+                    =   t;
 
                 // Determine usable receiver type. `withLhsDenotable` would be simpler, but
                 // we may need the type (for safeMemberOperator code)
@@ -891,7 +827,7 @@ class BaseGenerator(CompilationContext ctx)
              to a Dart function, or it's a ClassModel, and will translate to a Dart
              constructor."
             assert (is FunctionModel | ClassModel | ConstructorModel memberDeclaration,
-                    isFunction);
+                    dartElementType == dartFunction);
 
             //"If we have arguments, we'll have a signature."
             //assert (exists signature);
@@ -1003,7 +939,7 @@ class BaseGenerator(CompilationContext ctx)
             function valueAccess(DartExpression receiver)
                 =>  if (exists optimizedExpression) then
                         optimizedExpression(receiver)
-                    else if (!isFunction) then
+                    else if (dartElementType != dartFunction) then
                         DartPropertyAccess(receiver, memberIdentifier)
                     else
                         DartMethodInvocation {
@@ -2101,16 +2037,24 @@ class BaseGenerator(CompilationContext ctx)
         };
     }
 
+    "Handles toplevel, class and interface member, and statement `ValueDefinition`s with
+     `LazySpecifier`s and `ValueGetterDefinition`s.
+
+     Note: non-lazy `ValueDefinition`s are handled by `generateForValueDefinition()`."
+
     shared
+    throws(`class AssertionError`,
+        "If provided a [[ValueDefinition]] with a non-lazy [[Specifier]].")
     DartFunctionDeclaration generateForValueDefinitionGetter(
             ValueDefinition|ValueGetterDefinition that) {
 
         value definition = that.definition;
 
-        if (definition is Specifier) {
-            throw CompilerBug(that, "Specifier not supported");
-        }
-        assert (is LazySpecifier|Block definition);
+        "True, but the typechecker is not smart enough to figure that out."
+        assert (exists definition);
+
+        "This method does not support non-lazy `Specifier`s."
+        assert (!is Specifier definition);
 
         value declarationModel
             =   switch (that)
@@ -2140,7 +2084,7 @@ class BaseGenerator(CompilationContext ctx)
         //      within functions, not getters (empty parameter list)
         //      within classes and interfaces, getters, but MethodDeclaration instead
 
-        value [identifier, isFunction]
+        value [identifier, dartElementType]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     declarationModel;
@@ -2153,10 +2097,10 @@ class BaseGenerator(CompilationContext ctx)
                 scope;
                 declarationModel;
             };
-            !isFunction then "get";
+            dartElementType != dartFunction then "get";
             identifier;
             DartFunctionExpression {
-                isFunction then dartFormalParameterListEmpty;
+                dartElementType == dartFunction then dartFormalParameterListEmpty;
                 switch (definition)
                 case (is LazySpecifier)
                     DartExpressionFunctionBody {
@@ -2198,7 +2142,7 @@ class BaseGenerator(CompilationContext ctx)
         value info = ValueSetterDefinitionInfo(that);
         value declarationModel = info.declarationModel;
 
-        value [identifier, isFunction]
+        value [identifier, dartElementType]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     info;
                     declarationModel;
@@ -2212,7 +2156,7 @@ class BaseGenerator(CompilationContext ctx)
                     "void";
                 };
             };
-            !isFunction then "set";
+            dartElementType != dartFunction then "set";
             identifier;
             DartFunctionExpression {
                 DartFormalParameterList {
@@ -3786,8 +3730,8 @@ class BaseGenerator(CompilationContext ctx)
         assert (is FunctionOrValueModel targetDeclaration);
 
         // FIXME handle interface setters (shared and non-shared)
-        value [targetIdentifier, targetIsFunction] =
-                dartTypes.dartIdentifierForFunctionOrValue(
+        value [targetIdentifier, targetDartElementType]
+            =   dartTypes.dartIdentifierForFunctionOrValue(
                     that, targetDeclaration, true);
 
         // create the possibly qualified (by module or value) target
@@ -3809,7 +3753,7 @@ class BaseGenerator(CompilationContext ctx)
                 rhsExpression);
 
         value unboxed =
-            if (targetIsFunction) then
+            if (targetDartElementType == dartFunction) then
                 DartFunctionExpressionInvocation {
                     targetExpression;
                     DartArgumentList([rhs]);

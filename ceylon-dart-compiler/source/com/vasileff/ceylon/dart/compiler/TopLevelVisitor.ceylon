@@ -73,7 +73,8 @@ import com.vasileff.ceylon.dart.ast {
     DartRedirectingConstructorInvocation,
     DartIntegerLiteral,
     DartIndexExpression,
-    DartListLiteral
+    DartListLiteral,
+    createExpressionEvaluationWithSetup
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     AnyInterfaceInfo,
@@ -1054,7 +1055,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         assert (is FunctionModel|ValueModel|SetterModel declaration);
 
-        value [identifier, isFunction]
+        value [identifier, dartElementType]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     declaration;
@@ -1079,13 +1080,13 @@ class TopLevelVisitor(CompilationContext ctx)
         DartMethodDeclaration {
             false; null;
             generateFunctionReturnType(scope, declaration);
-            !isFunction then (
+            dartElementType != dartFunction then (
                 if (declaration is SetterModel)
                 then "set"
                 else "get"
             );
             identifier;
-            isFunction then generateFormalParameterList {
+            dartElementType == dartFunction then generateFormalParameterList {
                 scope;
                 parameterModels;
             };

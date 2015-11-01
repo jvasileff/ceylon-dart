@@ -66,13 +66,15 @@ shared alias ConditionCodeTuple
 shared Backend dartBackend
     =   Backend.registerBackend("Dart", "dart");
 
+"A function, value, or operator."
 shared abstract
 class DartElementType() of
     dartValue | dartFunction | DartOperator {}
 
+"A Dart Operator than can be used as a name for an instance method."
 shared abstract
 class DartOperator()
-    of dartPrefixOperator | dartInfixOperator | dartListAccess
+    of dartPrefixOperator | dartBinaryOperator | dartListAccess | dartListAssignment
     extends DartElementType() {}
 
 shared
@@ -81,11 +83,25 @@ object dartValue extends DartElementType() {}
 shared
 object dartFunction extends DartElementType() {}
 
+"The operators `-` and `~`."
 shared
 object dartPrefixOperator extends DartOperator() {}
 
+"
+ - equalityOperator: `==`
+ - relationalOperator: `<`, `>`, `<=`, `>=`
+ - additiveOperator: `-`, `+`
+ - multiplicativeOperator: `/`, `~/`, `*`, `%`
+ - bitwiseOperator: `|`, `ˆ`, `&`
+ - shiftOperator: `<<`, `>>`
+"
 shared
-object dartInfixOperator extends DartOperator() {}
+object dartBinaryOperator extends DartOperator() {}
 
+"The `[]` operator."
 shared
 object dartListAccess extends DartOperator() {}
+
+"The `[]=` operator."
+shared
+object dartListAssignment extends DartOperator() {}

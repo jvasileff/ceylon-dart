@@ -54,12 +54,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     value nameCache => ctx.nameCache;
 
-    [String, Boolean]?(DeclarationModel) mappedFunctionOrValue = (() {
+    [String, DartElementType]?(DeclarationModel) mappedFunctionOrValue = (() {
         return ImmutableMap {
             ceylonTypes.objectDeclaration.getMember("string", null, false)
-                -> ["toString", true],
+                -> ["toString", package.dartFunction],
             ceylonTypes.objectDeclaration.getMember("hash", null, false)
-                -> ["hashCode", false]
+                -> ["hashCode", dartValue]
         }.get;
     })();
 
@@ -470,12 +470,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // Determine if `declaration` is implemented as a Dart function, and if
         // so, return $dart$core.Function. Otherwise, return the type of the Dart value.
 
-        if (exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
-                mapped[1]) {
-            // Explicitly mapped/specified, may not follow normal conventions
-            return ctx.dartTypes.dartFunction;
-        }
-
         if (is ValueModel | SetterModel declaration,
                 useGetterSetterMethods(declaration)) {
             return ctx.dartTypes.dartFunction;
@@ -852,7 +846,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        target is a dart value. Note: this will be true for Ceylon values that must be
        mapped to Dart functions."
     shared
-    [DartExpression, Boolean] expressionForBaseExpression(
+    [DartExpression, DartElementType] expressionForBaseExpression(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
@@ -867,7 +861,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // TODO assert shouldn't be necessary
         assert (is FunctionModel | ValueModel | SetterModel originalDeclaration);
 
-        value [identifier, isFunction] = dartIdentifierForFunctionOrValue {
+        value [identifier, dartElementType] = dartIdentifierForFunctionOrValue {
             scope;
             originalDeclaration;
             setter;
@@ -914,7 +908,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             identifier;
                         };
 
-                return [dartExpression, isFunction];
+                return [dartExpression, dartElementType];
             }
             case (is ConstructorModel | ControlBlockModel
                     | FunctionOrValueModel | SpecificationModel) {
@@ -923,7 +917,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     =   getContainingClassOrInterface(originalDeclaration);
 
                 if (eq(container, declarationsClassOrInterface)) {
-                    return [identifier, isFunction];
+                    return [identifier, dartElementType];
                 }
                 else {
                     // The declaration doesn't belong to a class or interface, and it
@@ -944,15 +938,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                 identifierForCapture(originalDeclaration);
                             };
 
-                    return [dartExpression, isFunction];
+                    return [dartExpression, dartElementType];
                 }
             }
             case (is PackageModel) {
-                return [identifier, isFunction];
+                return [identifier, dartElementType];
             }
         }
         else {
-            return [identifier, isFunction];
+            return [identifier, dartElementType];
         }
     }
 
@@ -1050,7 +1044,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        to Dart functions."
     shared
     see(`function dartIdentifierForFunctionOrValue`)
-    [DartSimpleIdentifier, Boolean] dartIdentifierForFunctionOrValueDeclaration(
+    [DartSimpleIdentifier, DartElementType] dartIdentifierForFunctionOrValueDeclaration(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = declaration is SetterModel) {
@@ -1059,20 +1053,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         //       are mapped to "toString"? And, handle "hashCode" name translation.
         value mapped = mappedFunctionOrValue(refinedDeclaration(declaration));
         String name;
-        Boolean isDartFunction;
+        DartElementType dartElementType;
 
         if (exists mapped) {
             name = mapped[0];
-            isDartFunction = mapped[1];
+            dartElementType = mapped[1];
         }
         else {
             name = getPackagePrefixedName(declaration);
-            isDartFunction = declaration is FunctionModel;
+            dartElementType
+                =   if (declaration is FunctionModel)
+                    then package.dartFunction
+                    else dartValue;
         }
 
         switch (container = declaration.container)
         case (is PackageModel) {
-            return [DartSimpleIdentifier(name), isDartFunction];
+            return [DartSimpleIdentifier(name), dartElementType];
         }
         case (is ClassOrInterfaceModel
                     | FunctionOrValueModel
@@ -1086,14 +1083,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 return
                 [DartSimpleIdentifier {
                     name + (if (setter) then "$set" else "$get");
-                },true];
+                }, package.dartFunction];
             }
             else {
                 // identifier for the value or function
                 return
                 [DartSimpleIdentifier {
                     name;
-                }, isDartFunction];
+                }, dartElementType];
             }
         }
         else {
@@ -1117,11 +1114,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     see(`function dartIdentifierForFunctionOrValueDeclaration`)
     see(`function expressionForBaseExpression`)
-    [DartIdentifier, Boolean] dartIdentifierForFunctionOrValue(
+    [DartIdentifier, DartElementType] dartIdentifierForFunctionOrValue(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false)
-        =>  let ([identifier, isDartFunction]
+        =>  let ([identifier, dartElementType]
                     = dartIdentifierForFunctionOrValueDeclaration(
                             scope, declaration, setter))
             if (declaration.container is PackageModel
@@ -1136,10 +1133,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             unPackagePrefixify(identifier.identifier);
                         };
                     },
-                    isDartFunction
+                    dartElementType
                 ]
             else
-                [identifier, isDartFunction];
+                [identifier, dartElementType];
 
     shared
     BoxingConversion? boxingConversionFor(

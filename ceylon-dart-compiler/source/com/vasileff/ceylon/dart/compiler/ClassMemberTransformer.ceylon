@@ -256,7 +256,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 case (is ValueSpecificationInfo) info.declaration
                 case (is LazySpecificationInfo) info.declaration;
 
-        value [identifier, isFunction]
+        value [identifier, dartElementType]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     info;
                     declarationModel;
@@ -267,7 +267,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             false;
             null;
             generateFunctionReturnType(info, declarationModel);
-            if (isFunction) then
+            if (dartElementType == dartFunction) then
                 null
             else if (that is ValueSetterDefinition) then
                 "set"
@@ -278,7 +278,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 null;
             identifier;
             parameters =
-                if (isFunction, is AnyFunction that) then
+                if (dartElementType == dartFunction, is AnyFunction that) then
                     generateFormalParameterList {
                         info;
                         that.parameterLists.first;
@@ -300,7 +300,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             }
                         ];
                     }
-                else if (isFunction) then
+                else if (dartElementType == dartFunction) then
                     dartFormalParameterListEmpty
                 else
                     null;
@@ -317,7 +317,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         value declarationModel
             =   AnyValueInfo(that).declarationModel;
 
-        value [identifier, isFunction]
+        value [identifier, dartElementType]
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     info;
                     declarationModel;
@@ -328,13 +328,13 @@ class ClassMemberTransformer(CompilationContext ctx)
         DartMethodDeclaration {
             false;
             null;
-            isFunction then
+            dartElementType == dartFunction then
                 DartTypeName {
                     DartSimpleIdentifier {
                         "void";
                     };
                 };
-            !isFunction then "set";
+            dartElementType != dartFunction then "set";
             identifier;
             DartFormalParameterList {
                 false; false;
@@ -449,7 +449,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             };
         }
         case (is ClassModel) {
-            value [dartIdentifier, isFunction]
+            value [dartIdentifier, dartElementType]
                 =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                         scope;
                         declarationModel;
@@ -460,7 +460,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 false;
                 null;
                 generateFunctionReturnType(scope, declarationModel);
-                !isFunction then (
+                dartElementType != dartFunction then (
                     if (declarationModel is SetterModel)
                     then "set"
                     else "get"
@@ -483,7 +483,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             }
                         ];
                     }
-                else if (isFunction) then
+                else if (dartElementType == dartFunction) then
                     DartFormalParameterList {
                         true; false;
                         standardParameters.parameters;

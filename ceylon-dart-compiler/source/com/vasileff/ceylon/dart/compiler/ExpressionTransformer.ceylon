@@ -173,7 +173,10 @@ import com.vasileff.ceylon.dart.ast {
     DartIsExpression,
     DartTypeName,
     DartContinueStatement,
-    DartExpressionFunctionBody
+    DartExpressionFunctionBody,
+    createExpressionEvaluationWithSetup,
+    createInlineDartStatements,
+    createNullSafeExpression
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     BaseExpressionInfo,
@@ -267,7 +270,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
             switch (targetDeclaration)
             case (is ValueModel) {
-                value [dartIdentifier, dartIdentifierIsFunction] =
+                value [dartIdentifier, dartElementType] =
                         dartTypes.expressionForBaseExpression {
                     info;
                     targetDeclaration;
@@ -278,7 +281,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     info.typeModel;
                     targetDeclaration;
-                    if (dartIdentifierIsFunction) then
+                    if (dartElementType == dartFunction) then
                         DartFunctionExpressionInvocation {
                             dartIdentifier;
                             DartArgumentList();
@@ -471,6 +474,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 // Return a `Callable` that takes a `containerType` and returns a
                 // `Callable` that can be used to invoke the `memberDeclaration`
+
                 "A Callable that invokes `memberDeclaration`."
                 value innerCallable
                     =   generateNewCallableForQualifiedExpression {
