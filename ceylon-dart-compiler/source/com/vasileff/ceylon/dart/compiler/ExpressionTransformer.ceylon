@@ -1175,14 +1175,19 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformExistsOperation(ExistsOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = NodeInfo(that),
+                 operandInfo = ExpressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
                 null;
                 generateExistsExpression {
                     info;
-                    withLhsNoType {
+                    operandInfo.typeModel;
+                    // no declaration; native, if possible
+                    null;
+                    withLhsNative {
+                        operandInfo.typeModel;
                         () => that.operand.transform(this);
                     };
                 };
@@ -1190,14 +1195,19 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformIsOperation(IsOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = NodeInfo(that),
+                 operandInfo = ExpressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
                 null;
                 generateIsExpression {
                     info;
-                    withLhsNoType {
+                    operandInfo.typeModel;
+                    // no declaration; native, if possible
+                    null;
+                    withLhsNative {
+                        operandInfo.typeModel;
                         () => that.operand.transform(this);
                     };
                     TypeInfo(that.type).typeModel;
@@ -1206,14 +1216,19 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformNonemptyOperation(NonemptyOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = NodeInfo(that),
+                 operandInfo = ExpressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
                 null;
                 generateNonemptyExpression {
                     info;
-                    withLhsNoType {
+                    operandInfo.typeModel;
+                    // no declaration; native, if possible
+                    null;
+                    withLhsNative {
+                        operandInfo.typeModel;
                         () => that.operand.transform(this);
                     };
                 };
@@ -2469,7 +2484,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformSwitchCaseElseExpression(SwitchCaseElseExpression that) {
         value info = NodeInfo(that);
 
-        value [switchedType, switchedVariable, variableDeclaration]
+        value [switchedType, switchedDeclaration, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);
 
         "Recursive function to generate an if statement for the switch clauses."
@@ -2509,6 +2524,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     DartIfStatement {
                         generateIsExpression {
                             info;
+                            switchedType;
+                            switchedDeclaration;
                             switchedVariable;
                             TypeInfo(caseItem.type).typeModel;
                         };

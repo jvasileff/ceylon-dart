@@ -506,6 +506,44 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     else dartTypeModelForDeclaration(declaration, type))
             dartTypeNameForDartModel(scope, dartModel);
 
+    "Use the declaration and type information to determine eraseToNative. The result is
+     *never* erased to Object.
+
+     `TypeModel.erasedToNative` information is validated against type information to
+     determine if the type is *really* erased to native (i.e. erase the isType to native
+     *iff* the type typeToCheck possibly native)."
+    shared
+    DartTypeName dartTypeNameForIsTest(
+            DScope scope,
+            TypeModel | TypeDetails typeToCheck,
+            FunctionOrValueModel? declarationToCheck,
+            TypeModel | TypeDetails isType)
+        =>  dartTypeNameForDartModel {
+                scope;
+                if (is TypeDetails isType) then
+                    dartTypeModel {
+                        isType.type;
+                        isType.erasedToNative
+                            && native(isType.type);
+                        false;
+                    }
+                else if (is TypeDetails typeToCheck) then
+                    dartTypeModel {
+                        isType;
+                        typeToCheck.erasedToNative
+                            && native(typeToCheck.type);
+                        false;
+                    }
+                else
+                    dartTypeModel {
+                        isType;
+                        if (exists declarationToCheck)
+                            then erasedToNative(declarationToCheck)
+                            else native(typeToCheck);
+                        false;
+                    };
+            };
+
     "For the Value, or the return type of the Function"
     shared
     DartTypeName dartReturnTypeNameForDeclaration(
@@ -1272,7 +1310,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
         }
         "Type and declaration arguments must not both be null."
-        assert (exists type);
-        return type;
+        assert (exists result = type else declaration?.type);
+        return result;
     }
 }

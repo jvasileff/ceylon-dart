@@ -1,0 +1,18 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.String i = "s";
+    {
+        $dart$core.String switch$0 = i;
+        if (switch$0 is $dart$core.String) {} else {
+            $dart$core.Object i$1;
+            i$1 = $ceylon$language.String.instance(i);
+            if ($ceylon$language.Integer.instance(1).equals($ceylon$language.Integer.instance(1))) {
+                $ceylon$language.print($ceylon$language.String.instance("can't happen"));
+            }
+        }
+    }
+}
+
+void run() => $package$run();

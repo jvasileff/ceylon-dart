@@ -119,7 +119,7 @@ class StatementTransformer(CompilationContext ctx)
         value info
             =   NodeInfo(that);
 
-        value [switchedType, switchedVariable, variableDeclaration]
+        value [switchedType, switchedDeclaration, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);
 
         "Recursive function to generate an if statement for the switch clauses."
@@ -159,6 +159,8 @@ class StatementTransformer(CompilationContext ctx)
                     DartIfStatement {
                         generateIsExpression {
                             info;
+                            switchedType;
+                            switchedDeclaration;
                             switchedVariable;
                             TypeInfo(caseItem.type).typeModel;
                         };

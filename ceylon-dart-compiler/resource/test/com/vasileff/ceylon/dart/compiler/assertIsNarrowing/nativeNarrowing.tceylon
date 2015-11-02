@@ -1,0 +1,8 @@
+shared void run() {
+    String i = "s";
+    switch (i)
+    case (is String) {}
+    else if (1 == 1) {
+        print ("can't happen");
+    }
+}

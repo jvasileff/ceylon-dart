@@ -1505,8 +1505,15 @@ class BaseGenerator(CompilationContext ctx)
             };
 
             // 3. perform is check on tmp variable
-            conditionExpression = generateIsExpression(
-                    info, tempIdentifier, isType);
+            conditionExpression
+                =   generateIsExpression {
+                        info;
+                        expressionType;
+                        // no declaration; native, if possible
+                        null;
+                        tempIdentifier;
+                        isType;
+                    };
 
             // 4. set replacement variable
             value replacementDefinition
@@ -1541,14 +1548,23 @@ class BaseGenerator(CompilationContext ctx)
 
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
-            assert(is FunctionOrValueModel originalDeclaration
+            assert (is FunctionOrValueModel od
                 =   variableDeclaration.originalDeclaration);
+
+            value originalDeclaration
+                =   dartTypes.declarationConsideringElidedReplacements(od);
 
             value originalIdentifier
                 =   DartSimpleIdentifier(dartTypes.getName(originalDeclaration));
 
             conditionExpression
-                =   generateIsExpression(info, originalIdentifier, isType);
+                =   generateIsExpression {
+                        info;
+                        originalDeclaration.type;
+                        originalDeclaration;
+                        originalIdentifier;
+                        isType;
+                    };
 
             replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
@@ -1683,12 +1699,18 @@ class BaseGenerator(CompilationContext ctx)
                     case (is ExistsCondition)
                         generateExistsExpression {
                             info;
+                            expressionType;
+                            // no declaration; native, if possible
+                            null;
                             tempIdentifier;
                             that.negated != negate;
                         }
                     case (is NonemptyCondition)
                         generateNonemptyExpression {
                             info;
+                            expressionType;
+                            // no declaration; native, if possible
+                            null;
                             tempIdentifier;
                             that.negated != negate;
                         };
@@ -1750,8 +1772,11 @@ class BaseGenerator(CompilationContext ctx)
 
             // check type of the original variable,
             // possibly declare new variable with a narrowed type
-            assert (is FunctionOrValueModel originalDeclaration
+            assert (is FunctionOrValueModel od
                 =   variableDeclaration.originalDeclaration);
+
+            value originalDeclaration
+                =   dartTypes.declarationConsideringElidedReplacements(od);
 
             value originalIdentifier
                 =   DartSimpleIdentifier(dartTypes.getName(originalDeclaration));
@@ -1761,12 +1786,16 @@ class BaseGenerator(CompilationContext ctx)
                     case (is ExistsCondition)
                         generateExistsExpression {
                             info;
+                            originalDeclaration.type;
+                            originalDeclaration;
                             originalIdentifier;
                             that.negated != negate;
                         }
                     case (is NonemptyCondition)
                         generateNonemptyExpression {
                             info;
+                            originalDeclaration.type;
+                            originalDeclaration;
                             originalIdentifier;
                             that.negated != negate;
                         };
@@ -1787,10 +1816,14 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateExistsExpression(
             DScope scope,
+            TypeModel | TypeDetails typeToCheck,
+            FunctionOrValueModel? declarationToCheck,
             DartExpression expressionToCheck,
             Boolean negated = false)
         =>  let (expression = generateIsExpression {
                     scope;
+                    typeToCheck;
+                    declarationToCheck;
                     expressionToCheck;
                     ctx.ceylonTypes.nullType;
                 })
@@ -1801,10 +1834,14 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateNonemptyExpression(
             DScope scope,
+            TypeModel | TypeDetails typeToCheck,
+            FunctionOrValueModel? declarationToCheck,
             DartExpression expressionToCheck,
             Boolean negated = false)
         =>  let (expression = generateIsExpression {
                     scope;
+                    typeToCheck;
+                    declarationToCheck;
                     expressionToCheck;
                     ctx.ceylonTypes.sequenceAnythingType;
                 })
@@ -1815,26 +1852,40 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateIsExpression(
             DScope scope,
+            TypeModel | TypeDetails typeToCheck,
+            FunctionOrValueModel? declarationToCheck,
             DartExpression expressionToCheck,
             TypeModel isType) {
 
-        // TODO Warn if non-denotable or if non-reified checks are not sufficient.
-        //      We need a parameter for the existing rhs type for these calcs.
+        // TODO - Warn if non-denotable or if non-reified checks are not sufficient.
+        //      - Optimize away unecessary checks
 
         if (isType.union) {
             value result = CeylonList(isType.caseTypes).reversed
-                .map((t)
-                    => generateIsExpression(scope, expressionToCheck, t))
-                .reduce((DartExpression partial, c)
-                    =>  DartBinaryExpression(c, "||", partial));
+                .map((isTypeComponent)
+                    =>  generateIsExpression {
+                            scope;
+                            typeToCheck;
+                            declarationToCheck;
+                            expressionToCheck;
+                            isTypeComponent;
+                        })
+                .reduce((DartExpression partial, c) =>
+                    DartBinaryExpression(c, "||", partial));
 
             assert (exists result);
             return result;
         }
         else if (isType.intersection) {
             value result = CeylonList(isType.satisfiedTypes).reversed
-                .map((t)
-                    => generateIsExpression(scope, expressionToCheck, t))
+                .map((isTypeComponent)
+                    =>  generateIsExpression {
+                            scope;
+                            typeToCheck;
+                            declarationToCheck;
+                            expressionToCheck;
+                            isTypeComponent;
+                        })
                 .reduce((DartExpression partial, c)
                     =>  DartBinaryExpression(c, "&&", partial));
 
@@ -1869,13 +1920,15 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
         else {
-            // Assume eraseToNative is false; otherwise, test should not have typechecked.
-            value dartType = dartTypes.dartTypeName(scope, isType, false);
-
             return
             DartIsExpression {
                 expressionToCheck;
-                dartType;
+                dartTypes.dartTypeNameForIsTest {
+                    scope;
+                    typeToCheck;
+                    declarationToCheck;
+                    isType;
+                };
             };
         }
     }
@@ -2479,11 +2532,13 @@ class BaseGenerator(CompilationContext ctx)
      - A [[DartVariableDeclarationStatement]] to declare the dart variable for the
        switched value."
     shared
-    [TypeModel, DartSimpleIdentifier, DartVariableDeclarationStatement]
+    [TypeModel, ValueModel?, DartSimpleIdentifier,
+        DartVariableDeclarationStatement]
     generateForSwitchClause(SwitchClause that) {
         value info = NodeInfo(that);
 
         TypeModel switchedType;
+        ValueModel? switchedDeclaration;
         DartSimpleIdentifier switchedVariable;
         DartVariableDeclarationStatement variableDeclaration;
 
@@ -2491,6 +2546,9 @@ class BaseGenerator(CompilationContext ctx)
         case (is Expression) {
             switchedType
                 =   ExpressionInfo(switched).typeModel;
+
+            switchedDeclaration
+                =   null;
 
             switchedVariable
                 =   DartSimpleIdentifier(dartTypes.createTempNameCustom("switch"));
@@ -2517,15 +2575,17 @@ class BaseGenerator(CompilationContext ctx)
                     };
         }
         case (is SpecifiedVariable) {
-            value declaration
+            switchedDeclaration
                 =   SpecifiedVariableInfo(switched).declarationModel;
 
+            assert (exists switchedDeclaration);
+
             switchedType
-                =   declaration.type;
+                =   switchedDeclaration.type;
 
             switchedVariable
                 =   DartSimpleIdentifier {
-                        dartTypes.getName(declaration);
+                        dartTypes.getName(switchedDeclaration);
                     };
 
             // declare the specified variable
@@ -2535,15 +2595,15 @@ class BaseGenerator(CompilationContext ctx)
                             null;
                             dartTypes.dartTypeNameForDeclaration {
                                 info;
-                                declaration;
+                                switchedDeclaration;
                             };
                             [DartVariableDeclaration {
                                 DartSimpleIdentifier {
-                                    dartTypes.getName(declaration);
+                                    dartTypes.getName(switchedDeclaration);
                                 };
                                 withLhs {
                                     null;
-                                    declaration;
+                                    switchedDeclaration;
                                     () => switched.specifier.expression.transform {
                                         expressionTransformer;
                                     };
@@ -2552,7 +2612,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
         }
-        return [switchedType, switchedVariable, variableDeclaration];
+        return [switchedType, switchedDeclaration, switchedVariable, variableDeclaration];
     }
 
     shared see(`function generateInvocation`)
