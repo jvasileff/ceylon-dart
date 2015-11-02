@@ -1,3 +1,6 @@
+import ceylon.math.whole {
+    parseWhole
+}
 
 shared abstract
 class DartNode() {
@@ -331,27 +334,42 @@ class DartBooleanLiteral(boolean)
 
 "A floating point literal expression."
 shared
-class DartDoubleLiteral(double)
+class DartDoubleLiteral(val)
         extends DartLiteral() {
 
-    shared Float double;
+    String | Float val;
+
+    // TODO parse all valid Ceylon Float literals
+    shared String text
+        =   switch (val)
+            case (is Float) val.string
+            case (is String) val;
 
     shared actual
     void write(CodeWriter writer) {
-        writer.write(double.string);
+        writer.write(text);
     }
 }
 
 "An integer literal expression."
 shared
-class DartIntegerLiteral(integer)
+class DartIntegerLiteral(val)
         extends DartLiteral() {
 
-    shared Integer integer;
+    String | Integer val;
+
+    // TODO parse all valid Ceylon Integer literals
+    shared String? text
+        =   switch(val)
+            case (is Integer) val.string
+            case (is String) parseWhole(val)?.string;
+
+    "Argument to DartIntegerLiteral must be parsable as an integer"
+    assert(exists text);
 
     shared actual
     void write(CodeWriter writer) {
-        writer.write(integer.string);
+        writer.write(text);
     }
 }
 

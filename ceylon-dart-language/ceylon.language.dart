@@ -8322,17 +8322,16 @@ class Measure  extends Range {
                 doElse$7 = false;
                 return Integer.instance(that$8.size).equals(Integer.instance(size)) && that$8.first.equals(first);
             }
-            if (doElse$7) {{
-                    $dart$core.bool doElse$9 = true;
-                    if (that is Span) {
-                        Span that$10;
-                        that$10 = that as Span;
-                        doElse$9 = false;
-                        return (that$10.increasing && that$10.first.equals(first)) && Integer.instance(that$10.size).equals(Integer.instance(size));
-                    }
-                    if (doElse$9) {
-                        return List.$equals(this, that);
-                    }
+            if (doElse$7) {
+                $dart$core.bool doElse$9 = true;
+                if (that is Span) {
+                    Span that$10;
+                    that$10 = that as Span;
+                    doElse$9 = false;
+                    return (that$10.increasing && that$10.first.equals(first)) && Integer.instance(that$10.size).equals(Integer.instance(size));
+                }
+                if (doElse$9) {
+                    return List.$equals(this, that);
                 }
             }
         }
@@ -9390,24 +9389,24 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                         if (!(rest == null)) {
                             doElse$8 = false;
                             {
-                                $dart$core.bool doElse$10 = true;
+                                $dart$core.bool doElse$9 = true;
                                 {
-                                    $dart$core.int tmp$11 = $package$parseFloatExponent(rest);
-                                    if (!(tmp$11 == null)) {
+                                    $dart$core.int tmp$10 = $package$parseFloatExponent(rest);
+                                    if (!(tmp$10 == null)) {
                                         $dart$core.int magnitude;
-                                        magnitude = tmp$11;
-                                        doElse$10 = false;
+                                        magnitude = tmp$10;
+                                        doElse$9 = false;
                                         exponent = magnitude - shift;
                                     }
                                 }
-                                if (doElse$10) {
+                                if (doElse$9) {
                                     return null;
                                 }
                             }
                         }
                         if (doElse$8) {
-                            $dart$core.Object rest$9;
-                            rest$9 = String.instance(rest);
+                            $dart$core.Object rest$11;
+                            rest$11 = String.instance(rest);
                             exponent = Integer.nativeValue(Integer.instance(shift).negated);
                         }
                     }
@@ -11688,17 +11687,16 @@ class Span  extends Range {
                 doElse$7 = false;
                 return that$8.first.equals(first) && that$8.last.equals(last);
             }
-            if (doElse$7) {{
-                    $dart$core.bool doElse$9 = true;
-                    if (that is Measure) {
-                        Measure that$10;
-                        that$10 = that as Measure;
-                        doElse$9 = false;
-                        return (increasing && that$10.first.equals(first)) && Integer.instance(that$10.size).equals(Integer.instance(size));
-                    }
-                    if (doElse$9) {
-                        return List.$equals(this, that);
-                    }
+            if (doElse$7) {
+                $dart$core.bool doElse$9 = true;
+                if (that is Measure) {
+                    Measure that$10;
+                    that$10 = that as Measure;
+                    doElse$9 = false;
+                    return (increasing && that$10.first.equals(first)) && Integer.instance(that$10.size).equals(Integer.instance(size));
+                }
+                if (doElse$9) {
+                    return List.$equals(this, that);
                 }
             }
         }

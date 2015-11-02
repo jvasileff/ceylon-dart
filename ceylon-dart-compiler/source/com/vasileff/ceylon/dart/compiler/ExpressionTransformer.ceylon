@@ -588,13 +588,13 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformFloatLiteral(FloatLiteral that)
         =>  withBoxing(dScope(that),
                 ceylonTypes.floatType, null,
-                DartDoubleLiteral(that.float));
+                DartDoubleLiteral(that.text));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(dScope(that),
                 ceylonTypes.integerType, null,
-                DartIntegerLiteral(that.integer));
+                DartIntegerLiteral(that.text));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)

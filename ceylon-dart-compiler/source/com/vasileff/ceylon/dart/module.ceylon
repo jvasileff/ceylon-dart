@@ -3,6 +3,7 @@ module com.vasileff.ceylon.dart "0.0.1" {
     import ceylon.io "1.2.0";
     import ceylon.file "1.2.0";
     import ceylon.test "1.2.0";
+    import ceylon.math "1.2.0";
     import ceylon.formatter "1.2.0";
     import ceylon.ast.create "1.2.0";
     import ceylon.ast.redhat "1.2.0";

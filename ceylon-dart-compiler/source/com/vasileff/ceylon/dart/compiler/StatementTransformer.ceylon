@@ -33,9 +33,9 @@ import ceylon.ast.core {
     CaseClause,
     IsCase,
     MatchCase,
-    ElseCaseClause,
     ExistsOrNonemptyCondition,
-    Throw
+    Throw,
+    ElseClause
 }
 import ceylon.collection {
     LinkedList
@@ -123,7 +123,7 @@ class StatementTransformer(CompilationContext ctx)
             =   generateForSwitchClause(that.clause);
 
         "Recursive function to generate an if statement for the switch clauses."
-        DartStatement generateIf([CaseClause|ElseCaseClause*] clauses) {
+        DartStatement generateIf([CaseClause | ElseClause*] clauses) {
             switch (clause = clauses.first)
             case (is CaseClause) {
                 switch (caseItem = clause.caseItem)
@@ -172,10 +172,8 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 }
             }
-            case (is ElseCaseClause) {
-                return toSingleStatementOrBlock{
-                    transformBlock(clause.block);
-                };
+            case (is ElseClause) {
+                return generateElseClause(clause);
             }
             case (is Null) {
                 return
@@ -205,8 +203,39 @@ class StatementTransformer(CompilationContext ctx)
         return [DartBlock([variableDeclaration, ifStatement])];
     }
 
+    DartStatement generateElseClause(ElseClause that) {
+        value info
+            =   ElseClauseInfo(that);
+
+        value variableDeclaration
+            =   info.variableDeclarationModel;
+
+        "Narrowed variable for else block, if any."
+        value replacementVariable
+            =   if (exists variableDeclaration) then
+                    generateReplacementVariableDefinition {
+                        info;
+                        variableDeclaration;
+                    }
+                else
+                    [];
+
+        return switch (child = that.child)
+            case (is IfElse)
+                toSingleStatementOrBlock {
+                    transformIfElse(child).prepend(replacementVariable);
+                }
+            case (is Block)
+                DartBlock {
+                    concatenate {
+                        replacementVariable,
+                        transformBlock(child).first.statements
+                    };
+                };
+    }
+
     shared actual
-    [DartStatement*] transformIfElse(IfElse that) {
+    [DartStatement+] transformIfElse(IfElse that) {
         if (that.ifClause.conditions.conditions.every((c) => c is BooleanCondition)) {
             // simple case, no variable declarations
             return
@@ -230,22 +259,12 @@ class StatementTransformer(CompilationContext ctx)
         //  3. execute then block in innermost if (after setting temp boolean to 'false'
         //  4. after unwinding all if's, if there's an else, wrap it in an 'if (temp)'
 
-        value info
-            =   NodeInfo(that);
-
         value doElseVariable
             =   that.elseClause exists
                 then DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));
 
-        "Narrowed variable for else block, if any."
-        value elseReplacementVariable
-            =   if (exists elseClause = that.elseClause,
-                    exists variableDeclaration =
-                        ElseClauseInfo(elseClause).variableDeclarationModel)
-                then generateReplacementVariableDefinition(info, variableDeclaration)
-                else [];
-
-        value statements = LinkedList<DartStatement?>();
+        value statements
+            =   LinkedList<DartStatement?>();
 
         // declare doElse variable, if any
         if (exists doElseVariable) {
@@ -315,22 +334,16 @@ class StatementTransformer(CompilationContext ctx)
 
         if (exists doElseVariable) {
             assert (exists elseChild = that.elseClause?.child);
+            assert (exists elseClause = that.elseClause);
             statements.add {
                 DartIfStatement {
                     doElseVariable;
-                    DartBlock {
-                        concatenate {
-                            elseReplacementVariable,
-                            (switch (elseChild)
-                             case (is Block) transformBlock(elseChild).first.statements
-                             case (is IfElse) elseChild.transform(this))
-                        };
-                    };
+                    generateElseClause(elseClause);
                 };
             };
         }
 
-        value result = statements.coalesced.sequence();
+        assert (nonempty result = statements.coalesced.sequence());
 
         // wrap in a block to scope doElseVariable, if exists
         return if (exists doElseVariable)
