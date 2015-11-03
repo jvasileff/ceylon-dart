@@ -10,6 +10,13 @@ DartPropertyAccess | DartSimpleIdentifier createDartPropertyAccess
         else propertyName;
 
 shared
+DartPrefixedIdentifier | DartSimpleIdentifier createDartPrefixedIdentifier
+        (DartSimpleIdentifier? prefix, DartSimpleIdentifier identifier)
+    =>  if (exists prefix)
+        then DartPrefixedIdentifier(prefix, identifier)
+        else identifier;
+
+shared
 DartFunctionExpressionInvocation createInlineDartStatements(
         "Zero or more statements, followed by a Return"
         [DartStatement*] statements)

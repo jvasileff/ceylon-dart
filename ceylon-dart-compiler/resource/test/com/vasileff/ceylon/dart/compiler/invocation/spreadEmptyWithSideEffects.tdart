@@ -30,7 +30,7 @@ void $package$run() {
         $package$emptyIncrementI;
         return $package$fa();
     })();
-    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(1))) {
+    if (!($package$i == 1)) {
         throw new $ceylon$language.AssertionError("Violated: i == 1");
     }
     $package$i = 0;
@@ -39,10 +39,10 @@ void $package$run() {
         $package$emptyIncrementI;
         return tmp$0;
     })());
-    if (!$ceylon$language.Integer.instance(result).equals($ceylon$language.Integer.instance(1))) {
+    if (!(result == 1)) {
         throw new $ceylon$language.AssertionError("Violated: result == 1");
     }
-    if (!$ceylon$language.Integer.instance($package$i).equals($ceylon$language.Integer.instance(2))) {
+    if (!($package$i == 2)) {
         throw new $ceylon$language.AssertionError("Violated: i == 2");
     }
     $ceylon$language.print($ceylon$language.String.instance("done"));

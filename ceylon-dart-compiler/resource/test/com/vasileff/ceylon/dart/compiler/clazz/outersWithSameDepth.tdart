@@ -25,10 +25,10 @@ class run$C implements run$I {
     $dart$core.int get a => run$I.$get$a(this);
 }
 void $package$run() {
-    if (!$ceylon$language.Integer.instance((new run$C$D(new run$C())).a).equals($ceylon$language.Integer.instance(1))) {
+    if (!((new run$C$D(new run$C())).a == 1)) {
         throw new $ceylon$language.AssertionError("Violated: C().D().a == 1");
     }
-    if (!$ceylon$language.Integer.instance((new run$C$D(new run$C())).b).equals($ceylon$language.Integer.instance(2))) {
+    if (!((new run$C$D(new run$C())).b == 2)) {
         throw new $ceylon$language.AssertionError("Violated: C().D().b == 2");
     }
     $ceylon$language.print($ceylon$language.String.instance("done"));

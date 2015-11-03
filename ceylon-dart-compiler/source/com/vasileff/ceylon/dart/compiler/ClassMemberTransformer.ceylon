@@ -257,10 +257,10 @@ class ClassMemberTransformer(CompilationContext ctx)
                 case (is LazySpecificationInfo) info.declaration;
 
         value [identifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     info;
                     declarationModel;
-                }.oldPair;
+                }.oldPairSimple;
 
         return
         DartMethodDeclaration {
@@ -318,11 +318,11 @@ class ClassMemberTransformer(CompilationContext ctx)
             =   AnyValueInfo(that).declarationModel;
 
         value [identifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     info;
                     declarationModel;
                     true;
-                }.oldPair;
+                }.oldPairSimple;
 
         return
         DartMethodDeclaration {
@@ -450,10 +450,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
         case (is ClassModel) {
             value [dartIdentifier, dartElementType]
-                =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                =   dartTypes.dartInvocable {
                         scope;
                         declarationModel;
-                    }.oldPair;
+                    }.oldPairSimple;
 
             return
             DartMethodDeclaration {

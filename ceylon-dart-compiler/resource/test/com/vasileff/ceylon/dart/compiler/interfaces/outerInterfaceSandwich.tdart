@@ -32,16 +32,16 @@ void $package$run() {
     A a = new A();
     $dart$core.Object i = a.i;
     A$I$B b = (new $ceylon$language.dart$Callable(() => new A$I$B(i as A$I))).f() as A$I$B;
-    if (!$ceylon$language.String.instance(a.s).equals($ceylon$language.String.instance("s"))) {
+    if (!(a.s == "s")) {
         throw new $ceylon$language.AssertionError("Violated: a.s == \"s\"");
     }
-    if (!$ceylon$language.String.instance((i as A$I).si).equals($ceylon$language.String.instance("s"))) {
+    if (!((i as A$I).si == "s")) {
         throw new $ceylon$language.AssertionError("Violated: i.si == \"s\"");
     }
-    if (!$ceylon$language.String.instance(b.sba).equals($ceylon$language.String.instance("s"))) {
+    if (!(b.sba == "s")) {
         throw new $ceylon$language.AssertionError("Violated: b.sba == \"s\"");
     }
-    if (!$ceylon$language.String.instance(b.sbi).equals($ceylon$language.String.instance("s"))) {
+    if (!(b.sbi == "s")) {
         throw new $ceylon$language.AssertionError("Violated: b.sbi == \"s\"");
     }
     $ceylon$language.print($ceylon$language.String.instance("done."));

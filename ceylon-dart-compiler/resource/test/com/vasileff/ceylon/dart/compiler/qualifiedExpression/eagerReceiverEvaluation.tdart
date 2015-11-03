@@ -31,10 +31,10 @@ class run$C {
             $ceylon$language.Integer $r = $ceylon$language.Integer.instance(other);
             return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
         })();
-        if (!(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer).equals($ceylon$language.Integer.instance(1))) {
+        if (!($ceylon$language.Integer.nativeValue(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: q(0) == 1");
         }
-        if (!(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer).equals($ceylon$language.Integer.instance(1))) {
+        if (!($ceylon$language.Integer.nativeValue(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: q(0) == 1");
         }
     }
@@ -52,25 +52,25 @@ void $package$run() {
         $ceylon$language.Integer $r = $ceylon$language.Integer.instance(i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).successor));
         return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
     })();
-    if (!(p.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer).equals($ceylon$language.Integer.instance(1))) {
+    if (!($ceylon$language.Integer.nativeValue(p.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer) == 1)) {
         throw new $ceylon$language.AssertionError("Violated: p(0) == 1");
     }
-    if (!(p.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer).equals($ceylon$language.Integer.instance(1))) {
+    if (!($ceylon$language.Integer.nativeValue(p.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer) == 1)) {
         throw new $ceylon$language.AssertionError("Violated: p(0) == 1");
     }
     $ceylon$language.Callable newB = (() {
         run$A $r = new run$A();
         return new $ceylon$language.dart$Callable(() => new run$A$B($r));
     })();
-    if (!$ceylon$language.Integer.instance((newB.f() as run$A$B).x).equals($ceylon$language.Integer.instance(1))) {
+    if (!((newB.f() as run$A$B).x == 1)) {
         throw new $ceylon$language.AssertionError("Violated: newB().x == 1");
     }
-    if (!$ceylon$language.Integer.instance((newB.f() as run$A$B).x).equals($ceylon$language.Integer.instance(1))) {
+    if (!((newB.f() as run$A$B).x == 1)) {
         throw new $ceylon$language.AssertionError("Violated: newB().x == 1");
     }
     $dart$core.int other = 1;
     $ceylon$language.Callable q = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance(other + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
-    if (!(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer).equals($ceylon$language.Integer.instance(1))) {
+    if (!($ceylon$language.Integer.nativeValue(q.f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer) == 1)) {
         throw new $ceylon$language.AssertionError("Violated: q(0) == 1");
     }
     (new run$D()).foo();

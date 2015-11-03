@@ -321,7 +321,7 @@ class BaseGenerator(CompilationContext ctx)
         // Toplevel and local functions will never be implemented as Dart values
         // or operators. Just grab the identifier and define a function.
         value functionIdentifier
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     info;
                     functionModel;
                     false;
@@ -390,24 +390,48 @@ class BaseGenerator(CompilationContext ctx)
 
         // TODO Use this in transformInvocation, transformBaseExpression, etc.
         //      Which will also require support for NamedArguments
-        //
-        // NOTE not yet used for values
 
-        value [signature, a] = signatureAndArguments else [null, []];
+        value [signature, a]
+            = signatureAndArguments else [null, []];
 
-        [Expression*] arguments;
-        switch (a)
-        case (is [Expression*]) {
-            arguments = a;
-        }
-        case (is PositionalArguments) {
-            arguments = a.argumentList.listedArguments;
-        }
+        value arguments
+            =   switch (a)
+                case (is [Expression*]) a
+                case (is PositionalArguments) a.argumentList.listedArguments;
 
-        value [functionOrValueIdentifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValue(
+        value dartFunctionOrValue
+            =   dartTypes.dartInvocable(
                     scope, memberDeclaration, false);
 
+        [DartExpression*] dartArguments;
+
+        if (arguments nonempty) {
+            "If there are arguments, the member is surely a FunctionModel and must
+             translate to a Dart function"
+            assert (is FunctionModel memberDeclaration);
+
+            "If we have arguments, we'll have a signature."
+            assert (exists signature);
+
+            value parameterDeclarations
+                =   CeylonList(memberDeclaration.firstParameterList.parameters)
+                        .collect(ParameterModel.model);
+
+            dartArguments
+                =   [for (i -> argument in arguments.indexed)
+                        withLhs {
+                            signature[i];
+                            parameterDeclarations[i];
+                            () => argument.transform(expressionTransformer);
+                        }
+                    ];
+        }
+        else {
+            dartArguments = [];
+        }
+
+// FIXME WIP is this still necessary? If so, add it back to generateInvocation. Or
+//           better, make it unnecessary.
         value resultDeclaration =
                 if (is FunctionModel memberDeclaration,
                         memberDeclaration.parameterLists.size() > 1)
@@ -416,50 +440,15 @@ class BaseGenerator(CompilationContext ctx)
                 then null
                 else memberDeclaration;
 
-        DartExpression invocation;
-        if (arguments nonempty) {
-            "If there are arguments, the member is surely a FunctionModel and must
-             translate to a Dart function"
-            assert (is FunctionModel memberDeclaration,
-                    dartElementType == dartFunction);
-
-            "If we have arguments, we'll have a signature."
-            assert (exists signature);
-
-            value parameterDeclarations = CeylonList(
-                    memberDeclaration.firstParameterList.parameters)
-                    .collect(ParameterModel.model);
-
-            invocation =
-            DartFunctionExpressionInvocation {
-                functionOrValueIdentifier;
-                DartArgumentList {
-                    [for (i -> argument in arguments.indexed)
-                        withLhs {
-                            signature[i];
-                            parameterDeclarations[i];
-                            () => argument.transform(expressionTransformer);
-                        }
-                    ];
-                };
-            };
-        }
-        else {
-            invocation
-                =   if (dartElementType != dartFunction)
-                    then functionOrValueIdentifier
-                    else DartFunctionExpressionInvocation {
-                        functionOrValueIdentifier;
-                        DartArgumentList();
-                    };
-        }
-
         return
         withBoxing {
             scope;
             resultType;
             resultDeclaration;
-            invocation;
+            dartFunctionOrValue.expressionForInvocation {
+                null;
+                dartArguments;
+            };
         };
     }
 
@@ -565,7 +554,7 @@ class BaseGenerator(CompilationContext ctx)
         DartTypeName dartReceiverType;
 
         "The Dart function, value, or constructor to invoking."
-        DartFunctionOrValue dartFunctionOrValue;
+        DartInvocable dartFunctionOrValue;
 
         if (is ClassModel | ConstructorModel memberDeclaration) {
             if (!exists generateReceiver) {
@@ -607,12 +596,9 @@ class BaseGenerator(CompilationContext ctx)
                     };
 
             dartFunctionOrValue
-                =   DartFunctionOrValue {
-                        dartTypes.dartConstructorName {
-                            scope;
-                            memberDeclaration;
-                        };
-                        dartFunction; // Constructor, really
+                =   dartTypes.dartInvocable {
+                        scope;
+                        memberDeclaration;
                     };
 
             argsSetupAndExpressions
@@ -653,7 +639,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   dartTypes.expressionForThis(scopeContainer);
 
                 dartFunctionOrValue
-                    =   DartFunctionOrValue {
+                    =   DartInvocable {
                             DartPropertyAccess {
                                 dartTypes.dartIdentifierForClassOrInterface {
                                     scope;
@@ -680,7 +666,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   DartSimpleIdentifier("super");
 
                 dartFunctionOrValue
-                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    =   dartTypes.dartInvocable {
                             scope;
                             memberDeclaration;
                             false;
@@ -716,7 +702,7 @@ class BaseGenerator(CompilationContext ctx)
                     };
 
             dartFunctionOrValue
-                =   DartFunctionOrValue {
+                =   DartInvocable {
                         DartPropertyAccess {
                             dartTypes.dartIdentifierForClassOrInterface {
                                 scope;
@@ -776,7 +762,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
 
                 dartFunctionOrValue
-                    =   DartFunctionOrValue {
+                    =   DartInvocable {
                             DartSimpleIdentifier(operand);
                             dartBinaryOperator;
                         };
@@ -821,7 +807,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
 
                 dartFunctionOrValue
-                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    =   dartTypes.dartInvocable {
                             scope;
                             memberDeclaration;
                             false;
@@ -1027,11 +1013,11 @@ class BaseGenerator(CompilationContext ctx)
             return withBoxingNonNative {
                 scope;
                 ceylonTypes.emptyType;
-                dartTypes.dartIdentifierForFunctionOrValue {
+                dartTypes.dartInvocable {
                     scope;
                     ceylonTypes.emptyValueDeclaration;
                     false;
-                }[0];
+                }.expressionForInvocation();
             };
         }
         else if (!nonempty listedArguments) {
@@ -1140,11 +1126,11 @@ class BaseGenerator(CompilationContext ctx)
             withBoxingNonNative {
                 scope;
                 ceylonTypes.emptyType;
-                dartTypes.dartIdentifierForFunctionOrValue {
+                dartTypes.dartInvocable {
                     scope;
                     ceylonTypes.emptyValueDeclaration;
                     false;
-                }[0];
+                }.expressionForInvocation();
             };
         }
 
@@ -1980,10 +1966,10 @@ class BaseGenerator(CompilationContext ctx)
         //      within classes and interfaces, getters, but MethodDeclaration instead
 
         value [identifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     scope;
                     declarationModel;
-                }.oldPair;
+                }.oldPairSimple;
 
         return
         DartFunctionDeclaration {
@@ -2038,10 +2024,10 @@ class BaseGenerator(CompilationContext ctx)
         value declarationModel = info.declarationModel;
 
         value [identifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     info;
                     declarationModel;
-                }.oldPair;
+                }.oldPairSimple;
 
         return
         DartFunctionDeclaration {
@@ -3217,11 +3203,11 @@ class BaseGenerator(CompilationContext ctx)
                             scope;
                             ceylonTypes.emptyType;
                             null;
-                            dartTypes.dartIdentifierForFunctionOrValue {
+                            dartTypes.dartInvocable {
                                 scope;
                                 ceylonTypes.emptyValueDeclaration;
                                 false;
-                            }[0];
+                            }.expressionForInvocation();
                         };
                     };
                 };
@@ -3560,11 +3546,11 @@ class BaseGenerator(CompilationContext ctx)
                     else if (parameter.sequenced) then
                         // Per spec 4.3.6: A variadic parameter may not have a
                         // default argument.
-                        dartTypes.dartIdentifierForFunctionOrValue {
+                        dartTypes.dartInvocable {
                             scope;
                             ceylonTypes.emptyValueDeclaration;
                             false;
-                        }[0]
+                        }.expressionForInvocation()
                     else if (parameter.defaulted) then
                         dartTypes.dartDefault(scope)
                     else
@@ -3578,11 +3564,11 @@ class BaseGenerator(CompilationContext ctx)
                             });
 
                             return
-                            dartTypes.dartIdentifierForFunctionOrValue {
+                            dartTypes.dartInvocable {
                                 scope;
                                 ceylonTypes.emptyValueDeclaration;
                                 false;
-                            }[0];
+                            }.expressionForInvocation();
                         })()));
 
         return [argsSetup, arguments];
@@ -3626,8 +3612,8 @@ class BaseGenerator(CompilationContext ctx)
 
         // FIXME handle interface setters (shared and non-shared)
         value [targetIdentifier, targetDartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValue(
-                    that, targetDeclaration, true);
+            =   dartTypes.dartInvocable(
+                    that, targetDeclaration, true).oldPairPrefixed;
 
         // create the possibly qualified (by module or value) target
         DartExpression targetExpression;

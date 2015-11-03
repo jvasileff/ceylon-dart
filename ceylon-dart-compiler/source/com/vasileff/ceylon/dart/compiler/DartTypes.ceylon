@@ -460,7 +460,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      Dart functions are captured as `$dart$core$Function`s rather than wrapped as
      `Callable`s."
     shared
-    see(`function dartIdentifierForFunctionOrValueDeclaration`)
     see(`function dartTypeNameForDeclaration`)
     DartTypeName dartCaptureTypeNameForDeclaration(
             DScope scope,
@@ -857,15 +856,17 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // Use the correct original declaration, since we may not have captured
         // replacement declarations that were elided (did not actually become
         // replacements in the Dart output)
-        value originalDeclaration =  declarationConsideringElidedReplacements(declaration);
+        value originalDeclaration
+            =   declarationConsideringElidedReplacements(declaration);
+
         // TODO assert shouldn't be necessary
         assert (is FunctionModel | ValueModel | SetterModel originalDeclaration);
 
-        value [identifier, dartElementType] = dartIdentifierForFunctionOrValue {
+        value [identifier, dartElementType] = dartInvocable {
             scope;
             originalDeclaration;
             setter;
-        };
+        }.oldPairPrefixed;
 
         if (exists container = getContainingClassOrInterface(scope)) {
             value declarationContainer = getRealContainingScope(originalDeclaration);
@@ -1036,42 +1037,49 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         };
     }
 
-    "Returns a tuple containing:
+    "Returns a [[DartInvocable]] suitable for use from [[scope]].
 
-     - The *unqualified* DartSimpleIdentifier for a Ceylon FunctionOrValue
-     - A boolean value that is true if the target is a dart function, or false if the
-       target is a dart value. This will be true for Ceylon values that must be mapped
-       to Dart functions."
+     **Note** this function should not be used for base expressions since they may
+     reference captured values. Use [[expressionForBaseExpression]] instead."
     shared
-    see(`function dartIdentifierForFunctionOrValue`)
-    DartFunctionOrValue dartIdentifierForFunctionOrValueDeclaration(
+    DartInvocable dartInvocable(
             DScope scope,
-            FunctionOrValueModel declaration,
+            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
-        // FIXME how should "string" setters be mapped, since the getters
-        //       are mapped to "toString"? And, handle "hashCode" name translation.
-        value mapped = mappedFunctionOrValue(refinedDeclaration(declaration));
-        String name;
-        DartElementType dartElementType;
-
-        if (exists mapped) {
-            name = mapped[0];
-            dartElementType = mapped[1];
-        }
-        else {
-            name = getPackagePrefixedName(declaration);
-            dartElementType
-                =   if (declaration is FunctionModel)
-                    then package.dartFunction
-                    else dartValue;
+        // handle constructors first
+        if (is ClassModel | ConstructorModel declaration) {
+            return DartInvocable {
+                dartConstructorName {
+                    scope;
+                    declaration;
+                };
+                package.dartFunction; // Constructor, really
+            };
         }
 
+        // it's a FunctionOrValueModel
         switch (container = declaration.container)
         case (is PackageModel) {
-            return DartFunctionOrValue {
-                DartSimpleIdentifier(name);
-                dartElementType;
+            return DartInvocable {
+                if (!sameModule(scope, declaration)) then
+                    DartPrefixedIdentifier {
+                        DartSimpleIdentifier {
+                            moduleImportPrefix(declaration);
+                        };
+                        DartSimpleIdentifier {
+                            getName(declaration);
+                        };
+                    }
+                else
+                    DartSimpleIdentifier {
+                        // toplevel functions and values from the same dart package
+                        // get a prefix to avoid shadowing problems
+                        getPackagePrefixedName(declaration);
+                    };
+                if (declaration is FunctionModel)
+                    then package.dartFunction
+                    else dartValue;
             };
         }
         case (is ClassOrInterfaceModel
@@ -1080,10 +1088,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | ConstructorModel
                     | SpecificationModel) {
 
+            // FIXME how should "string" setters be mapped, since the getters
+            //       are mapped to "toString"? And, handle "hashCode" name translation.
+            value mapped = mappedFunctionOrValue(refinedDeclaration(declaration));
+            String name;
+            DartElementType dartElementType;
+
+            if (exists mapped) {
+                name = mapped[0];
+                dartElementType = mapped[1];
+            }
+            else {
+                name = getPackagePrefixedName(declaration);
+                dartElementType
+                    =   if (declaration is FunctionModel)
+                        then package.dartFunction
+                        else dartValue;
+            }
+
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
                 // identifier for the getter or setter method
-                return DartFunctionOrValue {
+                return DartInvocable {
                     DartSimpleIdentifier {
                         name + (if (setter) then "$set" else "$get");
                     };
@@ -1092,7 +1118,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
             else {
                 // identifier for the value or function
-                return DartFunctionOrValue {
+                return DartInvocable {
                     DartSimpleIdentifier {
                         name;
                     };
@@ -1101,54 +1127,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
         }
         else {
-            // TODO should be a compiler bug, but we don't have a Node
-            throw Exception(
-                "Unexpected container for base expression: \
-                 declaration type '``className(declaration)``' \
-                 container type '``className(container)``'");
+            throw CompilerBug(scope, "Unexpected container for '``declaration``'.");
         }
     }
-
-    "Returns a tuple containing:
-
-     - The Dart identifier for a Ceylon FunctionOrValue
-     - A boolean value that is true if the target is a dart function, or false if the
-       target is a dart value. This will be true for Ceylon values that must be mapped
-       to Dart functions.
-
-     **Note** this function should not be used for base expressions since they may
-     reference captured values. Use [[expressionForBaseExpression]] instead."
-    shared
-    see(`function dartIdentifierForFunctionOrValueDeclaration`)
-    see(`function expressionForBaseExpression`)
-    [DartIdentifier, DartElementType] dartIdentifierForFunctionOrValue(
-            DScope scope,
-            FunctionOrValueModel declaration,
-            Boolean setter = false)
-        =>  let (dartFunctionOrValue
-                    =   dartIdentifierForFunctionOrValueDeclaration {
-                            scope;
-                            declaration;
-                            setter;
-                        })
-            if (declaration.container is PackageModel
-                && !sameModule(scope, declaration)) then
-                [
-                    DartPrefixedIdentifier {
-                        DartSimpleIdentifier {
-                            moduleImportPrefix(declaration);
-                        };
-                        DartSimpleIdentifier {
-                            // trim leading "$package." A bit ugly...
-                            unPackagePrefixify(asserted<DartSimpleIdentifier>(
-                                    dartFunctionOrValue.reference).identifier);
-                        };
-                    },
-                    dartFunctionOrValue.elementType
-                ]
-            else
-                [asserted<DartSimpleIdentifier>(dartFunctionOrValue.reference),
-                    dartFunctionOrValue.elementType];
 
     shared
     BoxingConversion? boxingConversionFor(

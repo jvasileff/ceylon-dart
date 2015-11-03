@@ -30,7 +30,7 @@ class run$C implements run$I {
     $dart$core.String get fooI => "fooI from C";
 }
 void $package$run() {
-    if (!$ceylon$language.String.instance((new run$C$Middle$D(new run$C$Middle(new run$C()))).fooIJ).equals($ceylon$language.String.instance("fooI"))) {
+    if (!((new run$C$Middle$D(new run$C$Middle(new run$C()))).fooIJ == "fooI")) {
         throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
     }
     $ceylon$language.print($ceylon$language.String.instance("done."));

@@ -1056,10 +1056,10 @@ class TopLevelVisitor(CompilationContext ctx)
         assert (is FunctionModel|ValueModel|SetterModel declaration);
 
         value [identifier, dartElementType]
-            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+            =   dartTypes.dartInvocable {
                     scope;
                     declaration;
-                }.oldPair;
+                }.oldPairSimple;
 
         value parameterModels
             =   switch (declaration)

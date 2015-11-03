@@ -1171,11 +1171,11 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  if (native) then
                 DartBooleanLiteral(boolean)
             else if (boolean) then
-                dartTypes.dartIdentifierForFunctionOrValue(scope,
-                    ceylonTypes.booleanTrueValueDeclaration)[0]
+                dartTypes.dartInvocable(scope,
+                    ceylonTypes.booleanTrueValueDeclaration).expressionForInvocation()
             else
-                dartTypes.dartIdentifierForFunctionOrValue(scope,
-                    ceylonTypes.booleanFalseValueDeclaration)[0];
+                dartTypes.dartInvocable(scope,
+                    ceylonTypes.booleanFalseValueDeclaration).expressionForInvocation();
 
     shared actual
     DartExpression transformExistsOperation(ExistsOperation that)
@@ -1870,7 +1870,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 capture[0];
                             };
                             [DartVariableDeclaration {
-                                dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                                dartTypes.dartInvocable {
                                     scope;
                                     capture[0];
                                     false;
@@ -1889,7 +1889,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         DartAssignmentExpression {
                             capture[1];
                             DartAssignmentOperator.equal;
-                            dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                            dartTypes.dartInvocable {
                                 scope;
                                 capture[0];
                                 false;
@@ -2402,11 +2402,11 @@ class ExpressionTransformer(CompilationContext ctx)
                                     DartReturnStatement {
                                         // TODO Use generateInvocation to call finished?
                                         //      Not yet; finished is a toplevel.
-                                        dartTypes.dartIdentifierForFunctionOrValue {
+                                        dartTypes.dartInvocable {
                                             info;
                                             ceylonTypes.finishedValueDeclaration;
                                             false;
-                                        }[0];
+                                        }.expressionForInvocation();
                                     };
                                 }],
                                 dartVariableDefinitions {

@@ -54,29 +54,29 @@ void $package$run() {
         I1$I2 $r = i1o$get().i2;
         return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new I1$I2$C($r, $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
     })().f($ceylon$language.Integer.instance(1)) as I1$I2$C;
-    if (!$ceylon$language.String.instance(c.cident).equals($ceylon$language.String.instance("c-1"))) {
+    if (!(c.cident == "c-1")) {
         throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");
     }
-    if (!$ceylon$language.String.instance(c.couterIdent).equals($ceylon$language.String.instance("i2o"))) {
+    if (!(c.couterIdent == "i2o")) {
         throw new $ceylon$language.AssertionError("Violated: c.couterIdent == \"i2o\"");
     }
-    if (!$ceylon$language.String.instance(c.ident).equals($ceylon$language.String.instance("i2byC-1"))) {
+    if (!(c.ident == "i2byC-1")) {
         throw new $ceylon$language.AssertionError("Violated: c.ident == \"i2byC-1\"");
     }
-    if (!$ceylon$language.String.instance(c.outerIdent).equals($ceylon$language.String.instance("i1o"))) {
+    if (!(c.outerIdent == "i1o")) {
         throw new $ceylon$language.AssertionError("Violated: c.outerIdent == \"i1o\"");
     }
     I1$I2$C cSelfOuter = (newC$get().f(c) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(2)) as I1$I2$C;
-    if (!$ceylon$language.String.instance(cSelfOuter.cident).equals($ceylon$language.String.instance("c-2"))) {
+    if (!(cSelfOuter.cident == "c-2")) {
         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.cident == \"c-2\"");
     }
-    if (!$ceylon$language.String.instance(cSelfOuter.couterIdent).equals($ceylon$language.String.instance("i2byC-1"))) {
+    if (!(cSelfOuter.couterIdent == "i2byC-1")) {
         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.couterIdent == \"i2byC-1\"");
     }
-    if (!$ceylon$language.String.instance(cSelfOuter.ident).equals($ceylon$language.String.instance("i2byC-2"))) {
+    if (!(cSelfOuter.ident == "i2byC-2")) {
         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.ident == \"i2byC-2\"");
     }
-    if (!$ceylon$language.String.instance(cSelfOuter.outerIdent).equals($ceylon$language.String.instance("i1o"))) {
+    if (!(cSelfOuter.outerIdent == "i1o")) {
         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.outerIdent == \"i1o\"");
     }
     $ceylon$language.print($ceylon$language.String.instance("done"));

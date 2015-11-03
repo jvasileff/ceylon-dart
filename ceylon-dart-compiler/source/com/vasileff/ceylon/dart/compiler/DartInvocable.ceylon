@@ -16,23 +16,30 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleFormalParameter,
     DartConstructorName,
     DartInstanceCreationExpression,
-    DartPropertyAccess
+    DartPropertyAccess,
+    DartPrefixedIdentifier
 }
 
 shared
-class DartFunctionOrValue(
-        shared DartSimpleIdentifier | DartPropertyAccess | DartConstructorName reference,
+class DartInvocable(
+        // DartPropetyAccess|DartPrefixedIdentifier may indicate a Dart static method
+        // or a qualified toplevel
+        shared DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
+                    | DartConstructorName reference,
         shared DartElementType elementType) {
 
-    shared [DartSimpleIdentifier, DartElementType] oldPair
+    shared [DartSimpleIdentifier, DartElementType] oldPairSimple
         =>  [asserted<DartSimpleIdentifier>(reference), elementType];
 
+    shared [DartPrefixedIdentifier|DartSimpleIdentifier, DartElementType] oldPairPrefixed
+        =>  [asserted<DartPrefixedIdentifier|DartSimpleIdentifier>(reference), elementType];
+
     shared
-    DartFunctionOrValue with(
-            DartSimpleIdentifier | DartPropertyAccess | DartConstructorName
-                reference = this.reference,
+    DartInvocable with(
+            DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
+                    | DartConstructorName reference = this.reference,
             DartElementType elementType = this.elementType)
-        =>  DartFunctionOrValue(reference, elementType);
+        =>  DartInvocable(reference, elementType);
 
     function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
         =>  if (is DartArgumentList arguments)
@@ -83,7 +90,7 @@ class DartFunctionOrValue(
 
     shared
     DartExpression expressionForInvocation(
-            DartExpression? receiver,
+            DartExpression? receiver = null,
             DartArgumentList|[DartExpression*] arguments = []) {
 
         switch (elementType)
@@ -101,7 +108,8 @@ class DartFunctionOrValue(
                     };
                 };
             }
-            case (is DartPropertyAccess) {
+            // Could be a Dart static method or a qualified toplevel
+            case (is DartPropertyAccess | DartPrefixedIdentifier) {
                 return
                 DartFunctionExpressionInvocation {
                     reference;
@@ -124,17 +132,27 @@ class DartFunctionOrValue(
             }
         }
         case (dartValue) {
+            "Arguments must be empty when accessing values"
+            assert (dartArgumentSequence(arguments).empty);
+
             "Dart values are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
-            "Arguments must be empty when accessing values"
-            assert (dartArgumentSequence(arguments).empty);
+            if (!exists receiver) {
+                return reference;
+            }
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             return createDartPropertyAccess(receiver, reference);
         }
         case (dartBinaryOperator) {
             "Binary operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             "Binary operators must have a receiver"
             assert (exists receiver);
@@ -156,6 +174,9 @@ class DartFunctionOrValue(
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
+
             "Index expressions must have a receiver"
             assert (exists receiver);
 
@@ -174,6 +195,9 @@ class DartFunctionOrValue(
         case (dartListAssignment) {
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             "Index assignment expressions must have a receiver"
             assert (exists receiver);
@@ -201,6 +225,9 @@ class DartFunctionOrValue(
             "Prefix operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
+
             "Dart Prefix operations must have a receiver"
             assert (exists receiver);
 
@@ -222,6 +249,13 @@ class DartFunctionOrValue(
             // TODO support this constructors?
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
+            if (!receiver exists) {
+                return reference;
+            }
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
+
             return createDartPropertyAccess(receiver, reference);
         }
         case (dartValue) {
@@ -229,6 +263,20 @@ class DartFunctionOrValue(
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
             // no known cases of this...
+
+            if (!receiver exists) {
+                DartFunctionExpression {
+                    dartFormalParameterListEmpty;
+                    DartExpressionFunctionBody {
+                        false;
+                        reference;
+                    };
+                };
+            }
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
+
             return
             DartFunctionExpression {
                 dartFormalParameterListEmpty;
@@ -244,6 +292,9 @@ class DartFunctionOrValue(
 
             "Binary operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             value arg0 = DartSimpleIdentifier("$0");
 
@@ -269,6 +320,9 @@ class DartFunctionOrValue(
         case (dartListAccess) {
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             "Index expressions must have a receiver"
             assert (exists receiver);
@@ -296,6 +350,9 @@ class DartFunctionOrValue(
         case (dartListAssignment) {
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             "Index assignment expressions must have a receiver"
             assert (exists receiver);
@@ -332,6 +389,9 @@ class DartFunctionOrValue(
         case (dartPrefixOperator) {
             "Prefix operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
+
+            "Member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier reference);
 
             "Dart Prefix operations must have a receiver"
             assert (exists receiver);
