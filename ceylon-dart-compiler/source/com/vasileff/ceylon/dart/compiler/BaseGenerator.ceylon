@@ -150,7 +150,7 @@ class BaseGenerator(CompilationContext ctx)
     value ceylonTypes = ctx.ceylonTypes;
 
     [TypeModel, TypeModel, String, TypeModel]?(DeclarationModel)
-    nativeBinaryFunctions = (() {
+    simpleNativeBinaryFunctions = (() {
         return ImmutableMap {
             ceylonTypes.stringDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.stringType,
@@ -230,6 +230,54 @@ class BaseGenerator(CompilationContext ctx)
                     ceylonTypes.floatType]
         }.get;
     })();
+
+    value booleanEquals = ceylonTypes.booleanDeclaration.getMember("equals", null, false);
+    value stringEquals = ceylonTypes.stringDeclaration.getMember("equals", null, false);
+    value integerEquals = ceylonTypes.integerDeclaration.getMember("equals", null, false);
+    value floatEquals = ceylonTypes.floatDeclaration.getMember("equals", null, false);
+
+    function nativeBinaryOptimization(
+            DeclarationModel declaration,
+            TypeModel receiverType,
+            TypeModel? argumentType) {
+
+        if (exists o = simpleNativeBinaryFunctions(declaration)) {
+            return o;
+        }
+
+        if (exists argumentType) {
+            value definiteArgument = ceylonTypes.definiteType(argumentType);
+            if (declaration == stringEquals
+                    && ceylonTypes.isCeylonString(definiteArgument)) {
+                return [ceylonTypes.booleanType,
+                        ceylonTypes.stringType, "==",
+                        ceylonTypes.stringType];
+            }
+
+            if (declaration == integerEquals
+                    && ceylonTypes.isCeylonInteger(definiteArgument)) {
+                return [ceylonTypes.booleanType,
+                        ceylonTypes.integerType, "==",
+                        ceylonTypes.integerType];
+            }
+
+            if (declaration == floatEquals
+                    && ceylonTypes.isCeylonFloat(definiteArgument)) {
+                return [ceylonTypes.booleanType,
+                        ceylonTypes.floatType, "==",
+                        ceylonTypes.floatType];
+            }
+
+            if (declaration == booleanEquals
+                    && ceylonTypes.isCeylonBoolean(definiteArgument)) {
+                return [ceylonTypes.booleanType,
+                        ceylonTypes.booleanType, "==",
+                        ceylonTypes.booleanType];
+            }
+        }
+
+        return null;
+    }
 
     shared
     DartInstanceCreationExpression createCallable(
@@ -689,7 +737,19 @@ class BaseGenerator(CompilationContext ctx)
             // receiver is not `super`
 
             // WIP native optimizations
-            if (exists optimization = nativeBinaryFunctions(memberDeclaration)) {
+            value firstArgType
+                // This leaves something on the table. We should be able to get the
+                // *argument list* signature from the typechecker.
+                =   if (is [Expression+] a) then
+                        ExpressionInfo(a[0]).typeModel
+                    else if (is PositionalArguments a,
+                             exists arg = a.argumentList.listedArguments.first) then
+                        ExpressionInfo(arg).typeModel
+                    else null;
+
+            if (exists optimization
+                    =   nativeBinaryOptimization(
+                            memberDeclaration, receiverType, firstArgType)) {
 
                 assert (!is ValueModel | SetterModel memberDeclaration);
 
