@@ -697,7 +697,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
 
   //  shared actual native String plus(String other);
   @$dart$core.override
-  String plus([String other]) => String.instance(_value + other._value);
+  String operator +(String other) => String.instance(_value + other._value);
 
   //  shared actual native String repeat(Integer times);
   @$dart$core.override
