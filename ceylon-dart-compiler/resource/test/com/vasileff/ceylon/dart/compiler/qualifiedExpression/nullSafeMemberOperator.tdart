@@ -6,20 +6,20 @@ void $package$run() {
 
     $dart$core.String os2$get() => null;
 
-    $ceylon$language.print($ceylon$language.Integer.instance((($ceylon$language.String $r) => $r == null ? null : $r.size)($ceylon$language.String.instance(os1$get()))));
-    $ceylon$language.print($ceylon$language.Integer.instance((($ceylon$language.String $r) => $r == null ? null : $r.size)($ceylon$language.String.instance(os2$get()))));
+    $ceylon$language.print($ceylon$language.Integer.instance((($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.size)($ceylon$language.String.instance(os1$get()))));
+    $ceylon$language.print($ceylon$language.Integer.instance((($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.size)($ceylon$language.String.instance(os2$get()))));
     $ceylon$language.Callable fos1 = (() {
         $ceylon$language.String $r = $ceylon$language.String.instance(os1$get());
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.String $r) => $r == null ? null : $r.getFromFirst($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)))($r));
+        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.getFromFirst($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)))($r));
     })();
     $ceylon$language.Callable fos2 = (() {
         $ceylon$language.String $r = $ceylon$language.String.instance(os2$get());
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.String $r) => $r == null ? null : $r.getFromFirst($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)))($r));
+        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.getFromFirst($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)))($r));
     })();
     $ceylon$language.print(fos1.f($ceylon$language.Integer.instance(0)));
     $ceylon$language.print(fos2.f($ceylon$language.Integer.instance(0)));
-    $ceylon$language.print((($ceylon$language.String $r) => $r == null ? null : $r.getFromFirst(0))($ceylon$language.String.instance(os1$get())));
-    $ceylon$language.print((($ceylon$language.String $r) => $r == null ? null : $r.getFromFirst(0))($ceylon$language.String.instance(os2$get())));
+    $ceylon$language.print((($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.getFromFirst(0))($ceylon$language.String.instance(os1$get())));
+    $ceylon$language.print((($ceylon$language.String $r) => $dart$core.identical($r, null) ? null : $r.getFromFirst(0))($ceylon$language.String.instance(os2$get())));
 }
 
 void run() => $package$run();

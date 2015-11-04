@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.Object sif = null;
     while (true) {
-        if (sif == null) {
+        if ($dart$core.identical(sif, null)) {
             break;
         }
         if (!false) {

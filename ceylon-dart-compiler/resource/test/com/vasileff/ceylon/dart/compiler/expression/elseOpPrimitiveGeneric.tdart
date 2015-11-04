@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.String x$get() => null;
 
-    $dart$core.String y = $ceylon$language.String.nativeValue($ceylon$language.identity((($dart$core.Object $lhs$) => $lhs$ == null ? $ceylon$language.String.instance("default") : $lhs$)($ceylon$language.String.instance(x$get()))) as $ceylon$language.String);
+    $dart$core.String y = $ceylon$language.String.nativeValue($ceylon$language.identity((($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $ceylon$language.String.instance("default") : $lhs$)($ceylon$language.String.instance(x$get()))) as $ceylon$language.String);
 }
 
 void run() => $package$run();

@@ -50,7 +50,7 @@ void $package$run() {
 
         return new $ceylon$language.dart$Callable(step$2$7);
     }));
-    if (!$ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    if (!($ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$8 = false;
         $dart$core.bool step$0$9() {
             if (step$0$expired$8) {
@@ -94,7 +94,7 @@ void $package$run() {
         }
 
         return new $ceylon$language.dart$Callable(step$2$15);
-    })).sequence().equals(values)) {
+    })).sequence() == values)) {
         throw new $ceylon$language.AssertionError("Violated: { for (f in funcs0.sequence()) f() }.sequence().equals(values)");
     }
     $ceylon$language.Iterable funcs1 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
@@ -138,7 +138,7 @@ void $package$run() {
                 $ceylon$language.Integer v = v$19;
                 $dart$core.int w;
                 $dart$core.int tmp$24 = $ceylon$language.Integer.nativeValue(v);
-                if (!(!(tmp$24 == null))) {
+                if (!(!$dart$core.identical(tmp$24, null))) {
                     continue;
                 }
                 w = tmp$24;
@@ -159,7 +159,7 @@ void $package$run() {
 
         return new $ceylon$language.dart$Callable(step$3$26);
     }));
-    if (!$ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    if (!($ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$27 = false;
         $dart$core.bool step$0$28() {
             if (step$0$expired$27) {
@@ -203,7 +203,7 @@ void $package$run() {
         }
 
         return new $ceylon$language.dart$Callable(step$2$34);
-    })).sequence().equals(values)) {
+    })).sequence() == values)) {
         throw new $ceylon$language.AssertionError("Violated: { for (f in funcs1.sequence()) f() }.sequence().equals(values)");
     }
     $ceylon$language.Iterable funcs2 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
@@ -247,7 +247,7 @@ void $package$run() {
                 $ceylon$language.Integer v = v$38;
                 $ceylon$language.Callable w;
                 $ceylon$language.Callable tmp$43 = true ? new $ceylon$language.dart$Callable(() => v) : null;
-                if (!(!(tmp$43 == null))) {
+                if (!(!$dart$core.identical(tmp$43, null))) {
                     continue;
                 }
                 w = tmp$43;
@@ -268,7 +268,7 @@ void $package$run() {
 
         return new $ceylon$language.dart$Callable(step$3$45);
     }));
-    if (!$ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    if (!($ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$46 = false;
         $dart$core.bool step$0$47() {
             if (step$0$expired$46) {
@@ -312,7 +312,7 @@ void $package$run() {
         }
 
         return new $ceylon$language.dart$Callable(step$2$53);
-    })).sequence().equals(values)) {
+    })).sequence() == values)) {
         throw new $ceylon$language.AssertionError("Violated: { for (f in funcs2.sequence()) f() }.sequence().equals(values)");
     }
     $ceylon$language.Iterable funcs3 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
@@ -393,7 +393,7 @@ void $package$run() {
 
         return new $ceylon$language.dart$Callable(step$3$66);
     }));
-    if (!$ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    if (!($ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$67 = false;
         $dart$core.bool step$0$68() {
             if (step$0$expired$67) {
@@ -437,7 +437,7 @@ void $package$run() {
         }
 
         return new $ceylon$language.dart$Callable(step$2$74);
-    })).sequence().equals(values)) {
+    })).sequence() == values)) {
         throw new $ceylon$language.AssertionError("Violated: { for (f in funcs3.sequence()) f() }.sequence().equals(values)");
     }
     $ceylon$language.print($ceylon$language.String.instance("* comprehensionCaptureTest end"));

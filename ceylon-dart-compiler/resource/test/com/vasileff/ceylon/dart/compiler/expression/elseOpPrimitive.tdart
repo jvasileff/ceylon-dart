@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.String x$get() => null;
 
-    $dart$core.String y = (($dart$core.String $lhs$) => $lhs$ == null ? "default" : $lhs$)(x$get());
+    $dart$core.String y = (($dart$core.String $lhs$) => $dart$core.identical($lhs$, null) ? "default" : $lhs$)(x$get());
     $ceylon$language.print($ceylon$language.String.instance(y));
 }
 

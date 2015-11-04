@@ -240,7 +240,7 @@ class ArraySequence implements Sequence {
             $dart$core.bool doElse$0 = true;
             {
                 $dart$core.Object tmp$1 = _$array.first;
-                if (!(tmp$1 == null)) {
+                if (!$dart$core.identical(tmp$1, null)) {
                     $dart$core.Object first;
                     first = tmp$1;
                     doElse$0 = false;
@@ -259,7 +259,7 @@ class ArraySequence implements Sequence {
             $dart$core.bool doElse$2 = true;
             {
                 $dart$core.Object tmp$3 = _$array.last;
-                if (!(tmp$3 == null)) {
+                if (!$dart$core.identical(tmp$3, null)) {
                     $dart$core.Object last;
                     last = tmp$3;
                     doElse$2 = false;
@@ -274,7 +274,7 @@ class ArraySequence implements Sequence {
             }
         }
     }
-    Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? new ArraySequence(_$array.spanFrom(Integer.instance(1))) : $lhs$)(size == 1 ? $package$empty : null);
+    Sequential get rest => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? new ArraySequence(_$array.spanFrom(Integer.instance(1))) : $lhs$)(size == 1 ? $package$empty : null);
     Sequence clone() => new ArraySequence(_$array.clone());
     void each([Callable step]) => _$array.each(step);
     $dart$core.int count([Callable selecting]) => _$array.count(selecting);
@@ -286,7 +286,7 @@ class ArraySequence implements Sequence {
         $dart$core.Object result;
         {
             $dart$core.Object tmp$4 = _$array.reduce(accumulating);
-            if (tmp$4 == null) {
+            if ($dart$core.identical(tmp$4, null)) {
                 throw new AssertionError("Violated: exists result = array.reduce(accumulating)");
             }
             result = tmp$4;
@@ -326,17 +326,17 @@ class ArraySequence implements Sequence {
     }
     Sequential span([Integer from, Integer to]) {
         if (Integer.nativeValue(from) <= Integer.nativeValue(to)) {
-            return ((Sequential $lhs$) => $lhs$ == null ? new ArraySequence(_$array.span(from, to)) : $lhs$)((Integer.nativeValue(to) < 0) || (Integer.nativeValue(from) > lastIndex) ? $package$empty : null);
+            return ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? new ArraySequence(_$array.span(from, to)) : $lhs$)((Integer.nativeValue(to) < 0) || (Integer.nativeValue(from) > lastIndex) ? $package$empty : null);
         } else {
-            return ((Sequential $lhs$) => $lhs$ == null ? new ArraySequence(_$array.span(from, to)) : $lhs$)((Integer.nativeValue(from) < 0) || (Integer.nativeValue(to) > lastIndex) ? $package$empty : null);
+            return ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? new ArraySequence(_$array.span(from, to)) : $lhs$)((Integer.nativeValue(from) < 0) || (Integer.nativeValue(to) > lastIndex) ? $package$empty : null);
         }
     }
-    Sequential spanFrom([Integer from]) => ((Sequential $lhs$) => $lhs$ == null ? new ArraySequence(_$array.spanFrom(from)) : $lhs$)(Integer.nativeValue(from) > lastIndex ? $package$empty : null);
-    Sequential spanTo([Integer to]) => ((Sequential $lhs$) => $lhs$ == null ? new ArraySequence(_$array.spanTo(to)) : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
+    Sequential spanFrom([Integer from]) => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? new ArraySequence(_$array.spanFrom(from)) : $lhs$)(Integer.nativeValue(from) > lastIndex ? $package$empty : null);
+    Sequential spanTo([Integer to]) => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? new ArraySequence(_$array.spanTo(to)) : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
     $dart$core.int firstOccurrence([$dart$core.Object element]) => _$array.firstOccurrence(element);
     $dart$core.int lastOccurrence([$dart$core.Object element]) => _$array.lastOccurrence(element);
     $dart$core.bool occurs([$dart$core.Object element]) => _$array.occurs(element);
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -534,8 +534,8 @@ abstract class Collection implements Iterable {
             Iterator iterator$0 = $this.iterator();
             while ((element$1 = iterator$0.next()) is !Finished) {
                 $dart$core.Object elem = element$1;
-                if (!(elem == null)) {
-                    if (elem.equals(element)) {
+                if (!$dart$core.identical(elem, null)) {
+                    if (elem == element) {
                         return true;
                     }
                 }
@@ -546,7 +546,7 @@ abstract class Collection implements Iterable {
         }
     }
     $dart$core.String toString();
-    static $dart$core.String $get$string([final Collection $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("{ " + $package$commaList($this)) + " }" : $lhs$)($this.empty ? "{}" : null);
+    static $dart$core.String $get$string([final Collection $this]) => (($dart$core.String $lhs$) => $dart$core.identical($lhs$, null) ? ("{ " + $package$commaList($this)) + " }" : $lhs$)($this.empty ? "{}" : null);
 }
 abstract class Comparable {
     Comparison compare([$dart$core.Object other]);
@@ -565,7 +565,7 @@ Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$da
         while ((element$1 = iterator$0.next()) is !Finished) {
             Callable compare = element$1 as Callable;
             Comparison comparison = compare.f(x, y) as Comparison;
-            if (!comparison.equals($package$equal)) {
+            if (!(comparison == $package$equal)) {
                 return comparison;
             }
         }
@@ -583,7 +583,7 @@ abstract class Comparison {
     }
     $dart$core.String string;
     Comparison get reversed;
-    $dart$core.bool equals([$dart$core.Object other]) => (() {
+    $dart$core.bool operator ==($dart$core.Object other) => (() {
         $dart$core.bool doElse$0 = true;
         if (other != null) {
             doElse$0 = false;
@@ -728,7 +728,7 @@ class Contextual$Using implements Obtainable {
             $dart$core.bool doElse$3 = true;
             {
                 $dart$core.Object tmp$4 = _$previous;
-                if (!(tmp$4 == null)) {
+                if (!$dart$core.identical(tmp$4, null)) {
                     $dart$core.Object p;
                     p = tmp$4;
                     doElse$3 = false;
@@ -750,7 +750,7 @@ class Contextual {
         $dart$core.Object result;
         {
             $dart$core.Object tmp$0 = _$val;
-            if (tmp$0 == null) {
+            if ($dart$core.identical(tmp$0, null)) {
                 throw new AssertionError("Violated: exists result = val");
             }
             result = tmp$0;
@@ -853,14 +853,14 @@ $dart$core.bool $package$corresponding([Iterable firstIterable, Iterable secondI
     if ($dart$core.identical(comparing, $package$dart$default)) {
         comparing = new dart$Callable(([$dart$core.Object first, $dart$core.Object second]) => (() {
             $dart$core.bool doElse$0 = true;
-            if (!(first == null)) {
-                if (!(second == null)) {
+            if (!$dart$core.identical(first, null)) {
+                if (!$dart$core.identical(second, null)) {
                     doElse$0 = false;
-                    return Boolean.instance(first.equals(second));
+                    return Boolean.instance(first == second);
                 }
             }
             if (doElse$0) {
-                return Boolean.instance((!(!(first == null))) && (!(!(second == null))));
+                return Boolean.instance((!(!$dart$core.identical(first, null))) && (!(!$dart$core.identical(second, null))));
             }
         })());
     }
@@ -1072,23 +1072,23 @@ $dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $
 
 Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
     Character $r = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r == $0));
 })(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
     Character $r = new Character.$fromInt(13);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r == $0));
 })())));
 
 Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
 
 Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
     Character $r = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r.equals($0)));
+    return new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($r == $0));
 })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
     $dart$core.String line = String.nativeValue(lineWithBreak.get(Integer.instance(0)) as String);
     $dart$core.String br = String.nativeValue(lineWithBreak.get(Integer.instance(1)) as String);
     return (() {
         $dart$core.bool doElse$5 = true;
-        if (!(br == null)) {
+        if (!$dart$core.identical(br, null)) {
             doElse$5 = false;
             return String.instance(line + br);
         }
@@ -1420,7 +1420,7 @@ abstract class Empty implements Sequential, Ranged {
 }
 class empty_ implements Empty {
     empty_() {}
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Empty.$get$string(this);
     $dart$core.Object getFromLast([$dart$core.int index]) => Empty.$getFromLast(this, index);
@@ -1537,7 +1537,7 @@ emptyIterator_ get emptyIterator => $package$emptyIterator;
 
 $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() {
     $dart$core.bool doElse$0 = true;
-    if (!(element == null)) {
+    if (!$dart$core.identical(element, null)) {
         doElse$0 = false;
         return new Tuple.$withList([element]);
     }
@@ -1558,7 +1558,7 @@ class Entry {
     Tuple get pair => new Tuple.$withList([key, item]);
     Entry get coalesced => (() {
         $dart$core.bool doElse$0 = true;
-        if (!(item == null)) {
+        if (!$dart$core.identical(item, null)) {
             doElse$0 = false;
             return new Entry(key, item);
         }
@@ -1566,35 +1566,35 @@ class Entry {
             return null;
         }
     })();
-    $dart$core.bool equals([$dart$core.Object that]) {{
+    $dart$core.bool operator ==($dart$core.Object that) {{
             $dart$core.bool doElse$1 = true;
             if (that is Entry) {
                 Entry that$2;
                 that$2 = that as Entry;
                 doElse$1 = false;
-                if (!this.key.equals(that$2.key)) {
+                if (!(this.key == that$2.key)) {
                     return false;
                 }
                 {
                     $dart$core.bool doElse$3 = true;
                     {
                         $dart$core.Object tmp$4 = this.item;
-                        if (!(tmp$4 == null)) {
+                        if (!$dart$core.identical(tmp$4, null)) {
                             $dart$core.Object thisItem;
                             thisItem = tmp$4;
                             {
                                 $dart$core.Object tmp$5 = that$2.item;
-                                if (!(tmp$5 == null)) {
+                                if (!$dart$core.identical(tmp$5, null)) {
                                     $dart$core.Object thatItem;
                                     thatItem = tmp$5;
                                     doElse$3 = false;
-                                    return thisItem.equals(thatItem);
+                                    return thisItem == thatItem;
                                 }
                             }
                         }
                     }
                     if (doElse$3) {
-                        return (!(!(this.item == null))) && (!(!(that$2.item == null)));
+                        return (!(!$dart$core.identical(this.item, null))) && (!(!$dart$core.identical(that$2.item, null)));
                     }
                 }
             }
@@ -1603,7 +1603,7 @@ class Entry {
             }
         }
     }
-    $dart$core.int get hashCode => ((31 + key.hashCode) * 31) + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.hashCode)(item));
+    $dart$core.int get hashCode => ((31 + key.hashCode) * 31) + (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? 0 : $lhs$)((($dart$core.Object $r) => $dart$core.identical($r, null) ? null : $r.hashCode)(item));
     $dart$core.String toString() => ((("" + key.toString()) + "->") + $package$stringify(item)) + "";
 }
 abstract class Enumerable implements Ordinal {
@@ -1740,7 +1740,7 @@ $dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Obj
         return "0";
     }
     Iterable digits = $package$empty;
-    $dart$core.int i = (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance(integer).negated) : $lhs$)(integer < 0 ? integer : null);
+    $dart$core.int i = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(integer).negated) : $lhs$)(integer < 0 ? integer : null);
     while (!(i == 0)) {
         $dart$core.int d = Integer.nativeValue(Integer.instance(i).remainder(Integer.instance(radix as $dart$core.int)).negated);
         Character c;
@@ -1838,7 +1838,7 @@ abstract class impl$BaseIterator implements Iterator {
 }
 abstract class impl$BaseMap implements Map {
     impl$BaseMap() {}
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -1906,7 +1906,7 @@ abstract class impl$BaseMap implements Map {
 }
 abstract class impl$BaseList implements List {
     impl$BaseList() {}
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -2004,7 +2004,7 @@ abstract class impl$BaseList implements List {
 }
 abstract class impl$BaseCharacterList implements List {
     impl$BaseCharacterList() {}
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -2102,7 +2102,7 @@ abstract class impl$BaseCharacterList implements List {
 }
 abstract class impl$BaseSequence implements Sequence {
     impl$BaseSequence() {}
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -2209,7 +2209,7 @@ class impl$ElementImpl implements serialization$Element {
     }
     $dart$core.String toString() => ("Element [index=" + Integer.instance(index).toString()) + "]";
     $dart$core.int get hashCode => index;
-    $dart$core.bool equals([$dart$core.Object other]) {{
+    $dart$core.bool operator ==($dart$core.Object other) {{
             $dart$core.bool doElse$0 = true;
             if (other is impl$ElementImpl) {
                 impl$ElementImpl other$1;
@@ -2233,13 +2233,13 @@ class impl$MemberImpl implements serialization$Member {
     }
     $dart$core.String toString() => ("Member [attribute=" + attribute.toString()) + "]";
     $dart$core.int get hashCode => attribute.hashCode;
-    $dart$core.bool equals([$dart$core.Object other]) {{
+    $dart$core.bool operator ==($dart$core.Object other) {{
             $dart$core.bool doElse$0 = true;
             if (other is impl$MemberImpl) {
                 impl$MemberImpl other$1;
                 other$1 = other as impl$MemberImpl;
                 doElse$0 = false;
-                return $dart$core.identical(this, other$1) || attribute.equals(other$1.attribute);
+                return $dart$core.identical(this, other$1) || (attribute == other$1.attribute);
             }
             if (doElse$0) {
                 return false;
@@ -2294,7 +2294,7 @@ class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
         Iterator iter;
         {
             Iterator tmp$18 = _$iterators.get(Integer.instance(_$which)) as Iterator;
-            if (tmp$18 == null) {
+            if ($dart$core.identical(tmp$18, null)) {
                 throw new AssertionError("Violated: exists iter = iterators[which]");
             }
             iter = tmp$18;
@@ -2698,7 +2698,7 @@ class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
             }
             {
                 $dart$core.bool doElse$58 = true;
-                if (!(next == null)) {
+                if (!$dart$core.identical(next, null)) {
                     if (Boolean.nativeValue($outer$ceylon$language$Iterable$locations$$anonymous$6_.$capture$Iterable$locations$selecting.f(next) as Boolean)) {
                         doElse$58 = false;
                         return new Entry((() {
@@ -2864,7 +2864,7 @@ class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements Iterator {
         _$i = 0;
     }
     $dart$core.int _$i;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter.next() : $lhs$)((_$i = Integer.nativeValue(Integer.instance(_$i).successor)) > $outer$ceylon$language$Iterable$take$$anonymous$10_.$capture$Iterable$take$taking ? $package$finished : null);
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter.next() : $lhs$)((_$i = Integer.nativeValue(Integer.instance(_$i).successor)) > $outer$ceylon$language$Iterable$take$$anonymous$10_.$capture$Iterable$take$taking ? $package$finished : null);
     $dart$core.String toString() => $outer$ceylon$language$Iterable$take$$anonymous$10_.toString() + ".iterator()";
 }
 class Iterable$take$$anonymous$10_ implements Iterable {
@@ -3874,7 +3874,7 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
     Array _$store;
     $dart$core.int _$hash([$dart$core.Object element, $dart$core.int size]) => (() {
         $dart$core.bool doElse$126 = true;
-        if (!(element == null)) {
+        if (!$dart$core.identical(element, null)) {
             doElse$126 = false;
             return Integer.nativeValue(Integer.instance(element.hashCode).magnitude.remainder(Integer.instance(size)));
         }
@@ -3898,7 +3898,7 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
                     ElementEntry e;
                     {
                         ElementEntry tmp$130 = entry;
-                        if (tmp$130 == null) {
+                        if ($dart$core.identical(tmp$130, null)) {
                             break;
                         }
                         e = tmp$130;
@@ -3923,7 +3923,7 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
                     ElementEntry entry = _$store.get(Integer.instance(index)) as ElementEntry;
                     {
                         $dart$core.bool doElse$132 = true;
-                        if (!(entry == null)) {
+                        if (!$dart$core.identical(entry, null)) {
                             if (entry.has(element)) {
                                 doElse$132 = false;
                             }
@@ -4019,7 +4019,7 @@ class Iterable$group$$anonymous$32_$$anonymous$33_ implements Iterator {
             $dart$core.bool doElse$144 = true;
             {
                 GroupEntry tmp$145 = _$entry;
-                if (!(tmp$145 == null)) {
+                if (!$dart$core.identical(tmp$145, null)) {
                     GroupEntry e;
                     e = tmp$145;
                     doElse$144 = false;
@@ -4039,7 +4039,7 @@ class Iterable$group$$anonymous$32_$$anonymous$33_ implements Iterator {
                         })()) as GroupEntry;
                         {
                             GroupEntry tmp$147 = _$entry;
-                            if (!(tmp$147 == null)) {
+                            if (!$dart$core.identical(tmp$147, null)) {
                                 GroupEntry e;
                                 e = tmp$147;
                                 _$entry = e.next;
@@ -4076,7 +4076,7 @@ class Iterable$group$$anonymous$32_ implements Map {
                     $dart$core.bool doElse$136 = true;
                     {
                         GroupEntry tmp$137 = _$store.get(Integer.instance(index)) as GroupEntry;
-                        if (!(tmp$137 == null)) {
+                        if (!$dart$core.identical(tmp$137, null)) {
                             GroupEntry entries;
                             entries = tmp$137;
                             doElse$136 = false;
@@ -4084,7 +4084,7 @@ class Iterable$group$$anonymous$32_ implements Map {
                                 $dart$core.bool doElse$138 = true;
                                 {
                                     GroupEntry tmp$139 = entries.get(group);
-                                    if (!(tmp$139 == null)) {
+                                    if (!$dart$core.identical(tmp$139, null)) {
                                         GroupEntry entry;
                                         entry = tmp$139;
                                         doElse$138 = false;
@@ -4128,7 +4128,7 @@ class Iterable$group$$anonymous$32_ implements Map {
                     GroupEntry g;
                     {
                         GroupEntry tmp$143 = group;
-                        if (tmp$143 == null) {
+                        if ($dart$core.identical(tmp$143, null)) {
                             break;
                         }
                         g = tmp$143;
@@ -4145,10 +4145,10 @@ class Iterable$group$$anonymous$32_ implements Map {
     $dart$core.int get size => _$count;
     Iterator iterator() => new Iterable$group$$anonymous$32_$$anonymous$33_(this);
     Map clone() => this;
-    GroupEntry _$group([$dart$core.Object key]) => ((GroupEntry $r) => $r == null ? null : $r.get(key))(_$store.get(Integer.instance(_$hash(key, _$store.size))) as GroupEntry);
-    $dart$core.bool defines([$dart$core.Object key]) => !(_$group(key) == null);
-    Sequence get([$dart$core.Object key]) => ((GroupEntry $r) => $r == null ? null : $r.elements)(_$group(key));
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    GroupEntry _$group([$dart$core.Object key]) => ((GroupEntry $r) => $dart$core.identical($r, null) ? null : $r.get(key))(_$store.get(Integer.instance(_$hash(key, _$store.size))) as GroupEntry);
+    $dart$core.bool defines([$dart$core.Object key]) => !$dart$core.identical(_$group(key), null);
+    Sequence get([$dart$core.Object key]) => ((GroupEntry $r) => $dart$core.identical($r, null) ? null : $r.elements)(_$group(key));
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -4218,9 +4218,9 @@ abstract class Iterable implements Category {
     $dart$core.bool contains([$dart$core.Object element]);
     static $dart$core.bool $contains([final Iterable $this, $dart$core.Object element]) => $this.any(new dart$Callable(([$dart$core.Object e]) => (() {
         $dart$core.bool doElse$0 = true;
-        if (!(e == null)) {
+        if (!$dart$core.identical(e, null)) {
             doElse$0 = false;
-            return Boolean.instance(e.equals(element));
+            return Boolean.instance(e == element);
         }
         if (doElse$0) {
             return $package$$false;
@@ -4567,7 +4567,7 @@ abstract class Iterable implements Category {
             Iterator iterator$50 = $this.iterator();
             while ((element$51 = iterator$50.next()) is !Finished) {
                 $dart$core.Object elem = element$51;
-                if (!(elem == null)) {
+                if (!$dart$core.identical(elem, null)) {
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return elem;
                     }
@@ -4584,7 +4584,7 @@ abstract class Iterable implements Category {
             Iterator iterator$52 = $this.iterator();
             while ((element$53 = iterator$52.next()) is !Finished) {
                 $dart$core.Object elem = element$53;
-                if (!(elem == null)) {
+                if (!$dart$core.identical(elem, null)) {
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         last = elem;
                     }
@@ -4601,7 +4601,7 @@ abstract class Iterable implements Category {
             Iterator iterator$54 = $this.iterator();
             while ((element$55 = iterator$54.next()) is !Finished) {
                 $dart$core.Object elem = element$55;
-                if (!(elem == null)) {
+                if (!$dart$core.identical(elem, null)) {
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         return new Entry(Integer.instance(index), elem);
                     }
@@ -4620,7 +4620,7 @@ abstract class Iterable implements Category {
             Iterator iterator$56 = $this.iterator();
             while ((element$57 = iterator$56.next()) is !Finished) {
                 $dart$core.Object elem = element$57;
-                if (!(elem == null)) {
+                if (!$dart$core.identical(elem, null)) {
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
                         last = new Entry(Integer.instance(index), elem);
                     }
@@ -4653,7 +4653,7 @@ abstract class Iterable implements Category {
                             }
                             val = val$63;
                         }
-                        if ((comparing.f(val, max) as Comparison).equals($package$larger)) {
+                        if ((comparing.f(val, max) as Comparison) == $package$larger) {
                             max = val;
                         }
                     }
@@ -4843,7 +4843,7 @@ abstract class Iterable implements Category {
                 return $package$finished;
             }
             $dart$core.Object elem = elem$84;
-            return (($dart$core.Object $lhs$) => $lhs$ == null ? defaultValue : $lhs$)(elem);
+            return (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? defaultValue : $lhs$)(elem);
         }
 
         return new dart$Callable(step$2$88);
@@ -4887,7 +4887,7 @@ abstract class Iterable implements Category {
         $dart$core.bool step$2$96() {
             while (step$1$95()) {
                 $dart$core.Object e = e$92;
-                if (!(!(e == null))) {
+                if (!(!$dart$core.identical(e, null))) {
                     continue;
                 }
                 return true;
@@ -5095,7 +5095,7 @@ class ElementEntry$$anonymous$34_ implements Iterator {
             $dart$core.bool doElse$166 = true;
             {
                 ElementEntry tmp$167 = _$entry;
-                if (!(tmp$167 == null)) {
+                if (!$dart$core.identical(tmp$167, null)) {
                     ElementEntry e;
                     e = tmp$167;
                     doElse$166 = false;
@@ -5130,28 +5130,28 @@ class ElementEntry implements Sequence {
             ElementEntry e;
             {
                 ElementEntry tmp$159 = entry;
-                if (tmp$159 == null) {
+                if ($dart$core.identical(tmp$159, null)) {
                     break;
                 }
                 e = tmp$159;
             }
             {
                 $dart$core.bool doElse$157 = true;
-                if (!(element == null)) {
+                if (!$dart$core.identical(element, null)) {
                     doElse$157 = false;
                     {
                         $dart$core.Object tmp$158 = e.element;
-                        if (!(tmp$158 == null)) {
+                        if (!$dart$core.identical(tmp$158, null)) {
                             $dart$core.Object ee;
                             ee = tmp$158;
-                            if (element.equals(ee)) {
+                            if (element == ee) {
                                 return true;
                             }
                         }
                     }
                 }
                 if (doElse$157) {
-                    if (!(!(e.element == null))) {
+                    if (!(!$dart$core.identical(e.element, null))) {
                         return true;
                     }
                 }
@@ -5174,7 +5174,7 @@ class ElementEntry implements Sequence {
                         $dart$core.bool doElse$162 = true;
                         {
                             ElementEntry tmp$163 = entry.next;
-                            if (!(tmp$163 == null)) {
+                            if (!$dart$core.identical(tmp$163, null)) {
                                 ElementEntry next;
                                 next = tmp$163;
                                 doElse$162 = false;
@@ -5190,14 +5190,14 @@ class ElementEntry implements Sequence {
             return entry.element;
         }
     }
-    Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(next);
+    Sequential get rest => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(next);
     $dart$core.Object get last {
         ElementEntry entry = this;
         while (true) {
             ElementEntry next;
             {
                 ElementEntry tmp$164 = entry.next;
-                if (tmp$164 == null) {
+                if ($dart$core.identical(tmp$164, null)) {
                     break;
                 }
                 next = tmp$164;
@@ -5213,7 +5213,7 @@ class ElementEntry implements Sequence {
             ElementEntry next;
             {
                 ElementEntry tmp$165 = entry.next;
-                if (tmp$165 == null) {
+                if ($dart$core.identical(tmp$165, null)) {
                     break;
                 }
                 next = tmp$165;
@@ -5224,7 +5224,7 @@ class ElementEntry implements Sequence {
         return count;
     }
     Iterator iterator() => new ElementEntry$$anonymous$34_(this);
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -5342,12 +5342,12 @@ class GroupEntry {
             GroupEntry e;
             {
                 GroupEntry tmp$168 = entry;
-                if (tmp$168 == null) {
+                if ($dart$core.identical(tmp$168, null)) {
                     break;
                 }
                 e = tmp$168;
             }
-            if (group.equals(e.group)) {
+            if (group == e.group) {
                 return e;
             }
             entry = e.next;
@@ -5358,7 +5358,7 @@ class GroupEntry {
 abstract class Iterator {
     $dart$core.Object next();
 }
-$dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $lhs$ == null ? y : $lhs$)((x as Comparable).largerThan(y) ? x : null);
+$dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable).largerThan(y) ? x : null);
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
@@ -5371,7 +5371,7 @@ class List$iterator$$anonymous$0_ implements Iterator {
     }
     $dart$core.int _$index;
     $dart$core.int _$size;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? List.$_$getElement(this.$outer$ceylon$language$List, (() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? List.$_$getElement(this.$outer$ceylon$language$List, (() {
         $dart$core.int tmp$5 = _$index;
         _$index = Integer.nativeValue(Integer.instance(_$index).successor);
         return tmp$5;
@@ -5395,7 +5395,7 @@ class List$collect$list_ implements List {
             return null;
         }
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -5497,7 +5497,7 @@ class List$Indexes$$anonymous$1_ implements Iterator {
         _$i = 0;
     }
     $dart$core.int _$i;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$finished : $lhs$)(_$i < $outer$ceylon$language$List$Indexes.size ? (() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$finished : $lhs$)(_$i < $outer$ceylon$language$List$Indexes.size ? (() {
         $dart$core.Object tmp$84 = Integer.instance(_$i);
         Integer.instance(_$i = Integer.nativeValue(Integer.instance(_$i).successor));
         return tmp$84;
@@ -5520,7 +5520,7 @@ class List$Indexes implements List {
         $dart$core.bool doElse$82 = true;
         {
             $dart$core.int tmp$83 = lastIndex;
-            if (!(tmp$83 == null)) {
+            if (!$dart$core.identical(tmp$83, null)) {
                 $dart$core.int endIndex;
                 endIndex = tmp$83;
                 doElse$82 = false;
@@ -5532,7 +5532,7 @@ class List$Indexes implements List {
         }
     })();
     Iterator iterator() => new List$Indexes$$anonymous$1_(this);
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -5673,7 +5673,7 @@ class List$Rest implements List {
         List o = $outer$ceylon$language$List;
         return new List$Rest$$anonymous$2_(this, o);
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -5772,7 +5772,7 @@ class List$Sublist$$anonymous$3_ implements Iterator {
         _$i = 0;
     }
     $dart$core.int _$i;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? $capture$$iter.next() : $lhs$)((() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $capture$$iter.next() : $lhs$)((() {
         $dart$core.int tmp$86 = _$i;
         _$i = Integer.nativeValue(Integer.instance(_$i).successor);
         return tmp$86;
@@ -5798,18 +5798,18 @@ class List$Sublist implements List {
     })();
     $dart$core.int get lastIndex => (() {
         $dart$core.int endIndex = $outer$ceylon$language$List.size - 1;
-        return endIndex >= 0 ? (($dart$core.int $lhs$) => $lhs$ == null ? _$to : $lhs$)(endIndex < _$to ? endIndex : null) : null;
+        return endIndex >= 0 ? (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? _$to : $lhs$)(endIndex < _$to ? endIndex : null) : null;
     })();
-    List measure([Integer from, $dart$core.int length]) => ((List $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.measure(from, length) : $lhs$)(((Integer.nativeValue(from) + length) - 1) > _$to ? $outer$ceylon$language$List.measure(from, _$to) : null);
-    List span([Integer from, Integer to]) => ((List $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.span(from, to) : $lhs$)(Integer.nativeValue(to) > this._$to ? $outer$ceylon$language$List.span(from, Integer.instance(this._$to)) : null);
+    List measure([Integer from, $dart$core.int length]) => ((List $lhs$) => $dart$core.identical($lhs$, null) ? $outer$ceylon$language$List.measure(from, length) : $lhs$)(((Integer.nativeValue(from) + length) - 1) > _$to ? $outer$ceylon$language$List.measure(from, _$to) : null);
+    List span([Integer from, Integer to]) => ((List $lhs$) => $dart$core.identical($lhs$, null) ? $outer$ceylon$language$List.span(from, to) : $lhs$)(Integer.nativeValue(to) > this._$to ? $outer$ceylon$language$List.span(from, Integer.instance(this._$to)) : null);
     List spanFrom([Integer from]) => $outer$ceylon$language$List.span(from, Integer.instance(_$to));
-    List spanTo([Integer to]) => ((List $lhs$) => $lhs$ == null ? $outer$ceylon$language$List.spanTo(to) : $lhs$)(Integer.nativeValue(to) > this._$to ? $outer$ceylon$language$List.spanTo(Integer.instance(this._$to)) : null);
+    List spanTo([Integer to]) => ((List $lhs$) => $dart$core.identical($lhs$, null) ? $outer$ceylon$language$List.spanTo(to) : $lhs$)(Integer.nativeValue(to) > this._$to ? $outer$ceylon$language$List.spanTo(Integer.instance(this._$to)) : null);
     List clone() => new List$Sublist($outer$ceylon$language$List.clone(), _$to);
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$List.iterator();
         return new List$Sublist$$anonymous$3_(this, iter);
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -5924,7 +5924,7 @@ class List$Repeat implements List {
     List clone() => new List$Repeat($outer$ceylon$language$List.clone(), _$times);
     Iterator iterator() => new CycledIterator($outer$ceylon$language$List, _$times);
     $dart$core.String toString() => ((("(" + $outer$ceylon$language$List.toString()) + ").repeat(") + Integer.instance(_$times).toString()) + ")";
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -6088,7 +6088,7 @@ class List$Patch implements List {
         Iterator patchIter = _$list.iterator();
         return new List$Patch$$anonymous$4_(this, iter, patchIter);
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -6190,7 +6190,7 @@ class List$Reversed$$anonymous$5_ implements Iterator {
         _$index = $capture$$outerList.size - 1;
     }
     $dart$core.int _$index;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? List.$_$getElement($capture$$outerList, (() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? List.$_$getElement($capture$$outerList, (() {
         $dart$core.int tmp$89 = _$index;
         _$index = Integer.nativeValue(Integer.instance(_$index).predecessor);
         return tmp$89;
@@ -6250,7 +6250,7 @@ class List$Reversed implements List {
         List outerList = $outer$ceylon$language$List;
         return new List$Reversed$$anonymous$5_(this, outerList);
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
@@ -6363,7 +6363,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                     $dart$core.Object elem;
                     {
                         $dart$core.Object tmp$90 = $capture$$list.get(i);
-                        if (tmp$90 == null) {
+                        if ($dart$core.identical(tmp$90, null)) {
                             throw new AssertionError("Violated: exists elem = list[i]");
                         }
                         elem = tmp$90;
@@ -6380,7 +6380,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                 $dart$core.int swap;
                 {
                     $dart$core.int tmp$92 = Integer.nativeValue(_$swaps.get(Integer.instance(_$counter)) as Integer);
-                    if (tmp$92 == null) {
+                    if ($dart$core.identical(tmp$92, null)) {
                         throw new AssertionError("Violated: exists swap = swaps[counter]");
                     }
                     swap = tmp$92;
@@ -6388,7 +6388,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                 $dart$core.int dir;
                 {
                     $dart$core.int tmp$93 = Integer.nativeValue(_$directions.get(Integer.instance(_$counter)) as Integer);
-                    if (tmp$93 == null) {
+                    if ($dart$core.identical(tmp$93, null)) {
                         throw new AssertionError("Violated: exists dir = directions[counter]");
                     }
                     dir = tmp$93;
@@ -6397,7 +6397,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                     $dart$core.int index;
                     {
                         $dart$core.int tmp$94 = Integer.nativeValue(_$indexes.get(Integer.instance(_$counter)) as Integer);
-                        if (tmp$94 == null) {
+                        if ($dart$core.identical(tmp$94, null)) {
                             throw new AssertionError("Violated: exists index = indexes[counter]");
                         }
                         index = tmp$94;
@@ -6406,7 +6406,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                     $dart$core.int swapIndex;
                     {
                         $dart$core.int tmp$95 = Integer.nativeValue(_$permutation.get(Integer.instance(otherIndex)) as Integer);
-                        if (tmp$95 == null) {
+                        if ($dart$core.identical(tmp$95, null)) {
                             throw new AssertionError("Violated: exists swapIndex = permutation[otherIndex]");
                         }
                         swapIndex = tmp$95;
@@ -6505,7 +6505,7 @@ abstract class List implements Collection, Correspondence, Ranged {
             $dart$core.bool doElse$0 = true;
             {
                 $dart$core.Object tmp$1 = $this.getFromFirst(index);
-                if (!(tmp$1 == null)) {
+                if (!$dart$core.identical(tmp$1, null)) {
                     $dart$core.Object element;
                     element = tmp$1;
                     doElse$0 = false;
@@ -6522,7 +6522,7 @@ abstract class List implements Collection, Correspondence, Ranged {
     }
     $dart$core.int get lastIndex;
     $dart$core.int get size;
-    static $dart$core.int $get$size([final List $this]) => (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance(1).negated) : $lhs$)($this.lastIndex) + 1;
+    static $dart$core.int $get$size([final List $this]) => (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(1).negated) : $lhs$)($this.lastIndex) + 1;
     $dart$core.bool defines([Integer index]);
     static $dart$core.bool $defines([final List $this, Integer index]) => (Integer.nativeValue(index) >= 0) && (Integer.nativeValue(index) < $this.size);
     $dart$core.bool contains([$dart$core.Object element]);
@@ -6533,10 +6533,10 @@ abstract class List implements Collection, Correspondence, Ranged {
                 Integer index = element$3 as Integer;
                 {
                     $dart$core.Object tmp$4 = $this.getFromFirst(Integer.nativeValue(index));
-                    if (!(tmp$4 == null)) {
+                    if (!$dart$core.identical(tmp$4, null)) {
                         $dart$core.Object elem;
                         elem = tmp$4;
-                        if (elem.equals(element)) {
+                        if (elem == element) {
                             return true;
                         }
                     }
@@ -6563,7 +6563,7 @@ abstract class List implements Collection, Correspondence, Ranged {
             return $package$emptyIterator;
         }
     }
-    $dart$core.bool equals([$dart$core.Object that]);
+    $dart$core.bool operator ==($dart$core.Object that);
     static $dart$core.bool $equals([final List $this, $dart$core.Object that]) {
         if (that is String) {
             $dart$core.String that$6;
@@ -6585,13 +6585,13 @@ abstract class List implements Collection, Correspondence, Ranged {
                             $dart$core.Object y = that$8.getFromFirst(Integer.nativeValue(index));
                             {
                                 $dart$core.bool doElse$11 = true;
-                                if (!(x == null)) {
+                                if (!$dart$core.identical(x, null)) {
                                     doElse$11 = false;
                                     {
                                         $dart$core.bool doElse$12 = true;
-                                        if (!(y == null)) {
+                                        if (!$dart$core.identical(y, null)) {
                                             doElse$12 = false;
-                                            if (!x.equals(y)) {
+                                            if (!(x == y)) {
                                                 return false;
                                             }
                                         }
@@ -6601,7 +6601,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                                     }
                                 }
                                 if (doElse$11) {
-                                    if (!(y == null)) {
+                                    if (!$dart$core.identical(y, null)) {
                                         return false;
                                     }
                                 }
@@ -6629,7 +6629,7 @@ abstract class List implements Collection, Correspondence, Ranged {
             while ((element$14 = iterator$13.next()) is !Finished) {
                 $dart$core.Object elem = element$14;
                 hash = hash * 31;
-                if (!(elem == null)) {
+                if (!$dart$core.identical(elem, null)) {
                     hash = hash + elem.hashCode;
                 }
             }
@@ -6651,7 +6651,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     index = Integer.nativeValue(Integer.instance(index).successor);
                     return tmp$16;
                 })());
-                if (!(tmp$15 == null)) {
+                if (!$dart$core.identical(tmp$15, null)) {
                     $dart$core.Object elem;
                     elem = tmp$15;
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
@@ -6671,7 +6671,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     index = Integer.nativeValue(Integer.instance(index).predecessor);
                     return tmp$18;
                 })());
-                if (!(tmp$17 == null)) {
+                if (!$dart$core.identical(tmp$17, null)) {
                     $dart$core.Object elem;
                     elem = tmp$17;
                     if (Boolean.nativeValue(selecting.f(elem) as Boolean)) {
@@ -6683,9 +6683,9 @@ abstract class List implements Collection, Correspondence, Ranged {
         return null;
     }
     List sublistFrom([$dart$core.int from]);
-    static List $sublistFrom([final List $this, $dart$core.int from]) => ((List $lhs$) => $lhs$ == null ? new List$Rest($this, from) : $lhs$)(from < 0 ? $this : null);
+    static List $sublistFrom([final List $this, $dart$core.int from]) => ((List $lhs$) => $dart$core.identical($lhs$, null) ? new List$Rest($this, from) : $lhs$)(from < 0 ? $this : null);
     List sublistTo([$dart$core.int to]);
-    static List $sublistTo([final List $this, $dart$core.int to]) => ((List $lhs$) => $lhs$ == null ? new List$Sublist($this, to) : $lhs$)(to < 0 ? $package$empty : null);
+    static List $sublistTo([final List $this, $dart$core.int to]) => ((List $lhs$) => $dart$core.identical($lhs$, null) ? new List$Sublist($this, to) : $lhs$)(to < 0 ? $package$empty : null);
     List sublist([$dart$core.int from, $dart$core.int to]);
     static List $sublist([final List $this, $dart$core.int from, $dart$core.int to]) => $this.sublistTo(to).sublistFrom(from);
     List patch([List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
@@ -6696,7 +6696,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         if ($dart$core.identical(length, $package$dart$default)) {
             length = 0;
         }
-        return ((List $lhs$) => $lhs$ == null ? $this : $lhs$)(((length as $dart$core.int) >= 0) && (((from as $dart$core.int) >= 0) && ((from as $dart$core.int) <= $this.size)) ? new List$Patch($this, list, from as $dart$core.int, length as $dart$core.int) : null);
+        return ((List $lhs$) => $dart$core.identical($lhs$, null) ? $this : $lhs$)(((length as $dart$core.int) >= 0) && (((from as $dart$core.int) >= 0) && ((from as $dart$core.int) <= $this.size)) ? new List$Patch($this, list, from as $dart$core.int, length as $dart$core.int) : null);
     }
     $dart$core.bool startsWith([List sublist]);
     static $dart$core.bool $startsWith([final List $this, List sublist]) => $this.includesAt(0, sublist);
@@ -6716,13 +6716,13 @@ abstract class List implements Collection, Correspondence, Ranged {
                 $dart$core.Object y = sublist.getFromFirst(Integer.nativeValue(i));
                 {
                     $dart$core.bool doElse$21 = true;
-                    if (!(x == null)) {
+                    if (!$dart$core.identical(x, null)) {
                         doElse$21 = false;
                         {
                             $dart$core.bool doElse$22 = true;
-                            if (!(y == null)) {
+                            if (!$dart$core.identical(y, null)) {
                                 doElse$22 = false;
-                                if (!x.equals(y)) {
+                                if (!(x == y)) {
                                     return false;
                                 }
                             }
@@ -6732,7 +6732,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                         }
                     }
                     if (doElse$21) {
-                        if (!(y == null)) {
+                        if (!$dart$core.identical(y, null)) {
                             return false;
                         }
                     }
@@ -6851,13 +6851,13 @@ abstract class List implements Collection, Correspondence, Ranged {
         $dart$core.Object elem = $this.getFromFirst(index);
         {
             $dart$core.bool doElse$38 = true;
-            if (!(element == null)) {
+            if (!$dart$core.identical(element, null)) {
                 doElse$38 = false;
                 return (() {
                     $dart$core.bool doElse$39 = true;
-                    if (!(elem == null)) {
+                    if (!$dart$core.identical(elem, null)) {
                         doElse$39 = false;
-                        return elem.equals(element);
+                        return elem == element;
                     }
                     if (doElse$39) {
                         return false;
@@ -6865,7 +6865,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 })();
             }
             if (doElse$38) {
-                return !(!(elem == null));
+                return !(!$dart$core.identical(elem, null));
             }
         }
     }
@@ -7012,7 +7012,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                 Integer index = index$58;
                 $dart$core.Object element;
                 $dart$core.Object tmp$63 = $this.getFromFirst(Integer.nativeValue(index));
-                if (!(!(tmp$63 == null))) {
+                if (!(!$dart$core.identical(tmp$63, null))) {
                     continue;
                 }
                 element = tmp$63;
@@ -7041,7 +7041,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         $dart$core.int index = 0;
         while (index < $this.size) {{
                 $dart$core.Object tmp$66 = $this.getFromFirst(index);
-                if (!(tmp$66 == null)) {
+                if (!$dart$core.identical(tmp$66, null)) {
                     $dart$core.Object element;
                     element = tmp$66;
                     if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
@@ -7060,7 +7060,7 @@ abstract class List implements Collection, Correspondence, Ranged {
             index = Integer.nativeValue(Integer.instance(index).predecessor);
             {
                 $dart$core.Object tmp$67 = $this.getFromFirst(index);
-                if (!(tmp$67 == null)) {
+                if (!$dart$core.identical(tmp$67, null)) {
                     $dart$core.Object element;
                     element = tmp$67;
                     if (Boolean.nativeValue(selecting.f(element) as Boolean)) {
@@ -7085,7 +7085,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     Integer index = element$70 as Integer;
                     {
                         $dart$core.Object tmp$71 = $this.getFromFirst(Integer.nativeValue(index));
-                        if (!(tmp$71 == null)) {
+                        if (!$dart$core.identical(tmp$71, null)) {
                             $dart$core.Object elem;
                             elem = tmp$71;
                             if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
@@ -7108,7 +7108,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     Integer index = element$74 as Integer;
                     {
                         $dart$core.Object tmp$75 = $this.getFromFirst(Integer.nativeValue(index));
-                        if (!(tmp$75 == null)) {
+                        if (!$dart$core.identical(tmp$75, null)) {
                             $dart$core.Object elem;
                             elem = tmp$75;
                             if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
@@ -7139,7 +7139,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     Integer index = element$77 as Integer;
                     {
                         $dart$core.Object tmp$78 = $this.getFromFirst(Integer.nativeValue(index));
-                        if (!(tmp$78 == null)) {
+                        if (!$dart$core.identical(tmp$78, null)) {
                             $dart$core.Object elem;
                             elem = tmp$78;
                             if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
@@ -7163,7 +7163,7 @@ abstract class List implements Collection, Correspondence, Ranged {
                     Integer index = element$80 as Integer;
                     {
                         $dart$core.Object tmp$81 = $this.getFromFirst(Integer.nativeValue(index));
-                        if (!(tmp$81 == null)) {
+                        if (!$dart$core.identical(tmp$81, null)) {
                             $dart$core.Object elem;
                             elem = tmp$81;
                             if (!Boolean.nativeValue(trimming.f(elem) as Boolean)) {
@@ -7187,9 +7187,9 @@ abstract class List implements Collection, Correspondence, Ranged {
         if ($this.size > 0) {
             $dart$core.int end = $this.size - 1;
             if (Integer.nativeValue(from) <= Integer.nativeValue(to)) {
-                return ((List $lhs$) => $lhs$ == null ? $package$empty : $lhs$)((Integer.nativeValue(to) >= 0) && (Integer.nativeValue(from) <= end) ? new ArraySequence(new Array($this.sublist(Integer.nativeValue(from), Integer.nativeValue(to)))) : null);
+                return ((List $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)((Integer.nativeValue(to) >= 0) && (Integer.nativeValue(from) <= end) ? new ArraySequence(new Array($this.sublist(Integer.nativeValue(from), Integer.nativeValue(to)))) : null);
             } else {
-                return ((List $lhs$) => $lhs$ == null ? $package$empty : $lhs$)((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= end) ? new ArraySequence(new Array($this.sublist(Integer.nativeValue(to), Integer.nativeValue(from)).reversed)) : null);
+                return ((List $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= end) ? new ArraySequence(new Array($this.sublist(Integer.nativeValue(to), Integer.nativeValue(from)).reversed)) : null);
             }
         } else {
             return $package$empty;
@@ -7405,8 +7405,8 @@ class Map$items$$anonymous$1_ implements Collection {
                 Entry e = element$7 as Entry;
                 $dart$core.Object k = e.key;
                 $dart$core.Object v = e.item;
-                if (!(v == null)) {
-                    if (v.equals(item)) {
+                if (!$dart$core.identical(v, null)) {
+                    if (v == item) {
                         return true;
                     }
                 }
@@ -7505,7 +7505,7 @@ class Map$mapItems$$anonymous$2_ implements Map {
     Iterator iterator() => $outer$ceylon$language$Map.map(new dart$Callable(_$mapEntry)).iterator();
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     Map clone() => $outer$ceylon$language$Map.clone().mapItems($capture$Map$mapItems$mapping);
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -7603,7 +7603,7 @@ class Map$filterKeys$$anonymous$3_ implements Map {
     })();
     Iterator iterator() => $outer$ceylon$language$Map.filter($package$forKey($capture$Map$filterKeys$filtering)).iterator();
     Map clone() => $outer$ceylon$language$Map.clone().filterKeys($capture$Map$filterKeys$filtering);
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -7676,7 +7676,7 @@ class Map$patch$$anonymous$4_ implements Map {
         this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
         this.$capture$Map$patch$other = $capture$Map$patch$other;
     }
-    $dart$core.Object get([$dart$core.Object key]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $outer$ceylon$language$Map.get(key) : $lhs$)($capture$Map$patch$other.get(key));
+    $dart$core.Object get([$dart$core.Object key]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $outer$ceylon$language$Map.get(key) : $lhs$)($capture$Map$patch$other.get(key));
     Map clone() => $outer$ceylon$language$Map.clone().patch($capture$Map$patch$other.clone());
     $dart$core.bool defines([$dart$core.Object key]) => $capture$Map$patch$other.defines(key) || $outer$ceylon$language$Map.defines(key);
     $dart$core.bool contains([$dart$core.Object entry]) => (() {
@@ -7693,7 +7693,7 @@ class Map$patch$$anonymous$4_ implements Map {
     })();
     $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($outer$ceylon$language$Map.defines($0)))));
     Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capture$Map$patch$other.contains($0))))));
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     Collection get keys => Map.$get$keys(this);
@@ -7762,7 +7762,7 @@ class Map$coalescedMap$$anonymous$5_ implements Map {
     Map$coalescedMap$$anonymous$5_([Map $outer$ceylon$language$Map]) {
         this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
     }
-    $dart$core.bool defines([$dart$core.Object key]) => !($outer$ceylon$language$Map.get(key) == null);
+    $dart$core.bool defines([$dart$core.Object key]) => !$dart$core.identical($outer$ceylon$language$Map.get(key), null);
     $dart$core.Object get([$dart$core.Object key]) => $outer$ceylon$language$Map.get(key);
     Iterator iterator() => functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$23 = false;
@@ -7805,7 +7805,7 @@ class Map$coalescedMap$$anonymous$5_ implements Map {
                 Entry entry = entry$26;
                 $dart$core.Object it;
                 $dart$core.Object tmp$31 = entry.item;
-                if (!(!(tmp$31 == null))) {
+                if (!(!$dart$core.identical(tmp$31, null))) {
                     continue;
                 }
                 it = tmp$31;
@@ -7827,7 +7827,7 @@ class Map$coalescedMap$$anonymous$5_ implements Map {
         return new dart$Callable(step$3$33);
     })).iterator();
     Map clone() => $outer$ceylon$language$Map.clone().coalescedMap;
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -7908,7 +7908,7 @@ abstract class Map implements Collection, Correspondence {
                         $dart$core.bool doElse$2 = true;
                         {
                             $dart$core.Object tmp$3 = $this.get(entry$1.key);
-                            if (!(tmp$3 == null)) {
+                            if (!$dart$core.identical(tmp$3, null)) {
                                 $dart$core.Object item;
                                 item = tmp$3;
                                 doElse$2 = false;
@@ -7916,11 +7916,11 @@ abstract class Map implements Collection, Correspondence {
                                     $dart$core.bool doElse$4 = true;
                                     {
                                         $dart$core.Object tmp$5 = entry$1.item;
-                                        if (!(tmp$5 == null)) {
+                                        if (!$dart$core.identical(tmp$5, null)) {
                                             $dart$core.Object entryItem;
                                             entryItem = tmp$5;
                                             doElse$4 = false;
-                                            return item.equals(entryItem);
+                                            return item == entryItem;
                                         }
                                     }
                                     if (doElse$4) {
@@ -7930,7 +7930,7 @@ abstract class Map implements Collection, Correspondence {
                             }
                         }
                         if (doElse$2) {
-                            return !(!(entry$1.item == null));
+                            return !(!$dart$core.identical(entry$1.item, null));
                         }
                     }
                 }
@@ -7945,7 +7945,7 @@ abstract class Map implements Collection, Correspondence {
     static Collection $get$keys([final Map $this]) => new Map$keys$$anonymous$0_($this);
     Collection get items;
     static Collection $get$items([final Map $this]) => new Map$items$$anonymous$1_($this);
-    $dart$core.bool equals([$dart$core.Object that]);
+    $dart$core.bool operator ==($dart$core.Object that);
     static $dart$core.bool $equals([final Map $this, $dart$core.Object that]) {{
             $dart$core.bool doElse$8 = true;
             if (that is Map) {
@@ -7963,15 +7963,15 @@ abstract class Map implements Collection, Correspondence {
                                 $dart$core.bool doElse$12 = true;
                                 {
                                     $dart$core.Object tmp$13 = entry.item;
-                                    if (!(tmp$13 == null)) {
+                                    if (!$dart$core.identical(tmp$13, null)) {
                                         $dart$core.Object thisItem;
                                         thisItem = tmp$13;
                                         doElse$12 = false;
                                         {
                                             $dart$core.bool doElse$14 = true;
-                                            if (!(thatItem == null)) {
+                                            if (!$dart$core.identical(thatItem, null)) {
                                                 doElse$14 = false;
-                                                if (!thatItem.equals(thisItem)) {
+                                                if (!(thatItem == thisItem)) {
                                                     return false;
                                                 }
                                             }
@@ -7982,7 +7982,7 @@ abstract class Map implements Collection, Correspondence {
                                     }
                                 }
                                 if (doElse$12) {
-                                    if (!(thatItem == null)) {
+                                    if (!$dart$core.identical(thatItem, null)) {
                                         return false;
                                     }
                                 }
@@ -8044,7 +8044,7 @@ class emptyMap_ implements Map {
     Iterable take([$dart$core.int taking]) => this;
     Iterable by([$dart$core.int step]) => this;
     void each([Callable step]) {}
-    $dart$core.bool equals([$dart$core.Object that]) => Map.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     Map filterKeys([Callable filtering]) => Map.$filterKeys(this, filtering);
@@ -8264,8 +8264,8 @@ class Measure  extends Range {
     $dart$core.bool longerThan([$dart$core.int length]) => size > length;
     $dart$core.bool shorterThan([$dart$core.int length]) => size < length;
     $dart$core.int get lastIndex => size - 1;
-    Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(size > 1 ? new Measure((first as Enumerable).successor, size - 1) : null);
-    $dart$core.Object getFromFirst([$dart$core.int index]) => (($dart$core.Object $lhs$) => $lhs$ == null ? null : $lhs$)((index >= 0) && (index < size) ? (first as Enumerable).neighbour(index) : null);
+    Sequential get rest => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(size > 1 ? new Measure((first as Enumerable).successor, size - 1) : null);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? null : $lhs$)((index >= 0) && (index < size) ? (first as Enumerable).neighbour(index) : null);
     $dart$core.bool get increasing => true;
     $dart$core.bool get decreasing => false;
     Iterator iterator() => new Measure$$anonymous$0_(this);
@@ -8273,9 +8273,9 @@ class Measure  extends Range {
         if (!(step > 0)) {
             throw new AssertionError("Violated: step > 0");
         }
-        return ((Iterable $lhs$) => $lhs$ == null ? new Measure$By(this, step) : $lhs$)(step == 1 ? this : null);
+        return ((Iterable $lhs$) => $dart$core.identical($lhs$, null) ? new Measure$By(this, step) : $lhs$)(step == 1 ? this : null);
     }
-    Range shifted([$dart$core.int shift]) => ((Range $lhs$) => $lhs$ == null ? new Measure((first as Enumerable).neighbour(shift), size) : $lhs$)(shift == 0 ? this : null);
+    Range shifted([$dart$core.int shift]) => ((Range $lhs$) => $dart$core.identical($lhs$, null) ? new Measure((first as Enumerable).neighbour(shift), size) : $lhs$)(shift == 0 ? this : null);
     $dart$core.bool containsElement([$dart$core.Object x]) => ((x as Enumerable).offset(first) >= 0) && ((x as Enumerable).offset(first) < size);
     $dart$core.bool includes([List sublist]) {
         if (sublist.empty) {
@@ -8314,13 +8314,13 @@ class Measure  extends Range {
             }
         }
     }
-    $dart$core.bool equals([$dart$core.Object that]) {{
+    $dart$core.bool operator ==($dart$core.Object that) {{
             $dart$core.bool doElse$7 = true;
             if (that is Measure) {
                 Measure that$8;
                 that$8 = that as Measure;
                 doElse$7 = false;
-                return (that$8.size == size) && that$8.first.equals(first);
+                return (that$8.size == size) && (that$8.first == first);
             }
             if (doElse$7) {
                 $dart$core.bool doElse$9 = true;
@@ -8328,7 +8328,7 @@ class Measure  extends Range {
                     Span that$10;
                     that$10 = that as Span;
                     doElse$9 = false;
-                    return (that$10.increasing && that$10.first.equals(first)) && (that$10.size == size);
+                    return (that$10.increasing && (that$10.first == first)) && (that$10.size == size);
                 }
                 if (doElse$9) {
                     return List.$equals(this, that);
@@ -8340,7 +8340,7 @@ class Measure  extends Range {
         if (length <= 0) {
             return $package$empty;
         } else {
-            $dart$core.int len = (($dart$core.int $lhs$) => $lhs$ == null ? size - Integer.nativeValue(from) : $lhs$)((Integer.nativeValue(from) + length) < size ? length : null);
+            $dart$core.int len = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? size - Integer.nativeValue(from) : $lhs$)((Integer.nativeValue(from) + length) < size ? length : null);
             return new Measure((first as Enumerable).neighbour(Integer.nativeValue(from)), len);
         }
     }
@@ -8349,14 +8349,14 @@ class Measure  extends Range {
             if ((Integer.nativeValue(to) < 0) || (Integer.nativeValue(from) >= size)) {
                 return $package$empty;
             } else {
-                $dart$core.int len = (($dart$core.int $lhs$) => $lhs$ == null ? size - Integer.nativeValue(from) : $lhs$)(Integer.nativeValue(to) < size ? (Integer.nativeValue(to) - Integer.nativeValue(from)) + 1 : null);
+                $dart$core.int len = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? size - Integer.nativeValue(from) : $lhs$)(Integer.nativeValue(to) < size ? (Integer.nativeValue(to) - Integer.nativeValue(from)) + 1 : null);
                 return new Measure((first as Enumerable).neighbour(Integer.nativeValue(from)), len);
             }
         } else {
             if ((Integer.nativeValue(from) < 0) || (Integer.nativeValue(to) >= size)) {
                 return $package$empty;
             } else {
-                $dart$core.int len = (($dart$core.int $lhs$) => $lhs$ == null ? size - Integer.nativeValue(to) : $lhs$)(Integer.nativeValue(from) < size ? (Integer.nativeValue(from) - Integer.nativeValue(to)) + 1 : null);
+                $dart$core.int len = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? size - Integer.nativeValue(to) : $lhs$)(Integer.nativeValue(from) < size ? (Integer.nativeValue(from) - Integer.nativeValue(to)) + 1 : null);
                 return (new Measure((first as Enumerable).neighbour(Integer.nativeValue(to)), len)).reversed;
             }
         }
@@ -8475,7 +8475,7 @@ class Measure  extends Range {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-$dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size]) => (($dart$core.Object $lhs$) => $lhs$ == null ? new Measure(first, size) : $lhs$)(size <= 0 ? $package$empty : null);
+$dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? new Measure(first, size) : $lhs$)(size <= 0 ? $package$empty : null);
 
 $dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
 
@@ -8894,7 +8894,7 @@ class meta$model$nothingType_ implements meta$model$Type {
     meta$model$nothingType_() {}
     $dart$core.String toString() => "Nothing";
     $dart$core.bool typeOf([$dart$core.Object instance]) => false;
-    $dart$core.bool exactly([meta$model$Type type]) => type.equals($package$meta$model$nothingType);
+    $dart$core.bool exactly([meta$model$Type type]) => type == $package$meta$model$nothingType;
     $dart$core.bool supertypeOf([meta$model$Type type]) => exactly(type);
     $dart$core.bool subtypeOf([meta$model$Type type]) => true;
     meta$model$Type union([meta$model$Type type]) => type;
@@ -9007,7 +9007,7 @@ $dart$core.Object get nothing => $package$nothing;
 
 abstract class Number implements Numeric, Comparable {
     $dart$core.Object get magnitude;
-    static $dart$core.Object $get$magnitude([final Number $this]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $this : $lhs$)($this.negative ? $this.negated : null);
+    static $dart$core.Object $get$magnitude([final Number $this]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $this : $lhs$)($this.negative ? $this.negated : null);
     $dart$core.int get sign;
     static $dart$core.int $get$sign([final Number $this]) {
         if ($this.positive) {
@@ -9324,7 +9324,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
         $dart$core.bool doElse$0 = true;
         {
             $dart$core.int tmp$1 = String.instance(unsignedPart).firstOccurrence(new Character.$fromInt(46));
-            if (!(tmp$1 == null)) {
+            if (!$dart$core.identical(tmp$1, null)) {
                 $dart$core.int dot;
                 dot = tmp$1;
                 doElse$0 = false;
@@ -9334,7 +9334,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                     $dart$core.bool doElse$2 = true;
                     {
                         $dart$core.int tmp$3 = String.instance(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).letter)));
-                        if (!(tmp$3 == null)) {
+                        if (!$dart$core.identical(tmp$3, null)) {
                             $dart$core.int mag;
                             mag = tmp$3;
                             doElse$2 = false;
@@ -9353,7 +9353,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                 $dart$core.bool doElse$4 = true;
                 {
                     $dart$core.int tmp$5 = String.instance(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => Boolean.instance(($r as Character).letter)));
-                    if (!(tmp$5 == null)) {
+                    if (!$dart$core.identical(tmp$5, null)) {
                         $dart$core.int mag;
                         mag = tmp$5;
                         doElse$4 = false;
@@ -9374,25 +9374,25 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
     }
     {
         $dart$core.int tmp$6 = $package$parseInteger(wholePart);
-        if (!(tmp$6 == null)) {
+        if (!$dart$core.identical(tmp$6, null)) {
             $dart$core.int whole;
             whole = tmp$6;
             {
                 $dart$core.int tmp$7 = $package$parseInteger(fractionalPart);
-                if (!(tmp$7 == null)) {
+                if (!$dart$core.identical(tmp$7, null)) {
                     $dart$core.int fractional;
                     fractional = tmp$7;
                     $dart$core.int shift = String.instance(fractionalPart).size;
                     $dart$core.int exponent;
                     {
                         $dart$core.bool doElse$8 = true;
-                        if (!(rest == null)) {
+                        if (!$dart$core.identical(rest, null)) {
                             doElse$8 = false;
                             {
                                 $dart$core.bool doElse$9 = true;
                                 {
                                     $dart$core.int tmp$10 = $package$parseFloatExponent(rest);
-                                    if (!(tmp$10 == null)) {
+                                    if (!$dart$core.identical(tmp$10, null)) {
                                         $dart$core.int magnitude;
                                         magnitude = tmp$10;
                                         doElse$9 = false;
@@ -9411,13 +9411,13 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                         }
                     }
                     $dart$core.int numerator = (whole * Integer.nativeValue(Integer.instance(10).power(Integer.instance(shift)))) + fractional;
-                    $dart$core.double signedNumerator = (($dart$core.double $lhs$) => $lhs$ == null ? Integer.instance(sign * numerator).float : $lhs$)(Integer.instance(numerator).zero ? Integer.instance(0).float * Integer.instance(sign).float : null);
+                    $dart$core.double signedNumerator = (($dart$core.double $lhs$) => $dart$core.identical($lhs$, null) ? Integer.instance(sign * numerator).float : $lhs$)(Integer.instance(numerator).zero ? Integer.instance(0).float * Integer.instance(sign).float : null);
                     $dart$core.int exponentMagnitude = Integer.nativeValue(Integer.instance(exponent).magnitude);
                     if (exponentMagnitude == 0) {
                         return signedNumerator;
                     } else if (exponentMagnitude < $package$maximumIntegerExponent) {
                         $dart$core.int scale = Integer.nativeValue(Integer.instance(10).power(Integer.instance(exponentMagnitude)));
-                        return (($dart$core.double $lhs$) => $lhs$ == null ? signedNumerator * Integer.instance(scale).float : $lhs$)(exponent < 0 ? signedNumerator / Integer.instance(scale).float : null);
+                        return (($dart$core.double $lhs$) => $dart$core.identical($lhs$, null) ? signedNumerator * Integer.instance(scale).float : $lhs$)(exponent < 0 ? signedNumerator / Integer.instance(scale).float : null);
                     } else {
                         return signedNumerator * Float.nativeValue(Float.instance(10.0).power(Float.instance(Integer.instance(exponent).float)));
                     }
@@ -9497,14 +9497,14 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
         $dart$core.bool doElse$0 = true;
         {
             Character tmp$1 = String.instance(string).get(Integer.instance(index)) as Character;
-            if (!(tmp$1 == null)) {
+            if (!$dart$core.identical(tmp$1, null)) {
                 Character char;
                 char = tmp$1;
                 doElse$0 = false;
-                if (char.equals(new Character.$fromInt(45))) {
+                if (char == (new Character.$fromInt(45))) {
                     negative = true;
                     index = Integer.nativeValue(Integer.instance(index).successor);
-                } else if (char.equals(new Character.$fromInt(43))) {
+                } else if (char == (new Character.$fromInt(43))) {
                     negative = false;
                     index = Integer.nativeValue(Integer.instance(index).successor);
                 } else {
@@ -9516,7 +9516,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
             return null;
         }
     }
-    $dart$core.int limit = (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance($package$runtime.maxIntegerValue).negated) : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
+    $dart$core.int limit = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance($package$runtime.maxIntegerValue).negated) : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
     $dart$core.int length = String.instance(string).size;
     $dart$core.int result = 0;
     $dart$core.int digitIndex = 0;
@@ -9526,7 +9526,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
             $dart$core.bool doElse$2 = true;
             {
                 Character tmp$3 = String.instance(string).get(Integer.instance(index)) as Character;
-                if (!(tmp$3 == null)) {
+                if (!$dart$core.identical(tmp$3, null)) {
                     Character char;
                     char = tmp$3;
                     doElse$2 = false;
@@ -9541,7 +9541,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
                 $dart$core.bool doElse$4 = true;
                 {
                     $dart$core.int tmp$5 = $package$parseIntegerExponent(ch);
-                    if (!(tmp$5 == null)) {
+                    if (!$dart$core.identical(tmp$5, null)) {
                         $dart$core.int exp;
                         exp = tmp$5;
                         doElse$4 = false;
@@ -9562,7 +9562,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
             $dart$core.bool doElse$6 = true;
             {
                 $dart$core.int tmp$7 = $package$parseDigit(ch, radix as $dart$core.int);
-                if (!(tmp$7 == null)) {
+                if (!$dart$core.identical(tmp$7, null)) {
                     $dart$core.int digit;
                     digit = tmp$7;
                     doElse$6 = false;
@@ -9586,7 +9586,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
     if (digitIndex == 0) {
         return null;
     } else {
-        return (($dart$core.int $lhs$) => $lhs$ == null ? Integer.nativeValue(Integer.instance(result).negated) : $lhs$)(negative ? result : null);
+        return (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(result).negated) : $lhs$)(negative ? result : null);
     }
 }
 
@@ -9594,15 +9594,15 @@ $dart$core.int parseInteger([$dart$core.String string, $dart$core.Object radix =
 
 $dart$core.int $package$parseIntegerExponent([Character char]) {{
         Character switch$8 = char;
-        if (switch$8.equals(new Character.$fromInt(80))) {
+        if (switch$8 == (new Character.$fromInt(80))) {
             return 15;
-        } else if (switch$8.equals(new Character.$fromInt(84))) {
+        } else if (switch$8 == (new Character.$fromInt(84))) {
             return 12;
-        } else if (switch$8.equals(new Character.$fromInt(71))) {
+        } else if (switch$8 == (new Character.$fromInt(71))) {
             return 9;
-        } else if (switch$8.equals(new Character.$fromInt(77))) {
+        } else if (switch$8 == (new Character.$fromInt(77))) {
             return 6;
-        } else if (switch$8.equals(new Character.$fromInt(107))) {
+        } else if (switch$8 == (new Character.$fromInt(107))) {
             return 3;
         } else {
             return null;
@@ -9667,7 +9667,7 @@ void $package$printAll([Iterable values, $dart$core.Object separator = $package$
 
 void printAll([Iterable values, $dart$core.Object separator = $package$dart$default]) => $package$printAll(values, separator);
 
-$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $lhs$ == null ? "<null>" : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.toString())(val));
+$dart$core.String $package$stringify([$dart$core.Object val]) => (($dart$core.String $lhs$) => $dart$core.identical($lhs$, null) ? "<null>" : $lhs$)((($dart$core.Object $r) => $dart$core.identical($r, null) ? null : $r.toString())(val));
 
 $dart$core.String stringify([$dart$core.Object val]) => $package$stringify(val);
 
@@ -9714,7 +9714,7 @@ abstract class Range implements Sequence {
     $dart$core.bool get increasing;
     $dart$core.bool get decreasing;
     Range get coalesced => this;
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -9818,7 +9818,7 @@ abstract class Resource {
     $dart$core.String get name;
     static $dart$core.String $get$name([final Resource $this]) {
         $dart$core.int pos = String.instance($this.uri).lastOccurrence(new Character.$fromInt(47));
-        if (!(pos == null)) {
+        if (!$dart$core.identical(pos, null)) {
             return String.nativeValue(String.instance($this.uri).spanFrom(Integer.instance(pos + 1)));
         }
         return $this.uri;
@@ -9849,7 +9849,7 @@ class Sequence$collect$list_ implements List {
             return null;
         }
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -9953,7 +9953,7 @@ class Sequence$Reverse$$anonymous$0_ implements Iterator {
         _$index = $capture$$outerList.size - 1;
     }
     $dart$core.int _$index;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => $lhs$ == null ? Sequence.$_$getElement($capture$$outerList, (() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? Sequence.$_$getElement($capture$$outerList, (() {
         $dart$core.int tmp$8 = _$index;
         _$index = Integer.nativeValue(Integer.instance(_$index).predecessor);
         return tmp$8;
@@ -9968,7 +9968,7 @@ class Sequence$Reverse implements Sequence {
     $dart$core.int get size => $outer$ceylon$language$Sequence.size;
     $dart$core.Object get first => $outer$ceylon$language$Sequence.last;
     $dart$core.Object get last => $outer$ceylon$language$Sequence.first;
-    Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? $outer$ceylon$language$Sequence.span(Integer.instance(size - 2), Integer.instance(0)) : $lhs$)(size == 1 ? $package$empty : null);
+    Sequential get rest => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? $outer$ceylon$language$Sequence.span(Integer.instance(size - 2), Integer.instance(0)) : $lhs$)(size == 1 ? $package$empty : null);
     Sequence get reversed => $outer$ceylon$language$Sequence;
     $dart$core.Object getFromFirst([$dart$core.int index]) => $outer$ceylon$language$Sequence.getFromFirst((size - 1) - index);
     Sequential measure([Integer from, $dart$core.int length]) => (() {
@@ -10006,7 +10006,7 @@ class Sequence$Reverse implements Sequence {
         Sequence outerList = $outer$ceylon$language$Sequence;
         return new Sequence$Reverse$$anonymous$0_(this, outerList);
     })();
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -10122,7 +10122,7 @@ class Sequence$Repeat implements Sequence {
         })();
     })();
     Iterator iterator() => new CycledIterator($outer$ceylon$language$Sequence, _$times);
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -10236,7 +10236,7 @@ abstract class Sequence implements Sequential, Iterable {
     Sequence get reversed;
     static Sequence $get$reversed([final Sequence $this]) => new Sequence$Reverse($this);
     Sequential repeat([$dart$core.int times]);
-    static Sequential $repeat([final Sequence $this, $dart$core.int times]) => ((Sequential $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(times > 0 ? new Sequence$Repeat($this, times) : null);
+    static Sequential $repeat([final Sequence $this, $dart$core.int times]) => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(times > 0 ? new Sequence$Repeat($this, times) : null);
     Sequence clone();
     static Sequence $clone([final Sequence $this]) => $this;
     Sequence sort([Callable comparing]);
@@ -10310,7 +10310,7 @@ abstract class Sequence implements Sequential, Iterable {
             $dart$core.bool doElse$6 = true;
             {
                 $dart$core.Object tmp$7 = $this.getFromFirst(index);
-                if (!(tmp$7 == null)) {
+                if (!$dart$core.identical(tmp$7, null)) {
                     $dart$core.Object element;
                     element = tmp$7;
                     doElse$6 = false;
@@ -10409,7 +10409,7 @@ class JoinedSequence implements Sequence {
         }
     }
     Iterator iterator() => new ChainedIterator(_$firstSeq, _$secondSeq);
-    $dart$core.bool equals([$dart$core.Object that]) => List.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
@@ -10530,7 +10530,7 @@ abstract class Sequential implements List, Ranged {
     Sequential append([Sequential elements]);
     Sequential prepend([Sequential elements]);
     $dart$core.String toString();
-    static $dart$core.String $get$string([final Sequential $this]) => (($dart$core.String $lhs$) => $lhs$ == null ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
+    static $dart$core.String $get$string([final Sequential $this]) => (($dart$core.String $lhs$) => $dart$core.identical($lhs$, null) ? ("[" + $package$commaList($this)) + "]" : $lhs$)($this.empty ? "[]" : null);
 }
 serialization$DeserializationContext $package$serialization$deserialization() => new serialization$DeserializationContextImpl();
 
@@ -10560,7 +10560,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
         serialization$Partial referring;
         {
             $dart$core.Object r = _$instances.get(instanceId);
-            if (r == null) {
+            if ($dart$core.identical(r, null)) {
                 serialization$PartialImpl p = new serialization$PartialImpl(instanceId);
                 _$instances.put(instanceId, p);
                 referring = p;
@@ -10590,7 +10590,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
         serialization$Partial partial;
         {
             $dart$core.Object r = _$instances.get(instanceId);
-            if (r == null) {
+            if ($dart$core.identical(r, null)) {
                 serialization$PartialImpl p = new serialization$PartialImpl(instanceId);
                 _$instances.put(instanceId, p);
                 partial = p;
@@ -10608,7 +10608,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
         $dart$core.Object container;
         {
             $dart$core.Object r = _$instances.get(containerId);
-            if (r == null) {
+            if ($dart$core.identical(r, null)) {
                 serialization$PartialImpl p = new serialization$PartialImpl(containerId);
                 _$instances.put(containerId, p);
                 container = p;
@@ -10624,7 +10624,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
     $dart$core.Object reconstruct([$dart$core.Object instanceId]) {
         serialization$NativeDeque deque = new serialization$NativeDeque();
         $dart$core.Object root = _$instances.get(instanceId);
-        if (!(!(root == null))) {
+        if (!(!$dart$core.identical(root, null))) {
             if (_$instances.contains(instanceId)) {
                 $dart$core.Object r;
                 {
@@ -10644,7 +10644,7 @@ class serialization$DeserializationContextImpl implements serialization$Deserial
             $dart$core.Object r = deque.popFront();
             {
                 $dart$core.Object switch$3 = r;
-                if (switch$3 == null) {
+                if ($dart$core.identical(switch$3, null)) {
                     if (!false) {
                         throw new AssertionError("Violated: false");
                     }
@@ -10822,7 +10822,7 @@ abstract class serialization$Partial {
         serialization$NativeMap s;
         {
             serialization$NativeMap tmp$0 = state;
-            if (tmp$0 == null) {
+            if ($dart$core.identical(tmp$0, null)) {
                 throw new AssertionError("Violated: exists s=state");
             }
             s = tmp$0;
@@ -10831,9 +10831,9 @@ abstract class serialization$Partial {
     }
     void instantiate();
     void initialize([serialization$DeserializationContextImpl context]);
-    $dart$core.bool get instantiated => !(instance_ == null);
-    $dart$core.bool get initialized => !(!(state == null));
-    $dart$core.bool get member => !(container == null);
+    $dart$core.bool get instantiated => !$dart$core.identical(instance_, null);
+    $dart$core.bool get initialized => !(!$dart$core.identical(state, null));
+    $dart$core.bool get member => !$dart$core.identical(container, null);
     $dart$core.Object instance() {
         if (!(instantiated && initialized)) {
             throw new AssertionError("Violated: instantiated && initialized");
@@ -10844,7 +10844,7 @@ abstract class serialization$Partial {
         serialization$NativeMap s;
         {
             serialization$NativeMap tmp$1 = state;
-            if (tmp$1 == null) {
+            if ($dart$core.identical(tmp$1, null)) {
                 throw new AssertionError("Violated: exists s=state");
             }
             s = tmp$1;
@@ -10954,7 +10954,7 @@ class serialization$ReferencesImpl  extends impl$BaseIterable implements seriali
     $dart$core.Object instance;
     Iterator iterator() {{
             $dart$core.bool doElse$0 = true;
-            if (!(instance == null)) {
+            if (!$dart$core.identical(instance, null)) {
                 doElse$0 = false;
                 return new ReferencesImpl$iterator$$anonymous$0_(this, instance);
             }
@@ -11072,7 +11072,7 @@ abstract class Set implements Collection {
             }
         }
     }
-    $dart$core.bool equals([$dart$core.Object that]);
+    $dart$core.bool operator ==($dart$core.Object that);
     static $dart$core.bool $equals([final Set $this, $dart$core.Object that]) {
         if (that is Set) {
             Set that$4;
@@ -11136,7 +11136,7 @@ class emptySet_ implements Set {
     Iterable take([$dart$core.int taking]) => this;
     Iterable by([$dart$core.int step]) => this;
     void each([Callable step]) {}
-    $dart$core.bool equals([$dart$core.Object that]) => Set.$equals(this, that);
+    $dart$core.bool operator ==($dart$core.Object that) => Set.$equals(this, that);
     $dart$core.int get hashCode => Set.$get$hash(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
@@ -11227,11 +11227,11 @@ class Singleton implements Sequence {
         $dart$core.bool doElse$0 = true;
         {
             $dart$core.Object tmp$1 = this._$element;
-            if (!(tmp$1 == null)) {
+            if (!$dart$core.identical(tmp$1, null)) {
                 $dart$core.Object e;
                 e = tmp$1;
                 doElse$0 = false;
-                return e.equals(element);
+                return e == element;
             }
         }
         if (doElse$0) {
@@ -11240,7 +11240,7 @@ class Singleton implements Sequence {
     })();
     $dart$core.String toString() => ("[" + $package$stringify(_$element)) + "]";
     Iterator iterator() => new Singleton$iterator$$anonymous$0_(this);
-    $dart$core.bool equals([$dart$core.Object that]) {{
+    $dart$core.bool operator ==($dart$core.Object that) {{
             $dart$core.bool doElse$2 = true;
             if (that is List) {
                 List that$3;
@@ -11250,14 +11250,14 @@ class Singleton implements Sequence {
                     $dart$core.Object elem = that$3.first;
                     return (() {
                         $dart$core.bool doElse$4 = true;
-                        if (!(_$element == null)) {
-                            if (!(elem == null)) {
+                        if (!$dart$core.identical(_$element, null)) {
+                            if (!$dart$core.identical(elem, null)) {
                                 doElse$4 = false;
-                                return elem.equals(_$element);
+                                return elem == _$element;
                             }
                         }
                         if (doElse$4) {
-                            return (!(!(_$element == null))) && (!(!(elem == null)));
+                            return (!(!$dart$core.identical(_$element, null))) && (!(!$dart$core.identical(elem, null)));
                         }
                     })();
                 }
@@ -11267,21 +11267,21 @@ class Singleton implements Sequence {
             }
         }
     }
-    $dart$core.int get hashCode => 31 + (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)((($dart$core.Object $r) => $r == null ? null : $r.hashCode)(_$element));
-    $dart$core.Object measure([Integer from, $dart$core.int length]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)((Integer.nativeValue(from) <= 0) && ((Integer.nativeValue(from) + length) > 0) ? this : null);
-    $dart$core.Object span([Integer from, Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(((Integer.nativeValue(from) <= 0) && (Integer.nativeValue(to) >= 0)) || ((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= 0)) ? this : null);
-    $dart$core.Object spanTo([Integer to]) => (($dart$core.Object $lhs$) => $lhs$ == null ? this : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
-    $dart$core.Object spanFrom([Integer from]) => (($dart$core.Object $lhs$) => $lhs$ == null ? this : $lhs$)(Integer.nativeValue(from) > 0 ? $package$empty : null);
-    $dart$core.int count([Callable selecting]) => (($dart$core.int $lhs$) => $lhs$ == null ? 0 : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? 1 : null);
+    $dart$core.int get hashCode => 31 + (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? 0 : $lhs$)((($dart$core.Object $r) => $dart$core.identical($r, null) ? null : $r.hashCode)(_$element));
+    $dart$core.Object measure([Integer from, $dart$core.int length]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)((Integer.nativeValue(from) <= 0) && ((Integer.nativeValue(from) + length) > 0) ? this : null);
+    $dart$core.Object span([Integer from, Integer to]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(((Integer.nativeValue(from) <= 0) && (Integer.nativeValue(to) >= 0)) || ((Integer.nativeValue(from) >= 0) && (Integer.nativeValue(to) <= 0)) ? this : null);
+    $dart$core.Object spanTo([Integer to]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? this : $lhs$)(Integer.nativeValue(to) < 0 ? $package$empty : null);
+    $dart$core.Object spanFrom([Integer from]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? this : $lhs$)(Integer.nativeValue(from) > 0 ? $package$empty : null);
+    $dart$core.int count([Callable selecting]) => (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? 0 : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? 1 : null);
     Singleton map([Callable collecting]) => new Singleton(collecting.f(_$element));
-    $dart$core.Object filter([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? this : null);
+    $dart$core.Object filter([Callable selecting]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? this : null);
     Callable fold([$dart$core.Object initial]) => new dart$Callable(([Callable accumulating]) => accumulating.f(initial, _$element));
     $dart$core.Object reduce([Callable accumulating]) => _$element;
     Singleton collect([Callable collecting]) => new Singleton(collecting.f(_$element));
-    $dart$core.Object select([Callable selecting]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? this : null);
+    $dart$core.Object select([Callable selecting]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(Boolean.nativeValue(selecting.f(_$element) as Boolean) ? this : null);
     $dart$core.Object find([Callable selecting]) => (() {
         $dart$core.bool doElse$5 = true;
-        if (!(_$element == null)) {
+        if (!$dart$core.identical(_$element, null)) {
             if (Boolean.nativeValue(selecting.f(_$element) as Boolean)) {
                 doElse$5 = false;
                 return _$element;
@@ -11295,11 +11295,11 @@ class Singleton implements Sequence {
     Singleton sort([Callable comparing]) => this;
     $dart$core.bool any([Callable selecting]) => Boolean.nativeValue(selecting.f(_$element) as Boolean);
     $dart$core.bool every([Callable selecting]) => Boolean.nativeValue(selecting.f(_$element) as Boolean);
-    $dart$core.Object skip([$dart$core.int skipping]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(skipping < 1 ? this : null);
-    $dart$core.Object take([$dart$core.int taking]) => (($dart$core.Object $lhs$) => $lhs$ == null ? $package$empty : $lhs$)(taking > 0 ? this : null);
+    $dart$core.Object skip([$dart$core.int skipping]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(skipping < 1 ? this : null);
+    $dart$core.Object take([$dart$core.int taking]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $package$empty : $lhs$)(taking > 0 ? this : null);
     $dart$core.Object get coalesced => (() {
         $dart$core.bool doElse$6 = true;
-        if (!(_$element == null)) {
+        if (!$dart$core.identical(_$element, null)) {
             doElse$6 = false;
             return new Singleton(_$element);
         }
@@ -11377,7 +11377,7 @@ class Singleton implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-$dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $lhs$ == null ? y : $lhs$)((x as Comparable).smallerThan(y) ? x : null);
+$dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable).smallerThan(y) ? x : null);
 
 $dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $package$smallest(x, y);
 
@@ -11565,13 +11565,13 @@ class Span  extends Range {
     $dart$core.bool increasing;
     $dart$core.bool get decreasing => !increasing;
     $dart$core.bool _$recursive;
-    $dart$core.Object _$next([$dart$core.Object x]) => (($dart$core.Object $lhs$) => $lhs$ == null ? (x as Enumerable).predecessor : $lhs$)(increasing ? (x as Enumerable).successor : null);
-    $dart$core.Object _$nextStep([$dart$core.Object x, $dart$core.int step]) => (($dart$core.Object $lhs$) => $lhs$ == null ? (x as Enumerable).neighbour(Integer.nativeValue(Integer.instance(step).negated)) : $lhs$)(increasing ? (x as Enumerable).neighbour(step) : null);
-    $dart$core.Object _$fromFirst([$dart$core.int offset]) => (($dart$core.Object $lhs$) => $lhs$ == null ? (first as Enumerable).neighbour(Integer.nativeValue(Integer.instance(offset).negated)) : $lhs$)(increasing ? (first as Enumerable).neighbour(offset) : null);
-    $dart$core.bool _$afterLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $lhs$ == null ? (x as Enumerable).offsetSign(last) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) > 0 : null);
-    $dart$core.bool _$beforeLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $lhs$ == null ? (x as Enumerable).offsetSign(last) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) < 0 : null);
-    $dart$core.bool _$beforeFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $lhs$ == null ? (x as Enumerable).offsetSign(first) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) < 0 : null);
-    $dart$core.bool _$afterFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $lhs$ == null ? (x as Enumerable).offsetSign(first) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) > 0 : null);
+    $dart$core.Object _$next([$dart$core.Object x]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).predecessor : $lhs$)(increasing ? (x as Enumerable).successor : null);
+    $dart$core.Object _$nextStep([$dart$core.Object x, $dart$core.int step]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).neighbour(Integer.nativeValue(Integer.instance(step).negated)) : $lhs$)(increasing ? (x as Enumerable).neighbour(step) : null);
+    $dart$core.Object _$fromFirst([$dart$core.int offset]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (first as Enumerable).neighbour(Integer.nativeValue(Integer.instance(offset).negated)) : $lhs$)(increasing ? (first as Enumerable).neighbour(offset) : null);
+    $dart$core.bool _$afterLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(last) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) > 0 : null);
+    $dart$core.bool _$beforeLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(last) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) < 0 : null);
+    $dart$core.bool _$beforeFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(first) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) < 0 : null);
+    $dart$core.bool _$afterFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(first) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) > 0 : null);
     $dart$core.int get size {
         $dart$core.int lastIndex = Integer.nativeValue(Integer.instance((last as Enumerable).offset(first)).magnitude);
         if (lastIndex < $package$runtime.maxIntegerValue) {
@@ -11607,8 +11607,8 @@ class Span  extends Range {
         }
     })();
     $dart$core.int get lastIndex => size - 1;
-    Sequential get rest => ((Sequential $lhs$) => $lhs$ == null ? $package$span(_$next(first), last) : $lhs$)(first.equals(last) ? $package$empty : null);
-    Sequence get reversed => ((Sequence $lhs$) => $lhs$ == null ? $package$span(last, first) : $lhs$)(_$recursive ? Sequence.$get$reversed(this) : null);
+    Sequential get rest => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? $package$span(_$next(first), last) : $lhs$)(first == last ? $package$empty : null);
+    Sequence get reversed => ((Sequence $lhs$) => $dart$core.identical($lhs$, null) ? $package$span(last, first) : $lhs$)(_$recursive ? Sequence.$get$reversed(this) : null);
     $dart$core.Object getFromFirst([$dart$core.int index]) {
         if (index < 0) {
             return null;
@@ -11624,10 +11624,10 @@ class Span  extends Range {
         if (!(step > 0)) {
             throw new AssertionError("Violated: step > 0");
         }
-        return ((Iterable $lhs$) => $lhs$ == null ? new Span$By(this, step) : $lhs$)(step == 1 ? this : null);
+        return ((Iterable $lhs$) => $dart$core.identical($lhs$, null) ? new Span$By(this, step) : $lhs$)(step == 1 ? this : null);
     }
-    Range shifted([$dart$core.int shift]) => ((Range $lhs$) => $lhs$ == null ? new Span((first as Enumerable).neighbour(shift), (last as Enumerable).neighbour(shift)) : $lhs$)(shift == 0 ? this : null);
-    $dart$core.bool containsElement([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $lhs$ == null ? (!_$afterLast(x)) && (!_$beforeFirst(x)) : $lhs$)(_$recursive ? (x as Enumerable).offset(first) <= (last as Enumerable).offset(first) : null);
+    Range shifted([$dart$core.int shift]) => ((Range $lhs$) => $dart$core.identical($lhs$, null) ? new Span((first as Enumerable).neighbour(shift), (last as Enumerable).neighbour(shift)) : $lhs$)(shift == 0 ? this : null);
+    $dart$core.bool containsElement([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (!_$afterLast(x)) && (!_$beforeFirst(x)) : $lhs$)(_$recursive ? (x as Enumerable).offset(first) <= (last as Enumerable).offset(first) : null);
     $dart$core.int count([Callable selecting]) {
         $dart$core.Object element = first;
         $dart$core.int count = 0;
@@ -11679,13 +11679,13 @@ class Span  extends Range {
             }
         }
     }
-    $dart$core.bool equals([$dart$core.Object that]) {{
+    $dart$core.bool operator ==($dart$core.Object that) {{
             $dart$core.bool doElse$7 = true;
             if (that is Span) {
                 Span that$8;
                 that$8 = that as Span;
                 doElse$7 = false;
-                return that$8.first.equals(first) && that$8.last.equals(last);
+                return (that$8.first == first) && (that$8.last == last);
             }
             if (doElse$7) {
                 $dart$core.bool doElse$9 = true;
@@ -11693,7 +11693,7 @@ class Span  extends Range {
                     Measure that$10;
                     that$10 = that as Measure;
                     doElse$9 = false;
-                    return (increasing && that$10.first.equals(first)) && (that$10.size == size);
+                    return (increasing && (that$10.first == first)) && (that$10.size == size);
                 }
                 if (doElse$9) {
                     return List.$equals(this, that);
@@ -11701,19 +11701,19 @@ class Span  extends Range {
             }
         }
     }
-    Sequential measure([Integer from, $dart$core.int length]) => ((Sequential $lhs$) => $lhs$ == null ? span(from, Integer.instance((Integer.nativeValue(from) + length) - 1)) : $lhs$)(length <= 0 ? $package$empty : null);
+    Sequential measure([Integer from, $dart$core.int length]) => ((Sequential $lhs$) => $dart$core.identical($lhs$, null) ? span(from, Integer.instance((Integer.nativeValue(from) + length) - 1)) : $lhs$)(length <= 0 ? $package$empty : null);
     Sequential span([Integer from, Integer to]) {
         if (Integer.nativeValue(from) <= Integer.nativeValue(to)) {
             if ((Integer.nativeValue(to) < 0) || (!longerThan(Integer.nativeValue(from)))) {
                 return $package$empty;
             } else {
-                return $package$span((($dart$core.Object $lhs$) => $lhs$ == null ? first : $lhs$)(this.get(from)), (($dart$core.Object $lhs$) => $lhs$ == null ? last : $lhs$)(this.get(to)));
+                return $package$span((($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? first : $lhs$)(this.get(from)), (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? last : $lhs$)(this.get(to)));
             }
         } else {
             if ((Integer.nativeValue(from) < 0) || (!longerThan(Integer.nativeValue(to)))) {
                 return $package$empty;
             } else {
-                Range range = $package$span((($dart$core.Object $lhs$) => $lhs$ == null ? first : $lhs$)(this.get(to)), (($dart$core.Object $lhs$) => $lhs$ == null ? last : $lhs$)(this.get(from)));
+                Range range = $package$span((($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? first : $lhs$)(this.get(to)), (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? last : $lhs$)(this.get(from)));
                 return range.reversed;
             }
         }
@@ -11725,7 +11725,7 @@ class Span  extends Range {
             $dart$core.Object first;
             {
                 $dart$core.Object tmp$12 = this.get(from);
-                if (tmp$12 == null) {
+                if ($dart$core.identical(tmp$12, null)) {
                     throw new AssertionError("Violated: exists first = this[from]");
                 }
                 first = tmp$12;
@@ -11742,7 +11742,7 @@ class Span  extends Range {
             $dart$core.Object last;
             {
                 $dart$core.Object tmp$13 = this.get(to);
-                if (tmp$13 == null) {
+                if ($dart$core.identical(tmp$13, null)) {
                     throw new AssertionError("Violated: exists last = this[to]");
                 }
                 last = tmp$13;
@@ -11978,13 +11978,13 @@ class StringBuilder implements List {
         _$delegate.write(String.instance(oldString).reversed);
         return this;
     }
-    $dart$core.bool equals([$dart$core.Object that]) => (() {
+    $dart$core.bool operator ==($dart$core.Object that) => (() {
         $dart$core.bool doElse$4 = true;
         if (that is StringBuilder) {
             StringBuilder that$5;
             that$5 = that as StringBuilder;
             doElse$4 = false;
-            return _$delegate.equals(that$5._$delegate);
+            return _$delegate == that$5._$delegate;
         }
         if (doElse$4) {
             return false;
