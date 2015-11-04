@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 $dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (() {
-    if ((x as $ceylon$language.Comparable).smallerThan(y)) {
+    if ((x as $ceylon$language.Comparable) < y) {
         return x;
     } else {
         return y;

@@ -550,13 +550,13 @@ abstract class Collection implements Iterable {
 }
 abstract class Comparable {
     Comparison compare([$dart$core.Object other]);
-    $dart$core.bool largerThan([$dart$core.Object other]);
+    $dart$core.bool operator >($dart$core.Object other);
     static $dart$core.bool $largerThan([final Comparable $this, $dart$core.Object other]) => $dart$core.identical($this.compare(other), $package$larger);
-    $dart$core.bool smallerThan([$dart$core.Object other]);
+    $dart$core.bool operator <($dart$core.Object other);
     static $dart$core.bool $smallerThan([final Comparable $this, $dart$core.Object other]) => $dart$core.identical($this.compare(other), $package$smaller);
-    $dart$core.bool notSmallerThan([$dart$core.Object other]);
+    $dart$core.bool operator >=($dart$core.Object other);
     static $dart$core.bool $notSmallerThan([final Comparable $this, $dart$core.Object other]) => !$dart$core.identical($this.compare(other), $package$smaller);
-    $dart$core.bool notLargerThan([$dart$core.Object other]);
+    $dart$core.bool operator <=($dart$core.Object other);
     static $dart$core.bool $notLargerThan([final Comparable $this, $dart$core.Object other]) => !$dart$core.identical($this.compare(other), $package$larger);
 }
 Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$dart$core.Object x, $dart$core.Object y]) {{
@@ -1601,7 +1601,7 @@ abstract class Enumerable implements Ordinal {
     $dart$core.Object get successor;
     static $dart$core.Object $get$successor([final Enumerable $this]) => $this.neighbour(1);
     $dart$core.Object get predecessor;
-    static $dart$core.Object $get$predecessor([final Enumerable $this]) => $this.neighbour(Integer.nativeValue(Integer.instance(1).negated));
+    static $dart$core.Object $get$predecessor([final Enumerable $this]) => $this.neighbour(Integer.nativeValue(-Integer.instance(1)));
     $dart$core.int offset([$dart$core.Object other]);
     $dart$core.int offsetSign([$dart$core.Object other]);
     static $dart$core.int $offsetSign([final Enumerable $this, $dart$core.Object other]) => Integer.instance($this.offset(other)).sign;
@@ -1730,9 +1730,9 @@ $dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Obj
         return "0";
     }
     Iterable digits = $package$empty;
-    $dart$core.int i = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(integer).negated) : $lhs$)(integer < 0 ? integer : null);
+    $dart$core.int i = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(-Integer.instance(integer)) : $lhs$)(integer < 0 ? integer : null);
     while (!(i == 0)) {
-        $dart$core.int d = Integer.nativeValue(Integer.instance(i).remainder(Integer.instance(radix as $dart$core.int)).negated);
+        $dart$core.int d = Integer.nativeValue(-(Integer.instance(i) % Integer.instance(radix as $dart$core.int)));
         Character c;
         if ((d >= 0) && (d < 10)) {
             c = Integer.instance(d + $package$zeroInt).character;
@@ -2265,11 +2265,11 @@ class InitializationError  extends AssertionError {
     $dart$core.String _$description;
 }
 abstract class Integral implements Number, Enumerable {
-    $dart$core.Object remainder([$dart$core.Object other]);
+    $dart$core.Object operator %($dart$core.Object other);
     $dart$core.bool get zero;
     $dart$core.bool get unit;
     $dart$core.bool divides([$dart$core.Object other]);
-    static $dart$core.bool $divides([final Integral $this, $dart$core.Object other]) => ((other as Integral).remainder($this) as Integral).zero;
+    static $dart$core.bool $divides([final Integral $this, $dart$core.Object other]) => (((other as Integral) % $this) as Integral).zero;
 }
 class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
     interleave$$anonymous$0_ $outer$ceylon$language$interleave$$anonymous$0_;
@@ -2469,9 +2469,9 @@ Iterable $package$interleave([Sequence iterables]) => new interleave$$anonymous$
 Iterable interleave([Sequence iterables]) => $package$interleave(iterables);
 
 abstract class Invertible implements Summable {
-    $dart$core.Object get negated;
-    $dart$core.Object minus([$dart$core.Object other]);
-    static $dart$core.Object $minus([final Invertible $this, $dart$core.Object other]) => $this.plus((other as Invertible).negated);
+    $dart$core.Object operator -();
+    $dart$core.Object operator -($dart$core.Object other);
+    static $dart$core.Object $minus([final Invertible $this, $dart$core.Object other]) => $this + (-(other as Invertible));
 }
 class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements Iterator {
     Iterable$exceptLast$$anonymous$2_ $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_;
@@ -3866,7 +3866,7 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
         $dart$core.bool doElse$126 = true;
         if (!$dart$core.identical(element, null)) {
             doElse$126 = false;
-            return Integer.nativeValue(Integer.instance(element.hashCode).magnitude.remainder(Integer.instance(size)));
+            return Integer.nativeValue(Integer.instance(element.hashCode).magnitude % Integer.instance(size));
         }
         if (doElse$126) {
             return 0;
@@ -4101,7 +4101,7 @@ class Iterable$group$$anonymous$32_ implements Map {
         }
     }
     Array _$store;
-    $dart$core.int _$hash([$dart$core.Object group, $dart$core.int size]) => Integer.nativeValue(Integer.instance(group.hashCode).magnitude.remainder(Integer.instance(size)));
+    $dart$core.int _$hash([$dart$core.Object group, $dart$core.int size]) => Integer.nativeValue(Integer.instance(group.hashCode).magnitude % Integer.instance(size));
     Array _$rebuild([Array store]) {
         Array newStore = (() {
             $dart$core.int arg$140$0 = store.size * 2;
@@ -5348,7 +5348,7 @@ class GroupEntry {
 abstract class Iterator {
     $dart$core.Object next();
 }
-$dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable).largerThan(y) ? x : null);
+$dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable) > y ? x : null);
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
@@ -5905,7 +5905,7 @@ class List$Repeat implements List {
         $dart$core.int size = $outer$ceylon$language$List.size;
         return (() {
             if (index < (size * _$times)) {
-                return $outer$ceylon$language$List.getFromFirst(Integer.nativeValue(Integer.instance(index).remainder(Integer.instance(size))));
+                return $outer$ceylon$language$List.getFromFirst(Integer.nativeValue(Integer.instance(index) % Integer.instance(size)));
             } else {
                 return null;
             }
@@ -6014,7 +6014,7 @@ class List$Patch$$anonymous$4_ implements Iterator {
         this.$outer$ceylon$language$List$Patch = $outer$ceylon$language$List$Patch;
         this.$capture$$iter = $capture$$iter;
         this.$capture$$patchIter = $capture$$patchIter;
-        _$index = Integer.nativeValue(Integer.instance(1).negated);
+        _$index = Integer.nativeValue(-Integer.instance(1));
     }
     $dart$core.int _$index;
     $dart$core.Object next() {
@@ -6336,7 +6336,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
         _$permutation = new Array($package$measure(Integer.instance(0), _$length) as Iterable);
         _$indexes = new Array($package$measure(Integer.instance(0), _$length) as Iterable);
         _$swaps = new Array($package$measure(Integer.instance(0), _$length) as Iterable);
-        _$directions = new Array.ofSize(_$length, Integer.instance(1).negated);
+        _$directions = new Array.ofSize(_$length, -Integer.instance(1));
         _$counter = _$length;
     }
     $dart$core.int _$length;
@@ -6409,7 +6409,7 @@ class List$permutations$$anonymous$6_$$anonymous$7_ implements Iterator {
                     _$counter = _$length;
                 } else {
                     _$swaps.set(_$counter, Integer.instance(_$counter));
-                    _$directions.set(_$counter, Integer.instance(dir).negated);
+                    _$directions.set(_$counter, -Integer.instance(dir));
                     _$counter = Integer.nativeValue(Integer.instance(_$counter).predecessor);
                 }
             }
@@ -6512,7 +6512,7 @@ abstract class List implements Collection, Correspondence, Ranged {
     }
     $dart$core.int get lastIndex;
     $dart$core.int get size;
-    static $dart$core.int $get$size([final List $this]) => (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(1).negated) : $lhs$)($this.lastIndex) + 1;
+    static $dart$core.int $get$size([final List $this]) => (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(-Integer.instance(1)) : $lhs$)($this.lastIndex) + 1;
     $dart$core.bool defines([Integer index]);
     static $dart$core.bool $defines([final List $this, Integer index]) => (Integer.nativeValue(index) >= 0) && (Integer.nativeValue(index) < $this.size);
     $dart$core.bool contains([$dart$core.Object element]);
@@ -7065,8 +7065,8 @@ abstract class List implements Collection, Correspondence, Ranged {
     static List $trim([final List $this, Callable trimming]) {
         if ($this.size > 0) {
             $dart$core.int end = $this.size - 1;
-            $dart$core.int from = Integer.nativeValue(Integer.instance(1).negated);
-            $dart$core.int to = Integer.nativeValue(Integer.instance(1).negated);
+            $dart$core.int from = Integer.nativeValue(-Integer.instance(1));
+            $dart$core.int to = Integer.nativeValue(-Integer.instance(1));
             {
                 $dart$core.bool doFail$68 = true;
                 $dart$core.Object element$70;
@@ -8107,7 +8107,7 @@ $dart$core.Object $package$max([Iterable values]) {
                         }
                         val = val$2;
                     }
-                    if ((val as Comparable).largerThan(max)) {
+                    if ((val as Comparable) > max) {
                         max = val;
                     }
                 }
@@ -8965,7 +8965,7 @@ $dart$core.Object $package$min([Iterable values]) {
                         }
                         val = val$2;
                     }
-                    if ((val as Comparable).smallerThan(min)) {
+                    if ((val as Comparable) < min) {
                         min = val;
                     }
                 }
@@ -8997,13 +8997,13 @@ $dart$core.Object get nothing => $package$nothing;
 
 abstract class Number implements Numeric, Comparable {
     $dart$core.Object get magnitude;
-    static $dart$core.Object $get$magnitude([final Number $this]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $this : $lhs$)($this.negative ? $this.negated : null);
+    static $dart$core.Object $get$magnitude([final Number $this]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? $this : $lhs$)($this.negative ? -$this : null);
     $dart$core.int get sign;
     static $dart$core.int $get$sign([final Number $this]) {
         if ($this.positive) {
             return 1;
         } else if ($this.negative) {
-            return Integer.nativeValue(Integer.instance(1).negated);
+            return Integer.nativeValue(-Integer.instance(1));
         } else {
             return 0;
         }
@@ -9017,8 +9017,8 @@ abstract class Number implements Numeric, Comparable {
     $dart$core.Object powerOfInteger([$dart$core.int integer]);
 }
 abstract class Numeric implements Invertible {
-    $dart$core.Object times([$dart$core.Object other]);
-    $dart$core.Object divided([$dart$core.Object other]);
+    $dart$core.Object operator *($dart$core.Object other);
+    $dart$core.Object operator /($dart$core.Object other);
 }
 abstract class Obtainable implements Usable {
     void obtain();
@@ -9298,7 +9298,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
     $dart$core.int sign;
     $dart$core.String unsignedPart;
     if (String.instance(string).startsWith(String.instance("-"))) {
-        sign = Integer.nativeValue(Integer.instance(1).negated);
+        sign = Integer.nativeValue(-Integer.instance(1));
         unsignedPart = String.nativeValue(String.instance(string).spanFrom(Integer.instance(1)));
     } else if (String.instance(string).startsWith(String.instance("+"))) {
         sign = 1;
@@ -9397,7 +9397,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                         if (doElse$8) {
                             $dart$core.Object rest$11;
                             rest$11 = String.instance(rest);
-                            exponent = Integer.nativeValue(Integer.instance(shift).negated);
+                            exponent = Integer.nativeValue(-Integer.instance(shift));
                         }
                     }
                     $dart$core.int numerator = (whole * Integer.nativeValue(Integer.instance(10).power(Integer.instance(shift)))) + fractional;
@@ -9437,15 +9437,15 @@ $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
         } else if (switch$12 == "P") {
             return 15;
         } else if (switch$12 == "m") {
-            return Integer.nativeValue(Integer.instance(3).negated);
+            return Integer.nativeValue(-Integer.instance(3));
         } else if (switch$12 == "u") {
-            return Integer.nativeValue(Integer.instance(6).negated);
+            return Integer.nativeValue(-Integer.instance(6));
         } else if (switch$12 == "n") {
-            return Integer.nativeValue(Integer.instance(9).negated);
+            return Integer.nativeValue(-Integer.instance(9));
         } else if (switch$12 == "p") {
-            return Integer.nativeValue(Integer.instance(12).negated);
+            return Integer.nativeValue(-Integer.instance(12));
         } else if (switch$12 == "f") {
-            return Integer.nativeValue(Integer.instance(15).negated);
+            return Integer.nativeValue(-Integer.instance(15));
         } else {
             if (String.instance(String.instance(string).lowercased).startsWith(String.instance("e")) && String.instance(string).rest.every($package$digitOrSign)) {
                 return $package$parseInteger(String.nativeValue(String.instance(string).rest));
@@ -9506,7 +9506,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
             return null;
         }
     }
-    $dart$core.int limit = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance($package$runtime.maxIntegerValue).negated) : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
+    $dart$core.int limit = (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(-Integer.instance($package$runtime.maxIntegerValue)) : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
     $dart$core.int length = String.instance(string).size;
     $dart$core.int result = 0;
     $dart$core.int digitIndex = 0;
@@ -9576,7 +9576,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
     if (digitIndex == 0) {
         return null;
     } else {
-        return (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(Integer.instance(result).negated) : $lhs$)(negative ? result : null);
+        return (($dart$core.int $lhs$) => $dart$core.identical($lhs$, null) ? Integer.nativeValue(-Integer.instance(result)) : $lhs$)(negative ? result : null);
     }
 }
 
@@ -9631,7 +9631,7 @@ $dart$core.int $package$parseDigit([Character digit, $dart$core.int radix]) {
 
 $dart$core.int parseDigit([Character digit, $dart$core.int radix]) => $package$parseDigit(digit, radix);
 
-$dart$core.Object $package$plus([$dart$core.Object x, $dart$core.Object y]) => (x as Summable).plus(y);
+$dart$core.Object $package$plus([$dart$core.Object x, $dart$core.Object y]) => (x as Summable) + y;
 
 $dart$core.Object plus([$dart$core.Object x, $dart$core.Object y]) => $package$plus(x, y);
 
@@ -9668,7 +9668,7 @@ $dart$core.Object $package$product([Iterable values]) {
         Iterator iterator$0 = values.rest.iterator();
         while ((element$1 = iterator$0.next()) is !Finished) {
             $dart$core.Object val = element$1;
-            product = (product as Numeric).times(val);
+            product = (product as Numeric) * val;
         }
     }
     return product;
@@ -10105,7 +10105,7 @@ class Sequence$Repeat implements Sequence {
         $dart$core.int size = $outer$ceylon$language$Sequence.size;
         return (() {
             if (index < (size * _$times)) {
-                return $outer$ceylon$language$Sequence.getFromFirst(Integer.nativeValue(Integer.instance(index).remainder(Integer.instance(size))));
+                return $outer$ceylon$language$Sequence.getFromFirst(Integer.nativeValue(Integer.instance(index) % Integer.instance(size)));
             } else {
                 return null;
             }
@@ -11367,7 +11367,7 @@ class Singleton implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-$dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable).smallerThan(y) ? x : null);
+$dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? y : $lhs$)((x as Comparable) < y ? x : null);
 
 $dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $package$smallest(x, y);
 
@@ -11556,8 +11556,8 @@ class Span  extends Range {
     $dart$core.bool get decreasing => !increasing;
     $dart$core.bool _$recursive;
     $dart$core.Object _$next([$dart$core.Object x]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).predecessor : $lhs$)(increasing ? (x as Enumerable).successor : null);
-    $dart$core.Object _$nextStep([$dart$core.Object x, $dart$core.int step]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).neighbour(Integer.nativeValue(Integer.instance(step).negated)) : $lhs$)(increasing ? (x as Enumerable).neighbour(step) : null);
-    $dart$core.Object _$fromFirst([$dart$core.int offset]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (first as Enumerable).neighbour(Integer.nativeValue(Integer.instance(offset).negated)) : $lhs$)(increasing ? (first as Enumerable).neighbour(offset) : null);
+    $dart$core.Object _$nextStep([$dart$core.Object x, $dart$core.int step]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).neighbour(Integer.nativeValue(-Integer.instance(step))) : $lhs$)(increasing ? (x as Enumerable).neighbour(step) : null);
+    $dart$core.Object _$fromFirst([$dart$core.int offset]) => (($dart$core.Object $lhs$) => $dart$core.identical($lhs$, null) ? (first as Enumerable).neighbour(Integer.nativeValue(-Integer.instance(offset))) : $lhs$)(increasing ? (first as Enumerable).neighbour(offset) : null);
     $dart$core.bool _$afterLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(last) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) > 0 : null);
     $dart$core.bool _$beforeLast([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(last) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(last) < 0 : null);
     $dart$core.bool _$beforeFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => $dart$core.identical($lhs$, null) ? (x as Enumerable).offsetSign(first) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) < 0 : null);
@@ -12092,7 +12092,7 @@ $dart$core.Object $package$sum([Iterable values]) {
             }
             val = val$1;
         }
-        sum = (sum as Summable).plus(val);
+        sum = (sum as Summable) + val;
     }
     return sum;
 }
@@ -12100,9 +12100,9 @@ $dart$core.Object $package$sum([Iterable values]) {
 $dart$core.Object sum([Iterable values]) => $package$sum(values);
 
 abstract class Summable {
-    $dart$core.Object plus([$dart$core.Object other]);
+    $dart$core.Object operator +($dart$core.Object other);
 }
-$dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => (x as Numeric).times(y);
+$dart$core.Object $package$times([$dart$core.Object x, $dart$core.Object y]) => (x as Numeric) * y;
 
 $dart$core.Object times([$dart$core.Object x, $dart$core.Object y]) => $package$times(x, y);
 
