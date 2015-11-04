@@ -583,16 +583,6 @@ abstract class Comparison {
     }
     $dart$core.String string;
     Comparison get reversed;
-    $dart$core.bool operator ==($dart$core.Object other) => (() {
-        $dart$core.bool doElse$0 = true;
-        if (other != null) {
-            doElse$0 = false;
-            return $dart$core.identical(this, other);
-        }
-        if (doElse$0) {
-            return false;
-        }
-    })();
 }
 class equal_  extends Comparison {
     equal_() : super("equal") {}
@@ -4653,7 +4643,7 @@ abstract class Iterable implements Category {
                             }
                             val = val$63;
                         }
-                        if ((comparing.f(val, max) as Comparison) == $package$larger) {
+                        if (comparing.f(val, max) == $package$larger) {
                             max = val;
                         }
                     }

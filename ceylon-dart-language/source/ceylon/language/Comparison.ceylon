@@ -6,12 +6,6 @@ shared abstract class Comparison(shared actual String string)
         of larger | smaller | equal {
     "The reversed value of this comparison."
     shared formal Comparison reversed;
-
-    // FIXME Dart workaround
-    shared actual Boolean equals(Object other)
-        =>  if (is Identifiable other)
-            then this === other
-            else false;
 }
 
 "The value is exactly equal to the given value."
