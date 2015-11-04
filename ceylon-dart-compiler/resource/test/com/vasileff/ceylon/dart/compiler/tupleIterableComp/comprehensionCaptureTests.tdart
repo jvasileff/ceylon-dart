@@ -138,7 +138,7 @@ void $package$run() {
                 $ceylon$language.Integer v = v$19;
                 $dart$core.int w;
                 $dart$core.int tmp$24 = $ceylon$language.Integer.nativeValue(v);
-                if (!(!$dart$core.identical(tmp$24, null))) {
+                if (!(!(null == tmp$24))) {
                     continue;
                 }
                 w = tmp$24;
@@ -247,7 +247,7 @@ void $package$run() {
                 $ceylon$language.Integer v = v$38;
                 $ceylon$language.Callable w;
                 $ceylon$language.Callable tmp$43 = true ? new $ceylon$language.dart$Callable(() => v) : null;
-                if (!(!$dart$core.identical(tmp$43, null))) {
+                if (!(!(null == tmp$43))) {
                     continue;
                 }
                 w = tmp$43;

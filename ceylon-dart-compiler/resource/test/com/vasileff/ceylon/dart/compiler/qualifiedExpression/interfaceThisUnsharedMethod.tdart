@@ -17,10 +17,10 @@ abstract class I {
         I me = $ceylon$language.nothing as I;
         I ml$get() => $ceylon$language.nothing as I;
 
-        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r) => $dart$core.identical($r, null) ? null : I.$_$foo($r, $0 as $ceylon$language.Usable))(me));
+        $ceylon$language.Callable fooRefMe = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r) => null == $r ? null : I.$_$foo($r, $0 as $ceylon$language.Usable))(me));
         $ceylon$language.Callable fooRefMl$get() => (() {
             I $r = ml$get();
-            return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r) => $dart$core.identical($r, null) ? null : I.$_$foo($r, $0 as $ceylon$language.Usable))($r));
+            return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ((I $r) => null == $r ? null : I.$_$foo($r, $0 as $ceylon$language.Usable))($r));
         })();
 
     }

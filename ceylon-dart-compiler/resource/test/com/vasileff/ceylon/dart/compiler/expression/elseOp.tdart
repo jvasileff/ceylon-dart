@@ -8,7 +8,7 @@ abstract class run$B implements run$A {
 void $package$run() {
     run$B x$get() => $ceylon$language.nothing as run$B;
 
-    run$A y = ((run$A $lhs$) => $dart$core.identical($lhs$, null) ? $ceylon$language.nothing as run$A : $lhs$)(x$get());
+    run$A y = ((run$A $lhs$) => null == $lhs$ ? $ceylon$language.nothing as run$A : $lhs$)(x$get());
     $ceylon$language.print(y);
 }
 

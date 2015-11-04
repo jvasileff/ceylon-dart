@@ -18,7 +18,7 @@ void $package$run() {
             while (step$0$1()) {
                 $ceylon$language.Sequential seq;
                 $ceylon$language.Sequential tmp$3 = maybeSeq;
-                if (!(!$dart$core.identical(tmp$3, null))) {
+                if (!(!(null == tmp$3))) {
                     continue;
                 }
                 seq = tmp$3;

@@ -16,8 +16,8 @@ class C {
 void $package$run() {
     C c1 = new C();
     C c2 = null;
-    ((C $r) => $dart$core.identical($r, null) ? null : new C$D($r, "Test1"))(c1);
-    ((C $r) => $dart$core.identical($r, null) ? null : new C$D($r, "Test2"))(c2);
+    ((C $r) => null == $r ? null : new C$D($r, "Test1"))(c1);
+    ((C $r) => null == $r ? null : new C$D($r, "Test2"))(c2);
 }
 
 void run() => $package$run();
