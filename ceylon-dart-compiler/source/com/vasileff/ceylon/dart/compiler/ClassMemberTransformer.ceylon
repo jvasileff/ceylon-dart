@@ -267,7 +267,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             false;
             null;
             generateFunctionReturnType(info, declarationModel);
-            if (dartElementType == dartFunction) then
+            if (dartElementType != dartValue) then
                 null
             else if (that is ValueSetterDefinition) then
                 "set"
@@ -276,10 +276,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                 "get"
             else
                 null;
+            dartElementType is DartOperator;
             identifier;
             parameters =
-                if (dartElementType == dartFunction, is AnyFunction that) then
+                if (dartElementType != dartValue, is AnyFunction that) then
                     generateFormalParameterList {
+                        !dartElementType is DartOperator; false;
                         info;
                         that.parameterLists.first;
                     }
@@ -300,7 +302,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             }
                         ];
                     }
-                else if (dartElementType == dartFunction) then
+                else if (dartElementType != dartValue) then
                     dartFormalParameterListEmpty
                 else
                     null;
@@ -328,13 +330,14 @@ class ClassMemberTransformer(CompilationContext ctx)
         DartMethodDeclaration {
             false;
             null;
-            dartElementType == dartFunction then
+            dartElementType != dartValue then
                 DartTypeName {
                     DartSimpleIdentifier {
                         "void";
                     };
                 };
-            dartElementType != dartFunction then "set";
+            dartElementType == dartValue then "set";
+            dartElementType is DartOperator;
             identifier;
             DartFormalParameterList {
                 false; false;
@@ -423,6 +426,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 "static";
                 generateFunctionReturnType(scope, declarationModel);
                 null;
+                false;
                 DartSimpleIdentifier {
                     dartTypes.getStaticInterfaceMethodName {
                         declarationModel;
@@ -460,11 +464,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                 false;
                 null;
                 generateFunctionReturnType(scope, declarationModel);
-                dartElementType != dartFunction then (
+                dartElementType == dartValue then (
                     if (declarationModel is SetterModel)
                     then "set"
                     else "get"
                 );
+                dartElementType is DartOperator;
                 dartIdentifier;
                 if (is SetterModel declarationModel) then
                     DartFormalParameterList {
@@ -483,9 +488,9 @@ class ClassMemberTransformer(CompilationContext ctx)
                             }
                         ];
                     }
-                else if (dartElementType == dartFunction) then
+                else if (dartElementType != dartValue) then
                     DartFormalParameterList {
-                        true; false;
+                        !dartElementType is DartOperator; false;
                         standardParameters.parameters;
                     }
                 else

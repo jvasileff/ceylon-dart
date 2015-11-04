@@ -268,6 +268,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             false; false;
                         };
                         "get";
+                        false;
                         dartTypes.identifierForOuter(outerDeclaration);
                         null;
                         null;
@@ -469,6 +470,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             false; false;
                         };
                         "get";
+                        false;
                         dartTypes.identifierForOuter {
                             outerDeclaration;
                         };
@@ -602,7 +604,8 @@ class TopLevelVisitor(CompilationContext ctx)
         "Initializer parameters."
         value standardParameters
             =   if (!parameters.empty)
-                then generateFormalParameterList(scope, parameters).parameters
+                then generateFormalParameterList(
+                        true, false, scope, parameters).parameters
                 else [];
 
         value hasDefaultedParameter
@@ -612,7 +615,8 @@ class TopLevelVisitor(CompilationContext ctx)
         value standardParametersNonDefaulted
             =   hasDefaultedParameter then (
                 if (!parameters.empty)
-                then generateFormalParameterList(scope, parameters, true).parameters
+                then generateFormalParameterList(
+                        true, false, scope, parameters, true).parameters
                 else []);
 
 
@@ -1030,6 +1034,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 DartSimpleIdentifier(functionName);
                 DartFunctionExpression {
                     generateFormalParameterList {
+                        true; false;
                         info;
                         that.parameterLists.first;
                     };
@@ -1080,13 +1085,15 @@ class TopLevelVisitor(CompilationContext ctx)
         DartMethodDeclaration {
             false; null;
             generateFunctionReturnType(scope, declaration);
-            dartElementType != dartFunction then (
+            dartElementType == dartValue then (
                 if (declaration is SetterModel)
                 then "set"
                 else "get"
             );
+            dartElementType is DartOperator;
             identifier;
-            dartElementType == dartFunction then generateFormalParameterList {
+            dartElementType != dartValue then generateFormalParameterList {
+                !dartElementType is DartOperator; false;
                 scope;
                 parameterModels;
             };

@@ -67,10 +67,14 @@ DartExpression createNullSafeExpression(
                 body = DartExpressionFunctionBody {
                     async = false;
                     DartConditionalExpression {
-                        DartBinaryExpression {
-                            parameterIdentifier;
-                            "==";
-                            DartNullLiteral();
+                        DartFunctionExpressionInvocation {
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("$dart$core");
+                                DartSimpleIdentifier("identical");
+                            };
+                            DartArgumentList {
+                                [parameterIdentifier, DartNullLiteral()];
+                            };
                         };
                         ifNullExpression;
                         ifNotNullExpression;

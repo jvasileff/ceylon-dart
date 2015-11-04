@@ -1437,14 +1437,14 @@ class DartFieldDeclaration(static, fieldList)
 shared
 class DartMethodDeclaration(
         external, modifierKeyword, returnType,
-        propertyKeyword, name, parameters, body)
+        propertyKeyword, operator, name, parameters, body)
         extends DartClassMember() {
 
     shared Boolean external;
     shared String? modifierKeyword; // abstract | static
     shared DartTypeName? returnType;
     shared String? propertyKeyword; // get | set
-    // shared String operatorKeyword
+    shared Boolean operator;
     shared DartSimpleIdentifier name;
     shared DartFormalParameterList? parameters;
     shared DartFunctionBody? body;
@@ -1467,6 +1467,9 @@ class DartMethodDeclaration(
         if (exists propertyKeyword) {
             writer.write(propertyKeyword);
             writer.write(" ");
+        }
+        if (operator) {
+            writer.write("operator ");
         }
         name.write(writer);
         if (exists parameters) {

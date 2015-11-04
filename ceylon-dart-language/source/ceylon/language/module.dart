@@ -271,7 +271,7 @@ class Character implements Comparable {
   $dart$core.bool notSmallerThan([Character other])
     =>  String.instance(toString()).notSmallerThan(String.instance(other.toString()));
 
-  $dart$core.bool equals($dart$core.Object other) {
+  $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Character) {
       return _value == other._value;
     }
@@ -325,7 +325,7 @@ class Float implements Number, Exponentiable {
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
 
-  $dart$core.bool equals($dart$core.Object other) {
+  $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Float) {
       return _value == other._value;
     }
@@ -402,7 +402,7 @@ class Integer implements Integral, Exponentiable, Binary {
 
   $dart$core.int get hashCode => _value.hashCode;
 
-  $dart$core.bool equals($dart$core.Object other) {
+  $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Integer) {
       return _value == other._value;
     }
@@ -784,8 +784,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   //          return false;
   //      }
   //  }
-  // TODO change to "==" once compiler handles this
-  $dart$core.bool equals([$dart$core.Object other])
+  $dart$core.bool operator ==($dart$core.Object other)
     => (other is String) ? _value == other._value : false;
 
   //  shared Boolean equalsIgnoringCase(String that) {

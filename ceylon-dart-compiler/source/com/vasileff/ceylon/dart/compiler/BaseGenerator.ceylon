@@ -102,7 +102,8 @@ import com.vasileff.ceylon.dart.ast {
     DartSwitchStatement,
     DartListLiteral,
     createNullSafeExpression,
-    createExpressionEvaluationWithSetup
+    createExpressionEvaluationWithSetup,
+    DartPrefixedIdentifier
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,
@@ -1712,10 +1713,11 @@ class BaseGenerator(CompilationContext ctx)
         // Non-denotable types we can handle
         else if (ceylonTypes.isCeylonNull(isType)) {
             return
-            DartBinaryExpression {
-                expressionToCheck;
-                "==";
-                DartNullLiteral();
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentical;
+                DartArgumentList {
+                    [expressionToCheck, DartNullLiteral()];
+                };
             };
         }
         else if (ceylonTypes.isCeylonNothing(isType)) {
@@ -2224,7 +2226,7 @@ class BaseGenerator(CompilationContext ctx)
                 body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
             }
             result = DartFunctionExpression {
-                generateFormalParameterList(scope, list);
+                generateFormalParameterList(true, false, scope, list);
                 body;
             };
         }
@@ -2234,6 +2236,8 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartFormalParameterList generateFormalParameterList(
+            Boolean positional,
+            Boolean named,
             DScope scope,
             Parameters|{Parameter*}|{ParameterModel*} parameters,
             "For parameters, disregard parameterModel.defaulted when determining if the
@@ -2285,7 +2289,7 @@ class BaseGenerator(CompilationContext ctx)
             }
         });
         return DartFormalParameterList {
-            positional = true;
+            positional; named;
             parameters = dartParameters;
         };
     }

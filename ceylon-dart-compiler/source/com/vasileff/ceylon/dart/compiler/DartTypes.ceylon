@@ -58,7 +58,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ceylonTypes.objectDeclaration.getMember("string", null, false)
                 -> ["toString", package.dartFunction],
             ceylonTypes.objectDeclaration.getMember("hash", null, false)
-                -> ["hashCode", dartValue]
+                -> ["hashCode", dartValue],
+            ceylonTypes.objectDeclaration.getMember("equals", null, false)
+                -> ["==", dartBinaryOperator]
         }.get;
     })();
 
