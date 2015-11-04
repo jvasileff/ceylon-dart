@@ -76,8 +76,10 @@ class DartInvocable(
     }
 
     shared
-    DartExpression expressionForLocalCapture() {
-        // Local function and values do not have receivers; they are not members.
+    DartExpression expressionForLocalCapture(DartExpression? receiver) {
+        // Local function and values *initially* do not have receivers (they are not
+        // members), but, if a capture is re-captured, it will have a receiver the
+        // for the second capture! (The receiver would be the first capturer.)
 
         "Constructors and Dart static methods are not captured."
         assert (!is DartConstructorName | DartPropertyAccess reference);
@@ -85,7 +87,17 @@ class DartInvocable(
         "Local functions and values are never operators."
         assert (elementType == dartFunction || elementType == dartValue);
 
-        return reference;
+        if (is DartPrefixedIdentifier reference) {
+            // must be a toplevel
+
+            "Toplevels don't have receivers."
+            assert (!exists receiver);
+
+            return reference;
+        }
+        else {
+            return createDartPropertyAccess(receiver, reference);
+        }
     }
 
     shared

@@ -2301,8 +2301,7 @@ class BaseGenerator(CompilationContext ctx)
             =   dartTypes.captureDeclarationsForClass(classModel)
                     .map((capture)
                         =>  dartTypes.expressionForBaseExpression(scope, capture, false))
-                    // Workaround https://github.com/ceylon/ceylon-compiler/issues/2293
-                    .map((tuple) => tuple.first);
+                    .map(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
 
         value outerExpression
             =   if (exists container = getContainingClassOrInterface(scope),
@@ -2687,14 +2686,15 @@ class BaseGenerator(CompilationContext ctx)
                     =>  dartTypes.erasedToNative(parameterModel.model));
 
         if (!needsWrapperFunction) {
-            "A bit ugly, but we do know it's a FunctionModel."
-            assert (is FunctionModel functionModel);
+            "A bit ugly, but we do know it's not a ClassModel | ConstructorModel
+             from above test."
+            assert (!is ClassModel | ConstructorModel functionModel);
             outerFunction
                 =   delegateFunction else
                     dartTypes.expressionForBaseExpression {
                         scope;
                         functionModel;
-                    }[0];
+                    }.expressionForClosure();
         }
         else {
             "Identifiers to use for the outer callable."
@@ -2793,12 +2793,11 @@ class BaseGenerator(CompilationContext ctx)
             case (is FunctionModel) {
                 invocation
                     =   DartFunctionExpressionInvocation {
-                            // ugliness: we have the same exact expression above!
-                            delegateFunction else
-                            dartTypes.expressionForBaseExpression {
+                            delegateFunction
+                            else dartTypes.expressionForBaseExpression {
                                 scope;
                                 functionModel;
-                            }[0];
+                            }.expressionForClosure();
                             DartArgumentList {
                                 innerArguments;
                             };
@@ -2806,18 +2805,15 @@ class BaseGenerator(CompilationContext ctx)
             }
             case (is ClassModel | ConstructorModel) {
                 invocation
-                    =   DartInstanceCreationExpression {
+                    =   dartTypes.dartInvocable {
+                            scope;
+                            functionModel; // really class or constructor
                             false;
-                            // no need to transform the base expression:
-                            dartTypes.dartConstructorName {
-                                scope;
-                                functionModel;
-                            };
-                            DartArgumentList {
-                                concatenate {
-                                    outerAndCaptureArguments,
-                                    innerArguments
-                                };
+                        }.expressionForInvocation {
+                            null;
+                            concatenate {
+                                outerAndCaptureArguments,
+                                innerArguments
                             };
                         };
             }

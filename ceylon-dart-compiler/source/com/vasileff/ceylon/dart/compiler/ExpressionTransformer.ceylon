@@ -270,24 +270,16 @@ class ExpressionTransformer(CompilationContext ctx)
 
             switch (targetDeclaration)
             case (is ValueModel) {
-                value [dartIdentifier, dartElementType] =
-                        dartTypes.expressionForBaseExpression {
-                    info;
-                    targetDeclaration;
-                    false;
-                };
-
+                // We always invoke values... to obtain the value.
                 return withBoxing {
                     info;
                     info.typeModel;
                     targetDeclaration;
-                    if (dartElementType == dartFunction) then
-                        DartFunctionExpressionInvocation {
-                            dartIdentifier;
-                            DartArgumentList();
-                        }
-                    else
-                        dartIdentifier;
+                    dartTypes.expressionForBaseExpression {
+                        info;
+                        targetDeclaration;
+                        false;
+                    }.expressionForInvocation();
                 };
             }
             case (is FunctionModel) {
@@ -307,8 +299,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         dartTypes.expressionForBaseExpression {
                             info;
                             targetDeclaration;
-                            false;
-                        }[0];
+                        }.expressionForInvocation();// it's a value, so we "invoke" it.
                     };
                 }
                 else {
@@ -942,11 +933,10 @@ class ExpressionTransformer(CompilationContext ctx)
                             // declaration.
                             invokedDeclaration.parameterLists.size() == 1
                                 then invokedDeclaration;
-                            DartFunctionExpressionInvocation {
-                                dartTypes.expressionForBaseExpression {
-                                    info;
-                                    invokedDeclaration;
-                                }[0]; // never a value, as far as we know!
+                            dartTypes.expressionForBaseExpression {
+                                info;
+                                invokedDeclaration;
+                            }.expressionForInvocation {
                                 argumentList;
                             };
                         };

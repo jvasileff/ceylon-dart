@@ -37,8 +37,7 @@ import com.vasileff.ceylon.dart.ast {
     DartSimpleIdentifier,
     DartIdentifier,
     DartExpression,
-    DartPropertyAccess,
-    createDartPropertyAccess
+    DartPropertyAccess
 }
 import com.vasileff.ceylon.dart.model {
     DartTypeModel
@@ -838,14 +837,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                 };
 
-    "Returns a tuple containing:
-
-     - A Dart expression for the Ceylon FunctionOrValue
-     - A boolean value that is true if the target is a dart function, or false if the
-       target is a dart value. Note: this will be true for Ceylon values that must be
-       mapped to Dart functions."
+    "Returns a [[DartQualifiedInvocable]] for the [[declaration]] in [[scope]], with
+     [[declaration]] being the target of a Ceylon base expression."
     shared
-    [DartExpression, DartElementType] expressionForBaseExpression(
+    DartQualifiedInvocable expressionForBaseExpression(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
@@ -853,22 +848,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         "By definition."
         assert (is FunctionModel | ValueModel | SetterModel declaration);
 
-        // Use the correct original declaration, since we may not have captured
-        // replacement declarations that were elided (did not actually become
-        // replacements in the Dart output)
+        "Use the correct original declaration, given that we may have ignored some
+         replacement declarations."
         value originalDeclaration
             =   declarationConsideringElidedReplacements(declaration);
 
-        // TODO assert shouldn't be necessary
-        assert (is FunctionModel | ValueModel | SetterModel originalDeclaration);
-
-        value [identifier, dartElementType] = dartInvocable {
-            scope;
-            originalDeclaration;
-            setter;
-        }.oldPairPrefixed;
+        value invocable
+            =   dartInvocable {
+                    scope;
+                    originalDeclaration;
+                    setter;
+                };
 
         if (exists container = getContainingClassOrInterface(scope)) {
+
             value declarationContainer = getRealContainingScope(originalDeclaration);
 
             "Arguments in named argument lists cannot be referenced."
@@ -879,37 +872,38 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
                 "Identifiers for members will always be simple identifiers (not prefixed
                  as toplevels may be.)"
-                assert (is DartSimpleIdentifier identifier);
+                assert (is DartSimpleIdentifier identifier = invocable.reference);
 
-                "An expression to the declaration including:
-                 - `this`, `$this`, or a reference to an outer container that is also the
-                   container of the declaration, and
-                 - the identifier."
-                value dartExpression
-                    =   createDartPropertyAccess {
-                            // We need to qualify with `this` inside constructors due to
-                            // name conflicts with constructor parameters. Note: using
-                            // `LoneThis()` we don't need `this` when referencing outers,
-                            // like (what would be) `this.$outer$ceylon$language$.cap`.
-                            if (originalDeclaration.parameter
-                                && ctx.withinConstructor(declarationContainer)) then
-                                expressionToThisOrOuterStripNonLoneThis {
-                                    ancestorChainToInheritingDeclaration {
-                                        container;
-                                        declarationContainer;
-                                    };
-                                }
-                            else
-                                expressionToThisOrOuterStripThis {
-                                    ancestorChainToInheritingDeclaration {
-                                        container;
-                                        declarationContainer;
-                                    };
-                                };
-                            identifier;
+                return
+                DartQualifiedInvocable {
+                    // We need to qualify with `this`
+                    //
+                    // - inside constructors due to name conflicts with constructor
+                    //   parameters.
+                    //
+                    // - when the invocation requires an operator
+                    //
+                    // Note: using `LoneThis()` we don't need `this` when referencing
+                    //       outers, like (what would be)
+                    //       `this.$outer$ceylon$language$.cap`.
+                    if (invocable.elementType is DartOperator
+                        || (originalDeclaration.parameter
+                            && ctx.withinConstructor(declarationContainer))) then
+                        expressionToThisOrOuterStripNonLoneThis {
+                            ancestorChainToInheritingDeclaration {
+                                container;
+                                declarationContainer;
+                            };
+                        }
+                    else
+                        expressionToThisOrOuterStripThis {
+                            ancestorChainToInheritingDeclaration {
+                                container;
+                                declarationContainer;
+                            };
                         };
-
-                return [dartExpression, dartElementType];
+                    invocable;
+                };
             }
             case (is ConstructorModel | ControlBlockModel
                     | FunctionOrValueModel | SpecificationModel) {
@@ -918,7 +912,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     =   getContainingClassOrInterface(originalDeclaration);
 
                 if (eq(container, declarationsClassOrInterface)) {
-                    return [identifier, dartElementType];
+                    return DartQualifiedInvocable {
+                        null;
+                        invocable;
+                    };
                 }
                 else {
                     // The declaration doesn't belong to a class or interface, and it
@@ -928,26 +925,29 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
-                    value dartExpression
-                        =   createDartPropertyAccess {
-                                expressionToThisOrOuterStripThis {
-                                    ancestorChainToCapturerOfDeclaration {
-                                        container;
-                                        originalDeclaration;
-                                    };
-                                };
-                                identifierForCapture(originalDeclaration);
+                    return DartQualifiedInvocable {
+                        expressionToThisOrOuterStripThis {
+                            ancestorChainToCapturerOfDeclaration {
+                                container;
+                                originalDeclaration;
                             };
-
-                    return [dartExpression, dartElementType];
+                        };
+                        DartInvocable {
+                            identifierForCapture(originalDeclaration);
+                            // operators become functions when closurized
+                            switch (et = invocable.elementType)
+                            case (package.dartFunction | dartValue) et
+                            case (is DartOperator) package.dartFunction;
+                        };
+                    };
                 }
             }
             case (is PackageModel) {
-                return [identifier, dartElementType];
+                return DartQualifiedInvocable(null, invocable);
             }
         }
         else {
-            return [identifier, dartElementType];
+            return DartQualifiedInvocable(null, invocable);
         }
     }
 
@@ -1088,23 +1088,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | ConstructorModel
                     | SpecificationModel) {
 
-            // FIXME how should "string" setters be mapped, since the getters
-            //       are mapped to "toString"? And, handle "hashCode" name translation.
-            value mapped = mappedFunctionOrValue(refinedDeclaration(declaration));
-            String name;
-            DartElementType dartElementType;
+            value mapped
+                =   mappedFunctionOrValue(refinedDeclaration(declaration));
 
-            if (exists mapped) {
-                name = mapped[0];
-                dartElementType = mapped[1];
-            }
-            else {
-                name = getPackagePrefixedName(declaration);
-                dartElementType
-                    =   if (declaration is FunctionModel)
+            value [name, dartElementType]
+                =   if (exists mapped) then [
+                        mapped[0],
+                        mapped[1]
+                    ] else [
+                        getPackagePrefixedName(declaration),
+                        if (declaration is FunctionModel
+                                // callable parameters are dartValues
+                                && !declaration.parameter)
                         then package.dartFunction
-                        else dartValue;
-            }
+                        else dartValue
+                    ];
 
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
@@ -1113,6 +1111,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     DartSimpleIdentifier {
                         name + (if (setter) then "$set" else "$get");
                     };
+                    // override previously calculated type
                     package.dartFunction;
                 };
             }
@@ -1250,12 +1249,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      This function is used by [[CoreGenerator.withBoxing]]."
     shared
     // FIXME this belongs in ceylonTypes
-    FunctionOrValueModel | Absent declarationConsideringElidedReplacements<Absent>
+    FunctionModel | ValueModel | SetterModel | Absent
+    declarationConsideringElidedReplacements<Absent>
             (FunctionOrValueModel | Absent declaration)
             given Absent satisfies Null {
 
         if (exists declaration) {
             if (!is ValueModel declaration) {
+                "By definition."
+                assert (is FunctionModel | SetterModel | Absent declaration);
                 return declaration;
             }
             else {
