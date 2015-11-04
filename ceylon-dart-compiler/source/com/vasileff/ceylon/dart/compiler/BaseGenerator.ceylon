@@ -1712,11 +1712,10 @@ class BaseGenerator(CompilationContext ctx)
         // Non-denotable types we can handle
         else if (ceylonTypes.isCeylonNull(isType)) {
             return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentical;
-                DartArgumentList {
-                    [expressionToCheck, DartNullLiteral()];
-                };
+            DartBinaryExpression {
+                DartNullLiteral();
+                "==";
+                expressionToCheck;
             };
         }
         else if (ceylonTypes.isCeylonNothing(isType)) {
