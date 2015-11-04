@@ -275,7 +275,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     info.typeModel;
                     targetDeclaration;
-                    dartTypes.expressionForBaseExpression {
+                    dartTypes.invocableForBaseExpression {
                         info;
                         targetDeclaration;
                         false;
@@ -296,7 +296,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         false;
                         // erased-to-object if defaulted
                         targetDeclaration.initializerParameter.defaulted;
-                        dartTypes.expressionForBaseExpression {
+                        dartTypes.invocableForBaseExpression {
                             info;
                             targetDeclaration;
                         }.expressionForInvocation();// it's a value, so we "invoke" it.
@@ -933,7 +933,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             // declaration.
                             invokedDeclaration.parameterLists.size() == 1
                                 then invokedDeclaration;
-                            dartTypes.expressionForBaseExpression {
+                            dartTypes.invocableForBaseExpression {
                                 info;
                                 invokedDeclaration;
                             }.expressionForInvocation {

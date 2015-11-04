@@ -840,7 +840,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "Returns a [[DartQualifiedInvocable]] for the [[declaration]] in [[scope]], with
      [[declaration]] being the target of a Ceylon base expression."
     shared
-    DartQualifiedInvocable expressionForBaseExpression(
+    DartQualifiedInvocable invocableForBaseExpression(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false) {
@@ -1040,7 +1040,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "Returns a [[DartInvocable]] suitable for use from [[scope]].
 
      **Note** this function should not be used for base expressions since they may
-     reference captured values. Use [[expressionForBaseExpression]] instead."
+     reference captured values. Use [[invocableForBaseExpression]] instead."
     shared
     DartInvocable dartInvocable(
             DScope scope,

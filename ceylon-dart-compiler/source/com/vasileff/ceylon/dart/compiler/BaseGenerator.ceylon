@@ -2300,7 +2300,7 @@ class BaseGenerator(CompilationContext ctx)
         value captureExpressions
             =   dartTypes.captureDeclarationsForClass(classModel)
                     .map((capture)
-                        =>  dartTypes.expressionForBaseExpression(scope, capture, false))
+                        =>  dartTypes.invocableForBaseExpression(scope, capture, false))
                     .map(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
 
         value outerExpression
@@ -2691,7 +2691,7 @@ class BaseGenerator(CompilationContext ctx)
             assert (!is ClassModel | ConstructorModel functionModel);
             outerFunction
                 =   delegateFunction else
-                    dartTypes.expressionForBaseExpression {
+                    dartTypes.invocableForBaseExpression {
                         scope;
                         functionModel;
                     }.expressionForClosure();
@@ -2794,7 +2794,7 @@ class BaseGenerator(CompilationContext ctx)
                 invocation
                     =   DartFunctionExpressionInvocation {
                             delegateFunction
-                            else dartTypes.expressionForBaseExpression {
+                            else dartTypes.invocableForBaseExpression {
                                 scope;
                                 functionModel;
                             }.expressionForClosure();
