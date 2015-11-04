@@ -60,7 +60,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ceylonTypes.objectDeclaration.getMember("hash", null, false)
                 -> ["hashCode", dartValue],
             ceylonTypes.objectDeclaration.getMember("equals", null, false)
-                -> ["==", dartBinaryOperator]
+                -> ["==", dartBinaryOperator],
+            ceylonTypes.comparableDeclaration.getMember("smallerThan", null, false)
+                -> ["<", dartBinaryOperator],
+            ceylonTypes.comparableDeclaration.getMember("largerThan", null, false)
+                -> [">", dartBinaryOperator],
+            ceylonTypes.comparableDeclaration.getMember("notSmallerThan", null, false)
+                -> [">=", dartBinaryOperator],
+            ceylonTypes.comparableDeclaration.getMember("notLargerThan", null, false)
+                -> ["<=", dartBinaryOperator],
+            ceylonTypes.invertibleDeclaration.getMember("negated", null, false)
+                -> ["-", dartPrefixOperator],
+            ceylonTypes.summableDeclaration.getMember("plus", null, false)
+                -> ["+", dartBinaryOperator],
+            ceylonTypes.invertibleDeclaration.getMember("minus", null, false)
+                -> ["-", dartBinaryOperator],
+            ceylonTypes.numericDeclaration.getMember("times", null, false)
+                -> ["*", dartBinaryOperator],
+            ceylonTypes.numericDeclaration.getMember("divided", null, false)
+                -> ["/", dartBinaryOperator],
+            ceylonTypes.integralDeclaration.getMember("remainder", null, false)
+                -> ["%", dartBinaryOperator]
         }.get;
     })();
 

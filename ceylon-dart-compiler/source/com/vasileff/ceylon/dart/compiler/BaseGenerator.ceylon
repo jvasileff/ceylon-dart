@@ -102,8 +102,7 @@ import com.vasileff.ceylon.dart.ast {
     DartSwitchStatement,
     DartListLiteral,
     createNullSafeExpression,
-    createExpressionEvaluationWithSetup,
-    DartPrefixedIdentifier
+    createExpressionEvaluationWithSetup
 }
 import com.vasileff.ceylon.dart.nodeinfo {
     FunctionExpressionInfo,

@@ -256,20 +256,20 @@ class Character implements Comparable {
       =>  String.instance(toString()).compare(String.instance(other.toString()));
 
   @$dart$core.override
-  $dart$core.bool largerThan([Character other])
-    =>  String.instance(toString()).largerThan(String.instance(other.toString()));
+  $dart$core.bool operator >(Character other)
+    =>  String.instance(toString()) > String.instance(other.toString());
 
   @$dart$core.override
-  $dart$core.bool smallerThan([Character other])
-    =>  String.instance(toString()).smallerThan(String.instance(other.toString()));
+  $dart$core.bool operator <(Character other)
+    =>  String.instance(toString()) < String.instance(other.toString());
 
   @$dart$core.override
-  $dart$core.bool notLargerThan([Character other])
-    =>  String.instance(toString()).notLargerThan(String.instance(other.toString()));
+  $dart$core.bool operator <=(Character other)
+    =>  String.instance(toString()) <= String.instance(other.toString());
 
   @$dart$core.override
-  $dart$core.bool notSmallerThan([Character other])
-    =>  String.instance(toString()).notSmallerThan(String.instance(other.toString()));
+  $dart$core.bool operator >=(Character other)
+    =>  String.instance(toString()) >= String.instance(other.toString());
 
   $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Character) {
@@ -309,16 +309,16 @@ class Float implements Number, Exponentiable {
   Float powerOfInteger([$dart$core.int integer]) => new Float($dart$math.pow(_value, integer));
   Float timesInteger([$dart$core.int integer]) => new Float(_value * integer);
 
-  Float divided([Float other]) => new Float(this._value / other._value);
-  Float times([Float other]) => new Float(this._value * other._value);
+  Float operator /(Float other) => new Float(this._value / other._value);
+  Float operator *(Float other) => new Float(this._value * other._value);
 
-  Float get negated => new Float(-this._value);
+  Float operator -() => new Float(-this._value);
 
   $dart$core.int get integer => this._value.toInt();
 
-  Float minus([Float other]) => new Float(this._value - other._value);
+  Float operator -(Float other) => new Float(this._value - other._value);
 
-  Float plus([Float other]) => new Float(this._value + other._value);
+  Float operator +(Float other) => new Float(this._value + other._value);
 
   Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
 
@@ -344,16 +344,16 @@ class Float implements Number, Exponentiable {
   //Comparison compare(Integer other);
 
   @$dart$core.override
-  $dart$core.bool largerThan([Float other]) => _value > other._value;
+  $dart$core.bool operator >(Float other) => _value > other._value;
 
   @$dart$core.override
-  $dart$core.bool smallerThan([Float other]) => _value < other._value;
+  $dart$core.bool operator <(Float other) => _value < other._value;
 
   @$dart$core.override
-  $dart$core.bool notLargerThan([Float other]) => _value <= other._value;
+  $dart$core.bool operator <=(Float other) => _value <= other._value;
 
   @$dart$core.override
-  $dart$core.bool notSmallerThan([Float other]) => _value >= other._value;
+  $dart$core.bool operator >=(Float other) => _value >= other._value;
 
   // Dart runtime
 
@@ -377,21 +377,21 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.bool get zero => _value == 0;
 
   $dart$core.bool divides([Integer other]) => other._value % _value == 0;
-  Integer remainder([Integer other])
+  Integer operator %(Integer other)
     => new Integer(_value - other._value * (_value ~/ other._value));
 
   Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
   Integer powerOfInteger([$dart$core.int integer]) => new Integer($dart$math.pow(_value, integer));
   Integer timesInteger([$dart$core.int integer]) => new Integer(_value * integer);
 
-  Integer divided([Integer other]) => new Integer(this._value ~/ other._value);
-  Integer times([Integer other]) => new Integer(this._value * other._value);
+  Integer operator /(Integer other) => new Integer(this._value ~/ other._value);
+  Integer operator *(Integer other) => new Integer(this._value * other._value);
 
-  Integer get negated => new Integer(-this._value);
+  Integer operator -() => new Integer(-this._value);
   Integer get magnitude => new Integer(this._value.abs());
-  Integer minus([Integer other]) => new Integer(this._value - other._value);
+  Integer operator -(Integer other) => new Integer(this._value - other._value);
 
-  Integer plus([Integer other]) => new Integer(this._value + other._value);
+  Integer operator +(Integer other) => new Integer(this._value + other._value);
 
   Integer power([Integer other]) => new Integer($dart$math.pow(this._value, other._value));
 
@@ -486,16 +486,16 @@ class Integer implements Integral, Exponentiable, Binary {
   //Comparison compare(Integer other);
 
   @$dart$core.override
-  $dart$core.bool largerThan([Integer other]) => _value > other._value;
+  $dart$core.bool operator >(Integer other) => _value > other._value;
 
   @$dart$core.override
-  $dart$core.bool smallerThan([Integer other]) => _value < other._value;
+  $dart$core.bool operator <(Integer other) => _value < other._value;
 
   @$dart$core.override
-  $dart$core.bool notLargerThan([Integer other]) => _value <= other._value;
+  $dart$core.bool operator <=(Integer other) => _value <= other._value;
 
   @$dart$core.override
-  $dart$core.bool notSmallerThan([Integer other]) => _value >= other._value;
+  $dart$core.bool operator >=(Integer other) => _value >= other._value;
 
   // Number
 
@@ -903,19 +903,19 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   //  shared actual native {Integer*} inclusions(List<Anything> sublist);
 
   //  shared actual native Boolean largerThan(String other);
-  $dart$core.bool largerThan([String other])
+  $dart$core.bool operator >(String other)
     => _value.compareTo(other._value) > 0;
 
   //  shared actual native Boolean smallerThan(String other);
-  $dart$core.bool smallerThan([String other])
+  $dart$core.bool operator <(String other)
     => _value.compareTo(other._value) < 0;
 
   //  shared actual native Boolean notSmallerThan(String other);
-  $dart$core.bool notSmallerThan([String other])
+  $dart$core.bool operator >=(String other)
     => _value.compareTo(other._value) >= 0;
 
   //  shared actual native Boolean notLargerThan(String other);
-  $dart$core.bool notLargerThan([String other])
+  $dart$core.bool operator <=(String other)
     => _value.compareTo(other._value) <= 0;
 
   //  shared actual native void each(void step(Character element));
