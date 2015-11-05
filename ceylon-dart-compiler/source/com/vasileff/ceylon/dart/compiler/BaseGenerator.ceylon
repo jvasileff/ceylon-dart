@@ -428,21 +428,11 @@ class BaseGenerator(CompilationContext ctx)
             dartArguments = [];
         }
 
-// FIXME WIP is this still necessary? If so, add it back to generateInvocation. Or
-//           better, make it unnecessary.
-        value resultDeclaration =
-                if (is FunctionModel memberDeclaration,
-                        memberDeclaration.parameterLists.size() > 1)
-                // The function actually returns a Callable, not the
-                // ultimate return type advertised by the declaration.
-                then null
-                else memberDeclaration;
-
         return
         withBoxing {
             scope;
             resultType;
-            resultDeclaration;
+            memberDeclaration;
             dartFunctionOrValue.expressionForInvocation {
                 null;
                 dartArguments;

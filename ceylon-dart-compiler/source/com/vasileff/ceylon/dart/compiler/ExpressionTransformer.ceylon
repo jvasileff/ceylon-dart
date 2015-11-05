@@ -805,11 +805,6 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                     };
 
-            value hasMultipleParameterLists
-                =   if (is FunctionModel invokedDeclaration)
-                    then invokedDeclaration.parameterLists.size() > 1
-                    else false;
-
             value [argsSetup, argumentList]
                 =   generateArgumentListFromArguments {
                         info;
@@ -824,10 +819,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 withBoxing {
                     info;
                     info.typeModel;
-                    // If there are multiple parameter lists, the function returns a
-                    // Callable, not the ultimate return type as advertised by the
-                    // declaration.
-                    !hasMultipleParameterLists then invokedDeclaration;
+                    invokedDeclaration;
                     DartFunctionExpressionInvocation {
                         // qualified reference to the static interface method
                         DartPropertyAccess {

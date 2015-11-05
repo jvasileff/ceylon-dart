@@ -1249,21 +1249,34 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        concerned with the *return* type. (The return is always erased to `Object` for
        callable parameters, but the `Callable` value itself is usually not erased.)"
     shared
-    Boolean erasedToObject(FunctionOrValueModel declaration)
+    Boolean erasedToObject(FunctionOrValueModel declaration) {
+        // If there are multiple parameter lists, the function returns a Callable, not
+        // the ultimate return type as advertised by the declaration.
+        if (is FunctionModel declaration, declaration.parameterLists.size() > 1) {
+            return false;
+        }
+
+        // The return for Callable parameters is always erased to object.
+        if (is FunctionModel declaration, declaration.parameter) {
+            return true;
+        }
+
         // Ignore "defaulted" for FunctionModel parameters, which are Callable
         // parameters that may be defaulted, where the erasure of the parameter
         // itself has no bearing on the erasure of the actual function return type
-        // TODO shouldn't we always return `true` for FunctionModels that are parameters?
-        =>  (
-                !declaration is FunctionModel
-                && (// defaulted parameters are erased, *except* class initializer
-                    // parameters
-                    (!declaration.container is ClassModel
-                        || ctx.withinConstructorDefaultsSet.contains
-                                        (declaration.container))
-                    && (declaration.initializerParameter?.defaulted else false))
-            )
-            || !denotable(declaration.type);
+        if (declaration is ValueModel
+                // defaulted parameters are erased
+                && (declaration.initializerParameter?.defaulted else false)
+                // unless they are class initializer parameters in a non-defaults
+                // handling constructor
+                && (!declaration.container is ClassModel ||
+                    ctx.withinConstructorDefaultsSet.contains(declaration.container))) {
+            return true;
+        }
+
+        // Non-denotable types are of course erased to object.
+        return !denotable(declaration.type);
+    }
 
     "For a given Ceylon declaration, the closest original declaration that was actually
      used to create a Dart declaration.

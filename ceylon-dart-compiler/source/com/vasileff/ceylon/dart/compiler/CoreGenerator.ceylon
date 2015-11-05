@@ -383,15 +383,16 @@ class CoreGenerator(CompilationContext ctx) {
             };
         }
 
-        if (exists lhsDeclaration, isCallableParameterOrParamOf(lhsDeclaration)) {
-            // Callable parameters are `Callable` values and are never erased to native
-            return withLhsValues {
-                lhsType = lhsType else lhsDeclaration.typedReference.fullType;
-                false;
-                false;
-                fun;
-            };
-        }
+        //if (exists lhsDeclaration, isCallableParameterOrParamOf(lhsDeclaration)) {
+        //    // Callable parameters are `Callable` values and are never erased to native
+        //    return withLhsValues {
+        //        lhsType = lhsType else lhsDeclaration.typedReference.fullType;
+        //        false;
+        //        false;
+        //        fun;
+        //    };
+        //}
+
         if (exists lhsDeclaration) {
             return withLhsValues {
                 lhsType = lhsType else lhsDeclaration.type;
