@@ -1120,8 +1120,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     ] else [
                         getPackagePrefixedName(declaration),
                         if (declaration is FunctionModel
-                                // callable parameters are dartValues
-                                && !declaration.parameter)
+                            // TODO Callable parameters that are shared class members
+                            //      should have forwarding functions. But, support for
+                            //      callable parameters for class initializers is
+                            //      incomplete, and existing tests expect us to treat
+                            //      them as values.
+                            && !declaration.parameter)
                         then package.dartFunction
                         else dartValue
                     ];
