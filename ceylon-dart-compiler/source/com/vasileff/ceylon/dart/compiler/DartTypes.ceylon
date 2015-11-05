@@ -1044,7 +1044,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        to Dart functions."
     shared
     see(`function dartIdentifierForFunctionOrValue`)
-    [DartSimpleIdentifier, DartElementType] dartIdentifierForFunctionOrValueDeclaration(
+    DartFunctionOrValue dartIdentifierForFunctionOrValueDeclaration(
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = declaration is SetterModel) {
@@ -1069,7 +1069,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         switch (container = declaration.container)
         case (is PackageModel) {
-            return [DartSimpleIdentifier(name), dartElementType];
+            return DartFunctionOrValue {
+                DartSimpleIdentifier(name);
+                dartElementType;
+            };
         }
         case (is ClassOrInterfaceModel
                     | FunctionOrValueModel
@@ -1080,17 +1083,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
                 // identifier for the getter or setter method
-                return
-                [DartSimpleIdentifier {
-                    name + (if (setter) then "$set" else "$get");
-                }, package.dartFunction];
+                return DartFunctionOrValue {
+                    DartSimpleIdentifier {
+                        name + (if (setter) then "$set" else "$get");
+                    };
+                    package.dartFunction;
+                };
             }
             else {
                 // identifier for the value or function
-                return
-                [DartSimpleIdentifier {
-                    name;
-                }, dartElementType];
+                return DartFunctionOrValue {
+                    DartSimpleIdentifier {
+                        name;
+                    };
+                    dartElementType;
+                };
             }
         }
         else {
@@ -1118,9 +1125,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             DScope scope,
             FunctionOrValueModel declaration,
             Boolean setter = false)
-        =>  let ([identifier, dartElementType]
-                    = dartIdentifierForFunctionOrValueDeclaration(
-                            scope, declaration, setter))
+        =>  let (dartFunctionOrValue
+                    =   dartIdentifierForFunctionOrValueDeclaration {
+                            scope;
+                            declaration;
+                            setter;
+                        })
             if (declaration.container is PackageModel
                 && !sameModule(scope, declaration)) then
                 [
@@ -1130,13 +1140,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         };
                         DartSimpleIdentifier {
                             // trim leading "$package." A bit ugly...
-                            unPackagePrefixify(identifier.identifier);
+                            unPackagePrefixify(asserted<DartSimpleIdentifier>(
+                                    dartFunctionOrValue.reference).identifier);
                         };
                     },
-                    dartElementType
+                    dartFunctionOrValue.elementType
                 ]
             else
-                [identifier, dartElementType];
+                [asserted<DartSimpleIdentifier>(dartFunctionOrValue.reference),
+                    dartFunctionOrValue.elementType];
 
     shared
     BoxingConversion? boxingConversionFor(

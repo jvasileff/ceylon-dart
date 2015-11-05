@@ -260,7 +260,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     info;
                     declarationModel;
-                };
+                }.oldPair;
 
         return
         DartMethodDeclaration {
@@ -322,7 +322,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                     info;
                     declarationModel;
                     true;
-                };
+                }.oldPair;
 
         return
         DartMethodDeclaration {
@@ -453,7 +453,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                         scope;
                         declarationModel;
-                    };
+                    }.oldPair;
 
             return
             DartMethodDeclaration {

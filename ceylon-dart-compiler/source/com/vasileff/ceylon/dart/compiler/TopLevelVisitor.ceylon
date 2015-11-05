@@ -1059,7 +1059,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     declaration;
-                };
+                }.oldPair;
 
         value parameterModels
             =   switch (declaration)

@@ -67,7 +67,6 @@ import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationStatement,
     DartExpression,
     DartSimpleIdentifier,
-    DartMethodInvocation,
     DartSimpleFormalParameter,
     DartIsExpression,
     DartFunctionExpression,
@@ -268,17 +267,28 @@ class BaseGenerator(CompilationContext ctx)
             (FunctionShortcutDefinition | FunctionDefinition that) {
 
         value info = AnyFunctionInfo(that);
+
         value functionModel = info.declarationModel;
-        value functionIdentifier = dartTypes.dartIdentifierForFunctionOrValueDeclaration(
-                    info, functionModel, false)[0];
+
+        // Toplevel and local functions will never be implemented as Dart values
+        // or operators. Just grab the identifier and define a function.
+        value functionIdentifier
+            =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                    info;
+                    functionModel;
+                    false;
+                }.reference;
+
+        "Functions have simple identifiers."
+        assert (is DartSimpleIdentifier functionIdentifier);
 
         return
         DartFunctionDeclaration {
-            external = false;
-            returnType = generateFunctionReturnType(info, functionModel);
-            propertyKeyword = null;
-            name = functionIdentifier;
-            functionExpression = generateFunctionExpression(that);
+            false;
+            generateFunctionReturnType(info, functionModel);
+            null;
+            functionIdentifier;
+            generateFunctionExpression(that);
         };
     }
 
@@ -472,16 +482,14 @@ class BaseGenerator(CompilationContext ctx)
 
         "By definition."
         assert (is FunctionModel | ValueModel | SetterModel
-                    | ClassModel | ConstructorModel
-                memberDeclaration);
+                    | ClassModel | ConstructorModel memberDeclaration);
 
         "SpreadMemberOperator not yet supported."
         assert (is Null | MemberOperator | SafeMemberOperator memberOperator);
+
         value safeMemberOperator = memberOperator is SafeMemberOperator;
 
         value [signature, a] = signatureAndArguments else [null, []];
-
-        [[DartStatement*], [DartExpression*]] argsSetupAndExpressions;
 
         function standardArgs() {
             if (!exists signatureAndArguments) {
@@ -496,24 +504,20 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        DartExpression(DartExpression)? optimizedExpression;
+        "For optimized invocations, the result type. Null for non-optimized invocations."
+        TypeModel? optimizedNativeRhsType;
 
-        "An optional `$this` argument, for use with static invocations and constructors."
-        [DartExpression]|[] thisArgument;
+        "The arguments."
+        [[DartStatement*], [DartExpression*]] argsSetupAndExpressions;
 
-        "Will either be an Interface or an expression for the Ceylon receiver. A dummy
-         value is used for constructors, d'oh!"
-        DartExpression dartBoxedReceiver;
+        "The receiver object (outer for constructors of member classes)."
+        DartExpression dartReceiver;
 
-        "Are we invoking a Dart function or constructor? (As opposed to a Dart value)"
-        DartElementType dartElementType;
+        "The Dart type of [[dartReceiver]]."
+        DartTypeName dartReceiverType;
 
-        "The Dart identifier for the function, value, or constructor"
-        DartSimpleIdentifier | DartConstructorName memberIdentifier;
-
-        "The Dart type of what Ceylon thinks is the receiver! They differ when Dart needs
-         the receiver to be an interface for a static method invocation."
-        DartTypeName? ceylonReceiverDartType;
+        "The Dart function, value, or constructor to invoking."
+        DartFunctionOrValue dartFunctionOrValue;
 
         if (is ClassModel | ConstructorModel memberDeclaration) {
             if (!exists generateReceiver) {
@@ -535,32 +539,10 @@ class BaseGenerator(CompilationContext ctx)
                             memberDeclaration.container.container;
                     });
 
-            optimizedExpression
+            optimizedNativeRhsType
                 =   null;
 
-            thisArgument
-                =   [withLhsDenotable {
-                        memberContainer;
-                        generateReceiver;
-                    }];
-
-            argsSetupAndExpressions
-                =   standardArgs();
-
-            dartElementType
-                =   dartFunction; // Constructor, really
-
-            dartBoxedReceiver // Very ugly. But won't be used.
-                =   DartNullLiteral();
-
-            memberIdentifier
-                =   dartTypes.dartConstructorName {
-                        scope;
-                        memberDeclaration;
-                    };
-
-            // The Dart type of what Ceylon thinks is the receiver!
-            ceylonReceiverDartType
+            dartReceiverType
                 =   dartTypes.dartTypeName {
                         scope;
                         ceylonTypes.denotableType {
@@ -569,12 +551,32 @@ class BaseGenerator(CompilationContext ctx)
                         };
                         eraseToNative = false;
                     };
+
+            dartReceiver
+                =   withLhsDenotable {
+                        memberContainer;
+                        generateReceiver;
+                    };
+
+            dartFunctionOrValue
+                =   DartFunctionOrValue {
+                        dartTypes.dartConstructorName {
+                            scope;
+                            memberDeclaration;
+                        };
+                        dartFunction; // Constructor, really
+                    };
+
+            argsSetupAndExpressions
+                =   standardArgs();
         }
         else if (!exists generateReceiver) {
             // Receiver is `super`
 
-            // Only used for null safe operator, and `super` is never null
-            ceylonReceiverDartType = null;
+            // dartReceiverType is only used for null safe operator, and `super` is never
+            // null. So let's save a nanosecond and avoid the calculation.
+            dartReceiverType
+                =   dartTypes.dartObject;
 
             if (receiverType.declaration is InterfaceModel) {
                 // Invoking a specific interface's implementation. Abandon polymorphism
@@ -584,17 +586,6 @@ class BaseGenerator(CompilationContext ctx)
 
                 "A `super` reference is surely contained within a class or interface."
                 assert (exists scopeContainer = getContainingClassOrInterface(scope));
-
-                thisArgument = [dartTypes.expressionForThis(scopeContainer)];
-
-                optimizedExpression
-                    =   null;
-
-                argsSetupAndExpressions
-                    =   standardArgs();
-
-                dartElementType
-                    =   dartFunction; // Static interface functions are... functions
 
                 // Note: It's nice that we have the declaration pointed to by
                 //       referenced by `super`, but it's also completely useless.
@@ -607,42 +598,48 @@ class BaseGenerator(CompilationContext ctx)
                 assert (is InterfaceModel implementingContainer
                     =   container(memberDeclaration));
 
-                dartBoxedReceiver
-                    =   dartTypes.dartIdentifierForClassOrInterface {
-                            scope;
-                            implementingContainer;
+                optimizedNativeRhsType
+                    =   null;
+
+                dartReceiver
+                    =   dartTypes.expressionForThis(scopeContainer);
+
+                dartFunctionOrValue
+                    =   DartFunctionOrValue {
+                            DartPropertyAccess {
+                                dartTypes.dartIdentifierForClassOrInterface {
+                                    scope;
+                                    implementingContainer;
+                                };
+                                dartTypes.getStaticInterfaceMethodIdentifier {
+                                    memberDeclaration;
+                                    false;
+                                };
+                            };
+                            dartFunction; // Static interface functions are... functions
                         };
 
-                memberIdentifier
-                    =   dartTypes.getStaticInterfaceMethodIdentifier {
-                            memberDeclaration;
-                            false;
-                        };
+                argsSetupAndExpressions
+                    =   standardArgs();
             }
             else {
                 // super refers to the superclass
 
-                optimizedExpression
-                        =   null;
+                optimizedNativeRhsType
+                    =   null;
 
-                thisArgument
-                        =   [];
+                dartReceiver
+                    =   DartSimpleIdentifier("super");
+
+                dartFunctionOrValue
+                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                            scope;
+                            memberDeclaration;
+                            false;
+                        };
 
                 argsSetupAndExpressions
-                        =   standardArgs();
-
-                dartBoxedReceiver
-                        =   DartSimpleIdentifier("super");
-
-                value [m, t] = dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                    scope;
-                    memberDeclaration;
-                    false;
-                };
-
-                memberIdentifier = m;
-
-                dartElementType = t;
+                    =   standardArgs();
             }
         }
         else if (!memberDeclaration.shared,
@@ -651,35 +648,10 @@ class BaseGenerator(CompilationContext ctx)
 
             // Invoking private interface member; must call static implementation method.
 
-            optimizedExpression
+            optimizedNativeRhsType
                 =   null;
 
-            thisArgument
-                =   [withLhsDenotable {
-                        memberContainer;
-                        generateReceiver;
-                    }];
-
-            argsSetupAndExpressions
-                =   standardArgs();
-
-            dartElementType
-                =   dartFunction; // Static interface functions are... functions
-
-            dartBoxedReceiver
-                =   dartTypes.dartIdentifierForClassOrInterface {
-                        scope;
-                        memberContainer;
-                    };
-
-            memberIdentifier
-                =   dartTypes.getStaticInterfaceMethodIdentifier {
-                        memberDeclaration;
-                        false;
-                    };
-
-            // The Dart type of what Ceylon thinks is the receiver!
-            ceylonReceiverDartType
+            dartReceiverType
                 =   dartTypes.dartTypeName {
                         scope;
                         ceylonTypes.denotableType {
@@ -688,11 +660,35 @@ class BaseGenerator(CompilationContext ctx)
                         };
                         eraseToNative = false;
                     };
+
+            dartReceiver
+                =   withLhsDenotable {
+                        memberContainer;
+                        generateReceiver;
+                    };
+
+            dartFunctionOrValue
+                =   DartFunctionOrValue {
+                        DartPropertyAccess {
+                            dartTypes.dartIdentifierForClassOrInterface {
+                                scope;
+                                memberContainer;
+                            };
+                            dartTypes.getStaticInterfaceMethodIdentifier {
+                                memberDeclaration;
+                                false;
+                            };
+                        };
+                        dartFunction;
+                    };
+
+            argsSetupAndExpressions
+                =   standardArgs();
         }
         else {
             // receiver is not `super`
 
-            // TODO WIP native optimizations
+            // WIP native optimizations
             if (exists optimization = nativeBinaryFunctions(memberDeclaration)) {
 
                 assert (!is ValueModel | SetterModel memberDeclaration);
@@ -703,88 +699,41 @@ class BaseGenerator(CompilationContext ctx)
                 value rightOperandTypeDetail
                     =   TypeDetails(rightOperandType, true, false);
 
-                value [argsSetup, argsExpressions]
-                    =   generateArguments {
-                            scope;
-                            [rightOperandTypeDetail];
-                            memberDeclaration.firstParameterList;
-                            a;
-                        };
+                optimizedNativeRhsType
+                    =   type;
 
-                // very ugly, but won't be used
-                memberIdentifier
-                    =   DartSimpleIdentifier("null");
-
-                // very ugly, but won't be used
-                dartElementType
-                    =   dartFunction;
-
-                thisArgument
-                    =   [];
-
-                ceylonReceiverDartType
+                dartReceiverType
                     =   dartTypes.dartTypeName {
                             scope;
                             leftOperandType;
                             eraseToNative = true;
                         };
 
-                dartBoxedReceiver
+                dartReceiver
                     =   withLhsNative {
                             leftOperandType;
                             generateReceiver;
                         };
 
-                // TODO Make sure we evaluate args for side-effects w/null-safe
-                //      invocations.
+                dartFunctionOrValue
+                    =   DartFunctionOrValue {
+                            DartSimpleIdentifier(operand);
+                            dartBinaryOperator;
+                        };
 
                 argsSetupAndExpressions
-                    =   [argsSetup, []];
-
-                assert (exists rightOperandArgument
-                    =   argsExpressions[0]);
-
-                optimizedExpression
-                    =   (DartExpression leftOperand)
-                        =>  withBoxingCustom {
+                    =   generateArguments {
                             scope;
-                            type;
-                            true; false;
-                            createExpressionEvaluationWithSetup {
-                                argsSetup;
-                                DartBinaryExpression {
-                                    leftOperand;
-                                    operand;
-                                    rightOperandArgument;
-                                };
-                            };
+                            [rightOperandTypeDetail];
+                            memberDeclaration.firstParameterList;
+                            a;
                         };
             }
             else {
-                thisArgument
-                    =   [];
-
-                optimizedExpression
-                    =   null;
-
-                argsSetupAndExpressions
-                    =   standardArgs();
-
-                value [m, t]
-                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
-                            scope;
-                            memberDeclaration;
-                            false;
-                        };
-
-                memberIdentifier
-                    =   m;
-
-                dartElementType
-                    =   t;
-
-                // Determine usable receiver type. `withLhsDenotable` would be simpler, but
-                // we may need the type (for safeMemberOperator code)
+                // Determine usable receiver type. Computing `dartReceiver` with
+                // `withLhsDenotable` would be simpler, but we may need the type
+                // for `dartReceiverType` if this invocation involves the
+                // safeMemberOperator.
                 assert (is ClassOrInterfaceModel container
                     =   container(memberDeclaration));
 
@@ -794,193 +743,79 @@ class BaseGenerator(CompilationContext ctx)
                             container;
                         };
 
-                ceylonReceiverDartType
+                optimizedNativeRhsType
+                    =   null;
+
+                dartReceiverType
                     =   dartTypes.dartTypeName {
                             scope;
                             receiverDenotableType;
                             eraseToNative = false;
                         };
 
-                dartBoxedReceiver
+                dartReceiver
                     =   withLhsCustom {
                             receiverDenotableType;
                             false; false;
                             generateReceiver;
                         };
+
+                dartFunctionOrValue
+                    =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
+                            scope;
+                            memberDeclaration;
+                            false;
+                        };
+
+                argsSetupAndExpressions
+                    =   standardArgs();
             }
         }
 
-        value resultDeclaration
-            =   if (is FunctionModel memberDeclaration,
-                    memberDeclaration.parameterLists.size() > 1)
-                // The function actually returns a Callable, not the
-                // ultimate return type advertised by the declaration.
-                then null
-                else memberDeclaration;
-
-        DartExpression invocation;
-        if (!optimizedExpression exists
-                && (argsSetupAndExpressions[1] nonempty
-                    || memberIdentifier is DartConstructorName)) {
-
-            "If there are arguments, the member is a FunctionModel and will translate
-             to a Dart function, or it's a ClassModel, and will translate to a Dart
-             constructor."
-            assert (is FunctionModel | ClassModel | ConstructorModel memberDeclaration,
-                    dartElementType == dartFunction);
-
-            //"If we have arguments, we'll have a signature."
-            //assert (exists signature);
-
-            value argumentList {
-                "Actual `$this` argument which may be the parameter to an anonymous
-                 function for the null safe operator."
-                value dartThisArgument
-                    =   if (thisArgument nonempty // Dart receiver is a static function
-                                && safeMemberOperator) // Ceylon receiver may be null
-                        then [DartSimpleIdentifier("$r")]
-                        else thisArgument;
-
-                return
-                DartArgumentList {
-                    concatenate {
-                        dartThisArgument,
-                        argsSetupAndExpressions[1]
-                    };
-                };
-            }
-
-            if (safeMemberOperator) {
-                // FIXME what about argsSetup???
-
-                "Must exist since receiver is never `super` when the safe member
-                 operator is used."
-                assert (exists ceylonReceiverDartType);
-
-                if (nonempty thisArgument) {
-                    // Static invocation (Dart interface static method or member class
-                    // constructor).
-
-                    invocation
-                        =   createNullSafeExpression {
-                                parameterIdentifier = DartSimpleIdentifier("$r");
-                                parameterType = ceylonReceiverDartType;
-                                // Static invocation: the possibly null value is the
-                                // $this argument
-                                maybeNullExpression = thisArgument.first;
-                                ifNullExpression = DartNullLiteral();
-                                ifNotNullExpression =
-                                    if (is DartConstructorName memberIdentifier) then
-                                        DartInstanceCreationExpression {
-                                            false;
-                                            memberIdentifier;
-                                            argumentList;
-                                        }
-                                    else
-                                        DartFunctionExpressionInvocation {
-                                            DartPropertyAccess {
-                                                // Static invocation: the dart receiver
-                                                // is the static method's containing
-                                                // interface, which is represented by
-                                                // `dartBoxedReceiver`
-                                                // (`dartBoxedReceiver` is *not* the
-                                                // potential null in this case)
-                                                dartBoxedReceiver;
-                                                memberIdentifier;
-                                            };
-                                            argumentList;
-                                        };
-                            };
-                }
-                else {
-                    // Non-static invocation on an (possibly null) object receiver
-
-                    "Construction of member classes will always involve a $this argument."
-                    assert (!is DartConstructorName memberIdentifier);
-
-                    invocation
-                        =   createNullSafeExpression {
-                                parameterIdentifier = DartSimpleIdentifier("$r");
-                                parameterType = ceylonReceiverDartType;
-                                maybeNullExpression = dartBoxedReceiver;
-                                ifNullExpression = DartNullLiteral();
-                                ifNotNullExpression =
-                                    DartMethodInvocation {
+        value invocation
+            =   if (safeMemberOperator) then
+                    // We're delaying argsSetup evaluation against the spec. We're also
+                    // not eagerly evaluating arguments themselves.
+                    // See https://github.com/ceylon/ceylon-compiler/issues/2386
+                    createNullSafeExpression {
+                        parameterIdentifier = DartSimpleIdentifier("$r");
+                        parameterType = dartReceiverType;
+                        // The receiver, which will be passed as an argument
+                        maybeNullExpression = dartReceiver;
+                        ifNullExpression = DartNullLiteral();
+                        // The invocation, with a replaced receiver
+                        ifNotNullExpression
+                            =   createExpressionEvaluationWithSetup {
+                                    argsSetupAndExpressions[0];
+                                    dartFunctionOrValue.expressionForInvocation {
                                         DartSimpleIdentifier("$r");
-                                        memberIdentifier;
-                                        argumentList;
+                                        argsSetupAndExpressions[1];
                                     };
-                            };
-                }
-            }
-            else {
-                invocation
-                    =   createExpressionEvaluationWithSetup {
-                            argsSetupAndExpressions[0];
-                            if (is DartConstructorName memberIdentifier) then
-                                DartInstanceCreationExpression {
-                                    false;
-                                    memberIdentifier;
-                                    argumentList;
-                                }
-                            else
-                                DartMethodInvocation {
-                                    dartBoxedReceiver;
-                                    memberIdentifier;
-                                    argumentList;
                                 };
+                    }
+                else
+                    createExpressionEvaluationWithSetup {
+                        argsSetupAndExpressions[0];
+                        dartFunctionOrValue.expressionForInvocation {
+                            dartReceiver;
+                            argsSetupAndExpressions[1];
                         };
+                    };
+
+        return if (exists optimizedNativeRhsType)
+            then withBoxingCustom {
+                scope;
+                optimizedNativeRhsType;
+                true; false;
+                invocation;
             }
-        }
-        else {
-            "If statement covered this condition."
-            assert (!is DartConstructorName memberIdentifier);
-
-            function valueAccess(DartExpression receiver)
-                =>  if (exists optimizedExpression) then
-                        optimizedExpression(receiver)
-                    else if (dartElementType != dartFunction) then
-                        DartPropertyAccess(receiver, memberIdentifier)
-                    else
-                        DartMethodInvocation {
-                            receiver;
-                            memberIdentifier;
-                            DartArgumentList {
-                                thisArgument; // possibly empty
-                            };
-                        };
-
-            if (safeMemberOperator) {
-                "Must exist since receiver is never `super` when the safe member
-                 operator is used."
-                assert (exists ceylonReceiverDartType);
-
-                invocation
-                    =   createNullSafeExpression {
-                            parameterIdentifier = DartSimpleIdentifier("$r");
-                            parameterType = ceylonReceiverDartType;
-                            maybeNullExpression = dartBoxedReceiver;
-                            ifNullExpression = DartNullLiteral();
-                            ifNotNullExpression = valueAccess {
-                                DartSimpleIdentifier("$r");
-                            };
-                        };
-            }
-            else {
-                invocation
-                    =   valueAccess(dartBoxedReceiver);
-            }
-        }
-
-        return
-        if (exists optimizedExpression)
-        then invocation
-        else withBoxing {
-            scope;
-            resultType;
-            resultDeclaration;
-            invocation;
-        };
+            else withBoxing {
+                scope;
+                resultType;
+                memberDeclaration;
+                //resultDeclaration;
+                invocation;
+            };
     }
 
     shared
@@ -2088,7 +1923,7 @@ class BaseGenerator(CompilationContext ctx)
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     scope;
                     declarationModel;
-                };
+                }.oldPair;
 
         return
         DartFunctionDeclaration {
@@ -2146,7 +1981,7 @@ class BaseGenerator(CompilationContext ctx)
             =   dartTypes.dartIdentifierForFunctionOrValueDeclaration {
                     info;
                     declarationModel;
-                };
+                }.oldPair;
 
         return
         DartFunctionDeclaration {

@@ -1874,7 +1874,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                     scope;
                                     capture[0];
                                     false;
-                                }[0];
+                                }.assertedSimpleIdentifier;
                                 capture[1];
                             }];
                         };
@@ -1893,7 +1893,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 scope;
                                 capture[0];
                                 false;
-                            }[0];
+                            }.assertedSimpleIdentifier;
                         };
                     });
 
