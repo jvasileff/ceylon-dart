@@ -947,6 +947,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
+                    "Setters on captures not yet supported."
+                    assert (!setter);
+
                     return DartQualifiedInvocable {
                         expressionToThisOrOuterStripThis {
                             ancestorChainToCapturerOfDeclaration {
@@ -960,6 +963,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             switch (et = invocable.elementType)
                             case (package.dartFunction | dartValue) et
                             case (is DartOperator) package.dartFunction;
+                            setter; // FIXME not really supported.
                         };
                     };
                 }
@@ -1077,6 +1081,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     declaration;
                 };
                 package.dartFunction; // Constructor, really
+                false;
             };
         }
 
@@ -1102,6 +1107,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 if (declaration is FunctionModel)
                     then package.dartFunction
                     else dartValue;
+                setter;
             };
         }
         case (is ClassOrInterfaceModel) {
@@ -1130,6 +1136,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     name;
                 };
                 dartElementType;
+                setter;
             };
         }
         case (is FunctionOrValueModel
@@ -1153,6 +1160,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     // override previously calculated type
                     package.dartFunction;
+                    setter;
                 };
             }
             else {
@@ -1161,6 +1169,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         name;
                     };
                     dartElementType;
+                    setter;
                 };
             }
         }

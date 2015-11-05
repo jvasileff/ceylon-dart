@@ -60,8 +60,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     SetterModel=Setter,
-    ParameterListModel=ParameterList,
-    Reference
+    ParameterListModel=ParameterList
 }
 import com.vasileff.ceylon.dart.ast {
     DartVariableDeclarationStatement,
@@ -639,6 +638,7 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                             };
                             dartFunction; // Static interface functions are... functions
+                            false;
                         };
 
                 argsSetupAndExpressions
@@ -702,6 +702,7 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
                         dartFunction;
+                        false;
                     };
 
             argsSetupAndExpressions
@@ -753,6 +754,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   DartInvocable {
                             DartSimpleIdentifier(operand);
                             dartBinaryOperator;
+                            false;
                         };
 
                 argsSetupAndExpressions
@@ -3571,79 +3573,67 @@ class BaseGenerator(CompilationContext ctx)
             BaseExpression | QualifiedExpression target,
             DartExpression() rhsExpression) {
 
-        // TODO review and test
-        // TODO make sure setters return the new value, or do somthing here
-        // TODO consider merging with generateInvocation()
+        // TODO Make sure setters return the new value, or handle that here when there
+        //      is a lhs type.
 
-        DeclarationModel targetDeclaration;
-        DartExpression? dartTarget;
-        Reference typedReference;
+        // TODO handle interface setters (shared and non-shared)
+
+        TypeModel valueType;
+        ValueModel valueDeclaration;
+        DartQualifiedInvocable invocable;
 
         switch (target)
         case (is BaseExpression) {
             value info = BaseExpressionInfo(target);
-            targetDeclaration = info.declaration;
-            dartTarget = null;
-            assert (is FunctionOrValueModel targetDeclaration);
-            typedReference = targetDeclaration.typedReference;
+            assert (is ValueModel d = info.declaration);
+            valueDeclaration = d;
+            valueType = info.typeModel;
+
+            invocable
+                =   dartTypes.invocableForBaseExpression {
+                        that;
+                        valueDeclaration;
+                        true;
+                    };
         }
         case (is QualifiedExpression) {
             value info = QualifiedExpressionInfo(target);
-            targetDeclaration = info.declaration;
-            typedReference = info.typeModel.getTypedReference(targetDeclaration, null);
+            assert (is ValueModel d = info.declaration);
+            valueDeclaration = d;
+            valueType = info.typeModel;
 
-            assert (is ClassOrInterfaceModel container = targetDeclaration.container);
-            dartTarget = withLhsDenotable {
-                container;
-                () => target.receiverExpression.transform(expressionTransformer);
-            };
-        }
-        assert (is FunctionOrValueModel targetDeclaration);
+            assert (is ClassOrInterfaceModel container
+                =   valueDeclaration.container);
 
-        // FIXME handle interface setters (shared and non-shared)
-        value [targetIdentifier, targetDartElementType]
-            =   dartTypes.dartInvocable(
-                    that, targetDeclaration, true).oldPairPrefixed;
-
-        // create the possibly qualified (by module or value) target
-        DartExpression targetExpression;
-        if (exists dartTarget) {
-            assert (is DartSimpleIdentifier targetIdentifier);
-            targetExpression = DartPropertyAccess {
-                dartTarget;
-                targetIdentifier;
-            };
-        }
-        else {
-            targetExpression = targetIdentifier;
+            invocable
+                =   DartQualifiedInvocable {
+                        withLhsDenotable {
+                            container;
+                            () => target.receiverExpression.transform {
+                                expressionTransformer;
+                            };
+                        };
+                        dartTypes.dartInvocable {
+                            that; valueDeclaration; true;
+                        };
+                    };
         }
 
-        DartExpression rhs = withLhs(
-                typedReference.type,
-                targetDeclaration,
-                rhsExpression);
-
-        value unboxed =
-            if (targetDartElementType == dartFunction) then
-                DartFunctionExpressionInvocation {
-                    targetExpression;
-                    DartArgumentList([rhs]);
-                }
-            else
-                DartAssignmentExpression {
-                    targetExpression;
-                    DartAssignmentOperator.equal;
-                    rhs;
+        value rhs
+            =   withLhs {
+                    valueType;
+                    valueDeclaration;
+                    rhsExpression;
                 };
 
-        // FIXME use the rhs type, since that's what Dart uses for the expression type
-        //       (and so does Ceylon). So we'll need 1) the rhs type!, and 2) to calculate
-        //       erasure on our own (pita). The only symptom is unnecessary casts.
+        // TODO use the rhs type, since that's what Dart uses for the expression type
+        //      (and so does Ceylon). So we'll need 1) the rhs type, and 2) to calculate
+        //      erasure on our own. The only symptom is unnecessary casts.
         return withBoxing {
             that;
-            typedReference.type;
-            targetDeclaration;
-            unboxed;
+            valueType;
+            valueDeclaration;
+            invocable.expressionForInvocation([rhs]);
         };
     }
 

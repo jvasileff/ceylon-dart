@@ -707,10 +707,10 @@ class Contextual$Using implements Obtainable {
                 Callable newValue$2;
                 newValue$2 = _$newValue as Callable;
                 doElse$1 = false;
-                _$val = newValue$2.f();
+                $outer$ceylon$language$Contextual._$val = newValue$2.f();
             }
             if (doElse$1) {
-                _$val = _$newValue;
+                $outer$ceylon$language$Contextual._$val = _$newValue;
             }
         }
     }
@@ -722,11 +722,11 @@ class Contextual$Using implements Obtainable {
                     $dart$core.Object p;
                     p = tmp$4;
                     doElse$3 = false;
-                    _$val = p;
+                    $outer$ceylon$language$Contextual._$val = p;
                 }
             }
             if (doElse$3) {
-                _$val = null;
+                $outer$ceylon$language$Contextual._$val = null;
             }
         }
     }

@@ -26,20 +26,19 @@ class DartInvocable(
         // or a qualified toplevel
         shared DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
                     | DartConstructorName reference,
-        shared DartElementType elementType) {
+        shared DartElementType elementType,
+        shared Boolean setter) {
 
     shared [DartSimpleIdentifier, DartElementType] oldPairSimple
         =>  [asserted<DartSimpleIdentifier>(reference), elementType];
-
-    shared [DartPrefixedIdentifier|DartSimpleIdentifier, DartElementType] oldPairPrefixed
-        =>  [asserted<DartPrefixedIdentifier|DartSimpleIdentifier>(reference), elementType];
 
     shared
     DartInvocable with(
             DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
                     | DartConstructorName reference = this.reference,
-            DartElementType elementType = this.elementType)
-        =>  DartInvocable(reference, elementType);
+            DartElementType elementType = this.elementType,
+            Boolean setter = this.setter)
+        =>  DartInvocable(reference, elementType, setter);
 
     function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
         =>  if (is DartArgumentList arguments)
@@ -80,6 +79,9 @@ class DartInvocable(
         // Local function and values *initially* do not have receivers (they are not
         // members), but, if a capture is re-captured, it will have a receiver the
         // for the second capture! (The receiver would be the first capturer.)
+
+        "Setters are not yet supported for capture."
+        assert (!setter);
 
         "Constructors and Dart static methods are not captured."
         assert (!is DartConstructorName | DartPropertyAccess reference);
@@ -144,22 +146,44 @@ class DartInvocable(
             }
         }
         case (dartValue) {
-            "Arguments must be empty when accessing values"
-            assert (dartArgumentSequence(arguments).empty);
-
             "Dart values are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
+            DartExpression target;
             if (!exists receiver) {
-                return reference;
+                target = reference;
+            }
+            else {
+                "Member identifiers must be DartSimpleIdentifiers."
+                assert (!is DartPrefixedIdentifier reference);
+
+                target = createDartPropertyAccess(receiver, reference);
             }
 
-            "Member identifiers must be DartSimpleIdentifiers."
-            assert (!is DartPrefixedIdentifier reference);
+            if (!setter) {
+                "Arguments must be empty when accessing values"
+                assert (dartArgumentSequence(arguments).empty);
 
-            return createDartPropertyAccess(receiver, reference);
+                return target;
+            }
+            else {
+                "Assignment operations must have an argument."
+                assert (exists val = dartArgumentSequence(arguments)[0]);
+
+                "Assignment operations must have only one argument"
+                assert (dartArgumentSequence(arguments).size == 1);
+
+                return DartAssignmentExpression {
+                    target;
+                    DartAssignmentOperator.equal;
+                    val;
+                };
+            }
         }
         case (dartBinaryOperator) {
+            "Binary operators are not setters"
+            assert(!setter);
+
             "Binary operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
@@ -183,6 +207,9 @@ class DartInvocable(
             };
         }
         case (dartListAccess) {
+            "Index methods are not setters."
+            assert(!setter);
+
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
@@ -205,6 +232,9 @@ class DartInvocable(
             };
         }
         case (dartListAssignment) {
+            "Index methods are not setters."
+            assert(!setter);
+
             "Index methods are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
@@ -234,6 +264,9 @@ class DartInvocable(
             };
         }
         case (dartPrefixOperator) {
+            "Prefix operators are not setters."
+            assert(!setter);
+
             "Prefix operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
@@ -256,6 +289,9 @@ class DartInvocable(
 
     shared
     DartExpression expressionForClosure(DartExpression? receiver) {
+        "Cannot closurize setters."
+        assert (!setter);
+
         switch (elementType)
         case (dartFunction) {
             // TODO support this constructors?
