@@ -759,9 +759,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     | Null invokedDeclaration);
 
         value invokedDeclarationContainer
-            =   if (exists invokedDeclaration)
-                then getContainingClassOrInterface(invokedDeclaration)
-                else null;
+            =   omap(getContainingClassOrInterface)(invokedDeclaration);
 
         value signature
             =   CeylonList {

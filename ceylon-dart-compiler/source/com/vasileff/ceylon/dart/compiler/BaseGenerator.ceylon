@@ -302,9 +302,7 @@ class BaseGenerator(CompilationContext ctx)
             DartArgumentList {
                 {
                     delegateFunction,
-                    if (exists variadicParameterIndex)
-                    then DartIntegerLiteral(variadicParameterIndex)
-                    else null
+                    omap(DartIntegerLiteral)(variadicParameterIndex)
                 }.coalesced.sequence();
             };
         };

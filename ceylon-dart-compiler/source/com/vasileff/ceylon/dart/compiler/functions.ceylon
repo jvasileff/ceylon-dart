@@ -471,3 +471,9 @@ Iterable<Element, Absent> takeUntil<Element, Absent=Null>
                 string => outer.string + ".iterator()";
             };
 };
+
+shared
+Return? omap<Return, Argument>(Return(Argument) collecting)(Argument? item)
+    =>  if (exists item)
+        then collecting(item)
+        else null;
