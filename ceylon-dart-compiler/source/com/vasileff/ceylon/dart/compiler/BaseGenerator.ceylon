@@ -1949,9 +1949,13 @@ class BaseGenerator(CompilationContext ctx)
         // TODO Take a look at generateFunctionExpression, and
         //      generateForValueDefinitionGetter and consider making more parallel.
 
-        // Note toplevels are getters (no parameter list)
-        //      within functions, not getters (empty parameter list)
-        //      within classes and interfaces, getters, but MethodDeclaration instead
+        // Functions, values, and operators:
+        //
+        //  - toplevels are getters with no parameter list
+        //  - locals are functions (not getters) with an empty parameter list
+        //  - class and interface members may be getters, functions, or values, but
+        //    are re-written in ClassMemberTransformer.generateMethodDefinitionRaw.
+        //    So we do not have to handle operators here.
 
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
@@ -1966,7 +1970,7 @@ class BaseGenerator(CompilationContext ctx)
                 scope;
                 declarationModel;
             };
-            dartElementType != dartFunction then "get";
+            dartElementType == dartValue then "get";
             identifier;
             DartFunctionExpression {
                 dartElementType == dartFunction then dartFormalParameterListEmpty;
@@ -2025,7 +2029,7 @@ class BaseGenerator(CompilationContext ctx)
                     "void";
                 };
             };
-            dartElementType != dartFunction then "set";
+            dartElementType == dartValue then "set";
             identifier;
             DartFunctionExpression {
                 DartFormalParameterList {
