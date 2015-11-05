@@ -1104,12 +1104,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     else dartValue;
             };
         }
-        case (is ClassOrInterfaceModel
-                    | FunctionOrValueModel
-                    | ControlBlockModel
-                    | ConstructorModel
-                    | SpecificationModel) {
-
+        case (is ClassOrInterfaceModel) {
             value mapped
                 =   mappedFunctionOrValue(refinedDeclaration(declaration));
 
@@ -1130,9 +1125,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         else dartValue
                     ];
 
+            return DartInvocable {
+                DartSimpleIdentifier {
+                    name;
+                };
+                dartElementType;
+            };
+        }
+        case (is FunctionOrValueModel
+                    | ControlBlockModel
+                    | ConstructorModel
+                    | SpecificationModel) {
+
+            value name
+                =   getPackagePrefixedName(declaration);
+
+            value dartElementType
+                =   if (declaration is FunctionModel && !declaration.parameter)
+                    then package.dartFunction
+                    else dartValue;
+
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
-                // identifier for the getter or setter method
                 return DartInvocable {
                     DartSimpleIdentifier {
                         name + (if (setter) then "$set" else "$get");
@@ -1142,7 +1156,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
             else {
-                // identifier for the value or function
                 return DartInvocable {
                     DartSimpleIdentifier {
                         name;
