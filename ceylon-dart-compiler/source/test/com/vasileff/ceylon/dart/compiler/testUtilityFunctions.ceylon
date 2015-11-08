@@ -17,11 +17,11 @@ import java.nio.file {
     JFiles=Files
 }
 import com.vasileff.ceylon.dart {
-    compile
+    testCompile
 }
 
 void compileAndCompare(String ceylon, String expected) {
-    value dartUnits = compile { false; ceylon };
+    value dartUnits = testCompile { false; ceylon };
     assert (exists dartUnit = dartUnits[0]);
 
     value sb = StringBuilder();
@@ -39,7 +39,7 @@ void compileAndCompare2(String key) {
 
     assert (exists ceylonResource = `module`.resourceByPath(ceylonPathPart));
 
-    value dartUnits = compile { false; ceylonResource.textContent() };
+    value dartUnits = testCompile { false; ceylonResource.textContent() };
     assert (exists dartUnit = dartUnits[0]);
     value dartCode = dartUnit.string.trimmed;
 
