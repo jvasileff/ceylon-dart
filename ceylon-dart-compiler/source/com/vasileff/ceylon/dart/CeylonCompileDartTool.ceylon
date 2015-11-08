@@ -288,11 +288,11 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 ds.sequence();
             };
 
+            // TODO use the *virtual* filesystem. See JsCompiler.findFile()
             assert (is Directory directory = parsePath(m.unit.fullPath).parent.resource);
             value native = nativeCode(directory);
             value bais = ByteArrayInputStream(
-                    createJavaByteArray(utf8.encode(
-                            dcu.string + native)));
+                    createJavaByteArray(utf8.encode(dcu.string + native)));
 
             outputRepositoryManager.putArtifact(
                 ArtifactContext(m.nameAsString, m.version, ".dart"),

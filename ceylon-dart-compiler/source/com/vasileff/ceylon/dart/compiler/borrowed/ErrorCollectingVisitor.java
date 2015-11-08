@@ -17,6 +17,7 @@ import com.redhat.ceylon.common.Backend;
 import com.redhat.ceylon.compiler.typechecker.TypeChecker;
 import com.redhat.ceylon.compiler.typechecker.analyzer.AnalysisError;
 import com.redhat.ceylon.compiler.typechecker.analyzer.UsageWarning;
+import com.redhat.ceylon.compiler.typechecker.context.PhasedUnit;
 import com.redhat.ceylon.compiler.typechecker.io.VirtualFile;
 import com.redhat.ceylon.compiler.typechecker.parser.RecognitionError;
 import com.redhat.ceylon.compiler.typechecker.tree.AnalysisMessage;
@@ -192,9 +193,9 @@ public class ErrorCollectingVisitor extends Visitor {
 
     private String getErrorSourceLine(PositionedMessage pm) {
         if (pm.node.getUnit() != null) {
+            PhasedUnit pu = tc.getPhasedUnitFromRelativePath(pm.node.getUnit().getRelativePath());
+            VirtualFile vfile = pu.getUnitFile();
             int lineNr = pm.message.getLine();
-            File file = new File(pm.node.getUnit().getFullPath());
-            VirtualFile vfile = tc.getContext().getVfs().getFromFile(file);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(vfile.getInputStream()))) {
                 String line;
                 while ((line = br.readLine()) != null) {

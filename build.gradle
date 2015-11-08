@@ -47,6 +47,11 @@ project('ceylon-dart-compiler') {
         includeNonShared true
         ignoreMissingDoc true
         ignoreMissingThrows true
+        // FIXME hack to make ceylon doc not crash.
+        // Currently, ceylon doc requires the output
+        // directory be the same as the compile directory
+        // if Java classes are present in the source
+        destinationDir = compileCeylon.destinationDir
     }
 
     // TODO plugin should create ceylonTest
