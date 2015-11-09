@@ -1,4 +1,3 @@
-
 import com.vasileff.ceylon.dart.ast {
     CodeWriter
 }
@@ -13,7 +12,7 @@ void run() {
             }
          """;
 
-    value result = compile { false; program };
+    value result = testCompile { false; program };
 
     for (dcu in result) {
         value codeWriter = CodeWriter(process.write);
