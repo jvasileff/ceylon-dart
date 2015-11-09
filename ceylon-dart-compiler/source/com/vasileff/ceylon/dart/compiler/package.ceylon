@@ -1,1 +1,1 @@
-package com.vasileff.ceylon.dart.compiler;
+shared package com.vasileff.ceylon.dart.compiler;

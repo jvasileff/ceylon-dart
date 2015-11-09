@@ -8,7 +8,7 @@ import ceylon.test {
     assertEquals
 }
 
-import com.vasileff.ceylon.dart.ast {
+import com.vasileff.ceylon.dart.compiler.dartast {
     CodeWriter
 }
 
@@ -16,7 +16,7 @@ import com.vasileff.ceylon.dart.ast {
 import java.nio.file {
     JFiles=Files
 }
-import com.vasileff.ceylon.dart {
+import com.vasileff.ceylon.dart.compiler {
     testCompile
 }
 
