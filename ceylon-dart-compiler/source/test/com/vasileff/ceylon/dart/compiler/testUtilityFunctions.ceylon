@@ -34,8 +34,8 @@ void compileAndCompare(String ceylon, String expected) {
 }
 
 void compileAndCompare2(String key) {
-    value ceylonPathPart = "compiler/" + key +  ".tceylon";
-    value dartPathPart = "compiler/" + key +  ".tdart";
+    value ceylonPathPart = key +  ".tceylon";
+    value dartPathPart = key +  ".tdart";
 
     assert (exists ceylonResource = `module`.resourceByPath(ceylonPathPart));
 
