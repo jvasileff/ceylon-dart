@@ -136,8 +136,9 @@ project('ceylon-dart-language') {
         inputs.dir project(":ceylon-dart-compiler").compileCeylon.destinationDir
 
         ext.destinationDir = file("build/modules-dart/main")
+        ext.sourceDir = file("source")
 
-        inputs.dir file("source")
+        inputs.dir sourceDir
         outputs.dir destinationDir
 
         String repository = project(':ceylon-dart-compiler')
@@ -146,9 +147,10 @@ project('ceylon-dart-language') {
         workingDir projectDir
         commandLine 'ceylon', 'run',
                 '--rep', repository,
-                '--run', 'com.vasileff.ceylon.dart::runCompileDartTool',
-                "--out=${destinationDir.toString()}",
-                'com.vasileff.ceylon.dart'
+                '--run', 'com.vasileff.ceylon.dart::bootstrapCompile',
+                'com.vasileff.ceylon.dart',
+                "${sourceDir.toString()}",
+                "${destinationDir.toString()}"
     }
 
     project.assemble.dependsOn compileCeylonDart;
