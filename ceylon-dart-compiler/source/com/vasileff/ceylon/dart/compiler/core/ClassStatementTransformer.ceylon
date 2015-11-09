@@ -31,6 +31,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     LazySpecificationInfo
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug
+}
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
  some declarations are class members and should not be re-declared in a dart constructor."

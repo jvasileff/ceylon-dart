@@ -1,1 +1,1 @@
-package com.vasileff.ceylon.dart.compiler.nodeinfo;
+shared package com.vasileff.ceylon.dart.compiler.nodeinfo;

@@ -42,6 +42,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 shared
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {

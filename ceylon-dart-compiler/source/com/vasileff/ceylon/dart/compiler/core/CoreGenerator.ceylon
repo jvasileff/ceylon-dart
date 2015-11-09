@@ -17,6 +17,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleIdentifier,
     DartAsExpression
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 """Provides:
 

@@ -59,6 +59,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     ValueSpecificationInfo
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)

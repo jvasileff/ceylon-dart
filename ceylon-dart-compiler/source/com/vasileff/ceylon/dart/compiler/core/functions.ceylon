@@ -55,6 +55,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 import com.redhat.ceylon.common {
     Backends
 }
+import com.vasileff.ceylon.dart.compiler {
+    dartBackend,
+    DScope
+}
 
 void printNodeAsCode(Node node) {
     TCNode tcNode(Node node)
@@ -342,6 +346,24 @@ SetterModel|FunctionModel|ValueModel? mostRefined
         return result;
     }
 }
+
+shared
+DScope dScope(Node|NodeInfo node, ScopeModel scope = toScopeModel(node))
+    =>  let (theScope = scope)
+        object satisfies DScope {
+            shared actual ScopeModel scope = theScope;
+            shared actual String location;
+            shared actual String filename;
+            if (is Node node) {
+                value info = NodeInfo(node);
+                location = info.location;
+                filename = info.filename;
+            }
+            else {
+                location = node.location;
+                filename = node.filename;
+            }
+        };
 
 shared
 ScopeModel container(DeclarationModel declaration)

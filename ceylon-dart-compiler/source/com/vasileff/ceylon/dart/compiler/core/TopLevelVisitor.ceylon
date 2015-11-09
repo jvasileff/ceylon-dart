@@ -90,6 +90,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ConstructorInfo,
     ExtensionOrConstructionInfo
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 "For Dart TopLevel declarations."
 shared

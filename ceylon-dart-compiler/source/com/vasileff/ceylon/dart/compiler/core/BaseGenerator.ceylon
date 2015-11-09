@@ -140,6 +140,10 @@ import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
     javaList
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 shared abstract
 class BaseGenerator(CompilationContext ctx)

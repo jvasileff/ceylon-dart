@@ -14,11 +14,7 @@ import com.redhat.ceylon.compiler.typechecker.io {
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnit
 }
-import com.vasileff.ceylon.dart.compiler.core {
-    compileDart,
-    allWarnings,
-    dartBackend
-}
+
 import com.vasileff.jl4c.guava.collect {
     javaList
 }

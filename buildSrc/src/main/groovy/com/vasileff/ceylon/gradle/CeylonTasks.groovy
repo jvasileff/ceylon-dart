@@ -111,6 +111,19 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
 }
 
 class CompileCeylonTask extends AbstractOutputtingCeylonTask {
+
+  Set<File> additionalRepositories() {
+    List<String> dirs = new ArrayList<String>()
+
+    // FIXME this doesn't work if dependencies are configured using Strings.
+    dependsOn.each {
+      if (it instanceof AbstractOutputtingCeylonTask) {
+        dirs.add(it.destinationDir.toString())
+      }
+    }
+    return dirs
+  }
+
   @TaskAction
   def compile() {
     def sources = getSourceDirs();
@@ -128,6 +141,13 @@ class CompileCeylonTask extends AbstractOutputtingCeylonTask {
           } else {
             sources.each {
               sourcemodules(dir: it)
+            }
+          }
+        }
+        if (!getRepositories().empty) {
+          reposet {
+            getRepositories().each {
+              repo(url: it)
             }
           }
         }
@@ -169,6 +189,24 @@ class CeylonDocTask extends AbstractOutputtingCeylonTask {
   Boolean ignoreMissingDoc = false;
   Boolean ignoreMissingThrows = false;
 
+  Set<File> additionalRepositories() {
+    List<String> dirs = new ArrayList<String>()
+
+    // FIXME this doesn't work if dependencies are configured using Strings.
+    dependsOn.each {
+      if (it instanceof AbstractOutputtingCeylonTask) {
+        it.each {
+          if (it instanceof AbstractOutputtingCeylonTask) {
+            // TODO add all of the task's repositories, too
+            //      and... not sure if this works
+            dirs.add(it.destinationDir.toString())
+          }
+        }
+      }
+    }
+    return dirs
+  }
+
   Set<File> additionalSourceDirs() {
     Set<File> dirs = new HashSet<File>()
     dependsOn.each {
@@ -201,6 +239,13 @@ class CeylonDocTask extends AbstractOutputtingCeylonTask {
           } else {
             sources.each {
               sourcemodules(dir: it)
+            }
+          }
+        }
+        if (!getRepositories().empty) {
+          reposet {
+            getRepositories().each {
+              repo(url: it)
             }
           }
         }

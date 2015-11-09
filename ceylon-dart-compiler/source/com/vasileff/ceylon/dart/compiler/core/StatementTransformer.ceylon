@@ -83,6 +83,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 import org.antlr.runtime {
     Token
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug
+}
 
 shared
 class StatementTransformer(CompilationContext ctx)

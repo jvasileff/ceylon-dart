@@ -5,6 +5,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo
 }
 
+
 // TODO better location info
 shared
 class CompilerBug(

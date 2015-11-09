@@ -103,7 +103,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler.core {
-    DScope,
     augmentNode,
     asserted,
     assertExists
@@ -111,6 +110,9 @@ import com.vasileff.ceylon.dart.compiler.core {
 
 import org.antlr.runtime {
     Token
+}
+import com.vasileff.ceylon.dart.compiler {
+    DScope
 }
 
 shared

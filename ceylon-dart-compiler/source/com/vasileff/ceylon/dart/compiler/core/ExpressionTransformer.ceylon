@@ -195,6 +195,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     TypeNameWithTypeArgumentsInfo
 }
+import com.vasileff.ceylon.dart.compiler {
+    CompilerBug,
+    DScope
+}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)

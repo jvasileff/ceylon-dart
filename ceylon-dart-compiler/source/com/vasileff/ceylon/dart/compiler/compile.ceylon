@@ -80,6 +80,12 @@ import ceylon.file {
     lines,
     File
 }
+import com.vasileff.ceylon.dart.compiler.core {
+    CompilationContext,
+    augmentNode,
+    computeCaptures,
+    computeClassCaptures
+}
 
 shared
 [DartCompilationUnit*] compileDart(

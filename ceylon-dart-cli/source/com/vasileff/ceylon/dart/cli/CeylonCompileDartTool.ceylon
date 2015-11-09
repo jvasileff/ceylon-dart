@@ -28,7 +28,7 @@ import com.redhat.ceylon.common.tools {
 import com.redhat.ceylon.compiler.typechecker.analyzer {
     Warning
 }
-import com.vasileff.ceylon.dart.compiler.core {
+import com.vasileff.ceylon.dart.compiler {
     CompilerBug,
     dartBackend,
     compileDart

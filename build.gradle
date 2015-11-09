@@ -59,20 +59,14 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "test.com.vasileff.ceylon.dart"
+        module "test.com.vasileff.ceylon.dart.compiler"
         test "test.com.vasileff.ceylon.dart.compiler"
     }
 
-    task install(type: Copy) {
+    task install {
         group "Deployment"
         description "Install plugins and copy the compiled modules to the user's repository"
-
         dependsOn "publish"
-        from(projectDir) {
-          include "ceylon-compile-dart.plugin"
-          include "ceylon-run-dart.plugin"
-        }
-        into ceylonBinDir
     }
 
     task publish(type: Copy) {
@@ -106,8 +100,8 @@ project('ceylon-dart-ant') {
     apply from: "$rootDir/buildSrc/eclipse.gradle"   // customize eclipse plugin
     apply from: "$rootDir/buildSrc/artifacts.gradle" // sourcesJar and javadocJar
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 
     dependencies {
         compile "org.apache.ant:ant:1.9.6"
@@ -148,7 +142,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart',
+                'com.vasileff.ceylon.dart.compiler',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}"
     }
@@ -160,7 +154,7 @@ project('ceylon-dart-language') {
         description = 'Assembles and tests this project.'
     }
 
-    task install(type: Copy) {
+    task install {
         group "Deployment"
         description "Install plugins and copy the compiled modules to the user's repository"
         dependsOn "publish"
@@ -174,6 +168,61 @@ project('ceylon-dart-language') {
 
         from compileCeylonDart.destinationDir
         into ceylonRepoDir
+    }
+}
+
+project('ceylon-dart-cli') {
+    description = "Ceylon Dart Commandline Interface"
+    apply plugin: 'ceylon'
+
+    defaultTasks 'compileCeylon'
+
+    compileCeylon {
+        // standard is src/main/ceylon
+        sourceDir file("source")
+
+        // add dependency, and auto-config input repository!
+        dependsOn project(":ceylon-dart-compiler").compileCeylon
+    }
+
+    ceylonDoc {
+        includeSource true
+        includeNonShared true
+        ignoreMissingDoc true
+        ignoreMissingThrows true
+
+        // TODO this shouldn't be necessary
+        repository project(":ceylon-dart-compiler").compileCeylon.destinationDir
+    }
+
+    task install(type: Copy) {
+        group "Deployment"
+        description "Install plugins and copy the compiled modules to the user's repository"
+
+        dependsOn "publish"
+        from(projectDir) {
+          include "ceylon-compile-dart.plugin"
+          include "ceylon-run-dart.plugin"
+        }
+        into ceylonBinDir
+    }
+
+    task publish(type: Copy) {
+        group "Deployment"
+        description "Copy the compiled modules to the user's repository"
+
+        dependsOn "ceylonDoc"
+        dependsOn "compileCeylon"
+
+        from ceylonDoc.destinationDir
+        from compileCeylon.destinationDir
+
+        into ceylonRepoDir
+    }
+
+    task build(dependsOn: assemble) {
+        group = 'Build'
+        description = 'Assembles and tests this project.'
     }
 }
 
