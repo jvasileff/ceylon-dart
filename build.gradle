@@ -147,7 +147,15 @@ project('ceylon-dart-language') {
                 "${destinationDir.toString()}"
     }
 
-    project.assemble.dependsOn compileCeylonDart;
+    task repositoryZip(type: Zip) {
+        dependsOn compileCeylonDart
+
+        from compileCeylonDart.destinationDir
+        into('repository')
+    }
+
+    project.assemble.dependsOn compileCeylonDart
+    project.assemble.dependsOn repositoryZip
 
     task build(dependsOn: assemble) {
         group = 'Build'
@@ -177,9 +185,24 @@ project('ceylon-dart-cli') {
 
     defaultTasks 'compileCeylon'
 
+    ext.generatedResourceDir = file("build/resource")
+
+    task prepareResources(type: Copy) {
+        dependsOn project(":ceylon-dart-language").repositoryZip
+
+        from file(project(":ceylon-dart-language").repositoryZip.archivePath)
+        into file(generatedResourceDir.toString() + "/com/vasileff/ceylon/dart/cli")
+        rename '.*', 'ceylon-language.zip'
+    }
+
     compileCeylon {
+        dependsOn prepareResources
+
         // standard is src/main/ceylon
         sourceDir file("source")
+
+        // include the language module as a resource
+        resourceDir generatedResourceDir
 
         // add dependency, and auto-config input repository!
         dependsOn project(":ceylon-dart-compiler").compileCeylon

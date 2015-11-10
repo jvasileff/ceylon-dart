@@ -63,6 +63,7 @@ abstract class AbstractCeylonTask extends DefaultTask {
 
 abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   private List<Object> source = new ArrayList<Object>();
+  private List<Object> resource = new ArrayList<Object>();
 
   String encoding = 'UTF-8'
   def destinationDir
@@ -71,9 +72,14 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   protected FileCollection getInputFiles() {
     // https://issues.gradle.org/browse/GRADLE-3051
     project.files(getSourceDirs());
+    project.files(getResourceDirs());
   }
 
   protected Set<File> additionalSourceDirs() {
+    return new HashSet<File>()
+  }
+
+  protected Set<File> additionalResourceDirs() {
     return new HashSet<File>()
   }
 
@@ -89,7 +95,24 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
     dirs
   }
 
+  Set<File> getResourceDirs() {
+    Set<File> dirs = new LinkedHashSet<File>()
+    resource.each {
+      def file = project.file(it)
+      if (file.isDirectory()) {
+        dirs.add(file)
+      }
+    }
+    dirs.addAll(additionalResourceDirs())
+    dirs
+  }
+
   void setSourceDirs(Iterable<?> srcDirs) {
+    source.clear()
+    GUtil.addToCollection(source, srcDirs)
+  }
+
+  void setResourceDirs(Iterable<?> srcDirs) {
     source.clear()
     GUtil.addToCollection(source, srcDirs)
   }
@@ -98,7 +121,17 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
     source.add(srcDir)
   }
 
+  void resourceDir(Object srcDir) {
+    resource.add(srcDir)
+  }
+
   void sourceDirs(Object... srcDirs) {
+    srcDirs.each {
+      source.add(it)
+    }
+  }
+
+  void resourceDirs(Object... srcDirs) {
     srcDirs.each {
       source.add(it)
     }
@@ -127,6 +160,7 @@ class CompileCeylonTask extends AbstractOutputtingCeylonTask {
   @TaskAction
   def compile() {
     def sources = getSourceDirs();
+    def resources = getResourceDirs();
     if (!sources.empty) {
       ant."ceylon-compile"(
             src: getAntSourcePath(),
@@ -149,6 +183,11 @@ class CompileCeylonTask extends AbstractOutputtingCeylonTask {
             getRepositories().each {
               repo(url: it)
             }
+          }
+        }
+        if (!resources.empty) {
+          resources.each {
+            resource(it)
           }
         }
       }
