@@ -1,0 +1,5 @@
+; Plugin definition for the "ceylon install-dart" tool
+summary=Installs the Dart Language Module into the specified module repository.
+module=com.vasileff.ceylon.dart.cli/0.0.1
+class=com.vasileff.ceylon.dart.cli.CeylonInstallDartTool
+
