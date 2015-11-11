@@ -71,8 +71,7 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   @InputFiles
   protected FileCollection getInputFiles() {
     // https://issues.gradle.org/browse/GRADLE-3051
-    project.files(getSourceDirs());
-    project.files(getResourceDirs());
+    project.files(getSourceDirs() + getResourceDirs());
   }
 
   protected Set<File> additionalSourceDirs() {
