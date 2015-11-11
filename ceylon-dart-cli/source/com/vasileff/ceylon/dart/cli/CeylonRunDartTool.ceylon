@@ -156,7 +156,7 @@ File? findDartInPath(String? path) {
 shared
 class CeylonRunDartToolError(String message) extends ToolError(message) {}
 
-// TODO gradle build support for resource directories...
+// TODO use resource file
 object resourceBundle extends ListResourceBundle() {
     shared actual ObjectArray<ObjectArray<Object>> contents
         =>  createJavaObjectArray([
