@@ -12,20 +12,20 @@ import ceylon.file {
     Directory,
     parsePath,
     lines,
-    File
+    File,
+    forEachLine
 }
 import ceylon.interop.java {
     CeylonIterable,
-    javaClass,
-    createJavaByteArray
-}
-import ceylon.io.charset {
-    utf8
+    javaClass
 }
 
 import com.redhat.ceylon.cmr.api {
     RepositoryManager,
     ArtifactContext
+}
+import com.redhat.ceylon.cmr.impl {
+    ShaSigner
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -69,7 +69,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpressionFunctionBody,
     DartFunctionExpression,
     DartFunctionDeclaration,
-    DartArgumentList
+    DartArgumentList,
+    CodeWriter
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -77,12 +78,14 @@ import com.vasileff.jl4c.guava.collect {
 
 import java.io {
     JFile=File,
-    JPrintWriter=PrintWriter,
-    ByteArrayInputStream
+    JPrintWriter=PrintWriter
 }
 import java.lang {
     System,
     Runnable
+}
+import java.nio.file {
+    JFiles=Files
 }
 import java.util {
     EnumSet
@@ -342,21 +345,37 @@ shared
                 then nativeCode(directory)
                 else "";
 
-        value dartCode = dcu.string + native;
+        // don't bother serializing if we don't have to
+        if (outputRepositoryManager exists || verboseCode) {
 
-        // persist to output repository
-        if (exists outputRepositoryManager) {
-            value bais = ByteArrayInputStream(
-                createJavaByteArray(utf8.encode(dartCode)));
+            // use a tempfile rather than a StringBuffer, since ShaSigner needs a file
+            try (tempFile = TemporaryFile("ceylon-dart-code-", ".dart", true)) {
+                value dartFile = tempFile.file;
 
-            outputRepositoryManager.putArtifact(
-                ArtifactContext(m.nameAsString, m.version, ".dart"),
-                bais);
-        }
+                // write to the temp file
+                try (appender = dartFile.Appender("utf-8")) {
+                    dcu.write(CodeWriter(appender.write));
+                    appender.write(native);
+                }
 
-        // write code to console
-        if (verboseCode) {
-            process.writeErrorLine(dartCode);
+                // persist to output repository
+                if (exists outputRepositoryManager) {
+                    value artifact = ArtifactContext(m.nameAsString, m.version,
+                            ArtifactContext.\iDART);
+
+                    artifact.forceOperation = true; // what does this do?
+
+                    outputRepositoryManager.putArtifact(artifact, javaFile(dartFile));
+
+                    ShaSigner.signArtifact(outputRepositoryManager, artifact,
+                            javaFile(dartFile), null);
+                }
+
+                // write code to console
+                if (verboseCode) {
+                    forEachLine(dartFile, process.writeErrorLine);
+                }
+            }
         }
     }
 
@@ -390,4 +409,32 @@ class CompilationStatus
     shared new success {}
     shared new errorTypeChecker {}
     shared new errorDartBackend {}
+}
+
+JFile javaFile(File file)
+    =>  JFile(file.path.string);
+
+class TemporaryFile(
+        String? prefix = null, String? suffix = null,
+        Boolean deleteOnExit = false)
+        satisfies Destroyable {
+
+    value path = JFiles.createTempFile(prefix, suffix);
+    if (deleteOnExit) {
+        path.toFile().deleteOnExit();
+    }
+    assert (is File f = parsePath(path.string).resource);
+
+    shared File file = f;
+
+    shared actual void destroy(Throwable? error) {
+        try {
+            f.delete();
+        }
+        finally {
+            if (exists error) {
+                throw error;
+            }
+        }
+    }
 }
