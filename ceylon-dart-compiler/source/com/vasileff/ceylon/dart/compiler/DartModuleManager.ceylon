@@ -6,7 +6,8 @@ import com.redhat.ceylon.model.typechecker.model {
     Modules,
     Package,
     Module,
-    ModuleImport
+    ModuleImport,
+    Unit
 }
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
@@ -19,6 +20,9 @@ import java.util {
     Collections,
     Arrays,
     JList=List
+}
+import com.redhat.ceylon.common {
+    Constants
 }
 
 class DartModuleManager() extends ModuleManager() {
@@ -39,9 +43,9 @@ class DartModuleManager() extends ModuleManager() {
 
             // build default module (module in which packages belong to when not
             // explicitly under a module)
-            JList<JString> defaultModuleName =
-                    Collections.singletonList(javaString(Module.\iDEFAULT_MODULE_NAME));
-            Module defaultModule = createModule(defaultModuleName, "unversioned");
+            value defaultModuleName = Collections.singletonList(
+                    javaString(Module.\iDEFAULT_MODULE_NAME));
+            value defaultModule = createModule(defaultModuleName, "unversioned");
             defaultModule.default = true;
             defaultModule.available = true;
             bindPackageToModule(emptyPackage, defaultModule);
@@ -50,10 +54,9 @@ class DartModuleManager() extends ModuleManager() {
 
             // create language module and add it as a dependency of defaultModule
             // since packages outside a module cannot declare dependencies
-            JList<JString> languageName =
-                    Arrays.asList(javaString("ceylon"), javaString("language"));
-            variable Module languageModule =
-                    createModule(languageName, languageModuleVersion);
+            value languageName = Arrays.asList(
+                    javaString("ceylon"), javaString("language"));
+            value languageModule = createModule(languageName, languageModuleVersion);
             languageModule.languageModule = languageModule;
             languageModule.available = false;
             modules.languageModule = languageModule;
@@ -61,5 +64,37 @@ class DartModuleManager() extends ModuleManager() {
             defaultModule.addImport(ModuleImport(languageModule, false, false));
             defaultModule.languageModule = languageModule;
         }
+    }
+
+    shared actual
+    Module createModule(variable JList<JString> moduleName, variable String version) {
+		Module mod = Module();
+		mod.name = moduleName;
+		mod.version = version;
+
+        value unit = Unit();
+        unit.filename = Constants.\iMODULE_DESCRIPTOR;
+
+        // FIXME *highly* dubious! Copied from JsModuleManager. Why do we trust toString?
+        unit.fullPath = moduleName.string + "/" + version;
+
+        mod.unit = unit;
+
+        // if not creating the language module or the default module, add an implicit
+        // import for the language module
+        if (!(mod.nameAsString == Module.\iDEFAULT_MODULE_NAME
+                || mod.nameAsString == Module.\iLANGUAGE_MODULE_NAME)) {
+
+            value languageModule
+                =   findLoadedModule(Module.\iLANGUAGE_MODULE_NAME, null)
+                    else modules.languageModule;
+
+            value moduleImport
+                =   ModuleImport(languageModule, false, false);
+
+            mod.addImport(moduleImport);
+            mod.languageModule = languageModule;
+        }
+        return mod;
     }
 }
