@@ -1,6 +1,6 @@
 ; Plugin definition for the "ceylon run-dart" tool
 summary=Executes a Ceylon program
-module=com.vasileff.ceylon.dart.cli/0.0.1
+module=com.vasileff.ceylon.dart.cli/1.2.0-DP1-SNAPSHOT
 class=com.vasileff.ceylon.dart.cli.CeylonRunDartTool
 
 

@@ -142,7 +142,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler',
+                'com.vasileff.ceylon.dart.compiler/1.2.0-DP1-SNAPSHOT',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}"
     }
