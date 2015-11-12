@@ -67,6 +67,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
     }
 
     shared actual
+    suppressWarnings("expressionTypeNothing")
     void run() {
         value dartPath = findDartInPath(process.environmentVariableValue("PATH"));
         if (!exists dartPath) {
@@ -89,9 +90,21 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
         value programModuleFile = repositoryManager.getArtifact(
             ArtifactContext(moduleName, moduleVersion, ArtifactContext.\iDART));
 
-        // TODO separate method for finding module files; proper not found error reporting
+        // TODO auto-detect version
+        value version = "1.2.0";
+
         value languageModuleFile = repositoryManager.getArtifact(
-            ArtifactContext("ceylon.language", "1.2.0", ArtifactContext.\iDART));
+            ArtifactContext("ceylon.language", "1.2.0", ArtifactContext.\iDART))
+            else null;
+
+        if (!exists languageModuleFile) {
+            print("The Ceylon/Dart language module version ``version`` was not found.
+                   Try installing with:
+
+                       ceylon install-dart --out ~/.ceylon/repo");
+            process.exit(1);
+            return;
+        }
 
         value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
             [moduleName -> programModuleFile,
@@ -110,6 +123,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
             error = currentError;
         };
         p.waitForExit();
+        process.exit(p.exitCode else 0);
     }
 }
 
