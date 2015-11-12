@@ -17,15 +17,22 @@ import ceylon.file {
 }
 import ceylon.interop.java {
     CeylonIterable,
-    javaClass
+    javaClass,
+    JavaIterable
 }
 
 import com.redhat.ceylon.cmr.api {
     RepositoryManager,
     ArtifactContext
 }
+import com.redhat.ceylon.cmr.ceylon {
+    CeylonUtils
+}
 import com.redhat.ceylon.cmr.impl {
     ShaSigner
+}
+import com.redhat.ceylon.common {
+    FileUtil
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -73,7 +80,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     CodeWriter
 }
 import com.vasileff.jl4c.guava.collect {
-    javaList
+    javaList,
+    LinkedListMultimap
 }
 
 import java.io {
@@ -196,6 +204,7 @@ shared
     sourceDirectories.each((f) => builder.addSrcDirectory(f));
     builder.setSourceFiles(javaList(sourceFiles));
     builder.setRepositoryManager(repositoryManager);
+    builder.moduleManagerFactory(DartModuleManagerFactory());
 
     // Typecheck, silently.
     value typeChecker = builder.typeChecker;
@@ -232,13 +241,19 @@ shared
     }
     errorVisitor.clear();
 
-    value moduleMembers =
-            HashMap<ModuleModel, LinkedList<DartCompilationUnitMember>>();
+    value moduleMembers
+        =   HashMap<ModuleModel, LinkedList<DartCompilationUnitMember>>();
+
+    value moduleSources
+        =   LinkedListMultimap<ModuleModel, JFile>();
 
     t3 = system.nanoseconds;
 
     for (phasedUnit in phasedUnits) {
         value path => phasedUnit.pathRelativeToSrcDir else "<null>";
+
+        // FIXME virtual files? skip if not saving src?
+        moduleSources.put(phasedUnit.\ipackage.\imodule, JFile(phasedUnit.unit.fullPath));
 
         if (verboseFiles) {
             standardErrorWriter.println("-- begin " + path);
@@ -369,6 +384,16 @@ shared
 
                     ShaSigner.signArtifact(outputRepositoryManager, artifact,
                             javaFile(dartFile), null);
+
+                    // create source artifact (*must* have this for language module)
+                    value sac = CeylonUtils.makeSourceArtifactCreator(
+                            outputRepositoryManager,
+                            JavaIterable(sourceDirectories),
+                            m.nameAsString, m.version,
+                            // TODO verboseCMR and logging
+                            false, null);
+
+                    sac.copy(FileUtil.filesToPathList(javaList(moduleSources.get(m))));
                 }
 
                 // write code to console

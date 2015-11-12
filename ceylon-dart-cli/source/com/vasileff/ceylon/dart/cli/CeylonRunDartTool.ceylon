@@ -88,11 +88,10 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 
         // collect required artifacts, generate temporary dart package root
         value programModuleFile = repositoryManager.getArtifact(
-            ArtifactContext(moduleName, moduleVersion, ArtifactContext.\iDART));
+                ArtifactContext(moduleName, moduleVersion, ArtifactContext.\iDART));
 
-        // TODO make the language module build with a non 1.2.0 version number
-        //value version = `module`.version;
-        value version = "1.2.0";
+        // use *our* version as the language module version!
+        value version = `module`.version;
 
         value languageModuleFile = repositoryManager.getArtifact(
             ArtifactContext("ceylon.language", version, ArtifactContext.\iDART))

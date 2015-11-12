@@ -79,9 +79,10 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     ModuleQuery.Type.\iDART,
                     null, null);
 
-        // configure the artifact context for the language module
+        // configure the artifact context for the language module including source
         value languageModuleAC
-            =   ArtifactContext("ceylon.language", moduleVersion, ArtifactContext.\iDART);
+            =   ArtifactContext("ceylon.language", moduleVersion,
+                    ArtifactContext.\iDART, ArtifactContext.\iSRC);
 
         languageModuleAC.ignoreDependencies = true;
 
