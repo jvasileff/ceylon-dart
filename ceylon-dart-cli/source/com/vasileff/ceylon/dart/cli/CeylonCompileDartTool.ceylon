@@ -31,7 +31,8 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
 import com.vasileff.ceylon.dart.compiler {
     CompilerBug,
     dartBackend,
-    compileDart
+    compileDart,
+    CompilationStatus
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -107,10 +108,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     shared actual
     void initialize(CeylonTool? ceylonTool) {}
 
+    suppressWarnings("expressionTypeNothing")
     shared actual
     void run() {
         try {
-            doRun();
+            value result = doRun();
+            process.exit(
+                switch (result)
+                case (CompilationStatus.success) 0
+                case (CompilationStatus.errorTypeChecker
+                        | CompilationStatus.errorDartBackend) 1);
         }
         catch (CompilerBug e) {
             process.writeErrorLine("Compiler Bug: " + e.message);
@@ -118,14 +125,14 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         }
     }
 
-    void doRun() {
+    CompilationStatus doRun() {
         value sourceDirectories = DefaultToolOptions.compilerSourceDirs;
         value resources = DefaultToolOptions.compilerResourceDirs;
         value resolver = SourceArgumentsResolver(sourceDirectories, resources, ".ceylon");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
 
-        compileDart {
+        return compileDart {
             sourceDirectories = CeylonList(sourceDirectories);
             sourceFiles = CeylonList(resolver.sourceFiles);
             repositoryManager = repositoryManager;
@@ -137,7 +144,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
             verboseCode = verboseCode;
             verboseProfile = verboseProfile;
             verboseFiles = verboseFiles;
-        };
+        }[1];
     }
 }
 

@@ -75,12 +75,13 @@ shared
             =   if (suppressAllWarnings)
                 then allWarnings
                 else [];
-    };
+    }[0];
 }
 
 "A simple CLI compiler that takes two arguments: a source directory and an output
  directory. Warnings are suppressed."
 shared
+suppressWarnings("expressionTypeNothing")
 void bootstrapCompile() {
     assert (exists sourceDirectory = process.arguments[0]);
     assert (exists outputDirectory = process.arguments[1]);
@@ -102,10 +103,16 @@ void bootstrapCompile() {
 
     resolver.expandAndParse(javaList<JString> { }, dartBackend);
 
-    compileDart {
+    value result = compileDart {
         sourceDirectories = CeylonList(sourceDirectories);
         sourceFiles = CeylonList(resolver.sourceFiles);
         outputRepositoryManager = outputRepositoryManager;
         suppressWarning = CeylonIterable(EnumSet.allOf(javaClass<Warning>()));
-    };
+    }[1];
+
+    process.exit(
+        switch (result)
+        case (CompilationStatus.success) 0
+        case (CompilationStatus.errorTypeChecker
+                | CompilationStatus.errorDartBackend) 1);
 }

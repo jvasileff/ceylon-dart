@@ -1,42 +1,61 @@
-import com.redhat.ceylon.cmr.api {
-    RepositoryManager,
-    ArtifactContext
+import ceylon.ast.core {
+    CompilationUnit
 }
-import com.redhat.ceylon.compiler.typechecker.io {
-    VirtualFile
+import ceylon.ast.redhat {
+    anyCompilationUnitToCeylon
 }
-
-import java.io {
-    JFile=File,
-    JPrintWriter=PrintWriter,
-    ByteArrayInputStream
+import ceylon.collection {
+    HashMap,
+    LinkedList
 }
-import java.lang {
-    System,
-    Runnable
-}
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning
-}
-import com.redhat.ceylon.compiler.typechecker {
-    TypeCheckerBuilder
-}
-import com.vasileff.jl4c.guava.collect {
-    javaList
-}
-import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit
-}
-import com.vasileff.ceylon.dart.compiler.borrowed {
-    ErrorCollectingVisitor
+import ceylon.file {
+    Directory,
+    parsePath,
+    lines,
+    File
 }
 import ceylon.interop.java {
     CeylonIterable,
     javaClass,
     createJavaByteArray
 }
+import ceylon.io.charset {
+    utf8
+}
+
+import com.redhat.ceylon.cmr.api {
+    RepositoryManager,
+    ArtifactContext
+}
+import com.redhat.ceylon.compiler.typechecker {
+    TypeCheckerBuilder
+}
+import com.redhat.ceylon.compiler.typechecker.analyzer {
+    Warning
+}
+import com.redhat.ceylon.compiler.typechecker.context {
+    PhasedUnit
+}
+import com.redhat.ceylon.compiler.typechecker.io {
+    VirtualFile
+}
+import com.redhat.ceylon.compiler.typechecker.util {
+    WarningSuppressionVisitor
+}
 import com.redhat.ceylon.model.typechecker.context {
     TypeCache
+}
+import com.redhat.ceylon.model.typechecker.model {
+    ModuleModel=Module
+}
+import com.vasileff.ceylon.dart.compiler.borrowed {
+    ErrorCollectingVisitor
+}
+import com.vasileff.ceylon.dart.compiler.core {
+    CompilationContext,
+    augmentNode,
+    computeCaptures,
+    computeClassCaptures
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -52,43 +71,25 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionDeclaration,
     DartArgumentList
 }
-import com.redhat.ceylon.model.typechecker.model {
-    ModuleModel=Module
+import com.vasileff.jl4c.guava.collect {
+    javaList
 }
-import ceylon.collection {
-    HashMap,
-    LinkedList
+
+import java.io {
+    JFile=File,
+    JPrintWriter=PrintWriter,
+    ByteArrayInputStream
 }
-import ceylon.ast.redhat {
-    anyCompilationUnitToCeylon
-}
-import ceylon.ast.core {
-    CompilationUnit
+import java.lang {
+    System,
+    Runnable
 }
 import java.util {
     EnumSet
 }
-import com.redhat.ceylon.compiler.typechecker.util {
-    WarningSuppressionVisitor
-}
-import ceylon.io.charset {
-    utf8
-}
-import ceylon.file {
-    Directory,
-    parsePath,
-    lines,
-    File
-}
-import com.vasileff.ceylon.dart.compiler.core {
-    CompilationContext,
-    augmentNode,
-    computeCaptures,
-    computeClassCaptures
-}
 
 shared
-[DartCompilationUnit*] compileDart(
+[[DartCompilationUnit*], CompilationStatus] compileDart(
         virtualFiles = [],
         sourceDirectories = [],
         sourceFiles = [],
@@ -224,7 +225,7 @@ shared
     phasedUnits.map(PhasedUnit.compilationUnit).each((cu) => cu.visit(errorVisitor));
     if (errorVisitor.errorCount > 0) {
         errorVisitor.printErrors(standardErrorWriter, null, true, true);
-        return [];
+        return [[], CompilationStatus.errorTypeChecker];
     }
     errorVisitor.clear();
 
@@ -373,9 +374,20 @@ shared
     // print warnings and errors
     errorVisitor.printErrors(standardErrorWriter, null, true, true);
 
-    return dartCompilationUnits.sequence();
+    return [dartCompilationUnits.sequence(),
+        if (errorVisitor.errorCount > 0)
+        then CompilationStatus.errorTypeChecker
+        else CompilationStatus.success];
 }
 
 shared
 [Warning*] allWarnings
     =   CeylonIterable<Warning>(EnumSet.allOf(javaClass<Warning>())).sequence();
+
+shared
+class CompilationStatus
+        of success | errorTypeChecker | errorDartBackend {
+    shared new success {}
+    shared new errorTypeChecker {}
+    shared new errorDartBackend {}
+}
