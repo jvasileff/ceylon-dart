@@ -8,35 +8,37 @@ import ceylon.io.charset {
     utf8
 }
 
-import com.redhat.ceylon.compiler.typechecker.io {
-    VirtualFile
-}
-import com.vasileff.ceylon.dart.compiler.dartast {
-    DartCompilationUnit
-}
-
-import com.vasileff.jl4c.guava.collect {
-    javaList
-}
-
-import java.io {
-    ByteArrayInputStream,
-    File
-}
 import com.redhat.ceylon.cmr.ceylon {
     CeylonUtils
 }
 import com.redhat.ceylon.common.tools {
     SourceArgumentsResolver
 }
+import com.redhat.ceylon.compiler.typechecker.analyzer {
+    Warning
+}
+import com.redhat.ceylon.compiler.typechecker.io {
+    VirtualFile
+}
+import com.vasileff.ceylon.dart.compiler.dartast {
+    DartCompilationUnit
+}
+import com.vasileff.jl4c.guava.collect {
+    javaList,
+    ImmutableListMultimap,
+    ImmutableSetMultimap
+}
+
+import java.io {
+    ByteArrayInputStream,
+    File,
+    InputStream
+}
 import java.lang {
     JString=String
 }
 import java.util {
     EnumSet
-}
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning
 }
 
 shared
@@ -67,6 +69,108 @@ shared
     return
     compileDart {
         virtualFiles = virtualFiles;
+        verboseAst = verbose;
+        verboseRhAst = verbose;
+        verboseCode = false;
+        suppressMainFunction = true;
+        suppressWarning
+            =   if (suppressAllWarnings)
+                then allWarnings
+                else [];
+    }[0];
+}
+
+shared
+[DartCompilationUnit*] testModuleCompile(
+        Boolean verbose = false,
+        Boolean suppressAllWarnings = true,
+        {<String -> String>*} listings = {}) {
+
+    "The full path, parent directory, and file."
+    function pathParts(String path) {
+        value trimmed = path.trim('/'.equals);
+        value components = trimmed.split('/'.equals).sequence();
+
+        "nonempty paths will have at least one path segment."
+        assert (nonempty components);
+
+        return ["/".join(components.exceptLast),
+                "/".join(components),
+                components.last];
+    }
+
+    "The path, and all parent directories."
+    function directorayAndParents(String path)
+        =>  let (trimmed = path.trim('/'.equals),
+                segments = trimmed.split('/'.equals).sequence())
+            { for (i in 1:segments.size) "/".join(segments.take(i)) };
+
+    value files
+        =   ImmutableListMultimap<String, VirtualFile> {
+                listings.map((listing)
+                    =>  let ([d, p, n] = pathParts(listing.key))
+                        d -> object satisfies VirtualFile {
+                            children = javaList<VirtualFile> {};
+
+                            path = p;
+
+                            name = n;
+
+                            folder = false;
+
+                            \iexists() => true;
+
+                            inputStream
+                                =>  ByteArrayInputStream(createJavaByteArray(
+                                        utf8.encode(listing.item)));
+
+                            compareTo(VirtualFile other)
+                                =>  switch (path.compare(other.path))
+                                    case (smaller) -1
+                                    case (larger) 1
+                                    case (equal) 0;
+                        });
+            };
+
+    value directories
+        =   ImmutableSetMultimap<String, String> {
+                *files.keys.flatMap(directorayAndParents).map((directory)
+                    =>  let ([d, p, n] = pathParts(directory))
+                        d -> p)
+            };
+
+    class DirectoryVirtualFile(path) satisfies VirtualFile {
+        shared actual String path;
+
+        name = pathParts(path)[2];
+
+        folder = true;
+
+        \iexists() => true;
+
+        children
+            =   javaList<VirtualFile> {
+                    expand {
+                        directories.get(path).map(DirectoryVirtualFile),
+                        files.get(path)
+                    };
+                };
+
+        compareTo(VirtualFile other)
+            =>  switch (path.compare(other.path))
+                case (smaller) -1
+                case (larger) 1
+                case (equal) 0;
+
+        shared actual
+        InputStream inputStream {
+            throw AssertionError("Directories don't have input streams.");
+        }
+    }
+
+    return
+    compileDart {
+        virtualFiles = [DirectoryVirtualFile("")];
         verboseAst = verbose;
         verboseRhAst = verbose;
         verboseCode = false;
