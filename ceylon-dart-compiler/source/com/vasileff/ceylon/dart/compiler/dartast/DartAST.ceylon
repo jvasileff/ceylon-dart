@@ -1,7 +1,3 @@
-import ceylon.math.whole {
-    parseWhole
-}
-
 shared abstract
 class DartNode() {
     shared formal
@@ -339,7 +335,6 @@ class DartDoubleLiteral(val)
 
     String | Float val;
 
-    // TODO parse all valid Ceylon Float literals
     shared String text
         =   switch (val)
             case (is Float) val.string
@@ -358,14 +353,10 @@ class DartIntegerLiteral(val)
 
     String | Integer val;
 
-    // TODO parse all valid Ceylon Integer literals
-    shared String? text
-        =   switch(val)
+    shared String text
+        =   switch (val)
             case (is Integer) val.string
-            case (is String) parseWhole(val)?.string;
-
-    "Argument to DartIntegerLiteral must be parsable as an integer"
-    assert(exists text);
+            case (is String) val;
 
     shared actual
     void write(CodeWriter writer) {

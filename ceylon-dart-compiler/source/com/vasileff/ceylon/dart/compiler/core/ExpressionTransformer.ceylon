@@ -587,22 +587,24 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformFloatLiteral(FloatLiteral that)
         =>  withBoxing(dScope(that),
                 ceylonTypes.floatType, null,
-                DartDoubleLiteral(that.text));
+                DartDoubleLiteral(parseCeylonFloat(that.text)));
 
     shared actual
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(dScope(that),
                 ceylonTypes.integerType, null,
-                DartIntegerLiteral(that.text));
+                DartIntegerLiteral(parseCeylonInteger(that.text)));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
+        // FIXME proper parsing/handling of escape sequences
         =>  withBoxing(dScope(that),
                 ceylonTypes.stringType, null,
                 DartSimpleStringLiteral(that.text));
 
     shared actual
     DartExpression transformCharacterLiteral(CharacterLiteral that)
+        // FIXME proper parsing/handling of escape sequences
         =>  withBoxing(dScope(that),
                 ceylonTypes.characterType, null,
                 DartInstanceCreationExpression {
@@ -616,7 +618,6 @@ class ExpressionTransformer(CompilationContext ctx)
                         DartSimpleIdentifier("$fromInt");
                     };
                     DartArgumentList {
-                        // FIXME text may be an escape sequence
                         [DartIntegerLiteral(that.text.first?.integer else 0)];
                     };
                 });

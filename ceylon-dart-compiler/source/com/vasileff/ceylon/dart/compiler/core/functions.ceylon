@@ -23,7 +23,14 @@ import ceylon.interop.java {
     CeylonList,
     CeylonIterable
 }
+import ceylon.math.whole {
+    parseWhole,
+    wholeNumber
+}
 
+import com.redhat.ceylon.common {
+    Backends
+}
 import com.redhat.ceylon.compiler.typechecker.tree {
     TCNode=Node
 }
@@ -48,18 +55,15 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ModuleImportModel=ModuleImport
 }
+import com.vasileff.ceylon.dart.compiler {
+    dartBackend,
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     DeclarationInfo,
     keys,
     BaseExpressionInfo
-}
-import com.redhat.ceylon.common {
-    Backends
-}
-import com.vasileff.ceylon.dart.compiler {
-    dartBackend,
-    DScope
 }
 
 void printNodeAsCode(Node node) {
@@ -515,3 +519,61 @@ Return? omap<Return, Argument>(Return(Argument) collecting)(Argument? item)
     =>  if (exists item)
         then collecting(item)
         else null;
+
+Integer?(Character) suffixExponent
+    =   map {
+            'k' -> 3,
+            'M' -> 6,
+            'G' -> 9,
+            'T' -> 12,
+            'P' -> 15,
+            'm' -> -3,
+            'u' -> -6,
+            'p' -> -12,
+            'f' -> -15
+        }.get;
+
+shared
+String parseCeylonInteger(String text) {
+
+    "Text must not be empty."
+    assert (exists first = text.first);
+
+    "Text must not be empty."
+    assert (exists last = text.last);
+
+
+    "The first character must be a number, `$`, or `#`."
+    assert (first in ['$', '#', *('0'..'9')]);
+
+    Integer radix
+        =   switch (first)
+            case ('$') 2
+            case ('#') 16
+            else 10;
+
+    value exponent = suffixExponent(last);
+
+    value start = if (radix == 10) then 0 else 1;
+    value length = text.size - start - (if (exponent exists) then 1 else 0);
+
+    "The text must be parsable as an integer."
+    assert (exists result = parseWhole(text[start:length].replace("_", ""), radix));
+
+    if (exists exponent) {
+        if (exponent.positive) {
+            return result.timesInteger(10 ^ exponent).string;
+        }
+        else {
+            return result.divided(wholeNumber(10 ^ exponent.magnitude)).string;
+        }
+    }
+    return result.string;
+}
+
+shared
+String parseCeylonFloat(String text) {
+    // TODO string manipulation instead; we lose precision on the roundtrip
+    assert (exists result = parseFloat(text.replace("_", "")));
+    return result.string;
+}
