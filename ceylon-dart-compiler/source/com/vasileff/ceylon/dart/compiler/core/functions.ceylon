@@ -20,7 +20,8 @@ import ceylon.formatter.options {
     FormattingOptions
 }
 import ceylon.interop.java {
-    CeylonList
+    CeylonList,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
@@ -118,6 +119,13 @@ Boolean sameModule(
         DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel first,
         DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel second)
     =>  getModule(first) == getModule(second);
+
+shared
+String moduleImportPrefix(ModuleModel m)
+    =>  CeylonIterable(m.name)
+            .map(Object.string)
+            .interpose("$")
+            .fold("$")(plus);
 
 "Shortcut for `(scope of ScopeModel).container`,"
 ScopeModel? containerOfScope(ScopeModel scope)

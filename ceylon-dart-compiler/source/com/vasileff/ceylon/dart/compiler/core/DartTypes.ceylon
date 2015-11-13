@@ -273,10 +273,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     moduleImportPrefix
         =   memoize((DScope | Node | ElementModel | UnitModel
                     | ModuleModel | ScopeModel declaration)
-            =>  CeylonIterable(getModule(declaration).name)
-                    .map(Object.string)
-                    .interpose("$")
-                    .fold("$")(plus));
+            =>  package.moduleImportPrefix(getModule(declaration)));
 
     shared
     String getPackagePrefixedName(FunctionOrValueModel declaration) {

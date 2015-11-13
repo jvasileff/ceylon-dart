@@ -5,7 +5,8 @@ import ceylon.file {
     parsePath,
     Path,
     Directory,
-    File
+    File,
+    lines
 }
 import ceylon.interop.java {
     createJavaObjectArray,
@@ -87,8 +88,28 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
                 null, null);
 
         // collect required artifacts, generate temporary dart package root
-        value programModuleFile = repositoryManager.getArtifact(
-                ArtifactContext(moduleName, moduleVersion, ArtifactContext.\iDART));
+        value programModuleFile
+            =   repositoryManager.getArtifact(ArtifactContext(
+                        moduleName, moduleVersion, ArtifactContext.\iDART));
+
+        value programModuleModelFile
+            =   assertedCeylonFile(repositoryManager.getArtifact(ArtifactContext(
+                        moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)));
+
+        // TODO transitive dependencies, better error handling
+        value importedModules
+            =   lines(programModuleModelFile).map((line)
+                =>  line.split(' '.equals)).map((pair) {
+                        if (exists name = pair.getFromFirst(0),
+                            exists version = pair.getFromFirst(1)) {
+                            return name ->
+                                repositoryManager.getArtifact(ArtifactContext(
+                                        name, version, ArtifactContext.\iDART));
+                        }
+                        else {
+                            return null;
+                        }
+                    }).coalesced;
 
         // use *our* version as the language module version!
         value version = `module`.version;
@@ -106,9 +127,11 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
             return;
         }
 
+        // TODO use *our* version, or the one specified by the module?
         value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
             [moduleName -> programModuleFile,
-             "ceylon.language" -> languageModuleFile]);
+                *importedModules]);
+             //"ceylon.language" -> languageModuleFile]);
 
         assert (exists programModuleSymlink = moduleMap[moduleName]?.string);
 

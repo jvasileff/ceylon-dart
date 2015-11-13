@@ -64,7 +64,8 @@ import com.vasileff.ceylon.dart.compiler.core {
     augmentNode,
     computeCaptures,
     computeClassCaptures,
-    isForDartBackend
+    isForDartBackend,
+    moduleImportPrefix
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -324,6 +325,31 @@ shared
             ds.add(mainFunctionHack);
         }
 
+        function dartPackageLocationForModule(ModuleModel m)
+            =>  "package:" + CeylonIterable(m.name)
+                    .map(Object.string)
+                    .interpose("/")
+                    .fold("")(plus)
+                    .plus("/")
+                    .plus(m.name.get(m.name.size() - 1).string)
+                    .plus(".dart");
+
+        // TODO decide if the language module should be excluded.
+        value importedModules
+            =   CeylonIterable(m.imports)
+                .filter(isForDartBackend)
+                .map(ModuleImport.\imodule)
+                .map((m) =>
+                    DartImportDirective {
+                        DartSimpleStringLiteral {
+                            dartPackageLocationForModule(m);
+                        };
+                        DartSimpleIdentifier {
+                            moduleImportPrefix(m);
+                        };
+                    }
+                );
+
         value dcu
             =   DartCompilationUnit {
                     {DartImportDirective {
@@ -345,11 +371,12 @@ shared
                         DartSimpleStringLiteral("dart:mirrors");
                         DartSimpleIdentifier("$dart$mirrors");
                     },
-                    !languageModule then
-                    DartImportDirective {
-                        DartSimpleStringLiteral("package:ceylon/language/language.dart");
-                        DartSimpleIdentifier("$ceylon$language");
-                    }}.coalesced.sequence();
+                    //!languageModule then
+                    //DartImportDirective {
+                    //    DartSimpleStringLiteral("package:ceylon/language/language.dart");
+                    //    DartSimpleIdentifier("$ceylon$language");
+                    //},
+                    *importedModules}.coalesced.sequence();
                     ds.sequence();
                 };
 
