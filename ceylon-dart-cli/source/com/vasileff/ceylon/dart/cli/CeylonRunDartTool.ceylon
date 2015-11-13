@@ -45,7 +45,8 @@ import java.lang {
 }
 import java.nio.file {
     JFiles=Files,
-    JPath=Path
+    JPath=Path,
+    FileAlreadyExistsException
 }
 import java.util {
     ListResourceBundle
@@ -164,8 +165,12 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
         value nameParts = name.split('.'.equals);
         for (part in nameParts) {
             symLinkPath = symLinkPath.resolve(part);
-            JFiles.createDirectory(symLinkPath);
-            symLinkPath.toFile().deleteOnExit();
+            try {
+                // this throws if "recreating" common dirs, like /com, since packages
+                // may share leading path segments.
+                JFiles.createDirectory(symLinkPath);
+                symLinkPath.toFile().deleteOnExit();
+            } catch (FileAlreadyExistsException e) {}
         }
         symLinkPath = symLinkPath.resolve(nameParts.last + ".dart");
         JFiles.createSymbolicLink(symLinkPath, jFile.toPath());
