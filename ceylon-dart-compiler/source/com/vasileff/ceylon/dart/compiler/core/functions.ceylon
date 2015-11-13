@@ -44,7 +44,8 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     TypeDeclarationModel=TypeDeclaration,
-    TypeModel=Type
+    TypeModel=Type,
+    ModuleImportModel=ModuleImport
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -307,18 +308,25 @@ Boolean isConstant(Expression e) {
 }
 
 "Returns the [[Backends]] object for the declaration."
-Backends getNativeBackends(Declaration|DeclarationInfo|DeclarationModel that)
+Backends getNativeBackends(Declaration | DeclarationInfo | DeclarationModel
+            | ModuleModel | ModuleImportModel that)
     =>  switch (that)
         case (is Declaration)
             DeclarationInfo(that).declarationModel.nativeBackends
         case (is DeclarationInfo)
             that.declarationModel.nativeBackends
         case (is DeclarationModel)
+            that.nativeBackends
+        case (is ModuleModel)
+            that.nativeBackends
+        case (is ModuleImportModel)
             that.nativeBackends;
 
 "Returns true if the declaration is not marked `native`, or if it is marked `native`
  with a Ceylon implementation for the Dart backend."
-Boolean isForDartBackend(Declaration|DeclarationInfo|DeclarationModel that)
+shared
+Boolean isForDartBackend(Declaration | DeclarationInfo | DeclarationModel
+            | ModuleModel | ModuleImportModel that)
     =>  let (backends = getNativeBackends(that))
         backends.none() || backends.supports(dartBackend);
 

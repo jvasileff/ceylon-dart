@@ -53,7 +53,8 @@ import com.redhat.ceylon.model.typechecker.context {
     TypeCache
 }
 import com.redhat.ceylon.model.typechecker.model {
-    ModuleModel=Module
+    ModuleModel=Module,
+    ModuleImport
 }
 import com.vasileff.ceylon.dart.compiler.borrowed {
     ErrorCollectingVisitor
@@ -62,7 +63,8 @@ import com.vasileff.ceylon.dart.compiler.core {
     CompilationContext,
     augmentNode,
     computeCaptures,
-    computeClassCaptures
+    computeClassCaptures,
+    isForDartBackend
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -364,8 +366,11 @@ shared
         if (outputRepositoryManager exists || verboseCode) {
 
             // use a tempfile rather than a StringBuffer, since ShaSigner needs a file
-            try (tempFile = TemporaryFile("ceylon-dart-code-", ".dart", true)) {
-                value dartFile = tempFile.file;
+            try (dFile = TemporaryFile("ceylon-dart-dart-", ".dart", true),
+                 mFile = TemporaryFile("ceylon-dart-model-", ".json", true)) {
+
+                value dartFile = dFile.file;
+                value modelFile = mFile.file;
 
                 // write to the temp file
                 try (appender = dartFile.Appender("utf-8")) {
@@ -375,6 +380,7 @@ shared
 
                 // persist to output repository
                 if (exists outputRepositoryManager) {
+                    // the code
                     value artifact = ArtifactContext(m.nameAsString, m.version,
                             ArtifactContext.\iDART);
 
@@ -385,7 +391,29 @@ shared
                     ShaSigner.signArtifact(outputRepositoryManager, artifact,
                             javaFile(dartFile), null);
 
-                    // create source artifact (*must* have this for language module)
+                    // the model
+                    value modelArtifact = ArtifactContext(m.nameAsString, m.version,
+                            ArtifactContext.\iDART_MODEL);
+
+                    modelArtifact.forceOperation = true; // what does this do?
+
+                    // write to the model file
+                    try (appender = modelFile.Appender("utf-8")) {
+                        appender.write("\n".join(CeylonIterable(m.imports)
+                            .filter(isForDartBackend)
+                            .map(ModuleImport.\imodule)
+                            .map((m) => m.nameAsString + " " + m.version)));
+                    }
+
+                    // persist
+                    outputRepositoryManager.putArtifact(
+                            modelArtifact, javaFile(modelFile));
+
+                    // and hash
+                    ShaSigner.signArtifact(outputRepositoryManager, modelArtifact,
+                            javaFile(modelFile), null);
+
+                    // the source artifact (*must* have this for language module)
                     value sac = CeylonUtils.makeSourceArtifactCreator(
                             outputRepositoryManager,
                             JavaIterable(sourceDirectories),
