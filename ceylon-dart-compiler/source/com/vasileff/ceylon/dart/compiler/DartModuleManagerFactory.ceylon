@@ -19,7 +19,6 @@ class DartModuleManagerFactory() satisfies ModuleManagerFactory {
 
     shared actual
     ModuleSourceMapper createModuleManagerUtil
-            (Context? context, ModuleManager? moduleManager)
-        =>  ModuleSourceMapper(context, moduleManager);
-
+            (Context context, ModuleManager moduleManager)
+        =>  DartModuleSourceMapper(context, moduleManager);
 }

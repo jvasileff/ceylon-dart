@@ -2,12 +2,14 @@ import ceylon.interop.java {
     javaString
 }
 
+import com.redhat.ceylon.common {
+    Backends
+}
 import com.redhat.ceylon.model.typechecker.model {
     Modules,
     Package,
     Module,
-    ModuleImport,
-    Unit
+    ModuleImport
 }
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
@@ -20,9 +22,6 @@ import java.util {
     Collections,
     Arrays,
     JList=List
-}
-import com.redhat.ceylon.common {
-    Constants
 }
 
 class DartModuleManager() extends ModuleManager() {
@@ -72,14 +71,6 @@ class DartModuleManager() extends ModuleManager() {
 		mod.name = moduleName;
 		mod.version = version;
 
-        value unit = Unit();
-        unit.filename = Constants.\iMODULE_DESCRIPTOR;
-
-        // FIXME *highly* dubious! Copied from JsModuleManager. Why do we trust toString?
-        unit.fullPath = moduleName.string + "/" + version;
-
-        mod.unit = unit;
-
         // if not creating the language module or the default module, add an implicit
         // import for the language module
         if (!(mod.nameAsString == Module.\iDEFAULT_MODULE_NAME
@@ -97,4 +88,8 @@ class DartModuleManager() extends ModuleManager() {
         }
         return mod;
     }
+
+    shared actual
+    Backends supportedBackends
+        =>  dartBackend.asSet();
 }
