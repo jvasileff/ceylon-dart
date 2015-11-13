@@ -282,6 +282,18 @@ class BaseGenerator(CompilationContext ctx)
         return null;
     }
 
+    [TypeModel, String, TypeModel]?(DeclarationModel)
+    nativeUnaryOptimization = (() {
+        return ImmutableMap {
+            ceylonTypes.integerDeclaration.getMember("negated", null, false)
+                -> [ceylonTypes.integerType, "-",
+                    ceylonTypes.integerType],
+            ceylonTypes.floatDeclaration.getMember("negated", null, false)
+                -> [ceylonTypes.floatType, "-",
+                    ceylonTypes.floatType]
+        }.get;
+    })();
+
     shared
     DartInstanceCreationExpression createCallable(
             DScope scope,
@@ -768,6 +780,40 @@ class BaseGenerator(CompilationContext ctx)
                             memberDeclaration.firstParameterList;
                             a;
                         };
+            }
+            else if (exists optimization
+                    =   nativeUnaryOptimization(memberDeclaration)) {
+
+                assert (!is SetterModel memberDeclaration);
+
+                value [type, operand, leftOperandType]
+                    =   optimization;
+
+                dartReceiverType
+                    =   dartTypes.dartTypeName {
+                            scope;
+                            leftOperandType;
+                            eraseToNative = true;
+                        };
+
+                optimizedNativeRhsType
+                    =   type;
+
+                dartReceiver
+                    =   withLhsNative {
+                            leftOperandType;
+                            generateReceiver;
+                        };
+
+                dartFunctionOrValue
+                    =   DartInvocable {
+                            DartSimpleIdentifier(operand);
+                            dartPrefixOperator;
+                            false;
+                        };
+
+                argsSetupAndExpressions
+                    =   [[], []];
             }
             else {
                 // Determine usable receiver type. Computing `dartReceiver` with
