@@ -1167,13 +1167,19 @@ const $package$runtime = runtime;
 
 // system
 
+final $dart$core.Stopwatch $helper$stopwatch = (() {
+    var sw = new $dart$core.Stopwatch();
+    sw.start();
+    return sw;
+})();
+
 class system_ {
 const system_.$value$();
   $dart$core.int get milliseconds
       =>  new $dart$core.DateTime.now().millisecondsSinceEpoch;
 
   $dart$core.int get nanoseconds
-      =>  new $dart$core.DateTime.now().millisecondsSinceEpoch * 1000000;
+      =>  $helper$stopwatch.elapsedMicroseconds * 1000;
 
   $dart$core.String toString()
       =>  "Dart";
