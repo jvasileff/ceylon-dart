@@ -12,6 +12,10 @@ import ceylon.interop.java {
     createJavaObjectArray,
     createJavaStringArray
 }
+import ceylon.json {
+    JsonObject=Object,
+    parse
+}
 import ceylon.process {
     createProcess,
     currentOutput,
@@ -97,20 +101,30 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
             =   assertedCeylonFile(repositoryManager.getArtifact(ArtifactContext(
                         moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)));
 
+        // There *has* to be a better way to parse a file!
+        value parsedJson = parse("".join(lines(programModuleModelFile)));
+
+        // TODO better error reporting
+        "Invalid json found in model file"
+        assert(is JsonObject parsedJson);
+
+        value namesAndVersions
+            =   parsedJson.getArray("$mod-deps").strings.map((dep)
+                =>  dep.split('/'.equals));
+
         // TODO transitive dependencies, better error handling
         value importedModules
-            =   lines(programModuleModelFile).map((line)
-                =>  line.split(' '.equals)).map((pair) {
-                        if (exists name = pair.getFromFirst(0),
-                            exists version = pair.getFromFirst(1)) {
-                            return name ->
-                                repositoryManager.getArtifact(ArtifactContext(
-                                        name, version, ArtifactContext.\iDART));
-                        }
-                        else {
-                            return null;
-                        }
-                    }).coalesced;
+            =   namesAndVersions.map((pair) {
+                    if (exists name = pair.getFromFirst(0),
+                        exists version = pair.getFromFirst(1)) {
+                        return name ->
+                            repositoryManager.getArtifact(ArtifactContext(
+                                    name, version, ArtifactContext.\iDART));
+                    }
+                    else {
+                        return null;
+                    }
+                }).coalesced;
 
         // use *our* version as the language module version!
         value version = `module`.version;

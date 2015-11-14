@@ -20,6 +20,14 @@ import ceylon.interop.java {
     javaClass,
     JavaIterable
 }
+import ceylon.json {
+    JsonObject=Object,
+    Array,
+    ObjectValue
+}
+import ceylon.language.meta {
+    type
+}
 
 import com.redhat.ceylon.cmr.api {
     RepositoryManager,
@@ -33,6 +41,9 @@ import com.redhat.ceylon.cmr.impl {
 }
 import com.redhat.ceylon.common {
     FileUtil
+}
+import com.redhat.ceylon.compiler.js.loader {
+    MetamodelVisitor
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -89,18 +100,29 @@ import com.vasileff.jl4c.guava.collect {
 
 import java.io {
     JFile=File,
-    JPrintWriter=PrintWriter
+    JPrintWriter=PrintWriter,
+    JWriter=Writer
 }
 import java.lang {
     System,
-    Runnable
+    Runnable,
+    CharArray,
+    JString=String,
+    JBoolean=Boolean,
+    JFloat=Float,
+    JDouble=Double,
+    JInteger=Integer,
+    JLong=Long
 }
 import java.nio.file {
     JFiles=Files
 }
 import java.util {
-    EnumSet
+    EnumSet,
+    JMap=Map,
+    JList=List
 }
+
 
 shared
 [[DartCompilationUnit*], CompilationStatus] compileDart(
@@ -250,6 +272,9 @@ shared
     value moduleSources
         =   LinkedListMultimap<ModuleModel, JFile>();
 
+    value metamodelVisitors
+        =   HashMap<ModuleModel, MetamodelVisitor>();
+
     t3 = system.nanoseconds;
 
     for (phasedUnit in phasedUnits) {
@@ -283,14 +308,27 @@ shared
 
         if (is CompilationUnit unit) {
             // ignore packages and modules for now
+
+            value m = phasedUnit.\ipackage.\imodule;
+
             LinkedList<DartCompilationUnitMember> declarations;
-            if (exists d = moduleMembers.get(phasedUnit.\ipackage.\imodule)) {
+            if (exists d = moduleMembers.get(m)) {
                 declarations = d;
             }
             else {
                 declarations = LinkedList<DartCompilationUnitMember>();
-                moduleMembers.put(phasedUnit.\ipackage.\imodule, declarations);
+                moduleMembers.put(m, declarations);
             }
+
+            MetamodelVisitor metamodelVisitor;
+            if (exists v = metamodelVisitors.get(m)) {
+                metamodelVisitor = v;
+            }
+            else {
+                metamodelVisitor = MetamodelVisitor(m);
+                metamodelVisitors.put(m, metamodelVisitor);
+            }
+            phasedUnit.compilationUnit.visit(metamodelVisitor);
 
             try {
                 computeCaptures(unit, ctx);
@@ -424,12 +462,10 @@ shared
 
                     modelArtifact.forceOperation = true; // what does this do?
 
-                    // write to the model file
+                    // persist the json model
                     try (appender = modelFile.Appender("utf-8")) {
-                        appender.write("\n".join(CeylonIterable(m.imports)
-                            .filter(isForDartBackend)
-                            .map(ModuleImport.\imodule)
-                            .map((m) => m.nameAsString + " " + m.version)));
+                        assert (exists metamodelVisitor = metamodelVisitors.get(m));
+                        encodeModel(metamodelVisitor.model, appender);
                     }
 
                     // persist
@@ -508,13 +544,63 @@ class TemporaryFile(
     shared File file = f;
 
     shared actual void destroy(Throwable? error) {
-        try {
-            f.delete();
+        f.delete();
+    }
+}
+
+JWriter javaWriter(File.Appender appender) => object
+        extends JWriter() {
+
+    close() => appender.close();
+
+    flush() => appender.flush();
+
+    write(CharArray charArray, Integer offset, Integer length)
+        // What's the best way to do this?
+        =>  appender.write(JString(charArray, offset, length).string);
+};
+
+void encodeModel(JMap<JString, Object> model, File.Appender appender) {
+    ObjectValue? javaToJson(Anything javaObject) {
+        switch (javaObject)
+        case (is JString) {
+            return javaObject.string;
         }
-        finally {
-            if (exists error) {
-                throw error;
-            }
+        case (is JBoolean) {
+            return javaObject.booleanValue();
         }
+        case (is JLong) {
+            return javaObject.longValue();
+        }
+        case (is JDouble) {
+            return javaObject.doubleValue();
+        }
+        case (is JInteger) {
+            return javaObject.longValue();
+        }
+        case (is JFloat) {
+            return javaObject.doubleValue();
+        }
+        case (is Null) {
+            return javaObject;
+        }
+        else if (is JMap<out Anything, out Anything> javaObject) {
+            return JsonObject {
+                CeylonIterable {
+                    javaObject.entrySet();
+                }.collect((entry)
+                    =>  (entry.key?.string else "<null>") -> javaToJson(entry.\ivalue));
+            };
+        }
+        else if (is JList<out Anything> javaObject) {
+            return Array {
+                CeylonIterable(javaObject).collect(javaToJson);
+            };
+        }
+        throw AssertionError("Unsupported type for json: ``type(javaObject)``");
+    }
+
+    if (exists s = javaToJson(model)?.string) {
+        appender.write(s);
     }
 }
