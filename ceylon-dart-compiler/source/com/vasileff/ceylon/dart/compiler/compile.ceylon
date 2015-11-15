@@ -18,7 +18,8 @@ import ceylon.file {
 import ceylon.interop.java {
     CeylonIterable,
     javaClass,
-    JavaIterable
+    JavaIterable,
+    javaString
 }
 import ceylon.json {
     JsonObject=Object,
@@ -129,6 +130,7 @@ shared
         virtualFiles = [],
         sourceDirectories = [],
         sourceFiles = [],
+        moduleFilters = [],
         repositoryManager = null,
         outputRepositoryManager = null,
         standardOutWriter = JPrintWriter(System.\iout),
@@ -145,6 +147,9 @@ shared
     {VirtualFile*} virtualFiles;
     {JFile*} sourceFiles; // for typechecker
     {JFile*} sourceDirectories; // for typechecker
+
+    "A list of modules to compile, or the empty list to compile all modules."
+    {String*} moduleFilters;
 
     RepositoryManager? repositoryManager;
     RepositoryManager? outputRepositoryManager;
@@ -228,6 +233,9 @@ shared
     virtualFiles.each((f) => builder.addSrcDirectory(f));
     sourceDirectories.each((f) => builder.addSrcDirectory(f));
     builder.setSourceFiles(javaList(sourceFiles));
+    if (!moduleFilters.empty) {
+        builder.setModuleFilters(javaList(moduleFilters.map(javaString)));
+    }
     builder.setRepositoryManager(repositoryManager);
     builder.moduleManagerFactory(DartModuleManagerFactory());
 

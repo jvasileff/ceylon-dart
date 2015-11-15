@@ -128,13 +128,15 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     CompilationStatus doRun() {
         value sourceDirectories = DefaultToolOptions.compilerSourceDirs;
         value resources = DefaultToolOptions.compilerResourceDirs;
-        value resolver = SourceArgumentsResolver(sourceDirectories, resources, ".ceylon");
+        value resolver = SourceArgumentsResolver(
+                sourceDirectories, resources, ".ceylon", ".dart");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
 
         return compileDart {
             sourceDirectories = CeylonList(sourceDirectories);
             sourceFiles = CeylonList(resolver.sourceFiles);
+            moduleFilters = CeylonIterable(resolver.sourceModules).collect(Object.string);
             repositoryManager = repositoryManager;
             outputRepositoryManager = outputRepositoryManager;
             suppressWarning = CeylonIterable(suppressWarning);
