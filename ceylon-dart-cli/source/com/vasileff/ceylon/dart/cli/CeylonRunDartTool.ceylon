@@ -25,7 +25,8 @@ import ceylon.process {
 
 import com.redhat.ceylon.cmr.api {
     ArtifactContext,
-    ModuleQuery
+    ModuleQuery,
+    RepositoryManager
 }
 import com.redhat.ceylon.cmr.ceylon {
     RepoUsingTool
@@ -40,10 +41,10 @@ import com.redhat.ceylon.common.tool {
 import com.redhat.ceylon.common.tools {
     CeylonTool
 }
-
-import java.io {
-    JFile=File
+import com.vasileff.ceylon.dart.compiler {
+    ReportableException
 }
+
 import java.lang {
     ObjectArray
 }
@@ -75,97 +76,121 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
     shared actual
     suppressWarnings("expressionTypeNothing")
     void run() {
-        value dartPath = findDartInPath(process.environmentVariableValue("PATH"));
-        if (!exists dartPath) {
-            process.writeErrorLine("Error: cannot find dart executable in path.");
+        try {
+            value exitCode = doRun();
+            process.exit(exitCode);
         }
-        assert (exists dartPath);
+        catch (ReportableException e) {
+            throw object extends ToolError(e.message, e.cause) {};
+        }
+    }
 
-        // TODO handle default modules
-        suppressWarnings("unusedDeclaration")
-        value moduleIsDefault = ModuleUtil.isDefaultModule(moduleString);
-        String moduleName = ModuleUtil.moduleName(moduleString);
-        String? moduleVersion = checkModuleVersionsOrShowSuggestions(
-                repositoryManager,
-                moduleName,
-                ModuleUtil.moduleVersion(moduleString),
-                ModuleQuery.Type.\iDART,
-                null, null);
+    function moduleFile(String moduleName, String? moduleVersion) {
+        if (exists file = ceylonFile(repositoryManager.getArtifact(ArtifactContext(
+                        moduleName, moduleVersion, ArtifactContext.\iDART)))) {
+            return file;
+        }
+        throw ReportableException("Cannot find module: \
+                 ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
+    }
 
-        // collect required artifacts, generate temporary dart package root
-        value programModuleFile
-            =   repositoryManager.getArtifact(ArtifactContext(
-                        moduleName, moduleVersion, ArtifactContext.\iDART));
+    function moduleModelFile(String moduleName, String? moduleVersion) {
+        if (exists file = ceylonFile(repositoryManager.getArtifact(ArtifactContext(
+                        moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)))) {
+            return file;
+        }
+        throw ReportableException("Cannot find model metadata for module: \
+                 ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
+    }
 
-        value programModuleModelFile
-            =   assertedCeylonFile(repositoryManager.getArtifact(ArtifactContext(
-                        moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)));
+    function moduleModel(String moduleName, String? moduleVersion) {
+        value modelFile = moduleModelFile(moduleName, moduleVersion);
 
         // There *has* to be a better way to parse a file!
-        value parsedJson = parse("".join(lines(programModuleModelFile)));
+        value parsedJson = parse("".join(lines(modelFile)));
 
-        // TODO better error reporting
-        "Invalid json found in model file"
-        assert(is JsonObject parsedJson);
+        if (!is JsonObject parsedJson) {
+            throw ReportableException(
+                    "Unable to parse json model metadata for module: \
+                     ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
+        }
+        return parsedJson;
+    }
+
+    Integer doRun() {
+        value dartPath = findDartInPath(process.environmentVariableValue("PATH"));
+        if (!exists dartPath) {
+            throw ReportableException("Cannot find dart executable in path.");
+        }
+
+        // Make sure the language module has been installed
+        // Although, the program may actually import some other version...
+        verifyLanguageModuleAvailability(repositoryManager);
+
+        // TODO support default modules
+        if (ModuleUtil.isDefaultModule(moduleString)) {
+            throw ReportableException(
+                    "Default modules not yet supported: ``moduleString``");
+        }
+
+        value moduleName
+            =   ModuleUtil.moduleName(moduleString);
+
+        value moduleVersion
+            =   checkModuleVersionsOrShowSuggestions(
+                    repositoryManager,
+                    moduleName,
+                    ModuleUtil.moduleVersion(moduleString),
+                    ModuleQuery.Type.\iDART,
+                    null, null) else null;
+
+        value parsedJson
+            =   moduleModel(moduleName, moduleVersion);
 
         value namesAndVersions
             =   parsedJson.getArray("$mod-deps").strings.map((dep)
-                =>  dep.split('/'.equals));
+                =>  [ModuleUtil.moduleName(dep),
+                     ModuleUtil.moduleVersion(dep) else ""]);
 
-        // TODO transitive dependencies, better error handling
+        // TODO transitive dependencies
         value importedModules
             =   namesAndVersions.map((pair) {
                     if (exists name = pair.getFromFirst(0),
                         exists version = pair.getFromFirst(1)) {
-                        return name ->
-                            repositoryManager.getArtifact(ArtifactContext(
-                                    name, version, ArtifactContext.\iDART));
+                        return name -> moduleFile(name, version);
                     }
                     else {
                         return null;
                     }
                 }).coalesced;
 
-        // use *our* version as the language module version!
-        value version = `module`.version;
+        value [packageRootPath, moduleMap]
+            =   createTemporaryPackageRoot {
+                    moduleName -> moduleFile(moduleName, moduleVersion),
+                    *importedModules
+                };
 
-        value languageModuleFile = repositoryManager.getArtifact(
-            ArtifactContext("ceylon.language", version, ArtifactContext.\iDART))
-            else null;
+        assert (exists programModuleSymlink
+            =   moduleMap[moduleName]?.string);
 
-        if (!exists languageModuleFile) {
-            print("The Ceylon/Dart language module version ``version`` was not found.
-                   Try installing with:
+        value p
+            =   createProcess {
+                    command = dartPath.name;
+                    arguments = [
+                        "--package-root=" + packageRootPath.string,
+                        programModuleSymlink];
+                    path = dartPath.directory.path;
+                    input = currentInput;
+                    output = currentOutput;
+                    error = currentError;
+                };
 
-                       ceylon install-dart --out ~/.ceylon/repo");
-            process.exit(1);
-            return;
-        }
-
-        // TODO use *our* version, or the one specified by the module?
-        value [packageRootPath, moduleMap] = createTemporaryPackageRoot(
-            [moduleName -> programModuleFile,
-                *importedModules]);
-             //"ceylon.language" -> languageModuleFile]);
-
-        assert (exists programModuleSymlink = moduleMap[moduleName]?.string);
-
-        value p = createProcess {
-            command = dartPath.name;
-            arguments = [
-                "--package-root=" + packageRootPath.string,
-                programModuleSymlink];
-            path = dartPath.directory.path;
-            input = currentInput;
-            output = currentOutput;
-            error = currentError;
-        };
         p.waitForExit();
-        process.exit(p.exitCode else 0);
+        return p.exitCode else 0;
     }
 }
 
-[JPath, Map<String, JPath>] createTemporaryPackageRoot({<String->JFile>*} modules) {
+[JPath, Map<String, JPath>] createTemporaryPackageRoot({<String->File>*} modules) {
     value moduleToLinkMap = HashMap<String, JPath>();
 
     // create temporary Dart package root directory
@@ -173,7 +198,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
     packageRootPath.toFile().deleteOnExit();
 
     // populate with modules
-    for (name->jFile in modules) {
+    for (name->file in modules) {
         variable JPath symLinkPath = packageRootPath;
 
         value nameParts = name.split('.'.equals);
@@ -187,7 +212,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
             } catch (FileAlreadyExistsException e) {}
         }
         symLinkPath = symLinkPath.resolve(nameParts.last + ".dart");
-        JFiles.createSymbolicLink(symLinkPath, jFile.toPath());
+        JFiles.createSymbolicLink(symLinkPath, javaPath(file));
         symLinkPath.toFile().deleteOnExit();
         moduleToLinkMap.put(name, symLinkPath);
     }
@@ -195,11 +220,9 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 }
 
 File? findDartInPath(String? path) {
-    // TODO don't assume single character separator, I guess.
     assert (exists sep = operatingSystem.pathSeparator.first);
 
-    // TODO handle Links
-    // TODO windows name (dart.exe?)
+    // TODO handle Links, support windows (dart.exe?)
     return path?.split(sep.equals)
             ?.map(parsePath)
             ?.map(Path.resource)
@@ -209,10 +232,6 @@ File? findDartInPath(String? path) {
             ?.first;
 }
 
-shared
-class CeylonRunDartToolError(String message) extends ToolError(message) {}
-
-// TODO use resource file
 object resourceBundle extends ListResourceBundle() {
     shared actual ObjectArray<ObjectArray<Object>> contents
         =>  createJavaObjectArray([
@@ -224,4 +243,20 @@ object resourceBundle extends ListResourceBundle() {
                 ["compiling", "Source found for module {0}, compiling..."],
                 ["compilation.failed", "Failed to compile sources"]
             ].map((e) => createJavaStringArray(e)));
+}
+
+void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
+    value version = `module`.version;
+
+    value languageModuleFile = repositoryManager.getArtifact(
+        ArtifactContext("ceylon.language", version, ArtifactContext.\iDART))
+        else null;
+
+    if (!exists languageModuleFile) {
+        throw ReportableException(
+              "The Ceylon/Dart language module version ``version`` was not found.
+               Try installing with:
+
+                   ceylon install-dart --out ~/.ceylon/repo");
+    }
 }
