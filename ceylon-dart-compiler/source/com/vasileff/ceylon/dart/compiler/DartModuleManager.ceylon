@@ -5,6 +5,10 @@ import ceylon.interop.java {
 import com.redhat.ceylon.common {
     Backends
 }
+import com.redhat.ceylon.compiler.js.loader {
+    JsonModule,
+    JsonPackage
+}
 import com.redhat.ceylon.model.typechecker.model {
     Modules,
     Package,
@@ -14,9 +18,13 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
 }
+import com.vasileff.jl4c.guava.collect {
+    javaList
+}
 
 import java.lang {
-    JString=String
+    JString=String,
+    Iterable
 }
 import java.util {
     Collections,
@@ -25,6 +33,15 @@ import java.util {
 }
 
 class DartModuleManager() extends ModuleManager() {
+
+    shared actual
+    Iterable<JString> searchedArtifactExtensions
+        // This is crazy. We should be using ArtifactContext.\iDART_MODEL, but
+        // ModuleValidator processes the elements with `getArtifactSuffixes()`, which
+        // prepends a '.'. So we can't search for our model file; its prefix doesn't
+        // begin with a dot. Further hackery for this in
+        // DartModuleSourceMapper.resolveModule().
+        =   javaList { javaString("dart") };
 
     shared actual
     void initCoreModules(variable Modules initialModules) {
@@ -40,17 +57,6 @@ class DartModuleManager() extends ModuleManager() {
             //build empty package
             Package emptyPackage = createPackage("", null);
 
-            // build default module (module in which packages belong to when not
-            // explicitly under a module)
-            value defaultModuleName = Collections.singletonList(
-                    javaString(Module.\iDEFAULT_MODULE_NAME));
-            value defaultModule = createModule(defaultModuleName, "unversioned");
-            defaultModule.default = true;
-            defaultModule.available = true;
-            bindPackageToModule(emptyPackage, defaultModule);
-            modules.listOfModules.add(defaultModule);
-            modules.defaultModule = defaultModule;
-
             // create language module and add it as a dependency of defaultModule
             // since packages outside a module cannot declare dependencies
             value languageName = Arrays.asList(
@@ -60,22 +66,28 @@ class DartModuleManager() extends ModuleManager() {
             languageModule.available = false;
             modules.languageModule = languageModule;
             modules.listOfModules.add(languageModule);
-            defaultModule.addImport(ModuleImport(languageModule, false, false));
-            defaultModule.languageModule = languageModule;
+
+            // build default module (module in which packages belong to when not
+            // explicitly under a module)
+            value defaultModuleName = Collections.singletonList(
+                    javaString(Module.\iDEFAULT_MODULE_NAME));
+            value defaultModule = createModule(defaultModuleName, "unversioned");
+            defaultModule.default = true;
+            defaultModule.available = true;
+            bindPackageToModule(emptyPackage, defaultModule);
+            modules.defaultModule = defaultModule;
+            modules.listOfModules.add(defaultModule);
         }
     }
 
     shared actual
-    Module createModule(variable JList<JString> moduleName, variable String version) {
-		Module mod = Module();
-		mod.name = moduleName;
-		mod.version = version;
+    JsonModule createModule(JList<JString> moduleName, String version) {
+		JsonModule m = JsonModule();
+		m.name = moduleName;
+		m.version = version;
 
-        // if not creating the language module or the default module, add an implicit
-        // import for the language module
-        if (!(mod.nameAsString == Module.\iDEFAULT_MODULE_NAME
-                || mod.nameAsString == Module.\iLANGUAGE_MODULE_NAME)) {
-
+        // Add an implicit import for the language module
+        if (!m.nameAsString == Module.\iLANGUAGE_MODULE_NAME) {
             value languageModule
                 =   findLoadedModule(Module.\iLANGUAGE_MODULE_NAME, null)
                     else modules.languageModule;
@@ -83,10 +95,30 @@ class DartModuleManager() extends ModuleManager() {
             value moduleImport
                 =   ModuleImport(languageModule, false, false);
 
-            mod.addImport(moduleImport);
-            mod.languageModule = languageModule;
+            m.addImport(moduleImport);
+            m.languageModule = languageModule;
         }
-        return mod;
+        return m;
+    }
+
+    shared actual
+    JsonPackage createPackage(String packageName, Module? m) {
+        if (exists m) {
+            if (exists p = m.getPackage(packageName)) {
+                "The package should be a JsonPackage, right?"
+                assert (is JsonPackage p);
+                return p;
+            }
+        }
+
+        value p = JsonPackage(packageName);
+
+        if (exists m) {
+            m.packages.add(p);
+            p.\imodule = m;
+        }
+
+        return p;
     }
 
     shared actual

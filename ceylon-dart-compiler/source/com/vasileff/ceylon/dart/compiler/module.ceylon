@@ -12,6 +12,8 @@ module com.vasileff.ceylon.dart.compiler "1.2.0-DP1-SNAPSHOT" {
     import com.vasileff.jl4c.guava "0.0.1";
     import com.redhat.ceylon.model "1.2.0";
     import com.redhat.ceylon.compiler.js "1.2.0";
+    import "net.minidev.json-smart" "1.1.1";
+
     shared import java.base "7";
     shared import ceylon.ast.core "1.2.0";
     shared import com.redhat.ceylon.typechecker "1.2.0";
