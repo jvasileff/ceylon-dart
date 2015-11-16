@@ -15,6 +15,7 @@ module com.vasileff.ceylon.dart.compiler "1.2.0-DP1-SNAPSHOT" {
     import "net.minidev.json-smart" "1.1.1";
 
     shared import java.base "7";
+    shared import ceylon.file "1.2.0";
     shared import ceylon.ast.core "1.2.0";
     shared import com.redhat.ceylon.typechecker "1.2.0";
     shared import "com.redhat.ceylon.module-resolver" "1.2.0";

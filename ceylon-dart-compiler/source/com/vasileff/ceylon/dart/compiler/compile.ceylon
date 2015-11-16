@@ -535,8 +535,10 @@ class CompilationStatus
     shared new errorDartBackend {}
 }
 
-JFile javaFile(File file)
-    =>  JFile(file.path.string);
+JFile javaFile(File | JFile file)
+    =>  if (is JFile file)
+        then file
+        else JFile(file.path.string);
 
 class TemporaryFile(
         String? prefix = null, String? suffix = null,

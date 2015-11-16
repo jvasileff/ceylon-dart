@@ -29,7 +29,8 @@ import com.redhat.ceylon.model.typechecker.util {
 }
 
 import java.io {
-    FileInputStream
+    JFileInputStream=FileInputStream,
+    JFile=File
 }
 import java.lang {
     JString=String
@@ -42,6 +43,9 @@ import java.util {
 
 import net.minidev.json {
     JSONValue
+}
+import ceylon.file {
+    File
 }
 
 object reflection {
@@ -155,13 +159,19 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
             =   modelAcResult.artifact();
 
         "Unable to parse the model."
-        assert (is JMap<out Anything, out Anything> jsonObject
-            =   JSONValue.parse(FileInputStream(modelFile)));
-
-        value model
-            =   TypeHoles.unsafeCast<JMap<JString, Object>>(jsonObject);
+        assert (exists model
+            =   parseJsonModel(modelFile));
 
         loadModuleFromMap(model, m, dependencyTree, phasedUnitsOfDependencies,
                 forCompiledModule);
     }
+}
+
+shared
+JMap<JString, Object>? parseJsonModel(JFile | File file) {
+    value jsonObject = JSONValue.parse(JFileInputStream(javaFile(file)));
+    if (is JMap<out Anything, out Anything> jsonObject) {
+        return TypeHoles.unsafeCast<JMap<JString, Object>>(jsonObject);
+    }
+    return null;
 }

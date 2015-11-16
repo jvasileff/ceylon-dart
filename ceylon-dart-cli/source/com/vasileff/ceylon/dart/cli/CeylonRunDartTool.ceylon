@@ -1,20 +1,19 @@
 import ceylon.collection {
-    HashMap
+    HashMap,
+    MutableSet,
+    HashSet
 }
 import ceylon.file {
     parsePath,
     Path,
     Directory,
-    File,
-    lines
+    File
 }
 import ceylon.interop.java {
     createJavaObjectArray,
-    createJavaStringArray
-}
-import ceylon.json {
-    JsonObject=Object,
-    parse
+    createJavaStringArray,
+    javaString,
+    CeylonIterable
 }
 import ceylon.process {
     createProcess,
@@ -42,11 +41,13 @@ import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.vasileff.ceylon.dart.compiler {
-    ReportableException
+    ReportableException,
+    parseJsonModel
 }
 
 import java.lang {
-    ObjectArray
+    ObjectArray,
+    JString=String
 }
 import java.nio.file {
     JFiles=Files,
@@ -54,7 +55,9 @@ import java.nio.file {
     FileAlreadyExistsException
 }
 import java.util {
-    ListResourceBundle
+    ListResourceBundle,
+    JMap=Map,
+    JList=List
 }
 
 shared
@@ -106,15 +109,62 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
     function moduleModel(String moduleName, String? moduleVersion) {
         value modelFile = moduleModelFile(moduleName, moduleVersion);
 
-        // There *has* to be a better way to parse a file!
-        value parsedJson = parse("".join(lines(modelFile)));
+        value parsedJson = parseJsonModel(modelFile);
 
-        if (!is JsonObject parsedJson) {
+        if (!exists parsedJson) {
             throw ReportableException(
                     "Unable to parse json model metadata for module: \
                      ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
         }
         return parsedJson;
+    }
+
+    function dependencyNamesFromJson(JMap<JString,Object> model) {
+        assert (is JList<out Anything>? dependencies
+            =   model.get(javaString("$mod-deps")));
+
+        "We'll always have dependencies; at least the language module."
+        assert (exists dependencies);
+
+        return
+        CeylonIterable(dependencies).collect((dependency) {
+            assert (is JString | JMap<out Anything, out Anything> dependency);
+
+            switch (dependency)
+            case (is JMap<out Anything, out Anything>) {
+                assert (is JString path = dependency.get(javaString("path")));
+                return path.string;
+            }
+            case (is JString) {
+                return dependency.string;
+            }
+        });
+    }
+
+    // TODO check versions for conflicts (including non-shared)
+    MutableSet<[String,String]> gatherDependencies(
+            String moduleName,
+            String moduleVersion,
+            MutableSet<[String,String]> dependencies
+                =   HashSet<[String, String]>()) {
+
+        value pair = [moduleName, moduleVersion];
+        value alreadyThere = !dependencies.add(pair);
+
+        if (alreadyThere) {
+            return dependencies;
+        }
+
+        value parsedJson = moduleModel(moduleName, moduleVersion);
+
+        dependencyNamesFromJson(parsedJson).each((dep)
+            =>  gatherDependencies {
+                    ModuleUtil.moduleName(dep);
+                    ModuleUtil.moduleVersion(dep) else "";
+                    dependencies;
+                });
+
+        return dependencies;
     }
 
     Integer doRun() {
@@ -142,33 +192,18 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
                     moduleName,
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,
-                    null, null) else null;
+                    null, null) else "";
 
-        value parsedJson
-            =   moduleModel(moduleName, moduleVersion);
+        value dependencies
+            =   gatherDependencies(moduleName, moduleVersion);
 
-        value namesAndVersions
-            =   parsedJson.getArray("$mod-deps").strings.map((dep)
-                =>  [ModuleUtil.moduleName(dep),
-                     ModuleUtil.moduleVersion(dep) else ""]);
-
-        // TODO transitive dependencies
-        value importedModules
-            =   namesAndVersions.map((pair) {
-                    if (exists name = pair.getFromFirst(0),
-                        exists version = pair.getFromFirst(1)) {
-                        return name -> moduleFile(name, version);
-                    }
-                    else {
-                        return null;
-                    }
-                }).coalesced;
+        value dependencyFiles
+            =   dependencies.map((pair)
+                =>  let ([name, version] = pair)
+                    name -> moduleFile(name, version));
 
         value [packageRootPath, moduleMap]
-            =   createTemporaryPackageRoot {
-                    moduleName -> moduleFile(moduleName, moduleVersion),
-                    *importedModules
-                };
+            =   createTemporaryPackageRoot(dependencyFiles);
 
         assert (exists programModuleSymlink
             =   moduleMap[moduleName]?.string);
