@@ -124,6 +124,7 @@ import java.util {
     JList=List
 }
 
+// TODO produce error on import of modules with conflicting versions, even if non-shared.
 
 shared
 [[DartCompilationUnit*], CompilationStatus] compileDart(

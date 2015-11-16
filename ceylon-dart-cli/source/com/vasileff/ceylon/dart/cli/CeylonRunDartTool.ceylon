@@ -1,7 +1,6 @@
 import ceylon.collection {
     HashMap,
-    MutableSet,
-    HashSet
+    MutableMap
 }
 import ceylon.file {
     parsePath,
@@ -93,7 +92,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
                         moduleName, moduleVersion, ArtifactContext.\iDART)))) {
             return file;
         }
-        throw ReportableException("Cannot find module: \
+        throw ReportableException("Cannot find module \
                  ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
     }
 
@@ -102,7 +101,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
                         moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)))) {
             return file;
         }
-        throw ReportableException("Cannot find model metadata for module: \
+        throw ReportableException("Cannot find model metadata for module \
                  ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
     }
 
@@ -113,7 +112,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 
         if (!exists parsedJson) {
             throw ReportableException(
-                    "Unable to parse json model metadata for module: \
+                    "Unable to parse json model metadata for module \
                      ``ModuleUtil.makeModuleName(moduleName, moduleVersion)``");
         }
         return parsedJson;
@@ -141,19 +140,24 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
         });
     }
 
-    // TODO check versions for conflicts (including non-shared)
-    MutableSet<[String,String]> gatherDependencies(
+    MutableMap<String,String> gatherDependencies(
             String moduleName,
             String moduleVersion,
-            MutableSet<[String,String]> dependencies
-                =   HashSet<[String, String]>()) {
+            MutableMap<String,String> dependencies
+                =   HashMap<String, String>()) {
 
-        value pair = [moduleName, moduleVersion];
-        value alreadyThere = !dependencies.add(pair);
-
-        if (alreadyThere) {
+        value previousVersion = dependencies[moduleName];
+        if (exists previousVersion) {
+            if (moduleVersion != previousVersion) {
+                throw ReportableException(
+                    "Two versions of the same module cannot be imported. Module \
+                     ``ModuleUtil.makeModuleName(moduleName, moduleVersion)`` conflicts \
+                     with ``ModuleUtil.makeModuleName(moduleName, previousVersion)``");
+            }
             return dependencies;
         }
+
+        dependencies.put(moduleName, moduleVersion);
 
         value parsedJson = moduleModel(moduleName, moduleVersion);
 
@@ -199,7 +203,7 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
 
         value dependencyFiles
             =   dependencies.map((pair)
-                =>  let ([name, version] = pair)
+                =>  let (name -> version = pair)
                     name -> moduleFile(name, version));
 
         value [packageRootPath, moduleMap]
