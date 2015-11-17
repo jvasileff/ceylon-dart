@@ -16,11 +16,17 @@ import com.redhat.ceylon.cmr.ceylon {
 import com.redhat.ceylon.common {
     ModuleUtil
 }
+import com.redhat.ceylon.common.tool {
+    ToolError
+}
 import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.redhat.ceylon.model.cmr {
     ArtifactResult
+}
+import com.vasileff.ceylon.dart.compiler {
+    ReportableException
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -46,7 +52,18 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     void initialize(CeylonTool? ceylonTool) {}
 
     shared actual
+    suppressWarnings("expressionTypeNothing")
     void run() {
+        try {
+            doRun();
+            process.exit(0);
+        }
+        catch (ReportableException e) {
+            throw object extends ToolError(e.message, e.cause) {};
+        }
+    }
+
+    void doRun() {
         value unzipRootPath = JFiles.createTempDirectory("install-dart");
         unzipRootPath.toFile().deleteOnExit();
 
@@ -82,7 +99,10 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         // configure the artifact context for the language module including source
         value languageModuleAC
             =   ArtifactContext("ceylon.language", moduleVersion,
-                    ArtifactContext.\iDART, ArtifactContext.\iSRC);
+                    ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART,
+                    ArtifactContext.\iSRC);
+
+        languageModuleAC.forceOperation = true;
 
         languageModuleAC.ignoreDependencies = true;
 

@@ -18,7 +18,8 @@ import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
     option=option__SETTER,
     description=description__SETTER,
-    optionArgument=optionArgument__SETTER
+    optionArgument=optionArgument__SETTER,
+    ToolError
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool,
@@ -32,15 +33,15 @@ import com.vasileff.ceylon.dart.compiler {
     CompilerBug,
     dartBackend,
     compileDart,
-    CompilationStatus
+    CompilationStatus,
+    ReportableException
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
 }
 
 import java.lang {
-    JString=String,
-    System
+    JString=String
 }
 import java.util {
     JList=List,
@@ -120,8 +121,10 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                         | CompilationStatus.errorDartBackend) 1);
         }
         catch (CompilerBug e) {
-            process.writeErrorLine("Compiler Bug: " + e.message);
-            System.exit(1);
+            throw object extends ToolError("Compiler Bug: " + e.message, e) {};
+        }
+        catch (ReportableException e) {
+            throw object extends ToolError(e.message, e.cause) {};
         }
     }
 
