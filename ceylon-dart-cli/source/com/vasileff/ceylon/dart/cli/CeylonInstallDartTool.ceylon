@@ -51,6 +51,10 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     shared actual
     void initialize(CeylonTool? ceylonTool) {}
 
+    needsSystemRepo() => false;
+
+    doNotReadFromOutputRepo() => true;
+
     shared actual
     suppressWarnings("expressionTypeNothing")
     void run() {
@@ -112,7 +116,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     && (verbose.contains("all")
                     || verbose.contains("files"));
 
-        // blindly copied from CeylonCopyTool
+        // adapted from CeylonCopyTool
         object feedback satisfies ModuleCopycat.CopycatFeedback {
             shared actual
             void afterCopyArtifact(ArtifactContext? artifactContext,
@@ -126,12 +130,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
 
             shared actual
             void afterCopyModule(ArtifactContext? artifactContext, Integer count,
-                    Integer max, Boolean copied) {
-                if (!logArtifacts) {
-                    append(") ").msg(if (copied) then "copying.ok" else "copying.skipped")
-                            .newline().flush();
-                }
-            }
+                    Integer max, Boolean copied) {}
 
             shared actual
             Boolean beforeCopyArtifact(ArtifactContext? artifactContext,
@@ -145,30 +144,17 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     append("    ").msg("copying.artifact",
                         artifactResult.artifact().name, count+1, max).flush();
                 }
-                else {
-                    if (count > 0) {
-                        append(", ");
-                    } else {
-                        append(" (");
-                    }
-                    variable value name = ArtifactContext.getSuffixFromFilename(
-                            artifactResult.artifact().name);
-                    if (name.startsWith(".") || name.startsWith("-")) {
-                        name = name.spanFrom(1);
-                    } else if ("module-doc".equals(name)) {
-                        name = "doc";
-                    }
-                    append(name);
-                }
                 return true;
             }
 
             shared actual
             Boolean beforeCopyModule(ArtifactContext artifactContext,
                     Integer count, Integer max) {
-                value mod = ModuleUtil.makeModuleName(
-                        artifactContext.name, artifactContext.version);
-                msg("copying.module", mod, count+1, max).flush();
+                if (logArtifacts) {
+                    value mod = ModuleUtil.makeModuleName(
+                            artifactContext.name, artifactContext.version);
+                    msg("copying.module", mod, count+1, max).flush();
+                }
                 return true;
             }
 
@@ -187,7 +173,6 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     }
 }
 
-// TODO use resource file
 object installResourceBundle extends ListResourceBundle() {
     shared actual ObjectArray<ObjectArray<Object>> contents
         // copied from tools/copy/resources/messages.properties

@@ -295,8 +295,8 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
 
     if (!exists languageModuleFile) {
         throw ReportableException(
-              "The Ceylon/Dart language module version ``version`` was not found.
-               Try installing with:
+              "The Ceylon/Dart language module version ``version``
+               was not found. Try installing with:
 
                    ceylon install-dart --out ~/.ceylon/repo");
     }
