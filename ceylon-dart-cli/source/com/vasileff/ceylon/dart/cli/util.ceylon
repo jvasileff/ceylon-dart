@@ -9,7 +9,10 @@ import ceylon.file {
     File,
     Path,
     Directory,
-    parsePath
+    parsePath,
+    Link,
+    Nil,
+    createFileIfNil
 }
 import com.vasileff.ceylon.dart.compiler {
     ceylonFile,
@@ -17,7 +20,8 @@ import com.vasileff.ceylon.dart.compiler {
     ReportableException,
     JsonObject,
     JsonArray,
-    javaPath
+    javaPath,
+    javaFile
 }
 import com.redhat.ceylon.common {
     ModuleUtil
@@ -188,4 +192,41 @@ File? findDartInPath(String? path) {
             ?.flatMap((d) => d.files("dart"))
             ?.filter(File.executable)
             ?.first;
+}
+
+Directory createDirectoryIfAbsent(Path path) {
+    value target = path.resource;
+    switch (target)
+    case (is Directory) {
+        return target;
+    }
+    case (is Nil) {
+        return target.createDirectory(true);
+    }
+    case (is File | Link) {
+        throw ReportableException(
+            "Cannot overwrite file or symbolic link resource \
+             ``target.path.string``");
+    }
+}
+
+File overwriteFile(Path path, String contents) {
+    value target = path.resource;
+    if (is Directory | Link target) {
+        throw ReportableException(
+            "Cannot overwrite directory or symbolic link resource \
+             ``target.path.string``");
+    }
+
+    value file = createFileIfNil(target);
+
+    try (writer = file.Overwriter("utf-8")) {
+        writer.write(contents);
+    }
+
+    return file;
+}
+
+void setExecutable(File file) {
+    javaFile(file).setExecutable(true);
 }

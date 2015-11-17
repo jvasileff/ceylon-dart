@@ -226,6 +226,7 @@ project('ceylon-dart-cli') {
         from(projectDir) {
           include "ceylon-install-dart.plugin"
           include "ceylon-compile-dart.plugin"
+          include "ceylon-assemble-dart.plugin"
           include "ceylon-run-dart.plugin"
         }
         into ceylonBinDir
