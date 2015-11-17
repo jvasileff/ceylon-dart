@@ -21,8 +21,7 @@ import ceylon.process {
 
 import com.redhat.ceylon.cmr.api {
     ArtifactContext,
-    ModuleQuery,
-    RepositoryManager
+    ModuleQuery
 }
 import com.redhat.ceylon.cmr.ceylon {
     RepoUsingTool
@@ -41,14 +40,10 @@ import com.vasileff.ceylon.dart.compiler {
     ReportableException,
     ceylonFile,
     javaPath,
-    parseJson,
     JsonObject,
     JsonArray
 }
 
-import java.io {
-    JFile=File
-}
 import java.lang {
     ObjectArray
 }
@@ -284,28 +279,4 @@ object resourceBundle extends ListResourceBundle() {
                 ["compiling", "Source found for module {0}, compiling..."],
                 ["compilation.failed", "Failed to compile sources"]
             ].map((e) => createJavaStringArray(e)));
-}
-
-void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
-    value version = `module`.version;
-
-    value languageModuleFile = repositoryManager.getArtifact(
-        ArtifactContext("ceylon.language", version, ArtifactContext.\iDART))
-        else null;
-
-    if (!exists languageModuleFile) {
-        throw ReportableException(
-              "The Ceylon/Dart language module version ``version``
-               was not found. Try installing with:
-
-                   ceylon install-dart --out ~/.ceylon/repo");
-    }
-}
-
-JsonObject? parseJsonModel(JFile | File file) {
-    value jsonObject = parseJson(ceylonFile(file));
-    if (is JsonObject jsonObject) {
-        return jsonObject;
-    }
-    return null;
 }
