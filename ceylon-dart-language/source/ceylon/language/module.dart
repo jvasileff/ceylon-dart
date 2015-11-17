@@ -211,7 +211,7 @@ $dart$core.Set<$dart$core.int> digitZeroChars = new $dart$core.Set.from([
     0xa620, 0xa8d0, 0xa900, 0xa9d0, 0xaa50, 0xabf0, 0xff10,
     0x104a0, 0x11066, 0x110f0, 0x11136, 0x111d0, 0x116c0]);
 
-class Character implements Comparable {
+class Character implements Comparable, Enumerable {
   $dart$core.int _value;
 
   Character(Character character) {
@@ -249,6 +249,15 @@ class Character implements Comparable {
   Character get uppercased => new Character.$fromInt(toString().toUpperCase().runes.elementAt(0));
 
   Character get lowercased => new Character.$fromInt(toString().toLowerCase().runes.elementAt(0));
+
+  // Enumerable
+  Character neighbour([$dart$core.int offset]) => new Character.$fromInt(this._value + offset);
+  $dart$core.int offset([Character other]) => this._value - other._value;
+  $dart$core.int offsetSign([Character other]) => offset(other).sign;
+
+  // Ordinal
+  Character get predecessor => new Character.$fromInt(this._value - 1);
+  Character get successor => new Character.$fromInt(this._value + 1);
 
   // Comparable
   @$dart$core.override
@@ -336,6 +345,11 @@ class Float implements Number, Exponentiable {
   }
 
   $dart$core.int get hashCode => _value.hashCode;
+
+  $dart$core.bool get positive => _value > 0.0;
+  $dart$core.bool get negative => _value < 0.0;
+  $dart$core.Object get fractionalPart => new Float(_value.remainder(1));
+  $dart$core.Object get wholePart => new Integer(_value.floor());
 
   // Comparable
   Comparison compare([Float other])
@@ -480,7 +494,7 @@ class Integer implements Integral, Exponentiable, Binary {
   Integer get successor => new Integer(this._value + 1);
 
   // Comparable
-  Comparison compare([Float other])
+  Comparison compare([Integer other])
       =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
 
   //Comparison compare(Integer other);
@@ -660,13 +674,14 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
     => length > 0 ? new String(this.sequence().terminal(length)) : String.instance("");
 
   //  shared actual native [String,String] slice(Integer index);
-  Sequence slice([$dart$core.int length]) {
+  Tuple slice([$dart$core.int length]) {
     var its = this.sequence().slice(length);
-    return new ArraySequence(new Array._withList([
+    return new Tuple.$withList([
         new String(its.getFromFirst(0)),
-        new String(its.getFromFirst(1))]));
+        new String(its.getFromFirst(1))]);
   }
 
+  
   //  shared actual native Integer size;
   @$dart$core.override
   $dart$core.int get size => _value.runes.length;
