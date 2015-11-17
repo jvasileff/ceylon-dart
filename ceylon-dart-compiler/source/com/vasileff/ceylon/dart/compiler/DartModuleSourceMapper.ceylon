@@ -1,3 +1,6 @@
+import ceylon.file {
+    File
+}
 import ceylon.interop.java {
     CeylonIterable,
     javaString,
@@ -6,6 +9,9 @@ import ceylon.interop.java {
 
 import com.redhat.ceylon.cmr.api {
     ArtifactContext
+}
+import com.redhat.ceylon.common {
+    ModuleUtil
 }
 import com.redhat.ceylon.compiler.js.loader {
     JsonModule
@@ -29,8 +35,8 @@ import com.redhat.ceylon.model.typechecker.util {
 }
 
 import java.io {
-    JFileInputStream=FileInputStream,
-    JFile=File
+    JFile=File,
+    JFileInputStream=FileInputStream
 }
 import java.lang {
     JString=String
@@ -43,9 +49,6 @@ import java.util {
 
 import net.minidev.json {
     JSONValue
-}
-import ceylon.file {
-    File
 }
 
 object reflection {
@@ -153,14 +156,24 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
                                 ArtifactContext.\iDART_MODEL);
 
         value modelAcResult
-            =   context.repositoryManager.getArtifactResult(modelAc);
+            =   context.repositoryManager.getArtifactResult(modelAc) else null;
+
+        if (!exists modelAcResult) {
+            throw ReportableException(
+                    "Unable to find model artifact for \
+                     ``ModuleUtil.makeModuleName(artifact.name(), artifact.version())``");
+        }
 
         value modelFile
             =   modelAcResult.artifact();
 
-        "Unable to parse the model."
-        assert (exists model
-            =   parseJsonModel(modelFile));
+        value model
+            =   parseJsonModel(modelFile);
+
+        if (!exists model) {
+            throw ReportableException(
+                    "Unable to parse the model from ``modelFile.absolutePath``");
+        }
 
         loadModuleFromMap(model, m, dependencyTree, phasedUnitsOfDependencies,
                 forCompiledModule);

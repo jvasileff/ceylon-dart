@@ -101,22 +101,17 @@ import com.vasileff.jl4c.guava.collect {
 
 import java.io {
     JFile=File,
-    JPrintWriter=PrintWriter,
-    JWriter=Writer
+    JPrintWriter=PrintWriter
 }
 import java.lang {
     System,
     Runnable,
-    CharArray,
     JString=String,
     JBoolean=Boolean,
     JFloat=Float,
     JDouble=Double,
     JInteger=Integer,
     JLong=Long
-}
-import java.nio.file {
-    JFiles=Files
 }
 import java.util {
     EnumSet,
@@ -535,41 +530,6 @@ class CompilationStatus
     shared new errorTypeChecker {}
     shared new errorDartBackend {}
 }
-
-JFile javaFile(File | JFile file)
-    =>  if (is JFile file)
-        then file
-        else JFile(file.path.string);
-
-class TemporaryFile(
-        String? prefix = null, String? suffix = null,
-        Boolean deleteOnExit = false)
-        satisfies Destroyable {
-
-    value path = JFiles.createTempFile(prefix, suffix);
-    if (deleteOnExit) {
-        path.toFile().deleteOnExit();
-    }
-    assert (is File f = parsePath(path.string).resource);
-
-    shared File file = f;
-
-    shared actual void destroy(Throwable? error) {
-        f.delete();
-    }
-}
-
-JWriter javaWriter(File.Appender appender) => object
-        extends JWriter() {
-
-    close() => appender.close();
-
-    flush() => appender.flush();
-
-    write(CharArray charArray, Integer offset, Integer length)
-        // What's the best way to do this?
-        =>  appender.write(JString(charArray, offset, length).string);
-};
 
 void encodeModel(JMap<JString, Object> model, File.Appender appender) {
     ObjectValue? javaToJson(Anything javaObject) {

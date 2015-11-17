@@ -10,9 +10,7 @@ import ceylon.file {
 }
 import ceylon.interop.java {
     createJavaObjectArray,
-    createJavaStringArray,
-    javaString,
-    CeylonIterable
+    createJavaStringArray
 }
 import ceylon.process {
     createProcess,
@@ -41,12 +39,18 @@ import com.redhat.ceylon.common.tools {
 }
 import com.vasileff.ceylon.dart.compiler {
     ReportableException,
-    parseJsonModel
+    ceylonFile,
+    javaPath,
+    parseJson,
+    JsonObject,
+    JsonArray
 }
 
+import java.io {
+    JFile=File
+}
 import java.lang {
-    ObjectArray,
-    JString=String
+    ObjectArray
 }
 import java.nio.file {
     JFiles=Files,
@@ -54,9 +58,7 @@ import java.nio.file {
     FileAlreadyExistsException
 }
 import java.util {
-    ListResourceBundle,
-    JMap=Map,
-    JList=List
+    ListResourceBundle
 }
 
 shared
@@ -118,24 +120,24 @@ class CeylonRunDartTool() extends RepoUsingTool(resourceBundle) {
         return parsedJson;
     }
 
-    function dependencyNamesFromJson(JMap<JString,Object> model) {
-        assert (is JList<out Anything>? dependencies
-            =   model.get(javaString("$mod-deps")));
+    function dependencyNamesFromJson(JsonObject model) {
+        assert (is JsonArray? dependencies
+            =   model.get("$mod-deps"));
 
         "We'll always have dependencies; at least the language module."
         assert (exists dependencies);
 
         return
-        CeylonIterable(dependencies).collect((dependency) {
-            assert (is JString | JMap<out Anything, out Anything> dependency);
+        dependencies.collect((dependency) {
+            assert (is String | JsonObject dependency);
 
             switch (dependency)
-            case (is JMap<out Anything, out Anything>) {
-                assert (is JString path = dependency.get(javaString("path")));
-                return path.string;
-            }
-            case (is JString) {
+            case (is String) {
                 return dependency.string;
+            }
+            case (is JsonObject) {
+                assert (is String path = dependency.get("path"));
+                return path.string;
             }
         });
     }
@@ -298,4 +300,12 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
 
                    ceylon install-dart --out ~/.ceylon/repo");
     }
+}
+
+JsonObject? parseJsonModel(JFile | File file) {
+    value jsonObject = parseJson(ceylonFile(file));
+    if (is JsonObject jsonObject) {
+        return jsonObject;
+    }
+    return null;
 }
