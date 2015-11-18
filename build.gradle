@@ -218,29 +218,41 @@ project('ceylon-dart-cli') {
         repository project(":ceylon-dart-compiler").compileCeylon.destinationDir
     }
 
+    // TODO plugin should create ceylonPluginPack
+    task ceylonPluginPack(type: CeylonPluginPackTask) {
+        destinationDir = "${project.buildDir}/modules-plugins/main"
+
+        scriptDir file("script")
+        module "com.vasileff.ceylon.dart.cli"
+    }
+
+    project.assemble.dependsOn ceylonPluginPack
+
     task install(type: Copy) {
         group "Deployment"
         description "Install plugins and copy the compiled modules to the user's repository"
-
         dependsOn "publish"
-        from(projectDir) {
+
+        from(file("script/com/vasileff/ceylon/dart/cli")) {
           include "ceylon-install-dart.plugin"
           include "ceylon-compile-dart.plugin"
           include "ceylon-assemble-dart.plugin"
           include "ceylon-run-dart.plugin"
         }
-        into ceylonBinDir
+        into ceylonBinDir + "/com.vasileff.ceylon.dart.cli"
     }
 
     task publish(type: Copy) {
         group "Deployment"
         description "Copy the compiled modules to the user's repository"
 
-        dependsOn "ceylonDoc"
         dependsOn "compileCeylon"
+        dependsOn "ceylonDoc"
+        dependsOn "ceylonPluginPack"
 
         from ceylonDoc.destinationDir
         from compileCeylon.destinationDir
+        from ceylonPluginPack.destinationDir
 
         into ceylonRepoDir
     }

@@ -1,5 +1,3 @@
-; Plugin definition for the "ceylon compile-native" tool
 summary=Compiles Ceylon source code to Dart and directly produces module and source archives in a module repository.
 module=com.vasileff.ceylon.dart.cli/1.2.0-DP1-SNAPSHOT
 class=com.vasileff.ceylon.dart.cli.CeylonCompileDartTool
-

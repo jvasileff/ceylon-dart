@@ -26,6 +26,14 @@ abstract class AbstractCeylonTask extends DefaultTask {
     }
   }
 
+  protected Path getAntScriptPath() {
+    ant.path {
+      getScriptDirs().each {
+        pathelement(location: it)
+      }
+    }
+  }
+
   void module(String module) {
     modules.add(module)
   }
@@ -63,6 +71,7 @@ abstract class AbstractCeylonTask extends DefaultTask {
 
 abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   private List<Object> source = new ArrayList<Object>();
+  private List<Object> script = new ArrayList<Object>();
   private List<Object> resource = new ArrayList<Object>();
 
   String encoding = 'UTF-8'
@@ -71,10 +80,15 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   @InputFiles
   protected FileCollection getInputFiles() {
     // https://issues.gradle.org/browse/GRADLE-3051
-    project.files(getSourceDirs() + getResourceDirs());
+    project.files(getSourceDirs() + getResourceDirs() + getScriptDirs());
   }
 
+
   protected Set<File> additionalSourceDirs() {
+    return new HashSet<File>()
+  }
+
+  protected Set<File> additionalScriptDirs() {
     return new HashSet<File>()
   }
 
@@ -91,6 +105,18 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
       }
     }
     dirs.addAll(additionalSourceDirs())
+    dirs
+  }
+
+  Set<File> getScriptDirs() {
+    Set<File> dirs = new LinkedHashSet<File>()
+    script.each {
+      def file = project.file(it)
+      if (file.isDirectory()) {
+        dirs.add(file)
+      }
+    }
+    dirs.addAll(additionalScriptDirs())
     dirs
   }
 
@@ -111,6 +137,11 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
     GUtil.addToCollection(source, srcDirs)
   }
 
+  void setScriptDirs(Iterable<?> srcDirs) {
+    script.clear()
+    GUtil.addToCollection(script, srcDirs)
+  }
+
   void setResourceDirs(Iterable<?> srcDirs) {
     source.clear()
     GUtil.addToCollection(source, srcDirs)
@@ -120,6 +151,10 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
     source.add(srcDir)
   }
 
+  void scriptDir(Object srcDir) {
+    script.add(srcDir)
+  }
+
   void resourceDir(Object srcDir) {
     resource.add(srcDir)
   }
@@ -127,6 +162,12 @@ abstract class AbstractOutputtingCeylonTask extends AbstractCeylonTask {
   void sourceDirs(Object... srcDirs) {
     srcDirs.each {
       source.add(it)
+    }
+  }
+
+  void scriptDirs(Object... srcDirs) {
+    srcDirs.each {
+      script.add(it)
     }
   }
 
@@ -277,6 +318,70 @@ class CeylonDocTask extends AbstractOutputtingCeylonTask {
           } else {
             sources.each {
               sourcemodules(dir: it)
+            }
+          }
+        }
+        if (!getRepositories().empty) {
+          reposet {
+            getRepositories().each {
+              repo(url: it)
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+class CeylonPluginPackTask extends AbstractOutputtingCeylonTask {
+  String group = "Build"
+  String description = "Packs scripts defined by the module."
+
+  Set<File> additionalRepositories() {
+    List<String> dirs = new ArrayList<String>()
+
+    // FIXME this doesn't work if dependencies are configured using Strings.
+    dependsOn.each {
+      if (it instanceof AbstractOutputtingCeylonTask) {
+        it.each {
+          if (it instanceof AbstractOutputtingCeylonTask) {
+            // TODO add all of the task's repositories, too
+            //      and... not sure if this works
+            dirs.add(it.destinationDir.toString())
+          }
+        }
+      }
+    }
+    return dirs
+  }
+
+  Set<File> additionalSourceDirs() {
+    Set<File> dirs = new HashSet<File>()
+    return dirs
+  }
+
+  Set<File> additionalScriptDirs() {
+    Set<File> dirs = new HashSet<File>()
+    dependsOn.each {
+      if (it instanceof AbstractOutputtingCeylonTask) {
+        dirs.addAll(it.getScriptDirs())
+      }
+    }
+    return dirs
+  }
+
+  @TaskAction
+  def compile() {
+    def scripts = getScriptDirs();
+    if (!scripts.empty) {
+      ant."ceylon-plugin"(
+            mode: "pack",
+            script: getAntScriptPath(),
+            out: getDestination()) {
+        moduleset {
+          if (!modules.empty) {
+            modules.each {
+              module(name: it)
             }
           }
         }
