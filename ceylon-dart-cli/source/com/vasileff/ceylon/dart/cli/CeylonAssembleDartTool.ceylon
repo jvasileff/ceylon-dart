@@ -108,7 +108,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
 
         value assemblyRootPath
             =   parsePath(validCwd().toPath().resolve(
-                    \iout?.string else "``moduleName``-assembly").string);
+                    \iout?.string else "``moduleShortName``-assembly").string);
 
         value assemblyBinPath
             =   assemblyRootPath.childPath("bin");
