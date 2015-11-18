@@ -1133,6 +1133,28 @@ Sequential _processArguments = $package$empty;
 class process_ {
   const process_.$value$();
 
+  $dart$core.String readLine() {
+    return $dart$io.stdin.readLineSync();
+  }
+
+  void flush() {}
+
+  void flushError() {}
+
+  $dart$core.String environmentVariableValue([$dart$core.String name])
+    =>  $dart$io.Platform.environment[name];
+
+  $dart$core.bool namedArgumentPresent([$dart$core.String name]) => false;
+
+  $dart$core.String namedArgumentValue([$dart$core.String name]) => null;
+
+  $dart$core.String propertyValue([$dart$core.String name]) => null;
+
+  $dart$core.Object exit([$dart$core.int code]) {
+    $dart$io.exit(code);
+    return nothing;
+  }
+
   void write([$dart$core.String string]) {
     $dart$io.stdout.write(string);
   }
