@@ -16,13 +16,27 @@ import com.redhat.ceylon.common {
 }
 import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
-    ToolError
+    ToolError,
+    rest=rest__SETTER
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.vasileff.ceylon.dart.compiler {
     ReportableException
+}
+import com.vasileff.jl4c.guava.collect {
+    javaList
+}
+
+import java.lang {
+    JString=String
+}
+import java.util {
+    JList=List
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 shared
@@ -35,6 +49,9 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
         order=1;
     }
     String moduleString = "";
+
+    shared variable rest
+    JList<JString> args = javaList<JString> {};
 
     shared actual
     void initialize(CeylonTool? ceylonTool) {
@@ -99,7 +116,9 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                     command = dartPath.name;
                     arguments = [
                         "--package-root=" + packageRootPath.string,
-                        programModuleSymlink];
+                        programModuleSymlink,
+                        *CeylonList(args).map(Object.string)
+                    ];
                     path = dartPath.directory.path;
                     input = currentInput;
                     output = currentOutput;

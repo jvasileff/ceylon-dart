@@ -681,7 +681,6 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
         new String(its.getFromFirst(1))]);
   }
 
-  
   //  shared actual native Integer size;
   @$dart$core.override
   $dart$core.int get size => _value.runes.length;
@@ -1129,6 +1128,8 @@ $dart$core.String className($dart$core.Object obj) {
 
 // process
 
+Sequential _processArguments = $package$empty;
+
 class process_ {
   const process_.$value$();
 
@@ -1153,11 +1154,23 @@ class process_ {
     }
     $dart$io.stderr.writeln(line);
   }
+
+  Sequential get arguments => _processArguments;
 }
 
 const process = const process_.$value$();
 
 const $package$process = process;
+
+initializeProcess($dart$core.List<$dart$core.String> arguments) {
+  if (arguments.isEmpty) {
+    _processArguments = $package$empty;
+  }
+  else {
+    _processArguments = new ArraySequence(new Array._withList(
+        arguments.map((s) => new String._fromNative(s)).toList(growable: false)));
+  }
+}
 
 // runtime
 

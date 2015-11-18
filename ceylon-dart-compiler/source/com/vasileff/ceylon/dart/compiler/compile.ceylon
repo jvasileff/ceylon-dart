@@ -87,12 +87,17 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleStringLiteral,
     DartTypeName,
     DartMethodInvocation,
-    dartFormalParameterListEmpty,
-    DartExpressionFunctionBody,
     DartFunctionExpression,
     DartFunctionDeclaration,
     DartArgumentList,
-    CodeWriter
+    CodeWriter,
+    DartFormalParameterList,
+    DartSimpleFormalParameter,
+    DartBlockFunctionBody,
+    DartBlock,
+    DartExpressionStatement,
+    DartPropertyAccess,
+    DartFunctionExpressionInvocation
 }
 import com.vasileff.jl4c.guava.collect {
     javaList,
@@ -174,13 +179,36 @@ shared
                 null;
                 DartSimpleIdentifier("main");
                 DartFunctionExpression {
-                    dartFormalParameterListEmpty;
-                    DartExpressionFunctionBody {
-                        false;
-                        DartMethodInvocation {
+                    DartFormalParameterList {
+                        false; false;
+                        [DartSimpleFormalParameter {
+                            false;
+                            true;
                             null;
-                            DartSimpleIdentifier("run");
-                            DartArgumentList([]);
+                            DartSimpleIdentifier("arguments");
+                        }];
+                    };
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            [DartExpressionStatement {
+                                DartFunctionExpressionInvocation {
+                                    DartPropertyAccess {
+                                        DartSimpleIdentifier("$ceylon$language");
+                                        DartSimpleIdentifier("initializeProcess");
+                                    };
+                                    DartArgumentList {
+                                        [DartSimpleIdentifier("arguments")];
+                                    };
+                                };
+                            },
+                            DartExpressionStatement {
+                                DartMethodInvocation {
+                                    null;
+                                    DartSimpleIdentifier("run");
+                                    DartArgumentList([]);
+                                };
+                            }];
                         };
                     };
                 };
