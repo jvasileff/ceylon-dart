@@ -56,7 +56,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         argumentName = "moduleOrFile";
         multiplicity = "*";
     }
-    JList<JString> moduleOrFile = javaList<JString>([]);
+    JList<JString> moduleOrFile = javaList<JString>{javaString("*")};
 
     shared variable option
     description("Wrap typeChecker.process() in TypeCache.doWithoutCaching \
@@ -131,12 +131,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     CompilationStatus doRun() {
         verifyLanguageModuleAvailability(repositoryManager);
 
-        value sourceDirectories = DefaultToolOptions.compilerSourceDirs;
+        value sourceDirectories = applyCwd(DefaultToolOptions.compilerSourceDirs);
         value resources = DefaultToolOptions.compilerResourceDirs;
         value resolver = SourceArgumentsResolver(
                 sourceDirectories, resources, ".ceylon", ".dart");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
+
+        if (resolver.sourceFiles.empty && resolver.sourceModules.empty) {
+            throw ReportableException("No modules or source files to compile.");
+        }
 
         return compileDart {
             sourceDirectories = CeylonList(sourceDirectories);
