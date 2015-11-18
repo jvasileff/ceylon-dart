@@ -44,7 +44,7 @@ project('ceylon-dart-compiler') {
 
     ceylonDoc {
         includeSource true
-        includeNonShared true
+        includeNonShared false
         ignoreMissingDoc true
         ignoreMissingThrows true
         // FIXME hack to make ceylon doc not crash.
@@ -210,7 +210,7 @@ project('ceylon-dart-cli') {
 
     ceylonDoc {
         includeSource true
-        includeNonShared true
+        includeNonShared false
         ignoreMissingDoc true
         ignoreMissingThrows true
 
