@@ -222,6 +222,8 @@ class Character implements Comparable, Enumerable {
 
   $dart$core.int get integer => _value;
 
+  $dart$core.int get codePoint => _value;
+
   @$dart$core.override
   $dart$core.String toString()
     => new $dart$core.String.fromCharCode(_value);
@@ -246,9 +248,15 @@ class Character implements Comparable, Enumerable {
 
   $dart$core.bool get lowercase => toString().toUpperCase() != toString();
 
+  $dart$core.bool get character => uppercased != lowercased;
+
+  $dart$core.bool get titlecase => uppercase;
+
   Character get uppercased => new Character.$fromInt(toString().toUpperCase().runes.elementAt(0));
 
   Character get lowercased => new Character.$fromInt(toString().toLowerCase().runes.elementAt(0));
+
+  Character get titlecased => uppercased;
 
   // Enumerable
   Character neighbour([$dart$core.int offset]) => new Character.$fromInt(this._value + offset);
@@ -261,24 +269,33 @@ class Character implements Comparable, Enumerable {
 
   // Comparable
   @$dart$core.override
-  Comparison compare([Character other])
-      =>  String.instance(toString()).compare(String.instance(other.toString()));
+  Comparison compare([Character other]) {
+    if (_value < other._value) {
+      return $package$smaller;
+    }
+    else if (_value > other._value) {
+      return $package$larger;
+    }
+    else {
+      return $package$equal;
+    }
+  }
 
   @$dart$core.override
   $dart$core.bool operator >(Character other)
-    =>  String.instance(toString()) > String.instance(other.toString());
+    =>  _value > other._value;
 
   @$dart$core.override
   $dart$core.bool operator <(Character other)
-    =>  String.instance(toString()) < String.instance(other.toString());
+    =>  _value < other._value;
 
   @$dart$core.override
   $dart$core.bool operator <=(Character other)
-    =>  String.instance(toString()) <= String.instance(other.toString());
+    =>  _value <= other._value;
 
   @$dart$core.override
   $dart$core.bool operator >=(Character other)
-    =>  String.instance(toString()) >= String.instance(other.toString());
+    =>  _value >= other._value;
 
   $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Character) {
@@ -286,6 +303,8 @@ class Character implements Comparable, Enumerable {
     }
     return false;
   }
+
+  $dart$core.int get hashCode => _value;
 }
 
 //
