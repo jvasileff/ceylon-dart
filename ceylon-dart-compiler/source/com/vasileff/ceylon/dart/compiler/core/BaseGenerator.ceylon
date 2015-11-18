@@ -282,15 +282,21 @@ class BaseGenerator(CompilationContext ctx)
         return null;
     }
 
-    [TypeModel, String, TypeModel]?(DeclarationModel)
-    nativeUnaryOptimization = (() {
+    [TypeModel, String, TypeModel, DartElementType]?(DeclarationModel)
+    nativeNoArgOptimizations = (() {
         return ImmutableMap {
             ceylonTypes.integerDeclaration.getMember("negated", null, false)
                 -> [ceylonTypes.integerType, "-",
-                    ceylonTypes.integerType],
+                    ceylonTypes.integerType,
+                    dartPrefixOperator],
             ceylonTypes.floatDeclaration.getMember("negated", null, false)
                 -> [ceylonTypes.floatType, "-",
-                    ceylonTypes.floatType]
+                    ceylonTypes.floatType,
+                    dartPrefixOperator],
+            ceylonTypes.integerDeclaration.getMember("float", null, false)
+                -> [ceylonTypes.floatType, "toDouble",
+                    ceylonTypes.integerType,
+                    dartFunction]
         }.get;
     })();
 
@@ -782,11 +788,11 @@ class BaseGenerator(CompilationContext ctx)
                         };
             }
             else if (exists optimization
-                    =   nativeUnaryOptimization(memberDeclaration)) {
+                    =   nativeNoArgOptimizations(memberDeclaration)) {
 
                 assert (!is SetterModel memberDeclaration);
 
-                value [type, operand, leftOperandType]
+                value [type, operand, leftOperandType, dartElementType]
                     =   optimization;
 
                 dartReceiverType
@@ -808,7 +814,7 @@ class BaseGenerator(CompilationContext ctx)
                 dartFunctionOrValue
                     =   DartInvocable {
                             DartSimpleIdentifier(operand);
-                            dartPrefixOperator;
+                            dartElementType;
                             false;
                         };
 
