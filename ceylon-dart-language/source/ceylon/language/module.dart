@@ -329,6 +329,8 @@ class Float implements Number, Exponentiable {
 
   Float operator +(Float other) => new Float(this._value + other._value);
 
+  Float get magnitude => new Float(this._value.abs());
+
   Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
 
   @$dart$core.override
@@ -345,6 +347,9 @@ class Float implements Number, Exponentiable {
   }
 
   $dart$core.int get hashCode => _value.hashCode;
+
+  $dart$core.int get sign
+    => _value < 0.0 ? -1 : (_value > 0.0 ? 1 : 0);
 
   $dart$core.bool get positive => _value > 0.0;
   $dart$core.bool get negative => _value < 0.0;
