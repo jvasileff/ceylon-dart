@@ -1300,8 +1300,11 @@ class serialization$NativeDeque {
   $dart$core.String string;
 }
 
-class serialization$PartialImpl implements serialization$Partial {
-  serialization$PartialImpl(x) {}
+class serialization$PartialImpl extends serialization$Partial {
+  serialization$PartialImpl(id) {}
+
+  void instantiate() {}
+  void initialize([serialization$DeserializationContextImpl context]) {}
 }
 
 class serialization$NativeMap {
