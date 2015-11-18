@@ -216,11 +216,17 @@ project('ceylon-dart-cli') {
 
         // TODO this shouldn't be necessary
         repository project(":ceylon-dart-compiler").compileCeylon.destinationDir
+
+        // For now, just output everything to the same repository since 'ceylon copy'
+        // doesn't work well when fed multiple '--rep' options.
+        destinationDir = compileCeylon.destinationDir
     }
 
     // TODO plugin should create ceylonPluginPack
     task ceylonPluginPack(type: CeylonPluginPackTask) {
-        destinationDir = "${project.buildDir}/modules-plugins/main"
+        // For now, just output everything to the same repository since 'ceylon copy'
+        // doesn't work well when fed multiple '--rep' options.
+        destinationDir = compileCeylon.destinationDir
 
         scriptDir file("script")
         module "com.vasileff.ceylon.dart.cli"
