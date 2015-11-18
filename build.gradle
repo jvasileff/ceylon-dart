@@ -59,7 +59,7 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "test.com.vasileff.ceylon.dart.compiler"
+        module "test.com.vasileff.ceylon.dart.compiler/1.2.0-DP1-SNAPSHOT"
         test "test.com.vasileff.ceylon.dart.compiler"
     }
 
