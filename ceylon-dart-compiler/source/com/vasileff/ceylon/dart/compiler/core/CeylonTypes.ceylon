@@ -81,6 +81,10 @@ class CeylonTypes(Unit unit) {
             iterableDeclaration, nothingType, nullType);
 
     shared
+    Type listAnythingType => ModelUtil.appliedType(
+            listDeclaration, anythingType);
+
+    shared
     Type sequenceAnythingType => ModelUtil.appliedType(
             sequenceDeclaration, anythingType);
 
@@ -172,6 +176,11 @@ class CeylonTypes(Unit unit) {
     shared
     Boolean isCeylonSequence(Type type)
         =>  unit.isSequenceType(type);
+
+    "True if [[type]] is a subtype of List<Anything>"
+    shared
+    Boolean isCeylonList(Type type)
+        =>  type.isSubtypeOf(listAnythingType);
 
     shared
     Boolean isCeylonString(Type type)
@@ -309,6 +318,10 @@ class CeylonTypes(Unit unit) {
     shared
     Interface iteratorDeclaration
         =>  unit.iteratorDeclaration;
+
+    shared
+    Interface listDeclaration
+        =>  unit.listDeclaration;
 
     shared
     Function measureFunctionDeclaration

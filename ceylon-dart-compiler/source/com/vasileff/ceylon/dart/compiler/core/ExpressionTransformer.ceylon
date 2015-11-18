@@ -1074,14 +1074,26 @@ class ExpressionTransformer(CompilationContext ctx)
 
         switch (subscript = that.subscript)
         case (is KeySubscript) {
-            return
-            generateInvocationFromName {
-                dScope(that);
-                that.primary;
-                "get";
-                [subscript.key];
-                ExpressionInfo(that).typeModel;
-            };
+            if (ceylonTypes.isCeylonList(ExpressionInfo(that.primary).typeModel)) {
+                return
+                generateInvocationFromName {
+                    dScope(that);
+                    that.primary;
+                    "getFromFirst";
+                    [subscript.key];
+                    ExpressionInfo(that).typeModel;
+                };
+            }
+            else {
+                return
+                generateInvocationFromName {
+                    dScope(that);
+                    that.primary;
+                    "get";
+                    [subscript.key];
+                    ExpressionInfo(that).typeModel;
+                };
+            }
         }
         case (is SpanSubscript) {
             return
