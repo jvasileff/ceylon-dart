@@ -1691,18 +1691,30 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
-        value methodName
-            =   switch(that)
-                case (is AndAssignmentOperation) "and"
-                case (is OrAssignmentOperation) "or";
-
+        value info = NodeInfo(that);
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
-        // passthrough; no new lhs
-        return generateAssignmentExpression {
+        return
+        generateAssignmentExpression {
             NodeInfo(that);
             leftOperand;
-            () => generateInvocationForBinaryOperation(that, methodName);
+            () => let (dartOperator
+                        =   switch (that)
+                            case (is AndAssignmentOperation) "&&"
+                            case (is OrAssignmentOperation) "||")
+                withBoxing {
+                    info;
+                    ceylonTypes.booleanType;
+                    null;
+                    withLhsNative { // for the two transformations
+                        ceylonTypes.booleanType;
+                        () => DartBinaryExpression {
+                            that.leftOperand.transform(this);
+                            dartOperator;
+                            that.rightOperand.transform(this);
+                        };
+                    };
+                };
         };
     }
 
