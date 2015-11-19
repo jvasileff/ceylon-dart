@@ -103,6 +103,12 @@ class Array extends impl$BaseList {
     _list[index] = element;
   }
 
+  void swap($dart$core.int i, $dart$core.int j) {
+    var oldI = getFromFirst(i);
+    set(i, getFromFirst(j));
+    set(j, oldI);
+  }
+
   void copyTo([Array destination,
           $dart$core.Object sourcePosition = $package$dart$default,
           $dart$core.Object destinationPosition = $package$dart$default,
@@ -248,7 +254,7 @@ class Character implements Comparable, Enumerable {
 
   $dart$core.bool get lowercase => toString().toUpperCase() != toString();
 
-  $dart$core.bool get character => uppercased != lowercased;
+  $dart$core.bool get letter => uppercased != lowercased;
 
   $dart$core.bool get titlecase => uppercase;
 
@@ -370,6 +376,10 @@ class Float implements Number, Exponentiable {
   $dart$core.int get sign
     => _value < 0.0 ? -1 : (_value > 0.0 ? 1 : 0);
 
+  $dart$core.bool get undefined => _value.isNaN;
+  $dart$core.bool get infinite => _value.isInfinite;
+  $dart$core.bool get finite => _value.isFinite;
+
   $dart$core.bool get positive => _value > 0.0;
   $dart$core.bool get negative => _value < 0.0;
   $dart$core.Object get fractionalPart => new Float(_value.remainder(1));
@@ -417,6 +427,17 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.bool divides([Integer other]) => other._value % _value == 0;
   Integer operator %(Integer other) => new Integer(_value.remainder(other._value));
 
+  Integer modulo([Integer modulus]) {
+    if (modulus._value < 0) {
+      throw new AssertionError("modulus must be positive");
+    }
+    $dart$core.int result = _value.remainder(modulus._value);
+    if (result < 0) {
+      return new Integer(result + modulus._value);
+    }
+    return new Integer(result);
+  }
+
   Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
   Integer powerOfInteger([$dart$core.int integer]) => new Integer($dart$math.pow(_value, integer));
   Integer timesInteger([$dart$core.int integer]) => new Integer(_value * integer);
@@ -450,6 +471,7 @@ class Integer implements Integral, Exponentiable, Binary {
   }
 
   $dart$core.double get float => _value.toDouble();
+  $dart$core.double get nearestFloat => _value.toDouble();
 
   // Binary
 
