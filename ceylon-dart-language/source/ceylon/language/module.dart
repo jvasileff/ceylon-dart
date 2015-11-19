@@ -415,8 +415,7 @@ class Integer implements Integral, Exponentiable, Binary {
   $dart$core.bool get zero => _value == 0;
 
   $dart$core.bool divides([Integer other]) => other._value % _value == 0;
-  Integer operator %(Integer other)
-    => new Integer(_value - other._value * (_value ~/ other._value));
+  Integer operator %(Integer other) => new Integer(_value.remainder(other._value));
 
   Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
   Integer powerOfInteger([$dart$core.int integer]) => new Integer($dart$math.pow(_value, integer));

@@ -936,7 +936,7 @@ class CycledIterator implements Iterator {
             }
         }
     }
-    $dart$core.String toString() => ((("" + _$iterable.toString()) + ".repeat(") + Integer.instance(_$times).toString()) + ").iterator()";
+    $dart$core.String toString() => ((("" + _$iterable.toString()) + ".repeat(") + _$times.toString()) + ").iterator()";
 }
 class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
@@ -1732,7 +1732,7 @@ $dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Obj
     Iterable digits = $package$empty;
     $dart$core.int i = (($dart$core.int $lhs$) => null == $lhs$ ? -integer : $lhs$)(integer < 0 ? integer : null);
     while (!(i == 0)) {
-        $dart$core.int d = -Integer.nativeValue(Integer.instance(i) % Integer.instance(radix as $dart$core.int));
+        $dart$core.int d = -i.remainder(radix as $dart$core.int);
         Character c;
         if ((d >= 0) && (d < 10)) {
             c = Integer.instance(d + $package$zeroInt).character;
@@ -2197,7 +2197,7 @@ class impl$ElementImpl implements serialization$Element {
     $dart$core.Object referred([$dart$core.Object instance]) {
         return $package$impl$reach.getAnything(instance, this);
     }
-    $dart$core.String toString() => ("Element [index=" + Integer.instance(index).toString()) + "]";
+    $dart$core.String toString() => ("Element [index=" + index.toString()) + "]";
     $dart$core.int get hashCode => index;
     $dart$core.bool operator ==($dart$core.Object other) {{
             $dart$core.bool doElse$0 = true;
@@ -3124,7 +3124,7 @@ class Iterable$repeat$$anonymous$16_ implements Iterable {
         this.$capture$Iterable$repeat$times = $capture$Iterable$repeat$times;
     }
     $dart$core.int get size => $capture$Iterable$repeat$times * $outer$ceylon$language$Iterable.size;
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").repeat(") + Integer.instance($capture$Iterable$repeat$times).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").repeat(") + $capture$Iterable$repeat$times.toString()) + ")";
     Iterator iterator() => new CycledIterator($outer$ceylon$language$Iterable, $capture$Iterable$repeat$times);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -3201,7 +3201,7 @@ class Iterable$by$$anonymous$17_ implements Iterable {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
         this.$capture$Iterable$by$step = $capture$Iterable$by$step;
     }
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").by(") + Integer.instance($capture$Iterable$by$step).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Iterable.toString()) + ").by(") + $capture$Iterable$by$step.toString()) + ")";
     Iterator iterator() => (() {
         Iterator iter = $outer$ceylon$language$Iterable.iterator();
         return new Iterable$by$$anonymous$17_$$anonymous$18_(this, iter);
@@ -3866,7 +3866,7 @@ class Iterable$distinct$$anonymous$30_$$anonymous$31_ implements Iterator {
         $dart$core.bool doElse$126 = true;
         if (!(null == element)) {
             doElse$126 = false;
-            return Integer.nativeValue(Integer.instance(element.hashCode).magnitude % Integer.instance(size));
+            return element.hashCode.abs().remainder(size);
         }
         if (doElse$126) {
             return 0;
@@ -4101,7 +4101,7 @@ class Iterable$group$$anonymous$32_ implements Map {
         }
     }
     Array _$store;
-    $dart$core.int _$hash([$dart$core.Object group, $dart$core.int size]) => Integer.nativeValue(Integer.instance(group.hashCode).magnitude % Integer.instance(size));
+    $dart$core.int _$hash([$dart$core.Object group, $dart$core.int size]) => group.hashCode.abs().remainder(size);
     Array _$rebuild([Array store]) {
         Array newStore = (() {
             $dart$core.int arg$140$0 = store.size * 2;
@@ -5514,7 +5514,7 @@ class List$Indexes implements List {
                 $dart$core.int endIndex;
                 endIndex = tmp$83;
                 doElse$82 = false;
-                return ("{ 0, ... , " + Integer.instance(endIndex).toString()) + " }";
+                return ("{ 0, ... , " + endIndex.toString()) + " }";
             }
         }
         if (doElse$82) {
@@ -5905,7 +5905,7 @@ class List$Repeat implements List {
         $dart$core.int size = $outer$ceylon$language$List.size;
         return (() {
             if (index < (size * _$times)) {
-                return $outer$ceylon$language$List.getFromFirst(Integer.nativeValue(Integer.instance(index) % Integer.instance(size)));
+                return $outer$ceylon$language$List.getFromFirst(index.remainder(size));
             } else {
                 return null;
             }
@@ -5913,7 +5913,7 @@ class List$Repeat implements List {
     })();
     List clone() => new List$Repeat($outer$ceylon$language$List.clone(), _$times);
     Iterator iterator() => new CycledIterator($outer$ceylon$language$List, _$times);
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$List.toString()) + ").repeat(") + Integer.instance(_$times).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$List.toString()) + ").repeat(") + _$times.toString()) + ")";
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hash(this);
     $dart$core.Object get first => List.$get$first(this);
@@ -8185,7 +8185,7 @@ class Measure$By implements Iterable {
     $dart$core.int _$step;
     $dart$core.int get size => 1 + (($outer$ceylon$language$Measure.size - 1) ~/ _$step);
     $dart$core.Object get first => $outer$ceylon$language$Measure.first;
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Measure.toString()) + ").by(") + Integer.instance(_$step).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Measure.toString()) + ").by(") + _$step.toString()) + ")";
     Iterator iterator() => new Measure$By$$anonymous$1_(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -8249,7 +8249,7 @@ class Measure  extends Range {
     }
     $dart$core.Object first;
     $dart$core.int size;
-    $dart$core.String toString() => (first.toString() + ":") + Integer.instance(size).toString();
+    $dart$core.String toString() => (first.toString() + ":") + size.toString();
     $dart$core.Object get last => (first as Enumerable).neighbour(size - 1);
     $dart$core.bool longerThan([$dart$core.int length]) => size > length;
     $dart$core.bool shorterThan([$dart$core.int length]) => size < length;
@@ -9402,7 +9402,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
                     }
                     $dart$core.int numerator = (whole * Integer.nativeValue(Integer.instance(10).power(Integer.instance(shift)))) + fractional;
                     $dart$core.double signedNumerator = (($dart$core.double $lhs$) => null == $lhs$ ? (sign * numerator).toDouble() : $lhs$)(Integer.instance(numerator).zero ? 0.toDouble() * sign.toDouble() : null);
-                    $dart$core.int exponentMagnitude = Integer.nativeValue(Integer.instance(exponent).magnitude);
+                    $dart$core.int exponentMagnitude = exponent.abs();
                     if (exponentMagnitude == 0) {
                         return signedNumerator;
                     } else if (exponentMagnitude < $package$maximumIntegerExponent) {
@@ -9420,7 +9420,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
 
 $dart$core.double parseFloat([$dart$core.String string]) => $package$parseFloat(string);
 
-$dart$core.int $package$maximumIntegerExponent = Integer.nativeValue($package$smallest(Integer.instance(String.instance(Integer.instance($package$runtime.maxIntegerValue).toString()).size), Integer.instance(String.instance(Integer.instance($package$runtime.minIntegerValue).toString()).size - 1)) as Integer);
+$dart$core.int $package$maximumIntegerExponent = Integer.nativeValue($package$smallest(Integer.instance(String.instance($package$runtime.maxIntegerValue.toString()).size), Integer.instance(String.instance($package$runtime.minIntegerValue.toString()).size - 1)) as Integer);
 
 $dart$core.int get maximumIntegerExponent => $package$maximumIntegerExponent;
 
@@ -10105,7 +10105,7 @@ class Sequence$Repeat implements Sequence {
         $dart$core.int size = $outer$ceylon$language$Sequence.size;
         return (() {
             if (index < (size * _$times)) {
-                return $outer$ceylon$language$Sequence.getFromFirst(Integer.nativeValue(Integer.instance(index) % Integer.instance(size)));
+                return $outer$ceylon$language$Sequence.getFromFirst(index.remainder(size));
             } else {
                 return null;
             }
@@ -11482,7 +11482,7 @@ class Span$By implements Iterable {
     $dart$core.int _$step;
     $dart$core.int get size => 1 + (($outer$ceylon$language$Span.size - 1) ~/ _$step);
     $dart$core.Object get first => $outer$ceylon$language$Span.first;
-    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Span.toString()) + ").by(") + Integer.instance(_$step).toString()) + ")";
+    $dart$core.String toString() => ((("(" + $outer$ceylon$language$Span.toString()) + ").by(") + _$step.toString()) + ")";
     Iterator iterator() {
         if ($outer$ceylon$language$Span._$recursive) {
             return new Span$By$iterator$$anonymous$1_(this);
@@ -11563,7 +11563,7 @@ class Span  extends Range {
     $dart$core.bool _$beforeFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => null == $lhs$ ? (x as Enumerable).offsetSign(first) > 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) < 0 : null);
     $dart$core.bool _$afterFirst([$dart$core.Object x]) => (($dart$core.bool $lhs$) => null == $lhs$ ? (x as Enumerable).offsetSign(first) < 0 : $lhs$)(increasing ? (x as Enumerable).offsetSign(first) > 0 : null);
     $dart$core.int get size {
-        $dart$core.int lastIndex = Integer.nativeValue(Integer.instance((last as Enumerable).offset(first)).magnitude);
+        $dart$core.int lastIndex = (last as Enumerable).offset(first).abs();
         if (lastIndex < $package$runtime.maxIntegerValue) {
             return lastIndex + 1;
         } else {
