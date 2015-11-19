@@ -781,17 +781,17 @@ class ValueSpecificationInfo(ValueSpecification astNode)
     shared actual default ValueSpecification node => astNode;
     value tcNode = assertedTcNode<Tree.SpecifierStatement>(astNode);
 
-    shared ValueModel declaration {
+    shared FunctionModel | ValueModel declaration {
         if (astNode.qualifier exists) {
             // If qualified with `this`, the `tcNode.declaration` isn't set (for
             // whatever reason).
             assert (is Tree.QualifiedMemberExpression qme = tcNode.baseMemberExpression);
-            assert (is ValueModel result = qme.declaration);
+            assert (is FunctionModel | ValueModel result = qme.declaration);
             return result;
         }
         else {
             // tcNode.baseMemberExpression is a Tree.BaseMemberExpression
-            assert (is ValueModel result = tcNode.declaration);
+            assert (is FunctionModel | ValueModel result = tcNode.declaration);
             return result;
         }
     }

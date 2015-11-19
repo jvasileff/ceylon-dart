@@ -10,7 +10,6 @@ import ceylon.ast.core {
     ValueGetterDefinition,
     ObjectDefinition,
     Statement,
-    Specification,
     TypeAliasDefinition,
     FunctionDeclaration,
     LazySpecification,
@@ -41,9 +40,13 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformStatement(Statement that)
-        =>  if (that is Specification && !that is ValueSpecification)
-            then super.transformStatement(that)
-            else that.transform(statementTransformer);
+        =>  that.transform(statementTransformer);
+
+    shared actual
+    DartStatement[] transformValueSpecification(ValueSpecification that)
+        // This could be a specification for a forward declared function, but
+        // StatementTransformer will need to take care of that
+        =>  that.transform(statementTransformer);
 
     "Ignore type aliases for now."
     shared actual

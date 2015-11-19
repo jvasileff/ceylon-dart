@@ -41,6 +41,9 @@ import ceylon.collection {
     LinkedList
 }
 
+import com.redhat.ceylon.model.typechecker.model {
+    FunctionModel=Function
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
     DartReturnStatement,
@@ -64,7 +67,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationList,
     DartPrefixExpression,
     DartStatement,
-    DartContinueStatement
+    DartContinueStatement,
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -430,8 +434,15 @@ class StatementTransformer(CompilationContext ctx)
         =>  [DartFunctionDeclarationStatement(generateForValueSetterDefinition(that))];
 
     shared actual
-    [DartStatement] transformValueSpecification(ValueSpecification that)
-        =>  [DartExpressionStatement {
+    [DartStatement] transformValueSpecification(ValueSpecification that) {
+        value info = ValueSpecificationInfo(that);
+        if (info.declaration is FunctionModel) {
+            addError(that,
+                "specification of forward declared functions not yet supported");
+            return [DartExpressionStatement(DartNullLiteral())];
+        }
+
+        return  [DartExpressionStatement {
                 withLhsNoType {
                     () => generateAssignmentExpression {
                         NodeInfo(that);
@@ -440,6 +451,7 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 };
             }];
+    }
 
     shared actual
     DartStatement[] transformPrefixPostfixStatement(PrefixPostfixStatement that)
