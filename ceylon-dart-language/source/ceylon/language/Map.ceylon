@@ -244,7 +244,7 @@ shared interface Map<out Key=Object, out Item=Anything>
                     switch (item = outer.lookup(key))
 // FIXME Dart workaround
 //                    case (Missing.instance) null
-                    case (is Missing) null
+                    case (missing) null
                     else mapping(key, item);
             }
             else {
@@ -260,7 +260,7 @@ shared interface Map<out Key=Object, out Item=Anything>
                     switch (item = outer.lookup(key))
 // FIXME Dart workaround
 //                    case (Missing.instance) default
-                    case (is Missing) default 
+                    case (missing) default 
                     else mapping(key, item);
             }
             else {
@@ -362,7 +362,7 @@ shared interface Map<out Key=Object, out Item=Anything>
                 => switch (result = other.lookup(key))
 // FIXME Dart workaround
 //                case (Missing.instance) outer.get(key) 
-                case (is Missing) outer.get(key) 
+                case (missing) outer.get(key) 
                 else result;
         
         shared actual OtherItem|Item|Default 
@@ -371,7 +371,7 @@ shared interface Map<out Key=Object, out Item=Anything>
                 => switch (result = other.lookup(key))
 // FIXME Dart workaround
 //                case (Missing.instance)
-                case (is Missing)
+                case (missing)
                     outer.getOrDefault(key, default)
                 else result;
         

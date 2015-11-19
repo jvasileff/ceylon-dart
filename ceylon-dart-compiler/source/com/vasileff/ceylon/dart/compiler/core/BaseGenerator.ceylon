@@ -2421,26 +2421,70 @@ class BaseGenerator(CompilationContext ctx)
             DartExpression switchedVariable,
             [Expression+] matchExpressions) {
 
+        value optionalType
+            =   !switchedType.isSubtypeOf(ceylonTypes.objectType);
+
+        value nonOptionalType
+            =   if (optionalType)
+                then ceylonTypes.objectType
+                else switchedType;
+
         "equals() test for a single expression"
-        function generateMatchCondition(Expression expression)
-            =>  withLhsNative {
-                    ceylonTypes.booleanType;
-                    () => generateInvocationSynthetic {
-                        scope;
-                        switchedType;
-                        // We may need to box the switched expression, which
-                        // has already been evaluated to the potentially
-                        // native switchedVariable.
-                        () => withBoxing {
+        function generateMatchCondition(Expression expression) {
+            return
+            withLhsNative {
+                ceylonTypes.booleanType;
+                () {
+                    value expressionType
+                        =   ExpressionInfo(expression).typeModel;
+
+                    if (ceylonTypes.isCeylonNull(expressionType)) {
+                        // testing against the null value
+                        return generateExistsExpression {
                             scope;
                             switchedType;
                             null;
                             switchedVariable;
+                            true;
                         };
-                        "equals";
-                        [expression];
-                    };
+                    }
+
+                    value equalsTest
+                        =   generateInvocationSynthetic {
+                                scope;
+                                nonOptionalType;
+                                // We may need to box the switched expression, which
+                                // has already been evaluated to the potentially
+                                // native switchedVariable.
+                                () => withBoxing {
+                                    scope;
+                                    switchedType;
+                                    null;
+                                    switchedVariable;
+                                };
+                                "equals";
+                                [expression];
+                            };
+
+                    if (optionalType) {
+                        // possibly null; test for !null first
+                        return DartBinaryExpression {
+                            generateExistsExpression {
+                                scope;
+                                switchedType;
+                                null;
+                                switchedVariable;
+                            };
+                            "&&";
+                            equalsTest;
+                        };
+                    }
+                    else {
+                        return equalsTest;
+                    }
                 };
+            };
+        }
 
         return matchExpressions
                 .reversed
