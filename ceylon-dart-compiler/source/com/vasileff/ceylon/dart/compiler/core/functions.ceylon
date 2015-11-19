@@ -368,21 +368,27 @@ SetterModel|FunctionModel|ValueModel? mostRefined
 }
 
 shared
-DScope dScope(Node|NodeInfo node, ScopeModel scope = toScopeModel(node))
-    =>  let (theScope = scope)
+DScope dScope(
+        "The AST node or node info for error reporting."
+        Node|NodeInfo node,
+        "The scope, which may be different from the [[node]]'s scope. The one known use
+         for this is creating values for `object` definitions, where the value's
+         scope must be used (which is the container of the `object` anonymous class
+         scope.)"
+        ScopeModel scope = toScopeModel(node))
+    =>  let (passedScope = scope, passedNode = node)
         object satisfies DScope {
-            shared actual ScopeModel scope = theScope;
-            shared actual String location;
-            shared actual String filename;
-            if (is Node node) {
-                value info = NodeInfo(node);
-                location = info.location;
-                filename = info.filename;
-            }
-            else {
-                location = node.location;
-                filename = node.filename;
-            }
+            shared actual Node node
+                =   if (is Node passedNode)
+                    then passedNode
+                    else passedNode.node;
+
+            shared actual NodeInfo nodeInfo
+                =   if (is NodeInfo passedNode)
+                    then passedNode
+                    else NodeInfo(passedNode);
+
+            shared actual ScopeModel scope => passedScope;
         };
 
 shared
@@ -481,8 +487,12 @@ T&Object assertExists<T>(T item, String? message = null) {
 }
 
 shared
-void addError(Node|NodeInfo node, String message) {
-    value info = if (is Node node) then NodeInfo(node) else node;
+void addError(Node|NodeInfo|DScope node, String message) {
+    value info
+        =   switch (node)
+            case (is Node) NodeInfo(node)
+            case (is NodeInfo) node
+            else node.nodeInfo;
     info.addUnexpectedError(message);
 }
 

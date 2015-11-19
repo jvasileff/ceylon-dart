@@ -30,6 +30,9 @@ import com.redhat.ceylon.model.typechecker.model {
     SpecificationModel=Specification,
     NamedArgumentListModel=NamedArgumentList
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartConstructorName,
     DartPrefixedIdentifier,
@@ -41,10 +44,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
-}
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
 }
 
 shared
@@ -1175,7 +1174,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
         }
         else {
-            throw CompilerBug(scope, "Unexpected container for '``declaration``'.");
+            addError(scope, "Unexpected container.");
+            return
+            DartInvocable {
+                DartSimpleIdentifier("");
+                package.dartFunction;
+                false;
+            };
         }
     }
 

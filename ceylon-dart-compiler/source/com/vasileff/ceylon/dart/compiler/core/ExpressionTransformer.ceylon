@@ -1153,7 +1153,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         return
         generateObjectInstantiation {
-            dScope(that, info.scope.container);
+            dScope(info, info.scope.container);
             info.anonymousClass;
         };
     }

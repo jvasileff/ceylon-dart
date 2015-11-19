@@ -62,6 +62,9 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     ParameterListModel=ParameterList
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
     DartExpression,
@@ -139,10 +142,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
     javaList
-}
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
 }
 
 shared abstract
@@ -615,8 +614,9 @@ class BaseGenerator(CompilationContext ctx)
 
         if (is ClassModel | ConstructorModel memberDeclaration) {
             if (!exists generateReceiver) {
-                throw CompilerBug(scope,
+                addError(scope,
                     "Member class and constructor invocations on super not supported.");
+                return DartNullLiteral();
             }
 
             // Invoking a member class; must call the statically known Dart constructor,
@@ -1923,8 +1923,10 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartExpression generateObjectInstantiation
-            (DScope valueScope, ClassModel classModel)
+    DartExpression generateObjectInstantiation(
+            "The scope of the value, not the scope of the object definition!"
+            DScope valueScope,
+            ClassModel classModel)
         =>  withBoxingNonNative {
                 valueScope;
                 classModel.type;

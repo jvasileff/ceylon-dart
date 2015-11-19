@@ -119,7 +119,8 @@ import com.vasileff.ceylon.dart.compiler {
 shared
 class NodeInfo(Node astNode) satisfies DScope {
 
-    shared default Node node => astNode;
+    shared actual default Node node => astNode;
+
     value tcNode = assertedTcNode<TcNode>(astNode);
 
     shared String text => tcNode.text;
@@ -132,10 +133,13 @@ class NodeInfo(Node astNode) satisfies DScope {
 
     // FIXME location and filename doesn't work for ArgumentListInfo
     // https://github.com/ceylon/ceylon-spec/issues/1385
-    shared actual String location => tcNode.location;
-    shared actual String filename => tcNode.unit?.filename else "unknown file";
+    shared String location => tcNode.location;
+    shared String filename => tcNode.unit?.filename else "unknown file";
 
     shared actual ScopeModel scope => tcNode.scope;
+
+    shared actual default NodeInfo nodeInfo => this;
+
     shared {Message*} errors => CeylonList(tcNode.errors);
 
     shared void addError(String string)

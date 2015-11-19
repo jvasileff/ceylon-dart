@@ -373,17 +373,10 @@ shared
             }
             phasedUnit.compilationUnit.visit(metamodelVisitor);
 
-            try {
-                computeCaptures(unit, ctx);
-                computeClassCaptures(unit, ctx);
-                ctx.topLevelVisitor.transformCompilationUnit(unit);
-                declarations.addAll(ctx.compilationUnitMembers.sequence());
-            }
-            catch (CompilerBug b) {
-                logError();
-                logError("Compiler bug: " + b.message);
-                // return; // exit early on error?
-            }
+            computeCaptures(unit, ctx);
+            computeClassCaptures(unit, ctx);
+            ctx.topLevelVisitor.transformCompilationUnit(unit);
+            declarations.addAll(ctx.compilationUnitMembers.sequence());
         }
 
         // collect warnings and errors

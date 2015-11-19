@@ -30,7 +30,6 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
     Warning
 }
 import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
     dartBackend,
     compileDart,
     CompilationStatus,
@@ -119,9 +118,6 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                 case (CompilationStatus.success) 0
                 case (CompilationStatus.errorTypeChecker
                         | CompilationStatus.errorDartBackend) 1);
-        }
-        catch (CompilerBug e) {
-            throw object extends ToolError("Compiler Bug: " + e.message, e) {};
         }
         catch (ReportableException e) {
             throw object extends ToolError(e.message, e.cause) {};
