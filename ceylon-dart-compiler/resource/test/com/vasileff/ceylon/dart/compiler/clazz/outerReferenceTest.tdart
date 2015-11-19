@@ -9,9 +9,9 @@ class I1$I2$C implements I1$I2 {
         this._$version = _$version;
     }
     $dart$core.int _$version;
-    $dart$core.String get cident => ("c-" + $ceylon$language.Integer.instance(_$version).toString()) + "";
+    $dart$core.String get cident => ("c-" + _$version.toString()) + "";
     $dart$core.String get couterIdent => $outer$default$I1$I2.ident;
-    $dart$core.String get ident => ("i2byC-" + $ceylon$language.Integer.instance(_$version).toString()) + "";
+    $dart$core.String get ident => ("i2byC-" + _$version.toString()) + "";
     $dart$core.String get outerIdent => I1$I2.$get$outerIdent(this);
 }
 abstract class I1$I2 {
