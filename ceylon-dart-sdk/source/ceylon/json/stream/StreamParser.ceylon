@@ -497,6 +497,8 @@ shared class LookAhead<T>(Iterator<T>&Positioned stream, lookAhead=1) satisfies 
     shared actual Integer position => pos;
 }
 
+// FIXME Dart workaround (no try/catch)
+/*
 "Adapts the given stream so that exceptions thrown while evaluating `next()` get 
  returned from the iterator, rather than propagating."
 Iterator<T|Exception>&Positioned errorReporting<T>(Iterator<T>&Positioned stream)
@@ -519,3 +521,4 @@ Iterator<T|Exception>&Positioned errorReporting<T>(Iterator<T>&Positioned stream
     
     shared actual Integer position => stream.position;
 };
+*/
