@@ -15,7 +15,7 @@ tagged("Streams", "Numbers")
 shared native Value sum<Value>({Value+} values) 
         given Value satisfies Summable<Value>;
 
-shared native("js") Value sum<Value>({Value+} values) 
+shared native("js", "dart") Value sum<Value>({Value+} values) 
         given Value satisfies Summable<Value> {
     value it = values.iterator();
     assert (!is Finished first = it.next());

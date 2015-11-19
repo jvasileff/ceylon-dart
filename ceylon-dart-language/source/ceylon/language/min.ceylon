@@ -14,7 +14,7 @@ shared native Absent|Value min<Value,Absent>
         given Value satisfies Comparable<Value>
         given Absent satisfies Null;
 
-shared native("js") Absent|Value min<Value,Absent>
+shared native("js", "dart") Absent|Value min<Value,Absent>
         (Iterable<Value,Absent> values) 
         given Value satisfies Comparable<Value>
         given Absent satisfies Null {

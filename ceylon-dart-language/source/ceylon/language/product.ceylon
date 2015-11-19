@@ -15,7 +15,7 @@ tagged("Streams", "Numbers")
 shared native Value product<Value>({Value+} values) 
         given Value satisfies Numeric<Value>;
 
-shared native("js") Value product<Value>({Value+} values) 
+shared native("js", "dart") Value product<Value>({Value+} values) 
         given Value satisfies Numeric<Value> {
     value it = values.iterator();
     assert (!is Finished first = it.next());

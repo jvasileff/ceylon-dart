@@ -18,7 +18,7 @@ shared native Absent|Value max<Value,Absent>
         given Value satisfies Comparable<Value>
         given Absent satisfies Null;
 
-shared native("js") Absent|Value max<Value,Absent>
+shared native("js", "dart") Absent|Value max<Value,Absent>
         (Iterable<Value,Absent> values) 
         given Value satisfies Comparable<Value>
         given Absent satisfies Null {
