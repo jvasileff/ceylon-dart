@@ -35,15 +35,21 @@ class HtmlSerializer(
     }
 
     void flushStartElement(Boolean end = false) {
-        if (exists [elementName, attributes] = bufferedStartElement) {
+// FIXME Dart workaround
+//        if (exists [elementName, attributes] = bufferedStartElement) {
+        if (exists pair = bufferedStartElement) {
+            value elementName = pair[0];
+            value attributes = pair[1];
             printIndent(elementName, true);
             print("<");
             print(escape(elementName, package.name));
-            for (name->val in attributes) {
+// FIXME Dart workaround
+//            for (name->val in attributes) {
+            for (entry in attributes) {
                 print(" "
-                    + escape(name, package.name)
+                    + escape(entry.key, package.name)
                     + "=\""
-                    + escape(val.string, attributeValue)
+                    + escape(entry.item.string, attributeValue)
                     + "\"");
             }
             if (end) {
