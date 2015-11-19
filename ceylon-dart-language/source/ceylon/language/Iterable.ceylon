@@ -1182,7 +1182,9 @@ shared interface Iterable<out Element=Anything,
             object satisfies Iterator<Integer->Element> {
                 variable value i=0;
                 next() => switch (next = iter.next())
-                          case (finished) finished
+// FIXME Dart workaround
+//                          case (finished) finished
+                          case (is Finished) finished
                           else i++ -> next;
                 string => outer.string + ".iterator()";
             };

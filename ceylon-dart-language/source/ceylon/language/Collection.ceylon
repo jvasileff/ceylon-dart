@@ -104,7 +104,9 @@ shared interface Collection<out Element=Anything>
             .indexed
             .flatMap(
                 (entry) 
-                    => let (index->entries = entry)
+// FIXME Dart workaround
+//                    => let (index->entries = entry)
+                    => let (index = entry.key, entries = entry.item)
                     entries.map((entry) => index->entry.item));
         
         empty => multiset.empty;
@@ -120,9 +122,13 @@ shared interface Collection<out Element=Anything>
                 if (initial) {
                     initial = false;
                 }
-                else if (exists i -> [key->_, __]
-                        = elements.paired.locateLast((pair)
-                            => pair[0].key < pair[1].key)) {
+// FIXME Dart workaround
+//                else if (exists i -> [key->_, __]
+//                        = elements.paired.locateLast((pair)
+//                            => pair[0].key < pair[1].key)) {
+                else if (exists a = elements.paired.locateLast((pair) => pair[0].key < pair[1].key)) {
+                    value i = a.key;
+                    value key = a.item[0].key;
                     assert (exists j
                             = elements.lastIndexWhere((elem) 
                                 => elem.key > key));
@@ -136,7 +142,9 @@ shared interface Collection<out Element=Anything>
                 }
                 return
                     if (nonempty permutation 
-                        = elements*.item) 
+// FIXME Dart workaround
+//                        = elements*.item) 
+                        = elements.collect(Entry.item))
                     then permutation 
                     else finished;
             }

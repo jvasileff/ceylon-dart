@@ -84,7 +84,10 @@ shared interface Map<out Key=Object, out Item=Anything>
     }
     
     function lookup(Object key)
-            => getOrDefault(key, Missing.instance);
+// FIXME Dart workaround
+//            => getOrDefault(key, Missing.instance);
+
+            => getOrDefault(key, missing);
     
     "Determines if the given [[value|entry]] is an [[Entry]]
      belonging to this map."
@@ -239,7 +242,9 @@ shared interface Map<out Key=Object, out Item=Anything>
             if (is Key key) {
                 return
                     switch (item = outer.lookup(key))
-                    case (Missing.instance) null
+// FIXME Dart workaround
+//                    case (Missing.instance) null
+                    case (is Missing) null
                     else mapping(key, item);
             }
             else {
@@ -253,7 +258,9 @@ shared interface Map<out Key=Object, out Item=Anything>
             if (is Key key) {
                 return
                     switch (item = outer.lookup(key))
-                    case (Missing.instance) default 
+// FIXME Dart workaround
+//                    case (Missing.instance) default
+                    case (is Missing) default 
                     else mapping(key, item);
             }
             else {
@@ -353,14 +360,18 @@ shared interface Map<out Key=Object, out Item=Anything>
         
         get(Object key) 
                 => switch (result = other.lookup(key))
-                case (Missing.instance) outer.get(key) 
+// FIXME Dart workaround
+//                case (Missing.instance) outer.get(key) 
+                case (is Missing) outer.get(key) 
                 else result;
         
         shared actual OtherItem|Item|Default 
         getOrDefault<Default>
                 (Object key, Default default) 
                 => switch (result = other.lookup(key))
-                case (Missing.instance)
+// FIXME Dart workaround
+//                case (Missing.instance)
+                case (is Missing)
                     outer.getOrDefault(key, default)
                 else result;
         
@@ -494,6 +505,9 @@ shared object emptyMap
     
 }
 
-class Missing of instance {
-    shared new instance {}
-}
+// FIXME Dart workaround
+//class Missing of instance {
+//    shared new instance {}
+//}
+interface Missing of missing {}
+object missing satisfies Missing {}
