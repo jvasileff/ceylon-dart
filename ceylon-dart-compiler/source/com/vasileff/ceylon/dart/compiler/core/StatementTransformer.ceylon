@@ -35,7 +35,8 @@ import ceylon.ast.core {
     MatchCase,
     ExistsOrNonemptyCondition,
     Throw,
-    ElseClause
+    ElseClause,
+    FunctionDeclaration
 }
 import ceylon.collection {
     LinkedList
@@ -78,7 +79,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ForFailInfo,
     ElseClauseInfo,
     TypeInfo,
-    IsCaseInfo
+    IsCaseInfo,
+    FunctionDeclarationInfo
 }
 
 import org.antlr.runtime {
@@ -700,6 +702,17 @@ class StatementTransformer(CompilationContext ctx)
                 generateForObjectDefinition(that);
             }
         ];
+    }
+
+    shared actual
+    DartStatement[] transformFunctionDeclaration(FunctionDeclaration that) {
+        value info = FunctionDeclarationInfo(that);
+        if (info.declarationModel.parameter) {
+            // ignore; must be a declaration for a callable parameter
+            return [];
+        }
+        addError(that, "forward function declarations not yet supported");
+        return  [];
     }
 
     shared actual
