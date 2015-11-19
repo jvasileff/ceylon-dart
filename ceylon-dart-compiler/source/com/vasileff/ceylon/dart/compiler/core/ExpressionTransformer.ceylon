@@ -1531,8 +1531,18 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformNotEqualOperation(NotEqualOperation that)
-        =>  DartPrefixExpression("!",
-                generateInvocationForBinaryOperation(that, "equals"));
+        =>  withBoxing {
+                dScope(that);
+                ceylonTypes.booleanType;
+                null;
+                DartPrefixExpression {
+                    "!";
+                    withLhsNative {
+                        ceylonTypes.booleanType;
+                        () => generateInvocationForBinaryOperation(that, "equals");
+                    };
+                };
+            };
 
     shared actual
     DartExpression transformIdenticalOperation(IdenticalOperation that)
