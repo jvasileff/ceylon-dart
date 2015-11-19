@@ -102,6 +102,10 @@ import com.redhat.ceylon.model.typechecker.model {
     ScopeModel=Scope,
     ConstructorModel=Constructor
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope,
+    dartBackend
+}
 import com.vasileff.ceylon.dart.compiler.core {
     augmentNode,
     asserted,
@@ -110,10 +114,6 @@ import com.vasileff.ceylon.dart.compiler.core {
 
 import org.antlr.runtime {
     Token
-}
-import com.vasileff.ceylon.dart.compiler {
-    DScope,
-    dartBackend
 }
 
 shared
@@ -403,8 +403,11 @@ class SpecifiedArgumentInfo(SpecifiedArgument astNode)
     shared actual default SpecifiedArgument node
         =>  astNode;
 
-    shared actual Tree.SpecifiedArgument | Tree.AttributeArgument tcNode
-        =>  assertedTcNode<Tree.SpecifiedArgument | Tree.AttributeArgument>(astNode);
+    shared actual Tree.SpecifiedArgument | Tree.AttributeArgument
+            | Tree.MethodArgument tcNode {
+        return assertedTcNode<Tree.SpecifiedArgument | Tree.AttributeArgument
+                | Tree.MethodArgument>(astNode);
+    }
 }
 
 shared abstract
@@ -551,14 +554,23 @@ class SpecificationInfo(Specification astNode)
         extends StatementInfo(astNode) {
 
     shared actual default Specification node => astNode;
-    value tcNode = assertedTcNode<Tree.SpecifierStatement>(astNode);
+
+    // tcNode may be a MethodArgument for lazy specifier named arguments.
+    value tcNode
+        =   assertedTcNode<Tree.SpecifierStatement | Tree.MethodArgument>(astNode);
 
     shared FunctionModel|ValueModel declaration {
-        assert (is FunctionModel | ValueModel d = tcNode.declaration);
+        assert (is FunctionModel | ValueModel d
+            =   if (is Tree.SpecifierStatement tcNode)
+                then tcNode.declaration
+                else tcNode.declarationModel);
         return d;
     }
 
-    shared TypedDeclarationModel? refined => tcNode.refined;
+    shared TypedDeclarationModel? refined
+        =>  if (is Tree.SpecifierStatement tcNode)
+            then tcNode.refined
+            else null;
 }
 
 shared

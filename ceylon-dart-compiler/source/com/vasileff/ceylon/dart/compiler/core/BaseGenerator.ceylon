@@ -37,7 +37,8 @@ import ceylon.ast.core {
     SafeMemberOperator,
     AnySpecifier,
     FunctionArgument,
-    Parameter
+    Parameter,
+    LazySpecification
 }
 import ceylon.collection {
     LinkedList
@@ -137,7 +138,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NamedArgumentInfo,
     SpreadArgumentInfo,
     sequenceArgumentInfo,
-    ComprehensionInfo
+    ComprehensionInfo,
+    LazySpecificationInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -3560,17 +3562,51 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                     }
                     case (is SpecifiedArgumentInfo) {
-                        // Treating ValueSpecification and LazySpecification identically.
-                        // A lazy function would just be evaluated right away anyway.
-                        dartExpression
-                            =   withLhs {
-                                    typeModel;
-                                    parameterModelModel;
-                                    () => argumentInfo.node.specification.specifier
-                                            .expression.transform {
-                                        expressionTransformer;
+                        // If the lazySpecification defines a function, generate and
+                        // pass a callable
+                        if (is LazySpecification lazySpecification
+                                    =   argumentInfo.node.specification,
+                                nonempty parameterLists
+                                    =   lazySpecification.parameterLists) {
+
+                            value lazySpecificationInfo
+                                =   LazySpecificationInfo(lazySpecification);
+
+                            "It has a parameter list, so it must be a function."
+                            assert (is FunctionModel declarationModel
+                                =   lazySpecificationInfo.declaration);
+
+                            dartExpression
+                                =   withLhs {
+                                        typeModel;
+                                        null;
+                                        () => generateNewCallable {
+                                            argumentInfo;
+                                            declarationModel;
+                                            generateFunctionExpressionRaw {
+                                                lazySpecificationInfo;
+                                                declarationModel;
+                                                parameterLists;
+                                                lazySpecification.specifier;
+                                            };
+                                            0; false;
+                                        };
                                     };
-                                };
+                        }
+                        else {
+                            // For values, treating ValueSpecification and
+                            // LazySpecification identically. A lazy function would just
+                            // be evaluated right away anyway.
+                            dartExpression
+                                =   withLhs {
+                                        typeModel;
+                                        parameterModelModel;
+                                        () => argumentInfo.node.specification.specifier
+                                                .expression.transform {
+                                            expressionTransformer;
+                                        };
+                                    };
+                        }
                     }
                     case (is ValueArgumentInfo) {
                         dartExpression
