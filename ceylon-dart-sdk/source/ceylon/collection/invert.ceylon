@@ -7,14 +7,16 @@ Map<Item,[Key+]> invert<Key,Item>(Map<Key,Item> map)
         given Item satisfies Object {
     
     value result = HashMap<Item,ArrayList<Key>>();
-    for (key->item in map) {
-        if (exists sb = result[item]) {
-            sb.add(key);
+// FIXME Dart workaround
+//    for (key->item in map) {
+    for (entry in map) {
+        if (exists sb = result[entry.item]) {
+            sb.add(entry.key);
         }
         else {
             value list = ArrayList<Key>();
-            list.add(key);
-            result.put(item, list);
+            list.add(entry.key);
+            result.put(entry.item, list);
         }
     }
     [Key+] mapping(Item item, ArrayList<Key> sa) {

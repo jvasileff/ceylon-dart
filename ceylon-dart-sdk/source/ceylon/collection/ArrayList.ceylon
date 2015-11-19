@@ -401,8 +401,13 @@ shared class ArrayList<Element>
 
     shared actual 
     List<Element> span(Integer from, Integer to) {
-        value [start, len, reversed]
-                = spanToMeasure(from, to, length);
+// FIXME Dart workaround
+//        value [start, len, reversed]
+//                = spanToMeasure(from, to, length);
+        value tuple = spanToMeasure(from, to, length);
+        value start = tuple[0];
+        value len = tuple[1];
+        value reversed = tuple[2];
         value result = ArrayList {
             initialCapacity = len; 
             growthFactor = growthFactor; 
@@ -413,8 +418,12 @@ shared class ArrayList<Element>
 
     shared actual 
     void deleteSpan(Integer from, Integer to) {
-        value [start, len, _]
-                = spanToMeasure(from, to, length);
+// FIXME Dart workaround
+//        value [start, len, _]
+//                = spanToMeasure(from, to, length);
+        value tuple = spanToMeasure(from, to, length);
+        value start = tuple[0];
+        value len = tuple[1];
         if (start < length && len > 0) {
             value fstTrailing = start + len;
             array.copyTo(array, 

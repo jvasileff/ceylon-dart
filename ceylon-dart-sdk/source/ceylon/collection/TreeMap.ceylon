@@ -11,7 +11,9 @@ shared class TreeMap<Key, Item>
         given Key satisfies Object {
     
     "A comparator function used to sort the entries."
-    Comparison compare(Key x, Key y);
+// FIXME Dart workaround
+//    Comparison compare(Key x, Key y);
+    Comparison(Key, Key) compare;
     
     "The root node of the tree."
     variable Node? root = null;
@@ -376,8 +378,10 @@ shared class TreeMap<Key, Item>
     root = if (exists nodeToClone) 
            then copyNode(nodeToClone) else null;
 
-    for (key->item in entries) {
-        put(key, item);
+// FIXME Dart workaround
+//    for (key->item in entries) {
+    for (entry in entries) {
+        put(entry.key, entry.item);
     }
 
 

@@ -11,7 +11,9 @@ shared class TreeSet<Element>
         given Element satisfies Object {
     
     "A comparator function used to sort the elements."
-    Comparison compare(Element x, Element y);
+// FIXME Dart workaround
+//    Comparison compare(Element x, Element y);
+    Comparison(Element, Element) compare;
     
     TreeMap<Element,Element> map;
     

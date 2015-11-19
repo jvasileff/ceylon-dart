@@ -496,16 +496,25 @@ shared class LinkedList<Element>
 
     shared actual 
     List<Element> span(Integer from, Integer to) {
-        value [start, len, reversed] 
-                = spanToMeasure(from, to, length);
+// FIXME Dart workaround
+//        value [start, len, reversed] 
+//                = spanToMeasure(from, to, length);
+        value tuple = spanToMeasure(from, to, length);
+        value start = tuple[0];
+        value len = tuple[1];
+        value reversed  = tuple[2];
         value result = LinkedList(skip(start).take(len));
         return reversed then result.reversed else result;
     }
     
     shared actual 
     void deleteSpan(Integer from, Integer to)  {
-        value [start, len, _] 
-                = spanToMeasure(from, to, length);
+// FIXME Dart workaround
+//        value [start, len, _] 
+//                = spanToMeasure(from, to, length);
+        value tuple = spanToMeasure(from, to, length);
+        value start = tuple[0];
+        value len = tuple[1];
         if (start < length && len > 0) {
             value keepHead = start > 0;
             value lastPreMeasureCell 
