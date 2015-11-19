@@ -8,8 +8,11 @@ shared Period? parsePeriod(String string) {
         variable Period period = zero;
         variable Integer integer = 0;
         variable Integer state = 0;
-        
-        for (index -> ch in string.rest.indexed) {
+       
+// FIXME Dart workaround
+//        for (index -> ch in string.rest.indexed) {
+        for (entry in string.rest.indexed) {
+            value ch = entry.item;
             if (ch.digit, state < 7, state != 3) {
                 integer = integer*10 + (ch.integer - '0'.integer);
                 continue;
