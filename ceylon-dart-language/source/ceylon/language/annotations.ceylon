@@ -120,9 +120,13 @@ shared annotation LateAnnotation late()
         => LateAnnotation();
 
 "The annotation class for the [[native]] annotation."
-shared final sealed annotation class NativeAnnotation(
-    shared String* backends)
-        satisfies OptionalAnnotation<NativeAnnotation,Annotated> {}
+shared final sealed annotation class NativeAnnotation(backends)
+        satisfies OptionalAnnotation<NativeAnnotation,Annotated> {
+    "The compiler backend that this native annotation applies to,
+     or the empty string to declare the annotated element is a
+     native header."
+    shared String* backends;
+}
 
 "Annotation to mark a member whose implementation is defined 
  in platform-native code."
@@ -235,6 +239,19 @@ shared annotation TagsAnnotation tagged(
     String* tags)
         => TagsAnnotation(*tags);
 
+"The annotation class for the [[aliased]] annotation."
+shared final sealed annotation class AliasesAnnotation(
+    "The aliases, in plain text."
+    shared String* aliases)
+        satisfies OptionalAnnotation<AliasesAnnotation,Annotated> {}
+
+"Annotation to specify a list of aliases that tools such as auto-completion and
+ quick-fixes should consider, to help users find a declaration using its aliases."
+shared annotation AliasesAnnotation aliased(
+    "The aliases, in plain text."
+    String* aliases)
+        => AliasesAnnotation(*aliases);
+
 "The annotation class for the [[license]] annotation."
 shared final sealed annotation class LicenseAnnotation(
     "The name, text, or URL of the license."
@@ -262,7 +279,7 @@ shared annotation OptionalImportAnnotation optional()
  annotation."
 shared final sealed annotation class SuppressWarningsAnnotation(
     "The warning types to suppress."
-    [String*] warnings)
+    shared String* warnings)
         satisfies OptionalAnnotation<SuppressWarningsAnnotation, 
             FunctionDeclaration|ValueDeclaration|ClassOrInterfaceDeclaration|ConstructorDeclaration|Module|Package|Import> {}
 
@@ -289,7 +306,7 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `ambiguousAnnotation`,
      `javaAnnotationElement`."
     String* warnings) 
-        => SuppressWarningsAnnotation(warnings);
+        => SuppressWarningsAnnotation(*warnings);
 
 "The annotation class for the [[serializable]] annotation."
 shared final annotation class SerializableAnnotation()
@@ -303,4 +320,3 @@ shared final annotation class SerializableAnnotation()
  instances of non-serializable classes."
 shared annotation SerializableAnnotation serializable() 
         => SerializableAnnotation();
-

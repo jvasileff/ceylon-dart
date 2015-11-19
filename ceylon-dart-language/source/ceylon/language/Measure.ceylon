@@ -45,13 +45,13 @@ class Measure<Element>(first, size)
         variable value count = 0;
         variable value current = first;
         shared actual Element|Finished next() {
-             //++count > size
-             //       then finished else current++;
-             if (count >= size) {
-                 return finished;
-             } else if (count++ == 0) {
+            if (count >= size) {
+                return finished;
+            }
+            else if (count++ == 0) {
                 return current;
-            } else {
+            }
+            else {
                 return ++current;
             }
         }
@@ -81,13 +81,13 @@ class Measure<Element>(first, size)
             shared actual Element|Finished next() {
                 if (count >= size) {
                     return finished;
-                } else {
-                    if (count++ == 0) {
-                        return current;
-                    } else {
-                        current = current.neighbour(step);
-                        return current;
-                    }
+                }
+                else if (count++ == 0) {
+                    return current;
+                }
+                else {
+                    current = current.neighbour(step);
+                    return current;
                 }
             }
             string => "``outer``.iterator()";
@@ -101,17 +101,6 @@ class Measure<Element>(first, size)
     
     containsElement(Element x)
             => 0 <= x.offset(first) < size;
-    
-    shared actual 
-    Boolean includes(List<> sublist) {
-        if (sublist.empty) {
-            return true;
-        } else if (is Range<Element> sublist) {
-            return includesRange(sublist);
-        } else {
-            return super.includes(sublist);
-        }
-    }
     
     shared actual 
     Boolean includesRange(Range<Element> range) {

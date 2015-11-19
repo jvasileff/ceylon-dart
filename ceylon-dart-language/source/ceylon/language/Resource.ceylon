@@ -40,6 +40,7 @@ import ceylon.language.meta.declaration {
        print(resource.textContent());"""
 by("Enrique Zamudio")
 see (`function Module.resourceByPath`)
+tagged("Environment")
 shared interface Resource {
     
     "The name of the resource; usually the filename."
@@ -63,7 +64,7 @@ shared interface Resource {
     "Retrieves the contents of the resource as a [[String]],
      using the specified encoding."
     shared formal String textContent(String encoding="UTF-8");
-
+    
     string => "``className(this)``[``uri``]";
 }
 

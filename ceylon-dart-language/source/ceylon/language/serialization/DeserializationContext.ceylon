@@ -1,6 +1,4 @@
 import ceylon.language.meta.model {
-    Class,
-    MemberClass,
     ClassModel
 }
 import ceylon.language.meta.declaration {
@@ -19,12 +17,12 @@ import ceylon.language.meta.declaration {
  
    For example, given
  
-       class Person(name, employer) {
-           String name;
-           Company employer;
+       serializable class Person(name, employer) {
+           shared String name;
+           shared Company employer;
        }
-       class Company(name) {
-           String name;
+       serializable class Company(name) {
+           shared String name;
            shared late Person owner;
        }
      
@@ -40,25 +38,29 @@ import ceylon.language.meta.declaration {
        value dc = deserialization<String>();
        
        dc.attribute("ww", `value Person.name`, "wwn");
-       dc.attribute("ww", `value.Person.employer`, "wi");
+       dc.attribute("ww", `value Person.employer`, "wi");
        dc.attribute("ul", `value Person.name`, "uln");
-       dc.attribute("ul", `value.Person.employer`, "wi");
+       dc.attribute("ul", `value Person.employer`, "wi");
        dc.attribute("wi", `value Company.name`, "win");
        dc.attribute("wi", `value Company.owner`, "ww");
        
-       dc.attributeValue("win", "Wonka Inc.");
-       dc.attributeValue("wwn", "Willy Wonka");
-       dc.attributeValue("uln", "Umpa lumpa");
+       dc.instanceValue("win", "Wonka Inc.");
+       dc.instanceValue("wwn", "Willy Wonka");
+       dc.instanceValue("uln", "Umpa lumpa");
        
        dc.instance("wi", `Company`);
        dc.instance("ww", `Person`);
        dc.instance("ul", `Person`);
        
-       value wonkaInc2 = dc.instance("wi");
-       value willy2 = dc.instance("ww");
-       value umpaLumpa2 = dc.instance("ul");
+       value wonkaInc2 = dc.reconstruct<Company>("wi");
+       value willy2 = dc.reconstruct<Person>("ww");
+       value umpaLumpa2 = dc.reconstruct<Person>("ul");
        
-   The calls to [[attribute]], [[attributeValue]] and [[instance]] could be 
+       assert(wonkaInc2.owner === willy2);
+       assert(willy2.employer === wonkaInc2);
+       assert(umpaLumpa2.employer === wonkaInc2);
+       
+   The calls to [[attribute]], [[instanceValue]] and [[instance]] could be 
    in any order.
 """
 shared sealed interface DeserializationContext<Id> {
@@ -66,7 +68,7 @@ shared sealed interface DeserializationContext<Id> {
     """The given [[instanceId]] refers to an instance of the given class."""
     throws(`class DeserializationException`, 
         "the given instance was specified by [[instanceValue]] or has already been reconstructed.")
-    shared formal void instance(Id instanceId, ClassModel clazz);
+    shared formal void instance(Id instanceId, ClassModel<> clazz);
     
     """The given [[instanceId]] is a member of the instance with the given [[containerId]].
        
@@ -75,7 +77,7 @@ shared sealed interface DeserializationContext<Id> {
         "the given instance was specified by [[instanceValue]] or has already been reconstructed.")
     shared formal void memberInstance(Id containerId, Id instanceId);
     
-    """The value of the given [[attributee]] of the instance with 
+    """The value of the given [[attribute]] of the instance with 
        the given [[instanceId]] has given [[attributeValueId]]."""
     throws(`class DeserializationException`, 
         "the given instance was specified by [[instanceValue]] or has already been reconstructed.")

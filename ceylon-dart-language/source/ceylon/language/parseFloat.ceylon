@@ -1,14 +1,21 @@
+
 "The [[Float]] value of the given 
  [[string representation|string]] of a decimal floating 
  point number, or `null` if the string does not represent a 
  decimal floating point number.
+ 
+ If the given string representation contains more digits
+ than can be represented by a `Float`, then the least 
+ significant digits are ignored.
  
  The syntax accepted by this method is the same as the 
  syntax for a `Float` literal in the Ceylon language 
  except that it may optionally begin with a sign 
  character (`+` or `-`) and may not contain grouping 
  underscore characters."
-see (`function parseInteger`)
+see (`function formatFloat`, 
+     `function parseInteger`)
+tagged("Numbers", "Basic types")
 shared Float? parseFloat(String string) {
     
     // parse the sign first
@@ -61,42 +68,53 @@ shared Float? parseFloat(String string) {
         return null;
     }
     
-    if (exists whole = parseInteger(wholePart), 
-        exists fractional = parseInteger(fractionalPart)) {
-        value shift = fractionalPart.size;
-        Integer exponent;
-        if (exists rest) {
-            if (exists magnitude
+    value usableWholePart 
+            = wholePart[0:maximumIntegerExponent];
+    value usableFractionalPart 
+            = fractionalPart[0:
+                maximumIntegerExponent
+                    - usableWholePart.size];
+    
+    value digits = usableWholePart + usableFractionalPart;
+    value shift 
+            = usableFractionalPart.empty
+            then usableWholePart.size - wholePart.size
+            else usableFractionalPart.size;
+    
+    Integer exponent;
+    if (exists rest) {
+        if (exists magnitude
                 = parseFloatExponent(rest)) {
-                exponent = magnitude-shift;
-            }
-            else {
-                return null;
-            }
+            exponent = magnitude - shift;
         }
         else {
-            exponent = -shift; 
+            return null;
         }
-        Integer numerator = whole*10^shift + fractional;
-        Float signedNumerator 
-                = numerator.zero
-                      then 0 * sign.float //preserve sign of -0.0
-                      else (sign * numerator).float;
+    }
+    else {
+        exponent = -shift; 
+    }
+    
+    if (exists unsigned = parseInteger(digits)) {
+        Float signed
+                = unsigned == 0
+                then 0 * sign.float //preserve sign of -0.0
+                else (sign * unsigned).nearestFloat;
         value exponentMagnitude = exponent.magnitude;
-        if (exponentMagnitude==0) {
-            return signedNumerator;
+        if (exponentMagnitude == 0) {
+            return signed;
         }
-        else if (exponentMagnitude<maximumIntegerExponent) {
+        else if (exponentMagnitude<=maximumIntegerExponent) {
             value scale = 10^exponentMagnitude;
             return exponent<0
-                then signedNumerator / scale
-                else signedNumerator * scale;
+            then signed / scale
+            else signed * scale;
         }
         else {
             //scale can't be represented as 
             //an integer, resulting in some
             //rounding error
-            return signedNumerator * 10.0^exponent;
+            return signed * 10.0^exponent;
         }
     }
     
@@ -104,9 +122,12 @@ shared Float? parseFloat(String string) {
 }
 
 //TODO: replace with a native implementation
-Integer maximumIntegerExponent 
+"The maximum number of decimal digits that can be 
+ represented by an [[Integer]]."
+Integer maximumIntegerExponent
         = smallest(runtime.maxIntegerValue.string.size,
-                   runtime.minIntegerValue.string.size-1);
+                   runtime.minIntegerValue.string.size-1)
+            - 1;
 
 Integer? parseFloatExponent(String string) {
     switch (string)

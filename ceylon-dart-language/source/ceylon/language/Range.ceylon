@@ -31,6 +31,7 @@ import ceylon.language {
  `..` and `:` are used to create new instances of `Range`."
 see (`function makeSpan`,
     `function makeMeasure`)
+tagged("Sequences")
 shared sealed
 abstract serializable
 class Range<Element>()
@@ -46,11 +47,6 @@ class Range<Element>()
     shared formal Boolean includesRange(Range<Element> range);
     
     contains(Object element) 
-            => if (is Element element) 
-            then containsElement(element)
-            else false;
-    
-    occurs(Anything element)
             => if (is Element element) 
             then containsElement(element)
             else false;

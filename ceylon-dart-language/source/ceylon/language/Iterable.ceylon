@@ -51,6 +51,12 @@
    
        {Integer+} lengths = { for (w in words) w.size };
    
+   The `*.` operator may be used to evaluate an attribute
+   or invoke a method of the elements of the stream,
+   producing a new stream:
+   
+       {Integer+} lengths = words*.size;
+   
    `Iterable` and its subtypes define various operations
    that return other iterable objects. Such operations come 
    in two flavors:
@@ -128,6 +134,7 @@
        Boolean same = corresponding(xs, ys);"""
 see (`interface Collection`, `function corresponding`)
 by ("Gavin")
+tagged("Streams")
 shared interface Iterable<out Element=Anything, 
                           out Absent=Null>
         satisfies Category<>
@@ -343,7 +350,7 @@ shared interface Iterable<out Element=Anything,
      
      results in the stream `{ 1, 10, 100, 1000, 10000 }`."
     see (`function collect`)
-    shared default 
+    shared default
     Iterable<Result,Absent> map<Result>(
             "The mapping to apply to the elements."
             Result collecting(Element element)) 
@@ -535,7 +542,7 @@ shared interface Iterable<out Element=Anything,
      The following identities explain the relationship 
      between `scan` and [[fold]]:
      
-         it.scan(z)(f).getFromFirst(n) == it.taking(n).fold(z)(f)
+         it.scan(z)(f).getFromFirst(n) == it.take(n).fold(z)(f)
          it.scan(z)(f).last == it.fold(z)(f)
          it.scan(z)(f).first == {}.fold(z)(f) == z
      
@@ -588,7 +595,7 @@ shared interface Iterable<out Element=Anything,
          (-10..10).find(Integer.positive)
      
      evaluates to `1`."
-    see (`function findLast`)
+    see (`function findLast`, `function locate`)
     shared default 
     Element? find(
             "The predicate the element must satisfy."
@@ -611,7 +618,7 @@ shared interface Iterable<out Element=Anything,
          (-10..10).findLast(3.divides)
      
      evaluates to `9`."
-    see (`function find`)
+    see (`function find`, `function locateLast`)
     shared default 
     Element? findLast(
             "The predicate the element must satisfy."
@@ -636,9 +643,11 @@ shared interface Iterable<out Element=Anything,
          (-10..10).locate(Integer.positive)
      
      evaluates to `11->1`."
-    see (`function locateLast`, `function locations`)
+    see (`function locateLast`, `function locations`,
+         `function find`, 
+         `function List.firstIndexWhere`)
     shared default 
-    <Integer->Element>? locate(
+    <Integer->Element&Object>? locate(
         "The predicate the element must satisfy."
         Boolean selecting(Element&Object element)) {
         variable value index = 0;
@@ -662,12 +671,14 @@ shared interface Iterable<out Element=Anything,
          (-10..10).locateLast(3.divides)
      
      evaluates to `19->9`."
-    see (`function locate`, `function locations`)
+    see (`function locate`, `function locations`,
+         `function findLast`, 
+         `function List.lastIndexWhere`)
     shared default 
-    <Integer->Element>? locateLast(
+    <Integer->Element&Object>? locateLast(
         "The predicate the element must satisfy."
         Boolean selecting(Element&Object element)) {
-        variable <Integer->Element>? last = null;
+        variable <Integer->Element&Object>? last = null;
         variable value index = 0;
         for (elem in this) {
             if (exists elem, selecting(elem)) {
@@ -691,17 +702,18 @@ shared interface Iterable<out Element=Anything,
      Note that this method is more efficient than the
      alternative of applying [[filter]] to an [[indexed]]
      stream."
-    see (`function locate`, `function locateLast`)
+    see (`function locate`, `function locateLast`, 
+         `function List.indexesWhere`)
     shared default
-    {<Integer->Element>*} locations(
+    {<Integer->Element&Object>*} locations(
         "The predicate the element must satisfy."
         Boolean selecting(Element&Object element)) 
-            => object satisfies {<Integer->Element>*} {
+            => object satisfies {<Integer->Element&Object>*} {
         iterator() 
                 => let (iter = outer.iterator()) 
-            object satisfies Iterator<Integer->Element> {
+            object satisfies Iterator<Integer->Element&Object> {
                 variable value i=0;
-                shared actual <Integer->Element>|Finished next() {
+                shared actual <Integer->Element&Object>|Finished next() {
                     while (!is Finished next = iter.next()) { 
                         if (exists next, selecting(next)) {
                             return i++->next; 
@@ -736,6 +748,7 @@ shared interface Iterable<out Element=Anything,
      and [[ceylon.language::min]] may be used to find the  
      largest and smallest values in a stream of [[Comparable]] 
      values, according to the natural order of its elements."
+    see (`function package.max`, `function package.min`)
     shared default 
     Element|Absent max(
             "The function comparing pairs of elements."
@@ -1132,7 +1145,7 @@ shared interface Iterable<out Element=Anything,
             "A default value that replaces `null` elements."
             Default defaultValue)
             given Default satisfies Object
-            => { for (elem in this) elem else defaultValue };
+            => map((elem) => elem else defaultValue);
     
     "The non-null elements of this stream, in the order in
      which they occur in this stream. For null elements of 
@@ -1168,9 +1181,9 @@ shared interface Iterable<out Element=Anything,
                 => let (iter = outer.iterator()) 
             object satisfies Iterator<Integer->Element> {
                 variable value i=0;
-                next() => if (!is Finished next = iter.next())
-                            then i++ -> next 
-                            else finished;
+                next() => switch (next = iter.next())
+                          case (finished) finished
+                          else i++ -> next;
                 string => outer.string + ".iterator()";
             };
     };
@@ -1255,7 +1268,8 @@ shared interface Iterable<out Element=Anything,
                 object satisfies Iterator<[Element+]> {
                     shared actual [Element+]|Finished next() {
                         if (!is Finished next = iter.next()) {
-                            value array = arrayOfSize(length, next);
+                            value array = 
+                                    Array.ofSize(length, next);
                             variable value index = 0;
                             while (++index<length) {
                                 if (!is Finished current = iter.next()) {
@@ -1343,7 +1357,7 @@ shared interface Iterable<out Element=Anything,
      
      For example, the expression
      
-         {6, 9}.cycled.taking(5)
+         {6, 9}.cycled.take(5)
      
      evaluates to the stream `{ 6, 9, 6, 9, 6 }`."
     see (`function repeat`)
@@ -1440,14 +1454,20 @@ shared interface Iterable<out Element=Anything,
     
     "A stream that produces every element produced by this
      stream exactly once. Duplicate elements of this stream
-     are eliminated.
+     are eliminated. Two elements are considered distinct
+     unless they are both [[null|Null]], or unless they are 
+     both non-null and [[equal|Object.equals]].
      
      For example:
      
          String(\"hello world\".distinct)
      
-     is the string `\"helo wrd\"`."
-    shared Iterable<Element,Absent> distinct
+     is the string `\"helo wrd\"`.
+     
+     This is a lazy operation and the resulting stream 
+     reflects changes to this stream."
+    see(`function set`)
+    shared default Iterable<Element,Absent> distinct
             => object satisfies Iterable<Element,Absent> {
         iterator() 
                 => let (elements=outer)
@@ -1480,8 +1500,10 @@ shared interface Iterable<out Element=Anything,
                                 hash(e.element, 
                                     newStore.size);
                         newStore.set(index, 
-                            ElementEntry(e.element, 
-                                newStore[index]));
+                            ElementEntry {
+                                next = newStore[index];
+                                element = e.element;
+                            });
                         entry = e.next;
                     }
                 }
@@ -1502,7 +1524,10 @@ shared interface Iterable<out Element=Anything,
                         }
                         else {
                             store.set(index, 
-                                ElementEntry(element, entry));
+                                ElementEntry {
+                                    next = entry;
+                                    element = element;
+                                });
                             count++;
                             if (count>store.size*2) {
                                 store = rebuild(store);
@@ -1515,48 +1540,194 @@ shared interface Iterable<out Element=Anything,
         };
     };
     
-    "Classifies the elements of this stream into a [[Map]] 
-     where each key is a value produced by the given 
-     [[grouping function|grouping]] and each corresponding
-     item is [[sequence|Sequence]] of all elements that 
-     produced the key when passed as arguments to the 
-     grouping function.
+    /*"Create a new immutable [[Set]] containing every element 
+     produced by this stream that is not null.
      
      For example:
      
-         (0..10).group((i) => i.even then \"even\" else \"odd\")
+         {0, 1, 1, 2, 3, null, 3, 3}.elements()
+     
+     is the set `{0, 1, 2, 3}`.
+     
+     This is an eager operation and the resulting set does
+     not reflect changes to this stream."
+    aliased("set")
+    see(`value distinct`)
+    shared default Set<Element&Object> elements()
+            => object extends Object() 
+                      satisfies Set<Element&Object> {
+        value elements =
+                outer.coalesced
+                    .summarize(identity,
+                        (Boolean? _, e) => true);
+        
+        clone() => this;
+        
+        iterator() => elements.keys.iterator();
+        
+        contains(Object element) => elements.defines(element);
+        
+        shared actual Set<Element&Object> 
+                complement<Other>(Set<Other> set)
+                given Other satisfies Object 
+                => filter((e) => !e in set)
+                .elements();
+        
+        shared actual Set<Element&Object|Other> 
+                exclusiveUnion<Other>(Set<Other> set)
+                given Other satisfies Object 
+                => filter((e) => !e in set)
+                .chain(set.filter((e) => !e in this))
+                .elements();
+        
+        shared actual Set<Element&Other&Object> 
+                intersection<Other>(Set<Other> set)
+                given Other satisfies Object
+                => filter((e) => e in set)
+                .narrow<Other>()
+                .elements();
+        
+        shared actual Set<Element&Object|Other> 
+                union<Other>(Set<Other> set)
+                given Other satisfies Object 
+                => chain(set)
+                .elements();
+        
+    };*/
+    
+    "Produce a [[Map]] mapping elements to frequencies where
+     each [[entry|Entry]] maps a distinct non-null element 
+     of this stream to the number of times the element was 
+     produced by the stream. Elements are considered 
+     distinct if they are not [[equal|Object.equals]]. Null 
+     elements of this stream are simply discarded.
+     
+     This is an eager operation, and the resulting map does
+     not reflect changes to this stream."
+    shared Map<Element&Object,Integer> frequencies()
+            => coalesced.summarize(identity, 
+                    (Integer? count, _) 
+                            => if (exists count) 
+                            then count+1 else 1);
+    
+    "Produces a [[Map]] mapping elements to items where each 
+     [[entry|Entry]] maps a distinct non-null element of 
+     this stream to the item produced by the given 
+     [[function|collecting]]. Elements are considered 
+     distinct if they are not [[equal|Object.equals]]. Null 
+     elements of this stream are simply discarded.
+     
+     This is an eager operation, and the resulting map does
+     not reflect changes to the given stream."
+    shared Map<Element&Object,Result> tabulate<Result>(
+            "A function that produces an item for the given
+             [[key]], an element of this stream."
+            Result collecting(Element key))
+            => coalesced.summarize(identity, 
+                    (Result? item, key)
+                            => if (exists item) 
+                            then item else collecting(key));
+    
+    "Classifies the elements of this stream into a new
+     immutable [[Map]] where each key is a value produced by 
+     the given [[grouping function|grouping]] and each 
+     corresponding item is [[sequence|Sequence]] of all 
+     elements that produced the key when passed as arguments 
+     to the grouping function.
+     
+     Within each group, the sequence elements occur in the
+     same order they occurred in this stream.
+     
+     For example:
+     
+     (0..10).group((i) => i.even then \"even\" else \"odd\")
      
      produces the map 
-     `{ even->[0, 2, 4, 6, 8, 10], odd->[1, 3, 5, 7, 9] }`."
-    shared Map<Group,[Element+]> group<Group>
-            (Group grouping(Element element))
+     `{ even->[0, 2, 4, 6, 8, 10], odd->[1, 3, 5, 7, 9] }`.
+     
+     This is an eager operation, and the resulting map does
+     not reflect changes to this stream."
+    see(`function summarize`)
+    shared Map<Group,[Element+]> group<Group>(
+            "The grouping function that assigns a key to the
+             given [[element]]. Multiple elements may be 
+             assigned to the same key, indicating that they
+             belong to the same [[Group]] in the resulting
+             map."
+            Group grouping(Element element))
+            given Group satisfies Object
+            => summarize<Group,ElementEntry<Element>>
+                    (grouping, ElementEntry)
+               .mapItems((_, item) => item.reversed);
+    
+    "Efficiently [[group]] and [[fold]] the elements of this
+     stream in a single step.
+     
+     For example, the expression:
+     
+         (1..10)
+            .summarize((i) => i%3, 
+                (Integer[2]? pair, i) 
+                    => if (exists [sum, product] = pair) 
+                       then [sum+i, product*i] else [i,i])
+    
+     produces the map 
+     `{ 0->[18, 162], 1->[22, 280], 2->[15, 80] }`, being 
+     equivalent to, but much more efficient than, the 
+     following expression written using `group()`, 
+     `mapItems()` and `fold()`:
+     
+         (1..10)
+             .group((i) => i%3)
+             .mapItems((_, item) 
+                => item.fold([0,1])
+                    ((pair, i) 
+                        => let ([sum, product] = pair) 
+                            [sum+i, product*i]))
+     
+     This is an eager operation, and the resulting map does
+     not reflect changes to this stream."
+    see(`function group`, `function fold`)
+    shared Map<Group,Result> summarize<Group,Result>(
+            "The grouping function that assigns a key to the
+             given [[element]]. Multiple elements may be 
+             assigned to the same key, indicating that they
+             should be aggregated by calling [[accumulating]]."
+            Group grouping(Element element),
+            "The accumulating function that accepts an
+             intermediate result for a key, and the next 
+             element with that key."
+            Result accumulating(Result? partial, Element element))
             given Group satisfies Object
             => object extends Object() 
-                      satisfies Map<Group,[Element+]> {
+                      satisfies Map<Group,Result> {
         
         variable value store 
                 = Array.ofSize {
             size = 16;
-            element = null of GroupEntry<Group,Element>?;
+            element = null of GroupEntry<Group,Result>?;
         };
         
         function hash(Object group, Integer size) 
                 => group.hash.magnitude % size;
         
-        function rebuild(Array<GroupEntry<Group,Element>?> store) {
+        function rebuild(Array<GroupEntry<Group,Result>?> store) {
             value newStore 
                     = Array.ofSize {
                 size = store.size*2;
-                element = null of GroupEntry<Group,Element>?;
+                element = null of GroupEntry<Group,Result>?;
             };
             for (groups in store) {
                 variable value group = groups;
                 while (exists g = group) {
                     value index = 
                             hash(g.group, newStore.size);
-                    newStore.set(index, 
-                        GroupEntry(g.group, g.elements, 
-                            newStore[index]));
+                    newStore.set(index,
+                        GroupEntry { 
+                            next = newStore[index]; 
+                            group = g.group; 
+                            elements = g.elements; 
+                        });
                     group = g.next;
                 }
             }
@@ -1567,43 +1738,39 @@ shared interface Iterable<out Element=Anything,
         for (element in outer) {
             value group = grouping(element);
             value index = hash(group, store.size);
-            GroupEntry<Group,Element> newEntry;
-            if (exists entries = store[index]) {
-                if (exists entry = entries.get(group)) {
-                    entry.elements 
-                            = ElementEntry(element, 
-                                entry.elements);
-                    continue;
-                }
-                else {
-                    newEntry 
-                            = GroupEntry(group, 
-                                ElementEntry(element), 
-                                    entries);
-                }
+            value entries = store[index];
+            if (exists entries, 
+                exists entry = entries.get(group)) {
+                entry.elements 
+                        = accumulating(entry.elements, 
+                            element);
+                //keep iterating
             }
             else {
-                newEntry 
-                        = GroupEntry(group,
-                            ElementEntry(element));
-            }
-            store.set(index, newEntry);
-            count++;
-            if (count>store.size*2) {
-                store = rebuild(store);
+                store.set(index, 
+                    GroupEntry {
+                        next = entries;
+                        group = group;
+                        elements = accumulating(null, element);
+                    });
+                count++;
+                if (count>store.size*2) {
+                    store = rebuild(store);
+                }
             }
         }
         
         size => count;
         
         iterator() 
-                => object satisfies Iterator<Group->[Element+]> {
+                => object satisfies Iterator<Group->Result> {
             variable value index = 0;
-            variable GroupEntry<Group,Element>? entry = null;
-            shared actual <Group->[Element+]>|Finished next() {
+            variable GroupEntry<Group,Result>? entry = null;
+            shared actual <Group->Result>|Finished next() {
+                GroupEntry<Group,Result> result;
                 if (exists e = entry) {
                     entry = e.next;
-                    return e.group -> e.elements;
+                    result = e;
                 }
                 else {
                     while (true) {
@@ -1614,13 +1781,15 @@ shared interface Iterable<out Element=Anything,
                             entry = store[index++];
                             if (exists e = entry) {
                                 entry = e.next;
-                                return e.group -> e.elements;
+                                result = e;
+                                break;
                             }
                         }
                     }
                 }
+                return result.group -> result.elements;
             }
-        };        
+        };
         
         clone() => this;
         
@@ -1630,6 +1799,11 @@ shared interface Iterable<out Element=Anything,
         defines(Object key) => group(key) exists;
         
         get(Object key) => group(key)?.elements;
+        
+        shared actual Result|Default getOrDefault<Default>
+                (Object key, Default default)
+                => if (exists group = group(key))
+                then group.elements else default;
         
     };
     
@@ -1653,8 +1827,7 @@ shared interface Iterable<out Element=Anything,
 String commaList({Anything*} elements)
         => ", ".join { for (e in elements) stringify(e) };
 
-class ElementEntry<Element>
-        (element, next = null)
+class ElementEntry<Element>(next, element)
         extends Object()
         satisfies [Element+] {
     
@@ -1736,16 +1909,15 @@ class ElementEntry<Element>
     
 }
 
-class GroupEntry<Group,Element>
-        (group, elements, next = null)
+class GroupEntry<Group,Result>(next, group, elements)
         given Group satisfies Object {
     
     shared Group group;
-    shared variable ElementEntry<Element> elements;
-    shared GroupEntry<Group,Element>? next;
+    shared variable Result elements;
+    shared GroupEntry<Group,Result>? next;
     
-    shared GroupEntry<Group,Element>? get(Object group) {
-        variable GroupEntry<Group,Element>? entry = this;
+    shared GroupEntry<Group,Result>? get(Object group) {
+        variable GroupEntry<Group,Result>? entry = this;
         while (exists e = entry) {
             if (group == e.group) {
                 return e;

@@ -1,7 +1,7 @@
-"""Represents a collection in which every element has a 
-   unique non-negative integer index. The elements of a
-   nonempty list are indexed starting with `0` at the 
-   [[first]] element of the list, and ending with the index
+"""A collection in which every element has a unique 
+   non-negative integer index. The elements of a nonempty 
+   list are indexed starting with `0` at the [[first]] 
+   element of the list, and ending with the index 
    [[lastIndex]] at the [[last]] element of the list.
    
    - For any nonempty list, `lastIndex==size-1`. 
@@ -52,6 +52,7 @@
 see (`interface Sequence`, 
      `interface Empty`, 
      `class Array`)
+tagged("Collections")
 shared interface List<out Element=Anything>
         satisfies Collection<Element> &
                   Correspondence<Integer,Element> &
@@ -99,15 +100,15 @@ shared interface List<out Element=Anything>
     }
     
     "The index of the last element of the list, or `null` if 
-     the list is empty."
+     the list is empty. Always `size>0 then size-1`."
     see (`value List.size`)
     shared formal Integer? lastIndex;
     
     "The number of elements in this list, always
-     `list.lastIndex+1`."
+     `1 + (lastIndex else -1)`."
     see (`value List.lastIndex`)
     shared actual default Integer size 
-            => (lastIndex else -1) + 1;
+            => 1 + (lastIndex else -1);
     
     "Determines if the given index refers to an element of 
      this list, that is, if `0<=index<=list.lastIndex`."
@@ -116,13 +117,11 @@ shared interface List<out Element=Anything>
     
     "Determines if this list contains the given value.
      Returns `true` for every element of this list."
-    see (`function occurs`)
     shared actual default Boolean contains(Object element) {
         for (index in 0:size) {
-            if (exists elem = getFromFirst(index)) {
-                if (elem==element) {
-                    return true;
-                }
+            if (exists elem = getFromFirst(index), 
+                    elem==element) {
+                return true;
             }
         }
         else {
@@ -268,10 +267,9 @@ shared interface List<out Element=Anything>
             Boolean selecting(Element&Object elem)) {
         variable value index = size-1;
         while (index >= 0) {
-            if (exists elem = getFromFirst(index--)) {
-                if (selecting(elem)) {
-                    return elem;
-                }
+            if (exists elem = getFromFirst(index--), 
+                    selecting(elem)) {
+                return elem;
             }
         }
         return null;
@@ -284,7 +282,7 @@ shared interface List<out Element=Anything>
     see (`function skip`)
     shared default 
     List<Element> sublistFrom(Integer from) 
-            => from<0 then this else Rest(from); 
+            => from<=0 then this else Rest(from); 
     
     "A sublist of this list, ending at the element with the 
      given [[index|to]].
@@ -351,182 +349,38 @@ shared interface List<out Element=Anything>
      start of this list."
     see (`function endsWith`)
     shared default 
-    Boolean startsWith(List<> sublist)
-            => includesAt(0, sublist);
+    Boolean startsWith(List<> sublist) {
+        if (sublist.size>size) {
+            return false;
+        }
+        return everyPair<Element,Anything>(
+                (first, second)
+                => if (exists first, exists second)
+                    then first==second
+                    else first exists == second exists, 
+                this, sublist);
+    }
     
     "Determine if the given [[list|sublist]] occurs at the 
      end of this list."
     see (`function startsWith`)
     shared default 
-    Boolean endsWith(List<> sublist)
-            => includesAt(size-sublist.size, sublist);
-    
-    "Determine if the given [[list|sublist]] occurs as a 
-     sublist at the given index of this list."
-    shared default 
-    Boolean includesAt(
-            "The index at which the [[sublist]] might occur."
-            Integer index, 
-            List<> sublist) {
-        if (sublist.size>size-index) {
+    Boolean endsWith(List<> sublist) {
+        if (sublist.size>size) {
             return false;
         }
-        for (i in 0:sublist.size) {
-            value x = getFromFirst(index+i);
-            value y = sublist.getFromFirst(i);
-            if (exists x) {
-                if (exists y) {
-                    if (x!=y) {
-                        return false;
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
-            else if (exists y) {
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
-    }
-    
-    "Determine if the given [[list|sublist]] occurs as a 
-     sublist at some index in this list."
-    shared default 
-    Boolean includes(List<> sublist) {
-        if (sublist.empty) {
-            return true;
-        }
-        for (index in 0:size-sublist.size+1) {
-            if (includesAt(index,sublist)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    "The indexes in this list at which the given 
-     [[list|sublist]] occurs as a sublist."
-    shared default 
-    {Integer*} inclusions(List<> sublist) 
-            => { for (index in 0:size-sublist.size+1) 
-                    if (includesAt(index,sublist)) index };
-    
-    "The first index in this list at which the given 
-     [[list|sublist]] occurs as a sublist."
-    shared default 
-    Integer? firstInclusion(List<> sublist) {
-        for (index in 0:size-sublist.size+1) {
-            if (includesAt(index,sublist)) {
-                return index;
-            }
-        }
-        else {
-            return null;
-        }
-    }
-    
-    "The last index in this list at which the given 
-     [[list|sublist]] occurs as a sublist."
-    shared default 
-    Integer? lastInclusion(List<> sublist) {
-        for (index in (0:size-sublist.size+1).reversed) {
-            if (includesAt(index,sublist)) {
-                return index;
-            }
-        }
-        else {
-            return null;
-        }
-    }
-    
-    "Determines if the given [[value|element]] occurs at the 
-     given index in this list."
-    shared default 
-    Boolean occursAt(
-            "The index at which the value might occur."
-            Integer index, 
-            "The value. If null, it is considered to occur
-             at any index in this list with a null element."
-            Anything element) {
-        value elem = getFromFirst(index);
-        if (exists element) {
-            return if (exists elem) 
-                then elem==element 
-                else false;
-        }
-        else {
-            return !elem exists;
-        }
-    }
-    
-    "Determines if the given [[value|element]] occurs as an 
-     element of this list."
-    shared default 
-    Boolean occurs(
-        "The value. If null, it is considered to occur
-         at any index in this list with a null element."
-        Anything element) {
-        for (index in 0:size) {
-            if (occursAt(index,element)) {
-                return true;
-            }
-        }
-        else {
-            return false;
-        }
-    }
-    
-    "The indexes in this list at which the given 
-     [[value|element]] occurs."
-    shared default 
-    {Integer*} occurrences(
-        "The value. If null, it is considered to occur
-         at any index in this list with a null element."
-        Anything element)
-            => { for (index in 0:size) 
-                    if (occursAt(index,element)) index };
-    
-    "The first index in this list at which the given 
-     [[value|element]] occurs."
-    shared default 
-    Integer? firstOccurrence(
-        "The value. If null, it is considered to occur
-         at any index in this list with a null element."
-        Anything element) {
-        for (index in 0:size) {
-            if (occursAt(index,element)) {
-                return index;
-            }
-        }
-        else {
-            return null;
-        }
-    }
-    
-    "The last index in this list at which the given 
-     [[value|element]] occurs."
-    shared default 
-    Integer? lastOccurrence(
-        "The value. If null, it is considered to occur
-         at any index in this list with a null element."
-        Anything element) {
-        for (index in (0:size).reversed) {
-            if (occursAt(index,element)) {
-                return index;
-            }
-        }
-        else {
-            return null;
-        }
+        return everyPair<Element,Anything>(
+                (first, second)
+                => if (exists first, exists second)
+                    then first==second
+                    else first exists == second exists, 
+                skip(size-sublist.size), sublist);
     }
     
     "The indexes in this list for which the element is not
      null and satisfies the given 
      [[predicate function|selecting]]."
+    see (`function locations`)
     shared default 
     {Integer*} indexesWhere(
             "The predicate function the indexed elements 
@@ -540,6 +394,7 @@ shared interface List<out Element=Anything>
     "The first index in this list for which the element is
      not null and satisfies the given 
      [[predicate function|selecting]]."
+    see (`function locate`)
     shared default 
     Integer? firstIndexWhere(
             "The predicate function the indexed elements 
@@ -559,6 +414,7 @@ shared interface List<out Element=Anything>
     "The last index in this list for which the element is
      not null and satisfies the given 
      [[predicate function|selecting]]."
+    see (`function locateLast`)
     shared default 
     Integer? lastIndexWhere(
             "The predicate function the indexed elements 
@@ -568,7 +424,7 @@ shared interface List<out Element=Anything>
         while (index>0) {
             index--;
             if (exists element=getFromFirst(index), 
-                selecting(element)) {
+                    selecting(element)) {
                 return index;
             }
         }
@@ -592,7 +448,7 @@ shared interface List<out Element=Anything>
             variable Integer to=-1;
             for (index in 0..end) {
                 if (exists elem=getFromFirst(index),
-                    !trimming(elem)) {
+                        !trimming(elem)) {
                     from = index;
                     break;
                 }
@@ -602,7 +458,7 @@ shared interface List<out Element=Anything>
             }
             for (index in end..0) {
                 if (exists elem=getFromFirst(index),
-                    !trimming(elem)) {
+                        !trimming(elem)) {
                     to = index;
                     break;
                 }
@@ -632,7 +488,7 @@ shared interface List<out Element=Anything>
             value end = size-1;
             for (index in 0..end) {
                 if (exists elem=getFromFirst(index),
-                    !trimming(elem)) {
+                        !trimming(elem)) {
                     return this[index..end];
                 }
             }
@@ -655,7 +511,7 @@ shared interface List<out Element=Anything>
             value end = size-1;
             for (index in end..0) {
                 if (exists elem=getFromFirst(index),
-                    !trimming(elem)) {
+                        !trimming(elem)) {
                     return this[0..index];
                 }
             }
@@ -715,12 +571,14 @@ shared interface List<out Element=Anything>
         if (size>0) {
             value end = size-1;
             if (from <= to) {
-                return to >= 0 && from <= end 
+                return 
+                    if (to >= 0 && from <= end) 
                     then ArraySequence(Array(sublist(from,to)))
                     else [];
             }
             else {
-                return from >= 0 && to <= end 
+                return 
+                    if (from >= 0 && to <= end) 
                     then ArraySequence(Array(sublist(to,from).reversed))
                     else [];
             }
@@ -762,8 +620,8 @@ shared interface List<out Element=Anything>
         then span(from, from + length - 1)
         else [];
 
-    "A nonempty sequence containing the results of applying 
-     the given mapping to the elements of this sequence."
+    "A sequence containing the results of applying the given 
+     mapping to the elements of this list."
     shared default actual 
     Result[] collect<Result>(
         "The transformation applied to the elements."
@@ -828,6 +686,11 @@ shared interface List<out Element=Anything>
         
         assert (from>=0);
         
+        sublistFrom(Integer from)
+                => if (from>0) 
+                then outer.Rest(from+this.from) 
+                else this;
+        
         getFromFirst(Integer index) 
                 => if (index<0)
                 then null 
@@ -869,8 +732,13 @@ shared interface List<out Element=Anything>
         
         assert (to>=0);
         
+        sublistTo(Integer to) 
+                => if (to<0) then [] 
+                else if (to<this.to) then outer.Sublist(to) 
+                else this;
+        
         getFromFirst(Integer index)
-                => if (index>=0 && index<=to) 
+                => if (0<=index<=to)
                 then outer.getFromFirst(index)
                 else null;
         
@@ -1029,77 +897,5 @@ shared interface List<out Element=Anything>
             };
         
     }
-    
-    "The permutations of this list, as a stream of nonempty
-     [[sequences|Sequence]]. That is, a stream producing 
-     every sequence that has the same [[size]] as this list
-     and contains every element of this list exactly once.
-     
-     For example, 
-     
-         \"ABC\".permutations.map(String)
-     
-     is the stream of strings
-     `{ \"ABC\", \"ACB\", \"CAB\", \"CBA\", \"BCA\", \"BAC\" }`.
-     
-     If this list is empty, the resulting stream is empty.
-     
-     Note: the permutations are distinct if and only if this 
-     list has no repeated elements."
-    shared {[Element+]*} permutations
-            => object satisfies {[Element+]*} {
-        
-        iterator()
-                => let (list=outer)
-                object satisfies Iterator<[Element+]> {
-            
-            value length = list.size;
-            value permutation = Array(0:length);
-            value indexes = Array(0:length);
-            value swaps = Array(0:length);
-            value directions = Array.ofSize(length, -1);
-            
-            variable value counter = length;
-            
-            shared actual [Element+]|Finished next() {
-                while (counter > 0) {
-                    if (counter == length) {
-                        counter--;
-                        value result 
-                                = permutation.collect((i) { 
-                            assert (exists elem = list[i]);
-                            return elem;
-                        });
-                        assert (nonempty result);
-                        return result;
-                    }
-                    else {
-                        assert (exists swap = swaps[counter],
-                            exists dir = directions[counter]);
-                        if (swap > 0) {
-                            assert (exists index 
-                                = indexes[counter]);
-                            value otherIndex = index + dir;
-                            assert (exists swapIndex 
-                                = permutation[otherIndex]);
-                            permutation.set(index, swapIndex);
-                            permutation.set(otherIndex, counter);
-                            indexes.set(swapIndex, index);
-                            indexes.set(counter, otherIndex);
-                            swaps.set(counter, swap-1);
-                            counter = length;
-                        }
-                        else {
-                            swaps.set(counter, counter);
-                            directions.set(counter, -dir);
-                            counter--;
-                        }
-                    }
-                }
-                return finished;
-            }
-        };
-        
-    };
     
 }

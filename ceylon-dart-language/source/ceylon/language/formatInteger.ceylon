@@ -1,8 +1,9 @@
 "The string representation of the given [[integer]] in the 
- base given by [[radix]]. If the given integer is negative, 
- the string representation will begin with `-`. Digits 
- consist of decimal digits `0` to `9`, together with and 
- lowercase letters `a` to `z` for bases greater than 10.
+ base given by [[radix]]. If the given integer is 
+ [[negative|Integer.negative]], the string representation 
+ will begin with `-`. Digits consist of decimal digits `0` 
+ to `9`, together with and lowercase letters `a` to `z` for 
+ bases greater than 10.
  
  For example:
  
@@ -14,13 +15,15 @@
 throws (`class AssertionError`, 
         "if [[radix]] is not between [[minRadix]] and 
          [[maxRadix]]")
-see (`function parseInteger`)
+see (`function formatFloat`,
+     `function parseInteger`)
+tagged("Numbers")
 shared String formatInteger(
-            "The integer value to format."
-            Integer integer,
-            "The base, between [[minRadix]] and [[maxRadix]] 
-             inclusive."
-            Integer radix = 10) {
+        "The integer value to format."
+        Integer integer,
+        "The base, between [[minRadix]] and [[maxRadix]] 
+         inclusive."
+        Integer radix = 10) {
     assert (minRadix <= radix <= maxRadix);
     if (integer == 0) {
         return "0";

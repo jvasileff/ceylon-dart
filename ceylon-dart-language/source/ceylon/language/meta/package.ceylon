@@ -3,7 +3,8 @@
    The Ceylon metamodel allows you to: 
    
    * dynamically inspect modules, packages, functions, values and types, 
-   * invoke functions and class initialisers, or read and write values, and
+   * invoke functions, constructors and class initialisers, 
+   * read and write values, and
    * inspect the annotations on program elements.
    
    ### A little bit of terminology
@@ -47,13 +48,22 @@
    literals:
    
    - <code>\`module ceylon.file\`</code> returns the [[Module|ceylon.language.meta.declaration::Module]] 
-     declaration which corresponds to the `ceylon.file` module you imported in your module descriptor.
+     declaration which corresponds to the `ceylon.file` module you imported in your module descriptor, or
+     to the current module if it is `ceylon.file`. You can also obtain a reference to the current module
+     with <code>\`module\`</code>.
    - <code>\`package ceylon.language.meta\`</code> returns the [[Package|ceylon.language.meta.declaration::Package]]
-     declaration from your current module imports.
+     declaration from your current module or its imports. You can also obtain a reference to the current package
+     with <code>\`package\`</code>.
    - <code>\`interface List\`</code> returns the [[InterfaceDeclaration|ceylon.language.meta.declaration::InterfaceDeclaration]] 
-     for the [[List|ceylon.language::List]] type.
+     for the [[List|ceylon.language::List]] type. You can also obtain a reference to the current interface
+     with <code>\`interface\`</code>.
    - <code>\`class Integer\`</code> returns the [[ClassDeclaration|ceylon.language.meta.declaration::ClassDeclaration]] 
-     for the [[Integer|ceylon.language::Integer]] type.
+     for the [[Integer|ceylon.language::Integer]] type. You can also obtain a reference to the current class
+     with <code>\`class\`</code>.
+   - <code>\`new Array.ofSize\`</code> returns the 
+     [[CallableConstructorDeclaration|ceylon.language.meta.declaration::CallableConstructorDeclaration]] 
+     for the [[Array.ofSize]] constructor. Similarly <code>\`new Color.black\`</code> for 
+     [[value constructors|ceylon.language.meta.declaration::ValueConstructorDeclaration]].
    - <code>\`function type\`</code> returns the [[FunctionDeclaration|ceylon.language.meta.declaration::FunctionDeclaration]] 
      for the [[type]] function. Similarly <code>\`function List.shorterThan\`</code> for methods.
    - <code>\`value modules\`</code> returns the [[ValueDeclaration|ceylon.language.meta.declaration::ValueDeclaration]] 
@@ -71,11 +81,18 @@
      closed type for the [[List|ceylon.language::List]] type applied with the [[Integer|ceylon.language::Integer]] type argument.
    - <code>\`Integer\`</code> returns the [[Class|ceylon.language.meta.model::Class]] model and closed type 
      for the [[Integer|ceylon.language::Integer]] type.
+   - <code>\`Array<Integer>.ofSize\`</code> returns the 
+     [[CallableConstructor|ceylon.language.meta.model::CallableConstructor]] model 
+     for the [[Array<Integer>.ofSize|Array.ofSize]] constructor.
+     Similarly <code>\`Color.black\`</code> for 
+     [[value constructor models|ceylon.language.meta.model::ValueConstructor]].
    - <code>\`type&lt;Integer>\`</code> returns the [[Function|ceylon.language.meta.model::Function]] model 
      for the [[type]] function applied with the [[Integer|ceylon.language::Integer]] type argument.
-     Similarly <code>\`List&lt;Integer>.shorterThan\`</code> for method models.
+     Similarly <code>\`List&lt;Integer>.shorterThan\`</code> for 
+     [[method models|ceylon.language.meta.model::Method]].
    - <code>\`modules\`</code> returns the [[Value|ceylon.language.meta.model::Value]] model 
-     for the [[modules]] value. Similarly <code>\`List&lt;Integer>.size\`</code> for attribute models.
+     for the [[modules]] value. Similarly <code>\`List&lt;Integer>.size\`</code> for 
+     [[attribute models|ceylon.language.meta.model::Attribute]].
    - <code>\`A & B\`</code> returns a [[IntersectionType|ceylon.language.meta.model::IntersectionType]]
      for the `A & B` intersection type.
    - <code>\`A | B\`</code> returns a [[UnionType|ceylon.language.meta.model::UnionType]]
@@ -92,6 +109,8 @@
    - The [[modules]] object contains a list of all currently loaded [[Module|ceylon.language.meta.declaration::Module]]
      declarations. Note that these contain even modules you did not import as it contains all transitive
      dependencies, and may contain multiple different versions of the same module.
+   - The [[classDeclaration]] function will return the 
+     [[ceylon.language.meta.declaration::ClassDeclaration]] of the given instance.
    - The [[type]] function will return the closed type of the given instance, which can only be a
      [[ClassModel|ceylon.language.meta.model::ClassModel]] since only classes can be instantiated.
    - The [[typeLiteral]] function is the functional equivalent to closed type literals: it turns a type argument
@@ -114,5 +133,6 @@
    not by the annotation constructor which was used to annotate 
    the program element.
    """
-by ("Gavin King", "Stephane Epardaud")
+by ("Gavin King", "Stephane Epardaud", "Tom Bentley")
+tagged("Metamodel")
 shared package ceylon.language.meta;

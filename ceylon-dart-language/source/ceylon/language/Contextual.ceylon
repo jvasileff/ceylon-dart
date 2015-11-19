@@ -120,4 +120,3 @@ shared class Contextual<Element>() {
         }
     }
 }
-

@@ -17,6 +17,7 @@
  since they don't have a total order."
 see (`class Integer`, `class Float`)
 by ("Gavin")
+tagged("Numbers")
 shared interface Number<Other> of Other
         satisfies Numeric<Other> & 
                   Comparable<Other>
@@ -32,6 +33,7 @@ shared interface Number<Other> of Other
      
      - `x.magnitude >= 0` for any `x`, and
      - `x.magnitude == 0` if and only if `x==0`."
+    aliased("absolute")
     shared default Other magnitude
             => negative then negated else this of Other;
     

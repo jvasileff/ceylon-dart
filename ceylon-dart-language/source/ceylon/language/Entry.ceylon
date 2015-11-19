@@ -6,6 +6,7 @@
  
      String->Person entry = person.name->person;"
 by ("Gavin")
+tagged("Collections")
 shared final serializable
 class Entry<out Key,out Item>(key, item)
         extends Object()

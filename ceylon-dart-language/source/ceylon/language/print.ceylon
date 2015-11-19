@@ -9,6 +9,7 @@
  and is intended mainly for debugging purposes."
 see (`function process.writeLine`)
 by ("Gavin")
+tagged("Environment")
 shared void print(Anything val) 
         => process.writeLine(stringify(val));
 
@@ -17,6 +18,7 @@ shared void print(Anything val)
  given character sequence."
 by ("Gavin")
 see (`function process.write`)
+tagged("Environment")
 shared void printAll({Anything*} values,
         "A character sequence to use to separate the values"
         String separator=", ") {

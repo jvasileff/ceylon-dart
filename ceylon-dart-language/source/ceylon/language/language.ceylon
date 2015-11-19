@@ -2,6 +2,7 @@
 "Contains information about the Ceylon language version."
 see (`value process`, `value runtime`, `value system`,
      `value operatingSystem`)
+tagged("Environment")
 shared native object language {
     
     "The Ceylon language version."
@@ -11,13 +12,13 @@ shared native object language {
     shared Integer majorVersion => 1;
     
     "The Ceylon language minor version."
-    shared Integer minorVersion => 1;
+    shared Integer minorVersion => 2;
     
     "The Ceylon language release version."
-    shared Integer releaseVersion => 1;
+    shared Integer releaseVersion => 0;
     
     "The Ceylon language release name."
-    shared String versionName => "Pif Gadget";
+    shared String versionName => "A Series Of Unlikely Explanations";
     
     "The major version of the code generated for the 
      underlying runtime."

@@ -11,7 +11,7 @@ abstract class Partial(id) {
     shared Object id;
     
     "The class, if we know it yet"
-    shared variable ClassModel? clazz = null;
+    shared variable ClassModel<>? clazz = null;
     
     "The containing instance (a partial for it, or the instance itself).
      null if this partial is not a member or we don't know the container yet."
@@ -62,7 +62,10 @@ abstract class Partial(id) {
     
     "The ids of the instances that this instance refers to"
     shared {Object*} refersTo {
-        assert(exists s=state);
-        return s.items;
+        if (exists s=state) {
+            return s.items;
+        } else {
+            return [];
+        }
     }
 }

@@ -26,6 +26,7 @@
    [Unicode]: http://www.unicode.org/"""
 see (`class String`)
 by ("Gavin")
+tagged("Basic types", "Strings")
 shared final native class Character(Character character)
         extends Object()
         satisfies Comparable<Character> & 
@@ -116,7 +117,7 @@ shared final native class Character(Character character)
      - *FORM FEED*, `\\f` or `\\{#000C}`,
      - *CARRIAGE RETURN*, `\\r` or `\\{#000D}`,
      - *HORIZONTAL TABULATION*, `\\t` or `\\{#0009}`,
-     - *VERTICAL TABULATION*, `\\{#000B}`,
+     - *LINE TABULATION*, `\\{#000B}`,
      - *FILE SEPARATOR*, `\\{#001C}`,
      - *GROUP SEPARATOR*, `\\{#001D}`,
      - *RECORD SEPARATOR*, `\\{#001E}`,
@@ -137,6 +138,7 @@ shared final native class Character(Character character)
     
     "The Unicode code point of the character, an [[Integer]]
      in the range `0..#10FFFF`."
+    aliased("codePoint")
     shared native Integer integer;
     
     "Compare this character with the given string character, 

@@ -13,8 +13,9 @@
  exception raised).
  
  An integer is considered equal to its [[float]] 
- representation. That is, for every integer `int`, the 
- expression `int.float==int` evaluates to `true`.
+ representation, if that exists. That is, for every integer 
+ `int`, either `int.float` throws an [[OverflowException]], 
+ or the expression `int.float==int` evaluates to `true`.
  
  An integer is represented as a sequence of bits. Not all of 
  the bits in the representation may be addressed by the 
@@ -40,6 +41,7 @@
 see (`value runtime.integerSize`,
      `function parseInteger`,
      `function formatInteger`)
+tagged("Basic types", "Numbers")
 shared native final class Integer(Integer integer)
         extends Object()
         satisfies Integral<Integer> &
@@ -59,6 +61,7 @@ shared native final class Integer(Integer integer)
     shared actual native Integer times(Integer other);
     shared actual native Integer divided(Integer other);
     shared actual native Integer remainder(Integer other);
+    shared actual native Integer modulo(Integer modulus);
     
     "The result of raising this number to the given 
      non-negative integer power, where `0^0` evaluates to 
@@ -76,11 +79,14 @@ shared native final class Integer(Integer integer)
      Or if:
      
      - the given object is a [[Float]],
-     - its value is neither [[Float.undefined]], nor [[infinity]],
+     - its value is neither [[Float.undefined]], nor 
+       [[infinity]],
      - the [[fractional part|Float.fractionalPart]] of its 
        value equals `0.0`, and
      - the [[integer part|Float.integer]] part of its value 
-       equals this integer."
+       equals this integer, and
+     - this integer is between -2<sup>53</sup> and 
+       2<sup>53</sup> (exclusive)."
     shared actual native Boolean equals(Object that);
     
     shared actual native Integer hash;
@@ -139,12 +145,34 @@ shared native final class Integer(Integer integer)
     shared actual native Integer leftLogicalShift(Integer shift);
     
     "The number, represented as a [[Float]], if such a 
-     representation is possible."
+     representation is possible. 
+     
+     - Any integer with [[magnitude]] smaller than 
+       [[runtime.maxExactIntegralFloat]] (2<sup>53</sup>) 
+       has such a representation.
+     - For larger integers on the JVM platform, an 
+       [[OverflowException]] is thrown."
     throws (`class OverflowException`,
         "if the number cannot be represented as a `Float`
-         without loss of precision")
+         without loss of precision, that is, if 
+         
+             this.magnitude>runtime.maxExactIntegralFloat")
+    see (`value runtime.maxExactIntegralFloat`)
     shared native Float float;
-    
+
+    "The nearest [[Float]] to this number. 
+     
+     - For any integer with [[magnitude]] smaller than 
+       [[runtime.maxExactIntegralFloat]] (2<sup>53</sup>), 
+       this is a `Float` with the exact same mathematical 
+       value (and the same value as [[float]]). 
+     - For larger integers on the JVM platform, the `Floats` 
+       are less dense than the `Integers` so there may be 
+       loss of precision.
+     
+     This method never throws an [[OverflowException]]."
+    shared native Float nearestFloat;
+
     shared actual native Integer predecessor;
     shared actual native Integer successor;
     shared actual native Integer neighbour(Integer offset);
@@ -164,6 +192,7 @@ shared native final class Integer(Integer integer)
      Thus, `i` is even if and only if `i%2 == 0`."
     shared native Boolean even => 2.divides(this);
     
+    aliased("absolute")
     shared actual native Integer magnitude;    
     shared actual native Integer sign;
     shared actual native Boolean negative;

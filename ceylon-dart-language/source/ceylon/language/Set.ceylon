@@ -1,15 +1,26 @@
-"A collection of unique elements.
+"A collection in which each distinct element occurs at most 
+ once. Two non-[[identical|Identifiable]] values are 
+ considered distinct only if they are unequal, according to
+ their own definition of [[value equality|Object.equals]].
  
- A `Set` is a [[Collection]] of its elements.
+ A `Set` is a [[Collection]] of its elements. Sets may not
+ have [[null|Null]] elements.
  
+ A new `Set` may be obtained by calling the function [[set]].
+     
+     value words = set { \"hello\", \"world\" };
+     value greetings = set { \"hello\", \"goodbye\", \"hola\", \"adios\" };
+     
  Sets may be the subject of the binary union, intersection, 
  and complement operators `|`, `&`, and `~`.
  
-     value kids = girls|boys; 
+     value greetingsInWords = words & greetings;
+     value allWords = words | greetings;
  
- Elements are compared for equality using [[Object.equals]] 
- or [[Comparable.compare]]. An element may occur at most 
- once in a set."
+ An implementation of `Set` may compare elements for 
+ equality using [[Object.equals]] or [[Comparable.compare]]."
+tagged("Collections")
+see (`function package.set`)
 shared interface Set<out Element=Object>
         satisfies Collection<Element>
         given Element satisfies Object {
@@ -52,6 +63,63 @@ shared interface Set<out Element=Object>
         }
     }
     
+    distinct => this;
+    
+    shared actual {Element*} 
+    defaultNullElements<Default>(Default defaultValue)
+            given Default satisfies Object => this;
+    
+    "Returns a new `Set` containing all the elements of this 
+     set and all the elements of the given `Set`.
+     
+     Note that it is possible for two sets of disjoint 
+     element type to be considered to have elements in 
+     common. For example, since \`1==1.0\` 
+     [[evaluates to true|Integer.equals]], 
+     the expression 
+     
+         set { 1 } | set { 1.0 }
+     
+     produces the set `{ 1 }`."
+    shared default Set<Element|Other> 
+            union<Other>(Set<Other> set)
+            given Other satisfies Object 
+            => package.set(chain(set));
+    
+    "Returns a new `Set` containing only the elements that 
+     are present in both this set and the given `Set` and 
+     that are instances of the intersection `Element&Other` 
+     of the element types of the two sets.
+     
+     Note that, according to this definition, and even 
+     though `1==1.0` [[evaluates to true|Integer.equals]], 
+     the expression
+     
+         set { 1 } & set { 1.0 }
+     
+     produces the empty set `{}`."
+    shared default Set<Element&Other> 
+            intersection<Other>(Set<Other> set)
+            given Other satisfies Object
+            => package.set(filter((e) => e in set)
+        .narrow<Other>());
+    
+    "Returns a new `Set` containing all the elements in this 
+     set that are not contained in the given `Set`."
+    shared default Set<Element> 
+            complement<Other>(Set<Other> set)
+            given Other satisfies Object 
+            => package.set(filter((e) => !e in set));
+    
+    "Returns a new `Set` containing only the elements 
+     contained in either this set or the given `Set`, but no 
+     element contained in both sets."
+    shared default Set<Element|Other> 
+            exclusiveUnion<Other>(Set<Other> set)
+            given Other satisfies Object 
+            => package.set(filter((e) => !e in set)
+                    .chain(set.filter((e) => !e in this)));
+    
     "Two `Set`s are considered equal if they have the same 
      size and if every element of the first set is also an 
      element of the second set, as determined by 
@@ -80,36 +148,60 @@ shared interface Set<out Element=Object>
         }
         return hashCode;
     }
-    
-    "Returns a new `Set` containing all the elements of this 
-     set and all the elements of the given `Set`."
-    shared formal 
-    Set<Element|Other> union<Other>(Set<Other> set)
-            given Other satisfies Object;
-    
-    "Returns a new `Set` containing only the elements that 
-     are present in both this set and the given `Set`."
-    shared formal 
-    Set<Element&Other> intersection<Other>(Set<Other> set)
-            given Other satisfies Object;
-    
-    "Returns a new `Set` containing only the elements 
-     contained in either this set or the given `Set`, but no 
-     element contained in both sets."
-    shared formal 
-    Set<Element|Other> exclusiveUnion<Other>(Set<Other> set)
-            given Other satisfies Object;
-    
-    "Returns a new `Set` containing all the elements in this 
-     set that are not contained in the given `Set`."
-    shared formal 
-    Set<Element> complement<Other>(Set<Other> set)
-            given Other satisfies Object;
-    
+        
 }
 
+"Create a new immutable [[Set]] containing every element 
+ produced by the given [[stream]], resolving items with
+ duplicate keys according to the given [[function|choosing]].
+ 
+ For example:
+ 
+     set { 0, 1, 1, 2, 3, 3, 3 }
+ 
+ produces the set `{ 0, 1, 2, 3 }`.
+ 
+ This is an eager operation and the resulting set does
+ not reflect changes to the given [[stream]]."
+see(`value Iterable.distinct`)
+shared Set<Element> set<Element>(
+        "The stream of elements."
+        {Element*} stream,
+        "A function that chooses between duplicate elements. 
+         By default, the element that occurs _earlier_ in 
+         the stream is chosen."
+        Element choosing(Element earlier, Element later) 
+                => earlier)
+        given Element satisfies Object
+        => if (is Set<Element> stream) 
+        then stream
+        else object extends Object() 
+                    satisfies Set<Element&Object> {
+    
+    value elements =
+            stream.summarize(identity,
+                (Element? current, element)
+                        => if (exists current)
+                        then choosing(current, element)
+                        else element);
+    
+    contains(Object element) => elements.defines(element);
+    
+    iterator() => elements.keys.iterator();
+    
+    size => elements.size;
+    
+    empty => elements.empty;
+    
+    clone() => this;
+    
+};
+
+
+
 "An immutable [[Set]] with no elements."
-shared object emptySet
+tagged("Collections")
+shared object emptySet 
         extends Object() 
         satisfies Set<Nothing> {
     

@@ -1,9 +1,6 @@
 import ceylon.language.meta {
     classDeclaration, type
 }
-import ceylon.language.meta.declaration {
-    ValueDeclaration
-}
 
 "A context representing serialization of many objects to a 
  single output stream. 
@@ -25,6 +22,8 @@ shared sealed
 interface SerializationContext {
     // could be generic
     "Obtain the references of the given instance."
+    throws(`class SerializationException`,
+        "If the class is not serializable")
     shared formal References references(Anything instance);
 }
 
@@ -33,7 +32,7 @@ class SerializationContextImpl() satisfies SerializationContext {
         if (classDeclaration(instance).serializable) {
             return ReferencesImpl(instance);
         } else {
-            throw AssertionError("instance of non-serializable class: ``type(instance)``");
+            throw SerializationException("instance of non-serializable class: ``type(instance)``");
         }
     }
 }

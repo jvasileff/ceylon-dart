@@ -33,6 +33,7 @@
        }"""
 see (`class Integer`)
 by ("Gavin")
+tagged("Numbers")
 shared interface Integral<Other> of Other
         satisfies Number<Other> & 
                   Enumerable<Other>
@@ -40,8 +41,24 @@ shared interface Integral<Other> of Other
     
     "The remainder, after dividing this number by the given 
      number."
-    see (`function Numeric.divided`)
+    see (`function Numeric.divided`, `function modulo`)
     shared formal Other remainder(Other other);
+
+    "The modulo, after dividing this number by the given 
+     number. This differs from [[remainder]] in that the
+     result is always positive."
+    see (`function Numeric.divided`, `function remainder`)
+    throws (`class AssertionError`, "If the modulus is not strictly positive")
+    shared default Other modulo(Other modulus){
+        if (!modulus.positive) {
+            throw AssertionError("modulus must be positive: ``modulus``");
+        }
+        value result = remainder(modulus);
+        if (result.negative){
+            return result + modulus;
+        }
+        return result;
+    }
     
     "Determine if the number is the additive identity."
     shared formal Boolean zero;

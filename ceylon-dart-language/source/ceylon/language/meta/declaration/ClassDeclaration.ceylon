@@ -9,6 +9,16 @@ import ceylon.language.meta.model {
 
 """Class declaration.
    
+   ### Callable classes
+   
+   Since Ceylon 1.2 classes are not always directly invokable
+   (if the class has constructors, but not a default constructor). Thus
+   members of `ClassDeclaration` which depend on the class parameter 
+   list typically have optional type, but are refined on 
+   [[ClassWithInitializerDeclaration]] to be non-optional. The exceptions to 
+   this are [[instantiate]] and [[memberInstantiate]], 
+   which throw exceptions.
+   
    <a name="toplevel-sample"></a>
    ### Usage sample for toplevel classes
    
@@ -52,16 +62,26 @@ import ceylon.language.meta.model {
 shared sealed interface ClassDeclaration 
         of ClassWithInitializerDeclaration | ClassWithConstructorsDeclaration
         satisfies ClassOrInterfaceDeclaration {
+    
+    "A constructor declaration representing the class initializer 
+     (for a class with a parameter list) or
+     the default constructor, or null if the class lacks 
+     both a parameter list and a default constructor."
+    shared formal CallableConstructorDeclaration? defaultConstructor;
+    
+    "The list of parameter declarations for this class. 
+     Returns `null` if the class lacks both a parameter list and a 
+     default constructor."
+    shared formal FunctionOrValueDeclaration[]? parameterDeclarations;
+    
+    "Gets a parameter declaration by name. 
+     Returns `null` if this class lacks both a parameter list and a 
+     default constructor, 
+     or if no such parameter exists in the parameter list."
+    shared formal FunctionOrValueDeclaration? getParameterDeclaration(String name);
+    
     "True if the current declaration is an annotation class or function."
     shared formal Boolean annotation;
-    
-    // TODO remove this, not all classes have parameters!
-    "The list of parameter declarations for this functional declaration."
-    shared formal FunctionOrValueDeclaration[] parameterDeclarations;
-    
-    // TODO remove this, not all classes have parameters!
-    "Gets a parameter declaration by name. Returns `null` if no such parameter exists."
-    shared formal FunctionOrValueDeclaration? getParameterDeclaration(String name);
     
     "True if the class has an [[abstract|ceylon.language::abstract]] annotation."
     shared formal Boolean abstract;
@@ -80,27 +100,49 @@ shared sealed interface ClassDeclaration
 
     "Applies the given closed type arguments to this toplevel class declaration in order to obtain a class model. 
      See [this code sample](#toplevel-sample) for an example on how to use this."
-    throws(`class IncompatibleTypeException`, "If the specified `Type` or `Arguments` type arguments are not compatible with the actual result.")
-    throws(`class TypeApplicationException`, "If the specified closed type argument values are not compatible with the actual result's type parameters.")
-    shared formal Class<Type, Arguments> classApply<Type=Anything, Arguments=Nothing>(AppliedType<>* typeArguments)
-        given Arguments satisfies Anything[];
+    throws(`class IncompatibleTypeException`, 
+        "If the specified `Type` or `Arguments` type arguments are not 
+         compatible with the actual result.")
+    throws(`class TypeApplicationException`, 
+            "If the specified closed type argument values are not compatible 
+             with the actual result's type parameters.")
+    shared formal Class<Type, Arguments> classApply
+            <Type=Anything, Arguments=Nothing>
+            (AppliedType<>* typeArguments)
+                given Arguments satisfies Anything[];
 
     "Applies the given closed container type and type arguments to this member class declaration in order to obtain a member class model. 
      See [this code sample](#member-sample) for an example on how to use this."
-    throws(`class IncompatibleTypeException`, "If the specified `Container`, `Type` or `Arguments` type arguments are not compatible with the actual result.")
-    throws(`class TypeApplicationException`, "If the specified closed container type or type argument values are not compatible with the actual result's container type or type parameters.")
-    shared formal MemberClass<Container, Type, Arguments> memberClassApply<Container=Nothing, Type=Anything, Arguments=Nothing>(AppliedType<Object> containerType, AppliedType<>* typeArguments)
-        given Arguments satisfies Anything[];
+    throws(`class IncompatibleTypeException`, 
+        "If the specified `Container`, `Type` or `Arguments` type arguments 
+         are not compatible with the actual result.")
+    throws(`class TypeApplicationException`, 
+            "If the specified closed container type or type argument values 
+             are not compatible with the actual result's container type or 
+             type parameters.")
+    shared formal MemberClass<Container, Type, Arguments> memberClassApply
+            <Container=Nothing, Type=Anything, Arguments=Nothing>
+            (AppliedType<Object> containerType, AppliedType<>* typeArguments)
+                given Arguments satisfies Anything[];
 
-    "Creates a new instance of this toplevel class, by applying the specified type arguments and value arguments."
-    throws(`class IncompatibleTypeException`, "If the specified type or value arguments are not compatible with this toplevel class.")
+    "Creates a new instance of this toplevel class, 
+     by applying the specified type arguments and value arguments."
+    throws(`class IncompatibleTypeException`, 
+        "If the specified type or value arguments are not compatible with 
+         this toplevel class, or if the class lacks both a parameter list
+         and a default constructor.")
     shared default Object instantiate(AppliedType<>[] typeArguments = [], Anything* arguments)
         => classApply<Object, Nothing>(*typeArguments).apply(*arguments);
     
-    "Creates a new instance of this member class, by applying the specified type arguments and value arguments."
-    throws(`class IncompatibleTypeException`, "If the specified container, type or value arguments are not compatible with this method.")
-    shared default Object memberInstantiate(Object container, AppliedType<>[] typeArguments = [], Anything* arguments)
-        => memberClassApply<Nothing, Object, Nothing>(`Nothing`, *typeArguments).bind(container).apply(*arguments);
+    "Creates a new instance of this member class, by applying the specified 
+     type arguments and value arguments."
+    throws(`class IncompatibleTypeException`, 
+        "If the specified container, type or value arguments are not 
+         compatible with this method, or if the class lacks both a parameter list
+         and a default constructor.")
+    shared default Object memberInstantiate
+            (Object container, AppliedType<>[] typeArguments = [], Anything* arguments)
+                => memberClassApply<Nothing, Object, Nothing>(`Nothing`, *typeArguments).bind(container).apply(*arguments);
     
     "Looks up a constructor declaration directly declared on this class, by name. 
      Returns `null` if no such constructor matches. 
@@ -117,20 +159,3 @@ shared sealed interface ClassDeclaration
             given Annotation satisfies AnnotationType;
 }
 
-shared sealed interface ClassWithInitializerDeclaration 
-        satisfies ClassDeclaration {
-    shared actual default [] constructorDeclarations() => [];
-    shared actual default Null getConstructorDeclaration(String name) => null;
-    shared actual default [] annotatedConstructorDeclarations<Annotation>()
-            given Annotation satisfies AnnotationType => [];
-}
-
-shared sealed interface ClassWithConstructorsDeclaration 
-        satisfies ClassDeclaration {
-    shared actual default Nothing instantiate(AppliedType<>[] typeArguments, Anything* arguments) {
-        throw IncompatibleTypeException("class has constructors");
-    }
-    shared actual default Nothing memberInstantiate(Object container, AppliedType<>[] typeArguments, Anything* arguments) {
-        throw IncompatibleTypeException("class has constructors");
-    }
-}

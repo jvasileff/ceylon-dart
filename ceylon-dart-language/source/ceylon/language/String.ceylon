@@ -53,9 +53,10 @@
    `span()`, and `measure()` require iteration from the 
    beginning of the string to the given index."""
 by ("Gavin")
+tagged("Basic types", "Strings")
 shared native final class String(characters)
         extends Object()
-        satisfies List<Character> & 
+        satisfies SearchableList<Character> &
                   Comparable<String> &
                   Summable<String> & 
                   Ranged<Integer,Character,String> {
@@ -119,12 +120,12 @@ shared native final class String(characters)
              occurring in the string should be discarded. If 
              `false`, they will be included in the resulting 
              iterator."
-            Boolean discardSeparators=true,
+            Boolean discardSeparators = true,
             "Specifies that the separator tokens should be 
              grouped eagerly and not be treated as 
              single-character tokens. If `false` each 
              separator token will be of size `1`."
-            Boolean groupSeparators=true);
+            Boolean groupSeparators = true);
     
     "The first character in the string."
     shared actual native Character? first;
@@ -315,14 +316,8 @@ shared native final class String(characters)
      UTF-16 encoding. For any nonempty string:
      
          string.lastIndex == string.size-1"
-    shared actual Integer? lastIndex {
-        if (size==0) {
-            return null;
-        }
-        else {
-            return size-1;
-        }
-    }
+    shared actual Integer? lastIndex 
+            => if (size==0) then null else size-1;
     
     "An iterator for the characters of the string."
     shared actual native Iterator<Character> iterator();
@@ -538,17 +533,25 @@ shared native final class String(characters)
                 = smallest(size - sourcePosition,
                     destination.size - destinationPosition));
     
-    shared actual native Boolean occurs(Anything element);
-    shared actual native Boolean occursAt(Integer index, Anything element);
-    shared actual native Boolean includes(List<Anything> sublist);
-    shared actual native Boolean includesAt(Integer index, List<Anything> sublist);
+    shared actual native List<Character> sublistFrom(Integer from);
+    shared actual native List<Character> sublistTo(Integer to);
     
-    shared actual native Integer? firstOccurrence(Anything element);
-    shared actual native Integer? lastOccurrence(Anything element);
-    shared actual native Integer? firstInclusion(List<Anything> sublist);
-    shared actual native Integer? lastInclusion(List<Anything> sublist);
+    shared actual native {Integer*} indexesWhere(Boolean selecting(Character element));
+    shared actual native Integer? firstIndexWhere(Boolean selecting(Character element));
+    shared actual native Integer? lastIndexWhere(Boolean selecting(Character element));
     
-    shared actual native {Integer*} inclusions(List<Anything> sublist);
+    shared actual native {Integer*} occurrences(Character element, Integer from, Integer length);
+    shared actual native {Integer*} inclusions(List<Character> sublist, Integer from);
+    
+    shared actual native Boolean occurs(Character element, Integer from, Integer length);
+    shared actual native Boolean occursAt(Integer index, Character element);
+    shared actual native Boolean includes(List<Character> sublist, Integer from);
+    shared actual native Boolean includesAt(Integer index, List<Character> sublist);
+        
+    shared actual native Integer? firstOccurrence(Character element, Integer from, Integer length);
+    shared actual native Integer? lastOccurrence(Character element, Integer from, Integer length);
+    shared actual native Integer? firstInclusion(List<Character> sublist, Integer from);
+    shared actual native Integer? lastInclusion(List<Character> sublist, Integer from);
         
     shared actual native Boolean largerThan(String other); 
     shared actual native Boolean smallerThan(String other); 
@@ -565,4 +568,5 @@ shared native final class String(characters)
     shared actual native Character? findLast(Boolean selecting(Character element));
     shared actual native <Integer->Character>? locate(Boolean selecting(Character element));
     shared actual native <Integer->Character>? locateLast(Boolean selecting(Character element));
+    shared actual native {<Integer->Character>*} locations(Boolean selecting(Character element));
 }
