@@ -626,8 +626,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return dartObjectModel;
         }
 
+        "The actual type, erasing aliases."
+        value resolved = type.resolveAliases();
+
         "The intersection of the type & Object"
-        value definiteType = ceylonTypes.definiteType(type);
+        value definiteType = ceylonTypes.definiteType(resolved);
 
         // Test against `definiteType` instead of `type` as a likely optimization
         if (!denotable(definiteType)) {
