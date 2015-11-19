@@ -31,9 +31,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     LazySpecificationInfo
 }
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug
-}
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
  some declarations are class members and should not be re-declared in a dart constructor."
@@ -96,9 +93,10 @@ class ClassStatementTransformer(CompilationContext ctx)
         value info = LazySpecificationInfo(that);
 
         if (!info.refined exists) {
-            throw CompilerBug(that,
+            addError(that,
                 "LazySpecifications that are not shortcut refinements
                  are not yet supported.");
+            return [];
         }
 
         // Functions and Values are (currently) always declared as members.
@@ -170,7 +168,9 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node (ClassStatementTransformer): '``className(that)``'");
+        addError(that,
+            "Node type not yet supported (ClassStatementTransformer): \
+             ``className(that)``");
+        return [];
     }
 }

@@ -481,6 +481,12 @@ T&Object assertExists<T>(T item, String? message = null) {
 }
 
 shared
+void addError(Node|NodeInfo node, String message) {
+    value info = if (is Node node) then NodeInfo(node) else node;
+    info.addUnexpectedError(message);
+}
+
+shared
 Boolean eq(Anything first, Anything second)
     =>  if (exists first, exists second)
         then first == second

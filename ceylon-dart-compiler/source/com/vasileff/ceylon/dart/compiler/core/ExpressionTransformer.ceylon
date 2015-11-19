@@ -133,6 +133,9 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     ConstructorModel=Constructor
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
     DartExpression,
@@ -195,10 +198,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     TypeNameWithTypeArgumentsInfo
 }
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
-}
 
 shared
 class ExpressionTransformer(CompilationContext ctx)
@@ -234,9 +233,10 @@ class ExpressionTransformer(CompilationContext ctx)
         switch (nameAndArgs)
         case (is MemberNameWithTypeArguments) {
             if (!is ValueModel | FunctionModel targetDeclaration) {
-                throw CompilerBug(that,
-                        "Unexpected declaration type for base expression: \
-                         ``className(targetDeclaration)``");
+                addError(that,
+                    "Unexpected declaration type for base expression: \
+                     ``className(targetDeclaration)``");
+                return DartNullLiteral();
             }
 
             // Is this a Function that's really a Constructor?
@@ -350,9 +350,8 @@ class ExpressionTransformer(CompilationContext ctx)
         }
 
         if (that.memberOperator is SpreadMemberOperator) {
-            throw CompilerBug(that,
-                    "Member operator not yet supported: \
-                     '``that.memberOperator.text``'");
+            addError(that, "Spread member operator not yet supported");
+            return DartNullLiteral();
         }
 
         value info
@@ -512,9 +511,10 @@ class ExpressionTransformer(CompilationContext ctx)
                 return createCallable(info, outerFunction);
             }
             else {
-                throw CompilerBug (that,
+                addError(that,
                     "Unsupported type member type for qualified expression: "
                     + type(memberDeclaration).string);
+                return DartNullLiteral();
             }
         }
 
@@ -577,9 +577,10 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
         else {
-            throw CompilerBug(that,
+            addError(that,
                 "Unsupported member type for qualified expression: \
                  ``type(memberDeclaration)``");
+            return DartNullLiteral();
         }
     }
 
@@ -1030,7 +1031,14 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 if (positionalArguments.argumentList.sequenceArgument exists) {
                     // TODO support sequence argument (a single element Tuple...)
-                    throw CompilerBug(that, "Sequence arguments not yet supported");
+                    //      This is:
+                    //          class A() {
+                    //              shared class B() {}
+                    //          }
+                    //          A.B() b = A.B(*[A()]);
+                    addError(that, "Sequence arguments not yet supported on static \
+                                    invocations of member classes");
+                    return DartNullLiteral();
                 }
 
                 "There must be a single argument, which is the container (outer)."
@@ -1794,7 +1802,8 @@ class ExpressionTransformer(CompilationContext ctx)
                 return [definition];
             }
             case (is TuplePattern | EntryPattern) {
-                throw CompilerBug(p, "Destructure not yet supported");
+                addError(p, "Destructuring not yet supported");
+                return [DartExpressionStatement(DartNullLiteral())];
             }
         }
 
@@ -1961,8 +1970,8 @@ class ExpressionTransformer(CompilationContext ctx)
             case (is ForComprehensionClause) {
                 value pattern = clause.iterator.pattern;
                 if (!pattern is VariablePattern) {
-                    throw CompilerBug(pattern,
-                        "For pattern type not yet supported: " + type(pattern).string);
+                    addError(pattern, "Destructuring not yet supported");
+                    return [];
                 }
                 assert (is VariablePattern pattern);
 
@@ -2817,8 +2826,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual default
     DartExpression transformNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node (ExpressionTransformer): '``className(that)``'");
+        addError(that,
+            "Node type not yet supported (ExpressionTransformer): ``className(that)``");
+        return DartNullLiteral();
     }
 
     DartFunctionDeclarationStatement createDartFunctionDeclarationStatement(

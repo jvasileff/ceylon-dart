@@ -43,6 +43,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     FunctionOrValueModel=FunctionOrValue
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
     DartClassDeclaration,
@@ -89,10 +92,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
     ConstructorInfo,
     ExtensionOrConstructionInfo
-}
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
 }
 
 "For Dart TopLevel declarations."
@@ -882,8 +881,8 @@ class TopLevelVisitor(CompilationContext ctx)
             value extensionOrConstruction = extendedType.target;
 
             if (is Construction extensionOrConstruction) {
-                throw CompilerBug(extendedType,
-                    "Extending constructors not yet supported.");
+                addError(extendedType, "Extending constructors not yet supported.");
+                return null;
             }
 
             "Arguments must exist for constructor or ininitializer extends"
@@ -1021,8 +1020,8 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual default
     void visitNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node (TopLevelVisitor): '``className(that)``'");
+        addError(that,
+            "Node type not yet supported (TopLevelVisitor): ``className(that)``");
     }
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)

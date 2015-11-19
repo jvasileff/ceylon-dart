@@ -32,6 +32,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     ClassModel=Class
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleIdentifier,
     DartMethodDeclaration,
@@ -59,10 +62,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     ValueSpecificationInfo
 }
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
-}
 
 shared
 class ClassMemberTransformer(CompilationContext ctx)
@@ -81,9 +80,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         value info = LazySpecificationInfo(that);
 
         if (!info.refined exists) {
-            throw CompilerBug(that,
+            addError(that,
                 "LazySpecifications that are not shortcut refinements
                  are not yet supported.");
+            return [];
         }
 
         // Shortcut refinement; just like function or getter definitions:
@@ -584,7 +584,9 @@ class ClassMemberTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node (ClassMemberTransformer): '``className(that)``'");
+        addError(that,
+            "Node type not yet supported (ClassMemberTransformer): \
+             ``className(that)``");
+        return [];
     }
 }

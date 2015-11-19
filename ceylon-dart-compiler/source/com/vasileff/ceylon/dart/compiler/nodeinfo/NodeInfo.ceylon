@@ -112,7 +112,8 @@ import org.antlr.runtime {
     Token
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    dartBackend
 }
 
 shared
@@ -136,9 +137,15 @@ class NodeInfo(Node astNode) satisfies DScope {
 
     shared actual ScopeModel scope => tcNode.scope;
     shared {Message*} errors => CeylonList(tcNode.errors);
-    shared void addError(String string) => tcNode.addError(string);
-    shared void addUnexpectedError(String string) => tcNode.addUnexpectedError(string);
-    shared void addUnsupportedError(String string) => tcNode.addUnsupportedError(string);
+
+    shared void addError(String string)
+        =>  tcNode.addError(string, dartBackend);
+
+    shared void addUnsupportedError(String string)
+        =>  tcNode.addUnsupportedError(string, dartBackend);
+
+    shared void addUnexpectedError(String string)
+        =>  tcNode.addUnexpectedError(string, dartBackend);
 }
 
 shared

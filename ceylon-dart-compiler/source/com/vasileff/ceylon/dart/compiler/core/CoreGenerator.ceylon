@@ -9,6 +9,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ConstructorModel=Constructor,
     ClassOrInterfaceModel=ClassOrInterface
 }
+import com.vasileff.ceylon.dart.compiler {
+    DScope
+}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
     DartExpression,
@@ -16,10 +19,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionExpressionInvocation,
     DartSimpleIdentifier,
     DartAsExpression
-}
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug,
-    DScope
 }
 
 """Provides:
@@ -66,15 +65,6 @@ class CoreGenerator(CompilationContext ctx) {
     void error(Node that, Anything message)
         =>  process.writeErrorLine(
                 message?.string else "<null>");
-
-    shared
-    CompilerBug unimplementedError(Node that, String? message=null) {
-        throw CompilerBug(that,
-            "Unimplemented" + (
-                if (exists message)
-                then ": " + message
-                else ""));
-    }
 
     shared
     DartExpression withBoxing(

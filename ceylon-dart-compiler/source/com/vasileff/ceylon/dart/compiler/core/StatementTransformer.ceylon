@@ -40,9 +40,6 @@ import ceylon.ast.core {
 import ceylon.collection {
     LinkedList
 }
-import ceylon.language.meta {
-    type
-}
 
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -82,9 +79,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 
 import org.antlr.runtime {
     Token
-}
-import com.vasileff.ceylon.dart.compiler {
-    CompilerBug
 }
 
 shared
@@ -476,8 +470,8 @@ class StatementTransformer(CompilationContext ctx)
         value pattern = that.forClause.iterator.pattern;
 
         if (!pattern is VariablePattern) {
-            throw CompilerBug(that,
-                "For pattern type not yet supported: " + type(pattern).string);
+            addError(pattern, "Destructuring not yet supported");
+            return [];
         }
         assert (is VariablePattern pattern);
 
@@ -898,7 +892,8 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
-        throw CompilerBug(that,
-            "Unhandled node (StatementTransformer): '``className(that)``'");
+        addError(that,
+            "Node type not yet supported (StatementTransformer): ``className(that)``");
+        return [];
     }
 }

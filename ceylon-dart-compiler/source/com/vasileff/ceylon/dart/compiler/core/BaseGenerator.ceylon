@@ -1676,7 +1676,22 @@ class BaseGenerator(CompilationContext ctx)
                 return [tempVariableDeclaration, conditionExpression, replacements];
             }
             else {
-                throw CompilerBug(that, "destructure not yet supported");
+                addError(sp.pattern, "Destructuring not yet supported");
+                return // dummy code
+                    [null, DartNullLiteral(),
+                    VariableTriple {
+                        ValueModel();
+                        DartVariableDeclarationStatement{
+                            DartVariableDeclarationList {
+                                null; null;
+                                [DartVariableDeclaration {
+                                    DartSimpleIdentifier("");
+                                    null;
+                                }];
+                            };
+                        };
+                        DartExpressionStatement(DartNullLiteral());
+                    }];
             }
         }
         else {
@@ -1988,7 +2003,14 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {
         if (!that.definition is Specifier) {
-            throw CompilerBug(that, "LazySpecifier not supported");
+            addError(that.definition, "LazySpecifier not supported");
+            return DartVariableDeclarationList {
+                null; null;
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier("");
+                    null;
+                }];
+            };
         }
 
         value info = ValueDefinitionInfo(that);
