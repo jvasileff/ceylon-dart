@@ -170,6 +170,17 @@ shared
     Boolean verboseProfile;
     Boolean verboseFiles;
 
+    suppressWarnings("unusedDeclaration")
+    void logOut(Object message = "") {
+        standardOutWriter.println(message);
+        standardOutWriter.flush();
+    }
+
+    void logError(Object message = "") {
+        standardErrorWriter.println(message);
+        standardErrorWriter.flush();
+    }
+
     value mainFunctionHack
         =   DartFunctionDeclaration {
                 false;
@@ -316,12 +327,12 @@ shared
         moduleSources.put(phasedUnit.\ipackage.\imodule, JFile(phasedUnit.unit.fullPath));
 
         if (verboseFiles) {
-            standardErrorWriter.println("-- begin " + path);
+            logError("-- begin " + path);
         }
 
         if (verboseRhAst) {
-            standardErrorWriter.println("-- Redhat AST " + path);
-            standardErrorWriter.println(phasedUnit.compilationUnit.string);
+            logError("-- Redhat AST " + path);
+            logError(phasedUnit.compilationUnit);
         }
 
         Integer start = system.nanoseconds;
@@ -334,8 +345,8 @@ shared
         };
 
         if (verboseAst) {
-            standardErrorWriter.println("-- Ceylon AST " + path);
-            standardErrorWriter.println(unit);
+            logError("-- Ceylon AST " + path);
+            logError(unit);
         }
 
         if (is CompilationUnit unit) {
@@ -369,8 +380,8 @@ shared
                 declarations.addAll(ctx.compilationUnitMembers.sequence());
             }
             catch (CompilerBug b) {
-                standardErrorWriter.println();
-                standardErrorWriter.println("Compiler bug: " + b.message);
+                logError();
+                logError("Compiler bug: " + b.message);
                 // return; // exit early on error?
             }
         }
@@ -381,7 +392,7 @@ shared
         // verboseFiles output
         if (verboseFiles) {
             Integer end = system.nanoseconds;
-            standardErrorWriter.println("-- end   " + path
+            logError("-- end   " + path
                 + " (``((end-start)/10^6).string``ms)");
         }
     }
