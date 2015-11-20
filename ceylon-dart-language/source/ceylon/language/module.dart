@@ -104,9 +104,52 @@ class Array extends impl$BaseList {
   }
 
   void swap($dart$core.int i, $dart$core.int j) {
-    var oldI = getFromFirst(i);
-    set(i, getFromFirst(j));
-    set(j, oldI);
+    if (i < 0 || j < 0) {
+      throw new AssertionError("array index may not be negative");
+    }
+    if (i >= size || j >= size) {
+      throw new AssertionError("array index must be less than size of array " + size.toString());
+    }
+    var oldI = _list[i];
+    _list[i] = _list[j];
+    _list[j] = oldI;
+  }
+
+  void reverseInPlace() {
+    for ($dart$core.int index=0; index < size/2; index++) {
+      var otherIndex = size - index - 1;
+      var x = _list[index];
+      _list[index] = _list[otherIndex];
+      _list[otherIndex] = x;
+    }
+  }
+
+  void move($dart$core.int from, $dart$core.int to) {
+    if (from < 0 || to < 0) {
+      throw new AssertionError("array index may not be negative");
+    }
+    if (from >= size || to >= size) {
+      throw new AssertionError("array index must be less than size of array " + size.toString());
+    }
+    if (from == to) {
+      return;
+    }
+    var len;
+    var srcPos;
+    var destPos;
+    if (from > to) {
+      len = from - to;
+      srcPos = to;
+      destPos = to + 1;
+    }
+    else {
+      len = to - from;
+      srcPos = from + 1;
+      destPos = from;
+    }
+    var x = _list[from];
+    _list.setRange(destPos,  destPos + len, _list, srcPos);
+    _list[to] = x;
   }
 
   void copyTo([Array destination,
@@ -1170,6 +1213,16 @@ $dart$core.String className($dart$core.Object obj) {
   $dart$mirrors.ClassMirror mirror = $dart$mirrors.reflectClass(obj.runtimeType);
   return $dart$mirrors.MirrorSystem.getName(mirror.qualifiedName);
 }
+
+//
+// identityHash
+//
+
+$dart$core.int identityHash($dart$core.Object identifiable)
+  => $dart$core.identityHashCode(identifiable);
+
+$package$identityHash($dart$core.Object identifiable)
+  => identityHash(identifiable);
 
 // process
 
