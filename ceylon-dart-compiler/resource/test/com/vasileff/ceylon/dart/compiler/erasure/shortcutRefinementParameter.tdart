@@ -6,5 +6,7 @@ abstract class I {
 }
 class J implements I {
     J() {}
-    void foo([$ceylon$language.Integer i]) => $ceylon$language.noop($ceylon$language.empty);
+    void foo([$ceylon$language.Integer i]) {
+        $ceylon$language.noop($ceylon$language.empty);
+    }
 }

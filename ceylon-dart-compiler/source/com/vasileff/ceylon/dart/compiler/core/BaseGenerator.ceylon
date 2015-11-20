@@ -2267,6 +2267,7 @@ class BaseGenerator(CompilationContext ctx)
             LazySpecifier|Block definition) {
 
         variable DartExpression? result = null;
+        value isVoid = functionModel.declaredVoid;
 
         for (i -> list in parameterLists.indexed.sequence().reversed) {
             if (i < parameterLists.size - 1) {
@@ -2281,7 +2282,7 @@ class BaseGenerator(CompilationContext ctx)
             value defaultedParameters = list.parameters.narrow<DefaultedParameter>();
 
             DartFunctionBody body;
-            if (defaultedParameters.empty) {
+            if (defaultedParameters.empty && !isVoid) {
                 // no defaulted parameters
                 if (i == parameterLists.size - 1) {
                     // the actual function body
@@ -2306,7 +2307,7 @@ class BaseGenerator(CompilationContext ctx)
                 }
             }
             else {
-                // defaulted parameters exist
+                // defaulted parameters exist, or the function is void
 
                 value statements = LinkedList<DartStatement>();
 
@@ -2329,16 +2330,28 @@ class BaseGenerator(CompilationContext ctx)
                     }
                     case (is LazySpecifier) {
                         // for FunctionShortcutDefinition
-                        statements.add {
-                            DartReturnStatement {
-                                withLhs {
-                                    null;
-                                    functionModel;
-                                    () => definition.expression.transform(
-                                            expressionTransformer);
+                        if (isVoid) {
+                            statements.add {
+                                DartExpressionStatement {
+                                    withLhsNoType {
+                                        () => definition.expression.transform(
+                                                expressionTransformer);
+                                    };
                                 };
                             };
-                        };
+                        }
+                        else {
+                            statements.add {
+                                DartReturnStatement {
+                                    withLhs {
+                                        null;
+                                        functionModel;
+                                        () => definition.expression.transform(
+                                                expressionTransformer);
+                                    };
+                                };
+                            };
+                        }
                     }
                 }
                 else {

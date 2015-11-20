@@ -286,7 +286,9 @@ class ArraySequence implements Sequence {
     }
     Sequential get rest => ((Sequential $lhs$) => null == $lhs$ ? new ArraySequence(_$array.spanFrom(Integer.instance(1))) : $lhs$)(size == 1 ? $package$empty : null);
     Sequence clone() => new ArraySequence(_$array.clone());
-    void each([Callable step]) => _$array.each(step);
+    void each([Callable step]) {
+        _$array.each(step);
+    }
     $dart$core.int count([Callable selecting]) => _$array.count(selecting);
     $dart$core.bool every([Callable selecting]) => _$array.every(selecting);
     $dart$core.bool any([Callable selecting]) => _$array.any(selecting);
@@ -8695,7 +8697,9 @@ abstract class meta$declaration$ValueDeclaration implements meta$declaration$Fun
     $dart$core.Object memberGet([$dart$core.Object container]);
     static $dart$core.Object $memberGet([final meta$declaration$ValueDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions unsupported at 'ValueDeclaration.ceylon: 81:55-81:63'")).bind(container).get();
     void set([$dart$core.Object newValue]);
-    static void $set([final meta$declaration$ValueDeclaration $this, $dart$core.Object newValue]) => $this.apply().setIfAssignable(newValue);
+    static void $set([final meta$declaration$ValueDeclaration $this, $dart$core.Object newValue]) {
+        $this.apply().setIfAssignable(newValue);
+    }
     void memberSet([$dart$core.Object container, $dart$core.Object newValue]);
     meta$declaration$SetterDeclaration get setter;
 }
@@ -9615,7 +9619,9 @@ $dart$core.Object $package$plus([$dart$core.Object x, $dart$core.Object y]) => (
 
 $dart$core.Object plus([$dart$core.Object x, $dart$core.Object y]) => $package$plus(x, y);
 
-void $package$print([$dart$core.Object val]) => $package$process.writeLine($package$stringify(val));
+void $package$print([$dart$core.Object val]) {
+    $package$process.writeLine($package$stringify(val));
+}
 
 void print([$dart$core.Object val]) => $package$print(val);
 
@@ -11819,7 +11825,9 @@ class Singleton implements Sequence {
         }
     })();
     Iterable chain([Iterable other]) => other.follow(_$element);
-    void each([Callable step]) => step.f(_$element);
+    void each([Callable step]) {
+        step.f(_$element);
+    }
     $dart$core.bool get empty => Sequence.$get$empty(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);

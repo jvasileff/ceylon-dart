@@ -37,7 +37,9 @@ class run$A {
         this._$s = _$s;
     }
     $dart$core.String _$s;
-    void myFoo() => $capture$run$foo();
+    void myFoo() {
+        $capture$run$foo();
+    }
 }
 void $package$run() {
     void foo() {}

@@ -1,0 +1,4 @@
+shared class A() {
+    shared void run() => print("hello");
+}
+shared void run() => print("hello");

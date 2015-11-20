@@ -3,7 +3,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I {
     void callFun();
-    static void $callFun([final run$I $this]) => $this.$capture$run$fun();
+    static void $callFun([final run$I $this]) {
+        $this.$capture$run$fun();
+    }
     $dart$core.Function $capture$run$fun;
 }
 class run$C implements run$I {
@@ -11,7 +13,9 @@ class run$C implements run$I {
     run$C([$dart$core.Function $capture$run$fun]) {
         this.$capture$run$fun = $capture$run$fun;
     }
-    void callFun() => $capture$run$fun();
+    void callFun() {
+        $capture$run$fun();
+    }
 }
 class run$D implements run$I {
     $dart$core.Function $capture$run$fun;
@@ -21,7 +25,9 @@ class run$D implements run$I {
     run$D.create([$dart$core.Function $capture$run$fun]) {
         this.$capture$run$fun = $capture$run$fun;
     }
-    void callFun() => $capture$run$fun();
+    void callFun() {
+        $capture$run$fun();
+    }
 }
 void $package$run() {
     void fun() {

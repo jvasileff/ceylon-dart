@@ -47,4 +47,8 @@ object functions {
     shared test
     void dontEraseForCallableParameters()
         =>  compileAndCompare2("functions/dontEraseForCallableParameters");
+
+    shared test
+    void useBlocksVoidFunctions()
+        =>  compileAndCompare2("functions/useBlocksVoidFunctions");
 }
