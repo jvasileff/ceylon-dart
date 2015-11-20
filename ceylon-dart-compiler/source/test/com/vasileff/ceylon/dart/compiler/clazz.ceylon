@@ -126,4 +126,12 @@ object clazz {
     shared test
     void outerAndCaptureInSuperInvocation()
         =>  compileAndCompare2("clazz/outerAndCaptureInSuperInvocation");
+
+    shared test
+    void valueDeclarationInConstructor()
+        =>  compileAndCompare2("clazz/valueDeclarationInConstructor");
+
+    shared test
+    void functionDeclarationInConstructor()
+        =>  compileAndCompare2("clazz/functionDeclarationInConstructor");
 }

@@ -803,15 +803,12 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartBlock {
                         concatenate {
                             outerAndCaptureMemberInitializers,
-                            classBody.children.takeWhile {
-                                not(constructor.equals);
-                            }.chain {
-                                constructor.block.children;
-                            }.chain {
-                                classBody.children.skipWhile {
-                                    not(constructor.equals);
-                                };
-                            }.flatMap((s) => s.transform(classStatementTransformer))
+                            classBody.children.takeWhile(not(constructor.equals))
+                                .flatMap((s) => s.transform(classStatementTransformer)),
+                            constructor.block.children
+                                .flatMap((s) => s.transform(statementTransformer)),
+                            classBody.children.skipWhile(not(constructor.equals))
+                                .flatMap((s) => s.transform(classStatementTransformer))
                         };
                     }
                 else

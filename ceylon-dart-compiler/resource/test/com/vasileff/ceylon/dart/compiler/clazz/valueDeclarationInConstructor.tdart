@@ -1,0 +1,19 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C() {
+        t = "t";
+        $dart$core.String s = "s";
+        $ceylon$language.print($ceylon$language.String.instance(s));
+        this.s = s;
+        $ceylon$language.print($ceylon$language.String.instance(t));
+    }
+    $dart$core.String s;
+    $dart$core.String t;
+}
+void $package$run() {
+    new C();
+}
+
+void run() => $package$run();

@@ -1,0 +1,13 @@
+class C {
+    shared variable String s;
+    shared variable String t = "t";
+    shared new() {
+        value s = "s";
+        print(s);
+        this.s = s;
+        print(t);
+    }
+}
+shared void run() {
+    C();
+}
