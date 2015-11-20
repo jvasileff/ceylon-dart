@@ -14,6 +14,10 @@ import java.nio.file {
     JFiles=Files,
     JPath=Path
 }
+import com.redhat.ceylon.model.typechecker.model {
+    FunctionModel=Function,
+    ModuleModel=Module
+}
 
 shared
 JFile javaFile(File | JFile file)
@@ -70,3 +74,12 @@ File? ceylonFile(File | JFile? file) {
     }
     return null;
 }
+
+Boolean hasRunFunction(ModuleModel m)
+    =>  if (is FunctionModel runFunction
+                =   m.rootPackage.getDirectMemberForBackend("run", dartBackend.asSet()),
+            runFunction.shared,
+            runFunction.parameterLists.size() == 1,
+            runFunction.parameterLists.get(0).parameters.size() == 0)
+        then true
+        else false;

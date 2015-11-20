@@ -225,6 +225,46 @@ shared
                 };
             };
 
+    value mainFunctionHackNoRun
+        =   DartFunctionDeclaration {
+                false;
+                DartTypeName {
+                    DartSimpleIdentifier("void");
+                };
+                null;
+                DartSimpleIdentifier("main");
+                DartFunctionExpression {
+                    DartFormalParameterList {
+                        false; false;
+                        [DartSimpleFormalParameter {
+                            false;
+                            true;
+                            null;
+                            DartSimpleIdentifier("arguments");
+                        }];
+                    };
+                    DartBlockFunctionBody {
+                        null; false;
+                        DartBlock {
+                            [DartExpressionStatement {
+                                DartFunctionExpressionInvocation {
+                                    DartPropertyAccess {
+                                        DartSimpleIdentifier("$dart$core");
+                                        DartSimpleIdentifier("print");
+                                    };
+                                    DartArgumentList {
+                                        [DartSimpleStringLiteral {
+                                            "A shared toplevel run() function \
+                                             was not found.";
+                                        }];
+                                    };
+                                };
+                            }];
+                        };
+                    };
+                };
+            };
+
     function nativeCode(Directory directory) {
         // Concatinate *.dart files. Filter import and library directives. Return.
         value sb = StringBuilder();
@@ -396,7 +436,12 @@ shared
         value languageModule = m.nameAsString == "ceylon.language";
 
         if (!suppressMainFunction) {
-            ds.add(mainFunctionHack);
+            if (hasRunFunction(m)) {
+                ds.add(mainFunctionHack);
+            }
+            else {
+                ds.add(mainFunctionHackNoRun);
+            }
         }
 
         function dartPackageLocationForModule(ModuleModel m)
