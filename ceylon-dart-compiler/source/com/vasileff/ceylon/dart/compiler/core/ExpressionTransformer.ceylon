@@ -764,9 +764,6 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is FunctionModel | ValueModel | ClassModel | ConstructorModel
                     | Null invokedDeclaration);
 
-        value invokedDeclarationContainer
-            =   omap(getContainingClassOrInterface)(invokedDeclaration);
-
         value signature
             =   CeylonList {
                     ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
@@ -776,8 +773,10 @@ class ExpressionTransformer(CompilationContext ctx)
                 !invokedDeclaration.shared,
                 // callable parameters are local values!
                 !invokedDeclaration.parameter,
-                is InterfaceModel invokedDeclarationContainer,
-                is BaseExpression invoked = that.invoked) {
+                is InterfaceModel invokedContainer
+                    =   container(invokedDeclaration),
+                is BaseExpression invoked
+                    =   that.invoked) {
 
             // Special case: invoking private interface member using a BaseExpression.
             //
@@ -807,7 +806,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 =   dartTypes.expressionToThisOrOuter {
                         dartTypes.ancestorChainToExactDeclaration {
                             scopeContainer;
-                            invokedDeclarationContainer;
+                            invokedContainer;
                         };
                     };
 
@@ -831,7 +830,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         DartPropertyAccess {
                             dartTypes.dartIdentifierForClassOrInterface {
                                 info;
-                                invokedDeclarationContainer;
+                                invokedContainer;
                             };
                             DartSimpleIdentifier {
                                 dartTypes.getStaticInterfaceMethodName(invokedDeclaration);

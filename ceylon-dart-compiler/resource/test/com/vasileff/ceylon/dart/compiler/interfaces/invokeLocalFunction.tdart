@@ -1,0 +1,27 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void printHello();
+    static void $printHello([final I $this]) {
+        void f() {
+            $ceylon$language.print($ceylon$language.String.instance("hello"));
+        }
+
+        void g() {
+            $ceylon$language.print($ceylon$language.String.instance("hello"));
+        }
+
+        f();
+        g();
+    }
+}
+class run$$anonymous$0_ implements I {
+    run$$anonymous$0_() {}
+    void printHello() => I.$printHello(this);
+}
+void $package$run() {
+    (new run$$anonymous$0_()).printHello();
+}
+
+void run() => $package$run();

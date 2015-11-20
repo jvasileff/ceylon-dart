@@ -140,4 +140,12 @@ object interfaces {
     shared test
     void outerInterfaceSandwich()
         =>  compileAndCompare2("interfaces/outerInterfaceSandwich");
+
+    shared test
+    void invokeLocalValue()
+        =>  compileAndCompare2("interfaces/invokeLocalValue");
+
+    shared test
+    void invokeLocalFunction()
+        =>  compileAndCompare2("interfaces/invokeLocalFunction");
 }

@@ -1,0 +1,12 @@
+shared interface I {
+    shared default void printHello() {
+        void f() => print("hello");
+        void g() { print("hello"); }
+
+        f();
+        g();
+    }
+}
+shared void run() {
+    object satisfies I {}.printHello();
+}

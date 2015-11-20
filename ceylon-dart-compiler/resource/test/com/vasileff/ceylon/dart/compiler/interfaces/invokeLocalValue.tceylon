@@ -1,0 +1,14 @@
+shared interface I {
+    shared default void printHello() {
+        Anything f = () => print("hello");
+
+        if (is Anything() f) {
+            f();
+            value f2 = f;
+            f2();
+        }
+    }
+}
+shared void run() {
+    object satisfies I {}.printHello();
+}

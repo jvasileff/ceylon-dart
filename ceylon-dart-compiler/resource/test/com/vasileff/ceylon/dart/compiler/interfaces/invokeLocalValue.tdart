@@ -1,0 +1,25 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    void printHello();
+    static void $printHello([final I $this]) {
+        $dart$core.Object f = new $ceylon$language.dart$Callable(() => $ceylon$language.print($ceylon$language.String.instance("hello")));
+        if (f is $ceylon$language.Callable) {
+            $ceylon$language.Callable f$0;
+            f$0 = f as $ceylon$language.Callable;
+            f$0.f();
+            $ceylon$language.Callable f2 = f$0;
+            f2.f();
+        }
+    }
+}
+class run$$anonymous$1_ implements I {
+    run$$anonymous$1_() {}
+    void printHello() => I.$printHello(this);
+}
+void $package$run() {
+    (new run$$anonymous$1_()).printHello();
+}
+
+void run() => $package$run();
