@@ -29,8 +29,8 @@ void capturesWithControlBlocks() {
         }
     }
 
-    //object b satisfies Ban {}
-    //b.capturesI();
-    //b.capturesIF();
-    //b.capturesIFS();
+    object b satisfies Ban {}
+    b.capturesI();
+    b.capturesIF();
+    b.capturesIFS();
 }

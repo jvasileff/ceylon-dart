@@ -11524,7 +11524,7 @@ class set$$anonymous$4_ implements Set {
     set$$anonymous$4_([Iterable $capture$set$$stream, Callable $capture$set$choosing]) {
         this.$capture$set$$stream = $capture$set$$stream;
         this.$capture$set$choosing = $capture$set$choosing;
-        _$elements = $capture$set$stream.summarize(new dart$Callable($package$identity), new dart$Callable(([$dart$core.Object current, $dart$core.Object element]) => (() {
+        _$elements = $capture$set$$stream.summarize(new dart$Callable($package$identity), new dart$Callable(([$dart$core.Object current, $dart$core.Object element]) => (() {
             $dart$core.bool doElse$11 = true;
             if (!(null == current)) {
                 doElse$11 = false;

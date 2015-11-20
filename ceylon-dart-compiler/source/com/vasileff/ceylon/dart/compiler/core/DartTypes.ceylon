@@ -958,7 +958,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             };
                         };
                         DartInvocable {
-                            identifierForCapture(originalDeclaration);
+                            // Note on identifier name: we're using `declaration`, not
+                            // originalDeclaration, since when class declarations are
+                            // made, we don't know which replacements have been elided,
+                            // so the parameter name for the capture will always assume
+                            // no elided declarations. The result is that there may be
+                            // more '$' is the name (an *extra* '$' for each refinement
+                            // that was skipped.)
+
+                            // TODO but we really need to have a visitor determine which
+                            //      replacements we'll honor (before the capture visitor)
+                            //      so that we *can* acknowledge elided replacements, and
+                            //      in some cases consolidate/de-dup captures. And, make
+                            //      sure the types all line up....
+                            identifierForCapture(declaration);
+
                             // operators become functions when closurized
                             switch (et = invocable.elementType)
                             case (package.dartFunction | dartValue) et

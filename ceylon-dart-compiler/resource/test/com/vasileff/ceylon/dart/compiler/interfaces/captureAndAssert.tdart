@@ -12,7 +12,7 @@ abstract class capturesWithControlBlocks$Bar {
 abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
     void capturesIF();
     static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
-        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$x;
         $ceylon$language.print(capture);
     }
     $dart$core.Object $capture$capturesWithControlBlocks$$x;
@@ -24,6 +24,19 @@ abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlock
         $ceylon$language.print($ceylon$language.Integer.instance(capture));
     }
     $dart$core.int $capture$capturesWithControlBlocks$$$x$0;
+}
+class capturesWithControlBlocks$b_ implements capturesWithControlBlocks$Ban {
+    $dart$core.int $capture$capturesWithControlBlocks$$$x$0;
+    $dart$core.Object $capture$capturesWithControlBlocks$$x;
+    $dart$core.Object $capture$capturesWithControlBlocks$x;
+    capturesWithControlBlocks$b_([$dart$core.int $capture$capturesWithControlBlocks$$$x$0, $dart$core.Object $capture$capturesWithControlBlocks$$x, $dart$core.Object $capture$capturesWithControlBlocks$x]) {
+        this.$capture$capturesWithControlBlocks$$$x$0 = $capture$capturesWithControlBlocks$$$x$0;
+        this.$capture$capturesWithControlBlocks$$x = $capture$capturesWithControlBlocks$$x;
+        this.$capture$capturesWithControlBlocks$x = $capture$capturesWithControlBlocks$x;
+    }
+    void capturesI() => capturesWithControlBlocks$Ban.$capturesI(this);
+    void capturesIF() => capturesWithControlBlocks$Baz.$capturesIF(this);
+    void capturesIFS() => capturesWithControlBlocks$Bar.$capturesIFS(this);
 }
 void $package$capturesWithControlBlocks() {
     $dart$core.Object x = $ceylon$language.Integer.instance(5);
@@ -39,6 +52,10 @@ void $package$capturesWithControlBlocks() {
     }
     x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
     $ceylon$language.print($ceylon$language.Integer.instance(x$0));
+    final capturesWithControlBlocks$b_ b = new capturesWithControlBlocks$b_(x$0, x, x);
+    b.capturesI();
+    b.capturesIF();
+    b.capturesIFS();
 }
 
 void capturesWithControlBlocks() => $package$capturesWithControlBlocks();
