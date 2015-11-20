@@ -1,0 +1,17 @@
+interface I {
+    shared String id => "I";
+}
+class A() satisfies I {}
+class B() satisfies I {}
+
+alias AB => A|B;
+
+alias MyInt => Integer;
+
+shared void run() {
+    AB ab = A(); // erase to object
+    print(ab.id); // be sure to cast
+
+    MyInt x = 5; // not erased to object
+    print(x * 2); // no cast necessary
+}

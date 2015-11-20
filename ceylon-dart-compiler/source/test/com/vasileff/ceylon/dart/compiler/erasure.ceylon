@@ -44,4 +44,8 @@ object erasure {
     shared test
     void shortcutRefinementParameter()
         =>  compileAndCompare2("erasure/shortcutRefinementParameter");
+
+    shared test
+    void aliasEraseToObject()
+        =>  compileAndCompare2("erasure/aliasEraseToObject");
 }

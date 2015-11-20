@@ -1,0 +1,23 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get id;
+    static $dart$core.String $get$id([final I $this]) => "I";
+}
+class A implements I {
+    A() {}
+    $dart$core.String get id => I.$get$id(this);
+}
+class B implements I {
+    B() {}
+    $dart$core.String get id => I.$get$id(this);
+}
+void $package$run() {
+    $dart$core.Object ab = new A();
+    $ceylon$language.print($ceylon$language.String.instance((ab as I).id));
+    $dart$core.int x = 5;
+    $ceylon$language.print($ceylon$language.Integer.instance(x * 2));
+}
+
+void run() => $package$run();
