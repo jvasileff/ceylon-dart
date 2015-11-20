@@ -1307,7 +1307,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
 
         // Non-denotable types are of course erased to object.
-        return !denotable(declaration.type);
+        return !denotable(declaration.type.resolveAliases());
     }
 
     "For a given Ceylon declaration, the closest original declaration that was actually
