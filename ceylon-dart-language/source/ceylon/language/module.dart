@@ -1224,6 +1224,21 @@ $dart$core.int identityHash($dart$core.Object identifiable)
 $package$identityHash($dart$core.Object identifiable)
   => identityHash(identifiable);
 
+// printStackTrace
+
+void printStackTrace([Throwable exception, $dart$core.Object write = dart$default]) {
+  // TODO if the stackTrace is not available, should we just print <null> or something instead?
+  if (null == exception.stackTrace) {
+    try { throw exception; } catch (e) {}
+  }
+  if (write == dart$default) {
+    $dart$io.stderr.write(String.instance(exception.stackTrace.toString()));
+  }
+  else {
+    (write as Callable).f(String.instance(exception.stackTrace.toString()));
+  }
+}
+
 // process
 
 Sequential _processArguments = $package$empty;
