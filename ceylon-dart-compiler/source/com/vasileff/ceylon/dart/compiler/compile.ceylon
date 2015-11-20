@@ -453,21 +453,29 @@ shared
                     .plus(m.name.get(m.name.size() - 1).string)
                     .plus(".dart");
 
-        // TODO decide if the language module should be excluded.
         value importedModules
             =   CeylonIterable(m.imports)
                 .filter(isForDartBackend)
                 .map(ModuleImport.\imodule)
                 .map((m) =>
-                    DartImportDirective {
-                        DartSimpleStringLiteral {
-                            dartPackageLocationForModule(m);
-                        };
-                        DartSimpleIdentifier {
-                            moduleImportPrefix(m);
-                        };
-                    }
-                );
+                    if (m.name.size() == 1
+                            && m.name.get(0).string.startsWith("dart:")) then
+                        let (name = m.name.get(0).string)
+                        DartImportDirective {
+                            DartSimpleStringLiteral(name);
+                            DartSimpleIdentifier {
+                                "$" + name.replace(":", "$");
+                            };
+                        }
+                    else
+                        DartImportDirective {
+                            DartSimpleStringLiteral {
+                                dartPackageLocationForModule(m);
+                            };
+                            DartSimpleIdentifier {
+                                moduleImportPrefix(m);
+                            };
+                        });
 
         value dcu
             =   DartCompilationUnit {

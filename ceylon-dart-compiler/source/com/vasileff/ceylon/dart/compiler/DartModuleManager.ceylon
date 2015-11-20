@@ -98,6 +98,13 @@ class DartModuleManager() extends ModuleManager() {
             m.addImport(moduleImport);
             m.languageModule = languageModule;
         }
+
+        // Mark native dart:* sdk modules available now to keep aether from trying to
+        // find a pom (somehow aether jumps in the module name has a ':').
+        if (moduleName.size() == 1 && moduleName.get(0).string.startsWith("dart:")) {
+            m.available = true;
+        }
+
         return m;
     }
 
