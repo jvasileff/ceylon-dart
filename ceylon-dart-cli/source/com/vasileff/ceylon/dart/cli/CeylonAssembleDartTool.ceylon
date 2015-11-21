@@ -6,7 +6,15 @@ import ceylon.file {
     parsePath,
     Directory,
     Link,
-    Path
+    Path,
+    createFileIfNil,
+    readAndAppendLines
+}
+import ceylon.process {
+    currentOutput,
+    currentError,
+    currentInput,
+    createProcess
 }
 
 import com.redhat.ceylon.cmr.api {
@@ -21,6 +29,7 @@ import com.redhat.ceylon.common {
 import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
     ToolError,
+    option=option__SETTER,
     optionArgument=optionArgument__SETTER,
     description=description__SETTER
 }
@@ -28,7 +37,8 @@ import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.vasileff.ceylon.dart.compiler {
-    ReportableException
+    ReportableException,
+    TemporaryFile
 }
 
 import java.lang {
@@ -53,6 +63,13 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
          The default is 'moduleName-assembly'.";
     }
     JString? \iout = null;
+
+    shared variable option
+    description {
+        "Generate an expanded assembly directory with a packages directory and \
+         a run script. The default is to generate a minified executable script.";
+    }
+    Boolean expanded = false;
 
     shared actual
     void initialize(CeylonTool? ceylonTool) {
@@ -82,6 +99,9 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     "Default modules not yet supported: ``moduleString``");
         }
 
+        value cwdPath
+            =   parsePath(validCwd().absolutePath);
+
         value moduleName
             =   ModuleUtil.moduleName(moduleString);
 
@@ -106,61 +126,128 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                 =>  let (name -> version = pair)
                     name -> moduleFile(repositoryManager, name, version));
 
-        value assemblyRootPath
-            =   parsePath(validCwd().toPath().resolve(
-                    \iout?.string else "``moduleShortName``-assembly").string);
+        if (expanded) {
+            value assemblyRootPath
+                =   cwdPath.childPath(\iout?.string else "``moduleShortName``-assembly");
 
-        value assemblyBinPath
-            =   assemblyRootPath.childPath("bin");
+            value assemblyBinPath
+                =   assemblyRootPath.childPath("bin");
 
-        value packageRootPath
-            =   assemblyRootPath.childPath("packages");
+            value packageRootPath
+                =   assemblyRootPath.childPath("packages");
 
-        createDirectoryIfAbsent(assemblyRootPath);
-        createDirectoryIfAbsent(assemblyBinPath);
-        createDirectoryIfAbsent(packageRootPath);
+            createDirectoryIfAbsent(assemblyRootPath);
+            createDirectoryIfAbsent(assemblyBinPath);
+            createDirectoryIfAbsent(packageRootPath);
 
-        value moduleMap
-            =   createPackageRoot(dependencyFiles, packageRootPath);
+            value moduleMap
+                =   createPackageRoot(dependencyFiles, packageRootPath);
 
-        assert (exists programModuleFile
-            =   moduleMap[moduleName]);
+            assert (exists programModuleFile
+                =   moduleMap[moduleName]);
 
-        value runFilePath
-            =   assemblyBinPath.childPath(moduleShortName);
+            value runFilePath
+                =   assemblyBinPath.childPath(moduleShortName);
 
-        value runScript
-            =   runScriptTemplate.replace {
-                    "MODULE_FILE_RELATIVE_PATH";
-                    programModuleFile.relativePath(assemblyBinPath).string;
-                }.replace {
-                    "PACKAGES_RELATIVE_PATH";
-                    packageRootPath.relativePath(assemblyBinPath).string;
-                };
+            value runScript
+                =   runScriptTemplate.replace {
+                        "MODULE_FILE_RELATIVE_PATH";
+                        programModuleFile.relativePath(assemblyBinPath).string;
+                    }.replace {
+                        "PACKAGES_RELATIVE_PATH";
+                        packageRootPath.relativePath(assemblyBinPath).string;
+                    };
 
-        value runFile
-            =   overwriteFile(runFilePath, runScript);
+            value runFile
+                =   overwriteFile(runFilePath, runScript);
 
-        setExecutable(runFile);
+            setExecutable(runFile);
 
-        value readmeFilePath
-            =   assemblyRootPath.childPath("README");
+            value readmeFilePath
+                =   assemblyRootPath.childPath("README");
 
-        value readmeText
-            =   readmeTemplate.replace {
-                    "MODULE_FILE_RELATIVE_PATH";
-                    programModuleFile.relativePath(assemblyRootPath).string;
-                }.replace {
-                    "PACKAGES_RELATIVE_PATH";
-                    packageRootPath.relativePath(assemblyRootPath).string;
-                }.replace {
-                    "RUN_FILE_NAME";
-                    moduleShortName;
-                };
+            value readmeText
+                =   readmeTemplate.replace {
+                        "MODULE_FILE_RELATIVE_PATH";
+                        programModuleFile.relativePath(assemblyRootPath).string;
+                    }.replace {
+                        "PACKAGES_RELATIVE_PATH";
+                        packageRootPath.relativePath(assemblyRootPath).string;
+                    }.replace {
+                        "RUN_FILE_NAME";
+                        moduleShortName;
+                    };
 
-        overwriteFile(readmeFilePath, readmeText);
+            overwriteFile(readmeFilePath, readmeText);
 
-        return 0;
+            print("Created expanded assembly directory \
+                   ``\iout else assemblyRootPath.relativePath(cwdPath)``");
+
+            return 0;
+        }
+        else {
+            // create an executable dart script
+
+            value [packageRootPath, moduleMap]
+                    =   createTemporaryPackageRoot(dependencyFiles);
+
+            assert (exists programModuleFile
+                =   moduleMap[moduleName]);
+
+            value dart2jsPath = findExecutableInPath("dart2js");
+            if (!exists dart2jsPath) {
+                throw ReportableException("Cannot find dart2js executable in path.");
+            }
+
+            try (tempScriptFile = TemporaryFile()) {
+                value p
+                    =   createProcess {
+                            command = dart2jsPath.string;
+                            arguments = [
+                                "--enable-experimental-mirrors",
+                                "--categories=Server",
+                                "--output-type=dart",
+                                "--package-root=" + packageRootPath.string,
+                                "-m", // minify
+                                "-o", tempScriptFile.file.path.string,
+                                programModuleFile.string
+                            ];
+                            path = parsePath(validCwd().absolutePath);
+                            input = currentInput;
+                            output = currentOutput;
+                            error = currentError;
+                        };
+
+                p.waitForExit();
+                if (exists code = p.exitCode, code != 0) {
+                    throw ReportableException("dart2js reported an error.");
+                }
+
+                value scriptFilePath
+                    =   parsePath(validCwd().absolutePath).childPath(
+                            \iout?.string else "``moduleShortName``.dart");
+
+                value resource
+                    =   scriptFilePath.resource;
+
+                if (is Directory | Link resource) {
+                    throw ReportableException(
+                        "Cannot overwrite directory or symbolic link resource \
+                         ``resource.path.string``");
+                }
+                value scriptFile = createFileIfNil(resource);
+                try (writer = scriptFile.Overwriter("utf-8")) {
+                    writer.writeLine("#!/usr/bin/env dart");
+                }
+                readAndAppendLines(tempScriptFile.file, scriptFile);
+                setExecutable(scriptFile);
+
+                print("Created minified executable Dart script \
+                       ``\iout else scriptFilePath.relativePath(cwdPath)``");
+
+                return 0;
+            }
+        }
     }
 }
 

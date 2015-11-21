@@ -71,7 +71,7 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
     }
 
     Integer doRun() {
-        value dartPath = findDartInPath(process.environmentVariableValue("PATH"));
+        value dartPath = findExecutableInPath("dart");
         if (!exists dartPath) {
             throw ReportableException("Cannot find dart executable in path.");
         }

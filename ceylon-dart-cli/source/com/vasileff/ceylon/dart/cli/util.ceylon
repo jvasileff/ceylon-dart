@@ -181,15 +181,16 @@ MutableMap<String,String> gatherDependencies(
     return [packageRootPath, moduleToLinkMap];
 }
 
-File? findDartInPath(String? path) {
+File? findExecutableInPath(String fileName) {
     assert (exists sep = operatingSystem.pathSeparator.first);
 
     // TODO handle Links, support windows (dart.exe?)
-    return path?.split(sep.equals)
+    return process.environmentVariableValue("PATH")
+            ?.split(sep.equals)
             ?.map(parsePath)
             ?.map(Path.resource)
             ?.narrow<Directory>()
-            ?.flatMap((d) => d.files("dart"))
+            ?.flatMap((d) => d.files(fileName))
             ?.filter(File.executable)
             ?.first;
 }
