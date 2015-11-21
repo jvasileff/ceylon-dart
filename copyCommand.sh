@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$OUTPUT_REPOSITORY=/tmp/modules
+OUTPUT_REPOSITORY=/tmp/modules
 
 ceylon copy --verbose=files --all --scripts \
     --no-default-repositories \
