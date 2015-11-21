@@ -15,7 +15,9 @@ import com.redhat.ceylon.common {
     ModuleUtil
 }
 import com.redhat.ceylon.common.tool {
-    ToolError
+    ToolError,
+    option=option__SETTER,
+    description=description__SETTER
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool
@@ -42,6 +44,13 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
 
     shared actual
     void initialize(CeylonTool? ceylonTool) {}
+
+    shared variable option
+    description {
+        "Suppress output of successfull actions. \
+         Errors and warnings will still be logged.";
+    }
+    Boolean quiet = false;
 
     needsSystemRepo() => false;
 
@@ -123,7 +132,9 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     && (verbose.contains("all")
                     || verbose.contains("files"));
 
-        // adapted from CeylonCopyTool
+        logInfo("Installing Dart modules to repository \
+             ``\iout else "./modules"``");
+
         object feedback satisfies ModuleCopycat.CopycatFeedback {
             shared actual
             void afterCopyArtifact(ArtifactContext? artifactContext,
@@ -136,8 +147,12 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
             }
 
             shared actual
-            void afterCopyModule(ArtifactContext? artifactContext, Integer count,
-                    Integer max, Boolean copied) {}
+            void afterCopyModule(ArtifactContext artifactContext, Integer count,
+                    Integer max, Boolean copied) {
+                value name = ModuleUtil.makeModuleName(
+                        artifactContext.name, artifactContext.version);
+                logInfo("    ``name``");
+            }
 
             shared actual
             Boolean beforeCopyArtifact(ArtifactContext? artifactContext,
@@ -177,5 +192,11 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         value copier = ModuleCopycat(repositoryManager, outputRepositoryManager,
                             log, feedback);
         copier.copyModules(artifactContexts);
+    }
+
+    void logInfo(String message) {
+        if (!quiet) {
+            process.writeErrorLine(message);
+        }
     }
 }

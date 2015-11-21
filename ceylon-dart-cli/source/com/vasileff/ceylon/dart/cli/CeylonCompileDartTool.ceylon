@@ -94,6 +94,13 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
     String? verbose = null;
 
+    shared variable option
+    description {
+        "Suppress output of successfull actions. \
+         Errors and warnings will still be logged.";
+    }
+    Boolean quiet = false;
+
     function verboseOption(String key)
         =>  if (exists v = verbose)
             then v.empty || v.contains("all") || v.contains(key)
@@ -151,6 +158,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
             verboseCode = verboseCode;
             verboseProfile = verboseProfile;
             verboseFiles = verboseFiles;
+            quiet = quiet;
         }[1];
     }
 }

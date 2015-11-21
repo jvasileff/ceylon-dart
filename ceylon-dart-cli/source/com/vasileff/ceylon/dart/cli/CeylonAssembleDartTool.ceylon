@@ -71,6 +71,13 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     }
     Boolean expanded = false;
 
+    shared variable option
+    description {
+        "Suppress output of successfull actions. \
+         Errors and warnings will still be logged.";
+    }
+    Boolean quiet = false;
+
     shared actual
     void initialize(CeylonTool? ceylonTool) {
         // noop
@@ -180,8 +187,8 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
 
             overwriteFile(readmeFilePath, readmeText);
 
-            print("Created expanded assembly directory \
-                   ``\iout else assemblyRootPath.relativePath(cwdPath)``");
+            logInfo("Created expanded assembly directory \
+                     ``\iout else assemblyRootPath.relativePath(cwdPath)``");
 
             return 0;
         }
@@ -242,11 +249,17 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                 readAndAppendLines(tempScriptFile.file, scriptFile);
                 setExecutable(scriptFile);
 
-                print("Created minified executable Dart script \
-                       ``\iout else scriptFilePath.relativePath(cwdPath)``");
+                logInfo("Created minified executable Dart script \
+                         ``\iout else scriptFilePath.relativePath(cwdPath)``");
 
                 return 0;
             }
+        }
+    }
+
+    void logInfo(String message) {
+        if (!quiet) {
+            process.writeErrorLine(message);
         }
     }
 }

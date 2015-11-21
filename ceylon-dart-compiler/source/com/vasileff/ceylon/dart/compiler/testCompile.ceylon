@@ -222,6 +222,7 @@ void bootstrapCompile() {
         repositoryManager = repositoryManager;
         outputRepositoryManager = outputRepositoryManager;
         suppressWarning = CeylonIterable(EnumSet.allOf(javaClass<Warning>()));
+        quiet = false;
     }[1];
 
     process.exit(

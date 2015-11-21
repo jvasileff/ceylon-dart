@@ -41,7 +41,8 @@ import com.redhat.ceylon.cmr.impl {
     ShaSigner
 }
 import com.redhat.ceylon.common {
-    FileUtil
+    FileUtil,
+    ModuleUtil
 }
 import com.redhat.ceylon.compiler.js.loader {
     MetamodelVisitor
@@ -143,7 +144,8 @@ shared
         verboseRhAst = false,
         verboseCode = false,
         verboseProfile = false,
-        verboseFiles = false) {
+        verboseFiles = false,
+        quiet = true) {
 
     {VirtualFile*} virtualFiles;
     {JFile*} sourceFiles; // for typechecker
@@ -169,6 +171,7 @@ shared
     Boolean verboseCode;
     Boolean verboseProfile;
     Boolean verboseFiles;
+    Boolean quiet;
 
     suppressWarnings("unusedDeclaration")
     void logOut(Object message = "") {
@@ -179,6 +182,12 @@ shared
     void logError(Object message = "") {
         standardErrorWriter.println(message);
         standardErrorWriter.flush();
+    }
+
+    void logInfo(String message) {
+        if (!quiet) {
+            logError(message);
+        }
     }
 
     value mainFunctionHack
@@ -582,6 +591,8 @@ shared
                 }
             }
         }
+        logInfo("Note: Created module \
+                 ``ModuleUtil.makeModuleName(m.nameAsString, m.version)``");
     }
 
     t4 = system.nanoseconds;
