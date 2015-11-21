@@ -78,6 +78,13 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     }
     Boolean quiet = false;
 
+    shared variable option { shortName = 'm'; }
+    description {
+        "In non-expanded mode, instruct dart2js to minify the output. Using this option
+         may result in buggy output.";
+    }
+    Boolean minify = false;
+
     shared actual
     void initialize(CeylonTool? ceylonTool) {
         // noop
@@ -196,7 +203,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
             // create an executable dart script
 
             value [packageRootPath, moduleMap]
-                    =   createTemporaryPackageRoot(dependencyFiles);
+                =   createTemporaryPackageRoot(dependencyFiles);
 
             assert (exists programModuleFile
                 =   moduleMap[moduleName]);
@@ -215,10 +222,10 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                                 "--categories=Server",
                                 "--output-type=dart",
                                 "--package-root=" + packageRootPath.string,
-                                "-m", // minify
+                                minify then "-m", // minify
                                 "-o", tempScriptFile.file.path.string,
                                 programModuleFile.string
-                            ];
+                            ].coalesced;
                             path = parsePath(validCwd().absolutePath);
                             input = currentInput;
                             output = currentOutput;
