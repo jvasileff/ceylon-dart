@@ -120,10 +120,9 @@ project('ceylon-dart-language') {
         group "Build"
         description "Compile the 'main' Ceylon modules."
 
-        // Compile with the regular tool, but make sure to use *our* version of
-        // the tool.  So, use "ceylon run", and specify the repository
-        // ("--rep"). The function "runCompileDartTool" simply delegates to the
-        // CeylonCompileDartTool.
+        // Use the "bootstrap" compiler since we have to compile the sdk before
+        // the cli, so we can include the language module in the cli module for
+        // `ceylon install-dart`.
 
         // TODO depend on the project artifacts, not the task
         dependsOn project(":ceylon-dart-compiler").compileCeylon
@@ -179,6 +178,72 @@ project('ceylon-dart-language') {
     }
 }
 
+project('ceylon-dart-sdk') {
+    apply plugin: 'base'
+
+    task compileCeylonDart(type:Exec) {
+        group "Build"
+        description "Compile the 'main' Ceylon modules."
+
+        // Use the "bootstrap" compiler since we have to compile the sdk before
+        // the cli, so we can include the sdk modules in the cli module for
+        // `ceylon install-dart`.
+
+        // TODO depend on the project artifacts, not the task
+        dependsOn project(":ceylon-dart-language").compileCeylonDart
+        inputs.dir project(":ceylon-dart-language").compileCeylonDart.destinationDir
+
+        ext.destinationDir = file("build/modules-dart/main")
+        ext.sourceDir = file("source")
+
+        inputs.dir sourceDir
+        outputs.dir destinationDir
+
+        String repository = project(':ceylon-dart-compiler')
+                .compileCeylon.destinationDir.toString();
+
+        workingDir projectDir
+        commandLine 'ceylon', 'run',
+                '--rep', repository,
+                '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
+                'com.vasileff.ceylon.dart.compiler/1.2.0-DP1-SNAPSHOT',
+                "${sourceDir.toString()}",
+                "${destinationDir.toString()}",
+                project(":ceylon-dart-language").compileCeylonDart.destinationDir
+    }
+
+    task repositoryZip(type: Zip) {
+        dependsOn compileCeylonDart
+
+        from compileCeylonDart.destinationDir
+        into('repository')
+    }
+
+    project.assemble.dependsOn compileCeylonDart
+    project.assemble.dependsOn repositoryZip
+
+    task build(dependsOn: assemble) {
+        group = 'Build'
+        description = 'Assembles and tests this project.'
+    }
+
+    task install {
+        group "Deployment"
+        description "Install plugins and copy the compiled modules to the user's repository"
+        dependsOn "publish"
+    }
+
+    task publish(type: Copy) {
+        group "Deployment"
+        description "Copy the compiled modules to the user's repository"
+
+        dependsOn "compileCeylonDart"
+
+        from compileCeylonDart.destinationDir
+        into ceylonRepoDir
+    }
+}
+
 project('ceylon-dart-cli') {
     description = "Ceylon Dart Commandline Interface"
     apply plugin: 'ceylon'
@@ -187,7 +252,7 @@ project('ceylon-dart-cli') {
 
     ext.generatedResourceDir = file("build/resource")
 
-    task prepareResources(type: Copy) {
+    task prepareResourcesLM(type: Copy) {
         dependsOn project(":ceylon-dart-language").repositoryZip
 
         from file(project(":ceylon-dart-language").repositoryZip.archivePath)
@@ -195,8 +260,17 @@ project('ceylon-dart-cli') {
         rename '.*', 'ceylon-language.zip'
     }
 
+    task prepareResourcesSDK(type: Copy) {
+        dependsOn project(":ceylon-dart-sdk").repositoryZip
+
+        from file(project(":ceylon-dart-sdk").repositoryZip.archivePath)
+        into file(generatedResourceDir.toString() + "/com/vasileff/ceylon/dart/cli")
+        rename '.*', 'ceylon-sdk.zip'
+    }
+
     compileCeylon {
-        dependsOn prepareResources
+        dependsOn prepareResourcesLM
+        dependsOn prepareResourcesSDK
 
         // standard is src/main/ceylon
         sourceDir file("source")

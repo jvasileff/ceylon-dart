@@ -63,21 +63,28 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         value unzipRootPath = JFiles.createTempDirectory("install-dart");
         unzipRootPath.toFile().deleteOnExit();
 
-        // unzip our copy of the language module repository
-        value zipIS = ZipInputStream(javaClass<CeylonInstallDartTool>()
-            .getResourceAsStream("/com/vasileff/ceylon/dart/cli/ceylon-language.zip"));
+        void unzip(String resource) {
+            // unzip our copy of the language module repository
+            value zipIS = ZipInputStream(javaClass<CeylonInstallDartTool>()
+                .getResourceAsStream(resource));
 
-        while (exists entry = zipIS.nextEntry) {
-            value entryPath = unzipRootPath.resolve(entry.name);
-            entryPath.toFile().deleteOnExit();
-            if (entry.directory) {
-                JFiles.createDirectory(entryPath);
+            while (exists entry = zipIS.nextEntry) {
+                value entryPath = unzipRootPath.resolve(entry.name);
+                entryPath.toFile().deleteOnExit();
+                if (entry.directory) {
+                    if (!entryPath.toFile().\iexists()) {
+                        JFiles.createDirectory(entryPath);
+                    }
+                }
+                else {
+                    JFiles.copy(zipIS, entryPath);
+                }
             }
-            else {
-                JFiles.copy(zipIS, entryPath);
-            }
+            zipIS.close();
         }
-        zipIS.close();
+
+        unzip("/com/vasileff/ceylon/dart/cli/ceylon-language.zip");
+        unzip("/com/vasileff/ceylon/dart/cli/ceylon-sdk.zip");
 
         // configure this OutputRepoUsingTool with the temporary input repository
         repositoryAsStrings
@@ -92,15 +99,23 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     ModuleQuery.Type.\iDART,
                     null, null);
 
-        // configure the artifact context for the language module including source
-        value languageModuleAC
-            =   ArtifactContext("ceylon.language", moduleVersion,
-                    ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART,
-                    ArtifactContext.\iSRC);
+        function newArtifactContext(String moduleName) {
+            value ac
+                =   ArtifactContext("ceylon.``moduleName``", moduleVersion,
+                        ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART,
+                        ArtifactContext.\iSRC);
 
-        languageModuleAC.forceOperation = true;
+            ac.forceOperation = true;
+            ac.ignoreDependencies = true;
+            return ac;
+        }
 
-        languageModuleAC.ignoreDependencies = true;
+        value artifactContexts
+            =   javaList {
+                    for (moduleName in { "language", "collection", "html",
+                                         "json", "logging", "math", "time" })
+                    newArtifactContext(moduleName)
+                };
 
         // perform the module copy
         value logArtifacts
@@ -161,6 +176,6 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
 
         value copier = ModuleCopycat(repositoryManager, outputRepositoryManager,
                             log, feedback);
-        copier.copyModule(languageModuleAC);
+        copier.copyModules(artifactContexts);
     }
 }

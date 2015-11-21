@@ -182,13 +182,22 @@ shared
     }[0];
 }
 
-"A simple CLI compiler that takes two arguments: a source directory and an output
- directory. Warnings are suppressed."
+"A simple CLI compiler that takes up to three arguments: a source directory, an output
+ directory, and optionally, a system repository url. Warnings are suppressed."
 shared
 suppressWarnings("expressionTypeNothing")
 void bootstrapCompile() {
     assert (exists sourceDirectory = process.arguments[0]);
     assert (exists outputDirectory = process.arguments[1]);
+
+    value systemRepoDirectory = process.arguments[2];
+
+    value repositoryManager
+        =   if (exists systemRepoDirectory)
+            then CeylonUtils.repoManager()
+                    .systemRepo(systemRepoDirectory)
+                    .buildManager()
+            else null;
 
     value sourceDirectories
         =   javaList { File(sourceDirectory) };
@@ -210,6 +219,7 @@ void bootstrapCompile() {
     value result = compileDart {
         sourceDirectories = CeylonList(sourceDirectories);
         sourceFiles = CeylonList(resolver.sourceFiles);
+        repositoryManager = repositoryManager;
         outputRepositoryManager = outputRepositoryManager;
         suppressWarning = CeylonIterable(EnumSet.allOf(javaClass<Warning>()));
     }[1];
