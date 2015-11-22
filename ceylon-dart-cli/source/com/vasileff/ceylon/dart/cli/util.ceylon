@@ -53,6 +53,15 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
     }
 }
 
+void checkCeylonVersion() {
+    if (language.version != "1.2.0") {
+        throw ReportableException(
+            "Sorry, the Dart backend is not compatible
+             with Ceylon ``language.version``. Please try again with Ceylon \
+             version 1.2.0.");
+    }
+}
+
 JsonObject? parseJsonModel(JFile | File file) {
     value jsonObject = parseJson(ceylonFile(file));
     if (is JsonObject jsonObject) {

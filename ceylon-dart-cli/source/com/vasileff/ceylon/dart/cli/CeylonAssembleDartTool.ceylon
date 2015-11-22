@@ -103,6 +103,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     }
 
     Integer doRun() {
+        checkCeylonVersion();
         // Make sure the language module has been installed
         // Although, the program may actually import some other version...
         verifyLanguageModuleAvailability(repositoryManager);

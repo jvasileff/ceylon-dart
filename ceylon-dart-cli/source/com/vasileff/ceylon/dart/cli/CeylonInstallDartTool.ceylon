@@ -69,6 +69,8 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     }
 
     void doRun() {
+        checkCeylonVersion();
+
         value unzipRootPath = JFiles.createTempDirectory("install-dart");
         unzipRootPath.toFile().deleteOnExit();
 

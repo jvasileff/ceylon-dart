@@ -138,6 +138,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
 
     CompilationStatus doRun() {
+        checkCeylonVersion();
         verifyLanguageModuleAvailability(repositoryManager);
 
         value sourceDirectories = applyCwd(DefaultToolOptions.compilerSourceDirs);

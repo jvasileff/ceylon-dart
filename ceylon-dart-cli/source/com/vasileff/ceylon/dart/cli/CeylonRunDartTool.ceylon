@@ -71,14 +71,15 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
     }
 
     Integer doRun() {
+        checkCeylonVersion();
+        // Make sure the language module has been installed
+        // Although, the program may actually import some other version...
+        verifyLanguageModuleAvailability(repositoryManager);
+
         value dartPath = findExecutableInPath("dart");
         if (!exists dartPath) {
             throw ReportableException("Cannot find dart executable in path.");
         }
-
-        // Make sure the language module has been installed
-        // Although, the program may actually import some other version...
-        verifyLanguageModuleAvailability(repositoryManager);
 
         // TODO support default modules
         if (ModuleUtil.isDefaultModule(moduleString)) {
