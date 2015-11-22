@@ -642,6 +642,9 @@ shared
         typeChecker;
     };
 
+    standardOutWriter.flush();
+    standardErrorWriter.flush();
+
     return [dartCompilationUnits.sequence(),
         if (errorVisitor.errorCount > 0)
         then CompilationStatus.errorTypeChecker
