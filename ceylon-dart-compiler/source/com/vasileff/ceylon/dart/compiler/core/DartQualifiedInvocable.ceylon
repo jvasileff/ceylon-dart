@@ -1,6 +1,7 @@
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpression,
-    DartArgumentList
+    DartArgumentList,
+    DartSimpleIdentifier
 }
 
 shared
@@ -27,3 +28,9 @@ class DartQualifiedInvocable(
     DartExpression expressionForClosure()
         =>  invocable.expressionForClosure(receiver);
 }
+
+object dummyDartInvocable extends DartInvocable(
+        DartSimpleIdentifier(""), dartFunction, false) {}
+
+object dummyDartQualifiedInvocable extends DartQualifiedInvocable(
+        null, dummyDartInvocable) {}

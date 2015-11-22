@@ -947,8 +947,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
-                    "Setters on captures not yet supported."
-                    assert (!setter);
+                    if (setter) {
+                        addError(scope, "invoking setters on captures not yet supported.");
+                        return dummyDartQualifiedInvocable;
+                    }
 
                     return DartQualifiedInvocable {
                         expressionToThisOrOuterStripThis {

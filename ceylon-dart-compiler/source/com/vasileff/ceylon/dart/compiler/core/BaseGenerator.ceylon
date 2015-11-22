@@ -33,12 +33,12 @@ import ceylon.ast.core {
     Comprehension,
     SpreadArgument,
     AnyMemberOperator,
-    MemberOperator,
     SafeMemberOperator,
     AnySpecifier,
     FunctionArgument,
     Parameter,
-    LazySpecification
+    LazySpecification,
+    SpreadMemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -579,8 +579,10 @@ class BaseGenerator(CompilationContext ctx)
         assert (is FunctionModel | ValueModel | SetterModel
                     | ClassModel | ConstructorModel memberDeclaration);
 
-        "SpreadMemberOperator not yet supported."
-        assert (is Null | MemberOperator | SafeMemberOperator memberOperator);
+        if (is SpreadMemberOperator memberOperator) {
+            addError(memberOperator, "Spread member operator not yet supported");
+            return DartNullLiteral();
+        }
 
         value safeMemberOperator = memberOperator is SafeMemberOperator;
 
