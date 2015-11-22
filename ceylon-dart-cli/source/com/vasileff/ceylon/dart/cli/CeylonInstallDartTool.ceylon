@@ -128,7 +128,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
             =   javaList {
                     for (moduleName in {
                         "language", "collection", "html", "json",
-                        "logging", "math", "time"
+                        "logging", "math", "promise", "time"
                     })
                     newArtifactContext(moduleName)
                 };
