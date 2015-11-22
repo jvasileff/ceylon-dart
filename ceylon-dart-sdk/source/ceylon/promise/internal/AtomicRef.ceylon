@@ -24,18 +24,18 @@ shared class AtomicRef<Value>(Value val) {
   
 }
 
-native("js")
+native("js", "dart")
 shared class AtomicRef<Value>(Value val) {
     
     variable Value state = val;
     
-    native("js") shared Value get() => state;
+    native("js", "dart") shared Value get() => state;
     
-    native("js") shared void set(Value val) {
+    native("js", "dart") shared void set(Value val) {
         state = val;
     }
     
-    native("js") shared Boolean compareAndSet(Value expect, Value update) {
+    native("js", "dart") shared Boolean compareAndSet(Value expect, Value update) {
         if (exists expect) {
             if (exists s = state, expect == s) {
                 state = update;

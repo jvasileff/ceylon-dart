@@ -37,3 +37,15 @@ shared object runtimeContext satisfies ExecutionContext {
     }
     native("js") shared actual ExecutionContext childContext() => this;
 }
+
+native
+void asyncRun(void task());
+
+native("dart")
+shared object runtimeContext satisfies ExecutionContext {
+    native("dart") shared actual void run(void task()) {
+        asyncRun(task);
+    }
+    native("dart") shared actual ExecutionContext childContext() => this;
+}
+

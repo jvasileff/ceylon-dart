@@ -15,20 +15,22 @@ shared interface ExecutionContext {
         shared actual Promise<Result> map<Result>(
             Result(T) onFulfilled, 
             Result(Throwable) onRejected) {
-            try {
+// FIXME Dart workaround
+//            try {
                 return fulfilledPromise(onFulfilled(val));
-            } catch(Throwable e) {
-                return rejectedPromise<Result>(e);
-            }
+//            } catch(Throwable e) {
+//                return rejectedPromise<Result>(e);
+//            }
         }
         shared actual Promise<Result> flatMap<Result>(
             Promise<Result>(T) onFulfilled,
             Promise<Result>(Throwable) onRejected) {
-            try {
+// FIXME Dart workaround
+//            try {
                 return onFulfilled(val);
-            } catch(Throwable e) {
-                return rejectedPromise<Result>(e);
-            }
+//            } catch(Throwable e) {
+//                return rejectedPromise<Result>(e);
+//            }
         }
     };
     
@@ -41,21 +43,23 @@ shared interface ExecutionContext {
         shared actual Promise<Result> map<Result>(
             Result(T) onFulfilled, 
             Result(Throwable) onRejected) {
-            try {
+// FIXME Dart workaround
+//            try {
                 return fulfilledPromise(onRejected(reason));
-            } catch(Throwable e) {
-                return rejectedPromise<Result>(e);
-            }
+//            } catch(Throwable e) {
+//                return rejectedPromise<Result>(e);
+//            }
         }
         
         shared actual Promise<Result> flatMap<Result>(
             Promise<Result>(T) onFulfilled,
             Promise<Result>(Throwable) onRejected) {
-            try {
+// FIXME Dart workaround
+//            try {
                 return onRejected(reason);
-            } catch(Throwable e) {
-                return rejectedPromise<Result>(e);
-            }
+//            } catch(Throwable e) {
+//                return rejectedPromise<Result>(e);
+//            }
         }
     };
     
