@@ -155,3 +155,28 @@ shared native("js") object runtime  {
         }
     }
 }
+
+shared native("dart") object runtime  {
+    shared native("dart") String name = "DartVM";
+    shared native("dart") String version = "Unknown Version";
+    shared native("dart") Integer integerSize = 64;
+    shared native("dart") Integer integerAddressableSize = 32;
+    shared native("dart") Integer maxIntegerValue = 2^63 - 1;
+    shared native("dart") Integer minIntegerValue = -(2^63);
+    shared native("dart") Integer maxArraySize = 2^63 - 1;
+    shared native("dart") Float maxFloatValue = 1.7976931348623157e+308;
+
+    // FIXME parseCeylonFloat replaces 5.0e-324 with 0.0
+    //shared native("dart") Float minFloatValue = 5.0e-324;
+    shared native("dart") Float minFloatValue = (() {
+        variable value x = 1.0;
+        while (x / 2.0 != 0.0) {
+            x = x / 2.0;
+        }
+        return x;
+    })();
+
+    shared native("dart") Float epsilon = 2.0^(-52);
+    shared native("dart") Integer maxExactIntegralFloat = 2^53-1;
+}
+

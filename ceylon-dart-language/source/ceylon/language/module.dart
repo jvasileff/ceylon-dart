@@ -1307,27 +1307,6 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
   }
 }
 
-// runtime
-
-class runtime_ {
-  const runtime_.$value$();
-
-  final $dart$core.String name = "DartVM";
-  final $dart$core.String version = "Unknown Version";
-  $dart$core.String toString() => "runtime [" + name + " / " + version + "]";
-
-  // just making stuff up...
-  final $dart$core.int integerSize = 64;
-  final $dart$core.int integerAddressableSize = 32;
-  $dart$core.int get maxIntegerValue => $dart$math.pow(2, 63) - 1;
-  $dart$core.int get minIntegerValue => -$dart$math.pow(2, 63);
-  $dart$core.int get maxArraySize => $dart$math.pow(2, 63) - 1;
-}
-
-const runtime = const runtime_.$value$();
-
-const $package$runtime = runtime;
-
 // system
 
 final $dart$core.Stopwatch $helper$stopwatch = (() {
