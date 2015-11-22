@@ -135,6 +135,7 @@ shared
         outputRepositoryManager = null,
         standardOutWriter = JPrintWriter(System.\iout),
         standardErrorWriter = JPrintWriter(System.\ierr),
+        generateSourceArtifact = false,
         suppressWarning = [],
         doWithoutCaching = false,
         suppressMainFunction = false,
@@ -157,6 +158,8 @@ shared
 
     JPrintWriter standardOutWriter;
     JPrintWriter standardErrorWriter;
+
+    Boolean generateSourceArtifact;
 
     {Warning*} suppressWarning;
 
@@ -596,15 +599,18 @@ shared
                     ShaSigner.signArtifact(outputRepositoryManager, modelArtifact,
                             javaFile(modelFile), null);
 
-                    // the source artifact (*must* have this for language module)
-                    value sac = CeylonUtils.makeSourceArtifactCreator(
-                            outputRepositoryManager,
-                            JavaIterable(sourceDirectories),
-                            m.nameAsString, m.version,
-                            // TODO verboseCMR and logging
-                            false, null);
+                    if (generateSourceArtifact) {
+                        // the source artifact (*must* have this for language module)
+                        value sac = CeylonUtils.makeSourceArtifactCreator(
+                                outputRepositoryManager,
+                                JavaIterable(sourceDirectories),
+                                m.nameAsString, m.version,
+                                // TODO verboseCMR and logging
+                                false, null);
 
-                    sac.copy(FileUtil.filesToPathList(javaList(moduleSources.get(m))));
+                        sac.copy(FileUtil.filesToPathList(
+                            javaList(moduleSources.get(m))));
+                    }
                 }
 
                 // write code to console
