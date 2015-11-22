@@ -27,7 +27,11 @@ import ceylon.ast.core {
     DefaultedParameter,
     Parameter,
     ConstructorDefinition,
-    Construction
+    Construction,
+    DynamicModifier,
+    DynamicInterfaceDefinition,
+    DynamicBlock,
+    DynamicValue
 }
 import ceylon.interop.java {
     CeylonList
@@ -77,7 +81,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartIntegerLiteral,
     DartIndexExpression,
     DartListLiteral,
-    createExpressionEvaluationWithSetup
+    createExpressionEvaluationWithSetup,
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyInterfaceInfo,
@@ -1017,6 +1022,10 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual default
     void visitNode(Node that) {
+        if (that is DynamicBlock | DynamicInterfaceDefinition
+                | DynamicModifier | DynamicValue) {
+            addError(that, "dynamic is not supported on the Dart VM");
+        }
         addError(that,
             "Node type not yet supported (TopLevelVisitor): ``className(that)``");
     }

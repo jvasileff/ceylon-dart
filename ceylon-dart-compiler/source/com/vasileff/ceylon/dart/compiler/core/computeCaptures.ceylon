@@ -2,7 +2,11 @@ import ceylon.ast.core {
     Visitor,
     BaseExpression,
     CompilationUnit,
-    Declaration
+    Declaration,
+    DynamicBlock,
+    DynamicInterfaceDefinition,
+    DynamicModifier,
+    DynamicValue
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -40,6 +44,29 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
                 return;
             }
             super.visitDeclaration(that);
+        }
+
+        shared actual
+        void visitDynamicBlock(DynamicBlock that) {
+            // 1. we don't currently support dynamic blocks
+            // 2. visiting dynamic blocks results in NPEs when
+            //    we try to obtain model objects.
+            return;
+        }
+
+        shared actual
+        void visitDynamicInterfaceDefinition(DynamicInterfaceDefinition that) {
+            return;
+        }
+
+        shared actual
+        void visitDynamicModifier(DynamicModifier that) {
+            return;
+        }
+
+        shared actual
+        void visitDynamicValue(DynamicValue that) {
+            return;
         }
 
         shared actual

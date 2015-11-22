@@ -111,7 +111,11 @@ import ceylon.ast.core {
     TypeNameWithTypeArguments,
     PositionalArguments,
     NamedArguments,
-    Meta
+    Meta,
+    DynamicModifier,
+    DynamicInterfaceDefinition,
+    DynamicBlock,
+    DynamicValue
 }
 import ceylon.collection {
     LinkedList
@@ -2835,6 +2839,11 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual default
     DartExpression transformNode(Node that) {
+        if (that is DynamicBlock | DynamicInterfaceDefinition
+                | DynamicModifier | DynamicValue) {
+            addError(that, "dynamic is not supported on the Dart VM");
+            return DartNullLiteral();
+        }
         addError(that,
             "Node type not yet supported (ExpressionTransformer): ``className(that)``");
         return DartNullLiteral();

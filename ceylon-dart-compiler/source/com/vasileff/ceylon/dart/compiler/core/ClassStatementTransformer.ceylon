@@ -17,7 +17,11 @@ import ceylon.ast.core {
     ValueSpecification,
     ValueSetterDefinition,
     InterfaceDefinition,
-    ConstructorDefinition
+    ConstructorDefinition,
+    DynamicModifier,
+    DynamicInterfaceDefinition,
+    DynamicBlock,
+    DynamicValue
 }
 
 import com.vasileff.ceylon.dart.compiler.dartast {
@@ -25,7 +29,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartAssignmentExpression,
     DartAssignmentOperator,
     DartExpressionStatement,
-    DartStatement
+    DartStatement,
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     LazySpecificationInfo
@@ -171,6 +176,11 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
+        if (that is DynamicBlock | DynamicInterfaceDefinition
+                | DynamicModifier | DynamicValue) {
+            addError(that, "dynamic is not supported on the Dart VM");
+            return [];
+        }
         addError(that,
             "Node type not yet supported (ClassStatementTransformer): \
              ``className(that)``");

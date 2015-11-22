@@ -21,7 +21,11 @@ import ceylon.ast.core {
     ExistsOrNonemptyCondition,
     IsCondition,
     ValueSpecification,
-    ConstructorDefinition
+    ConstructorDefinition,
+    DynamicModifier,
+    DynamicInterfaceDefinition,
+    DynamicBlock,
+    DynamicValue
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -46,7 +50,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFieldDeclaration,
     DartVariableDeclarationList,
     DartVariableDeclaration,
-    DartFunctionExpression
+    DartFunctionExpression,
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -584,6 +589,11 @@ class ClassMemberTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
+        if (that is DynamicBlock | DynamicInterfaceDefinition
+                | DynamicModifier | DynamicValue) {
+            addError(that, "dynamic is not supported on the Dart VM");
+            return [];
+        }
         addError(that,
             "Node type not yet supported (ClassMemberTransformer): \
              ``className(that)``");

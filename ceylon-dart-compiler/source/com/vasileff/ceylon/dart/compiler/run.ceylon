@@ -8,11 +8,14 @@ void run() {
     value program =
          """
             shared void run() {
-                print("hello");
+                dynamic {
+                    x = y;
+                    print("hello");
+                }
             }
          """;
 
-    value result = testCompile { false; program };
+    value result = testCompile { true; program };
 
     for (dcu in result) {
         value codeWriter = CodeWriter(process.write);

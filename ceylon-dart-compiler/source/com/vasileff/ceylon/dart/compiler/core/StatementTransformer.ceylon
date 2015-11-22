@@ -36,7 +36,11 @@ import ceylon.ast.core {
     ExistsOrNonemptyCondition,
     Throw,
     ElseClause,
-    FunctionDeclaration
+    FunctionDeclaration,
+    DynamicBlock,
+    DynamicInterfaceDefinition,
+    DynamicModifier,
+    DynamicValue
 }
 import ceylon.collection {
     LinkedList
@@ -917,8 +921,14 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual default
     [] transformNode(Node that) {
-        addError(that,
-            "Node type not yet supported (StatementTransformer): ``className(that)``");
+        if (that is DynamicBlock | DynamicInterfaceDefinition
+                | DynamicModifier | DynamicValue) {
+
+            addError(that, "dynamic is not supported on the Dart VM");
+            return [];
+        }
+        addError(that, "Node type not yet supported (StatementTransformer): \
+                        ``className(that)``");
         return [];
     }
 }
