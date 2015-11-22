@@ -47,7 +47,7 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
         throw ReportableException(
               "The Ceylon/Dart module \
                ``ModuleUtil.makeModuleName("ceylon.language", version)``
-               was not found. Try installing with:
+               was not found. Please complete the installation with:
 
                    ceylon install-dart --out ~/.ceylon/repo\n ");
     }

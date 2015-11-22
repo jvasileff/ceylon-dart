@@ -2826,7 +2826,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                     DartArgumentList {
                         [DartSimpleStringLiteral {
-                            "Meta expressions unsupported at \
+                            "Meta expressions not yet supported at \
                              '``info.filename``: ``info.location``'";
                         }];
                     };
