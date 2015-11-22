@@ -51,7 +51,8 @@ import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
 }
 import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning
+    Warning,
+    ModuleSourceMapper
 }
 import com.redhat.ceylon.compiler.typechecker.context {
     PhasedUnit
@@ -350,10 +351,34 @@ shared
         =>  cu.visit(warningSuppressionVisitor));
 
     // exit early if errors exist
-    value errorVisitor = ErrorCollectingVisitor(typeChecker);
+    value errorVisitor = ErrorCollectingVisitor();
     phasedUnits.map(PhasedUnit.compilationUnit).each((cu) => cu.visit(errorVisitor));
     if (errorVisitor.errorCount > 0) {
-        errorVisitor.printErrors(standardErrorWriter, null, true, true);
+        // if there are dependency errors, report only them
+        value dependencyErrors
+            =   CeylonIterable(errorVisitor.positionedMessages)
+                .filter((pm)
+                    => pm.message is ModuleSourceMapper.ModuleDependencyAnalysisError)
+                .sequence();
+        if (dependencyErrors nonempty) {
+            printErrors {
+                (String s) => standardErrorWriter.print(s);
+                null; true; true;
+                dependencyErrors;
+                typeChecker;
+            };
+            standardErrorWriter.flush();
+        }
+        else {
+            // otherwise, print all the errors
+            printErrors {
+                (String s) => standardErrorWriter.print(s);
+                null; true; true;
+                CeylonIterable(errorVisitor.positionedMessages).sequence();
+                typeChecker;
+            };
+            standardErrorWriter.flush();
+        }
         return [[], CompilationStatus.errorTypeChecker];
     }
     errorVisitor.clear();
@@ -607,7 +632,12 @@ shared
     }
 
     // print warnings and errors
-    errorVisitor.printErrors(standardErrorWriter, null, true, true);
+    printErrors {
+        (String s) => standardErrorWriter.print(s);
+        null; true; true;
+        CeylonIterable(errorVisitor.positionedMessages).sequence();
+        typeChecker;
+    };
 
     return [dartCompilationUnits.sequence(),
         if (errorVisitor.errorCount > 0)
