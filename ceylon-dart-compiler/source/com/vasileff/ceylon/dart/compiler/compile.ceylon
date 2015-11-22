@@ -480,6 +480,9 @@ shared
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
 
+    // we'll print errors at the end, but determine count now
+    value errorCount = errorVisitor.errorCount;
+
     for (m -> ds in moduleMembers) {
         value languageModule = m.nameAsString == "ceylon.language";
 
@@ -564,8 +567,8 @@ shared
                 then nativeCode(directory)
                 else "";
 
-        // don't bother serializing if we don't have to
-        if (outputRepositoryManager exists || verboseCode) {
+        // don't bother serializing if we don't have to, or if errors exist
+        if (!errorCount.positive && (outputRepositoryManager exists || verboseCode)) {
 
             // use a tempfile rather than a StringBuffer, since ShaSigner needs a file
             try (dFile = TemporaryFile("ceylon-dart-dart-", ".dart", true),
@@ -632,9 +635,9 @@ shared
                     forEachLine(dartFile, process.writeErrorLine);
                 }
             }
+            logInfo("Note: Created module \
+                     ``ModuleUtil.makeModuleName(m.nameAsString, m.version)``");
         }
-        logInfo("Note: Created module \
-                 ``ModuleUtil.makeModuleName(m.nameAsString, m.version)``");
     }
 
     t4 = system.nanoseconds;
@@ -648,7 +651,7 @@ shared
         process.writeErrorLine("Dart compilation:       " + ((t4-t3)/10^6).string);
     }
 
-    // print warnings and errors
+    // print errors last, to make them easy to find
     printErrors {
         (String s) => standardErrorWriter.print(s);
         true; true;
