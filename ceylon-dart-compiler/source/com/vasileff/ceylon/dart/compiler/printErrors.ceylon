@@ -15,15 +15,8 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     AnalysisMessage,
     TreeUtil
 }
-import com.vasileff.ceylon.dart.compiler.borrowed {
-    DiagnosticListener,
-    ErrorCollectingVisitor {
-        PositionedMessage
-    }
-}
 
 import java.io {
-    JFile=File,
     BufferedReader,
     IOException,
     InputStreamReader
@@ -31,7 +24,6 @@ import java.io {
 
 // translated from ErrorCollectingVisitor java source
 Integer printErrors(void write(String message),
-            DiagnosticListener? diagnosticListener,
             Boolean printWarnings,
             Boolean printCount,
             [PositionedMessage*] errors,
@@ -82,24 +74,6 @@ Integer printErrors(void write(String message),
             write(getErrorMarkerLine(position));
             write(operatingSystem.newline);
         }
-
-        if (exists diagnosticListener) {
-            variable JFile? file = null;
-            value warning = message is UsageWarning;
-            if (node.unit exists, node.unit.fullPath exists) {
-                file = JFile(node.unit.fullPath).absoluteFile;
-            }
-
-            if (position != -1) {
-                position++;
-            }
-
-            if (warning) {
-                diagnosticListener.warning(file, line, position, message.message);
-            } else {
-                diagnosticListener.error(file, line, position, message.message);
-            }
-        }
     }
 
     if (printCount) {
@@ -122,10 +96,10 @@ String? getErrorSourceLine(
         TypeChecker tc) {
     if (pm.node.unit exists) {
         value pu = tc.getPhasedUnitFromRelativePath(pm.node.unit.relativePath);
-        value vfile = pu.unitFile;
+        value virtualFile = pu.unitFile;
         variable value lineNr = pm.message.line;
         try (br = CeylonDestroyable(BufferedReader(
-                        InputStreamReader(vfile.inputStream)))) {
+                        InputStreamReader(virtualFile.inputStream)))) {
             while (exists line = br.resource.readLine()) {
                 if (--lineNr <= 0) {
                     return line;

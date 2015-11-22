@@ -70,9 +70,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
     ModuleImport
 }
-import com.vasileff.ceylon.dart.compiler.borrowed {
-    ErrorCollectingVisitor
-}
 import com.vasileff.ceylon.dart.compiler.core {
     CompilationContext,
     augmentNode,
@@ -351,19 +348,19 @@ shared
         =>  cu.visit(warningSuppressionVisitor));
 
     // exit early if errors exist
-    value errorVisitor = ErrorCollectingVisitor();
+    value errorVisitor = ErrorCollectingVisitor2();
     phasedUnits.map(PhasedUnit.compilationUnit).each((cu) => cu.visit(errorVisitor));
     if (errorVisitor.errorCount > 0) {
         // if there are dependency errors, report only them
         value dependencyErrors
-            =   CeylonIterable(errorVisitor.positionedMessages)
+            =   errorVisitor.positionedMessages
                 .filter((pm)
                     => pm.message is ModuleSourceMapper.ModuleDependencyAnalysisError)
                 .sequence();
         if (dependencyErrors nonempty) {
             printErrors {
                 (String s) => standardErrorWriter.print(s);
-                null; true; true;
+                true; true;
                 dependencyErrors;
                 typeChecker;
             };
@@ -373,8 +370,8 @@ shared
             // otherwise, print all the errors
             printErrors {
                 (String s) => standardErrorWriter.print(s);
-                null; true; true;
-                CeylonIterable(errorVisitor.positionedMessages).sequence();
+                true; true;
+                errorVisitor.positionedMessages;
                 typeChecker;
             };
             standardErrorWriter.flush();
@@ -634,8 +631,8 @@ shared
     // print warnings and errors
     printErrors {
         (String s) => standardErrorWriter.print(s);
-        null; true; true;
-        CeylonIterable(errorVisitor.positionedMessages).sequence();
+        true; true;
+        errorVisitor.positionedMessages;
         typeChecker;
     };
 
