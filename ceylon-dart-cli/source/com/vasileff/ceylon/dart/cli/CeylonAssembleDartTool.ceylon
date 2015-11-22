@@ -256,7 +256,8 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                 readAndAppendLines(tempScriptFile.file, scriptFile);
                 setExecutable(scriptFile);
 
-                logInfo("Created minified executable Dart script \
+                value minified = if (minify) then "minified " else "";
+                logInfo("Created ``minified``executable Dart script \
                          ``\iout else scriptFilePath.relativePath(cwdPath)``");
 
                 return 0;
