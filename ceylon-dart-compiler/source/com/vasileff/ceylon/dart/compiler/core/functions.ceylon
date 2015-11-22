@@ -83,10 +83,6 @@ String location(Node that) {
     return location;
 }
 
-shared
-Boolean hasError(Node that)
-    =>  that.transform(hasErrorTransformer);
-
 UnitModel getUnit
         (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
