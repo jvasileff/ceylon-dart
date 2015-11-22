@@ -81,8 +81,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartIntegerLiteral,
     DartIndexExpression,
     DartListLiteral,
-    createExpressionEvaluationWithSetup,
-    DartNullLiteral
+    createExpressionEvaluationWithSetup
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyInterfaceInfo,

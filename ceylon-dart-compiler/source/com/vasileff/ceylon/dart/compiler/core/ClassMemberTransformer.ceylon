@@ -50,8 +50,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFieldDeclaration,
     DartVariableDeclarationList,
     DartVariableDeclaration,
-    DartFunctionExpression,
-    DartNullLiteral
+    DartFunctionExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,

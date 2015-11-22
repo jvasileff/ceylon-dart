@@ -29,8 +29,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartAssignmentExpression,
     DartAssignmentOperator,
     DartExpressionStatement,
-    DartStatement,
-    DartNullLiteral
+    DartStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     LazySpecificationInfo
