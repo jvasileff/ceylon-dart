@@ -100,17 +100,23 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
             =   javaList { javaString(unzipRootPath.resolve("repository").string) };
 
         // auto-discover version
-        String? moduleVersion
-            =   checkModuleVersionsOrShowSuggestions(
+        String? moduleVersion(String moduleName)
+            =>  checkModuleVersionsOrShowSuggestions(
                     repositoryManager,
-                    "ceylon.language",
+                    moduleName,
                     null,
                     ModuleQuery.Type.\iDART,
                     null, null);
 
-        function newArtifactContext(String moduleName) {
+        function newArtifactContext(String shortName) {
+            value name
+                =   "ceylon.``shortName``";
+
+            value version
+                =   moduleVersion(name);
+
             value ac
-                =   ArtifactContext("ceylon.``moduleName``", moduleVersion,
+                =   ArtifactContext(name, version,
                         ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART);
 
             ac.forceOperation = true;
@@ -120,8 +126,10 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
 
         value artifactContexts
             =   javaList {
-                    for (moduleName in { "language", "collection", "html",
-                                         "json", "logging", "math", "time" })
+                    for (moduleName in {
+                        "language", "collection", "html", "json",
+                        "logging", "math", "time"
+                    })
                     newArtifactContext(moduleName)
                 };
 
