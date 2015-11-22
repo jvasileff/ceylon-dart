@@ -111,8 +111,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         function newArtifactContext(String moduleName) {
             value ac
                 =   ArtifactContext("ceylon.``moduleName``", moduleVersion,
-                        ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART,
-                        ArtifactContext.\iSRC);
+                        ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART);
 
             ac.forceOperation = true;
             ac.ignoreDependencies = true;
