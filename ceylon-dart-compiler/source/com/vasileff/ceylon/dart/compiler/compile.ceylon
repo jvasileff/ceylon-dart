@@ -411,46 +411,60 @@ shared
 
         Integer start = system.nanoseconds;
 
-        value ctx = CompilationContext(phasedUnit);
+        try {
+            value ctx = CompilationContext(phasedUnit);
 
-        value unit = anyCompilationUnitToCeylon {
-            phasedUnit.compilationUnit;
-            augmentNode;
-        };
+            value unit = anyCompilationUnitToCeylon {
+                phasedUnit.compilationUnit;
+                augmentNode;
+            };
 
-        if (verboseAst) {
-            logError("-- Ceylon AST " + path);
-            logError(unit);
+            if (verboseAst) {
+                logError("-- Ceylon AST " + path);
+                logError(unit);
+            }
+
+            if (is CompilationUnit unit) {
+                // ignore packages and modules for now
+
+                value m = phasedUnit.\ipackage.\imodule;
+
+                LinkedList<DartCompilationUnitMember> declarations;
+                if (exists d = moduleMembers.get(m)) {
+                    declarations = d;
+                }
+                else {
+                    declarations = LinkedList<DartCompilationUnitMember>();
+                    moduleMembers.put(m, declarations);
+                }
+
+                MetamodelVisitor metamodelVisitor;
+                if (exists v = metamodelVisitors.get(m)) {
+                    metamodelVisitor = v;
+                }
+                else {
+                    metamodelVisitor = MetamodelVisitor(m);
+                    metamodelVisitors.put(m, metamodelVisitor);
+                }
+                phasedUnit.compilationUnit.visit(metamodelVisitor);
+
+                computeCaptures(unit, ctx);
+                computeClassCaptures(unit, ctx);
+                ctx.topLevelVisitor.transformCompilationUnit(unit);
+                declarations.addAll(ctx.compilationUnitMembers.sequence());
+            }
         }
+        catch (Throwable t) {
+            logError(
+               "------------------------------------------------------------
+                                    ** Compiler bug! **
+                ------------------------------------------------------------
+                ``t.message``\n
+                was encountered while compiling the file:
 
-        if (is CompilationUnit unit) {
-            // ignore packages and modules for now
-
-            value m = phasedUnit.\ipackage.\imodule;
-
-            LinkedList<DartCompilationUnitMember> declarations;
-            if (exists d = moduleMembers.get(m)) {
-                declarations = d;
-            }
-            else {
-                declarations = LinkedList<DartCompilationUnitMember>();
-                moduleMembers.put(m, declarations);
-            }
-
-            MetamodelVisitor metamodelVisitor;
-            if (exists v = metamodelVisitors.get(m)) {
-                metamodelVisitor = v;
-            }
-            else {
-                metamodelVisitor = MetamodelVisitor(m);
-                metamodelVisitors.put(m, metamodelVisitor);
-            }
-            phasedUnit.compilationUnit.visit(metamodelVisitor);
-
-            computeCaptures(unit, ctx);
-            computeClassCaptures(unit, ctx);
-            ctx.topLevelVisitor.transformCompilationUnit(unit);
-            declarations.addAll(ctx.compilationUnitMembers.sequence());
+                    ``phasedUnit.unit.fullPath``
+                ------------------------------------------------------------");
+            throw t;
         }
 
         // collect warnings and errors
