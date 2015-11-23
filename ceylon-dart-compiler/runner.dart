@@ -1,7 +1,7 @@
 library runnerLib;
 
 import "dart:core" as $dart$core;
-import "../ceylon-dart-language/build/modules-dart/main/ceylon/language/1.2.0-DP1/ceylon.language-1.2.0-DP1.dart" as $ceylon$language;
+import "../ceylon-dart-language/build/modules-dart/main/ceylon/language/1.2.0-DP2-SNAPSHOT/ceylon.language-1.2.0-DP2-SNAPSHOT.dart" as $ceylon$language;
 
 void main(var arguments) {
     $ceylon$language.initializeProcess(arguments);
