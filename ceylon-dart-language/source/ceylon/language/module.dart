@@ -1643,6 +1643,6 @@ class dart$Default {
 
 const dart$default = const dart$Default();
 
-const $package$dart$default = dart$Default;
+const $package$dart$default = dart$default;
 
 /////////////////////////////////////////////////////////////////////////////////
