@@ -31,8 +31,10 @@ To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.2.0 is requi
 
 **Step 2: Install Dart**
 
-[Homebrew](http://brew.sh) users on OS X can install Dart with:
+[Homebrew](http://brew.sh) users on OS X can install Dart
+[with](https://www.dartlang.org/downloads/mac.html):
 
+    $ brew tap dart-lang/dart
     $ brew install dart
 
 For Linux users, Dart is available as either a Debian package or zip download
@@ -45,6 +47,10 @@ The Dart backend commandline interface can be installed with:
     $ ceylon plugin install com.vasileff.ceylon.dart.cli/1.2.0-DP1
 
 And that's it!
+
+*Please note that upon running the commandline tools the first time, additional
+dependencies may be downloaded. No feedback is provided that this is happening,
+and canceling early may result in a corrupted download. So please be patient!*
 
 ### Using the Commandline Interface
 
