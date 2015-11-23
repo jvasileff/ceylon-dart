@@ -5624,6 +5624,21 @@ class GroupEntry {
 abstract class Iterator {
     $dart$core.Object next();
 }
+class language_ {
+    language_() {}
+    $dart$core.String get version => "1.2.0-DP2-SNAPSHOT";
+    $dart$core.int get majorVersion => 1;
+    $dart$core.int get minorVersion => 2;
+    $dart$core.int get releaseVersion => 0;
+    $dart$core.String get versionName => "A Series Of Unlikely Explanations";
+    $dart$core.int get majorVersionBinary => 8;
+    $dart$core.int get minorVersionBinary => 0;
+    $dart$core.String toString() => "language";
+}
+final language_ $package$language = new language_();
+
+language_ get language => $package$language;
+
 $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) => (($dart$core.Object $lhs$) => null == $lhs$ ? y : $lhs$)((x as Comparable) > y ? x : null);
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
@@ -8482,7 +8497,7 @@ abstract class meta$declaration$ClassDeclaration implements meta$declaration$Cla
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
             typeArguments = $package$empty;
         }
-        return $this.memberClassApply(throw new AssertionError("Meta expressions unsupported at 'ClassDeclaration.ceylon: 145:62-145:70'"), typeArguments as Sequential).bind(container).apply(arguments);
+        return $this.memberClassApply(throw new AssertionError("Meta expressions not yet supported at 'ClassDeclaration.ceylon: 145:62-145:70'"), typeArguments as Sequential).bind(container).apply(arguments);
     }
     $dart$core.Object getConstructorDeclaration([$dart$core.String name]);
     Sequential constructorDeclarations();
@@ -8683,7 +8698,7 @@ abstract class meta$declaration$ValueConstructorDeclaration implements meta$decl
     $dart$core.Object get();
     static $dart$core.Object $get([final meta$declaration$ValueConstructorDeclaration $this]) => $this.apply().get();
     $dart$core.Object memberGet([$dart$core.Object container]);
-    static $dart$core.Object $memberGet([final meta$declaration$ValueConstructorDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions unsupported at 'ValueConstructorDeclaration.ceylon: 50:44-50:52'")).bind(container).get();
+    static $dart$core.Object $memberGet([final meta$declaration$ValueConstructorDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions not yet supported at 'ValueConstructorDeclaration.ceylon: 50:44-50:52'")).bind(container).get();
 }
 abstract class meta$declaration$ValueDeclaration implements meta$declaration$FunctionOrValueDeclaration, meta$declaration$NestableDeclaration, meta$declaration$GettableDeclaration {
     $dart$core.bool get late;
@@ -8695,7 +8710,7 @@ abstract class meta$declaration$ValueDeclaration implements meta$declaration$Fun
     $dart$core.Object get();
     static $dart$core.Object $get([final meta$declaration$ValueDeclaration $this]) => $this.apply().get();
     $dart$core.Object memberGet([$dart$core.Object container]);
-    static $dart$core.Object $memberGet([final meta$declaration$ValueDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions unsupported at 'ValueDeclaration.ceylon: 81:55-81:63'")).bind(container).get();
+    static $dart$core.Object $memberGet([final meta$declaration$ValueDeclaration $this, $dart$core.Object container]) => $this.memberApply(throw new AssertionError("Meta expressions not yet supported at 'ValueDeclaration.ceylon: 81:55-81:63'")).bind(container).get();
     void set([$dart$core.Object newValue]);
     static void $set([final meta$declaration$ValueDeclaration $this, $dart$core.Object newValue]) {
         $this.apply().setIfAssignable(newValue);
@@ -9018,8 +9033,12 @@ abstract class Obtainable implements Usable {
 }
 class operatingSystem_ {
     operatingSystem_() {}
+    $dart$core.String get fileSeparator => "/";
+    $dart$core.String get pathSeparator => ":";
     $dart$core.String get version => "Unknown";
+    $dart$core.String get name => "Unknown";
     $dart$core.String get newline => "\n";
+    $dart$core.String toString() => ((("operating system [" + name) + " / ") + version) + "]";
 }
 final operatingSystem_ $package$operatingSystem = new operatingSystem_();
 
@@ -9801,6 +9820,42 @@ abstract class Resource {
     $dart$core.String toString();
     static $dart$core.String $get$string([final Resource $this]) => ((("" + $package$className($this)) + "[") + $this.uri) + "]";
 }
+class runtime_ {
+    runtime_() {
+        name = "DartVM";
+        version = "Unknown Version";
+        integerSize = 64;
+        integerAddressableSize = 32;
+        maxIntegerValue = Integer.nativeValue(Integer.instance(2).power(Integer.instance(63))) - 1;
+        minIntegerValue = -Integer.nativeValue(Integer.instance(2).power(Integer.instance(63)));
+        maxArraySize = Integer.nativeValue(Integer.instance(2).power(Integer.instance(63))) - 1;
+        maxFloatValue = 1.7976931348623157E308;
+        minFloatValue = Float.nativeValue((new dart$Callable(() {
+            $dart$core.double x = 1.0;
+            while (!((x / 2.0) == 0.0)) {
+                x = x / 2.0;
+            }
+            return Float.instance(x);
+        })).f() as Float);
+        epsilon = Float.nativeValue(Float.instance(2.0).power(Float.instance((-52).toDouble())));
+        maxExactIntegralFloat = Integer.nativeValue(Integer.instance(2).power(Integer.instance(53))) - 1;
+    }
+    $dart$core.String name;
+    $dart$core.String version;
+    $dart$core.int integerSize;
+    $dart$core.int integerAddressableSize;
+    $dart$core.int maxIntegerValue;
+    $dart$core.int minIntegerValue;
+    $dart$core.int maxArraySize;
+    $dart$core.double maxFloatValue;
+    $dart$core.double minFloatValue;
+    $dart$core.double epsilon;
+    $dart$core.int maxExactIntegralFloat;
+}
+final runtime_ $package$runtime = new runtime_();
+
+runtime_ get runtime => $package$runtime;
+
 abstract class Scalable {
     $dart$core.Object scale([$dart$core.Object scalar]);
 }
