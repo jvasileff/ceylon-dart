@@ -672,6 +672,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     Boolean denotable(TypeModel type)
         =>  let (dt = ceylonTypes.definiteType(type))
             !dt.typeParameter
+                && !dt.typeConstructor
                 && !ceylonTypes.isCeylonObject(dt)
                 && !ceylonTypes.isCeylonIdentifiable(dt)
                 && !ceylonTypes.isCeylonBasic(dt)
