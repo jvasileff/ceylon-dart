@@ -395,6 +395,8 @@ shared
     t3 = system.nanoseconds;
 
     for (phasedUnit in phasedUnits) {
+        phasedUnit.compilationUnit.visit(typeConstructorVisitor);
+
         value path => phasedUnit.pathRelativeToSrcDir else "<null>";
 
         // FIXME virtual files? skip if not saving src?
