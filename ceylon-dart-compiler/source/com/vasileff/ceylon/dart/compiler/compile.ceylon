@@ -486,8 +486,6 @@ shared
     value errorCount = errorVisitor.errorCount;
 
     for (m -> ds in moduleMembers) {
-        value languageModule = m.nameAsString == "ceylon.language";
-
         if (!suppressMainFunction) {
             if (hasRunFunction(m)) {
                 ds.add(mainFunctionHack);
@@ -536,26 +534,6 @@ shared
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
                     },
-                    languageModule then
-                    DartImportDirective {
-                        DartSimpleStringLiteral("dart:io");
-                        DartSimpleIdentifier("$dart$io");
-                    },
-                    languageModule then
-                    DartImportDirective {
-                        DartSimpleStringLiteral("dart:math");
-                        DartSimpleIdentifier("$dart$math");
-                    },
-                    languageModule then
-                    DartImportDirective {
-                        DartSimpleStringLiteral("dart:mirrors");
-                        DartSimpleIdentifier("$dart$mirrors");
-                    },
-                    //!languageModule then
-                    //DartImportDirective {
-                    //    DartSimpleStringLiteral("package:ceylon/language/language.dart");
-                    //    DartSimpleIdentifier("$ceylon$language");
-                    //},
                     *importedModules}.coalesced.sequence();
                     ds.sequence();
                 };
