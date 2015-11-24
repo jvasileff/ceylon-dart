@@ -4,34 +4,10 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.int x = 1;
     $dart$core.int y = 1;
-    $dart$core.int z = (() {
-        if (x > y) {
-            return x;
-        } else {
-            return y;
-        }
-    })();
-    $dart$core.Object o = (() {
-        if (x > y) {
-            return $ceylon$language.Integer.instance(x);
-        } else {
-            return $ceylon$language.Integer.instance(y);
-        }
-    })();
-    $dart$core.Object p = (() {
-        if (x > y) {
-            return $ceylon$language.Integer.instance(x);
-        } else {
-            return $ceylon$language.String.instance("");
-        }
-    })();
-    $dart$core.Object q = (() {
-        if (x > y) {
-            return $ceylon$language.Integer.instance(x);
-        } else {
-            return o;
-        }
-    })();
+    $dart$core.int z = x > y ? x : y;
+    $dart$core.Object o = x > y ? $ceylon$language.Integer.instance(x) : $ceylon$language.Integer.instance(y);
+    $dart$core.Object p = x > y ? $ceylon$language.Integer.instance(x) : $ceylon$language.String.instance("");
+    $dart$core.Object q = x > y ? $ceylon$language.Integer.instance(x) : o;
 }
 
 void run() => $package$run();

@@ -87,13 +87,7 @@ void $package$run() {
                 return $ceylon$language.finished;
             }
             $ceylon$language.Integer i = i$11;
-            return (() {
-                if ($ceylon$language.Integer.instance(2).divides(i)) {
-                    return i;
-                } else {
-                    return $ceylon$language.String.instance("nope");
-                }
-            })();
+            return $ceylon$language.Integer.instance(2).divides(i) ? i : $ceylon$language.String.instance("nope");
         }
 
         return new $ceylon$language.dart$Callable(step$2$15);

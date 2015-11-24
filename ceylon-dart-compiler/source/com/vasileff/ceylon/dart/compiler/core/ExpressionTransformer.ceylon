@@ -2638,29 +2638,14 @@ class ExpressionTransformer(CompilationContext ctx)
         if (that.conditions.conditions.every((c) => c is BooleanCondition)) {
             // simple case, no variable declarations
             return
-            DartFunctionExpressionInvocation {
-                DartFunctionExpression {
-                    DartFormalParameterList();
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartIfStatement {
-                                generateBooleanDartCondition {
-                                    that.conditions.conditions.map {
-                                        asserted<BooleanCondition>;
-                                    };
-                                };
-                                DartReturnStatement {
-                                    that.thenExpression.transform(this);
-                                };
-                                DartReturnStatement {
-                                    that.elseExpression.transform(this);
-                                };
-                            }];
-                        };
+            DartConditionalExpression {
+                generateBooleanDartCondition {
+                    that.conditions.conditions.map {
+                        asserted<BooleanCondition>;
                     };
                 };
-                DartArgumentList { []; };
+                that.thenExpression.transform(this);
+                that.elseExpression.transform(this);
             };
         }
 
