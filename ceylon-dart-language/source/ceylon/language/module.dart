@@ -515,6 +515,7 @@ class Integer implements Integral, Exponentiable, Binary {
 
   $dart$core.double get float => _value.toDouble();
   $dart$core.double get nearestFloat => _value.toDouble();
+  Byte get byte => new Byte(_value);
 
   // Binary
 
@@ -534,7 +535,7 @@ class Integer implements Integral, Exponentiable, Binary {
     if (index < 0 || index > 31) {
       return false;
     }
-    return _value.toSigned(32) & (1<<index) == 0;
+    return _value.toSigned(32) & (1<<index) != 0;
   }
 
   Integer set([$dart$core.int index, $dart$core.bool bit]) {
