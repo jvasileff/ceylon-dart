@@ -60,8 +60,8 @@ mirror the tools used for the JVM and JavaScript backends:
 - `ceylon compile-dart` to compile Ceylon modules to Dart
 - `ceylon run-dart` to run compiled Ceylon modules on the Dart VM
 
-A third tool, `ceylon assemble-dart`, packages Ceylon modules as standalone
-executables for the Dart VM.
+A third tool, `ceylon assemble-dart`, package a Ceylon module as a standalone
+executable for the Dart VM.
 
 ### "Hello, World" Walkthrough
 
@@ -108,13 +108,31 @@ and run as you would any other executable:
     $ ./helloworld 'Ceylon on Dart, without the Java!!'
     Hello, Ceylon on Dart, without the Java!!!
 
-Of course, you'll want to write much more sophisticated programs that take full
-advantage of Ceylon's advanced but easy to use type system and features.  To
+Of course, you'll want to write much more sophisticated programs that take
+advantage of Ceylon's advanced but easy to use type system and features. To
 learn more, see the [Ceylon language
 tour](http://ceylon-lang.org/documentation/1.2/tour/).
 
 You can also try Ceylon [online](http://try.ceylon-lang.org), but be sure to
 copy the examples locally, and try them out on the Dart backend!
+
+#### About the `ceylon new` Command
+
+Note that the `ceylon new` command is not Dart specific; it is a standard
+command available with Ceylon 1.2.0. For help using the command, use `ceylon
+help new`.
+
+You may notice options to create Eclipse and Ant configuration files. While
+Eclipse and Ant support is not currently available for the Dart backend, these
+options may still be useful, as you might use Eclipse to develop a module using
+the Java or JavaScript backend, and then drop to the CLI to compile for Dart.
+
+Also note that the first argument to `ceylon new` must be the name of a
+template. Of the three templates available as part of Ceylon 1.2.0,
+`hello-world` and `simple` can be used for Dart projects. For example, to get
+started with a blank project, you might use:
+
+    ceylon new simple --module-name=com.mydomain.myproject myprojectDir
 
 ### SDK Modules Included in DP1
 
