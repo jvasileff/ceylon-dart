@@ -1128,6 +1128,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
         case (is ClassOrInterfaceModel) {
+            if (declaration.staticallyImportable) {
+                // Special case: Dart static member
+                return DartInvocable {
+                    DartPropertyAccess {
+                        dartIdentifierForClassOrInterface(scope, container);
+                        DartSimpleIdentifier(getPackagePrefixedName(declaration));
+                    };
+                    if (declaration is FunctionModel)
+                    then package.dartFunction
+                    else dartValue;
+                    setter;
+                };
+            }
+
             value mapped
                 =   mappedFunctionOrValue(refinedDeclaration(declaration));
 

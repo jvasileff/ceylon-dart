@@ -876,10 +876,11 @@ class ExpressionTransformer(CompilationContext ctx)
                     invoked.memberOperator;
                 };
             }
-            // Other QualifiedExpressions, but exclude those w/Package "receivers";
-            // they are more like BaseExpressions
+            // Other QualifiedExpressions, but exclude those w/Package "receivers" and
+            // static methods; they are more like BaseExpressions
             else if (is QualifiedExpression invoked,
-                    !invoked.receiverExpression is Package) {
+                    !invoked.receiverExpression is Package,
+                    !invokedDeclaration.staticallyImportable) {
 
                 value invokedQEInfo = QualifiedExpressionInfo(invoked);
 
@@ -906,7 +907,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     invoked.memberOperator;
                 };
             }
-            // BaseExpression or QualifiedExpression w/Package "receiver"
+            // BaseExpression, QualifiedExpression w/Package "receiver", or
+            // QualifiedExpression to static method
             else {
                 if (invokedDeclaration.parameter) {
                     // Invoking a Callable parameter
