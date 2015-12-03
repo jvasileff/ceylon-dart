@@ -1231,7 +1231,7 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
     try { throw exception; } catch (e) {}
   }
   if (write == dart$default) {
-    $dart$io.stderr.write(String.instance(exception.stackTrace.toString()));
+    process.writeLine(exception.stackTrace.toString());
   }
   else {
     (write as Callable).f(String.instance(exception.stackTrace.toString()));
@@ -1241,6 +1241,10 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
 // process
 
 Sequential _processArguments = $package$empty;
+
+// Buffer output for write and writeError, to avoid having to use dart:io.
+// ($dart$core.print outputs newlines)
+$dart$core.StringBuffer _$outputBuffer = new $dart$core.StringBuffer();
 
 class process_ {
   const process_.$value$();
@@ -1268,25 +1272,31 @@ class process_ {
   }
 
   void write([$dart$core.String string]) {
-    $dart$io.stdout.write(string);
+    var newlineIndex = string.lastIndexOf('\n');
+    if (newlineIndex > -1) {
+      $dart$core.print(_$outputBuffer.toString() + string.substring(0, newlineIndex));
+      _$outputBuffer.clear();
+      _$outputBuffer.write(string.substring(newlineIndex + 1));
+    }
+    else {
+      _$outputBuffer.write(string);
+    }
   }
 
   void writeLine([$dart$core.Object line = dart$default]) {
     if ($dart$core.identical(line, dart$default)) {
       line = "";
     }
-    $dart$io.stdout.writeln(line);
+    $dart$core.print(_$outputBuffer.toString() + line);
+    _$outputBuffer.clear();
   }
 
   void writeError([$dart$core.String string]) {
-    $dart$io.stderr.write(string);
+    write(string);
   }
 
   void writeErrorLine([$dart$core.Object line = dart$default]) {
-    if ($dart$core.identical(line, dart$default)) {
-      line = "";
-    }
-    $dart$io.stderr.writeln(line);
+    writeLine(line);
   }
 
   Sequential get arguments => _processArguments;
