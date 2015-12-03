@@ -3,7 +3,6 @@ library ceylon.language;
 import 'dart:core' as $dart$core;
 import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
-import 'dart:mirrors' as $dart$mirrors;
 import '../../../ceylon.language.dart';
 
 class LazyIterable extends impl$BaseIterable {
@@ -1209,10 +1208,9 @@ class Tuple extends impl$BaseSequence {
 //
 
 $dart$core.String className($dart$core.Object obj) {
-  // TODO use our own reified metadata when available?
-  // removing dependency on `dart:mirrors` would be nice
-  $dart$mirrors.ClassMirror mirror = $dart$mirrors.reflectClass(obj.runtimeType);
-  return $dart$mirrors.MirrorSystem.getName(mirror.qualifiedName);
+  // TODO use our own reified metadata when available
+  //      Type.toString() includes only the name, not package
+  return obj.runtimeType.toString();
 }
 
 //
