@@ -1443,6 +1443,12 @@ class dart$Callable implements $dart$core.Function, Callable {
     if (invocation.memberName == #call) {
       // There is no spread argument (this is the "f" function)
 
+      // For interop, dart$Calable's may be used directly as Functions, so handle the
+      // non-variadic case that is normally avoided in `get f` above.
+      if (_variadicIndex == -1) {
+          return $dart$core.Function.apply(_function, invocation.positionalArguments, null);
+      }
+
       var inArgs = invocation.positionalArguments;
       var outArgs = new $dart$core.List(_variadicIndex + 1);
 
