@@ -68,7 +68,8 @@ import ceylon.ast.core {
     ConstructorDefinition,
     ExtensionOrConstruction,
     Extension,
-    Construction
+    Construction,
+    VariadicVariable
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -596,6 +597,16 @@ class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
     //      Tree.PatternIterator -> Tree.VariablePattern -> Tree.Variable
 
     shared actual default UnspecifiedVariable node => astNode;
+    value tcNode = assertedTcNode<Tree.Variable>(astNode);
+
+    shared ValueModel declarationModel => tcNode.declarationModel;
+}
+
+shared
+class VariadicVariableInfo(VariadicVariable astNode)
+        extends VariableInfo(astNode) {
+
+    shared actual default VariadicVariable node => astNode;
     value tcNode = assertedTcNode<Tree.Variable>(astNode);
 
     shared ValueModel declarationModel => tcNode.declarationModel;
