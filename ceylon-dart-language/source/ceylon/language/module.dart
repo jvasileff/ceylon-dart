@@ -1116,11 +1116,11 @@ class Tuple extends impl$BaseSequence {
   }
 
   Tuple.$ofElements(Iterable rest) : _list = [] {
+    restSequence = $package$empty;
+    rest.each(new dart$Callable((e) => _list.add(e)));
     if (_list.length == 0) {
       throw new AssertionError("list must not be empty");
     }
-    restSequence = $package$empty;
-    rest.each(new dart$Callable((e) => _list.add(e)));
   }
 
   Tuple.$withList([$dart$core.List this._list, $dart$core.Object rest = dart$default]) {
@@ -1186,8 +1186,18 @@ class Tuple extends impl$BaseSequence {
 
   // spanFrom
   @$dart$core.override
-  Sequential spanFrom([Integer from])
-    => List.$spanFrom(this, from).sequence();
+  Sequential spanFrom([Integer from]) {
+    // Return a Tuple, since destructuring and subrange expressions
+    // may have Tuple results when enough static type information is
+    // available. It may be necessary to optimize this at some point;
+    // the Java backend uses a utility method for spanFrom for when
+    // a Tuple is the expected result, leaving the Tuple.spanFrom
+    // method free to return *just* a Sequential.
+    if (Integer.nativeValue(from) > lastIndex) {
+      return empty;
+    }
+    return new Tuple.$ofElements(List.$spanFrom(this, from));
+  }
 
   // FIXME why doesn't impl$BaseSequence define this?
   @$dart$core.override
