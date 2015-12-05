@@ -58,6 +58,10 @@ class CeylonTypes(Unit unit) {
     Type characterType => unit.characterType;
 
     shared
+    Type entryAnythingType => ModelUtil.appliedType(
+            entryDeclaration, anythingType, anythingType);
+
+    shared
     Type exceptionType => unit.exceptionType;
 
     shared

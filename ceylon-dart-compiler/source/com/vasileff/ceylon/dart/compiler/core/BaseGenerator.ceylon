@@ -143,7 +143,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     sequenceArgumentInfo,
     ComprehensionInfo,
     LazySpecificationInfo,
-    VariableInfo,
     VariadicVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
@@ -2226,10 +2225,94 @@ class BaseGenerator(CompilationContext ctx)
             return generateForTuplePattern(pattern, expressionType, generator);
         }
         case (is EntryPattern) {
-            addError(pattern, "EntryPattern not yet supported.");
-            return [];
-            //return generateForEntryPattern(pattern);
+            return generateForEntryPattern(pattern, expressionType, generator);
         }
+    }
+
+    shared
+    DartStatement[] generateForEntryPattern(
+            EntryPattern pattern, TypeModel? expressionType,
+            DartExpression() generateExpression) {
+
+        value typeModel
+            =   expressionType else ceylonTypes.entryAnythingType;
+
+        value info
+            =   NodeInfo(pattern);
+
+        value tempVariableIdentifier
+            =   DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom("d");
+                };
+
+        value keyInfo
+            =   NodeInfo(pattern.key);
+
+        value itemInfo
+            =   NodeInfo(pattern.item);
+
+        return
+        concatenate {
+            // temp variable for entry
+            [DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeName {
+                        info;
+                        typeModel;
+                    };
+                    [DartVariableDeclaration {
+                        tempVariableIdentifier;
+                        withLhsNative {
+                            typeModel;
+                            generateExpression;
+                        };
+                    }];
+                };
+            }],
+            // definitions for the key
+            generateForPattern {
+                pattern.key;
+                // we could preserve more type information by using
+                // generateInvocationDetailsFromName, but why bother? Just use
+                // types like Entry<Anything, Anything> and cast the result.
+                null;
+                () => generateInvocationSynthetic {
+                    keyInfo;
+                    typeModel;
+                    generateReceiver() => withBoxing {
+                        keyInfo;
+                        typeModel;
+                        null;
+                        tempVariableIdentifier;
+                    };
+                    // we know it's an Entry
+                    "key";
+                    [];
+                };
+            },
+            // definitions for the item
+            generateForPattern {
+                pattern.item;
+                // we could preserve more type information by using
+                // generateInvocationDetailsFromName, but why bother? Just use
+                // types like Entry<Anything, Anything> and cast the result.
+                null;
+                () => generateInvocationSynthetic {
+                    itemInfo;
+                    typeModel;
+                    generateReceiver() => withBoxing {
+                        itemInfo;
+                        typeModel;
+                        null;
+                        tempVariableIdentifier;
+                    };
+                    // we know it's an Entry
+                    "item";
+                    [];
+                };
+            }
+        };
     }
 
     shared
