@@ -307,7 +307,7 @@ class StatementTransformer(CompilationContext ctx)
                             concatenate {
                                 // declare and define new variables, if any
                                 replacements.map(VariableTriple.dartDeclaration),
-                                replacements.map(VariableTriple.dartAssignment),
+                                replacements.flatMap(VariableTriple.dartAssignment),
 
                                 // nest if statement for next condition, if any
                                 if (nonempty rest = conditions.rest) then
@@ -388,7 +388,7 @@ class StatementTransformer(CompilationContext ctx)
                             conditionExpression;
                             DartBreakStatement();
                         }],
-                        replacements.map(VariableTriple.dartAssignment)
+                        replacements.flatMap(VariableTriple.dartAssignment)
                     }.coalesced
                 else
                     expand {
@@ -400,7 +400,7 @@ class StatementTransformer(CompilationContext ctx)
                                     conditionExpression;
                                     DartBreakStatement();
                                 }],
-                                replacements.map(VariableTriple.dartAssignment)
+                                replacements.flatMap(VariableTriple.dartAssignment)
                             };
                         }]
                     });
@@ -885,7 +885,7 @@ class StatementTransformer(CompilationContext ctx)
                             };
                         };
                     },
-                    replacement?.dartAssignment
+                    *(replacement?.dartAssignment else [])
                 ];
 
         value result

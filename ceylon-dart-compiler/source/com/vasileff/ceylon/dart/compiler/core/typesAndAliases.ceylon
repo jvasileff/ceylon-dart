@@ -50,17 +50,15 @@ shared alias DeclarationModelType
 shared class VariableTriple(
     shared ValueModel declarationModel,
     shared DartVariableDeclarationStatement dartDeclaration,
-    shared DartStatement dartAssignment) {}
+    shared [DartStatement+] dartAssignment) {}
 
 "Tuple containing:
 
- - replacement variables,
- - tempDefinition
- - conditionExpression"
+ - a Dart variable declaration for a value to test
+ - a boolean test expression
+ - new variables to declare for replacements and destructures"
 shared alias ConditionCodeTuple
     =>  [DartVariableDeclarationStatement?, DartExpression, VariableTriple*];
-
-
 
 "A function, value, or operator."
 shared abstract

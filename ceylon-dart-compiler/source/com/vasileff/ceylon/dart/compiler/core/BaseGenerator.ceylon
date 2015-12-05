@@ -1340,8 +1340,9 @@ class BaseGenerator(CompilationContext ctx)
             else e;
 
     shared
-    [DartVariableDeclarationStatement?, DartExpression, VariableTriple=]
-    generateIsConditionExpression(IsCondition that, Boolean negate = false) {
+    ConditionCodeTuple generateIsConditionExpression(
+            IsCondition that, Boolean negate = false) {
+
         // IsCondition holds a TypedVariable that may
         // or may not include a specifier to define a new variable
 
@@ -1460,7 +1461,7 @@ class BaseGenerator(CompilationContext ctx)
                 =   [VariableTriple {
                         variableDeclaration;
                         replacementDeclaration;
-                        replacementDefinition;
+                        [replacementDefinition];
                     }];
         }
         else {
@@ -1489,7 +1490,7 @@ class BaseGenerator(CompilationContext ctx)
             replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
                                         info, variableDeclaration))
-                    then [VariableTriple(variableDeclaration, *r)]
+                    then [VariableTriple(variableDeclaration, r[0], [r[1]])]
                     else [];
         }
 
@@ -1578,8 +1579,8 @@ class BaseGenerator(CompilationContext ctx)
                 generateExistsOrNonemptyConditionExpression(condition, negate);
 
     shared
-    ConditionCodeTuple generateExistsOrNonemptyConditionExpression(
-            ExistsOrNonemptyCondition that, Boolean negate = false) {
+    ConditionCodeTuple generateExistsOrNonemptyConditionExpression
+            (ExistsOrNonemptyCondition that, Boolean negate = false) {
 
         value info = ExistsOrNonemptyConditionInfo(that);
 
@@ -1678,7 +1679,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   VariableTriple {
                             variableDeclaration;
                             replacementDeclaration;
-                            replacementDefinition;
+                            [replacementDefinition];
                         };
 
                 return [tempVariableDeclaration, conditionExpression, replacements];
@@ -1698,7 +1699,7 @@ class BaseGenerator(CompilationContext ctx)
                                 }];
                             };
                         };
-                        DartExpressionStatement(DartNullLiteral());
+                        [DartExpressionStatement(DartNullLiteral())];
                     }];
             }
         }
@@ -1741,7 +1742,7 @@ class BaseGenerator(CompilationContext ctx)
             value replacements
                 =   if (nonempty r = generateReplacementVariableDefinition(
                                 info, variableDeclaration))
-                    then [VariableTriple(variableDeclaration, *r)]
+                    then [VariableTriple(variableDeclaration, r[0], [r[1]])]
                     else [];
 
             return [null, conditionExpression, *replacements];

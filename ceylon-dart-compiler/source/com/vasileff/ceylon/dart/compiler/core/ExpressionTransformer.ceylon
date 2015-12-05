@@ -2354,7 +2354,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                     DartContinueStatement();
                                 },
                                 // assign values (for new values or replacements)
-                                *parts[2...].map(VariableTriple.dartAssignment)
+                                *parts[2...].flatMap(VariableTriple.dartAssignment)
                             }.coalesced;
                         };
 
@@ -2693,7 +2693,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             concatenate {
                                 // declare and define new variables, if any
                                 replacements.map(VariableTriple.dartDeclaration),
-                                replacements.map(VariableTriple.dartAssignment),
+                                replacements.flatMap(VariableTriple.dartAssignment),
 
                                 // nest if statement for next condition, if any
                                 if (nonempty rest = conditions.rest) then
