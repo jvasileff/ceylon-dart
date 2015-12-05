@@ -38,7 +38,10 @@ import ceylon.ast.core {
     FunctionArgument,
     Parameter,
     LazySpecification,
-    SpreadMemberOperator
+    SpreadMemberOperator,
+    Pattern,
+    TuplePattern,
+    EntryPattern
 }
 import ceylon.collection {
     LinkedList
@@ -139,7 +142,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     SpreadArgumentInfo,
     sequenceArgumentInfo,
     ComprehensionInfo,
-    LazySpecificationInfo
+    LazySpecificationInfo,
+    VariableInfo,
+    VariadicVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -2207,6 +2212,173 @@ class BaseGenerator(CompilationContext ctx)
             };
         };
     }
+
+    shared
+    DartStatement[] generateForPattern(
+            Pattern pattern, TypeModel? expressionType,
+            DartExpression() generator) {
+
+        switch (pattern)
+        case (is VariablePattern) {
+            return [generateForVariablePattern(pattern, generator)];
+        }
+        case (is TuplePattern) {
+            return generateForTuplePattern(pattern, expressionType, generator);
+        }
+        case (is EntryPattern) {
+            addError(pattern, "EntryPattern not yet supported.");
+            return [];
+            //return generateForEntryPattern(pattern);
+        }
+    }
+
+    shared
+    DartStatement[] generateForTuplePattern(
+            TuplePattern pattern, TypeModel? expressionType,
+            DartExpression() generateExpression) {
+
+        value typeModel
+            =   expressionType else ceylonTypes.tupleAnythingType;
+
+        value info
+            =   NodeInfo(pattern);
+
+        value tempVariableIdentifier
+            =   DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom("d");
+                };
+
+        value tempVariableDefinition
+            =   DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeName {
+                            info;
+                            typeModel;
+                        };
+                        [DartVariableDeclaration {
+                            tempVariableIdentifier;
+                            withLhsNative {
+                                typeModel;
+                                generateExpression;
+                            };
+                        }];
+                    };
+                };
+
+        value elementDefinitions
+            =   pattern.elementPatterns.indexed.flatMap((pair) {
+                    value index -> elementPattern = pair;
+                    value pInfo = NodeInfo(elementPattern);
+
+                    return generateForPattern {
+                        elementPattern;
+                        // we could preserve more type information by using
+                        // generateInvocationDetailsFromName, but why bother? Just use
+                        // types like Entry<Anything, Anything> and cast the result.
+                        null;
+                        () => generateInvocationSynthetic {
+                            pInfo;
+                            typeModel;
+                            generateReceiver() => withBoxing {
+                                pInfo;
+                                typeModel;
+                                null;
+                                tempVariableIdentifier;
+                            };
+                            // we know it's a Tuple, so always use
+                            // getFromFirst
+                            "getFromFirst";
+                            [() => withBoxing {
+                                pInfo;
+                                ceylonTypes.integerType;
+                                null;
+                                DartIntegerLiteral(index);
+                            }];
+                        };
+                    };
+                });
+
+        // NOTE when the variadicVariable is a Tuple, we are trusting Tuple.spanFrom
+        //      to return a Tuple, even though its return type is Sequential.
+        value variadicDefinition
+            =   if (exists variadicVariable = pattern.variadicElementPattern)
+                    then let (variableInfo = VariadicVariableInfo(variadicVariable))
+                    DartVariableDeclarationStatement {
+                        DartVariableDeclarationList {
+                            keyword = null;
+                            dartTypes.dartTypeNameForDeclaration {
+                                variableInfo;
+                                variableInfo.declarationModel;
+                            };
+                            [DartVariableDeclaration {
+                                DartSimpleIdentifier {
+                                    dartTypes.getName {
+                                        variableInfo.declarationModel;
+                                    };
+                                };
+                                withLhs {
+                                    null;
+                                    variableInfo.declarationModel;
+                                    () => generateInvocationSynthetic {
+                                        variableInfo;
+                                        typeModel;
+                                        () => withBoxing {
+                                            variableInfo;
+                                            typeModel;
+                                            null;
+                                            tempVariableIdentifier;
+                                        };
+                                        "spanFrom";
+                                        [() => withBoxing {
+                                            variableInfo;
+                                            ceylonTypes.integerType;
+                                            null;
+                                            DartIntegerLiteral {
+                                                pattern.elementPatterns.size;
+                                            };
+                                        }];
+                                    };
+                                };
+                            }];
+                        };
+                    }
+                else null;
+
+        return concatenate {
+            [tempVariableDefinition],
+            elementDefinitions,
+            emptyOrSingleton(variadicDefinition)
+        };
+    }
+
+    shared
+    DartStatement generateForVariablePattern
+            (VariablePattern pattern, DartExpression() generator)
+        =>  let (variableInfo = UnspecifiedVariableInfo(pattern.variable))
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        variableInfo;
+                        variableInfo.declarationModel;
+                    };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.getName {
+                                variableInfo.declarationModel;
+                            };
+                        };
+                        withLhs {
+                            null;
+                            variableInfo.declarationModel;
+                            generator;
+                        };
+                    }];
+                };
+            };
+
+
 
     shared
     DartFunctionExpression generateFunctionExpression(

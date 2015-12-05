@@ -41,8 +41,7 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicModifier,
     DynamicValue,
-    Destructure,
-    TuplePattern
+    Destructure
 }
 import ceylon.collection {
     LinkedList
@@ -75,8 +74,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPrefixExpression,
     DartStatement,
     DartContinueStatement,
-    DartNullLiteral,
-    DartIntegerLiteral
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -88,8 +86,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
-    ExpressionInfo,
-    VariadicVariableInfo
+    ExpressionInfo
 }
 
 import org.antlr.runtime {
@@ -766,145 +763,15 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartStatement[] transformDestructure(Destructure that) {
-
-        if (is TuplePattern tuplePattern = that.pattern) {
-
-            value expressionInfo
-                =   ExpressionInfo(that.specifier.expression);
-
-            value tempVariableIdentifier
-                =   DartSimpleIdentifier {
-                        dartTypes.createTempNameCustom("d");
-                    };
-
-            value tempVariableDefinition
-                =   DartVariableDeclarationStatement {
-                        DartVariableDeclarationList {
-                            null;
-                            dartTypes.dartTypeName {
-                                expressionInfo;
-                                expressionInfo.typeModel;
-                            };
-                            [DartVariableDeclaration {
-                                tempVariableIdentifier;
-                                withLhsNative {
-                                    expressionInfo.typeModel;
-                                    () => that.specifier.expression.transform {
-                                        expressionTransformer;
-                                    };
-                                };
-                            }];
-                        };
-                    };
-
-            value variableDefinitions
-                =   tuplePattern.elementPatterns.indexed.map((pair) {
-                        value index -> p = pair;
-
-                        // FIXME support other pattern types
-                        assert (is VariablePattern p);
-
-                        value variableInfo = UnspecifiedVariableInfo(p.variable);
-
-                        return
-                        DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                keyword = null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    variableInfo;
-                                    variableInfo.declarationModel;
-                                };
-                                [DartVariableDeclaration {
-                                    DartSimpleIdentifier {
-                                        dartTypes.getName {
-                                            variableInfo.declarationModel;
-                                        };
-                                    };
-                                    withLhs {
-                                        null;
-                                        variableInfo.declarationModel;
-                                        () => generateInvocationSynthetic {
-                                            variableInfo;
-                                            expressionInfo.typeModel;
-                                            () => withBoxing {
-                                                variableInfo;
-                                                expressionInfo.typeModel;
-                                                null;
-                                                tempVariableIdentifier;
-                                            };
-                                            // we know it's a Tuple, so always use
-                                            // getFromFirst
-                                            "getFromFirst";
-                                            [() => withBoxing {
-                                                variableInfo;
-                                                ceylonTypes.integerType;
-                                                null;
-                                                DartIntegerLiteral(index);
-                                            }];
-                                            variableInfo.declarationModel.type;
-                                        };
-                                    };
-                                }];
-                            };
-                        };
-                    });
-
-            // NOTE when the variadicVariable is a Tuple, we are trusting Tuple.spanFrom
-            //      to return a Tuple, even though its return type is Sequential.
-            value variadicDefinition
-                =   if (exists variadicVariable = tuplePattern.variadicElementPattern)
-                        then let (variableInfo = VariadicVariableInfo(variadicVariable))
-                        DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                keyword = null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    variableInfo;
-                                    variableInfo.declarationModel;
-                                };
-                                [DartVariableDeclaration {
-                                    DartSimpleIdentifier {
-                                        dartTypes.getName {
-                                            variableInfo.declarationModel;
-                                        };
-                                    };
-                                    withLhs {
-                                        null;
-                                        variableInfo.declarationModel;
-                                        () => generateInvocationSynthetic {
-                                            variableInfo;
-                                            expressionInfo.typeModel;
-                                            () => withBoxing {
-                                                variableInfo;
-                                                expressionInfo.typeModel;
-                                                null;
-                                                tempVariableIdentifier;
-                                            };
-                                            "spanFrom";
-                                            [() => withBoxing {
-                                                variableInfo;
-                                                ceylonTypes.integerType;
-                                                null;
-                                                DartIntegerLiteral {
-                                                    tuplePattern.elementPatterns.size;
-                                                };
-                                            }];
-                                        };
-                                    };
-                                }];
-                            };
-                        }
-                    else null;
-
-            return concatenate {
-                [tempVariableDefinition],
-                variableDefinitions,
-                emptyOrSingleton(variadicDefinition)
+    DartStatement[] transformDestructure(Destructure that)
+        =>  let (expressionInfo = ExpressionInfo(that.specifier.expression))
+            generateForPattern {
+                that.pattern;
+                expressionInfo.typeModel;
+                () => that.specifier.expression.transform {
+                    expressionTransformer;
+                };
             };
-        }
-
-        return super.transformDestructure(that);
-    }
 
     shared actual
     [DartStatement*] transformAssertion(Assertion that)
