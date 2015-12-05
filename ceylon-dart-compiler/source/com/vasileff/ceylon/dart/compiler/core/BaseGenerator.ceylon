@@ -2321,7 +2321,7 @@ class BaseGenerator(CompilationContext ctx)
             DartExpression() generateExpression) {
 
         value typeModel
-            =   expressionType else ceylonTypes.tupleAnythingType;
+            =   expressionType else ceylonTypes.sequentialAnythingType;
 
         value info
             =   NodeInfo(pattern);
@@ -2369,8 +2369,7 @@ class BaseGenerator(CompilationContext ctx)
                                 null;
                                 tempVariableIdentifier;
                             };
-                            // we know it's a Tuple, so always use
-                            // getFromFirst
+                            // we know it's at least a Sequential
                             "getFromFirst";
                             [() => withBoxing {
                                 pInfo;
