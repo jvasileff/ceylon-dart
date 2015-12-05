@@ -2326,6 +2326,35 @@ class BaseGenerator(CompilationContext ctx)
         value info
             =   NodeInfo(pattern);
 
+        // handle the stupid '[a*] = sequential' noop case first.
+        if (pattern.elementPatterns.empty) {
+            assert (exists variadicVariable = pattern.variadicElementPattern);
+            value variableInfo = VariadicVariableInfo(variadicVariable);
+
+            return
+            [DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    keyword = null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        variableInfo;
+                        variableInfo.declarationModel;
+                    };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.getName {
+                                variableInfo.declarationModel;
+                            };
+                        };
+                        withLhs {
+                            null;
+                            variableInfo.declarationModel;
+                            generateExpression;
+                        };
+                    }];
+                };
+            }];
+        }
+
         value tempVariableIdentifier
             =   DartSimpleIdentifier {
                     dartTypes.createTempNameCustom("d");
