@@ -697,6 +697,20 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   Iterable get linesWithBreaks
     => $package$dartStringLinesWithBreaks(this._value);
 
+  $dart$core.String replace($dart$core.String substring, $dart$core.String replacement)
+    => this._value.replaceAll(substring, replacement);
+
+  $dart$core.String replaceFirst($dart$core.String substring, $dart$core.String replacement)
+    => this._value.replaceFirst(substring, replacement);
+
+  $dart$core.String replaceLast($dart$core.String substring, $dart$core.String replacement) {
+    var index = _value.lastIndexOf(substring);
+    if (index < 0) {
+      return this._value;
+    }
+    return this._value.replaceFirst(substring, replacement, index);
+  }
+
   //  shared String trimmed => trim(Character.whitespace);
   $dart$core.String get trimmed
     => String.nativeValue(trim(new dart$Callable(([Character c])
