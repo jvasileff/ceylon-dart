@@ -1456,6 +1456,8 @@ class dart$Callable implements $dart$core.Function, Callable {
   final $dart$core.Function _function;
   final $dart$core.int _variadicIndex;
 
+  $dart$core.bool operator ==($dart$core.Object other) => false;
+
   dart$Callable([$dart$core.Function this._function, $dart$core.int this._variadicIndex = -1]);
 
   // for non-spread calls `f()`
@@ -1593,6 +1595,8 @@ class dart$FlatFunction implements $dart$core.Function, Callable {
 
   dart$FlatFunction(Callable this.tupleFunction);
 
+  $dart$core.bool operator ==($dart$core.Object other) => false;
+
   // for non-spread calls `f()`, always use noSuchMethod.
 
   // for spread calls `s()`, always use noSuchMethod.
@@ -1626,6 +1630,8 @@ class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
   final Callable flatFunction;
 
   dart$UnflatFunction(Callable this.flatFunction);
+
+  $dart$core.bool operator ==($dart$core.Object other) => false;
 
   // for non-spread calls `f()`, always use noSuchMethod.
 
