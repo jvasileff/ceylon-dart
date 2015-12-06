@@ -1252,11 +1252,16 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformNotOperation(NotOperation that)
-        =>  DartPrefixExpression {
-                "!";
-                withLhsNative {
-                    ceylonTypes.booleanType;
-                    () => that.operand.transform(this);
+        =>  withBoxing {
+                NodeInfo(that);
+                ceylonTypes.booleanType;
+                null;
+                DartPrefixExpression {
+                    "!";
+                    withLhsNative {
+                        ceylonTypes.booleanType;
+                        () => that.operand.transform(this);
+                    };
                 };
             };
 
