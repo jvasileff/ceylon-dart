@@ -28,13 +28,7 @@ import ceylon.time.base {
 shared Time? parseTime(String input) => convertToTime(parseTimeComponents(input));
 
 shared Time? convertToTime([Integer, Integer, Integer, Integer]? timeComponents) {
-// FIXME Dart workaround
-//    if (exists [hh, mm, ss, sss] = timeComponents) {
-    if (exists tuple = timeComponents) {
-        value hh = tuple[0];
-        value mm = tuple[1];
-        value ss = tuple[2];
-        value sss = tuple[3];
+    if (exists [hh, mm, ss, sss] = timeComponents) {
         if ([24, 00, 00, 000] == [hh, mm, ss, sss]) {
             return time(00, 00);
         }

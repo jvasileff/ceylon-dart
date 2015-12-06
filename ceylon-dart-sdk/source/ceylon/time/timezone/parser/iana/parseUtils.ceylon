@@ -19,11 +19,7 @@ DayOfWeek findDayOfWeek(String dayOfWeek) {
  P.S.: This is a good case to add this feature to Time. something like:
        time(1,0).period"
 Period toPeriod([AtTime, Signal] signedTime) {
-// FIXME Dart workaround
-//    value [atTime, signal] = signedTime;
-    value tuple = signedTime;
-    value atTime = tuple[0];
-    value signal = tuple[1];
+    value [atTime, signal] = signedTime;
     return Period {
         hours = atTime.time.hours * signal;
         minutes = atTime.time.minutes * signal;
