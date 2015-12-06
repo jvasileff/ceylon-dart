@@ -9,7 +9,10 @@ void $package$run() {{
         $dart$core.Object element$1;
         $ceylon$language.Iterator iterator$0 = $package$myIterable.iterator();
         while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
-            $ceylon$language.Integer x = element$1 as $ceylon$language.Integer;
+            $ceylon$language.Integer x;
+            {
+                x = element$1 as $ceylon$language.Integer;
+            }
             $ceylon$language.print(x);
         }
     }

@@ -41,7 +41,10 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicModifier,
     DynamicValue,
-    Destructure
+    Destructure,
+    Pattern,
+    TuplePattern,
+    EntryPattern
 }
 import ceylon.collection {
     LinkedList
@@ -86,7 +89,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
-    ExpressionInfo
+    ExpressionInfo,
+    VariadicVariableInfo
 }
 
 import org.antlr.runtime {
@@ -487,24 +491,11 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformForFail(ForFail that) {
-        value pattern = that.forClause.iterator.pattern;
-
-        if (!pattern is VariablePattern) {
-            addError(pattern, "Destructuring not yet supported");
-            return [];
-        }
-        assert (is VariablePattern pattern);
-
         value info = ForFailInfo(that);
-        value variableInfo = UnspecifiedVariableInfo(pattern.variable);
-        value variableDeclaration = variableInfo.declarationModel;
 
         // Only track doFail if there is a fail clause and a break statement
         value doFailVariable = that.failClause exists && info.exits
                 then DartSimpleIdentifier(dartTypes.createTempNameCustom("doFail"));
-
-        // Don't erase to native for the loop variable; avoid premature unboxing
-        ctx.disableErasureToNative.add(variableDeclaration);
 
         // The iterator
         value dartIteratorVariable = DartSimpleIdentifier {
@@ -551,6 +542,50 @@ class StatementTransformer(CompilationContext ctx)
                     };
                     "next";
                     [];
+                };
+
+        // Don't erase to native loop variables; avoid premature unboxing
+        void disableErasureToNative(Pattern p) {
+            switch(p)
+            case (is VariablePattern) {
+                ctx.disableErasureToNative.add(
+                    UnspecifiedVariableInfo(p.variable).declarationModel);
+            }
+            case (is TuplePattern) {
+                p.elementPatterns.each(disableErasureToNative);
+                if (exists v = p.variadicElementPattern) {
+                    ctx.disableErasureToNative.add(
+                        VariadicVariableInfo(v).declarationModel);
+                }
+            }
+            case (is EntryPattern) {
+                p.children.each(disableErasureToNative);
+            }
+        }
+        disableErasureToNative(that.forClause.iterator.pattern);
+
+        // VariableTriples for inside the loop
+        value variableTriples
+            =   generateForPattern {
+                    that.forClause.iterator.pattern;
+                    // minus Finished, since this will be in the loop after
+                    // the test.
+                    loopVariableType.minus(ceylonTypes.finishedType);
+                    () => withBoxing {
+                        info;
+                        loopVariableType;
+                        null;
+                        dartLoopVariable;
+                    };
+                };
+
+        // Variable declarations and assignements for inside the loop
+        value variables
+            =   concatenate {
+                    variableTriples.map(VariableTriple.dartDeclaration),
+                    [DartBlock {
+                        [*variableTriples.flatMap(VariableTriple.dartAssignment)];
+                    }]
                 };
 
         return
@@ -623,37 +658,16 @@ class StatementTransformer(CompilationContext ctx)
                 };
                 // The forClause block
                 DartBlock {
-                    // Define the "real" loop variable
-                    [DartVariableDeclarationStatement {
-                        DartVariableDeclarationList {
-                            null;
-                            dartTypes.dartTypeNameForDeclaration {
-                                info;
-                                variableDeclaration;
-                            };
-                            [DartVariableDeclaration {
-                                DartSimpleIdentifier {
-                                    dartTypes.getName(variableDeclaration);
-                                };
-                                withLhs {
-                                    null;
-                                    variableDeclaration;
-                                    () => withBoxing {
-                                        info;
-                                        loopVariableType;
-                                        null;
-                                        dartLoopVariable;
-                                    };
-                                };
-                            }];
-                        };
-                    },
-                    // Statements
-                    *withDoFailVariable {
-                        doFailVariable;
-                        () => expand(that.forClause.block.transformChildren(
-                            statementTransformer));
-                    }];
+                    // Define the loop variables
+                    concatenate {
+                        variables,
+                        // Statements
+                        withDoFailVariable {
+                            doFailVariable;
+                            () => expand(that.forClause.block.transformChildren(
+                                statementTransformer));
+                        }
+                    };
                 };
             },
             // Conditional Fail Block

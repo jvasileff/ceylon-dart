@@ -101,8 +101,6 @@ import ceylon.ast.core {
     LetExpression,
     SpecifiedPattern,
     VariablePattern,
-    TuplePattern,
-    EntryPattern,
     SpreadArgument,
     ComprehensionClause,
     ForComprehensionClause,

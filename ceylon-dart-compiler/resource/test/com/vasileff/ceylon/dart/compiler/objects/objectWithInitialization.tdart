@@ -10,7 +10,10 @@ class o_ {
             $dart$core.Object element$1;
             $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance(_$myIterable).iterator();
             while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
-                $ceylon$language.Character x = element$1 as $ceylon$language.Character;
+                $ceylon$language.Character x;
+                {
+                    x = element$1 as $ceylon$language.Character;
+                }
                 $ceylon$language.print(x);
             }
         }
