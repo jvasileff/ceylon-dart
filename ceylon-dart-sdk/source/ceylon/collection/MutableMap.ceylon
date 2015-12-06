@@ -38,10 +38,8 @@ shared interface MapMutator<in Key, in Item>
     "Add the given [[entries]] to this map, overwriting any 
      existing entries with the same keys."
     shared default void putAll({<Key->Item>*} entries) {
-// FIXME Dart workaround
-//        for (key->item in entries) {
-        for (entry in entries) {
-            put(entry.key, entry.item);
+        for (key->item in entries) {
+            put(key, item);
         }
     }
     

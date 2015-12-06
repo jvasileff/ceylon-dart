@@ -378,10 +378,8 @@ shared class TreeMap<Key, Item>
     root = if (exists nodeToClone) 
            then copyNode(nodeToClone) else null;
 
-// FIXME Dart workaround
-//    for (key->item in entries) {
-    for (entry in entries) {
-        put(entry.key, entry.item);
+    for (key->item in entries) {
+        put(key, item);
     }
 
 
