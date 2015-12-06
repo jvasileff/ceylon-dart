@@ -2214,24 +2214,18 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartStatement[] generateForPattern(
-            Pattern pattern, TypeModel? expressionType,
-            DartExpression() generator) {
-
-        switch (pattern)
-        case (is VariablePattern) {
-            return [generateForVariablePattern(pattern, generator)];
-        }
-        case (is TuplePattern) {
-            return generateForTuplePattern(pattern, expressionType, generator);
-        }
-        case (is EntryPattern) {
-            return generateForEntryPattern(pattern, expressionType, generator);
-        }
-    }
+    [VariableTriple*] generateForPattern
+            (Pattern pattern, TypeModel? expressionType, DartExpression() generator)
+        =>  switch (pattern)
+            case (is VariablePattern)
+                [generateForVariablePattern(pattern, generator)]
+            case (is TuplePattern)
+                generateForTuplePattern(pattern, expressionType, generator)
+            case (is EntryPattern)
+                generateForEntryPattern(pattern, expressionType, generator);
 
     shared
-    DartStatement[] generateForEntryPattern(
+    [VariableTriple*] generateForEntryPattern(
             EntryPattern pattern, TypeModel? expressionType,
             DartExpression() generateExpression) {
 
@@ -2252,72 +2246,84 @@ class BaseGenerator(CompilationContext ctx)
         value itemInfo
             =   NodeInfo(pattern.item);
 
-        return
-        concatenate {
-            // temp variable for entry
-            [DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    null;
-                    dartTypes.dartTypeName {
-                        info;
-                        typeModel;
-                    };
-                    [DartVariableDeclaration {
-                        tempVariableIdentifier;
-                        withLhsNative {
+        value tempVariable
+            =   DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeName {
+                            info;
                             typeModel;
-                            generateExpression;
                         };
-                    }];
-                };
-            }],
-            // definitions for the key
-            generateForPattern {
-                pattern.key;
-                // we could preserve more type information by using
-                // generateInvocationDetailsFromName, but why bother? Just use
-                // types like Entry<Anything, Anything> and cast the result.
-                null;
-                () => generateInvocationSynthetic {
-                    keyInfo;
-                    typeModel;
-                    generateReceiver() => withBoxing {
-                        keyInfo;
-                        typeModel;
-                        null;
-                        tempVariableIdentifier;
+                        [DartVariableDeclaration {
+                            tempVariableIdentifier;
+                            withLhsNative {
+                                typeModel;
+                                generateExpression;
+                            };
+                        }];
                     };
-                    // we know it's an Entry
-                    "key";
-                    [];
                 };
+
+        value triples
+            =   concatenate {
+                    // variables for the key
+                    generateForPattern {
+                        pattern.key;
+                        // we could preserve more type information by using
+                        // generateInvocationDetailsFromName, but why bother? Just use
+                        // types like Entry<Anything, Anything> and cast the result.
+                        null;
+                        () => generateInvocationSynthetic {
+                            keyInfo;
+                            typeModel;
+                            generateReceiver() => withBoxing {
+                                keyInfo;
+                                typeModel;
+                                null;
+                                tempVariableIdentifier;
+                            };
+                            // we know it's an Entry
+                            "key";
+                            [];
+                        };
+                    },
+                    // variables for the item
+                    generateForPattern {
+                        pattern.item;
+                        // we could preserve more type information by using
+                        // generateInvocationDetailsFromName, but why bother? Just use
+                        // types like Entry<Anything, Anything> and cast the result.
+                        null;
+                        () => generateInvocationSynthetic {
+                            itemInfo;
+                            typeModel;
+                            generateReceiver() => withBoxing {
+                                itemInfo;
+                                typeModel;
+                                null;
+                                tempVariableIdentifier;
+                            };
+                            // we know it's an Entry
+                            "item";
+                            [];
+                        };
+                    }
+                };
+
+        // hack in the temp variable
+        assert (exists first = triples.first);
+        return [
+            VariableTriple {
+                first.declarationModel;
+                first.dartDeclaration;
+                [ tempVariable, *first.dartAssignment ];
             },
-            // definitions for the item
-            generateForPattern {
-                pattern.item;
-                // we could preserve more type information by using
-                // generateInvocationDetailsFromName, but why bother? Just use
-                // types like Entry<Anything, Anything> and cast the result.
-                null;
-                () => generateInvocationSynthetic {
-                    itemInfo;
-                    typeModel;
-                    generateReceiver() => withBoxing {
-                        itemInfo;
-                        typeModel;
-                        null;
-                        tempVariableIdentifier;
-                    };
-                    // we know it's an Entry
-                    "item";
-                    [];
-                };
-            }
-        };
+            *triples.rest
+        ];
     }
 
     shared
-    DartStatement[] generateForTuplePattern(
+    [VariableTriple*] generateForTuplePattern(
             TuplePattern pattern, TypeModel? expressionType,
             DartExpression() generateExpression) {
 
@@ -2329,30 +2335,49 @@ class BaseGenerator(CompilationContext ctx)
 
         // handle the stupid '[a*] = sequential' noop case first.
         if (pattern.elementPatterns.empty) {
-            assert (exists variadicVariable = pattern.variadicElementPattern);
-            value variableInfo = VariadicVariableInfo(variadicVariable);
+            assert (exists variadicVariable
+                =   pattern.variadicElementPattern);
+
+            value variableInfo
+                =   VariadicVariableInfo(variadicVariable);
+
+            value variableIdentifier
+                =   DartSimpleIdentifier {
+                        dartTypes.getName {
+                            variableInfo.declarationModel;
+                        };
+                    };
 
             return
-            [DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    keyword = null;
-                    dartTypes.dartTypeNameForDeclaration {
-                        variableInfo;
-                        variableInfo.declarationModel;
-                    };
-                    [DartVariableDeclaration {
-                        DartSimpleIdentifier {
-                            dartTypes.getName {
-                                variableInfo.declarationModel;
-                            };
+            [VariableTriple {
+                variableInfo.declarationModel;
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        keyword = null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            variableInfo;
+                            variableInfo.declarationModel;
                         };
+                        [DartVariableDeclaration {
+                            variableIdentifier;
+                        }];
+                    };
+                };
+                // The declaration and assignment *have* to be separate. We can't put
+                // initialization in the declaration because the rhs may be a temp
+                // variable from a prior step that will not be evaluated until all of
+                // the declarations are made.
+                [DartExpressionStatement {
+                    DartAssignmentExpression {
+                        variableIdentifier;
+                        DartAssignmentOperator.equal;
                         withLhs {
                             null;
                             variableInfo.declarationModel;
                             generateExpression;
                         };
-                    }];
-                };
+                    };
+                }];
             }];
         }
 
@@ -2379,7 +2404,7 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 };
 
-        value elementDefinitions
+        value elementParts
             =   pattern.elementPatterns.indexed.flatMap((pair) {
                     value index -> elementPattern = pair;
                     value pInfo = NodeInfo(elementPattern);
@@ -2413,22 +2438,29 @@ class BaseGenerator(CompilationContext ctx)
 
         // NOTE when the variadicVariable is a Tuple, we are trusting Tuple.spanFrom
         //      to return a Tuple, even though its return type is Sequential.
-        value variadicDefinition
-            =   if (exists variadicVariable = pattern.variadicElementPattern)
-                    then let (variableInfo = VariadicVariableInfo(variadicVariable))
-                    DartVariableDeclarationStatement {
-                        DartVariableDeclarationList {
-                            keyword = null;
-                            dartTypes.dartTypeNameForDeclaration {
-                                variableInfo;
-                                variableInfo.declarationModel;
-                            };
-                            [DartVariableDeclaration {
-                                DartSimpleIdentifier {
-                                    dartTypes.getName {
-                                        variableInfo.declarationModel;
-                                    };
+        value variadicVariable
+            =   if (exists variadicVariable = pattern.variadicElementPattern) then
+                    let (variableInfo = VariadicVariableInfo(variadicVariable),
+                         variableName = dartTypes.getName(variableInfo.declarationModel),
+                         variableIdentifier = DartSimpleIdentifier(variableName))
+                    [VariableTriple {
+                        variableInfo.declarationModel;
+                        DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                keyword = null;
+                                dartTypes.dartTypeNameForDeclaration {
+                                    variableInfo;
+                                    variableInfo.declarationModel;
                                 };
+                                [DartVariableDeclaration {
+                                    variableIdentifier;
+                                }];
+                            };
+                        };
+                        [DartExpressionStatement {
+                            DartAssignmentExpression {
+                                variableIdentifier;
+                                DartAssignmentOperator.equal;
                                 withLhs {
                                     null;
                                     variableInfo.declarationModel;
@@ -2452,45 +2484,58 @@ class BaseGenerator(CompilationContext ctx)
                                         }];
                                     };
                                 };
-                            }];
-                        };
-                    }
-                else null;
+                            };
+                        }];
+                    }]
+                    else [];
 
-        return concatenate {
-            [tempVariableDefinition],
-            elementDefinitions,
-            emptyOrSingleton(variadicDefinition)
-        };
+        value triples
+            =   elementParts.chain(variadicVariable).sequence();
+
+        // hack in the temp variable
+        assert (exists first = triples.first);
+        return [
+            VariableTriple {
+                first.declarationModel;
+                first.dartDeclaration;
+                [ tempVariableDefinition, *first.dartAssignment ];
+            },
+            *triples.rest
+        ];
     }
 
     shared
-    DartStatement generateForVariablePattern
+    VariableTriple generateForVariablePattern
             (VariablePattern pattern, DartExpression() generator)
-        =>  let (variableInfo = UnspecifiedVariableInfo(pattern.variable))
-            DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    keyword = null;
-                    dartTypes.dartTypeNameForDeclaration {
-                        variableInfo;
-                        variableInfo.declarationModel;
-                    };
-                    [DartVariableDeclaration {
-                        DartSimpleIdentifier {
-                            dartTypes.getName {
-                                variableInfo.declarationModel;
-                            };
+        =>  let (variableInfo = UnspecifiedVariableInfo(pattern.variable),
+                 variableName = dartTypes.getName(variableInfo.declarationModel),
+                 variableIdentifier = DartSimpleIdentifier(variableName))
+            VariableTriple {
+                variableInfo.declarationModel;
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        keyword = null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            variableInfo;
+                            variableInfo.declarationModel;
                         };
+                        [DartVariableDeclaration {
+                            variableIdentifier;
+                        }];
+                    };
+                };
+                [DartExpressionStatement {
+                    DartAssignmentExpression {
+                        variableIdentifier;
+                        DartAssignmentOperator.equal;
                         withLhs {
                             null;
                             variableInfo.declarationModel;
                             generator;
                         };
-                    }];
-                };
+                    };
+                }];
             };
-
-
 
     shared
     DartFunctionExpression generateFunctionExpression(

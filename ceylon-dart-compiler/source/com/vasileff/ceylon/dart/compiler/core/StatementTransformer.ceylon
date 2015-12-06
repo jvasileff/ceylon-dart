@@ -764,13 +764,19 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformDestructure(Destructure that)
-        =>  let (expressionInfo = ExpressionInfo(that.specifier.expression))
-            generateForPattern {
-                that.pattern;
-                expressionInfo.typeModel;
-                () => that.specifier.expression.transform {
-                    expressionTransformer;
-                };
+        =>  let (expressionInfo = ExpressionInfo(that.specifier.expression),
+                parts = generateForPattern {
+                    that.pattern;
+                    expressionInfo.typeModel;
+                    () => that.specifier.expression.transform {
+                        expressionTransformer;
+                    };
+                })
+            concatenate {
+                parts.map(VariableTriple.dartDeclaration),
+                [DartBlock {
+                    [*parts.flatMap(VariableTriple.dartAssignment)];
+                }]
             };
 
     shared actual
