@@ -1783,47 +1783,27 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLetExpression(LetExpression that) {
-        value info = NodeInfo(that);
-
-        [DartStatement+] generateVariableDeclarations(SpecifiedPattern sp) {
-            switch (p = sp.pattern)
-            case (is VariablePattern) {
-                value variableDeclaration
-                    =   UnspecifiedVariableInfo(p.variable).declarationModel;
-
-                value variableIdentifier
-                    =   DartSimpleIdentifier(dartTypes.getName(variableDeclaration));
-
-                value definition
-                    =   DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                keyword = null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    info;
-                                    variableDeclaration;
-                                };
-                                [DartVariableDeclaration {
-                                    variableIdentifier;
-                                    withLhs {
-                                        null;
-                                        variableDeclaration;
-                                        () => sp.specifier.expression.transform {
-                                            expressionTransformer;
-                                        };
-                                    };
-                                }];
-                            };
+        // TODO generateForPattern for VariablePatterns creates ugly code with the
+        //      declaration split from the assignment. Try to consolidate the two for
+        //      simple cases?
+        function generateVariableDeclarations(SpecifiedPattern sp)
+            =>  let (expressionInfo = ExpressionInfo(sp.specifier.expression),
+                    parts = generateForPattern {
+                        sp.pattern;
+                        expressionInfo.typeModel;
+                        () => sp.specifier.expression.transform {
+                            expressionTransformer;
                         };
-                return [definition];
-            }
-            case (is TuplePattern | EntryPattern) {
-                addError(p, "Destructuring not yet supported");
-                return [DartExpressionStatement(DartNullLiteral())];
-            }
-        }
+                    })
+                concatenate {
+                    parts.map(VariableTriple.dartDeclaration),
+                    [DartBlock {
+                        [*parts.flatMap(VariableTriple.dartAssignment)];
+                    }]
+                };
 
-        [DartStatement+] variableDeclarations
-            =   sequence(that.patterns.children.flatMap(generateVariableDeclarations));
+        value variableDeclarations
+            =   [*that.patterns.children.flatMap(generateVariableDeclarations)];
 
         return
         DartFunctionExpressionInvocation {
