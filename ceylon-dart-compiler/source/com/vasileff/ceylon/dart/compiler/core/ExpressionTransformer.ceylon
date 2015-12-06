@@ -2154,7 +2154,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
                  - Calls the init function for this step, to initialize the iterator
                  - Obtains `next()` from the iterator
-                 - Destructures (not done yet)
                  - Assigns to 'outer' variables"
                 value dartStepFunctionDeclaration
                     =   createDartFunctionDeclarationStatement {

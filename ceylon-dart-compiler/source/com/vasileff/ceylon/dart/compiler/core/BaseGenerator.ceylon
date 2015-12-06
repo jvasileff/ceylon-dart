@@ -1636,72 +1636,21 @@ class BaseGenerator(CompilationContext ctx)
                             that.negated != negate;
                         };
 
-            if (is VariablePattern p = sp.pattern) {
-                value variableDeclaration
-                    =   UnspecifiedVariableInfo(p.variable).declarationModel;
-
-                value variableIdentifier
-                    =   DartSimpleIdentifier(dartTypes.getName(variableDeclaration));
-
-                value replacementDeclaration
-                    =   DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                keyword = null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    info;
-                                    variableDeclaration;
-                                };
-                                [DartVariableDeclaration {
-                                    variableIdentifier;
-                                }];
-                            };
+            value variables
+                =   generateForPattern {
+                        sp.pattern;
+                        // This runs if the exists test passed. Use definiteType so
+                        // generateForPattern can call methods on tempIdentifier.
+                        ceylonTypes.definiteType(expressionType);
+                        () => withBoxing {
+                            info;
+                            expressionType;
+                            null;
+                            tempIdentifier;
                         };
+                    };
 
-                value replacementDefinition
-                    =   DartExpressionStatement {
-                            DartAssignmentExpression {
-                                variableIdentifier;
-                                DartAssignmentOperator.equal;
-                                withLhs {
-                                    null;
-                                    variableDeclaration;
-                                    () => withBoxing {
-                                        info;
-                                        expressionType;
-                                        null;
-                                        tempIdentifier;
-                                    };
-                                };
-                            };
-                        };
-
-                value replacements
-                    =   VariableTriple {
-                            variableDeclaration;
-                            replacementDeclaration;
-                            [replacementDefinition];
-                        };
-
-                return [tempVariableDeclaration, conditionExpression, replacements];
-            }
-            else {
-                addError(sp.pattern, "Destructuring not yet supported");
-                return // dummy code
-                    [null, DartNullLiteral(),
-                    VariableTriple {
-                        ValueModel();
-                        DartVariableDeclarationStatement{
-                            DartVariableDeclarationList {
-                                null; null;
-                                [DartVariableDeclaration {
-                                    DartSimpleIdentifier("");
-                                    null;
-                                }];
-                            };
-                        };
-                        [DartExpressionStatement(DartNullLiteral())];
-                    }];
-            }
+            return [tempVariableDeclaration, conditionExpression, *variables];
         }
         else {
             assert (exists variableDeclaration = info.variableDeclarationModel);
