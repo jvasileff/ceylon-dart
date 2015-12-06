@@ -611,53 +611,60 @@ class Collection$permutations$$anonymous$0_$$anonymous$5_ implements Iterator {
         if (_$initial) {
             _$initial = false;
         } else {
-            $dart$core.bool doElse$2 = true;
+            $dart$core.bool doElse$3 = true;
             {
-                Entry tmp$3 = _$elements.paired.locateLast(new dart$Callable(([Tuple pair]) => Boolean.instance(Integer.nativeValue((pair.getFromFirst(0) as Entry).key as Integer) < Integer.nativeValue((pair.getFromFirst(1) as Entry).key as Integer))));
-                if (!(null == tmp$3)) {
-                    Entry a;
-                    a = tmp$3;
-                    doElse$2 = false;
-                    $dart$core.int i = Integer.nativeValue(a.key as Integer);
-                    $dart$core.int key = Integer.nativeValue(((a.item as Tuple).getFromFirst(0) as Entry).key as Integer);
+                Entry tmp$4 = _$elements.paired.locateLast(new dart$Callable(([Tuple pair]) => Boolean.instance(Integer.nativeValue((pair.getFromFirst(0) as Entry).key as Integer) < Integer.nativeValue((pair.getFromFirst(1) as Entry).key as Integer))));
+                if (!(null == tmp$4)) {
+                    $dart$core.int i;
+                    $dart$core.int key;
+                    $dart$core.Object _;
+                    Entry __;
+                    Entry d$5 = tmp$4;
+                    i = Integer.nativeValue(d$5.key as Integer);
+                    Sequential d$6 = d$5.item as Sequential;
+                    Entry d$7 = d$6.getFromFirst(0) as Entry;
+                    key = Integer.nativeValue(d$7.key as Integer);
+                    _ = d$7.item;
+                    __ = d$6.getFromFirst(1) as Entry;
+                    doElse$3 = false;
                     $dart$core.int j;
                     {
-                        $dart$core.int tmp$4 = _$elements.lastIndexWhere(new dart$Callable(([Entry elem]) => Boolean.instance(Integer.nativeValue(elem.key as Integer) > key)));
-                        if (null == tmp$4) {
+                        $dart$core.int tmp$8 = _$elements.lastIndexWhere(new dart$Callable(([Entry elem]) => Boolean.instance(Integer.nativeValue(elem.key as Integer) > key)));
+                        if (null == tmp$8) {
                             throw new AssertionError("Violated: exists j = elements.lastIndexWhere((elem) => elem.key > key)");
                         }
-                        j = tmp$4;
+                        j = tmp$8;
                     }
                     _$elements.swap(i, j);
                     {
-                        $dart$core.Object element$6;
-                        Iterator iterator$5 = ($package$measure(Integer.instance(0), ((_$size - i) - 1) ~/ 2) as List).iterator();
-                        while ((element$6 = iterator$5.next()) is !Finished) {
+                        $dart$core.Object element$10;
+                        Iterator iterator$9 = ($package$measure(Integer.instance(0), ((_$size - i) - 1) ~/ 2) as List).iterator();
+                        while ((element$10 = iterator$9.next()) is !Finished) {
                             Integer k;
                             {
-                                k = element$6 as Integer;
+                                k = element$10 as Integer;
                             }
                             _$elements.swap((i + 1) + Integer.nativeValue(k), (_$size - 1) - Integer.nativeValue(k));
                         }
                     }
                 }
             }
-            if (doElse$2) {
+            if (doElse$3) {
                 return $package$finished;
             }
         }
         return (() {
-            $dart$core.bool doElse$7 = true;
+            $dart$core.bool doElse$11 = true;
             {
-                Sequential tmp$8 = _$elements.collect(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item));
-                if (tmp$8 is Sequence) {
+                Sequential tmp$12 = _$elements.collect(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item));
+                if (tmp$12 is Sequence) {
                     Sequence permutation;
-                    permutation = tmp$8 as Sequence;
-                    doElse$7 = false;
+                    permutation = tmp$12 as Sequence;
+                    doElse$11 = false;
                     return permutation;
                 }
             }
-            if (doElse$7) {
+            if (doElse$11) {
                 return $package$finished;
             }
         })();
@@ -669,12 +676,11 @@ class Collection$permutations$$anonymous$0_ implements Iterable {
         this.$outer$ceylon$language$Collection = $outer$ceylon$language$Collection;
         _$multiset = $outer$ceylon$language$Collection.indexed.group(new dart$Callable(([Entry entry]) => (($dart$core.Object $lhs$) => null == $lhs$ ? $package$nullElement : $lhs$)(entry.item))).items.sort(new dart$Callable(([Sequence x, Sequence y]) => ((x.first as Entry).key as Integer).compare((y.first as Entry).key as Integer))).indexed.flatMap(new dart$Callable(([Entry entry]) => (() {
             $dart$core.int index;
-            {
-                index = Integer.nativeValue(entry.key as Integer);
-            }
             Sequence entries;
             {
-                entries = entry.item as Sequence;
+                Entry d$2 = entry;
+                index = Integer.nativeValue(d$2.key as Integer);
+                entries = d$2.item as Sequence;
             }
             return entries.map(new dart$Callable(([Entry entry]) => new Entry(Integer.instance(index), entry.item)));
         })()));
@@ -7434,12 +7440,13 @@ class Map$items$$anonymous$1_ implements Collection {
             $dart$core.Object element$6;
             Iterator iterator$5 = $outer$ceylon$language$Map.iterator();
             while ((element$6 = iterator$5.next()) is !Finished) {
-                Entry e;
+                $dart$core.Object k;
+                $dart$core.Object v;
                 {
-                    e = element$6 as Entry;
+                    Entry d$7 = element$6 as Entry;
+                    k = d$7.key;
+                    v = d$7.item;
                 }
-                $dart$core.Object k = e.key;
-                $dart$core.Object v = e.item;
                 if (!(null == v)) {
                     if (v == item) {
                         return true;
@@ -7520,9 +7527,9 @@ class Map$mapItems$$anonymous$3_ implements Map {
     }
     $dart$core.bool defines([$dart$core.Object key]) => $outer$ceylon$language$Map.defines(key);
     $dart$core.Object get([$dart$core.Object key]) {{
-            $dart$core.bool doElse$16 = true;
+            $dart$core.bool doElse$17 = true;
             if (key != null) {
-                doElse$16 = false;
+                doElse$17 = false;
                 return (() {
                     $dart$core.Object item = Map.$_$lookup($outer$ceylon$language$Map, key);
                     if ((!(null == item)) && (item == $package$missing)) {
@@ -7532,15 +7539,15 @@ class Map$mapItems$$anonymous$3_ implements Map {
                     }
                 })();
             }
-            if (doElse$16) {
+            if (doElse$17) {
                 return null;
             }
         }
     }
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) {{
-            $dart$core.bool doElse$17 = true;
+            $dart$core.bool doElse$18 = true;
             if (key != null) {
-                doElse$17 = false;
+                doElse$18 = false;
                 return (() {
                     $dart$core.Object item = Map.$_$lookup($outer$ceylon$language$Map, key);
                     if ((!(null == item)) && (item == $package$missing)) {
@@ -7550,7 +7557,7 @@ class Map$mapItems$$anonymous$3_ implements Map {
                     }
                 })();
             }
-            if (doElse$17) {
+            if (doElse$18) {
                 return $default;
             }
         }
@@ -7638,38 +7645,38 @@ class Map$filterKeys$$anonymous$5_ implements Map {
         this.$capture$Map$filterKeys$filtering = $capture$Map$filterKeys$filtering;
     }
     $dart$core.Object get([$dart$core.Object key]) => (() {
-        $dart$core.bool doElse$18 = true;
-        if (key != null) {
-            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
-                doElse$18 = false;
-                return $outer$ceylon$language$Map.get(key);
-            }
-        }
-        if (doElse$18) {
-            return null;
-        }
-    })();
-    $dart$core.bool defines([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$19 = true;
         if (key != null) {
             if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$19 = false;
-                return $outer$ceylon$language$Map.defines(key);
+                return $outer$ceylon$language$Map.get(key);
             }
         }
         if (doElse$19) {
-            return false;
+            return null;
         }
     })();
-    $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => (() {
+    $dart$core.bool defines([$dart$core.Object key]) => (() {
         $dart$core.bool doElse$20 = true;
         if (key != null) {
             if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
                 doElse$20 = false;
-                return $outer$ceylon$language$Map.getOrDefault(key, $default);
+                return $outer$ceylon$language$Map.defines(key);
             }
         }
         if (doElse$20) {
+            return false;
+        }
+    })();
+    $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => (() {
+        $dart$core.bool doElse$21 = true;
+        if (key != null) {
+            if (Boolean.nativeValue($capture$Map$filterKeys$filtering.f(key) as Boolean)) {
+                doElse$21 = false;
+                return $outer$ceylon$language$Map.getOrDefault(key, $default);
+            }
+        }
+        if (doElse$21) {
             return $default;
         }
     })();
@@ -7773,14 +7780,14 @@ class Map$patch$$anonymous$6_ implements Map {
     })();
     Map clone() => $outer$ceylon$language$Map.clone().patch($capture$Map$patch$other.clone());
     $dart$core.bool contains([$dart$core.Object entry]) => (() {
-        $dart$core.bool doElse$21 = true;
+        $dart$core.bool doElse$22 = true;
         if (entry is Entry) {
-            Entry entry$22;
-            entry$22 = entry as Entry;
-            doElse$21 = false;
-            return $capture$Map$patch$other.contains(entry$22) || ((!$capture$Map$patch$other.defines(entry$22.key)) && $outer$ceylon$language$Map.contains(entry$22));
+            Entry entry$23;
+            entry$23 = entry as Entry;
+            doElse$22 = false;
+            return $capture$Map$patch$other.contains(entry$23) || ((!$capture$Map$patch$other.defines(entry$23.key)) && $outer$ceylon$language$Map.contains(entry$23));
         }
-        if (doElse$21) {
+        if (doElse$22) {
             return false;
         }
     })();
@@ -7865,70 +7872,70 @@ class Map$coalescedMap$$anonymous$7_ implements Map {
     $dart$core.Object get([$dart$core.Object key]) => $outer$ceylon$language$Map.get(key);
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => (($dart$core.Object $lhs$) => null == $lhs$ ? $default : $lhs$)($outer$ceylon$language$Map.getOrDefault(key, $default));
     Iterator iterator() => functionIterable(new dart$Callable(() {
-        $dart$core.bool step$0$expired$23 = false;
-        $dart$core.bool step$0$24() {
-            if (step$0$expired$23) {
+        $dart$core.bool step$0$expired$24 = false;
+        $dart$core.bool step$0$25() {
+            if (step$0$expired$24) {
                 return false;
             }
-            step$0$expired$23 = true;
+            step$0$expired$24 = true;
             return true;
         }
 
-        Iterator iterator_1$25;
-        $dart$core.bool step$1$Init$28() {
-            if (iterator_1$25 != null) {
+        Iterator iterator_1$26;
+        $dart$core.bool step$1$Init$29() {
+            if (iterator_1$26 != null) {
                 return true;
             }
-            if (!step$0$24()) {
+            if (!step$0$25()) {
                 return false;
             }
-            iterator_1$25 = $outer$ceylon$language$Map.iterator();
+            iterator_1$26 = $outer$ceylon$language$Map.iterator();
             return true;
         }
 
-        Entry entry$27;
-        $dart$core.bool step$1$29() {
-            while (step$1$Init$28()) {
-                $dart$core.Object next$26;
-                if ((next$26 = iterator_1$25.next()) is !Finished) {
+        Entry entry$28;
+        $dart$core.bool step$1$30() {
+            while (step$1$Init$29()) {
+                $dart$core.Object next$27;
+                if ((next$27 = iterator_1$26.next()) is !Finished) {
                     Entry entry;
                     {
-                        entry = next$26 as Entry;
+                        entry = next$27 as Entry;
                     }
-                    entry$27 = entry;
+                    entry$28 = entry;
                     return true;
                 }
-                iterator_1$25 = null;
+                iterator_1$26 = null;
             }
             return false;
         }
 
-        $dart$core.Object it$32;
-        $dart$core.bool step$2$30() {
-            while (step$1$29()) {
-                Entry entry = entry$27;
+        $dart$core.Object it$33;
+        $dart$core.bool step$2$31() {
+            while (step$1$30()) {
+                Entry entry = entry$28;
                 $dart$core.Object it;
-                $dart$core.Object tmp$31 = entry.item;
-                if (!(!(null == tmp$31))) {
+                $dart$core.Object tmp$32 = entry.item;
+                if (!(!(null == tmp$32))) {
                     continue;
                 }
-                it = tmp$31;
-                it$32 = it;
+                it = tmp$32;
+                it$33 = it;
                 return true;
             }
             return false;
         }
 
-        $dart$core.Object step$3$33() {
-            if (!step$2$30()) {
+        $dart$core.Object step$3$34() {
+            if (!step$2$31()) {
                 return $package$finished;
             }
-            Entry entry = entry$27;
-            $dart$core.Object it = it$32;
+            Entry entry = entry$28;
+            $dart$core.Object it = it$33;
             return new Entry(entry.key, it);
         }
 
-        return new dart$Callable(step$3$33);
+        return new dart$Callable(step$3$34);
     })).iterator();
     Map clone() => $outer$ceylon$language$Map.clone().coalescedMap;
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
@@ -8073,44 +8080,44 @@ abstract class Map implements Collection, Correspondence {
     static Map $inverse([final Map $this]) => $this.coalescedMap.summarize(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item), new dart$Callable(([ElementEntry keys, Entry entry]) => new ElementEntry(keys, entry.key)));
     $dart$core.bool operator ==($dart$core.Object that);
     static $dart$core.bool $equals([final Map $this, $dart$core.Object that]) {{
-            $dart$core.bool doElse$7 = true;
+            $dart$core.bool doElse$8 = true;
             if (that is Map) {
-                Map that$8;
-                that$8 = that as Map;
-                if (that$8.size == $this.size) {
-                    doElse$7 = false;
+                Map that$9;
+                that$9 = that as Map;
+                if (that$9.size == $this.size) {
+                    doElse$8 = false;
                     {
-                        $dart$core.Object element$10;
-                        Iterator iterator$9 = $this.iterator();
-                        while ((element$10 = iterator$9.next()) is !Finished) {
+                        $dart$core.Object element$11;
+                        Iterator iterator$10 = $this.iterator();
+                        while ((element$11 = iterator$10.next()) is !Finished) {
                             Entry entry;
                             {
-                                entry = element$10 as Entry;
+                                entry = element$11 as Entry;
                             }
-                            $dart$core.Object thatItem = that$8.get(entry.key);
+                            $dart$core.Object thatItem = that$9.get(entry.key);
                             {
-                                $dart$core.bool doElse$11 = true;
+                                $dart$core.bool doElse$12 = true;
                                 {
-                                    $dart$core.Object tmp$12 = entry.item;
-                                    if (!(null == tmp$12)) {
+                                    $dart$core.Object tmp$13 = entry.item;
+                                    if (!(null == tmp$13)) {
                                         $dart$core.Object thisItem;
-                                        thisItem = tmp$12;
-                                        doElse$11 = false;
+                                        thisItem = tmp$13;
+                                        doElse$12 = false;
                                         {
-                                            $dart$core.bool doElse$13 = true;
+                                            $dart$core.bool doElse$14 = true;
                                             if (!(null == thatItem)) {
-                                                doElse$13 = false;
+                                                doElse$14 = false;
                                                 if (!(thatItem == thisItem)) {
                                                     return false;
                                                 }
                                             }
-                                            if (doElse$13) {
+                                            if (doElse$14) {
                                                 return false;
                                             }
                                         }
                                     }
                                 }
-                                if (doElse$11) {
+                                if (doElse$12) {
                                     if (!(null == thatItem)) {
                                         return false;
                                     }
@@ -8123,7 +8130,7 @@ abstract class Map implements Collection, Correspondence {
                     }
                 }
             }
-            if (doElse$7) {
+            if (doElse$8) {
                 return false;
             }
         }
@@ -8132,12 +8139,12 @@ abstract class Map implements Collection, Correspondence {
     static $dart$core.int $get$hash([final Map $this]) {
         $dart$core.int hashCode = 0;
         {
-            $dart$core.Object element$15;
-            Iterator iterator$14 = $this.iterator();
-            while ((element$15 = iterator$14.next()) is !Finished) {
+            $dart$core.Object element$16;
+            Iterator iterator$15 = $this.iterator();
+            while ((element$16 = iterator$15.next()) is !Finished) {
                 Entry elem;
                 {
-                    elem = element$15 as Entry;
+                    elem = element$16 as Entry;
                 }
                 hashCode = hashCode + elem.hashCode;
             }
@@ -8160,12 +8167,12 @@ Map $package$map([Iterable stream, $dart$core.Object choosing = $package$dart$de
         choosing = new dart$Callable(([$dart$core.Object earlier, $dart$core.Object later]) => earlier);
     }
     return stream.summarize(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).key), new dart$Callable(([$dart$core.Object item, Entry entry]) => (() {
-        $dart$core.bool doElse$34 = true;
+        $dart$core.bool doElse$35 = true;
         if (!(null == item)) {
-            doElse$34 = false;
+            doElse$35 = false;
             return (choosing as Callable).f(item, entry.item);
         }
-        if (doElse$34) {
+        if (doElse$35) {
             return entry.item;
         }
     })()));

@@ -133,11 +133,7 @@ shared interface Map<out Key=Object, out Item=Anything>
     shared default Collection<Item> items
             => object satisfies Collection<Item> {
         shared actual Boolean contains(Object item) {
-// FIXME Dart workaround
-//            for (k->v in outer) {
-            for (e in outer) {
-                value k = e.key;
-                value v = e.item;
+            for (k->v in outer) {
                 if (exists v, v==item) {
                     return true;
                 }
