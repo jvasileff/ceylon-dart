@@ -49,10 +49,8 @@ Html page = Html {
                     Th("#"),
                     Th("Name")
                 };
-// FIXME Dart workaround
-//                for (i -> user in users.indexed)
-                for (entry in users.indexed)
-                    UserRow(entry.item)
+                for (i -> user in users.indexed)
+                    UserRow(user)
             },
             users.size > 1 then
                 Div {
