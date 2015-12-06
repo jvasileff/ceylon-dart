@@ -11,7 +11,6 @@ import ceylon.ast.core {
     ValueDeclaration,
     IfElse,
     ForFail,
-    VariablePattern,
     PrefixPostfixStatement,
     AssignmentStatement,
     While,
@@ -41,10 +40,7 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicModifier,
     DynamicValue,
-    Destructure,
-    Pattern,
-    TuplePattern,
-    EntryPattern
+    Destructure
 }
 import ceylon.collection {
     LinkedList
@@ -82,15 +78,13 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     ValueSpecificationInfo,
-    UnspecifiedVariableInfo,
     ValueDeclarationInfo,
     ForFailInfo,
     ElseClauseInfo,
     TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
-    ExpressionInfo,
-    VariadicVariableInfo
+    ExpressionInfo
 }
 
 import org.antlr.runtime {
@@ -545,24 +539,7 @@ class StatementTransformer(CompilationContext ctx)
                 };
 
         // Don't erase to native loop variables; avoid premature unboxing
-        void disableErasureToNative(Pattern p) {
-            switch(p)
-            case (is VariablePattern) {
-                ctx.disableErasureToNative.add(
-                    UnspecifiedVariableInfo(p.variable).declarationModel);
-            }
-            case (is TuplePattern) {
-                p.elementPatterns.each(disableErasureToNative);
-                if (exists v = p.variadicElementPattern) {
-                    ctx.disableErasureToNative.add(
-                        VariadicVariableInfo(v).declarationModel);
-                }
-            }
-            case (is EntryPattern) {
-                p.children.each(disableErasureToNative);
-            }
-        }
-        disableErasureToNative(that.forClause.iterator.pattern);
+        dartTypes.disableErasureToNative(that.forClause.iterator.pattern);
 
         // VariableTriples for inside the loop
         value variableTriples

@@ -100,7 +100,6 @@ import ceylon.ast.core {
     CaseExpression,
     LetExpression,
     SpecifiedPattern,
-    VariablePattern,
     SpreadArgument,
     ComprehensionClause,
     ForComprehensionClause,
@@ -196,7 +195,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ObjectExpressionInfo,
     SuperInfo,
     IsCaseInfo,
-    UnspecifiedVariableInfo,
     NodeInfo,
     TypeNameWithTypeArgumentsInfo
 }
@@ -1961,31 +1959,10 @@ class ExpressionTransformer(CompilationContext ctx)
 
             switch (clause)
             case (is ForComprehensionClause) {
-                value pattern = clause.iterator.pattern;
-                if (!pattern is VariablePattern) {
-                    addError(pattern, "Destructuring not yet supported");
-                    return [];
-                }
-                assert (is VariablePattern pattern);
-
-                value variableInfo = UnspecifiedVariableInfo(pattern.variable);
-
-                value variableDeclaration = variableInfo.declarationModel;
-
-                // Don't erase to native; avoid premature unboxing
-                ctx.disableErasureToNative.add(variableDeclaration);
-
                 "The iterator for the iterable in this `for` clause"
                 value iteratorVariable
                     =   DartSimpleIdentifier {
                             dartTypes.createTempNameCustom("iterator_" + count.string);
-                        };
-
-                "The synthetic variable used to hold the current value outside of the
-                 function (simple case; for destructuring, we'll need more)"
-                value dartValueVariable
-                    =   DartSimpleIdentifier {
-                            dartTypes.createTempName(variableDeclaration);
                         };
 
                 "Temp variable for result of `next()`"
@@ -2028,6 +2005,43 @@ class ExpressionTransformer(CompilationContext ctx)
                             "next";
                             [];
                         };
+
+                // Don't erase to native loop variables; avoid premature unboxing
+                dartTypes.disableErasureToNative(clause.iterator.pattern);
+
+                "VariableTriples for inside the loop"
+                value variableTriples
+                    =   generateForPattern {
+                            clause.iterator.pattern;
+                            // minus Finished, since this will be in the loop after
+                            // the test.
+                            nextType.minus(ceylonTypes.finishedType);
+                            () => withBoxing {
+                                info;
+                                nextType;
+                                null;
+                                nextVariable;
+                            };
+                        };
+
+                "Variable declarations and assignements for inside the loop"
+                value variables
+                    =   concatenate {
+                            variableTriples.map(VariableTriple.dartDeclaration),
+                            [DartBlock {
+                                [*variableTriples.flatMap(VariableTriple.dartAssignment)];
+                            }]
+                        };
+
+                "The synthetic variables used to hold the current values outside of the
+                 function"
+                value dartValueVariables
+                    =   variableTriples
+                            .map(VariableTriple.declarationModel)
+                            .collect((variableDeclaration)
+                                =>  DartSimpleIdentifier {
+                                        dartTypes.createTempName(variableDeclaration);
+                                    });
 
                 value stepInitFunctionName
                     =   generateStepInitFunctionName(count);
@@ -2110,23 +2124,25 @@ class ExpressionTransformer(CompilationContext ctx)
                             };
                         };
 
-                "Declare the 'outer' variable."
-                value dartValueVariableDeclaration
-                    =   DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    info;
-                                    variableDeclaration;
+                "Declare the 'outer' variables."
+                value dartValueVariableDeclarations
+                    =   zipPairs(variableTriples, dartValueVariables).collect((pair)
+                        =>  DartVariableDeclarationStatement {
+                                DartVariableDeclarationList {
+                                    null;
+                                    dartTypes.dartTypeNameForDeclaration {
+                                        info;
+                                        pair[0].declarationModel;
+                                    };
+                                    [DartVariableDeclaration {
+                                        pair[1];
+                                    }];
                                 };
-                                [DartVariableDeclaration {
-                                    dartValueVariable;
-                                }];
-                            };
-                        };
+                            });
 
                 value capturables
-                    =   [[variableDeclaration, dartValueVariable]];
+                    =   zipPairs(variableTriples, dartValueVariables).collect((pair)
+                        =>  [pair[0].declarationModel, pair[1]]);
 
                 "A dart function declaration for the step function. This function
 
@@ -2183,28 +2199,22 @@ class ExpressionTransformer(CompilationContext ctx)
                                                 true;
                                             };
                                             DartBlock {
-                                                [// assign dartVariable = nextVariable
-                                                // Simple case; for destructuring we'll
-                                                // need more.
-                                                DartExpressionStatement {
-                                                    DartAssignmentExpression {
-                                                        dartValueVariable;
-                                                        DartAssignmentOperator.equal;
-                                                        withLhs {
-                                                            null;
-                                                            variableDeclaration;
-                                                            () => withBoxing {
-                                                                clauseInfo;
-                                                                nextType;
-                                                                null;
-                                                                nextVariable;
-                                                            };
-                                                        };
-                                                    };
-                                                },
-                                                DartReturnStatement {
-                                                    DartBooleanLiteral(true);
-                                                }];
+                                                concatenate {
+                                                    // Define the "inner" variables
+                                                    variables,
+                                                    // Assign them to the outers
+                                                    // This used to be all in one step.
+                                                    // Might be nice to consolidate:
+                                                    // we're wasting a bunch of variables
+                                                    // since we never need the inners.
+                                                    dartAssignmentsToOuterVariables {
+                                                        clauseInfo;
+                                                        capturables;
+                                                    },
+                                                    [DartReturnStatement {
+                                                        DartBooleanLiteral(true);
+                                                    }]
+                                                };
                                             };
                                         }],
                                         // Assign null to the iterator. The while loop
@@ -2227,14 +2237,17 @@ class ExpressionTransformer(CompilationContext ctx)
                             }];
                         };
 
-                return [dartIteratorVariableDeclaration,
-                        dartInitFunctionDeclaration,
-                        dartValueVariableDeclaration,
-                        dartStepFunctionDeclaration,
-                        *generateSteps {
-                            clause.clause; count+1; stepFunctionName;
-                            expand { accumulatedCapturables, capturables };
-                        }];
+                return
+                concatenate {
+                    [dartIteratorVariableDeclaration],
+                    [dartInitFunctionDeclaration],
+                    dartValueVariableDeclarations,
+                    [dartStepFunctionDeclaration],
+                    generateSteps {
+                        clause.clause; count+1; stepFunctionName;
+                        expand { accumulatedCapturables, capturables };
+                    }
+                };
             }
             case (is IfComprehensionClause) {
                 value stepFunctionId
@@ -2301,7 +2314,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             .flatMap((p) => p[2...])
                             .map(VariableTriple.declarationModel);
 
-                "All of the replacement declarations."
+                "All of the replacement and destructure declarations."
                 value dartVariableDeclarations
                     =   conditionExpressionParts
                             .flatMap((p) => p[2...])

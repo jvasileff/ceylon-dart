@@ -1,5 +1,9 @@
 import ceylon.ast.core {
-    Node
+    Node,
+    EntryPattern,
+    VariablePattern,
+    TuplePattern,
+    Pattern
 }
 import ceylon.interop.java {
     CeylonIterable
@@ -44,6 +48,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
+}
+import com.vasileff.ceylon.dart.compiler.nodeinfo {
+    UnspecifiedVariableInfo,
+    VariadicVariableInfo
 }
 
 shared
@@ -1402,5 +1410,25 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         "Type and declaration arguments must not both be null."
         assert (exists result = type else declaration?.type);
         return result;
+    }
+
+    "Disable erasure for all variable declarations contained within the given pattern."
+    shared
+    void disableErasureToNative(Pattern p) {
+        switch(p)
+        case (is VariablePattern) {
+            ctx.disableErasureToNative.add(
+                UnspecifiedVariableInfo(p.variable).declarationModel);
+        }
+        case (is TuplePattern) {
+            p.elementPatterns.each(disableErasureToNative);
+            if (exists v = p.variadicElementPattern) {
+                ctx.disableErasureToNative.add(
+                    VariadicVariableInfo(v).declarationModel);
+            }
+        }
+        case (is EntryPattern) {
+            p.children.each(disableErasureToNative);
+        }
     }
 }

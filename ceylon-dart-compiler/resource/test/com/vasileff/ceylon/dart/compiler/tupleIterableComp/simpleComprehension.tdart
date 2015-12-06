@@ -24,12 +24,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer i$3;
+        $ceylon$language.Integer i$4;
         $dart$core.bool step$1$6() {
             while (step$1$Init$5()) {
-                $dart$core.Object next$4;
-                if ((next$4 = iterator_1$2.next()) is !$ceylon$language.Finished) {
-                    i$3 = next$4 as $ceylon$language.Integer;
+                $dart$core.Object next$3;
+                if ((next$3 = iterator_1$2.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer i;
+                    {
+                        i = next$3 as $ceylon$language.Integer;
+                    }
+                    i$4 = i;
                     return true;
                 }
                 iterator_1$2 = null;
@@ -41,7 +45,7 @@ void $package$run() {
             if (!step$1$6()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer i = i$3;
+            $ceylon$language.Integer i = i$4;
             return i;
         }
 
@@ -69,12 +73,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer i$11;
+        $ceylon$language.Integer i$12;
         $dart$core.bool step$1$14() {
             while (step$1$Init$13()) {
-                $dart$core.Object next$12;
-                if ((next$12 = iterator_1$10.next()) is !$ceylon$language.Finished) {
-                    i$11 = next$12 as $ceylon$language.Integer;
+                $dart$core.Object next$11;
+                if ((next$11 = iterator_1$10.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer i;
+                    {
+                        i = next$11 as $ceylon$language.Integer;
+                    }
+                    i$12 = i;
                     return true;
                 }
                 iterator_1$10 = null;
@@ -86,7 +94,7 @@ void $package$run() {
             if (!step$1$14()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer i = i$11;
+            $ceylon$language.Integer i = i$12;
             return $ceylon$language.Integer.instance(2).divides(i) ? i : $ceylon$language.String.instance("nope");
         }
 

@@ -27,12 +27,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer v$3;
+        $ceylon$language.Integer v$4;
         $dart$core.bool step$1$6() {
             while (step$1$Init$5()) {
-                $dart$core.Object next$4;
-                if ((next$4 = iterator_1$2.next()) is !$ceylon$language.Finished) {
-                    v$3 = next$4 as $ceylon$language.Integer;
+                $dart$core.Object next$3;
+                if ((next$3 = iterator_1$2.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer v;
+                    {
+                        v = next$3 as $ceylon$language.Integer;
+                    }
+                    v$4 = v;
                     return true;
                 }
                 iterator_1$2 = null;
@@ -44,7 +48,7 @@ void $package$run() {
             if (!step$1$6()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer v = v$3;
+            $ceylon$language.Integer v = v$4;
             return new $ceylon$language.dart$Callable(() => v);
         }
 
@@ -72,12 +76,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Callable f$11;
+        $ceylon$language.Callable f$12;
         $dart$core.bool step$1$14() {
             while (step$1$Init$13()) {
-                $dart$core.Object next$12;
-                if ((next$12 = iterator_1$10.next()) is !$ceylon$language.Finished) {
-                    f$11 = next$12 as $ceylon$language.Callable;
+                $dart$core.Object next$11;
+                if ((next$11 = iterator_1$10.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Callable f;
+                    {
+                        f = next$11 as $ceylon$language.Callable;
+                    }
+                    f$12 = f;
                     return true;
                 }
                 iterator_1$10 = null;
@@ -89,7 +97,7 @@ void $package$run() {
             if (!step$1$14()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Callable f = f$11;
+            $ceylon$language.Callable f = f$12;
             return f.f();
         }
 
@@ -119,12 +127,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer v$19;
+        $ceylon$language.Integer v$20;
         $dart$core.bool step$1$22() {
             while (step$1$Init$21()) {
-                $dart$core.Object next$20;
-                if ((next$20 = iterator_1$18.next()) is !$ceylon$language.Finished) {
-                    v$19 = next$20 as $ceylon$language.Integer;
+                $dart$core.Object next$19;
+                if ((next$19 = iterator_1$18.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer v;
+                    {
+                        v = next$19 as $ceylon$language.Integer;
+                    }
+                    v$20 = v;
                     return true;
                 }
                 iterator_1$18 = null;
@@ -135,7 +147,7 @@ void $package$run() {
         $dart$core.int w$25;
         $dart$core.bool step$2$23() {
             while (step$1$22()) {
-                $ceylon$language.Integer v = v$19;
+                $ceylon$language.Integer v = v$20;
                 $dart$core.int w;
                 $dart$core.int tmp$24 = $ceylon$language.Integer.nativeValue(v);
                 if (!(!(null == tmp$24))) {
@@ -152,7 +164,7 @@ void $package$run() {
             if (!step$2$23()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer v = v$19;
+            $ceylon$language.Integer v = v$20;
             $dart$core.int w = w$25;
             return new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance(w));
         }
@@ -181,12 +193,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Callable f$30;
+        $ceylon$language.Callable f$31;
         $dart$core.bool step$1$33() {
             while (step$1$Init$32()) {
-                $dart$core.Object next$31;
-                if ((next$31 = iterator_1$29.next()) is !$ceylon$language.Finished) {
-                    f$30 = next$31 as $ceylon$language.Callable;
+                $dart$core.Object next$30;
+                if ((next$30 = iterator_1$29.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Callable f;
+                    {
+                        f = next$30 as $ceylon$language.Callable;
+                    }
+                    f$31 = f;
                     return true;
                 }
                 iterator_1$29 = null;
@@ -198,7 +214,7 @@ void $package$run() {
             if (!step$1$33()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Callable f = f$30;
+            $ceylon$language.Callable f = f$31;
             return f.f();
         }
 
@@ -228,12 +244,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer v$38;
+        $ceylon$language.Integer v$39;
         $dart$core.bool step$1$41() {
             while (step$1$Init$40()) {
-                $dart$core.Object next$39;
-                if ((next$39 = iterator_1$37.next()) is !$ceylon$language.Finished) {
-                    v$38 = next$39 as $ceylon$language.Integer;
+                $dart$core.Object next$38;
+                if ((next$38 = iterator_1$37.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer v;
+                    {
+                        v = next$38 as $ceylon$language.Integer;
+                    }
+                    v$39 = v;
                     return true;
                 }
                 iterator_1$37 = null;
@@ -244,7 +264,7 @@ void $package$run() {
         $ceylon$language.Callable w$44;
         $dart$core.bool step$2$42() {
             while (step$1$41()) {
-                $ceylon$language.Integer v = v$38;
+                $ceylon$language.Integer v = v$39;
                 $ceylon$language.Callable w;
                 $ceylon$language.Callable tmp$43 = true ? new $ceylon$language.dart$Callable(() => v) : null;
                 if (!(!(null == tmp$43))) {
@@ -261,7 +281,7 @@ void $package$run() {
             if (!step$2$42()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer v = v$38;
+            $ceylon$language.Integer v = v$39;
             $ceylon$language.Callable w = w$44;
             return w;
         }
@@ -290,12 +310,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Callable f$49;
+        $ceylon$language.Callable f$50;
         $dart$core.bool step$1$52() {
             while (step$1$Init$51()) {
-                $dart$core.Object next$50;
-                if ((next$50 = iterator_1$48.next()) is !$ceylon$language.Finished) {
-                    f$49 = next$50 as $ceylon$language.Callable;
+                $dart$core.Object next$49;
+                if ((next$49 = iterator_1$48.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Callable f;
+                    {
+                        f = next$49 as $ceylon$language.Callable;
+                    }
+                    f$50 = f;
                     return true;
                 }
                 iterator_1$48 = null;
@@ -307,7 +331,7 @@ void $package$run() {
             if (!step$1$52()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Callable f = f$49;
+            $ceylon$language.Callable f = f$50;
             return f.f();
         }
 
@@ -337,12 +361,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Integer v$57;
+        $ceylon$language.Integer v$58;
         $dart$core.bool step$1$60() {
             while (step$1$Init$59()) {
-                $dart$core.Object next$58;
-                if ((next$58 = iterator_1$56.next()) is !$ceylon$language.Finished) {
-                    v$57 = next$58 as $ceylon$language.Integer;
+                $dart$core.Object next$57;
+                if ((next$57 = iterator_1$56.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Integer v;
+                    {
+                        v = next$57 as $ceylon$language.Integer;
+                    }
+                    v$58 = v;
                     return true;
                 }
                 iterator_1$56 = null;
@@ -358,7 +386,7 @@ void $package$run() {
             if (!step$1$60()) {
                 return false;
             }
-            $ceylon$language.Integer v = v$57;
+            $ceylon$language.Integer v = v$58;
             iterator_2$61 = (new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
                 switch ($i$) {
                 case 0 :
@@ -368,13 +396,17 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Callable w$62;
+        $ceylon$language.Callable w$63;
         $dart$core.bool step$2$65() {
             while (step$2$Init$64()) {
-                $ceylon$language.Integer v = v$57;
-                $dart$core.Object next$63;
-                if ((next$63 = iterator_2$61.next()) is !$ceylon$language.Finished) {
-                    w$62 = next$63 as $ceylon$language.Callable;
+                $ceylon$language.Integer v = v$58;
+                $dart$core.Object next$62;
+                if ((next$62 = iterator_2$61.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Callable w;
+                    {
+                        w = next$62 as $ceylon$language.Callable;
+                    }
+                    w$63 = w;
                     return true;
                 }
                 iterator_2$61 = null;
@@ -386,8 +418,8 @@ void $package$run() {
             if (!step$2$65()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Integer v = v$57;
-            $ceylon$language.Callable w = w$62;
+            $ceylon$language.Integer v = v$58;
+            $ceylon$language.Callable w = w$63;
             return w;
         }
 
@@ -415,12 +447,16 @@ void $package$run() {
             return true;
         }
 
-        $ceylon$language.Callable f$70;
+        $ceylon$language.Callable f$71;
         $dart$core.bool step$1$73() {
             while (step$1$Init$72()) {
-                $dart$core.Object next$71;
-                if ((next$71 = iterator_1$69.next()) is !$ceylon$language.Finished) {
-                    f$70 = next$71 as $ceylon$language.Callable;
+                $dart$core.Object next$70;
+                if ((next$70 = iterator_1$69.next()) is !$ceylon$language.Finished) {
+                    $ceylon$language.Callable f;
+                    {
+                        f = next$70 as $ceylon$language.Callable;
+                    }
+                    f$71 = f;
                     return true;
                 }
                 iterator_1$69 = null;
@@ -432,7 +468,7 @@ void $package$run() {
             if (!step$1$73()) {
                 return $ceylon$language.finished;
             }
-            $ceylon$language.Callable f = f$70;
+            $ceylon$language.Callable f = f$71;
             return f.f();
         }
 
