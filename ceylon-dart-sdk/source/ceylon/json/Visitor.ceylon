@@ -56,11 +56,9 @@ shared void visit(subject, visitor, sortedKeys=false) {
         visitor.onStartObject();
         
         value items = sortedKeys then subject else subject.sort(compareKeys);
-// FIXME Dart workaround
-//        for (key->child in items) {
-        for (entry in items) {
-            visitor.onKey(entry.key);
-            visit(entry.item, visitor);
+        for (key->child in items) {
+            visitor.onKey(key);
+            visit(child, visitor);
         }
         visitor.onEndObject();
     }
