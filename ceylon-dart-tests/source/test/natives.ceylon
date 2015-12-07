@@ -1,3 +1,4 @@
+/*
 shared class NativeBase(Integer a) {
     shared String base() => "Base ``a``";
 }
@@ -91,3 +92,4 @@ shared void testNativeClassesAndObjects() {
         ex.printStackTrace();
     }
 }
+*/
