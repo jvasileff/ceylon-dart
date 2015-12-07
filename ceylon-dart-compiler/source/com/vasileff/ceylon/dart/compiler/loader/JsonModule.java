@@ -17,6 +17,7 @@ public class JsonModule extends Module {
     private Map<String,Object> model;
     private boolean loaded = false;
 
+    @SuppressWarnings("unchecked")
     public void setModel(Map<String, Object> value) {
         if (model != null) {
             final String modName = (String)model.get("$mod-name");
@@ -37,7 +38,6 @@ public class JsonModule extends Module {
             int bits = (int)model.get("$mod-pa");
             setNativeBackends(JsonPackage.hasAnnotationBit(bits, "native") ? Backend.JavaScript.asSet() : Backends.ANY);
         }
-        @SuppressWarnings("unchecked")
         Map<String,Object> moduleAnns = (Map<String,Object>)model.get("$mod-anns");
         if (moduleAnns != null) {
             for (Map.Entry<String, Object> e : moduleAnns.entrySet()) {

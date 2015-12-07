@@ -72,6 +72,7 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
         setName(ModuleManager.splitModuleName(pkgname));
     }
 
+    @SuppressWarnings("unchecked")
     public void setModule(com.redhat.ceylon.model.typechecker.model.Module module) {
         if (module instanceof JsonModule && model == null) {
             model = ((JsonModule)module).getModelForPackage(getNameAsString());
@@ -86,7 +87,6 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
                     int bits = (int)model.remove("$pkg-pa");
                     setShared(hasAnnotationBit(bits, "shared"));
                 }
-                @SuppressWarnings("unchecked")
                 Map<String,Object> pkgAnns = (Map<String,Object>)model.remove("$pkg-anns");
                 if (pkgAnns != null) {
                     for (Map.Entry<String, Object> e : pkgAnns.entrySet()) {
@@ -1042,6 +1042,7 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
         return (bits & (1 << idx)) > 0;
     }
 
+    @SuppressWarnings("unchecked")
     private void setAnnotations(Declaration d, Integer bits, Map<String,Object> m) {
         if (bits != null) {
             d.setShared(hasAnnotationBit(bits, "shared"));
@@ -1079,17 +1080,16 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
     }
 
     /** Load a nested type that hasn't been loaded yet */
+    @SuppressWarnings("unchecked")
     private TypeDeclaration loadNestedType(final String fqn, List<TypeParameter> typeParams) {
         try{
         String[] path = fqn.split("\\.");
-        @SuppressWarnings("unchecked")
         Map<String,Object> typeMap = (Map<String,Object>)model.get(path[0]);
         if (typeMap.get(MetamodelGenerator.KEY_METATYPE) instanceof TypeDeclaration == false) {
             load(path[0], typeParams);
         }
         TypeDeclaration td = (TypeDeclaration)typeMap.get(MetamodelGenerator.KEY_METATYPE);
         for (int i = 1; i < path.length; i++) {
-            @SuppressWarnings("unchecked")
             Map<String,Object> subtypes = (Map<String,Object>)typeMap.get(MetamodelGenerator.KEY_INTERFACES);
             Map<String,Object> childMap = null;
             int type = 0;
