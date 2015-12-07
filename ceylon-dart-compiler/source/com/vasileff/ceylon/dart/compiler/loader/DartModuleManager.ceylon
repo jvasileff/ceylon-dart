@@ -27,9 +27,9 @@ import java.util {
     Arrays,
     JList=List
 }
-import com.vasileff.ceylon.dart.compiler.loader {
-    JsonModule,
-    JsonPackage
+
+import com.vasileff.ceylon.dart.compiler {
+    dartBackend
 }
 
 class DartModuleManager() extends ModuleManager() {

@@ -47,8 +47,11 @@ import java.util {
 import net.minidev.json {
     JSONValue
 }
-import com.vasileff.ceylon.dart.compiler.loader {
-    JsonModule
+
+import com.vasileff.ceylon.dart.compiler {
+    javaFile,
+    TypeHoles,
+    ReportableException
 }
 
 object reflection {

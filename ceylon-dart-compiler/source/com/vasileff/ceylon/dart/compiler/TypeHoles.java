@@ -1,8 +1,8 @@
 package com.vasileff.ceylon.dart.compiler;
 
-class TypeHoles {
+public class TypeHoles {
     @SuppressWarnings("unchecked")
-    static <T> T unsafeCast(Object o) {
+    public static <T> T unsafeCast(Object o) {
         return (T) o;
     }
 }

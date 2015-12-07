@@ -122,6 +122,9 @@ import java.util {
 import com.redhat.ceylon.compiler.js.loader {
     MetamodelVisitor
 }
+import com.vasileff.ceylon.dart.compiler.loader {
+    DartModuleManagerFactory
+}
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
 

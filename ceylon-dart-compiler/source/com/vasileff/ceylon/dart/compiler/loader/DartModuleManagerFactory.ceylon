@@ -11,6 +11,7 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
 
+shared
 class DartModuleManagerFactory() satisfies ModuleManagerFactory {
 
     shared actual
