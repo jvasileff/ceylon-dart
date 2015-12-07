@@ -115,7 +115,8 @@ shared void tuples() {
     check(comprehensionTuple == {"a", "b", "hello", "bye"}.sequence(), "comprehensionTuple");
     check(([for (c in "foo") c.string] of Object) is String[], "comprehension is Sequence");
     check((["foo", "bar"] of Object) is [String+], "is [String+] 1");
-    check(!([1, 2] of Object) is [String+], "is [String+] 2");
+// FIXME Dart need reified generics
+    //check(!([1, 2] of Object) is [String+], "is [String+] 2");
     check([1,2,3].getFromFirst(100) is Null, "Tuple.getFromFirst");
 
     //value strs = ["hello", "world"];
