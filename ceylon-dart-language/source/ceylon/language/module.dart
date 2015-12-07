@@ -421,6 +421,8 @@ class Float implements Number, Exponentiable {
   $dart$core.bool get undefined => _value.isNaN;
   $dart$core.bool get infinite => _value.isInfinite;
   $dart$core.bool get finite => _value.isFinite;
+  $dart$core.bool get strictlyPositive => !_value.isNaN && !_value.isNegative;
+  $dart$core.bool get strictlyNegative => !_value.isNaN && _value.isNegative;
 
   $dart$core.bool get positive => _value > 0.0;
   $dart$core.bool get negative => _value < 0.0;
