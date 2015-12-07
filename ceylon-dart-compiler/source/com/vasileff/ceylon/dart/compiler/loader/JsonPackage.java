@@ -143,6 +143,11 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
                     throw new IllegalArgumentException("Missing metatype from entry " + m + " under " + e.getKey());
                 } else if (m.get(MetamodelGenerator.KEY_METATYPE) instanceof ClassOrInterface) {
                     refineMembers((ClassOrInterface)m.get(MetamodelGenerator.KEY_METATYPE));
+                } else if (m.get(MetamodelGenerator.KEY_METATYPE) instanceof Value) {
+                    TypeDeclaration td = ((Value)m.get(MetamodelGenerator.KEY_METATYPE)).getTypeDeclaration();
+                    if (td != null) {
+                        refineMembers((ClassOrInterface)td);
+                    }
                 }
             }
         }

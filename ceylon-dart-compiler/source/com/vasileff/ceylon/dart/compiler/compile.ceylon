@@ -44,9 +44,6 @@ import com.redhat.ceylon.common {
     FileUtil,
     ModuleUtil
 }
-import com.redhat.ceylon.compiler.js.loader {
-    MetamodelVisitor
-}
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
 }
@@ -121,6 +118,9 @@ import java.util {
     EnumSet,
     JMap=Map,
     JList=List
+}
+import com.redhat.ceylon.compiler.js.loader {
+    MetamodelVisitor
 }
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.

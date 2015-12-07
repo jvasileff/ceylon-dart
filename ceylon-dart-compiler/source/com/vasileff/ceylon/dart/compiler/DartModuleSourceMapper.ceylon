@@ -13,9 +13,6 @@ import com.redhat.ceylon.cmr.api {
 import com.redhat.ceylon.common {
     ModuleUtil
 }
-import com.redhat.ceylon.compiler.js.loader {
-    JsonModule
-}
 import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
@@ -49,6 +46,9 @@ import java.util {
 
 import net.minidev.json {
     JSONValue
+}
+import com.vasileff.ceylon.dart.compiler.loader {
+    JsonModule
 }
 
 object reflection {

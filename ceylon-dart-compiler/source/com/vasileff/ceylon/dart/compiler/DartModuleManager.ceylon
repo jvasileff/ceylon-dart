@@ -5,10 +5,6 @@ import ceylon.interop.java {
 import com.redhat.ceylon.common {
     Backends
 }
-import com.redhat.ceylon.compiler.js.loader {
-    JsonModule,
-    JsonPackage
-}
 import com.redhat.ceylon.model.typechecker.model {
     Modules,
     Package,
@@ -30,6 +26,10 @@ import java.util {
     Collections,
     Arrays,
     JList=List
+}
+import com.vasileff.ceylon.dart.compiler.loader {
+    JsonModule,
+    JsonPackage
 }
 
 class DartModuleManager() extends ModuleManager() {
