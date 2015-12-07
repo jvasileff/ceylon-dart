@@ -1430,7 +1430,13 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformScaleOperation(ScaleOperation that)
-        =>  generateInvocationForBinaryOperation(that, "scale");
+        // the left and right operands are swapped compared to other binary operations
+        =>  generateInvocationFromName {
+                NodeInfo(that);
+                that.rightOperand;
+                "scale";
+                [that.leftOperand];
+            };
 
     shared actual
     DartExpression transformSpanOperation(SpanOperation that) {
