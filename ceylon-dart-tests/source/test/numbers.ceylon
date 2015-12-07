@@ -454,7 +454,7 @@ shared void numbers() {
     check(#ffff_ffff == 4294967295, "ffff_ffff");
     check($1111_1111 == 255, "1111_1111");
 
-    if (runtime.integerSize== 64) {
+    if (runtime.integerAddressableSize== 64) {
         check(#ff.not == #ffffffffffffff00, "~xff == xffffffffffffff00");
         check(box(#ff).not == #ffffffffffffff00, "~xff == xffffffffffffff00 boxed");
         check(0.not == #ffffffffffffffff, "~0 == xffffffffffffffff");
@@ -471,7 +471,7 @@ shared void numbers() {
                 "b1010101010101010101010101010101010101010101010101010101010101010 >>> 1 == b1101010101010101010101010101010101010101010101010101010101010101 boxed");
         check((-1).rightLogicalShift(1) == runtime.maxIntegerValue, "-1.rightLogicalShift(1) == MAXINT");
         check(box(-1).rightLogicalShift(1) == runtime.maxIntegerValue, "-1.rightLogicalShift(1) == MAXINT");
-    } else if (runtime.integerSize == 53) {
+    } else if (runtime.integerAddressableSize == 32) {
         check(#ff.not == -256, "~xff == -256");
         check(box(#ff).not == -256, "~xff == -256 boxed");
         check(0.not == -1, "~0 == -1");
