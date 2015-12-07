@@ -837,30 +837,32 @@ class StatementTransformer(CompilationContext ctx)
         value errorMessage
             =   assertionErrorMessage(info);
 
-        value [tempDefinition, conditionExpression, *replacements]
+        value [tempDefinition, conditionExpression, *variableTriples]
             =   switch (that)
                 case (is IsCondition)
                     generateIsConditionExpression(that, true)
                 case (is ExistsOrNonemptyCondition)
                     generateExistsOrNonemptyConditionExpression(that, true);
 
-        value replacement
-            =   replacements.first;
+        "The Dart declarations for the variables if they have not already been declared
+         as a class members."
+        value replacementAndNewDeclarations
+            =   variableTriples
+                .filter((triple)
+                    =>  !ctx.capturedInitializerDeclarations.contains(triple.declarationModel))
+                .map(VariableTriple.dartDeclaration);
 
-        "The Dart declaration for the replacement iff it has not already been declared
-         as a class member."
-        value replacementDartDeclaration
-            =   if (exists declaration = replacement?.declarationModel,
-                    !ctx.capturedInitializerDeclarations.contains(declaration))
-                then replacement?.dartDeclaration
-                else null;
+        "Assignments for replacements and destructurs"
+        value assignmentStatements
+            =   variableTriples
+                .flatMap(VariableTriple.dartAssignment)
+                .sequence();
 
-        value statements
-            =   [
-                    replacementDartDeclaration,
-                    tempDefinition,
+        value nonDeclarationStatements
+            =   concatenate {
+                    [tempDefinition].coalesced,
                     // if (!(x is T)) then throw new AssertionError(...)
-                    DartIfStatement {
+                    [DartIfStatement {
                         conditionExpression; // negated above
                         DartExpressionStatement {
                             DartThrowExpression {
@@ -881,19 +883,22 @@ class StatementTransformer(CompilationContext ctx)
                                 };
                             };
                         };
-                    },
-                    *(replacement?.dartAssignment else [])
-                ];
+                    }],
+                    assignmentStatements
+                };
 
         value result
-            =   if (tempDefinition exists) then
+            =   if (tempDefinition exists && !assignmentStatements.empty) then
                     // scope the temp variable in a block
-                    [
-                        statements[0], // the variable declaration
-                        DartBlock(statements[1...].coalesced.sequence())
-                    ].coalesced.sequence()
+                    concatenate {
+                        replacementAndNewDeclarations,
+                        [DartBlock(nonDeclarationStatements)]
+                    }
                  else
-                    statements.coalesced.sequence();
+                    concatenate {
+                        replacementAndNewDeclarations,
+                        nonDeclarationStatements
+                    };
 
         assert (nonempty result);
         return result;
