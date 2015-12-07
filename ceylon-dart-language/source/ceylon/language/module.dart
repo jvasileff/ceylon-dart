@@ -408,7 +408,9 @@ class Float implements Number, Exponentiable {
       return _value == other._value;
     }
     else if (other is Integer) {
-      return _value == other._value;
+      return other._value < Integer.twoFiftyThree &&
+          other._value > -Integer.twoFiftyThree &&
+          _value == other._value;
     }
     return false;
   }
@@ -428,14 +430,11 @@ class Float implements Number, Exponentiable {
   $dart$core.bool get negative => _value < 0.0;
   Float get fractionalPart => new Float(_value.remainder(1));
   Float get wholePart {
-    if (!_value.isFinite || _value == 0.0 ) {
+    $dart$core.double result = _value.truncateToDouble();
+    if (result == _value && result.sign == _value.sign) {
       return this;
     }
-    $dart$core.double result = _value.floorToDouble();
-    if (result == _value) {
-      return this;
-    }
-    return new Float(_value);
+    return new Float(result);
   }
 
   // Comparable
@@ -471,6 +470,8 @@ class Float implements Number, Exponentiable {
 
 class Integer implements Integral, Exponentiable, Binary {
   final $dart$core.int _value;
+
+  static $dart$core.int twoFiftyThree = 1<<53;
 
   Integer($dart$core.int this._value);
 
@@ -518,7 +519,9 @@ class Integer implements Integral, Exponentiable, Binary {
       return _value == other._value;
     }
     else if (other is Float) {
-      return _value == other._value;
+      return _value < twoFiftyThree
+          && _value > -twoFiftyThree
+          && _value == other._value;
     }
     return false;
   }
@@ -548,7 +551,7 @@ class Integer implements Integral, Exponentiable, Binary {
     return _value.toSigned(32) & (1<<index) != 0;
   }
 
-  Integer set([$dart$core.int index, $dart$core.bool bit]) {
+  Integer set([$dart$core.int index, $dart$core.bool bit = true]) {
     if (index < 0 || index > 31) {
       return new Integer(_value.toSigned(32));
     }
@@ -561,7 +564,7 @@ class Integer implements Integral, Exponentiable, Binary {
     }
   }
 
-  Integer flip([$dart$core.int index, $dart$core.bool bit]) {
+  Integer flip([$dart$core.int index]) {
     if (index < 0 || index > 31) {
       return new Integer(_value.toSigned(32));
     }

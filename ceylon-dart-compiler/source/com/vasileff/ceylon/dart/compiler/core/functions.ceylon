@@ -65,6 +65,13 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     keys,
     BaseExpressionInfo
 }
+import java.lang {
+    JDouble=Double { jparseDouble=parseDouble }
+}
+import com.vasileff.ceylon.dart.compiler.dartast {
+    DartPrefixExpression,
+    DartIntegerLiteral
+}
 
 void printNodeAsCode(Node node) {
     TCNode tcNode(Node node)
@@ -541,19 +548,18 @@ Integer?(Character) suffixExponent
             'P' -> 15,
             'm' -> -3,
             'u' -> -6,
+            'n' -> -9,
             'p' -> -12,
             'f' -> -15
         }.get;
 
 shared
-String parseCeylonInteger(String text) {
-
+DartIntegerLiteral | DartPrefixExpression parseCeylonInteger(String text) {
     "Text must not be empty."
     assert (exists first = text.first);
 
     "Text must not be empty."
     assert (exists last = text.last);
-
 
     "The first character must be a number, `$`, or `#`."
     assert (first in ['$', '#', *('0'..'9')]);
@@ -564,9 +570,10 @@ String parseCeylonInteger(String text) {
             case ('#') 16
             else 10;
 
-    value exponent = suffixExponent(last);
+    value exponent = if(radix == 10) then suffixExponent(last) else null;
 
     value start = if (radix == 10) then 0 else 1;
+
     value length = text.size - start - (if (exponent exists) then 1 else 0);
 
     "The text must be parsable as an integer."
@@ -574,18 +581,41 @@ String parseCeylonInteger(String text) {
 
     if (exists exponent) {
         if (exponent.positive) {
-            return result.timesInteger(10 ^ exponent).string;
+            return DartIntegerLiteral(result.timesInteger(10 ^ exponent).string);
         }
         else {
-            return result.divided(wholeNumber(10 ^ exponent.magnitude)).string;
+            return DartIntegerLiteral(
+                result.divided(wholeNumber(10 ^ exponent.magnitude)).string);
         }
     }
-    return result.string;
+
+    if (radix == 10) {
+        return DartIntegerLiteral(result.string);
+    }
+
+    value string64 = result.integer.string;
+    if (string64.startsWith("-")) {
+        return DartPrefixExpression("-", DartIntegerLiteral(string64[1...]));
+    }
+    return DartIntegerLiteral(string64);
 }
 
 shared
 String parseCeylonFloat(String text) {
     // TODO string manipulation instead; we lose precision on the roundtrip
-    assert (exists result = parseFloat(text.replace("_", "")));
+    //      for now, use Java's parseDouble for better results than parseFloat
+
+    "Text must not be empty."
+    assert (exists last = text.last);
+
+    value exponent = suffixExponent(last);
+
+    value length = text.size - (if (exponent exists) then 1 else 0);
+
+    value result = jparseDouble(text[0:length].replace("_", ""));
+
+    if (exists exponent) {
+        return (result * 10.0 ^ exponent).string;
+    }
     return result.string;
 }

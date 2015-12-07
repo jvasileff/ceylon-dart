@@ -594,7 +594,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformIntegerLiteral(IntegerLiteral that)
         =>  withBoxing(dScope(that),
                 ceylonTypes.integerType, null,
-                DartIntegerLiteral(parseCeylonInteger(that.text)));
+                parseCeylonInteger(that.text));
 
     shared actual
     DartExpression transformStringLiteral(StringLiteral that)
