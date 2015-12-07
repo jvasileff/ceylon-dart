@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ceylon compile-dart test --suppress-warning &&
+ceylon run-dart test
