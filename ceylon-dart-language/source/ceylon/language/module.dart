@@ -532,17 +532,15 @@ class Integer implements Integral, Exponentiable, Binary {
 
   // Binary
 
-  // FIXME fix bugs and simulate 32bits using `toSigned`
-
   // Treat as unsigned to match javascript's Unsigned Right Shift Operator >>>
   Integer rightLogicalShift([$dart$core.int shift])
-    => new Integer(((_value & 0xFFFFFFFF) >> (shift%32)).toUnsigned(32));
+    => new Integer(((_value & 0xFFFFFFFF) >> (shift & 0x1F)).toUnsigned(32));
 
   Integer leftLogicalShift([$dart$core.int shift])
-    => new Integer((_value << (shift%32)).toSigned(32));
+    => new Integer((_value << (shift & 0x1F)).toSigned(32));
 
   Integer rightArithmeticShift([$dart$core.int shift])
-    => new Integer((_value.toSigned(32) >> (shift%32)).toSigned(32));
+    => new Integer((_value.toSigned(32) >> (shift & 0x1F)).toSigned(32));
 
   $dart$core.bool get([$dart$core.int index]) {
     if (index < 0 || index > 31) {
@@ -553,7 +551,10 @@ class Integer implements Integral, Exponentiable, Binary {
 
   Integer set([$dart$core.int index, $dart$core.bool bit = true]) {
     if (index < 0 || index > 31) {
-      return new Integer(_value.toSigned(32));
+      // Match JS behavior, for now
+      // https://github.com/ceylon/ceylon/issues/5799
+      //return new Integer(_value.toSigned(32));
+      return this;
     }
     $dart$core.int mask = (1 << index).toSigned(32);
     if (bit) {
@@ -566,7 +567,10 @@ class Integer implements Integral, Exponentiable, Binary {
 
   Integer flip([$dart$core.int index]) {
     if (index < 0 || index > 31) {
-      return new Integer(_value.toSigned(32));
+      // Match JS behavior, for now
+      // https://github.com/ceylon/ceylon/issues/5799
+      //return new Integer(_value.toSigned(32));
+      return this;
     }
     $dart$core.int mask = (1 << index).toSigned(32);
     return new Integer(_value.toSigned(32) ^ mask);
@@ -583,7 +587,7 @@ class Integer implements Integral, Exponentiable, Binary {
   Integer xor([Integer other])
     =>  new Integer(_value.toSigned(32) ^ other._value.toSigned(32));
 
-  Integer get not => new Integer(~_value.toSigned(32));
+  Integer get not => new Integer((~_value).toSigned(32));
 
   // Enumerable
   Integer neighbour([$dart$core.int offset]) => new Integer(this._value + offset);
