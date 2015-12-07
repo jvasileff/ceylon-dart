@@ -426,8 +426,8 @@ class Float implements Number, Exponentiable {
 
   $dart$core.bool get positive => _value > 0.0;
   $dart$core.bool get negative => _value < 0.0;
-  $dart$core.Object get fractionalPart => new Float(_value.remainder(1));
-  $dart$core.Object get wholePart {
+  Float get fractionalPart => new Float(_value.remainder(1));
+  Float get wholePart {
     if (!_value.isFinite || _value == 0.0 ) {
       return this;
     }
@@ -617,8 +617,8 @@ class Integer implements Integral, Exponentiable, Binary {
 
   $dart$core.bool get positive => _value > 0;
   $dart$core.bool get negative => _value < 0;
-  $dart$core.Object get fractionalPart => new Integer(0);
-  $dart$core.Object get wholePart => this;
+  Integer get fractionalPart => new Integer(0);
+  Integer get wholePart => this;
 
   $dart$core.bool get even => _value % 2 == 0;
 
