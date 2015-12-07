@@ -1429,6 +1429,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is ComplementOperation) "complement");
 
     shared actual
+    // workaround https://github.com/ceylon/ceylon.ast/issues/106
+    DartExpression transformIntersectionOperation(IntersectionOperation that)
+        =>  transformSetOperation(that);
+
+    shared actual
     DartExpression transformScaleOperation(ScaleOperation that)
         // the left and right operands are swapped compared to other binary operations
         =>  generateInvocationFromName {
