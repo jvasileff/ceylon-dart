@@ -425,7 +425,16 @@ class Float implements Number, Exponentiable {
   $dart$core.bool get positive => _value > 0.0;
   $dart$core.bool get negative => _value < 0.0;
   $dart$core.Object get fractionalPart => new Float(_value.remainder(1));
-  $dart$core.Object get wholePart => new Integer(_value.floor());
+  $dart$core.Object get wholePart {
+    if (!_value.isFinite || _value == 0.0 ) {
+      return this;
+    }
+    $dart$core.double result = _value.floorToDouble();
+    if (result == _value) {
+      return this;
+    }
+    return new Float(_value);
+  }
 
   // Comparable
   Comparison compare([Float other])
