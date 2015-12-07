@@ -1360,7 +1360,7 @@ final $dart$core.Stopwatch $helper$stopwatch = (() {
 })();
 
 class system_ {
-const system_.$value$();
+
   $dart$core.int get milliseconds
       =>  new $dart$core.DateTime.now().millisecondsSinceEpoch;
 
@@ -1369,11 +1369,22 @@ const system_.$value$();
 
   $dart$core.String toString()
       =>  "Dart";
+
+  // TODO can we do better?
+  $dart$core.String get locale
+      =>  "en";
+
+  // TODO can we do better?
+  $dart$core.String get characterEncoding
+      =>  "UTF-8";
+
+  $dart$core.int timezoneOffset
+      =   (new $dart$core.DateTime.now()).timeZoneOffset.inMilliseconds;
 }
 
-const system = const system_.$value$();
+system_ system = new system_();
 
-const $package$system = system;
+system_ $package$system = system;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
