@@ -334,6 +334,10 @@ class BaseGenerator(CompilationContext ctx)
                 -> [ceylonTypes.floatType, "abs",
                     ceylonTypes.floatType,
                     dartFunction],
+            ceylonTypes.stringDeclaration.getMember("string", null, false)
+                -> [ceylonTypes.stringType, "toString",
+                    ceylonTypes.stringType,
+                    dartFunction],
             ceylonTypes.integerDeclaration.getMember("string", null, false)
                 -> [ceylonTypes.stringType, "toString",
                     ceylonTypes.integerType,
