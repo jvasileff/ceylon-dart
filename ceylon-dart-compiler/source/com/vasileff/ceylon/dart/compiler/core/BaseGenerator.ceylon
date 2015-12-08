@@ -50,7 +50,9 @@ import ceylon.interop.java {
     CeylonList,
     CeylonIterable
 }
-
+import java.util {
+    JList=List
+}
 import com.redhat.ceylon.model.typechecker.model {
     PackageModel=Package,
     FunctionModel=Function,
@@ -64,7 +66,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterModel=Parameter,
     DeclarationModel=Declaration,
     SetterModel=Setter,
-    ParameterListModel=ParameterList
+    ParameterListModel=ParameterList,
+    TypeParameterModel=TypeParameter,
+    SiteVariance
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -1728,85 +1732,173 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateIsExpression(
             DScope scope,
+            "Used to determine if expressionToCheck is native (i.e. int vs Integer)"
             TypeModel | TypeDetails typeToCheck,
+            "Used to determine if expressionToCheck is native (i.e. int vs Integer)"
             FunctionOrValueModel? declarationToCheck,
             DartExpression expressionToCheck,
             TypeModel isType) {
 
-        // TODO - Warn if non-denotable or if non-reified checks are not sufficient.
-        //      - Optimize away unecessary checks
+        TypeModel rawType(TypeModel isType) {
+            if (isType.union) {
+                value result = CeylonList(isType.caseTypes).reversed
+                    .map(rawType)
+                    .reduce(ceylonTypes.unionType);
 
-        if (isType.union) {
-            value result = CeylonList(isType.caseTypes).reversed
-                .map((isTypeComponent)
-                    =>  generateIsExpression {
-                            scope;
-                            typeToCheck;
-                            declarationToCheck;
-                            expressionToCheck;
-                            isTypeComponent;
-                        })
-                .reduce((DartExpression partial, c) =>
-                    DartBinaryExpression(c, "||", partial));
-
-            assert (exists result);
-            return result;
-        }
-        else if (isType.intersection) {
-            value result = CeylonList(isType.satisfiedTypes).reversed
-                .map((isTypeComponent)
-                    =>  generateIsExpression {
-                            scope;
-                            typeToCheck;
-                            declarationToCheck;
-                            expressionToCheck;
-                            isTypeComponent;
-                        })
-                .reduce((DartExpression partial, c)
-                    =>  DartBinaryExpression(c, "&&", partial));
-
-            assert (exists result);
-            return result;
-        }
-        // Non-denotable types we can handle
-        else if (ceylonTypes.isCeylonNull(isType)) {
-            return
-            DartBinaryExpression {
-                DartNullLiteral();
-                "==";
-                expressionToCheck;
-            };
-        }
-        else if (ceylonTypes.isCeylonNothing(isType)) {
-            return DartBooleanLiteral(false);
-        }
-        else if (!dartTypes.denotable(isType)) {
-            // This isn't good! But no alternative w/o reified generics
-            // TODO check satisfied types && isType.isSubtypeOf(ceylonTypes.nullType)
-            if (isType.isSubtypeOf(ceylonTypes.objectType)) {
-                return
-                DartBinaryExpression {
-                    expressionToCheck;
-                    "!=";
-                    DartNullLiteral();
-                };
+                assert (exists result);
+                return result;
+            }
+            else if (isType.intersection) {
+                value result = CeylonList(isType.caseTypes).reversed
+                    .map(rawType)
+                    .reduce(ceylonTypes.intersectionType);
+                assert (exists result);
+                return result;
+            }
+            // Non-denotable types we can handle
+            else if (ceylonTypes.isCeylonNull(isType)) {
+                return isType;
+            }
+            else if (ceylonTypes.isCeylonNothing(isType)) {
+                return isType;
+            }
+            else if (!dartTypes.denotable(isType)) {
+                // a type parameter or something we can't handle... do our best
+                if (isType.isSubtypeOf(ceylonTypes.objectType)) {
+                    return ceylonTypes.objectType;
+                }
+                return ceylonTypes.anythingType;
             }
             else {
-                return DartBooleanLiteral(true);
+                // if generic, rebuild with least precise type arguments
+                value qualifyingType
+                    =   if (exists qt = isType.qualifyingType)
+                        then rawType(qt)
+                        else null;
+
+                value declaration = isType.declaration;
+
+                // generic, or possibly generic qualifying type?
+                if (qualifyingType exists || !declaration.typeParameters.empty) {
+                    function satisfiedTypesToRaw
+                            (JList<TypeModel>? types)
+                        =>  if (exists types) then
+                                CeylonList(types).reversed
+                                    .map(rawType)
+                                    .reduce(ceylonTypes.unionType)
+                            else
+                                null;
+
+                    value parameters
+                        =   CeylonList(declaration.typeParameters);
+
+                    value arguments
+                        =   javaList(parameters.map((p)
+                            =>  if (p.contravariant) then
+                                    ceylonTypes.nothingType
+                                else if (p.isSelfType()) then
+                                    // FIXME TODO what should we do here?
+                                    ceylonTypes.anythingType
+                                else
+                                    (satisfiedTypesToRaw(p.satisfiedTypes)
+                                        else ceylonTypes.anythingType)));
+
+                    value rawTypeModel
+                        =   declaration.appliedType(qualifyingType, arguments);
+
+                    parameters.filter(TypeParameterModel.invariant).each((p)
+                        =>  rawTypeModel.setVariance(p, SiteVariance.\iOUT));
+
+                    return rawTypeModel;
+                }
+                return isType;
             }
         }
-        else {
-            return
-            DartIsExpression {
-                expressionToCheck;
-                dartTypes.dartTypeNameForIsTest {
-                    scope;
-                    typeToCheck;
-                    declarationToCheck;
-                    isType;
+
+        DartExpression generateExpression(TypeModel isType) {
+            // TODO Optimize away unecessary checks?
+            if (isType.union) {
+                value result = CeylonList(isType.caseTypes).reversed
+                    .map(generateExpression)
+                    .reduce((DartExpression partial, c) =>
+                        DartBinaryExpression(c, "||", partial));
+
+                assert (exists result);
+                return result;
+            }
+            else if (isType.intersection) {
+                value result = CeylonList(isType.satisfiedTypes).reversed
+                    .map(generateExpression)
+                    .reduce((DartExpression partial, c)
+                        =>  DartBinaryExpression(c, "&&", partial));
+
+                assert (exists result);
+                return result;
+            }
+            // Non-denotable types we can handle
+            else if (ceylonTypes.isCeylonNull(isType)) {
+                return
+                DartBinaryExpression {
+                    DartNullLiteral();
+                    "==";
+                    expressionToCheck;
                 };
-            };
+            }
+            else if (ceylonTypes.isCeylonNothing(isType)) {
+                return DartBooleanLiteral(false);
+            }
+            else if (!dartTypes.denotable(isType)) {
+                // This isn't good! But no alternative w/o reified generics
+                // TODO check satisfied types && isType.isSubtypeOf(ceylonTypes.nullType)
+                if (isType.isSubtypeOf(ceylonTypes.objectType)) {
+                    return
+                    DartBinaryExpression {
+                        expressionToCheck;
+                        "!=";
+                        DartNullLiteral();
+                    };
+                }
+                else {
+                    return DartBooleanLiteral(true);
+                }
+            }
+            else {
+                return
+                DartIsExpression {
+                    expressionToCheck;
+                    dartTypes.dartTypeNameForIsTest {
+                        scope;
+                        typeToCheck;
+                        declarationToCheck;
+                        isType;
+                    };
+                };
+            }
         }
+
+        value resolvedIsType
+            =   isType.resolveAliases();
+
+        value typeModelToCheck
+            =   switch(typeToCheck)
+                case (is TypeModel) typeToCheck
+                case (is TypeDetails) typeToCheck.type;
+
+        value desiredResultType
+            =   ceylonTypes.intersectionType(typeModelToCheck, resolvedIsType);
+
+        value actualResultType
+            =   ceylonTypes.intersectionType(typeModelToCheck, rawType(resolvedIsType));
+
+        if (!actualResultType.isSubtypeOf(desiredResultType)) {
+            addWarning(scope, "unsoundTypeTest",
+                "**unsound type test** reified generics not yet implemented; 'is' test \
+                 may produce incorrect results; the expected result type \
+                 '``desiredResultType.asString()``' is a subtype of the effective result \
+                 type '``actualResultType.asString()``'.");
+        }
+
+        return generateExpression(resolvedIsType);
     }
 
     "Generate a dart *declaration* for a [[ValueDeclaration]] or [[ValueDefinition]]. The

@@ -490,6 +490,16 @@ T&Object assertExists<T>(T item, String? message = null) {
 }
 
 shared
+void addWarning(Node|NodeInfo|DScope node, String warningName, String message) {
+    value info
+        =   switch (node)
+            case (is Node) NodeInfo(node)
+            case (is NodeInfo) node
+            else node.nodeInfo;
+    info.addWarning(warningName, message);
+}
+
+shared
 void addError(Node|NodeInfo|DScope node, String message) {
     value info
         =   switch (node)

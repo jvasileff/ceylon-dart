@@ -165,7 +165,7 @@ class StatementTransformer(CompilationContext ctx)
                     return
                     DartIfStatement {
                         generateIsExpression {
-                            info;
+                            dScope(caseItem);
                             switchedType;
                             switchedDeclaration;
                             switchedVariable;

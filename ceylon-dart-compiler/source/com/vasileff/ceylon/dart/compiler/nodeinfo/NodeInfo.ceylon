@@ -116,6 +116,9 @@ import com.vasileff.ceylon.dart.compiler.core {
 import org.antlr.runtime {
     Token
 }
+import com.redhat.ceylon.compiler.typechecker.analyzer {
+    UsageWarning
+}
 
 shared
 class NodeInfo(Node astNode) satisfies DScope {
@@ -151,6 +154,10 @@ class NodeInfo(Node astNode) satisfies DScope {
 
     shared void addUnexpectedError(String string)
         =>  tcNode.addUnexpectedError(string, dartBackend);
+
+    // TODO we're supposed to use java enums and tcNode.addUsageWarning I guess
+    shared void addWarning(String warningName, String message)
+        =>  tcNode.addError(UsageWarning(tcNode, message, warningName, dartBackend));
 }
 
 shared

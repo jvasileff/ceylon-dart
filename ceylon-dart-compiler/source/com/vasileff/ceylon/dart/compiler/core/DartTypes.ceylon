@@ -536,17 +536,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             DScope scope,
             TypeModel | TypeDetails typeToCheck,
             FunctionOrValueModel? declarationToCheck,
-            TypeModel | TypeDetails isType)
+            TypeModel isType)
         =>  dartTypeNameForDartModel {
                 scope;
-                if (is TypeDetails isType) then
-                    dartTypeModel {
-                        isType.type;
-                        isType.erasedToNative
-                            && native(isType.type);
-                        false;
-                    }
-                else if (is TypeDetails typeToCheck) then
+                if (is TypeDetails typeToCheck) then
                     dartTypeModel {
                         isType;
                         typeToCheck.erasedToNative
