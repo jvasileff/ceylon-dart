@@ -48,7 +48,6 @@ import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
 }
 import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning,
     ModuleSourceMapper
 }
 import com.redhat.ceylon.compiler.typechecker.context {
@@ -350,8 +349,6 @@ shared
     suppressedWarnings.addAll(javaList(suppressWarning));
     value warningSuppressionVisitor = WarningSuppressionVisitor<Warning>(
                 javaClass<Warning>(), suppressedWarnings);
-    phasedUnits.map(PhasedUnit.compilationUnit).each((cu)
-        =>  cu.visit(warningSuppressionVisitor));
 
     // exit early if errors exist
     value errorVisitor = ErrorCollectingVisitor2();
@@ -374,6 +371,9 @@ shared
         }
         else {
             // otherwise, print all the errors
+            phasedUnits.map(PhasedUnit.compilationUnit).each((cu)
+                =>  cu.visit(warningSuppressionVisitor));
+
             printErrors {
                 (String s) => standardErrorWriter.print(s);
                 true; true;
@@ -644,6 +644,11 @@ shared
         process.writeErrorLine("Dart compiler creation: " + ((t3-t2)/10^6).string);
         process.writeErrorLine("Dart compilation:       " + ((t4-t3)/10^6).string);
     }
+
+    // suppress warnings *after* generating Dart code since Dart backend
+    // may add warnings.
+    phasedUnits.map(PhasedUnit.compilationUnit).each((cu)
+        =>  cu.visit(warningSuppressionVisitor));
 
     // print errors last, to make them easy to find
     printErrors {

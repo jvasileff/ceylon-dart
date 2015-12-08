@@ -57,7 +57,8 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
-    DScope
+    DScope,
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -490,13 +491,13 @@ T&Object assertExists<T>(T item, String? message = null) {
 }
 
 shared
-void addWarning(Node|NodeInfo|DScope node, String warningName, String message) {
+void addWarning(Node|NodeInfo|DScope node, Warning warning, String message) {
     value info
         =   switch (node)
             case (is Node) NodeInfo(node)
             case (is NodeInfo) node
             else node.nodeInfo;
-    info.addWarning(warningName, message);
+    info.addWarning(warning, message);
 }
 
 shared

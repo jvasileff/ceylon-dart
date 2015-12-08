@@ -10,5 +10,5 @@ module com.vasileff.ceylon.dart.cli "1.2.0-DP2-SNAPSHOT" {
     shared import com.redhat.ceylon.typechecker "1.2.0";
     shared import "com.redhat.ceylon.module-resolver" "1.2.0";
 
-    import com.vasileff.ceylon.dart.compiler "1.2.0-DP2-SNAPSHOT";
+    shared import com.vasileff.ceylon.dart.compiler "1.2.0-DP2-SNAPSHOT";
 }

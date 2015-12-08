@@ -71,7 +71,8 @@ import com.redhat.ceylon.model.typechecker.model {
     SiteVariance
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
@@ -1891,7 +1892,7 @@ class BaseGenerator(CompilationContext ctx)
             =   ceylonTypes.intersectionType(typeModelToCheck, rawType(resolvedIsType));
 
         if (!actualResultType.isSubtypeOf(desiredResultType)) {
-            addWarning(scope, "unsoundTypeTest",
+            addWarning(scope, Warning.unsoundTypeTest,
                 "**unsound type test** reified generics not yet implemented; 'is' test \
                  may produce incorrect results; the expected result type \
                  '``desiredResultType.asString()``' is a subtype of the effective result \

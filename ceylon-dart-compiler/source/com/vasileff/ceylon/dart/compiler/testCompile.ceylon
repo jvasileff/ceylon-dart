@@ -14,9 +14,6 @@ import com.redhat.ceylon.cmr.ceylon {
 import com.redhat.ceylon.common.tools {
     SourceArgumentsResolver
 }
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning
-}
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
 }

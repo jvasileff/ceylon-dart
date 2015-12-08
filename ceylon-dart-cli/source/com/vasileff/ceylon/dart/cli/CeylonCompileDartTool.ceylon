@@ -26,14 +26,12 @@ import com.redhat.ceylon.common.tools {
     SourceArgumentsResolver,
     CeylonToolLoader
 }
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    Warning
-}
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
     compileDart,
     CompilationStatus,
-    ReportableException
+    ReportableException,
+    Warning
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -84,7 +82,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `suppressedAlready`, `suppressesNothing`,
          `unknownWarning`, `ambiguousAnnotation`,
          `similarModule`, `importsOtherJdk`,
-         `javaAnnotationElement`, `syntaxDeprecation`.";
+         `javaAnnotationElement`, `syntaxDeprecation`,
+         `unsoundTypeTest`.";
     }
     EnumSet<Warning> suppressWarning = EnumSet.noneOf(javaClass<Warning>());
 
