@@ -1750,7 +1750,7 @@ class BaseGenerator(CompilationContext ctx)
                 return result;
             }
             else if (isType.intersection) {
-                value result = CeylonList(isType.caseTypes).reversed
+                value result = CeylonList(isType.satisfiedTypes).reversed
                     .map(rawType)
                     .reduce(ceylonTypes.intersectionType);
                 assert (exists result);
