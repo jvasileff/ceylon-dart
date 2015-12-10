@@ -947,6 +947,11 @@ class StatementTransformer(CompilationContext ctx)
         // an interop exception type that wraps Anything (but generic!) that can be
         // caught, consistent with Ceylon's rules. We would need to unwrap on throw.
 
+        if (that.tryClause.resources exists) {
+            addError(that, "try with resources not yet supported.");
+            return [];
+        }
+
         value dartCatchClause
             =   switch (catchClauses = that.catchClauses)
                 case (is Empty) null
