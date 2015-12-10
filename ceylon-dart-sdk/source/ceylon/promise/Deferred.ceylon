@@ -68,13 +68,12 @@ shared class Deferred<Value>(context = globalExecutionContext)
               variable Anything() task 
                     = () {
                   Result t;
-// FIXME Dart workaround
-//                  try {
+                  try {
                       t = on(val);
-//                  } catch (Throwable e) {
-//                      deferred.reject(e);
-//                      return;
-//                  }
+                  } catch (Throwable e) {
+                      deferred.reject(e);
+                      return;
+                  }
                   deferred.fulfill(t);
               };
               
@@ -121,13 +120,12 @@ shared class Deferred<Value>(context = globalExecutionContext)
               
                 variable Anything() task = void () {
                     Promise<Result> t;
-// FIXME Dart workaround
-//                    try {
+                    try {
                         t = on(val);
-//                    } catch (Throwable e) {
-//                        deferred.reject(e);
-//                        return;
-//                    }
+                    } catch (Throwable e) {
+                        deferred.reject(e);
+                        return;
+                    }
                     deferred.fulfill(t);
                 };
               
