@@ -359,17 +359,23 @@ class Character implements Comparable, Enumerable {
 // Exception.dart
 //
 
-class Exception extends Throwable {
-  Exception.$(
-      $dart$core.String message,
-      Throwable cause)
-      : super(message, cause);
-
-  Exception([
-      $dart$core.String message = dart$default,
-      Throwable cause = dart$default]) : this.$(
-          $dart$core.identical(message, dart$default) ? null : message,
-          $dart$core.identical(cause, dart$default) ? null : cause);
+class Exception  extends Throwable {
+    Exception([$dart$core.Object description = dart$default, $dart$core.Object _$cause = dart$default]) : this.$s((() {
+        if ($dart$core.identical(description, dart$default)) {
+            description = null;
+        }
+        if ($dart$core.identical(_$cause, dart$default)) {
+            _$cause = null;
+        }
+        return [description, _$cause];
+    })());
+    Exception.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+    Exception.$w([$dart$core.String description, Throwable _$cause]) : super(description, _$cause) {
+        this.description = description;
+        this._$cause = _$cause;
+    }
+    $dart$core.String description;
+    Throwable _$cause;
 }
 
 //

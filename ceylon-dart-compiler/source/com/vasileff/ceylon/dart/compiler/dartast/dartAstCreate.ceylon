@@ -98,3 +98,15 @@ DartExpression createExpressionEvaluationWithSetup(
                     }]
                 };
             };
+
+shared
+DartIfStatement createIfStatement
+        ([[DartExpression, DartBlock]+] parts, DartBlock? finalElse = null)
+    =>  DartIfStatement {
+            parts.first[0];
+            parts.first[1];
+            if (nonempty rest = parts.rest)
+            then createIfStatement(rest, finalElse)
+            else finalElse;
+        };
+

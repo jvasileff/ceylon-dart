@@ -40,7 +40,9 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicModifier,
     DynamicValue,
-    Destructure
+    Destructure,
+    TryCatchFinally,
+    Type
 }
 import ceylon.collection {
     LinkedList
@@ -73,7 +75,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPrefixExpression,
     DartStatement,
     DartContinueStatement,
-    DartNullLiteral
+    DartNullLiteral,
+    DartTryStatement,
+    DartCatchClause,
+    DartRethrowExpression,
+    createIfStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -84,7 +90,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
-    ExpressionInfo
+    ExpressionInfo,
+    UnspecifiedVariableInfo
 }
 
 import org.antlr.runtime {
@@ -933,6 +940,89 @@ class StatementTransformer(CompilationContext ctx)
                         };
                     };
                 }];
+
+    shared actual
+    DartStatement[] transformTryCatchFinally(TryCatchFinally that) {
+        // Idea: Since Dart allows non-exception objects to be thrown, we could have
+        // an interop exception type that wraps Anything (but generic!) that can be
+        // caught, consistent with Ceylon's rules. We would need to unwrap on throw.
+
+        value dartCatchClause
+            =   switch (catchClauses = that.catchClauses)
+                case (is Empty) null
+                else let (exceptionVariable = DartSimpleIdentifier(
+                                dartTypes.createTempNameCustom("e")))
+                    DartCatchClause {
+                        null;
+                        exceptionVariable;
+                        null;
+                        DartBlock {
+                            [createIfStatement {
+                                catchClauses.collect { (clause) =>
+                                    let (variableInfo = UnspecifiedVariableInfo
+                                            (clause.variable),
+                                        typeInfo = TypeInfo(asserted<Type>
+                                            (clause.variable.type)))
+                                    [generateIsExpression {
+                                        typeInfo;
+                                        // Could be `Anything`, since Dart allows non
+                                        // Exception objects to be thrown
+                                        ceylonTypes.anythingType;
+                                        null;
+                                        exceptionVariable;
+                                        typeInfo.typeModel;
+                                    },
+                                    DartBlock {
+                                        // really need a convenience fn for this...
+                                        [DartVariableDeclarationStatement {
+                                            DartVariableDeclarationList {
+                                                null;
+                                                dartTypes.dartTypeNameForDeclaration {
+                                                    variableInfo;
+                                                    variableInfo.declarationModel;
+                                                };
+                                                [DartVariableDeclaration {
+                                                    DartSimpleIdentifier {
+                                                        dartTypes.getName {
+                                                            variableInfo.declarationModel;
+                                                        };
+                                                    };
+                                                    withLhs {
+                                                        null;
+                                                        variableInfo.declarationModel;
+                                                        () => withBoxing {
+                                                            variableInfo;
+                                                            // Typed as `Anything` as
+                                                            // noted above.
+                                                            ceylonTypes.anythingType;
+                                                            null;
+                                                            exceptionVariable;
+                                                        };
+                                                    };
+                                                }];
+                                            };
+                                        },
+                                        *transformBlock(clause.block).first.statements];
+                                    }];
+                                };
+                                DartBlock {
+                                    [DartExpressionStatement {
+                                        DartRethrowExpression.instance;
+                                    }];
+                                };
+                            }];
+                        };
+                    };
+
+        return
+        [DartTryStatement {
+            transformBlock(that.tryClause.block).first;
+            emptyOrSingleton(dartCatchClause);
+            if (exists finallyBlock = that.finallyClause?.block)
+            then transformBlock(finallyBlock).first
+            else null;
+        }];
+    }
 
     shared actual default
     [] transformNode(Node that) {

@@ -1257,6 +1257,67 @@ class DartThrowExpression(expression)
     }
 }
 
+"A rethrow expression."
+shared
+class DartRethrowExpression
+        extends DartExpression {
+
+    shared new instance extends DartExpression() {}
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("rethrow");
+    }
+}
+
+"A catch clause within a try statement."
+shared
+class DartCatchClause(exceptionType, exceptionParameter, stackTraceParameter, block)
+        extends DartStatement() {
+    shared DartTypeName? exceptionType;
+    shared DartSimpleIdentifier exceptionParameter;
+    shared DartSimpleIdentifier? stackTraceParameter;
+    shared DartBlock block;
+
+    shared actual
+    void write(CodeWriter writer) {
+        if (exists exceptionType) {
+            writer.write(" on ");
+            exceptionType.write(writer);
+        }
+        writer.write(" catch (");
+        exceptionParameter.write(writer);
+        if (exists stackTraceParameter) {
+            writer.write(", ");
+            stackTraceParameter.write(writer);
+        }
+        writer.write(") ");
+        block.write(writer);
+    }
+}
+
+"A try statement"
+shared
+class DartTryStatement(block, catchClauses, finallyBlock=null)
+        extends DartStatement() {
+    shared DartBlock block;
+    shared [DartCatchClause*] catchClauses;
+    shared DartBlock? finallyBlock;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("try ");
+        block.write(writer);
+        catchClauses.each((cc) => cc.write(writer));
+        if (exists finallyBlock) {
+            writer.write(" finally ");
+            finallyBlock.write(writer);
+        }
+    }
+}
+
 "A parenthesized expression."
 shared
 class DartParenthesizedExpression(expression)
