@@ -1084,12 +1084,44 @@ class ExpressionTransformer(CompilationContext ctx)
         switch (subscript = that.subscript)
         case (is KeySubscript) {
             if (ceylonTypes.isCeylonList(ExpressionInfo(that.primary).typeModel)) {
+                // The extra withBoxing/withLhs combo below is important. Here's why:
+                //
+                // The return type of the `getFromFirst` invocation may be something like
+                // `Integer | Float | Null` because `getFromFirst` is a method of
+                // iterable, and doesn't account for the type of the element at a
+                // *particular* index as the typechecker does (the typechecker, through
+                // magic, has better type info that the method's return type would
+                // indicate.)
+                //
+                // Now, if `Integer` is the type of the expression per the typechecker,
+                // then it is a candidate for widening/coercion to `Float`. *But*, for
+                // this to work, our coercion machinery must see a `Integer`-to-`Float`
+                // boxing/casting; an `Integer|Float`-to-`Float` boxing, for example, will
+                // not trigger a coercion.
+                //
+                // So we must *first* box/cast to `Integer` (or whatever the the
+                // type should be, per the typechecker), and then box/cast to whatever
+                // the context lhs is. The second boxing will then have full information
+                // to perform whatever coercions or processing is necessary.
+
+                "The expression type, which may be more specific that the return type
+                 of `getFromFirst`, due to typechecker magic."
+                value preciseType
+                    =   ExpressionInfo(that).typeModel;
+
                 return
-                generateInvocationFromName {
+                withBoxingNonNative {
                     dScope(that);
-                    that.primary;
-                    "getFromFirst";
-                    [subscript.key];
+                    preciseType;
+                    withLhsNonNative {
+                        preciseType;
+                        () => generateInvocationFromName {
+                            dScope(that);
+                            that.primary;
+                            "getFromFirst";
+                            [subscript.key];
+                        };
+                    };
                 };
             }
             else {
