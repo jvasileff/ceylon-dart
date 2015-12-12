@@ -567,7 +567,11 @@ class ClassMemberTransformer(CompilationContext ctx)
         // Declare class members for new and replacement values
         value capturedVariableTriples
             =   that.conditions.conditions
-                    .narrow<IsCondition | ExistsOrNonemptyCondition>()
+                    .map((c)
+                        =>  if (is IsCondition | ExistsOrNonemptyCondition c)
+                            then c
+                            else null)
+                    .coalesced
                     .map(generateConditionExpression)
                     .flatMap((conditionTuple) => conditionTuple[2...])
                     .filter(compose(ctx.capturedInitializerDeclarations.contains,

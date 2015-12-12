@@ -534,23 +534,33 @@ class TopLevelVisitor(CompilationContext ctx)
                     extendedType;
                     parameters?.parameters else [];
                 }
-                else classBody.content.narrow<ConstructorDefinition>().flatMap {
-                    (constructor) => generateDartConstructors {
-                        scope;
-                        classModel;
-                        classBody;
-                        constructor.extendedType;
-                        constructor.parameters.parameters;
-                        constructor;
-                    };
-                }.sequence();
+                else classBody.content
+                    .map((node)
+                        =>  if (is ConstructorDefinition node)
+                            then node
+                            else null)
+                    .coalesced
+                    .flatMap {
+                        (constructor) => generateDartConstructors {
+                            scope;
+                            classModel;
+                            classBody;
+                            constructor.extendedType;
+                            constructor.parameters.parameters;
+                            constructor;
+                        };
+                    }.sequence();
 
         "Class members. Statements (aside from Specification and Assertion statements) do
          not introduce members and are therefore not supported by
          [[ClassMemberTransformer]]."
         value members
             =   classBody.children
-                    .narrow<Declaration|Specification|Assertion>()
+                    .map((node)
+                        =>  if (is Declaration|Specification|Assertion node)
+                            then node
+                            else null)
+                    .coalesced
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
 
@@ -560,7 +570,11 @@ class TopLevelVisitor(CompilationContext ctx)
             // Shouldn't there be a better way?
             =   supertypeDeclarations(classModel)
                     .flatMap((d) => CeylonList(d.members))
-                    .narrow<FunctionOrValueModel>()
+                    .map((declaration)
+                        =>  if (is FunctionOrValueModel declaration)
+                            then declaration
+                            else null)
+                    .coalesced
                     .filter(FunctionOrValueModel.shared)
                     .map(curry(mostRefined)(classModel))
                     .distinct
@@ -736,7 +750,10 @@ class TopLevelVisitor(CompilationContext ctx)
                                 [createExpressionEvaluationWithSetup {
                                     generateDefaultValueAssignments {
                                         scope;
-                                        parameters.narrow<DefaultedParameter>();
+                                        parameters.map((parameter)
+                                            =>  if (is DefaultedParameter parameter)
+                                                then parameter
+                                                else null).coalesced;
                                     };
                                     DartListLiteral {
                                         false;

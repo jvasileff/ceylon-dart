@@ -2644,8 +2644,12 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
 
-        value ifStatement = generateIf(
-                that.children.rest.narrow<CaseExpression|Expression>());
+        value ifStatement
+            =   generateIf {
+                    for (node in that.children.rest)
+                        if (is CaseExpression | Expression node)
+                            node
+                };
 
         return
         DartFunctionExpressionInvocation {

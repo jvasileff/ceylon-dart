@@ -60,7 +60,11 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
             // A bit slow, but should produce good results.
             value declarations
                 =   that.conditions.conditions
-                        .narrow<IsCondition | ExistsOrNonemptyCondition>()
+                        .map((condition)
+                            =>  if (is IsCondition | ExistsOrNonemptyCondition condition)
+                                then condition
+                                else null)
+                        .coalesced
                         .map(ctx.statementTransformer.generateConditionExpression)
                         .flatMap((conditionTuple) => conditionTuple[2...])
                         .map(VariableTriple.declarationModel);

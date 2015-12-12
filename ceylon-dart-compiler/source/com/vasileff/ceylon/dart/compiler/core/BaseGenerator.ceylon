@@ -2643,7 +2643,8 @@ class BaseGenerator(CompilationContext ctx)
             //Defaulted Parameters:
             //If any exist, use a block (not lazy specifier)
             //At start of block, assign values as necessary
-            value defaultedParameters = list.parameters.narrow<DefaultedParameter>();
+            value defaultedParameters
+                =   { for (p in list.parameters) if (is DefaultedParameter p) p };
 
             DartFunctionBody body;
             if (defaultedParameters.empty && !isVoid) {
