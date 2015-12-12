@@ -81,7 +81,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartIntegerLiteral,
     DartIndexExpression,
     DartListLiteral,
-    createExpressionEvaluationWithSetup
+    createExpressionEvaluationWithSetup,
+    DartExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyInterfaceInfo,
@@ -463,6 +464,11 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        function assertedExpression(DartExpression? e) {
+            assert (exists e);
+            return e;
+        }
+
         "$outer getters for $outers that may be required by satisfied interfaces.
          Access through *our* outer."
         value outerForwarders
@@ -484,7 +490,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         null;
                         DartExpressionFunctionBody {
                             false;
-                            assertExists {
+                            assertedExpression {
                                 dartTypes.expressionToThisOrOuterStripThis {
                                     dartTypes.ancestorChainToOuterInheritingDeclaration {
                                         classModel;
@@ -558,12 +564,13 @@ class TopLevelVisitor(CompilationContext ctx)
                     .filter(FunctionOrValueModel.shared)
                     .map(curry(mostRefined)(classModel))
                     .distinct
-                    .map((m) => assertExists(m,
-                        "Surely a most-refined implementation exists."))
+                    .map((m) {
+                        "Surely a most-refined implementation exists."
+                        assert (exists m);
+                        return m;
+                    })
                     .filter((m) => container(m) is InterfaceModel)
                     .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
-                    .map((m) => asserted<FunctionOrValueModel>(m,
-                        "Most refined function or value should be a function or value."))
                     .filter(not(FunctionOrValueModel.formal))
                     .sequence();
 

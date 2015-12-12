@@ -252,13 +252,18 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartStatement+] transformIfElse(IfElse that) {
+        function assertBooleanCondition(Anything a) {
+            assert (is BooleanCondition a);
+            return a;
+        }
+
         if (that.ifClause.conditions.conditions.every((c) => c is BooleanCondition)) {
             // simple case, no variable declarations
             return
             [DartIfStatement {
                 generateBooleanDartCondition {
                     that.ifClause.conditions.conditions.map {
-                        asserted<BooleanCondition>;
+                        assertBooleanCondition;
                     };
                 };
                 transformBlock(that.ifClause.block).first;
@@ -375,7 +380,11 @@ class StatementTransformer(CompilationContext ctx)
             [DartWhileStatement {
                 generateBooleanDartCondition {
                     that.conditions.conditions.map {
-                        asserted<BooleanCondition>;
+                        (condition) {
+                            "All conditions will be BooleanConditions per prior check"
+                            assert (is BooleanCondition condition);
+                            return condition;
+                        };
                     };
                 };
                 statementTransformer.transformBlock(that.block).first;
@@ -952,6 +961,11 @@ class StatementTransformer(CompilationContext ctx)
             return [];
         }
 
+        function assertType(Anything a) {
+            assert (is Type a);
+            return a;
+        }
+
         value dartCatchClause
             =   switch (catchClauses = that.catchClauses)
                 case (is Empty) null
@@ -966,7 +980,7 @@ class StatementTransformer(CompilationContext ctx)
                                 catchClauses.collect { (clause) =>
                                     let (variableInfo = UnspecifiedVariableInfo
                                             (clause.variable),
-                                        typeInfo = TypeInfo(asserted<Type>
+                                        typeInfo = TypeInfo(assertType
                                             (clause.variable.type)))
                                     [generateIsExpression {
                                         typeInfo;

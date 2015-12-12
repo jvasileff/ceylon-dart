@@ -3027,11 +3027,8 @@ class BaseGenerator(CompilationContext ctx)
 
         "Identifiers to use for the outer callable."
         DartSimpleIdentifier(ParameterModel) outerParameterIdentifier
-            =   compose {
-                    assertExists<DartSimpleIdentifier?>;
-                    map(parameters.indexed.collect((e)
-                        =>  e.item -> DartSimpleIdentifier("$``e.key``"))).get;
-                };
+            =   unsafeMap(parameters.indexed.collect((e)
+                =>  e.item -> DartSimpleIdentifier("$``e.key``")));
 
         "Dart parameters for the *outer* function–the one with the public facing
          signature."
@@ -3247,11 +3244,8 @@ class BaseGenerator(CompilationContext ctx)
         else {
             "Identifiers to use for the outer callable."
             DartSimpleIdentifier(ParameterModel) outerParameterIdentifier
-                =   compose {
-                        assertExists<DartSimpleIdentifier?>;
-                        map(parameters.indexed.collect((e)
-                            =>  e.item -> DartSimpleIdentifier("$``e.key``"))).get;
-                    };
+                =   unsafeMap(parameters.indexed.collect((e)
+                    =>  e.item -> DartSimpleIdentifier("$``e.key``")));
 
             // Generate outerFunction to handle boxing and/or call to constructor
             value outerParameters = parameters.collect((parameterModel) {
@@ -4097,11 +4091,16 @@ class BaseGenerator(CompilationContext ctx)
             iterableArgument = [];
         }
 
+        function assertedParameterModel(ParameterModel? m) {
+            assert (exists m);
+            return m;
+        }
+
         value definedParameters
             =   set {
                     concatenate {
                         if (nonempty iterableArgument)
-                        then [assertExists(iterableInfo.parameter)]
+                        then [assertedParameterModel(iterableInfo.parameter)]
                         else [],
                         namedArguments.namedArguments
                             .map(namedArgumentInfo)

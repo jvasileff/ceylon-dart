@@ -202,10 +202,16 @@ getRealScope(ElementModel scope) {
     return result;
 }
 
-ClassModel getClassModelForConstructor(ClassModel | ConstructorModel model)
-    =>  switch (model)
-        case (is ClassModel) model
-        case (is ConstructorModel) asserted<ClassModel>(model.container);
+ClassModel getClassModelForConstructor(ClassModel | ConstructorModel model) {
+    switch (model)
+    case (is ClassModel) {
+        return model;
+    }
+    case (is ConstructorModel) {
+        assert (is ClassModel result = model.container);
+        return result;
+    }
+}
 
 ConstructorModel? getConstructor(FunctionModel model)
     =>  if (is ConstructorModel c = model.type.declaration)
@@ -459,35 +465,15 @@ shared
     =>  [ for (it in iterables) for (val in it) val ];
 
 shared
-Type asserted<Type>(Anything item, String? message = null) {
-    try {
-        assert(is Type item);
-        return item;
-    }
-    catch (AssertionError e) {
-        if (exists message) {
-            throw AssertionError(message);
-        }
-        else {
-            throw e;
-        }
-    }
-}
+Item(Key) unsafeMap<Key, Item>({<Key->Item>*} entries)
+        given Key satisfies Object {
 
-shared
-T&Object assertExists<T>(T item, String? message = null) {
-    try {
-        assert(exists item);
+    value m = map(entries);
+    function unsafeGet(Key key) {
+        assert (exists item = m.get(key));
         return item;
     }
-    catch (AssertionError e) {
-        if (exists message) {
-            throw AssertionError(message);
-        }
-        else {
-            throw e;
-        }
-    }
+    return unsafeGet;
 }
 
 shared

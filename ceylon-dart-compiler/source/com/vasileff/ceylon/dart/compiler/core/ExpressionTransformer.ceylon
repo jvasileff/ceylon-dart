@@ -2295,6 +2295,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 value stepFunctionId
                     =   generateStepFunctionName(count);
 
+                function assertBooleanCondition(Anything a) {
+                    assert (is BooleanCondition a);
+                    return a;
+                }
+
                 if (clause.conditions.conditions.every((c) => c is BooleanCondition)) {
                     // Simple case, no new variable declarations
                     value functionBody
@@ -2312,7 +2317,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                         [DartIfStatement {
                                             generateBooleanDartCondition {
                                                 clause.conditions.conditions.map {
-                                                    asserted<BooleanCondition>;
+                                                    assertBooleanCondition;
                                                 };
                                             };
                                             DartReturnStatement {
@@ -2660,8 +2665,6 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     see(`function StatementTransformer.transformIfElse`)
     DartExpression transformIfElseExpression(IfElseExpression that) {
-
-
         // Create a function expression for the IfElseExpression and invoke it.
         // No need for `withLhs` or `withBoxing`; our parent should have set the
         // lhs, and child transformations should perform boxing.
@@ -2675,7 +2678,11 @@ class ExpressionTransformer(CompilationContext ctx)
             DartConditionalExpression {
                 generateBooleanDartCondition {
                     that.conditions.conditions.map {
-                        asserted<BooleanCondition>;
+                        (condition) {
+                            "All conditions will be BooleanConditions per prior check"
+                            assert (is BooleanCondition condition);
+                            return condition;
+                        };
                     };
                 };
                 that.thenExpression.transform(this);

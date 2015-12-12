@@ -778,12 +778,17 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     {ClassOrInterfaceModel+} ancestorChainToOuterInheritingDeclaration(
             ClassModel|InterfaceModel scope,
-            ClassOrInterfaceModel inheritedDeclaration)
-        =>  // up to and including a declarations that inherits inheritedDeclaration
-            ancestorChainToInheritingDeclaration {
-                assertExists(getContainingClassOrInterface(container(scope)));
-                inheritedDeclaration;
-            }.follow(scope);
+            ClassOrInterfaceModel inheritedDeclaration) {
+
+        assert (exists containingClassOrInterface
+            =   getContainingClassOrInterface(container(scope)));
+
+        // up to and including a declarations that inherits inheritedDeclaration
+        return ancestorChainToInheritingDeclaration {
+            containingClassOrInterface;
+            inheritedDeclaration;
+        }.follow(scope);
+    }
 
     shared
     {ClassOrInterfaceModel+} ancestorChainToCapturerOfDeclaration(

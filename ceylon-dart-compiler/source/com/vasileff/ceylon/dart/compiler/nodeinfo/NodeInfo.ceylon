@@ -109,9 +109,7 @@ import com.vasileff.ceylon.dart.compiler {
     Warning
 }
 import com.vasileff.ceylon.dart.compiler.core {
-    augmentNode,
-    asserted,
-    assertExists
+    augmentNode
 }
 
 import org.antlr.runtime {
@@ -1091,19 +1089,29 @@ class ExtensionOrConstructionInfo(ExtensionOrConstruction astNode)
     assert (is TcNodeType n = getTcNode(astNode));
     tcNode = n;
 
-    value tcExtendedTypeExpression
-        =   if (is Tree.InvocationExpression tcNode)
-            then asserted<Tree.ExtendedTypeExpression>(tcNode.primary)
-            else null;
+    value tcExtendedTypeExpression {
+        if (is Tree.InvocationExpression tcNode) {
+            assert (is Tree.ExtendedTypeExpression result = tcNode.primary);
+            return result;
+        }
+        return null;
+    }
 
-    shared TypeModel | TypedReferenceModel? target
-        =>  asserted<TypeModel | TypedReferenceModel>(tcExtendedTypeExpression?.target);
+    shared
+    TypeModel | TypedReferenceModel? target {
+        assert(is TypeModel | TypedReferenceModel | Null result
+            =   tcExtendedTypeExpression?.target);
+        return result;
+    }
 
     // we *could* fall back to SimpleType.declarationModel, for class extends clauses for
     // classes w/constructors.
-    shared default ClassModel | ConstructorModel | Null declaration
-        =>  asserted<ClassModel | ConstructorModel | Null>
-                (tcExtendedTypeExpression?.declaration);
+    shared default
+    ClassModel | ConstructorModel | Null declaration {
+        assert (is ClassModel | ConstructorModel | Null result
+            =   tcExtendedTypeExpression?.declaration);
+        return result;
+    }
 
     shared default List<TypeModel>? signature
         =>  if (exists s = tcExtendedTypeExpression?.signature)
@@ -1121,7 +1129,11 @@ class ExtensionInfo(Extension astNode)
 
     shared actual default Extension node => astNode;
 
-    shared actual ClassModel? declaration => asserted<ClassModel?>(super.declaration);
+    shared actual
+    ClassModel? declaration {
+        assert (is ClassModel? result = super.declaration);
+        return result;
+    }
 }
 
 shared
@@ -1130,14 +1142,23 @@ class ConstructionInfo(Construction astNode)
 
     shared actual Construction node => astNode;
 
-    shared actual ConstructorModel declaration
-        =>  asserted<ConstructorModel>(super.declaration);
+    shared actual
+    ConstructorModel declaration {
+        assert (is ConstructorModel result = super.declaration);
+        return result;
+    }
 
-    shared actual List<TypeModel> signature
-        =>  assertExists(super.signature);
+    shared actual
+    List<TypeModel> signature {
+        assert (exists result = super.signature);
+        return result;
+    }
 
-    shared actual TypeModel typeModel
-        =>  assertExists(super.typeModel);
+    shared actual
+    TypeModel typeModel {
+        assert (exists result = super.typeModel);
+        return result;
+    }
 }
 
 shared
@@ -1202,16 +1223,21 @@ class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
     tcNode = n;
 
 
-    shared default TypeDeclarationModel declarationModel
-        =>  switch (tcNode)
-            case (is Tree.SimpleType)
-                tcNode.declarationModel
-            case (is Tree.BaseTypeExpression)
-                asserted<TypeDeclarationModel>(tcNode.declaration)
-            case (is Tree.QualifiedTypeExpression)
-                asserted<TypeDeclarationModel>(tcNode.declaration);
+    shared default TypeDeclarationModel declarationModel {
+        switch (tcNode)
+        case (is Tree.SimpleType) {
+            return tcNode.declarationModel;
+        }
+        case (is Tree.BaseTypeExpression) {
+            assert (is TypeDeclarationModel result = tcNode.declaration);
+            return result;
+        }
+        case (is Tree.QualifiedTypeExpression) {
+            assert  (is TypeDeclarationModel result = tcNode.declaration);
+            return result;
+        }
+    }
 }
 
 TcNode? getTcNode(Node astNode)
     =>  astNode.get(keys.tcNode);
-

@@ -29,8 +29,13 @@ class DartInvocable(
         shared DartElementType elementType,
         shared Boolean setter) {
 
-    shared [DartSimpleIdentifier, DartElementType] oldPairSimple
-        =>  [asserted<DartSimpleIdentifier>(reference), elementType];
+
+    // TODO remove this function
+    shared
+    [DartSimpleIdentifier, DartElementType] oldPairSimple {
+        assert (is DartSimpleIdentifier reference);
+        return [reference, elementType];
+    }
 
     shared
     DartInvocable with(
