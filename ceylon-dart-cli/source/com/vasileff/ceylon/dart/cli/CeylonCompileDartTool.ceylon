@@ -106,6 +106,17 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
     Boolean quiet = false;
 
+    shared variable optionArgument
+    description("Repeat compilation the specified number of times (useful for
+                 performance testing).")
+    JString? repeat = null;
+
+    shared variable option
+    description {
+        "Include 'count nodes' visitors to determine baseline performance.";
+    }
+    Boolean baselinePerfTest = false;
+
     function verboseOption(String key)
         =>  if (exists v = verbose)
             then v.empty || v.contains("all") || v.contains(key)
@@ -151,22 +162,30 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
             throw ReportableException("No modules or source files to compile.");
         }
 
-        return compileDart {
-            sourceDirectories = CeylonList(sourceDirectories);
-            sourceFiles = CeylonList(resolver.sourceFiles);
-            moduleFilters = CeylonIterable(resolver.sourceModules).collect(Object.string);
-            repositoryManager = repositoryManager;
-            outputRepositoryManager = outputRepositoryManager;
-            suppressWarning = CeylonIterable(suppressWarning);
-            generateSourceArtifact = generateSourceArtifact;
-            doWithoutCaching = doWithoutCaching;
-            verboseAst = verboseAst;
-            verboseRhAst = verboseRhAst;
-            verboseCode = verboseCode;
-            verboseProfile = verboseProfile;
-            verboseFiles = verboseFiles;
-            quiet = quiet;
-        }[1];
+        function doCompileDart()
+            =>  compileDart {
+                    sourceDirectories = CeylonList(sourceDirectories);
+                    sourceFiles = CeylonList(resolver.sourceFiles);
+                    moduleFilters = CeylonIterable(resolver.sourceModules)
+                            .collect(Object.string);
+                    repositoryManager = repositoryManager;
+                    outputRepositoryManager = outputRepositoryManager;
+                    suppressWarning = CeylonIterable(suppressWarning);
+                    generateSourceArtifact = generateSourceArtifact;
+                    doWithoutCaching = doWithoutCaching;
+                    verboseAst = verboseAst;
+                    verboseRhAst = verboseRhAst;
+                    verboseCode = verboseCode;
+                    verboseProfile = verboseProfile;
+                    verboseFiles = verboseFiles;
+                    quiet = quiet;
+                    baselinePerfTest = baselinePerfTest;
+                }[1];
+
+        for (_ in 0:(parseInteger(repeat?.string else "0") else 0)) {
+            doCompileDart();
+        }
+        return doCompileDart();
     }
 }
 

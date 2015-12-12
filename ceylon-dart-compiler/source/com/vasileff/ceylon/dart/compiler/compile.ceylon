@@ -1,12 +1,17 @@
 import ceylon.ast.core {
-    CompilationUnit
+    CompilationUnit,
+    AnyCompilationUnit,
+    Node,
+    WideningTransformer,
+    Visitor
 }
 import ceylon.ast.redhat {
     anyCompilationUnitToCeylon
 }
 import ceylon.collection {
     HashMap,
-    LinkedList
+    LinkedList,
+    linked
 }
 import ceylon.file {
     Directory,
@@ -43,6 +48,9 @@ import com.redhat.ceylon.cmr.impl {
 import com.redhat.ceylon.common {
     FileUtil,
     ModuleUtil
+}
+import com.redhat.ceylon.compiler.js.loader {
+    MetamodelVisitor
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -94,6 +102,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess,
     DartFunctionExpressionInvocation
 }
+import com.vasileff.ceylon.dart.compiler.loader {
+    DartModuleManagerFactory
+}
 import com.vasileff.jl4c.guava.collect {
     javaList,
     LinkedListMultimap
@@ -118,11 +129,10 @@ import java.util {
     JMap=Map,
     JList=List
 }
-import com.redhat.ceylon.compiler.js.loader {
-    MetamodelVisitor
-}
-import com.vasileff.ceylon.dart.compiler.loader {
-    DartModuleManagerFactory
+import com.redhat.ceylon.compiler.typechecker.tree {
+    TCVisitor = Visitor,
+    TreeNode = Node,
+    Tree
 }
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
@@ -146,7 +156,8 @@ shared
         verboseCode = false,
         verboseProfile = false,
         verboseFiles = false,
-        quiet = true) {
+        quiet = true,
+        baselinePerfTest = false) {
 
     {VirtualFile*} virtualFiles;
     {JFile*} sourceFiles; // for typechecker
@@ -175,6 +186,9 @@ shared
     Boolean verboseProfile;
     Boolean verboseFiles;
     Boolean quiet;
+
+    "Include 'count nodes' visitors to determine baseline performance."
+    Boolean baselinePerfTest;
 
     suppressWarnings("unusedDeclaration")
     void logOut(Object message = "") {
@@ -305,18 +319,18 @@ shared
     // make sure Dart backend is registered
     noop(dartBackend);
 
-    // times
-    Integer t0;
-    Integer t1;
-    Integer t2;
-    Integer t3;
-    Integer t4;
+    // timers
+    value timer = Timer();
+    value timerStages = Timer();
 
-    t0 = system.nanoseconds;
+    value swTypeCheckerCreation = timerStages.Measurement("Typechecker creation");
 
     value builder = TypeCheckerBuilder();
 
-    builder.statistics(verboseProfile);
+    // the typechecker output is mostly redundant with our measurements
+    // (although it does also provide 'parse' time)
+    //builder.statistics(verboseProfile);
+
     virtualFiles.each((f) => builder.addSrcDirectory(f));
     sourceDirectories.each((f) => builder.addSrcDirectory(f));
     builder.setSourceFiles(javaList(sourceFiles));
@@ -329,18 +343,21 @@ shared
     // Typecheck, silently.
     value typeChecker = builder.typeChecker;
 
-    t1 = system.nanoseconds;
+    swTypeCheckerCreation.destroy(null);
 
-    if (doWithoutCaching) {
-        TypeCache.doWithoutCaching(object satisfies Runnable {
-            run() => typeChecker.process(true);
-        });
-    }
-    else {
-        typeChecker.process(true);
+    try (timerStages.Measurement("TypeChecker processing"),
+            timer.Measurement("typeChecker.process")) {
+        if (doWithoutCaching) {
+            TypeCache.doWithoutCaching(object satisfies Runnable {
+                run() => typeChecker.process(true);
+            });
+        }
+        else {
+            typeChecker.process(true);
+        }
     }
 
-    t2 = system.nanoseconds;
+    value swDartCompilerCreation = timerStages.Measurement("Dart compiler creation");
 
     value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits);
 
@@ -395,7 +412,12 @@ shared
     value metamodelVisitors
         =   HashMap<ModuleModel, MetamodelVisitor>();
 
-    t3 = system.nanoseconds;
+    swDartCompilerCreation.destroy(null);
+    value swDartCompilation = timerStages.Measurement("Dart compilation");
+
+    variable Integer nodeCountTransformer = 0;
+    variable Integer nodeCountVisitor = 0;
+    variable Integer nodeCountTcVisitor = 0;
 
     for (phasedUnit in phasedUnits) {
         phasedUnit.compilationUnit.visit(typeConstructorVisitor);
@@ -419,10 +441,13 @@ shared
         try {
             value ctx = CompilationContext(phasedUnit);
 
-            value unit = anyCompilationUnitToCeylon {
-                phasedUnit.compilationUnit;
-                augmentNode;
-            };
+            AnyCompilationUnit unit;
+            try (timer.Measurement("anyCompilationUnitToCeylon")) {
+                unit = anyCompilationUnitToCeylon {
+                    phasedUnit.compilationUnit;
+                    augmentNode;
+                };
+            }
 
             if (verboseAst) {
                 logError("-- Ceylon AST " + path);
@@ -451,11 +476,37 @@ shared
                     metamodelVisitor = MetamodelVisitor(m);
                     metamodelVisitors.put(m, metamodelVisitor);
                 }
-                phasedUnit.compilationUnit.visit(metamodelVisitor);
 
-                computeCaptures(unit, ctx);
-                computeClassCaptures(unit, ctx);
-                ctx.topLevelVisitor.transformCompilationUnit(unit);
+                try (timer.Measurement("metamodelVisitor")) {
+                    phasedUnit.compilationUnit.visit(metamodelVisitor);
+                }
+
+                try (timer.Measurement("computeCaptures")) {
+                    computeCaptures(unit, ctx);
+                }
+
+                try (timer.Measurement("computeClassCaptures")) {
+                    computeClassCaptures(unit, ctx);
+                }
+
+                try (timer.Measurement("transformCompilationUnit")) {
+                    ctx.topLevelVisitor.transformCompilationUnit(unit);
+                }
+
+                if (baselinePerfTest) {
+                    try (timer.Measurement("countNodesTransformer")) {
+                        nodeCountTransformer += countNodesTransformer(unit);
+                    }
+
+                    try (timer.Measurement("countNodesVisitor")) {
+                        nodeCountVisitor += countNodesVisitor(unit);
+                    }
+
+                    try (timer.Measurement("countNodesTcVisitor")) {
+                        nodeCountTcVisitor += countNodesTcVisitor(phasedUnit.compilationUnit);
+                    }
+                }
+
                 declarations.addAll(ctx.compilationUnitMembers.sequence());
             }
         }
@@ -473,7 +524,9 @@ shared
         }
 
         // collect warnings and errors
-        phasedUnit.compilationUnit.visit(errorVisitor);
+        try (timer.Measurement("errorVisitor")) {
+            phasedUnit.compilationUnit.visit(errorVisitor);
+        }
 
         // verboseFiles output
         if (verboseFiles) {
@@ -487,6 +540,9 @@ shared
 
     // we'll print errors at the end, but determine count now
     value errorCount = errorVisitor.errorCount;
+
+    swDartCompilation.destroy(null);
+    value swDartSerialization = timerStages.Measurement("Dart serialization");
 
     for (m -> ds in moduleMembers) {
         if (!suppressMainFunction) {
@@ -634,21 +690,39 @@ shared
         }
     }
 
-    t4 = system.nanoseconds;
-
-    if (verboseProfile) {
-        process.writeErrorLine("Profiling Information");
-        process.writeErrorLine("---------------------");
-        process.writeErrorLine("TypeChecker creation:   " + ((t1-t0)/10^6).string);
-        process.writeErrorLine("TypeChecker processing: " + ((t2-t1)/10^6).string);
-        process.writeErrorLine("Dart compiler creation: " + ((t3-t2)/10^6).string);
-        process.writeErrorLine("Dart compilation:       " + ((t4-t3)/10^6).string);
-    }
+    swDartSerialization.destroy(null);
 
     // suppress warnings *after* generating Dart code since Dart backend
     // may add warnings.
-    phasedUnits.map(PhasedUnit.compilationUnit).each((cu)
-        =>  cu.visit(warningSuppressionVisitor));
+    try (timerStages.Measurement("Warning Suppression")) {
+        try (timer.Measurement("warningSuppressionVisitor")) {
+            phasedUnits.map(PhasedUnit.compilationUnit).each((cu)
+                =>  cu.visit(warningSuppressionVisitor));
+        }
+    }
+
+    if (verboseProfile) {
+        void printTiming(String key, Integer nanos) {
+            process.writeErrorLine(key.plus(":").padTrailing(30)
+                + formatFloat(nanos.float/1M, 2, 2).padLeading(10) + "ms");
+        }
+
+        process.writeErrorLine("");
+        process.writeErrorLine("Profiling Information (Cross Sections)");
+        process.writeErrorLine("------------------------------------------");
+        for (sw in timer.totals) {
+            printTiming(sw.key, sw.item);
+        }
+        printTiming("Total", timer.totalNanoseconds);
+
+        process.writeErrorLine("");
+        process.writeErrorLine("Profiling Information (Stages)");
+        process.writeErrorLine("------------------------------------------");
+        for (sw in timerStages.totals) {
+            printTiming(sw.key, sw.item);
+        }
+        printTiming("Total", timerStages.totalNanoseconds);
+    }
 
     // print errors last, to make them easy to find
     printErrors {
@@ -722,4 +796,69 @@ void encodeModel(JMap<JString, Object> model, File.Appender appender) {
     if (exists s = javaToJson(model)?.string) {
         appender.write(s);
     }
+}
+
+class Timer() {
+    shared
+    HashMap<String, Integer> totals = HashMap<String, Integer>(linked);
+
+    shared
+    class Measurement(String id) satisfies Destroyable {
+        value startNanos = system.nanoseconds;
+
+        shared actual
+        void destroy(Throwable? error) {
+            value elapsed = system.nanoseconds - startNanos;
+            totals.put(id, elapsed + totals.getOrDefault(id, 0));
+        }
+    }
+
+    shared
+    T time<T>(String id, T run()) {
+        value start = system.nanoseconds;
+        value result = run();
+        value stop = system.nanoseconds;
+        totals.put(id, stop - start + totals.getOrDefault(id, 0));
+        return result;
+    }
+
+    shared
+    Integer totalNanoseconds
+        =>  sum { 0, *totals.map(Entry.item) };
+}
+
+"Count nodes. Useful for determining baseline performance of WideningTransformers."
+Integer countNodesTransformer(CompilationUnit unit) {
+    object transformer satisfies WideningTransformer<Integer> {
+        shared actual Integer transformNode(Node that)
+            =>  sum { 1, *that.transformChildren(this) };
+    }
+    return unit.transform(transformer);
+}
+
+"Count nodes. Useful for determining baseline performance of Visitors."
+Integer countNodesVisitor(CompilationUnit unit) {
+    variable Integer count = 0;
+    object visitor satisfies Visitor {
+        shared actual void visitNode(Node that) {
+            count++;
+            that.visitChildren(this);
+        }
+    }
+    unit.visit(visitor);
+    return count;
+}
+
+"Count nodes. Useful for determining baseline performance of TC Visitors."
+Integer countNodesTcVisitor(Tree.CompilationUnit unit) {
+    variable Integer count = 0;
+    object visitor extends TCVisitor() {
+        shared actual
+        void visitAny(TreeNode that) {
+            count++;
+            that.visitChildren(this);
+        }
+    }
+    unit.visit(visitor);
+    return count;
 }
