@@ -33,17 +33,11 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
     object captureVisitor satisfies Visitor {
 
         shared actual
-        void visitCompilationUnit(CompilationUnit that) {
-            super.visitCompilationUnit(that);
-        }
-
-        shared actual
         void visitDeclaration(Declaration that) {
             // skip native declarations entirely, for now
-            if (!isForDartBackend(that)) {
-                return;
+            if (isForDartBackend(that)) {
+                super.visitDeclaration(that);
             }
-            super.visitDeclaration(that);
         }
 
         shared actual
@@ -51,47 +45,50 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             // 1. we don't currently support dynamic blocks
             // 2. visiting dynamic blocks results in NPEs when
             //    we try to obtain model objects.
-            return;
         }
 
         shared actual
-        void visitDynamicInterfaceDefinition(DynamicInterfaceDefinition that) {
-            return;
-        }
+        void visitDynamicInterfaceDefinition(DynamicInterfaceDefinition that) {}
 
         shared actual
-        void visitDynamicModifier(DynamicModifier that) {
-            return;
-        }
+        void visitDynamicModifier(DynamicModifier that) {}
 
         shared actual
-        void visitDynamicValue(DynamicValue that) {
-            return;
-        }
+        void visitDynamicValue(DynamicValue that) {}
 
         shared actual
         void visitBaseExpression(BaseExpression that) {
-            value info = BaseExpressionInfo(that);
-            value targetDeclaration = info.declaration;
+            value info
+                =   BaseExpressionInfo(that);
+
+            value targetDeclaration
+                =   info.declaration;
+
+            if (!is FunctionOrValueModel targetDeclaration) {
+                return;
+            }
 
             value expressionsClassOrInterface
-                =   getContainingClassOrInterface(that);
+                =   getContainingClassOrInterface(info.scope);
 
             value targetsClassOrInterface
-                =>  getContainingClassOrInterface(targetDeclaration);
+                =>  getContainingClassOrInterface(toScopeModel(targetDeclaration));
 
             // Capture is not required for:
             //  - class or interface members, which can be accessed via "outer" refs
             //  - toplevels, which can be accessed directly
             //  - declarations in the same class or interface as the expression,
             //    which can be accessed directly
-            if (is FunctionOrValueModel targetDeclaration,
-                exists expressionsClassOrInterface,
+            if (exists expressionsClassOrInterface,
                 !isClassOrInterfaceMember(targetDeclaration)
                     && !isToplevel(targetDeclaration)
                     && !eq(expressionsClassOrInterface, targetsClassOrInterface)) {
 
-                capture(targetDeclaration, expressionsClassOrInterface);
+                capture {
+                    targetDeclaration;
+                    targetsClassOrInterface;
+                    expressionsClassOrInterface;
+                };
             }
         }
 
@@ -111,12 +108,13 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
            the inputs to this function would be "value x" and "interface I2", and the
            resultant capture would be "value x" by "Interface I1".
         """
-        void capture(FunctionOrValueModel target, variable ClassOrInterfaceModel by) {
+        void capture(FunctionOrValueModel target,
+                ClassOrInterfaceModel? targetsClassOrInterface,
+                variable ClassOrInterfaceModel by) {
             // TODO Replacement declarations are captured even if we are not defining new
             //      Dart variables for them. We should problaby capture the original
             //      declaration in this case
 
-            value targetsClassOrInterface => getContainingClassOrInterface(target);
             while (true) {
                 value bysClassOrInterface = getContainingClassOrInterface(by.container);
                 if (eq(targetsClassOrInterface, bysClassOrInterface)) {
