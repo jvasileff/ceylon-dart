@@ -120,10 +120,10 @@ import org.antlr.runtime {
 
 shared
 class NodeInfo(Node astNode) satisfies DScope {
-
     shared actual default Node node => astNode;
 
-    value tcNode = assertedTcNode<TcNode>(astNode);
+    value tcNode = getTcNode(astNode);
+    assert (exists tcNode);
 
     shared String text => tcNode.text;
 
@@ -162,7 +162,9 @@ class ExpressionInfo(Expression astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Expression node => astNode;
-    value tcNode = assertedTcNode<Tree.Term>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.Term tcNode);
 
     "The type of this expression"
     shared TypeModel typeModel => tcNode.typeModel;
@@ -173,7 +175,10 @@ class CompilationUnitInfo(CompilationUnit astNode)
         extends NodeInfo(astNode) {
 
     shared actual default CompilationUnit node => astNode;
-    shared Tree.CompilationUnit tcNode = assertedTcNode<Tree.CompilationUnit>(astNode);
+
+    shared Tree.CompilationUnit tcNode;
+    assert (is Tree.CompilationUnit n = getTcNode(astNode));
+    tcNode = n;
 }
 
 shared
@@ -181,7 +186,10 @@ class BaseExpressionInfo(BaseExpression astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default BaseExpression node => astNode;
-    shared Tree.StaticMemberOrTypeExpression tcNode = assertedTcNode<Tree.StaticMemberOrTypeExpression>(astNode);
+
+    shared Tree.StaticMemberOrTypeExpression tcNode;
+    assert (is Tree.StaticMemberOrTypeExpression n = getTcNode(astNode));
+    tcNode = n;
 
     // MemberOrTypeExpression
 
@@ -216,7 +224,9 @@ class QualifiedExpressionInfo(QualifiedExpression astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default QualifiedExpression node => astNode;
-    value tcNode = assertedTcNode<Tree.QualifiedMemberOrTypeExpression>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.QualifiedMemberOrTypeExpression tcNode);
 
     // MemberOrTypeExpression
 
@@ -256,7 +266,10 @@ class DeclarationInfo(Declaration astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Declaration node => astNode;
-    value tcNode = assertedTcNode<Tree.Declaration>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.Declaration tcNode);
+
     shared default DeclarationModel declarationModel => tcNode.declarationModel;
 }
 
@@ -285,7 +298,9 @@ class AnyValueInfo(AnyValue astNode)
         extends TypedDeclarationInfo(astNode) {
 
     shared actual default AnyValue node => astNode;
-    value tcNode = assertedTcNode<Tree.TypedDeclaration>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.TypedDeclaration tcNode);
 
     shared actual default
     ValueModel declarationModel {
@@ -299,7 +314,9 @@ class ValueDefinitionInfo(ValueDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDefinition node => astNode;
-    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.AttributeDeclaration tcNode);
 
     shared actual default
     ValueModel declarationModel => tcNode.declarationModel;
@@ -310,7 +327,9 @@ class ValueDeclarationInfo(ValueDeclaration astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueDeclaration node => astNode;
-    value tcNode = assertedTcNode<Tree.AttributeDeclaration>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.AttributeDeclaration tcNode);
 
     shared actual default
     ValueModel declarationModel => tcNode.declarationModel;
@@ -321,7 +340,9 @@ class ValueGetterDefinitionInfo(ValueGetterDefinition astNode)
         extends AnyValueInfo(astNode) {
 
     shared actual default ValueGetterDefinition node => astNode;
-    value tcNode = assertedTcNode<Tree.AttributeGetterDefinition>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.AttributeGetterDefinition tcNode);
 
     shared actual default
     ValueModel declarationModel => tcNode.declarationModel;
@@ -332,7 +353,9 @@ class ValueSetterDefinitionInfo(ValueSetterDefinition astNode)
         extends DeclarationInfo(astNode) {
 
     shared actual default ValueSetterDefinition node => astNode;
-    value tcNode = assertedTcNode<Tree.AttributeSetterDefinition>(astNode);
+
+    value tcNode = getTcNode(astNode);
+    assert (is Tree.AttributeSetterDefinition tcNode);
 
     shared actual default
     SetterModel declarationModel => tcNode.declarationModel;
@@ -348,9 +371,11 @@ class ArgumentListInfo(ArgumentList astNode)
     //
     // It can be Tree.NamedArgumentList for NamedArguments.iterableArgument when
     // no iterableArgument exists.
-    value tcNode = assertedTcNode<Tree.SequencedArgument
-                                    | Tree.SequenceEnumeration
-                                    | Tree.NamedArgumentList>(astNode);
+    Tree.SequencedArgument | Tree.SequenceEnumeration | Tree.NamedArgumentList tcNode;
+    assert (is Tree.SequencedArgument
+                | Tree.SequenceEnumeration
+                | Tree.NamedArgumentList n = getTcNode(astNode));
+    tcNode = n;
 
     "The [[ParameterModel]], if this argument list is used as an argument (e.g. within
      [[ceylon.ast.core::NamedArguments]])."
@@ -385,7 +410,6 @@ class NamedArgumentInfo(NamedArgument astNode)
         =>  astNode;
 
     shared formal Tree.NamedArgument tcNode;
-        //=>  assertedTcNode<Tree.NamedArgument>(astNode);
 
     shared ParameterModel parameter => tcNode.parameter;
 }
@@ -397,8 +421,9 @@ class AnonymousArgumentInfo(AnonymousArgument astNode)
     shared actual default AnonymousArgument node
         =>  astNode;
 
-    shared actual Tree.SpecifiedArgument tcNode
-        =>  assertedTcNode<Tree.SpecifiedArgument>(astNode);
+    shared actual Tree.SpecifiedArgument tcNode;
+    assert (is Tree.SpecifiedArgument n = getTcNode(astNode));
+    tcNode = n;
 }
 
 shared
@@ -408,11 +433,12 @@ class SpecifiedArgumentInfo(SpecifiedArgument astNode)
     shared actual default SpecifiedArgument node
         =>  astNode;
 
-    shared actual Tree.SpecifiedArgument | Tree.AttributeArgument
-            | Tree.MethodArgument tcNode {
-        return assertedTcNode<Tree.SpecifiedArgument | Tree.AttributeArgument
-                | Tree.MethodArgument>(astNode);
-    }
+    shared alias TcNodeType
+        =>  Tree.SpecifiedArgument | Tree.AttributeArgument | Tree.MethodArgument;
+
+    shared actual TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 }
 
 shared abstract
@@ -433,8 +459,12 @@ class ValueArgumentInfo(ValueArgument astNode)
     shared actual default ValueArgument node
         =>  astNode;
 
-    shared actual Tree.AttributeArgument tcNode
-        =>  assertedTcNode<Tree.AttributeArgument>(astNode);
+    shared alias TcNodeType
+        =>  Tree.AttributeArgument;
+
+    shared actual TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 }
 
 shared
@@ -444,8 +474,12 @@ class FunctionArgumentInfo(FunctionArgument astNode)
     shared actual default FunctionArgument node
         =>  astNode;
 
-    shared actual Tree.MethodArgument tcNode
-        =>  assertedTcNode<Tree.MethodArgument>(astNode);
+    shared alias TcNodeType
+        =>  Tree.MethodArgument;
+
+    shared actual TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared FunctionModel declarationModel
         =>  tcNode.declarationModel;
@@ -458,8 +492,12 @@ class ObjectArgumentInfo(ObjectArgument astNode)
     shared actual default ObjectArgument node
         =>  astNode;
 
-    shared actual Tree.ObjectArgument tcNode
-        =>  assertedTcNode<Tree.ObjectArgument>(astNode);
+    shared alias TcNodeType
+        =>  Tree.ObjectArgument;
+
+    shared actual TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ClassModel anonymousClass => tcNode.anonymousClass;
 }
@@ -469,7 +507,13 @@ class ComprehensionInfo(Comprehension astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Comprehension node => astNode;
-    value tcNode = assertedTcNode<Tree.Comprehension>(astNode);
+
+    alias TcNodeType
+        =>  Tree.Comprehension;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared ParameterModel? parameter => tcNode.parameter;
@@ -480,7 +524,13 @@ class ComprehensionClauseInfo(ComprehensionClause astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ComprehensionClause node => astNode;
-    value tcNode = assertedTcNode<Tree.ComprehensionClause>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ComprehensionClause;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
@@ -492,7 +542,13 @@ class SpreadArgumentInfo(SpreadArgument astNode)
         extends NodeInfo(astNode) {
 
     shared actual default SpreadArgument node => astNode;
-    value tcNode = assertedTcNode<Tree.SpreadArgument>(astNode);
+
+    alias TcNodeType
+        =>  Tree.SpreadArgument;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared TypeModel typeModel => tcNode.typeModel;
     shared ParameterModel? parameter => tcNode.parameter;
@@ -511,7 +567,14 @@ class FunctionExpressionInfo(FunctionExpression astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default FunctionExpression node => astNode;
-    value tcNode = assertedTcNode<Tree.FunctionArgument>(astNode);
+
+    alias TcNodeType
+        =>  Tree.FunctionArgument;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
     shared FunctionModel declarationModel => tcNode.declarationModel;
 }
 
@@ -520,7 +583,14 @@ class AnyFunctionInfo(AnyFunction astNode)
         extends TypedDeclarationInfo(astNode) {
 
     shared actual default AnyFunction node => astNode;
-    value tcNode = assertedTcNode<Tree.AnyMethod>(astNode);
+
+    alias TcNodeType
+        =>  Tree.AnyMethod;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
     shared actual FunctionModel declarationModel => tcNode.declarationModel;
 }
 
@@ -529,7 +599,13 @@ class ObjectDefinitionInfo(ObjectDefinition astNode)
         extends DeclarationInfo(astNode) {
 
     shared actual default ObjectDefinition node => astNode;
-    value tcNode = assertedTcNode<Tree.ObjectDefinition>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ObjectDefinition;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared actual ValueModel declarationModel => tcNode.declarationModel;
     shared ClassModel anonymousClass => tcNode.anonymousClass;
@@ -540,7 +616,13 @@ class ObjectExpressionInfo(ObjectExpression astNode)
         extends ExpressionInfo(astNode) {
 
     shared actual default ObjectExpression node => astNode;
-    value tcNode = assertedTcNode<Tree.ObjectExpression>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ObjectExpression;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ClassModel anonymousClass => tcNode.anonymousClass;
 }
@@ -561,8 +643,12 @@ class SpecificationInfo(Specification astNode)
     shared actual default Specification node => astNode;
 
     // tcNode may be a MethodArgument for lazy specifier named arguments.
-    value tcNode
-        =   assertedTcNode<Tree.SpecifierStatement | Tree.MethodArgument>(astNode);
+    alias TcNodeType
+        =>  Tree.SpecifierStatement | Tree.MethodArgument;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared FunctionModel|ValueModel declaration {
         assert (is FunctionModel | ValueModel d
@@ -592,6 +678,22 @@ class VariableInfo(Variable astNode)
 }
 
 shared
+class SpecifiedVariableInfo(SpecifiedVariable astNode)
+        extends VariableInfo(astNode) {
+
+    shared actual default SpecifiedVariable node => astNode;
+
+    alias TcNodeType
+        =>  Tree.Variable;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
+    shared ValueModel declarationModel => tcNode.declarationModel;
+}
+
+shared
 class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
         extends VariableInfo(astNode) {
 
@@ -601,7 +703,13 @@ class UnspecifiedVariableInfo(UnspecifiedVariable astNode)
     //      Tree.PatternIterator -> Tree.VariablePattern -> Tree.Variable
 
     shared actual default UnspecifiedVariable node => astNode;
-    value tcNode = assertedTcNode<Tree.Variable>(astNode);
+
+    alias TcNodeType
+        =>  Tree.Variable;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel declarationModel => tcNode.declarationModel;
 }
@@ -611,7 +719,13 @@ class VariadicVariableInfo(VariadicVariable astNode)
         extends VariableInfo(astNode) {
 
     shared actual default VariadicVariable node => astNode;
-    value tcNode = assertedTcNode<Tree.Variable>(astNode);
+
+    alias TcNodeType
+        =>  Tree.Variable;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel declarationModel => tcNode.declarationModel;
 }
@@ -621,7 +735,13 @@ class ForFailInfo(ForFail astNode)
         extends StatementInfo(astNode) {
 
     shared actual default ForFail node => astNode;
-    value tcNode = assertedTcNode<Tree.ForStatement>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ForStatement;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared Boolean exits => tcNode.exits;
 }
@@ -671,7 +791,13 @@ class ParameterInfo(Parameter astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Parameter node => astNode;
-    value tcNode = assertedTcNode<Tree.Parameter>(astNode);
+
+    alias TcNodeType
+        =>  Tree.Parameter;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ParameterModel parameterModel => tcNode.parameterModel;
 }
@@ -681,19 +807,15 @@ class TypeInfo(Type astNode)
         extends NodeInfo(astNode) {
 
     shared actual default Type node => astNode;
-    value tcNode = assertedTcNode<Tree.Type>(astNode);
+
+    alias TcNodeType
+        =>  Tree.Type;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared TypeModel typeModel => tcNode.typeModel;
-}
-
-shared
-class SpecifiedVariableInfo(SpecifiedVariable astNode)
-        extends NodeInfo(astNode) {
-
-    shared actual default SpecifiedVariable node => astNode;
-    value tcNode = assertedTcNode<Tree.Variable>(astNode);
-
-    shared ValueModel declarationModel => tcNode.declarationModel;
 }
 
 shared
@@ -701,7 +823,13 @@ class IsConditionInfo(IsCondition astNode)
         extends NodeInfo(astNode) {
 
     shared actual default IsCondition node => astNode;
-    value tcNode = assertedTcNode<Tree.IsCondition>(astNode);
+
+    alias TcNodeType
+        =>  Tree.IsCondition;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel variableDeclarationModel => tcNode.variable.declarationModel;
 }
@@ -711,7 +839,13 @@ class ExistsOrNonemptyConditionInfo(ExistsOrNonemptyCondition astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ExistsOrNonemptyCondition node => astNode;
-    value tcNode = assertedTcNode<Tree.ExistsOrNonemptyCondition>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ExistsOrNonemptyCondition;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     /*
         tcNode.variable is one of:
@@ -765,7 +899,13 @@ class ControlClauseInfo(ControlClauseNodeType astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ControlClauseNodeType node => astNode;
-    value tcNode = assertedTcNode<Tree.ControlClause>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ControlClause;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ControlBlockModel controlBlock => tcNode.controlBlock;
 }
@@ -775,7 +915,13 @@ class IsCaseInfo(IsCase astNode)
         extends NodeInfo(astNode) {
 
     shared actual default IsCase node => astNode;
-    value tcNode = assertedTcNode<Tree.IsCase>(astNode);
+
+    alias TcNodeType
+        =>  Tree.IsCase;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
 }
@@ -785,7 +931,13 @@ class ElseClauseInfo(ElseClause astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ElseClause node => astNode;
-    value tcNode = assertedTcNode<Tree.ElseClause>(astNode);
+
+    alias TcNodeType
+        =>  Tree.ElseClause;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
 }
@@ -795,7 +947,13 @@ class IfElseExpressionInfo(IfElseExpression astNode)
         extends NodeInfo(astNode) {
 
     shared actual default IfElseExpression node => astNode;
-    value tcNode = assertedTcNode<Tree.IfExpression>(astNode);
+
+    alias TcNodeType
+        =>  Tree.IfExpression;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared ValueModel? elseVariableDeclarationModel
         =>  tcNode.elseClause.variable?.declarationModel;
@@ -806,7 +964,13 @@ class ValueSpecificationInfo(ValueSpecification astNode)
         extends NodeInfo(astNode) {
 
     shared actual default ValueSpecification node => astNode;
-    value tcNode = assertedTcNode<Tree.SpecifierStatement>(astNode);
+
+    alias TcNodeType
+        =>  Tree.SpecifierStatement;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared FunctionModel | ValueModel declaration {
         if (astNode.qualifier exists) {
@@ -902,7 +1066,12 @@ class ConstructorInfo(ConstructorDefinition astNode)
 
     shared actual default ConstructorDefinition node => astNode;
 
-    value tcNode = assertedTcNode<Tree.Constructor>(astNode);
+    alias TcNodeType
+        =>  Tree.Constructor;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     shared actual FunctionModel declarationModel => tcNode.declarationModel;
 
@@ -915,7 +1084,12 @@ class ExtensionOrConstructionInfo(ExtensionOrConstruction astNode)
 
     shared actual default ExtensionOrConstruction node => astNode;
 
-    value tcNode = assertedTcNode<Tree.InvocationExpression | Tree.SimpleType>(astNode);
+    alias TcNodeType
+        =>  Tree.InvocationExpression | Tree.SimpleType;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
 
     value tcExtendedTypeExpression
         =   if (is Tree.InvocationExpression tcNode)
@@ -972,7 +1146,13 @@ class OuterInfo(Outer astNode)
 
     shared actual default Outer node => astNode;
 
-    value tcNode = assertedTcNode<Tree.Outer>(astNode);
+    alias TcNodeType
+        =>  Tree.Outer;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
     shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
@@ -982,7 +1162,13 @@ class SuperInfo(Super astNode)
 
     shared actual default Super node => astNode;
 
-    value tcNode = assertedTcNode<Tree.Super>(astNode);
+    alias TcNodeType
+        =>  Tree.Super;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
     shared default TypeDeclarationModel declarationModel => tcNode.declarationModel;
 }
 
@@ -992,7 +1178,13 @@ class ThisInfo(This astNode)
 
     shared actual default This node => astNode;
 
-    value tcNode = assertedTcNode<Tree.This>(astNode);
+    alias TcNodeType
+        =>  Tree.This;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
     shared default DeclarationModel declarationModel => tcNode.declarationModel;
 }
 
@@ -1002,9 +1194,13 @@ class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
 
     shared actual default TypeNameWithTypeArguments node => astNode;
 
-    value tcNode = assertedTcNode<
-            Tree.SimpleType | Tree.BaseTypeExpression | Tree.QualifiedTypeExpression>
-            (astNode);
+    alias TcNodeType
+        =>  Tree.SimpleType | Tree.BaseTypeExpression | Tree.QualifiedTypeExpression;
+
+    TcNodeType tcNode;
+    assert (is TcNodeType n = getTcNode(astNode));
+    tcNode = n;
+
 
     shared default TypeDeclarationModel declarationModel
         =>  switch (tcNode)
@@ -1016,8 +1212,6 @@ class TypeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments astNode)
                 asserted<TypeDeclarationModel>(tcNode.declaration);
 }
 
-TcNodeType assertedTcNode<TcNodeType>(Node astNode)
-        given TcNodeType satisfies TcNode {
-    assert (is TcNodeType tcNode = astNode.get(keys.tcNode));
-    return tcNode;
-}
+TcNode? getTcNode(Node astNode)
+    =>  astNode.get(keys.tcNode);
+
