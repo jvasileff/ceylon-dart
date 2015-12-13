@@ -187,7 +187,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     FunctionExpressionInfo,
     QualifiedExpressionInfo,
     InvocationInfo,
-    ExpressionInfo,
     ThisInfo,
     OuterInfo,
     TypeInfo,
@@ -196,7 +195,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     SuperInfo,
     IsCaseInfo,
     NodeInfo,
-    TypeNameWithTypeArgumentsInfo
+    TypeNameWithTypeArgumentsInfo,
+    expressionInfo
 }
 
 shared
@@ -228,7 +228,7 @@ class ExpressionTransformer(CompilationContext ctx)
             NameWithTypeArguments nameAndArgs,
             DeclarationModel targetDeclaration) {
 
-        value info = ExpressionInfo(that);
+        value info = expressionInfo(that);
 
         switch (nameAndArgs)
         case (is MemberNameWithTypeArguments) {
@@ -361,7 +361,7 @@ class ExpressionTransformer(CompilationContext ctx)
             =   switch (receiver = that.receiverExpression)
                 case (is BaseExpression) BaseExpressionInfo(receiver)
                 case (is QualifiedExpression) QualifiedExpressionInfo(receiver)
-                else ExpressionInfo(receiver);
+                else expressionInfo(receiver);
 
         value memberDeclaration
             =   if (is FunctionModel d = info.declaration,
@@ -632,7 +632,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         "Caller must properly set `withLhs`."
         DartExpression asString(Expression e) {
-            value info = ExpressionInfo(e);
+            value info = expressionInfo(e);
             if (ceylonTypes.isCeylonString(info.typeModel)) {
                 return e.transform(this);
             } else {
@@ -661,7 +661,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformTuple(Tuple that)
         =>  generateTuple {
-                ExpressionInfo(that);
+                expressionInfo(that);
                 that.argumentList.listedArguments;
                 that.argumentList.sequenceArgument;
             };
@@ -669,7 +669,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformIterable(Iterable that)
         =>  generateIterable {
-                ExpressionInfo(that);
+                expressionInfo(that);
                 that.argumentList.listedArguments;
                 that.argumentList.sequenceArgument;
             };
@@ -704,7 +704,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is QualifiedExpression)
                     QualifiedExpressionInfo(invoked)
                 else
-                    ExpressionInfo(invoked);
+                    expressionInfo(invoked);
 
         DeclarationModel? invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
@@ -888,7 +888,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     return(indirectInvocationOnCallable());
                 }
 
-                value receiverInfo = ExpressionInfo(invoked.receiverExpression);
+                value receiverInfo = expressionInfo(invoked.receiverExpression);
 
                 return generateInvocation {
                     info;
@@ -1049,7 +1049,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 return
                 generateNewCallableForQualifiedExpression {
                     info;
-                    ExpressionInfo(argument).typeModel;
+                    expressionInfo(argument).typeModel;
                     () => argument.transform(expressionTransformer);
                     !isConstant(argument);
                     invokedDeclaration;
@@ -1060,7 +1060,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
             // Normal case, receiver is an object.
 
-            value receiverInfo = ExpressionInfo(invoked.receiverExpression);
+            value receiverInfo = expressionInfo(invoked.receiverExpression);
 
             return generateInvocation {
                 info;
@@ -1083,7 +1083,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         switch (subscript = that.subscript)
         case (is KeySubscript) {
-            if (ceylonTypes.isCeylonList(ExpressionInfo(that.primary).typeModel)) {
+            if (ceylonTypes.isCeylonList(expressionInfo(that.primary).typeModel)) {
                 // The extra withBoxing/withLhs combo below is important. Here's why:
                 //
                 // The return type of the `getFromFirst` invocation may be something like
@@ -1107,7 +1107,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 "The expression type, which may be more specific that the return type
                  of `getFromFirst`, due to typechecker magic."
                 value preciseType
-                    =   ExpressionInfo(that).typeModel;
+                    =   expressionInfo(that).typeModel;
 
                 return
                 withBoxingNonNative {
@@ -1212,7 +1212,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformExistsOperation(ExistsOperation that)
         =>  let (info = NodeInfo(that),
-                 operandInfo = ExpressionInfo(that.operand))
+                 operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
@@ -1232,7 +1232,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformIsOperation(IsOperation that)
         =>  let (info = NodeInfo(that),
-                 operandInfo = ExpressionInfo(that.operand))
+                 operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
@@ -1253,7 +1253,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformNonemptyOperation(NonemptyOperation that)
         =>  let (info = NodeInfo(that),
-                 operandInfo = ExpressionInfo(that.operand))
+                 operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
                 ceylonTypes.booleanType;
@@ -1361,7 +1361,7 @@ class ExpressionTransformer(CompilationContext ctx)
         case (is Null) {
             assert (exists lhsDenotable = ctx.lhsDenotableTop);
             tempVarType = ceylonTypes.denotableType {
-                ExpressionInfo(that).typeModel;
+                expressionInfo(that).typeModel;
                 lhsDenotable;
             };
         }
@@ -1425,7 +1425,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformArithmeticOperation(ArithmeticOperation that)
-        =>  let (info = ExpressionInfo(that),
+        =>  let (info = expressionInfo(that),
                  methodName = switch(that)
                         case (is ExponentiationOperation) "power"
                         case (is ProductOperation) "times"
@@ -1471,9 +1471,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformSpanOperation(SpanOperation that) {
-        value info = ExpressionInfo(that);
-        value firstInfo = ExpressionInfo(that.first);
-        value lastInfo = ExpressionInfo(that.last);
+        value info = expressionInfo(that);
+        value firstInfo = expressionInfo(that.first);
+        value lastInfo = expressionInfo(that.last);
 
         // Determine Enumerable type (Enumerable<T>)
         value enumerableType =
@@ -1498,8 +1498,8 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformMeasureOperation(MeasureOperation that) {
-        value info = ExpressionInfo(that);
-        value firstInfo = ExpressionInfo(that.first);
+        value info = expressionInfo(that);
+        value firstInfo = expressionInfo(that.first);
 
         // Determine Enumerable type (Enumerable<T>)
         value enumerableType = firstInfo.typeModel.getSupertype(
@@ -1524,7 +1524,7 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  let (info = NodeInfo(that))
             withBoxingNonNative {
                 info;
-                ExpressionInfo(that).typeModel;
+                expressionInfo(that).typeModel;
                 DartInstanceCreationExpression {
                     false;
                     dartTypes.dartConstructorName {
@@ -1655,7 +1655,7 @@ class ExpressionTransformer(CompilationContext ctx)
         // Sub? to Super, in some cases.
 
         value info
-            =   ExpressionInfo(that);
+            =   expressionInfo(that);
 
         // Find out what type the result of this elseOperation will be assigned to
         value [lhsType, lhsNative, lhsObject]
@@ -1825,10 +1825,10 @@ class ExpressionTransformer(CompilationContext ctx)
         //      declaration split from the assignment. Try to consolidate the two for
         //      simple cases?
         function generateVariableDeclarations(SpecifiedPattern sp)
-            =>  let (expressionInfo = ExpressionInfo(sp.specifier.expression),
+            =>  let (eInfo = expressionInfo(sp.specifier.expression),
                     parts = generateForPattern {
                         sp.pattern;
-                        expressionInfo.typeModel;
+                        eInfo.typeModel;
                         () => sp.specifier.expression.transform {
                             expressionTransformer;
                         };
@@ -2847,7 +2847,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformMeta(Meta that)
-        =>  let(info = ExpressionInfo(that))
+        =>  let(info = expressionInfo(that))
             DartThrowExpression {
                 DartInstanceCreationExpression {
                     const = false;

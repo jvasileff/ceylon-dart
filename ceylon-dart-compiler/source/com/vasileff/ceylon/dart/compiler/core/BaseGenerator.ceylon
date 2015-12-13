@@ -148,7 +148,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     sequenceArgumentInfo,
     ComprehensionInfo,
     LazySpecificationInfo,
-    VariadicVariableInfo
+    VariadicVariableInfo,
+    expressionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -803,10 +804,10 @@ class BaseGenerator(CompilationContext ctx)
                 // This leaves something on the table. We should be able to get the
                 // *argument list* signature from the typechecker.
                 =   if (is [Expression+] a) then
-                        ExpressionInfo(a[0]).typeModel
+                        expressionInfo(a[0]).typeModel
                     else if (is PositionalArguments a,
                              exists arg = a.argumentList.listedArguments.first) then
-                        ExpressionInfo(arg).typeModel
+                        expressionInfo(arg).typeModel
                     else null;
 
             if (exists optimization
@@ -1008,7 +1009,7 @@ class BaseGenerator(CompilationContext ctx)
         return
         generateInvocationDetailsSynthetic {
             scope;
-            ExpressionInfo(receiver).typeModel;
+            expressionInfo(receiver).typeModel;
             () => receiver.transform(expressionTransformer);
             memberName;
             arguments;
@@ -1264,7 +1265,7 @@ class BaseGenerator(CompilationContext ctx)
             value tupleType
                 =   ceylonTypes.getTupleType {
                         listedArguments.collect {
-                            compose(ExpressionInfo.typeModel, ExpressionInfo);
+                            compose(ExpressionInfo.typeModel, expressionInfo);
                         };
                         firstDefaulted = null;
                         restType;
@@ -1384,7 +1385,7 @@ class BaseGenerator(CompilationContext ctx)
             value variableIdentifier = DartSimpleIdentifier(
                     dartTypes.getName(variableDeclaration));
 
-            value expressionType = ExpressionInfo(expression).typeModel;
+            value expressionType = expressionInfo(expression).typeModel;
 
             value tempIdentifier = DartSimpleIdentifier(
                     dartTypes.createTempName(variableDeclaration));
@@ -1592,7 +1593,7 @@ class BaseGenerator(CompilationContext ctx)
             };
 
             value expression = sp.specifier.expression;
-            value expressionType = ExpressionInfo(expression).typeModel;
+            value expressionType = expressionInfo(expression).typeModel;
 
             value tempVariableDeclaration
                 =   DartVariableDeclarationStatement {
@@ -2840,7 +2841,7 @@ class BaseGenerator(CompilationContext ctx)
                 ceylonTypes.booleanType;
                 () {
                     value expressionType
-                        =   ExpressionInfo(expression).typeModel;
+                        =   expressionInfo(expression).typeModel;
 
                     if (ceylonTypes.isCeylonNull(expressionType)) {
                         // testing against the null value
@@ -2918,7 +2919,7 @@ class BaseGenerator(CompilationContext ctx)
         switch (switched = that.switched)
         case (is Expression) {
             switchedType
-                =   ExpressionInfo(switched).typeModel;
+                =   expressionInfo(switched).typeModel;
 
             switchedDeclaration
                 =   null;
@@ -4261,7 +4262,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateSequentialFromSpreadArgument(SpreadArgument that)
-        =>  let (argumentInfo = ExpressionInfo(that.argument))
+        =>  let (argumentInfo = expressionInfo(that.argument))
             if (ceylonTypes.isCeylonSequential(argumentInfo.typeModel)) then
                 // Basically a noop; `x[*y] === y` if `y is Sequential`.
                 that.argument.transform(expressionTransformer)

@@ -90,8 +90,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
-    ExpressionInfo,
-    UnspecifiedVariableInfo
+    UnspecifiedVariableInfo,
+    expressionInfo
 }
 
 import org.antlr.runtime {
@@ -771,10 +771,10 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformDestructure(Destructure that)
-        =>  let (expressionInfo = ExpressionInfo(that.specifier.expression),
+        =>  let (eInfo = expressionInfo(that.specifier.expression),
                 parts = generateForPattern {
                     that.pattern;
-                    expressionInfo.typeModel;
+                    eInfo.typeModel;
                     () => that.specifier.expression.transform {
                         expressionTransformer;
                     };
