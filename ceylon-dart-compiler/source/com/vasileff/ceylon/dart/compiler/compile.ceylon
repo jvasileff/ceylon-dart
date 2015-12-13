@@ -498,12 +498,17 @@ shared
                         nodeCountTransformer += countNodesTransformer(unit);
                     }
 
+                    try (timer.Measurement("countNodesTransformerNull")) {
+                        nodeCountTransformer += countNodesTransformerNull(unit);
+                    }
+
                     try (timer.Measurement("countNodesVisitor")) {
                         nodeCountVisitor += countNodesVisitor(unit);
                     }
 
                     try (timer.Measurement("countNodesTcVisitor")) {
-                        nodeCountTcVisitor += countNodesTcVisitor(phasedUnit.compilationUnit);
+                        nodeCountTcVisitor += countNodesTcVisitor(
+                                phasedUnit.compilationUnit);
                     }
                 }
 
@@ -834,6 +839,21 @@ Integer countNodesTransformer(CompilationUnit unit) {
             =>  sum { 1, *that.transformChildren(this) };
     }
     return unit.transform(transformer);
+}
+
+"Count nodes. Useful for determining baseline performance of WideningTransformers that
+ are used like Visitors."
+Integer countNodesTransformerNull(CompilationUnit unit) {
+    variable Integer count = 0;
+    object transformer satisfies WideningTransformer<Null> {
+        shared actual Null transformNode(Node that) {
+            count++;
+            that.transformChildren(this);
+            return null;
+        }
+    }
+    unit.transform(transformer);
+    return count;
 }
 
 "Count nodes. Useful for determining baseline performance of Visitors."
