@@ -4027,7 +4027,7 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                     }
                     case (is ObjectArgumentInfo) {
-                        argumentInfo.node.transform(topLevelVisitor);
+                        argumentInfo.node.visit(topLevelVisitor);
 
                         dartExpression
                             =   withLhs {

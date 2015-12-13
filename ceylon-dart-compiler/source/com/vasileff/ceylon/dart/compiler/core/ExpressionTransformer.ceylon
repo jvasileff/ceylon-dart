@@ -1176,7 +1176,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformObjectExpression(ObjectExpression that) {
         value info = ObjectExpressionInfo(that);
 
-        that.transform(topLevelVisitor);
+        that.visit(topLevelVisitor);
 
         return
         generateObjectInstantiation {

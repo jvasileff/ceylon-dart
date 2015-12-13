@@ -490,7 +490,7 @@ shared
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
-                    ctx.topLevelVisitor.transformCompilationUnit(unit);
+                    ctx.topLevelVisitor.visitCompilationUnit(unit);
                 }
 
                 if (baselinePerfTest) {
