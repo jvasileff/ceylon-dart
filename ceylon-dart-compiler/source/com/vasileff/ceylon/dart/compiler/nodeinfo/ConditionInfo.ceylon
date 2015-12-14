@@ -2,9 +2,11 @@ import ceylon.ast.core {
     NonemptyCondition,
     ExistsCondition,
     ExistsOrNonemptyCondition,
-    IsCondition
+    IsCondition,
+    BooleanCondition
 }
 import com.redhat.ceylon.compiler.typechecker.tree {
+    TcNode=Node,
     Tree
 }
 import com.redhat.ceylon.model.typechecker.model {
@@ -12,9 +14,21 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 
 shared abstract
+class ConditionInfo()
+        of BooleanConditionInfo | IsConditionInfo | ExistsOrNonemptyConditionInfo
+        extends NodeInfo() {}
+
+shared final
+class BooleanConditionInfo(shared actual BooleanCondition node)
+        extends ConditionInfo() {
+
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared abstract
 class ExistsOrNonemptyConditionInfo()
         of ExistsConditionInfo | NonemptyConditionInfo
-        extends NodeInfo() {
+        extends ConditionInfo() {
 
     shared actual formal ExistsOrNonemptyCondition node;
 
@@ -72,9 +86,9 @@ class NonemptyConditionInfo(shared actual NonemptyCondition node)
     shared actual TcNodeType tcNode = lazyTcNode;
 }
 
-shared
+shared final
 class IsConditionInfo(shared actual IsCondition node)
-        extends NodeInfo() {
+        extends ConditionInfo() {
 
     shared alias TcNodeType => Tree.IsCondition;
     value lazyTcNode {
@@ -85,4 +99,3 @@ class IsConditionInfo(shared actual IsCondition node)
 
     shared ValueModel variableDeclarationModel => tcNode.variable.declarationModel;
 }
-

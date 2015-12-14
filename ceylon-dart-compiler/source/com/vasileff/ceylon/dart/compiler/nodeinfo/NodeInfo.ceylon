@@ -32,11 +32,11 @@ class DefaultNodeInfo(shared actual Node node) extends NodeInfo() {
 
 shared abstract
 class NodeInfo()
-        of  ExpressionInfo | DeclarationInfo | ExistsOrNonemptyConditionInfo
+        of  ExpressionInfo | DeclarationInfo | ConditionInfo
           | ExtensionOrConstructionInfo | NamedArgumentInfo | ArgumentListInfo
           | CompilationUnitInfo | ComprehensionInfo |ComprehensionClauseInfo
           | ElseClauseInfo | ForClauseInfo | ForIteratorInfo | IsCaseInfo
-          | IsConditionInfo | ParameterInfo | SpreadArgumentInfo | StatementInfo
+          | ParameterInfo | SpreadArgumentInfo | StatementInfo
           | TypeInfo | TypeNameWithTypeArgumentsInfo
           | VariableInfo | ControlClauseInfo | DefaultNodeInfo
         satisfies DScope {

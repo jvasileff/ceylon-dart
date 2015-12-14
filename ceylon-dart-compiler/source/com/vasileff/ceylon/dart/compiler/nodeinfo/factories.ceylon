@@ -3,6 +3,7 @@ import ceylon.ast.core {
     ExtensionOrConstruction,
     NamedArgument,
     ArgumentList,
+    BooleanCondition,
     CompilationUnit,
     Comprehension,
     ComprehensionClause,
@@ -59,7 +60,8 @@ import ceylon.ast.core {
     AnyValue,
     ValueDeclaration,
     ValueDefinition,
-    ValueGetterDefinition
+    ValueGetterDefinition,
+    Condition
 }
 
 shared
@@ -68,9 +70,9 @@ NodeInfo nodeInfo(Node astNode)
         case (is Expression) expressionInfo(astNode)
         case (is Declaration) declarationInfo(astNode)
         case (is Statement) statementInfo(astNode)
-        case (is ExistsOrNonemptyCondition) existsOrNonemptyConditionInfo(astNode)
         case (is ExtensionOrConstruction) extensionOrConstructionInfo(astNode)
         case (is NamedArgument) namedArgumentInfo(astNode)
+        case (is Condition) conditionInfo(astNode)
         case (is ArgumentList) ArgumentListInfo(astNode)
         case (is CompilationUnit) CompilationUnitInfo(astNode)
         case (is Comprehension) ComprehensionInfo(astNode)
@@ -79,7 +81,6 @@ NodeInfo nodeInfo(Node astNode)
         case (is ForClause) ForClauseInfo(astNode)
         case (is ForIterator) ForIteratorInfo(astNode)
         case (is IsCase) IsCaseInfo(astNode)
-        case (is IsCondition) IsConditionInfo(astNode)
         case (is Parameter) ParameterInfo(astNode)
         case (is SpreadArgument) SpreadArgumentInfo(astNode)
         case (is Type) TypeInfo(astNode)
@@ -88,6 +89,14 @@ NodeInfo nodeInfo(Node astNode)
         else if (is ControlClauseNodeType astNode)
             then ControlClauseInfo(astNode)
             else DefaultNodeInfo(astNode);
+
+shared
+ConditionInfo conditionInfo(Condition astNode)
+    =>  switch (astNode)
+        case (is BooleanCondition) BooleanConditionInfo(astNode)
+        case (is ExistsCondition) ExistsConditionInfo(astNode)
+        case (is NonemptyCondition) NonemptyConditionInfo(astNode)
+        case (is IsCondition) IsConditionInfo(astNode);
 
 shared
 ExpressionInfo expressionInfo(Expression astNode)
