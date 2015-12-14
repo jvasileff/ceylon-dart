@@ -636,7 +636,24 @@ class SpecificationInfo()
     // tcNode may be a MethodArgument for lazy specifier named arguments.
     shared actual formal Tree.SpecifierStatement | Tree.MethodArgument tcNode;
 
-    shared default FunctionModel | ValueModel declaration {
+    shared formal FunctionModel | ValueModel declaration;
+
+    shared formal TypedDeclarationModel? refined;
+}
+
+shared
+class LazySpecificationInfo(shared actual LazySpecification node)
+        extends SpecificationInfo() {
+
+    // tcNode may be a MethodArgument for lazy specifier named arguments.
+    shared alias TcNodeType => Tree.SpecifierStatement | Tree.MethodArgument;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual FunctionModel | ValueModel declaration {
         assert (is FunctionModel | ValueModel d
             =   switch (tcn = tcNode)
                 case (is Tree.SpecifierStatement) tcn.declaration
@@ -644,22 +661,10 @@ class SpecificationInfo()
         return d;
     }
 
-    shared TypedDeclarationModel? refined
+    shared actual TypedDeclarationModel? refined
         =>  if (is Tree.SpecifierStatement tcn = tcNode)
             then tcn.refined
             else null;
-}
-
-shared
-class LazySpecificationInfo(shared actual LazySpecification node)
-        extends SpecificationInfo() {
-
-    shared alias TcNodeType => Tree.SpecifierStatement | Tree.MethodArgument;
-    value lazyTcNode {
-        assert (is TcNodeType node = getTcNode(node));
-        return node;
-    }
-    shared actual TcNodeType tcNode = lazyTcNode;
 }
 
 shared abstract
@@ -989,7 +994,8 @@ class ValueSpecificationInfo(shared actual ValueSpecification node)
         }
     }
 
-    //shared TypedDeclarationModel? refined => tcNode.refined;
+    shared actual TypedDeclarationModel refined
+        =>  tcNode.refined;
 
     shared QualifiedExpression | BaseExpression target {
         assert (is Tree.BaseMemberExpression | Tree.QualifiedMemberExpression
