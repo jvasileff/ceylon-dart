@@ -3431,7 +3431,9 @@ class BaseGenerator(CompilationContext ctx)
             =   argumentList.sequenceArgument;
 
         value sequenceArgInfo
-            =   sequenceArgumentInfo(sequenceArg);
+            =   if (exists sequenceArg)
+                then sequenceArgumentInfo(sequenceArg)
+                else null;
 
         value sequenceArgType
             =   switch (sequenceArgInfo)

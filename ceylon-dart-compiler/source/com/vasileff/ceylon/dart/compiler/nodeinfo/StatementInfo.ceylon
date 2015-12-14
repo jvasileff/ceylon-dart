@@ -7,7 +7,10 @@ import ceylon.ast.core {
     QualifiedExpression,
     ForFail,
     DynamicBlock,
-    While
+    While,
+    IfElse,
+    SwitchCaseElse,
+    TryCatchFinally
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -34,14 +37,23 @@ class StatementInfo()
     shared actual formal Statement node;
 }
 
+shared
+class DefaultStatementInfo(shared actual Statement node)
+        extends StatementInfo() {
+
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
 shared abstract
 class ControlStructureInfo()
-        of DynamicBlockInfo | WhileInfo | ForFailInfo
+        of DynamicBlockInfo | IfElseInfo | WhileInfo | ForFailInfo
+            | SwitchCaseElseInfo | TryCatchFinallyInfo
         extends StatementInfo() {}
 
 shared final
 class DynamicBlockInfo(shared actual DynamicBlock node)
         extends ControlStructureInfo() {
+
     shared actual TcNode tcNode = getTcNode(node);
 }
 
@@ -60,14 +72,26 @@ class ForFailInfo(shared actual ForFail node)
 }
 
 shared final
-class WhileInfo(shared actual While node)
+class IfElseInfo(shared actual IfElse node)
         extends ControlStructureInfo() {
     shared actual TcNode tcNode = getTcNode(node);
 }
 
-shared
-class DefaultStatementInfo(shared actual Statement node)
-        extends StatementInfo() {
+shared final
+class SwitchCaseElseInfo(shared actual SwitchCaseElse node)
+        extends ControlStructureInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared final
+class TryCatchFinallyInfo(shared actual TryCatchFinally node)
+        extends ControlStructureInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared final
+class WhileInfo(shared actual While node)
+        extends ControlStructureInfo() {
     shared actual TcNode tcNode = getTcNode(node);
 }
 

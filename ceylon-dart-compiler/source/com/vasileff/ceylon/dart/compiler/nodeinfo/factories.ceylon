@@ -4,6 +4,9 @@ import ceylon.ast.core {
     NamedArgument,
     ArgumentList,
     BooleanCondition,
+    IfElse,
+    SwitchCaseElse,
+    TryCatchFinally,
     CompilationUnit,
     Comprehension,
     ComprehensionClause,
@@ -62,19 +65,25 @@ import ceylon.ast.core {
     ValueDeclaration,
     ValueDefinition,
     ValueGetterDefinition,
+    ValueSpecification,
     Condition,
-    While
+    While,
+    ExpressionStatement,
+    Assertion,
+    Directive,
+    Destructure
 }
 
 shared
 NodeInfo nodeInfo(Node astNode)
-  =>    switch (astNode)
+    =>  switch (astNode)
         case (is Expression) expressionInfo(astNode)
         case (is Declaration) declarationInfo(astNode)
         case (is Statement) statementInfo(astNode)
         case (is ExtensionOrConstruction) extensionOrConstructionInfo(astNode)
         case (is NamedArgument) namedArgumentInfo(astNode)
         case (is Condition) conditionInfo(astNode)
+        case (is Variable) variableInfo(astNode)
         case (is ArgumentList) ArgumentListInfo(astNode)
         case (is CompilationUnit) CompilationUnitInfo(astNode)
         case (is Comprehension) ComprehensionInfo(astNode)
@@ -87,10 +96,8 @@ NodeInfo nodeInfo(Node astNode)
         case (is SpreadArgument) SpreadArgumentInfo(astNode)
         case (is Type) TypeInfo(astNode)
         case (is TypeNameWithTypeArguments) TypeNameWithTypeArgumentsInfo(astNode)
-        case (is Variable) variableInfo(astNode)
-        else if (is ControlClauseNodeType astNode)
-            then ControlClauseInfo(astNode)
-            else DefaultNodeInfo(astNode);
+        case (is ControlClauseNodeType) ControlClauseInfo(astNode)
+        else DefaultNodeInfo(astNode);
 
 shared
 ConditionInfo conditionInfo(Condition astNode)
@@ -117,10 +124,10 @@ ExpressionInfo expressionInfo(Expression astNode)
 shared
 DeclarationInfo declarationInfo(Declaration astNode)
     =>  switch (astNode)
-        case (is ConstructorDefinition) ConstructorDefinitionInfo(astNode)
-        case (is ObjectDefinition) ObjectDefinitionInfo(astNode)
         case (is TypeDeclaration) typeDeclarationInfo(astNode)
         case (is TypedDeclaration) typedDeclarationInfo(astNode)
+        case (is ConstructorDefinition) ConstructorDefinitionInfo(astNode)
+        case (is ObjectDefinition) ObjectDefinitionInfo(astNode)
         case (is ValueSetterDefinition) ValueSetterDefinitionInfo(astNode);
 
 shared
@@ -140,12 +147,11 @@ NamedArgumentInfo namedArgumentInfo(NamedArgument astNode)
         case (is ObjectArgument) ObjectArgumentInfo(astNode);
 
 shared
-SpreadArgumentInfo | ComprehensionInfo | Null sequenceArgumentInfo
-        (SpreadArgument | Comprehension | Null astNode)
+SpreadArgumentInfo | ComprehensionInfo sequenceArgumentInfo
+        (SpreadArgument | Comprehension astNode)
     =>  switch (astNode)
         case (is SpreadArgument) SpreadArgumentInfo(astNode)
-        case (is Comprehension) ComprehensionInfo(astNode)
-        case (is Null) null;
+        case (is Comprehension) ComprehensionInfo(astNode);
 
 shared
 AnyFunctionInfo anyFunctionInfo(AnyFunction astNode)
@@ -159,9 +165,14 @@ StatementInfo statementInfo(Statement astNode)
     =>  switch (astNode)
         case (is DynamicBlock) DynamicBlockInfo(astNode)
         case (is ForFail) ForFailInfo(astNode)
+        case (is IfElse) IfElseInfo(astNode)
+        case (is SwitchCaseElse) SwitchCaseElseInfo(astNode)
+        case (is TryCatchFinally) TryCatchFinallyInfo(astNode)
+        case (is ValueSpecification) ValueSpecificationInfo(astNode)
         case (is LazySpecification) LazySpecificationInfo(astNode)
         case (is While) WhileInfo(astNode)
-        else DefaultStatementInfo(astNode);
+        case (is ExpressionStatement | Assertion | Directive | Destructure)
+                DefaultStatementInfo(astNode);
 
 shared
 VariableInfo variableInfo(Variable astNode)
@@ -177,7 +188,6 @@ ExistsOrNonemptyConditionInfo existsOrNonemptyConditionInfo
     =>  switch (astNode)
         case (is ExistsCondition) ExistsConditionInfo(astNode)
         case (is NonemptyCondition) NonemptyConditionInfo(astNode);
-
 
 shared
 TypeDeclarationInfo typeDeclarationInfo(TypeDeclaration astNode)
