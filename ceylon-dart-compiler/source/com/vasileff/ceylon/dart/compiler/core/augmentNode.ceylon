@@ -16,8 +16,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 
 shared
 void augmentNode(TcNode tcNode, Node node) {
-    node.put(keys.location, tcNode.location);
-    node.put(keys.tcNode, tcNode);
+    node.set(keys.tcNode, tcNode);
 
     // hack to populate info for synthetic node
     if (is PositionalArguments node,

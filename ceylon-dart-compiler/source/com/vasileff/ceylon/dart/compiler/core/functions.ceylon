@@ -60,20 +60,22 @@ import com.vasileff.ceylon.dart.compiler {
     DScope,
     Warning
 }
+import com.vasileff.ceylon.dart.compiler.dartast {
+    DartPrefixExpression,
+    DartIntegerLiteral
+}
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     DeclarationInfo,
-    keys,
     BaseExpressionInfo,
     declarationInfo,
     nodeInfo
 }
+
 import java.lang {
-    JDouble=Double { jparseDouble=parseDouble }
-}
-import com.vasileff.ceylon.dart.compiler.dartast {
-    DartPrefixExpression,
-    DartIntegerLiteral
+    JDouble=Double {
+        jparseDouble=parseDouble
+    }
 }
 
 void printNodeAsCode(Node node) {
@@ -86,11 +88,6 @@ void printNodeAsCode(Node node) {
         maxLineLength = 80;
     };
     print(format(tcNode(node), fo));
-}
-
-String location(Node that) {
-    assert (exists location = that.get(keys.location));
-    return location;
 }
 
 UnitModel getUnit

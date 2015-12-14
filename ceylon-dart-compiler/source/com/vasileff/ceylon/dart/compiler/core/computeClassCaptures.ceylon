@@ -3,7 +3,8 @@ import ceylon.ast.core {
     CompilationUnit,
     Assertion,
     IsCondition,
-    ExistsOrNonemptyCondition
+    ExistsOrNonemptyCondition,
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -37,6 +38,14 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
     value builder = ImmutableSetMultimapBuilder<ClassModel, FunctionOrValueModel>();
 
     object classCaptureVisitor satisfies Visitor {
+
+        shared actual
+        void visitNode(Node that) {
+            // ceylon.ast 1.2.0 optimization
+            for (child in that.children) {
+                child.visit(this);
+            }
+        }
 
         shared actual
         void visitCompilationUnit(CompilationUnit that) {

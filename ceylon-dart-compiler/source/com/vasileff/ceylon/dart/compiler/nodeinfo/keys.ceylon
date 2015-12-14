@@ -11,7 +11,4 @@ shared
 object keys {
     shared
     Key<TcNode> tcNode = ScopedKey<TcNode>(`value keys`, "tcNode");
-
-    shared
-    Key<String> location = ScopedKey<String>(`value keys`, "location");
 }

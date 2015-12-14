@@ -6,7 +6,8 @@ import ceylon.ast.core {
     DynamicBlock,
     DynamicInterfaceDefinition,
     DynamicModifier,
-    DynamicValue
+    DynamicValue,
+    Node
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -31,6 +32,14 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
     "For proper operation, this visitor must be visited by a [[CompilationUnit]]."
     object captureVisitor satisfies Visitor {
+
+        shared actual
+        void visitNode(Node that) {
+            // ceylon.ast 1.2.0 optimization
+            for (child in that.children) {
+                child.visit(this);
+            }
+        }
 
         shared actual
         void visitDeclaration(Declaration that) {
