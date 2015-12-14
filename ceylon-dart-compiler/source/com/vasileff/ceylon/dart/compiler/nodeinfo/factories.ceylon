@@ -10,6 +10,7 @@ import ceylon.ast.core {
     ElseClause,
     ForClause,
     ForIterator,
+    ForFail,
     IsCase,
     IsCondition,
     SpreadArgument,
@@ -18,6 +19,7 @@ import ceylon.ast.core {
     Node,
     Expression,
     Declaration,
+    DynamicBlock,
     Statement,
     Parameter,
     Type,
@@ -27,7 +29,6 @@ import ceylon.ast.core {
     ValueArgument,
     ObjectArgument,
     LazySpecification,
-    ForFail,
     FunctionDeclaration,
     FunctionDefinition,
     AnyFunction,
@@ -61,7 +62,8 @@ import ceylon.ast.core {
     ValueDeclaration,
     ValueDefinition,
     ValueGetterDefinition,
-    Condition
+    Condition,
+    While
 }
 
 shared
@@ -155,8 +157,10 @@ AnyFunctionInfo anyFunctionInfo(AnyFunction astNode)
 shared
 StatementInfo statementInfo(Statement astNode)
     =>  switch (astNode)
+        case (is DynamicBlock) DynamicBlockInfo(astNode)
         case (is ForFail) ForFailInfo(astNode)
         case (is LazySpecification) LazySpecificationInfo(astNode)
+        case (is While) WhileInfo(astNode)
         else DefaultStatementInfo(astNode);
 
 shared

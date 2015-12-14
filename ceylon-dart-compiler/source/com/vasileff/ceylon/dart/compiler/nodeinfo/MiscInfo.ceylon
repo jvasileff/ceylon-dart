@@ -11,10 +11,8 @@ import ceylon.ast.core {
     ExtensionOrConstruction,
     SpreadArgument,
     ElseClause,
-    DynamicBlock,
     TypeNameWithTypeArguments,
     Extension,
-    While,
     CaseClause,
     ComprehensionClause,
     IfClause,
@@ -25,6 +23,7 @@ import ceylon.ast.core {
 import ceylon.interop.java {
     CeylonList
 }
+
 import com.redhat.ceylon.compiler.typechecker.tree {
     TcNode=Node,
     Tree
@@ -110,8 +109,7 @@ class ComprehensionInfo(shared actual Comprehension node)
 
 shared
 alias ControlClauseNodeType
-    =>  CaseClause | CatchClause | DynamicBlock | FinallyClause
-            | IfClause | TryClause | While;
+    =>  CaseClause | CatchClause | FinallyClause | IfClause | TryClause;
 
 shared
 class ControlClauseInfo(ControlClauseNodeType tn)

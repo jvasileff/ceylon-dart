@@ -5,8 +5,14 @@ import ceylon.ast.core {
     ValueSpecification,
     BaseExpression,
     QualifiedExpression,
-    ForFail
+    ForFail,
+    DynamicBlock,
+    While
 }
+import ceylon.ast.redhat {
+    primaryToCeylon
+}
+
 import com.redhat.ceylon.compiler.typechecker.tree {
     TcNode=Node,
     Tree
@@ -16,30 +22,32 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     TypedDeclarationModel=TypedDeclaration
 }
-import ceylon.ast.redhat {
-    primaryToCeylon
-}
 import com.vasileff.ceylon.dart.compiler.core {
     augmentNode
 }
 
 shared abstract
 class StatementInfo()
-        of ForFailInfo | SpecificationInfo | DefaultStatementInfo
+        of ControlStructureInfo | SpecificationInfo | DefaultStatementInfo
         extends NodeInfo() {
 
     shared actual formal Statement node;
 }
 
-shared
-class DefaultStatementInfo(shared actual Statement node)
-        extends StatementInfo() {
+shared abstract
+class ControlStructureInfo()
+        of DynamicBlockInfo | WhileInfo | ForFailInfo
+        extends StatementInfo() {}
+
+shared final
+class DynamicBlockInfo(shared actual DynamicBlock node)
+        extends ControlStructureInfo() {
     shared actual TcNode tcNode = getTcNode(node);
 }
 
 shared
 class ForFailInfo(shared actual ForFail node)
-        extends StatementInfo() {
+        extends ControlStructureInfo() {
 
     shared alias TcNodeType => Tree.ForStatement;
     value lazyTcNode {
@@ -49,6 +57,18 @@ class ForFailInfo(shared actual ForFail node)
     shared actual TcNodeType tcNode = lazyTcNode;
 
     shared Boolean exits => tcNode.exits;
+}
+
+shared final
+class WhileInfo(shared actual While node)
+        extends ControlStructureInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared
+class DefaultStatementInfo(shared actual Statement node)
+        extends StatementInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
 }
 
 shared abstract
