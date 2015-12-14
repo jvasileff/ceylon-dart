@@ -59,12 +59,13 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ValueDeclarationInfo,
     typedDeclarationInfo,
     ValueSetterDefinitionInfo,
-    DeclarationInfo,
     ObjectDefinitionInfo,
     LazySpecificationInfo,
     FunctionDeclarationInfo,
-    NodeInfo,
-    ValueSpecificationInfo
+    ValueSpecificationInfo,
+    anyValueInfo,
+    declarationInfo,
+    nodeInfo
 }
 
 shared
@@ -232,7 +233,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 | ValueDefinition
                 | ValueGetterDefinition
                 | ValueSetterDefinition that)
-        =>  let (info = DeclarationInfo(that))
+        =>  let (info = declarationInfo(that))
             if (!isForDartBackend(that)) then
                 [] // skip native declarations entirely, for now
             else if (info.declarationModel.container is InterfaceModel
@@ -322,10 +323,10 @@ class ClassMemberTransformer(CompilationContext ctx)
             (ValueDeclaration | ValueDefinition that) {
 
         value info
-            =   NodeInfo(that);
+            =   nodeInfo(that);
 
         value declarationModel
-            =   AnyValueInfo(that).declarationModel;
+            =   anyValueInfo(that).declarationModel;
 
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
@@ -584,7 +585,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                     generateForValueDeclarationRaw {
                         // TODO Use Condition node for more accurate line/col info
                         //      (must first make the node avail in VariableTriple)
-                        NodeInfo(that);
+                        nodeInfo(that);
                         variableTriple.declarationModel;
                     };
                 });

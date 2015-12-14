@@ -91,7 +91,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     IsCaseInfo,
     FunctionDeclarationInfo,
     UnspecifiedVariableInfo,
-    expressionInfo
+    expressionInfo,
+    nodeInfo
 }
 
 import org.antlr.runtime {
@@ -131,7 +132,7 @@ class StatementTransformer(CompilationContext ctx)
     shared actual
     DartStatement[] transformSwitchCaseElse(SwitchCaseElse that) {
         value info
-            =   NodeInfo(that);
+            =   nodeInfo(that);
 
         value [switchedType, switchedDeclaration, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);
@@ -467,7 +468,7 @@ class StatementTransformer(CompilationContext ctx)
         return  [DartExpressionStatement {
                 withLhsNoType {
                     () => generateAssignmentExpression {
-                        NodeInfo(that);
+                        nodeInfo(that);
                         ValueSpecificationInfo(that).target;
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
@@ -809,7 +810,7 @@ class StatementTransformer(CompilationContext ctx)
                 generateIsOrExistsOrNonemptyConditionAssertion(that);
 
     DartStatement generateBooleanConditionAssertion(BooleanCondition that) {
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         "The Ceylon source code for the condition"
         value errorMessage = assertionErrorMessage(info);
@@ -847,7 +848,7 @@ class StatementTransformer(CompilationContext ctx)
             (IsCondition | ExistsOrNonemptyCondition that) {
 
         value info
-            =   NodeInfo(that);
+            =   nodeInfo(that);
 
         "The Ceylon source code for the condition"
         value errorMessage

@@ -12,7 +12,7 @@ import com.redhat.ceylon.model.typechecker.model {
     Element
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    NodeInfo
+    nodeInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableSetMultimapBuilder,
@@ -45,7 +45,7 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
 
         shared actual
         void visitAssertion(Assertion that) {
-            value info = NodeInfo(that);
+            value info = nodeInfo(that);
             assert (is Element element = info.scope);
 
             ClassModel classModel;

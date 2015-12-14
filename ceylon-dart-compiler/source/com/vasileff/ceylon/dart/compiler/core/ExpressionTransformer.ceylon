@@ -194,9 +194,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ObjectExpressionInfo,
     SuperInfo,
     IsCaseInfo,
-    NodeInfo,
     TypeNameWithTypeArgumentsInfo,
-    expressionInfo
+    expressionInfo,
+    nodeInfo
 }
 
 shared
@@ -1211,7 +1211,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformExistsOperation(ExistsOperation that)
-        =>  let (info = NodeInfo(that),
+        =>  let (info = nodeInfo(that),
                  operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
@@ -1231,7 +1231,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformIsOperation(IsOperation that)
-        =>  let (info = NodeInfo(that),
+        =>  let (info = nodeInfo(that),
                  operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
@@ -1252,7 +1252,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformNonemptyOperation(NonemptyOperation that)
-        =>  let (info = NodeInfo(that),
+        =>  let (info = nodeInfo(that),
                  operandInfo = expressionInfo(that.operand))
             withBoxing {
                 info;
@@ -1279,7 +1279,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformNotOperation(NotOperation that)
         =>  withBoxing {
-                NodeInfo(that);
+                nodeInfo(that);
                 ceylonTypes.booleanType;
                 null;
                 DartPrefixExpression {
@@ -1294,7 +1294,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformNegationOperation(NegationOperation that)
         =>  generateInvocationFromName {
-                NodeInfo(that);
+                nodeInfo(that);
                 that.operand;
                 "negated";
                 [];
@@ -1312,7 +1312,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         return
         generateAssignmentExpression {
@@ -1335,7 +1335,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         // the expected type after boxing
         TypeModel tempVarType;
@@ -1417,7 +1417,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression generateInvocationForBinaryOperation
             (BinaryOperation that, String methodName)
         =>  generateInvocationFromName {
-                NodeInfo(that);
+                nodeInfo(that);
                 that.leftOperand;
                 methodName;
                 [that.rightOperand];
@@ -1463,7 +1463,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformScaleOperation(ScaleOperation that)
         // the left and right operands are swapped compared to other binary operations
         =>  generateInvocationFromName {
-                NodeInfo(that);
+                nodeInfo(that);
                 that.rightOperand;
                 "scale";
                 [that.leftOperand];
@@ -1521,7 +1521,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformEntryOperation(EntryOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = nodeInfo(that))
             withBoxingNonNative {
                 info;
                 expressionInfo(that).typeModel;
@@ -1546,7 +1546,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformInOperation(InOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = nodeInfo(that))
             generateInvocationFromName {
                 info;
                 // Note: the *right* operand is the receiver
@@ -1589,7 +1589,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformIdenticalOperation(IdenticalOperation that)
-        =>  let (info = NodeInfo(that))
+        =>  let (info = nodeInfo(that))
             withBoxing {
                 info;
                 rhsType = ceylonTypes.booleanType;
@@ -1614,7 +1614,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLogicalOperation(LogicalOperation that)
-        =>  let (info = NodeInfo(that),
+        =>  let (info = nodeInfo(that),
                  dartOperator =
                     switch (that)
                     case (is AndOperation) "&&"
@@ -1704,7 +1704,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // passthrough; no new lhs
         return generateAssignmentExpression {
-            NodeInfo(that);
+            nodeInfo(that);
             leftOperand;
             () => that.rightOperand.transform(expressionTransformer);
         };
@@ -1726,7 +1726,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // passthrough; no new lhs
         return generateAssignmentExpression {
-            NodeInfo(that);
+            nodeInfo(that);
             leftOperand;
             () => generateInvocationForBinaryOperation(that, methodName);
         };
@@ -1744,7 +1744,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         // passthrough; no new lhs
         return generateAssignmentExpression {
-            NodeInfo(that);
+            nodeInfo(that);
             leftOperand;
             () => generateInvocationForBinaryOperation(that, methodName);
         };
@@ -1752,12 +1752,12 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
         return
         generateAssignmentExpression {
-            NodeInfo(that);
+            nodeInfo(that);
             leftOperand;
             () => let (dartOperator
                         =   switch (that)
@@ -1791,7 +1791,7 @@ class ExpressionTransformer(CompilationContext ctx)
             case (is OpenBound) "smallerThan"
             case (is ClosedBound) "notLargerThan";
 
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         return
         withBoxing {
@@ -1867,7 +1867,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformComprehension(Comprehension that) {
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         function generateStepFunctionName(Integer step)
             =>  DartSimpleIdentifier {
@@ -1997,7 +1997,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 DartSimpleIdentifier prevStepFunction,
                 {[ValueModel, DartSimpleIdentifier]*} accumulatedCapturables) {
 
-            value clauseInfo = NodeInfo(clause);
+            value clauseInfo = nodeInfo(clause);
 
             switch (clause)
             case (is ForComprehensionClause) {
@@ -2556,7 +2556,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformSwitchCaseElseExpression(SwitchCaseElseExpression that) {
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         value [switchedType, switchedDeclaration, switchedVariable, variableDeclaration]
             =   generateForSwitchClause(that.clause);

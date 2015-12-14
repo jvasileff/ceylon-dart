@@ -64,7 +64,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     DeclarationInfo,
     keys,
-    BaseExpressionInfo
+    BaseExpressionInfo,
+    declarationInfo,
+    nodeInfo
 }
 import java.lang {
     JDouble=Double { jparseDouble=parseDouble }
@@ -113,7 +115,7 @@ ModuleModel getModule
         (DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
     =>  if (is Node declaration) then
-            getModule(NodeInfo(declaration).scope)
+            getModule(nodeInfo(declaration).scope)
         else if (is PackageModel declaration) then
             declaration.\imodule
         else if (is ModuleModel declaration) then
@@ -144,7 +146,7 @@ ScopeModel? containerOfScope(ScopeModel scope)
 ScopeModel toScopeModel(DScope|Node|NodeInfo|ScopeModel|ElementModel scope) {
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
     if (is Node scope) {
-        return NodeInfo(scope).scope;
+        return nodeInfo(scope).scope;
     }
     else if (is NodeInfo scope) {
         return scope.scope;
@@ -334,7 +336,7 @@ Backends getNativeBackends(Declaration | DeclarationInfo | DeclarationModel
             | ModuleModel | ModuleImportModel that)
     =>  switch (that)
         case (is Declaration)
-            DeclarationInfo(that).declarationModel.nativeBackends
+            declarationInfo(that).declarationModel.nativeBackends
         case (is DeclarationInfo)
             that.declarationModel.nativeBackends
         case (is DeclarationModel)
@@ -377,6 +379,9 @@ SetterModel|FunctionModel|ValueModel? mostRefined
     }
 }
 
+NodeInfo getNodeInfo(Node node)
+    =>  nodeInfo(node);
+
 shared
 DScope dScope(
         "The AST node or node info for error reporting."
@@ -396,7 +401,7 @@ DScope dScope(
             shared actual NodeInfo nodeInfo
                 =   if (is NodeInfo passedNode)
                     then passedNode
-                    else NodeInfo(passedNode);
+                    else getNodeInfo(passedNode);
 
             shared actual ScopeModel scope => passedScope;
         };
@@ -480,7 +485,7 @@ shared
 void addWarning(Node|NodeInfo|DScope node, Warning warning, String message) {
     value info
         =   switch (node)
-            case (is Node) NodeInfo(node)
+            case (is Node) nodeInfo(node)
             case (is NodeInfo) node
             else node.nodeInfo;
     info.addWarning(warning, message);
@@ -490,7 +495,7 @@ shared
 void addError(Node|NodeInfo|DScope node, String message) {
     value info
         =   switch (node)
-            case (is Node) NodeInfo(node)
+            case (is Node) nodeInfo(node)
             case (is NodeInfo) node
             else node.nodeInfo;
     info.addUnexpectedError(message);

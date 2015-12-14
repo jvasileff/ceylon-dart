@@ -87,16 +87,16 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyInterfaceInfo,
     ValueDefinitionInfo,
-    AnyFunctionInfo,
     AnyClassInfo,
     ValueGetterDefinitionInfo,
     ObjectDefinitionInfo,
     ObjectExpressionInfo,
-    NodeInfo,
     ObjectArgumentInfo,
     ParameterInfo,
-    ConstructorInfo,
-    ExtensionOrConstructionInfo
+    ConstructorDefinitionInfo,
+    anyFunctionInfo,
+    extensionOrConstructionInfo,
+    nodeInfo
 }
 
 "For Dart TopLevel declarations."
@@ -623,7 +623,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value constructorInfo
             =   if (exists constructor)
-                then ConstructorInfo(constructor)
+                then ConstructorDefinitionInfo(constructor)
                 else null;
 
         value constructorModel
@@ -913,14 +913,14 @@ class TopLevelVisitor(CompilationContext ctx)
             "Arguments must exist for constructor or ininitializer extends"
             assert (exists arguments = extensionOrConstruction.arguments);
 
-            value extensionOrConstructionInfo
-                =   ExtensionOrConstructionInfo(extensionOrConstruction);
+            value ecInfo
+                =   extensionOrConstructionInfo(extensionOrConstruction);
 
             value outerAndCaptureArguments
-                =   switch (extendedClass = extensionOrConstructionInfo.declaration)
+                =   switch (extendedClass = ecInfo.declaration)
                     case (is ClassModel)
                         generateArgumentsForOuterAndCaptures {
-                            NodeInfo(extendedType);
+                            nodeInfo(extendedType);
                             extendedClass;
                         }
                     case (is ConstructorModel | Null) []; // TODO
@@ -928,10 +928,10 @@ class TopLevelVisitor(CompilationContext ctx)
             if (!arguments.argumentList.children.empty) {
 
                 assert (exists parameterList
-                    =   extensionOrConstructionInfo.declaration?.firstParameterList);
+                    =   ecInfo.declaration?.firstParameterList);
 
                 assert (exists callableType
-                    =   extensionOrConstructionInfo.typeModel);
+                    =   ecInfo.typeModel);
 
                 value signature
                     =   CeylonList {
@@ -945,7 +945,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         concatenate {
                             outerAndCaptureArguments,
                             generateArgumentListFromArguments {
-                                extensionOrConstructionInfo;
+                                ecInfo;
                                 arguments;
                                 signature;
                                 parameterList;
@@ -964,7 +964,7 @@ class TopLevelVisitor(CompilationContext ctx)
     [DartFunctionDeclaration*] generateForwardingGetterSetter
             (ValueDefinition | ValueGetterDefinition | ObjectDefinition that) {
 
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         value declarationModel =
             switch (that)
@@ -1054,7 +1054,7 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
-        =>  let (info = AnyFunctionInfo(that),
+        =>  let (info = anyFunctionInfo(that),
                 functionName = dartTypes.getName(info.declarationModel),
                 functionPPName = dartTypes.getPackagePrefixedName(info.declarationModel),
                 parameterModels = CeylonList(

@@ -50,9 +50,7 @@ import ceylon.interop.java {
     CeylonList,
     CeylonIterable
 }
-import java.util {
-    JList=List
-}
+
 import com.redhat.ceylon.model.typechecker.model {
     PackageModel=Package,
     FunctionModel=Function,
@@ -124,19 +122,15 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ArgumentListInfo,
     ExpressionInfo,
     FunctionDefinitionInfo,
-    AnyFunctionInfo,
     IsConditionInfo,
     TypeInfo,
     ValueDefinitionInfo,
     ValueGetterDefinitionInfo,
     UnspecifiedVariableInfo,
-    ExistsOrNonemptyConditionInfo,
-    AnyValueInfo,
     ValueSetterDefinitionInfo,
     ObjectDefinitionInfo,
     SpecifiedVariableInfo,
     ComprehensionClauseInfo,
-    NodeInfo,
     namedArgumentInfo,
     AnonymousArgumentInfo,
     SpecifiedArgumentInfo,
@@ -149,11 +143,19 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ComprehensionInfo,
     LazySpecificationInfo,
     VariadicVariableInfo,
-    expressionInfo
+    expressionInfo,
+    anyFunctionInfo,
+    anyValueInfo,
+    existsOrNonemptyConditionInfo,
+    nodeInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
     javaList
+}
+
+import java.util {
+    JList=List
 }
 
 shared abstract
@@ -396,7 +398,7 @@ class BaseGenerator(CompilationContext ctx)
     DartFunctionDeclaration generateFunctionDefinition
             (FunctionShortcutDefinition | FunctionDefinition that) {
 
-        value info = AnyFunctionInfo(that);
+        value info = anyFunctionInfo(that);
 
         value functionModel = info.declarationModel;
 
@@ -1579,7 +1581,7 @@ class BaseGenerator(CompilationContext ctx)
     ConditionCodeTuple generateExistsOrNonemptyConditionExpression
             (ExistsOrNonemptyCondition that, Boolean negate = false) {
 
-        value info = ExistsOrNonemptyConditionInfo(that);
+        value info = existsOrNonemptyConditionInfo(that);
 
         // ExistsCondition holds
         //  - a MemberName to test existing values, or
@@ -1909,7 +1911,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartVariableDeclarationList generateForValueDeclaration
             (ValueDeclaration | ValueDefinition that)
-        =>  let (info = AnyValueInfo(that))
+        =>  let (info = anyValueInfo(that))
             generateForValueDeclarationRaw(info, info.declarationModel);
 
     "Generate a dart *declaration*."
@@ -2267,7 +2269,7 @@ class BaseGenerator(CompilationContext ctx)
             =   expressionType else ceylonTypes.entryAnythingType;
 
         value info
-            =   NodeInfo(pattern);
+            =   nodeInfo(pattern);
 
         value tempVariableIdentifier
             =   DartSimpleIdentifier {
@@ -2275,10 +2277,10 @@ class BaseGenerator(CompilationContext ctx)
                 };
 
         value keyInfo
-            =   NodeInfo(pattern.key);
+            =   nodeInfo(pattern.key);
 
         value itemInfo
-            =   NodeInfo(pattern.item);
+            =   nodeInfo(pattern.item);
 
         value tempVariable
             =   DartVariableDeclarationStatement {
@@ -2365,7 +2367,7 @@ class BaseGenerator(CompilationContext ctx)
             =   expressionType else ceylonTypes.sequentialAnythingType;
 
         value info
-            =   NodeInfo(pattern);
+            =   nodeInfo(pattern);
 
         // handle the stupid '[a*] = sequential' noop case first.
         if (pattern.elementPatterns.empty) {
@@ -2441,7 +2443,7 @@ class BaseGenerator(CompilationContext ctx)
         value elementParts
             =   pattern.elementPatterns.indexed.flatMap((pair) {
                     value index -> elementPattern = pair;
-                    value pInfo = NodeInfo(elementPattern);
+                    value pInfo = nodeInfo(elementPattern);
 
                     return generateForPattern {
                         elementPattern;
@@ -2909,7 +2911,7 @@ class BaseGenerator(CompilationContext ctx)
     [TypeModel, ValueModel?, DartSimpleIdentifier,
         DartVariableDeclarationStatement]
     generateForSwitchClause(SwitchClause that) {
-        value info = NodeInfo(that);
+        value info = nodeInfo(that);
 
         TypeModel switchedType;
         ValueModel? switchedDeclaration;
@@ -3883,7 +3885,7 @@ class BaseGenerator(CompilationContext ctx)
             List<TypeModel | TypeDetails> signature,
             ParameterListModel parameterList) {
 
-        value scope = NodeInfo(namedArguments);
+        value scope = nodeInfo(namedArguments);
 
         variable String? tmpVariableMemo = null;
 
