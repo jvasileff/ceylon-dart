@@ -25,7 +25,8 @@ import ceylon.ast.core {
     DynamicModifier,
     DynamicInterfaceDefinition,
     DynamicBlock,
-    DynamicValue
+    DynamicValue,
+    DefaultedParameter
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -37,7 +38,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleIdentifier,
@@ -65,7 +67,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ValueSpecificationInfo,
     anyValueInfo,
     declarationInfo,
-    nodeInfo
+    nodeInfo,
+    FunctionDefinitionInfo
 }
 
 shared
@@ -176,6 +179,16 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
+        // Refining methods with defaulted parameters not yet supported, so warn when
+        // declaring them.
+        if (info.declarationModel.formal || info.declarationModel.default,
+                info.node.parameterLists.first.children.any(
+                        (p) => p is DefaultedParameter)) {
+            addWarning(that.name, Warning.deprecation,
+                    "**potential runtime error** formal and default methods with defaulted
+                     parameters not yet supported.");
+        }
+
         return [generateMethodGetterOrSetterDeclaration(that)];
     }
 
@@ -219,8 +232,21 @@ class ClassMemberTransformer(CompilationContext ctx)
             else [];
 
     shared actual
-    [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that)
-        =>  generateForMethodGetterOrSetterDefinition(that);
+    [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that) {
+        value info = FunctionDefinitionInfo(that);
+
+        // Refining methods with defaulted parameters not yet supported, so warn when
+        // declaring them.
+        if (info.declarationModel.formal || info.declarationModel.default,
+                info.node.parameterLists.first.children.any(
+                        (p) => p is DefaultedParameter)) {
+            addWarning(that.name, Warning.deprecation,
+                    "**potential runtime error** formal and default methods with defaulted
+                     parameters not yet supported.");
+        }
+
+        return generateForMethodGetterOrSetterDefinition(that);
+    }
 
     shared actual
     [DartMethodDeclaration*] transformFunctionShortcutDefinition
