@@ -76,8 +76,3 @@ class NodeInfo()
     shared void addWarning(Warning warning, String message)
         =>  tcNode.addUsageWarning(warning, message, dartBackend);
 }
-
-TcNode getTcNode(Node astNode) {
-    assert (exists node = astNode.get(keys.tcNode));
-    return node;
-}

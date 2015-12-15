@@ -11,16 +11,17 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     Tree
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    keys
+    keys,
+    NodeBox
 }
 
 shared
 void augmentNode(TcNode tcNode, Node node) {
-    node.set(keys.tcNode, tcNode);
+    node.set(keys.tcNode, NodeBox(tcNode));
 
     // hack to populate info for synthetic node
     if (is PositionalArguments node,
-        is Tree.SequencedArgument sa = node.argumentList.get(keys.tcNode),
+        is Tree.SequencedArgument sa = node.argumentList.get(keys.tcNode)?.node,
             !sa.token exists) {
         sa.scope = tcNode.scope;
         sa.unit = tcNode.unit;
