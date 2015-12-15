@@ -121,4 +121,12 @@ object typeConstructorVisitor extends Visitor() {
         }
         super.visit(that);
     }
+
+    shared actual
+    void visit(Tree.TypeSpecifier that) {
+        if (is Tree.TypeConstructor typeConstructor = that.type) {
+            that.type = dummyBaseType(typeConstructor);
+        }
+        super.visit(that);
+    }
 }
