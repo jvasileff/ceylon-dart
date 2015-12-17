@@ -106,7 +106,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else id;
 
     String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
-        String classOrObjectShortName(ClassModel declaration)
+        String usableShortName(ClassModel | FunctionModel | ValueModel declaration)
             =>  if (declaration.anonymous) then
                     // *all* objects are anonymous classes, not just expressions that
                     // get the "anonymous#" names. Non-expression objects are named
@@ -157,11 +157,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is ValueModel | FunctionModel) {
             return makePrivate {
                 originalDeclaration;
-                sanitizeIdentifier(originalDeclaration.name);
+                sanitizeIdentifier {
+                    usableShortName(originalDeclaration);
+                };
             };
         }
         case (is ClassModel) {
-            return sanitizeIdentifier(classOrObjectShortName(originalDeclaration));
+            return sanitizeIdentifier(usableShortName(originalDeclaration));
         }
         case (is ConstructorModel | InterfaceModel) {
             return sanitizeIdentifier(originalDeclaration.name);
