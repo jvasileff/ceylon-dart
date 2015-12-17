@@ -745,12 +745,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  DartSimpleIdentifier(getName(declaration));
 
     shared
-    DartSimpleIdentifier expressionForThis(ClassOrInterfaceModel scope)
-        =>  switch (container = getContainingClassOrInterface(scope))
-            case (is ClassModel)
-                DartSimpleIdentifier("this")
-            else
-                DartSimpleIdentifier("$this");
+    DartSimpleIdentifier expressionForThis(DScope scope)
+        =>  if (isSelfAParameter(scope))
+            then DartSimpleIdentifier("$this")
+            else DartSimpleIdentifier("this");
 
     "A stream containing the given [[declaration]] followed by declarations for all
      of [[declaration]]'s ancestor Classes and Interfaces."
@@ -801,24 +799,51 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 =>  capturedBySelfOrSupertype(capturedDeclaration, c));
 
     """
+       Returns a dart expression for [[outerDeclaration]] from [[scope]]. The expression
+       will be of the form:
+
+            $this ("." $outer$ref)*
+
+       For class scopes, `this` will not be included unless [[outerDeclaration]]
+       is the same as [[scope]].
+    """
+    shared
+    DartExpression expressionToOuter
+            (DScope scope, ClassOrInterfaceModel outerDeclaration) {
+
+        "If there is an outerDeclaration, there must be an innerDeclaration"
+        assert (exists innerDeclaration = getContainingClassOrInterface(scope));
+
+        return
+        expressionToThisOrOuterStripNonLoneThis {
+            scope;
+            classOrInterfaceContainerPath(innerDeclaration, outerDeclaration.equals);
+        };
+    }
+
+    """
        Chain of references to the member:
             $this ("." $outer$CI)* "." memberName
 
         The first identifier in the chain will be `this` or `$this`.
     """
     shared
-    DartPropertyAccess | DartSimpleIdentifier expressionToThisOrOuter
-            ({ClassOrInterfaceModel+} chain)
-        =>  let (isInterface = chain.first is InterfaceModel)
-            (if (isInterface) then ["$this"] else ["this"])
-                .chain(chain.skip(1).map(outerFieldName))
+    DartPropertyAccess | DartSimpleIdentifier expressionToThisOrOuter(
+            DScope scope,
+            {ClassOrInterfaceModel+} chain,
+            Boolean selfIsParameter = isSelfAParameter(scope))
+        =>  let (thisExpression = if (selfIsParameter) then "$this" else "this")
+            chain
+                .skip(1) // skip outermost declaration; will be $this instead
+                .map(outerFieldName)
+                .follow(thisExpression)
                 .map(DartSimpleIdentifier)
                 .reduce<DartPropertyAccess|DartSimpleIdentifier> {
-                    (expression, field) =>
-                    DartPropertyAccess {
-                        expression;
-                        field;
-                    };
+                        (expression, field)
+                    =>  DartPropertyAccess {
+                            expression;
+                            field;
+                        };
                 };
 
     """
@@ -829,19 +854,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        will be suppressed.
     """
     shared
-    DartPropertyAccess | DartSimpleIdentifier? expressionToThisOrOuterStripThis
-            ({ClassOrInterfaceModel+} chain)
-        =>  let (isInterface = chain.first is InterfaceModel)
-            (if (isInterface) then ["$this"] else [])
-                .chain(chain.skip(1).map(outerFieldName))
-                .map(DartSimpleIdentifier)
-                .reduce<DartPropertyAccess|DartSimpleIdentifier> {
-                    (expression, field) =>
-                    DartPropertyAccess {
-                        expression;
-                        field;
-                    };
-                };
+    DartPropertyAccess | DartSimpleIdentifier expressionToThisOrOuterStripNonLoneThis(
+            DScope scope,
+            {ClassOrInterfaceModel+} chain,
+            Boolean selfIsParameter = isSelfAParameter(scope))
+        =>  expressionToThisOrOuterStripThis {
+                scope;
+                chain;
+                selfIsParameter;
+            } else DartSimpleIdentifier("this");
 
     """
        Chain of references to the member:
@@ -851,21 +872,24 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        will be suppressed.
     """
     shared
-    DartPropertyAccess | DartSimpleIdentifier? expressionToThisOrOuterStripNonLoneThis
-            ({ClassOrInterfaceModel+} chain)
-        =>  let (isInterface = chain.first is InterfaceModel)
-            let (chainSeq = chain.sequence())
-            (if (isInterface) then ["$this"]
-             else if (chainSeq.size == 1) then ["this"]
-             else [])
-                .chain(chain.skip(1).map(outerFieldName))
+    DartPropertyAccess | DartSimpleIdentifier | Null
+    expressionToThisOrOuterStripThis(
+            DScope scope,
+            {ClassOrInterfaceModel+} chain,
+            Boolean selfIsParameter = isSelfAParameter(scope))
+        =>  let (thisExpression = selfIsParameter then "$this")
+            chain
+                .skip(1) // skip outermost declaration; will be $this instead
+                .map(outerFieldName)
+                .follow(thisExpression)
+                .coalesced
                 .map(DartSimpleIdentifier)
-                .reduce<DartPropertyAccess|DartSimpleIdentifier> {
-                    (expression, field) =>
-                    DartPropertyAccess {
-                        expression;
-                        field;
-                    };
+                .reduce<DartPropertyAccess | DartSimpleIdentifier> {
+                        (expression, field)
+                    =>  DartPropertyAccess {
+                            expression;
+                            field;
+                        };
                 };
 
     "Returns a [[DartQualifiedInvocable]] for the [[declaration]] in [[scope]], with
@@ -921,6 +945,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         || (originalDeclaration.parameter
                             && ctx.withinConstructor(declarationContainer))) then
                         expressionToThisOrOuterStripNonLoneThis {
+                            scope;
                             ancestorChainToInheritingDeclaration {
                                 container;
                                 declarationContainer;
@@ -928,6 +953,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         }
                     else
                         expressionToThisOrOuterStripThis {
+                            scope;
                             ancestorChainToInheritingDeclaration {
                                 container;
                                 declarationContainer;
@@ -963,6 +989,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
                     return DartQualifiedInvocable {
                         expressionToThisOrOuterStripThis {
+                            scope;
                             ancestorChainToCapturerOfDeclaration {
                                 container;
                                 originalDeclaration;
@@ -1015,42 +1042,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ClassOrInterfaceModel inner,
             Boolean found(ClassOrInterfaceModel declaration))
         =>  takeUntil(classOrInterfaceContainers(inner))(found);
-
-    shared
-    DartSimpleIdentifier thisReference(ClassOrInterfaceModel scope)
-        =>  if (scope is InterfaceModel)
-            then DartSimpleIdentifier("$this")
-            else DartSimpleIdentifier("this");
-
-    """
-       Returns a dart expression for [[outerDeclaration]] from [[scope]]. The expression
-       will be of the form:
-
-            $this ("." $outer$ref)*
-
-       For class scopes, `this` will not be included unless [[outerDeclaration]]
-       is the same as [[scope]].
-    """
-    shared
-    DartExpression expressionToOuter(
-            ClassOrInterfaceModel scope,
-            ClassOrInterfaceModel outerDeclaration)
-        =>  (let (thisExpression = if (scope is InterfaceModel)
-                                  then [thisReference(scope)]
-                                  else [])
-            thisExpression.chain {
-                classOrInterfaceContainerPath(scope, outerDeclaration.equals)
-                .skip(1) // don't include scope; will be $this instead
-                .map(outerFieldName)
-                .map(DartSimpleIdentifier);
-            }.reduce {
-                (DartExpression expression, field)
-                    =>  DartPropertyAccess {
-                            expression;
-                            field;
-                        };
-            })
-            else thisReference(scope);
 
     "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype

@@ -713,7 +713,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   null;
 
                 dartReceiver
-                    =   dartTypes.expressionForThis(scopeContainer);
+                    =   dartTypes.expressionForThis(scope);
 
                 dartFunctionOrValue
                     =   DartInvocable {
@@ -2812,9 +2812,8 @@ class BaseGenerator(CompilationContext ctx)
                     .map(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
 
         value outerExpression
-            =   if (exists container = getContainingClassOrInterface(scope),
-                    exists outerCI = getContainingClassOrInterface(classModel.container))
-                then [dartTypes.expressionToOuter(container, outerCI)]
+            =   if (exists outerCI = getContainingClassOrInterface(classModel.container))
+                then [dartTypes.expressionToOuter(scope, outerCI)]
                 else []; // No outer if no containing class or interface.
 
         return concatenate { outerExpression, captureExpressions };

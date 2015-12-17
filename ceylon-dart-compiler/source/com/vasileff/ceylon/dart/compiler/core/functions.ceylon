@@ -174,6 +174,22 @@ ClassModel|InterfaceModel? getContainingClassOrInterface
     return null;
 }
 
+ClassModel | InterfaceModel | FunctionModel | ValueModel | Null
+getContainingClassInterfaceOrParameter
+        (DScope|Node|ScopeModel|ElementModel scope) {
+    variable ScopeModel scopeModel = toScopeModel(scope);
+    while (!is PackageModel s = scopeModel) {
+        if (is ClassModel | InterfaceModel s) {
+            return s;
+        }
+        else if (is FunctionModel | ValueModel s, s.parameter) {
+            return s;
+        }
+        scopeModel = s.container;
+    }
+    return null;
+}
+
 DeclarationModelType? getContainingDeclaration
         (Node|ScopeModel|ElementModel scope) {
     variable ScopeModel scopeModel = toScopeModel(scope);
@@ -317,6 +333,32 @@ Boolean isCallableParameterOrParamOf(FunctionOrValueModel declaration)
             true
         else
             false;
+
+"Is the given [[scope]] a defaulted parameter of a `formal` or `default` method?
+
+ This is useful to determine if the default value expression or function definition
+ should be implemented as a Dart static method."
+Boolean isScopeDefaultedParameterOfFormal(DScope | ScopeModel scope)
+    =>  if (is FunctionOrValueModel container
+                =   getContainingClassInterfaceOrParameter(scope),
+            container.parameter,
+            is FunctionModel containerContainer
+                =   package.container(container))
+        then containerContainer.formal || containerContainer.default
+        else false;
+
+"Is scope in a Dart static method that takes `$this` as the first parameter? Returns true
+ if [[scope]] is inside:
+
+ - an interface (static methods are used for interface functions and values), or
+
+ - a defaulted parameter of a `formal` or `default` method (static methods are used to
+   evaluate expressions for default values)"
+Boolean isSelfAParameter(DScope scope)
+    =>  getContainingClassOrInterface(scope) is InterfaceModel
+        // TODO uncomment to support static methods for
+        //      calculating values of defaulted parameters.
+            ;//|| isScopeDefaultedParameterOfFormal(scope);
 
 "Does the expression represent a constant. That is, `outer`, `this`, or a base expression
  to a non-transient, non-variable, non-formal & non-default value."

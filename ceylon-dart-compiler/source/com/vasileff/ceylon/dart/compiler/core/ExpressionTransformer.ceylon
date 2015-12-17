@@ -804,6 +804,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
             thisExpression
                 =   dartTypes.expressionToThisOrOuter {
+                        info;
                         dartTypes.ancestorChainToExactDeclaration {
                             scopeContainer;
                             invokedContainer;
@@ -2806,22 +2807,14 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  super.transformPackage(that);
 
     shared actual
-    DartExpression transformThis(This that) {
-        value info = ThisInfo(that);
-        DartSimpleIdentifier identifier;
-        if (getContainingClassOrInterface(info.scope) is InterfaceModel) {
-            identifier = DartSimpleIdentifier("$this");
-        }
-        else {
-            identifier = DartSimpleIdentifier("this");
-        }
-        return withBoxing {
-            info;
-            info.typeModel;
-            rhsDeclaration = null; // no declaration for `this`
-            identifier;
-        };
-    }
+    DartExpression transformThis(This that)
+        =>  let (info = ThisInfo(that))
+            withBoxing {
+                info;
+                info.typeModel;
+                rhsDeclaration = null;
+                dartTypes.expressionForThis(info);
+            };
 
     shared actual
     DartExpression transformOuter(Outer that) {
