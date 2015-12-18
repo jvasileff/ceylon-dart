@@ -445,6 +445,7 @@ abstract class Binary {
     $dart$core.Object xor([$dart$core.Object other]);
     $dart$core.bool get([$dart$core.int index]);
     $dart$core.Object set([$dart$core.int index, $dart$core.Object bit = $package$dart$default]);
+    static $dart$core.Object $set$bit(final Binary $this, $dart$core.int index) => true;
     $dart$core.Object clear([$dart$core.int index]);
     static $dart$core.Object $clear([final Binary $this, $dart$core.int index]) => $this.set(index, false);
     $dart$core.Object flip([$dart$core.int index]);
@@ -510,7 +511,12 @@ class Byte implements Binary, Invertible, Enumerable {
     Byte leftLogicalShift([$dart$core.int shift]) => new Byte(Integer.nativeValue(Integer.instance(signed).leftLogicalShift(Integer.nativeValue(Integer.instance(shift).and(Integer.instance(7))))));
     Byte rightArithmeticShift([$dart$core.int shift]) => new Byte(Integer.nativeValue(Integer.instance(signed).rightArithmeticShift(Integer.nativeValue(Integer.instance(shift).and(Integer.instance(7))))));
     Byte rightLogicalShift([$dart$core.int shift]) => new Byte(Integer.nativeValue(Integer.instance(signed).and(Integer.instance(255)).rightLogicalShift(Integer.nativeValue(Integer.instance(shift).and(Integer.instance(7))))));
-    Byte set([$dart$core.int index, $dart$core.Object bit = $package$dart$default]) => new Byte(Integer.nativeValue(Integer.instance(signed).set(index, bit)));
+    Byte set([$dart$core.int index, $dart$core.Object bit = $package$dart$default]) {
+        if ($dart$core.identical(bit, $package$dart$default)) {
+            bit = Binary.$set$bit(this, index);
+        }
+        return new Byte(Integer.nativeValue(Integer.instance(signed).set(index, bit)));
+    }
     Byte xor([Byte other]) => new Byte(Integer.nativeValue(Integer.instance(signed).xor(Integer.instance(other.unsigned))));
     Byte get predecessor => new Byte(unsigned - 1);
     Byte get successor => new Byte(unsigned + 1);
@@ -5465,13 +5471,14 @@ abstract class Iterable implements Category {
     Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]);
     static Iterable $interpose([final Iterable $this, $dart$core.Object element, $dart$core.Object step = $package$dart$default]) {
         if ($dart$core.identical(step, $package$dart$default)) {
-            step = 1;
+            step = Iterable.$interpose$step($this, element);
         }
         if (!((step as $dart$core.int) >= 1)) {
             throw new AssertionError("Violated: step>=1");
         }
         return new Iterable$interpose$$anonymous$29_($this, step, element);
     }
+    static $dart$core.Object $interpose$step(final Iterable $this, $dart$core.Object element) => 1;
     Iterable get distinct;
     static Iterable $get$distinct([final Iterable $this]) => new Iterable$distinct$$anonymous$31_($this);
     Map frequencies();
@@ -6947,13 +6954,15 @@ abstract class List implements Collection, Correspondence, Ranged {
     List patch([List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
     static List $patch([final List $this, List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = $this.size;
+            from = List.$patch$from($this, list);
         }
         if ($dart$core.identical(length, $package$dart$default)) {
-            length = 0;
+            length = List.$patch$length($this, list, from);
         }
         return ((List $lhs$) => null == $lhs$ ? $this : $lhs$)(((length as $dart$core.int) >= 0) && (((from as $dart$core.int) >= 0) && ((from as $dart$core.int) <= $this.size)) ? new List$Patch($this, list, from as $dart$core.int, length as $dart$core.int) : null);
     }
+    static $dart$core.Object $patch$from(final List $this, List list) => $this.size;
+    static $dart$core.Object $patch$length(final List $this, List list, $dart$core.Object from) => 0;
     $dart$core.bool startsWith([List sublist]);
     static $dart$core.bool $startsWith([final List $this, List sublist]) {
         if (sublist.size > $this.size) {
@@ -8664,17 +8673,19 @@ abstract class meta$declaration$ClassDeclaration implements meta$declaration$Cla
     $dart$core.Object instantiate([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
     static $dart$core.Object $instantiate([final meta$declaration$ClassDeclaration $this, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
-            typeArguments = $package$empty;
+            typeArguments = meta$declaration$ClassDeclaration.$instantiate$typeArguments($this);
         }
         return $this.classApply(typeArguments as Sequential).apply(arguments);
     }
+    static $dart$core.Object $instantiate$typeArguments(final meta$declaration$ClassDeclaration $this) => $package$empty;
     $dart$core.Object memberInstantiate([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
     static $dart$core.Object $memberInstantiate([final meta$declaration$ClassDeclaration $this, $dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
-            typeArguments = $package$empty;
+            typeArguments = meta$declaration$ClassDeclaration.$memberInstantiate$typeArguments($this, container);
         }
         return $this.memberClassApply(throw new AssertionError("Meta expressions not yet supported at 'ClassDeclaration.ceylon: 145:62-145:70'"), typeArguments as Sequential).bind(container).apply(arguments);
     }
+    static $dart$core.Object $memberInstantiate$typeArguments(final meta$declaration$ClassDeclaration $this, $dart$core.Object container) => $package$empty;
     $dart$core.Object getConstructorDeclaration([$dart$core.String name]);
     Sequential constructorDeclarations();
     Sequential annotatedConstructorDeclarations();
@@ -8725,11 +8736,13 @@ abstract class meta$declaration$FunctionalDeclaration implements meta$declaratio
     $dart$core.Object invoke([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
     static $dart$core.Object $invoke([final meta$declaration$FunctionalDeclaration $this, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) {
         if ($dart$core.identical(typeArguments, $package$dart$default)) {
-            typeArguments = $package$empty;
+            typeArguments = meta$declaration$FunctionalDeclaration.$invoke$typeArguments($this);
         }
         return ($this.apply(typeArguments as Sequential) as meta$model$Applicable).apply(arguments);
     }
+    static $dart$core.Object $invoke$typeArguments(final meta$declaration$FunctionalDeclaration $this) => $package$empty;
     $dart$core.Object memberInvoke([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]);
+    static $dart$core.Object $memberInvoke$typeArguments(final meta$declaration$FunctionalDeclaration $this, $dart$core.Object container) => $package$empty;
 }
 abstract class meta$declaration$FunctionDeclaration implements meta$declaration$FunctionOrValueDeclaration, meta$declaration$FunctionalDeclaration {
     meta$model$Function apply([Sequential typeArguments]);
@@ -9987,6 +10000,7 @@ abstract class Resource {
     $dart$core.int get size;
     $dart$core.String get uri;
     $dart$core.String textContent([$dart$core.Object encoding = $package$dart$default]);
+    static $dart$core.Object $textContent$encoding(final Resource $this) => "UTF-8";
     $dart$core.String toString();
     static $dart$core.String $get$string([final Resource $this]) => ((("" + $package$className($this)) + "[") + $this.uri) + "]";
 }
@@ -10274,30 +10288,34 @@ abstract class SearchableList implements List {
     Iterable occurrences([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
     static Iterable $occurrences([final SearchableList $this, $dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$occurrences$from($this, element);
         }
         if ($dart$core.identical(length, $package$dart$default)) {
-            length = $this.size - (from as $dart$core.int);
+            length = SearchableList.$occurrences$length($this, element, from);
         }
         return new SearchableList$occurrences$$anonymous$0_($this, from, length, element);
     }
+    static $dart$core.Object $occurrences$from(final SearchableList $this, $dart$core.Object element) => 0;
+    static $dart$core.Object $occurrences$length(final SearchableList $this, $dart$core.Object element, $dart$core.Object from) => $this.size - (from as $dart$core.int);
     $dart$core.bool occurs([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
     static $dart$core.bool $occurs([final SearchableList $this, $dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$occurs$from($this, element);
         }
         if ($dart$core.identical(length, $package$dart$default)) {
-            length = $this.size - (from as $dart$core.int);
+            length = SearchableList.$occurs$length($this, element, from);
         }
         return !(null == $this.firstOccurrence(element, from, length));
     }
+    static $dart$core.Object $occurs$from(final SearchableList $this, $dart$core.Object element) => 0;
+    static $dart$core.Object $occurs$length(final SearchableList $this, $dart$core.Object element, $dart$core.Object from) => $this.size - (from as $dart$core.int);
     $dart$core.int firstOccurrence([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
     static $dart$core.int $firstOccurrence([final SearchableList $this, $dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$firstOccurrence$from($this, element);
         }
         if ($dart$core.identical(length, $package$dart$default)) {
-            length = $this.size - (from as $dart$core.int);
+            length = SearchableList.$firstOccurrence$length($this, element, from);
         }
         {
             $dart$core.Object element$5;
@@ -10316,13 +10334,15 @@ abstract class SearchableList implements List {
             }
         }
     }
+    static $dart$core.Object $firstOccurrence$from(final SearchableList $this, $dart$core.Object element) => 0;
+    static $dart$core.Object $firstOccurrence$length(final SearchableList $this, $dart$core.Object element, $dart$core.Object from) => $this.size - (from as $dart$core.int);
     $dart$core.int lastOccurrence([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]);
     static $dart$core.int $lastOccurrence([final SearchableList $this, $dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$lastOccurrence$from($this, element);
         }
         if ($dart$core.identical(length, $package$dart$default)) {
-            length = $this.size - (from as $dart$core.int);
+            length = SearchableList.$lastOccurrence$length($this, element, from);
         }
         {
             $dart$core.Object element$7;
@@ -10341,6 +10361,8 @@ abstract class SearchableList implements List {
             }
         }
     }
+    static $dart$core.Object $lastOccurrence$from(final SearchableList $this, $dart$core.Object element) => 0;
+    static $dart$core.Object $lastOccurrence$length(final SearchableList $this, $dart$core.Object element, $dart$core.Object from) => $this.size - (from as $dart$core.int);
     $dart$core.bool includesAt([$dart$core.int index, List sublist]);
     static $dart$core.bool $includesAt([final SearchableList $this, $dart$core.int index, List sublist]) {
         if ((index >= 0) && (index <= ($this.size - sublist.size))) {
@@ -10383,21 +10405,23 @@ abstract class SearchableList implements List {
     Iterable inclusions([List sublist, $dart$core.Object from = $package$dart$default]);
     static Iterable $inclusions([final SearchableList $this, List sublist, $dart$core.Object from = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$inclusions$from($this, sublist);
         }
         return new SearchableList$inclusions$$anonymous$2_($this, sublist, from);
     }
+    static $dart$core.Object $inclusions$from(final SearchableList $this, List sublist) => 0;
     $dart$core.bool includes([List sublist, $dart$core.Object from = $package$dart$default]);
     static $dart$core.bool $includes([final SearchableList $this, List sublist, $dart$core.Object from = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$includes$from($this, sublist);
         }
         return !(null == $this.firstInclusion(sublist, from));
     }
+    static $dart$core.Object $includes$from(final SearchableList $this, List sublist) => 0;
     $dart$core.int firstInclusion([List sublist, $dart$core.Object from = $package$dart$default]);
     static $dart$core.int $firstInclusion([final SearchableList $this, List sublist, $dart$core.Object from = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$firstInclusion$from($this, sublist);
         }
         {
             $dart$core.Object element$15;
@@ -10416,10 +10440,11 @@ abstract class SearchableList implements List {
             }
         }
     }
+    static $dart$core.Object $firstInclusion$from(final SearchableList $this, List sublist) => 0;
     $dart$core.int lastInclusion([List sublist, $dart$core.Object from = $package$dart$default]);
     static $dart$core.int $lastInclusion([final SearchableList $this, List sublist, $dart$core.Object from = $package$dart$default]) {
         if ($dart$core.identical(from, $package$dart$default)) {
-            from = 0;
+            from = SearchableList.$lastInclusion$from($this, sublist);
         }
         {
             $dart$core.Object element$17;
@@ -10438,6 +10463,7 @@ abstract class SearchableList implements List {
             }
         }
     }
+    static $dart$core.Object $lastInclusion$from(final SearchableList $this, List sublist) => 0;
 }
 class Sequence$collect$list_ implements List {
     Sequence $outer$ceylon$language$Sequence;
@@ -11686,9 +11712,9 @@ abstract class Set implements Collection {
     Set intersection([Set set]);
     static Set $intersection([final Set $this, Set set]) => $package$set($this.filter(new dart$Callable(([$dart$core.Object e]) => Boolean.instance(set.contains(e)))).narrow());
     Set complement([Set set]);
-    static Set $complement([final Set $this, Set set]) => $package$set($this.filter(new dart$Callable(([$dart$core.Object e]) => !set.contains(e))));
+    static Set $complement([final Set $this, Set set]) => $package$set($this.filter(new dart$Callable(([$dart$core.Object e]) => Boolean.instance(!set.contains(e)))));
     Set exclusiveUnion([Set set]);
-    static Set $exclusiveUnion([final Set $this, Set set]) => $package$set($this.filter(new dart$Callable(([$dart$core.Object e]) => !set.contains(e))).chain(set.filter(new dart$Callable(([$dart$core.Object e]) => !$this.contains(e)))));
+    static Set $exclusiveUnion([final Set $this, Set set]) => $package$set($this.filter(new dart$Callable(([$dart$core.Object e]) => Boolean.instance(!set.contains(e)))).chain(set.filter(new dart$Callable(([$dart$core.Object e]) => Boolean.instance(!$this.contains(e))))));
     $dart$core.bool operator ==($dart$core.Object that);
     static $dart$core.bool $equals([final Set $this, $dart$core.Object that]) {
         if (that is Set) {
