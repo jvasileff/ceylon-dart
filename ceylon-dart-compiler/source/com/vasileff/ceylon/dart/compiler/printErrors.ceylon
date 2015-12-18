@@ -84,7 +84,7 @@ Integer printErrors(void write(String message),
 
         if (warningCount > 0) {
             write(warningCount.string + " "
-                + (if (warningCount == 1) then "warning" else "warnings" + "\n"));
+                + (if (warningCount == 1) then "warning" else "warnings") + "\n");
         }
     }
 
