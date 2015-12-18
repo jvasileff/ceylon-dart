@@ -39,8 +39,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope,
-    Warning
+    DScope
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleIdentifier,
@@ -71,7 +70,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     anyValueInfo,
     declarationInfo,
     nodeInfo,
-    FunctionDefinitionInfo,
     DeclarationInfo,
     DefaultedParameterInfo
 }
