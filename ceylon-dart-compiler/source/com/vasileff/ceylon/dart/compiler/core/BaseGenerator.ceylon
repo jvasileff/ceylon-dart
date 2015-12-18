@@ -147,7 +147,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     anyFunctionInfo,
     anyValueInfo,
     existsOrNonemptyConditionInfo,
-    nodeInfo
+    nodeInfo,
+    parameterInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -1996,15 +1997,15 @@ class BaseGenerator(CompilationContext ctx)
     [DartStatement*] generateDefaultValueAssignments
             (DScope scope, {DefaultedParameter*} defaultedParameters)
         =>  defaultedParameters.collect((param) {
-                value parameterInfo
-                    =   ParameterInfo(param);
+                value pInfo
+                    =   parameterInfo(param);
 
                 value parameterModelModel
-                    =   parameterInfo.parameterModel.model;
+                    =   pInfo.parameterModel.model;
 
                 value paramName
                     =   DartSimpleIdentifier {
-                            dartTypes.getName(parameterInfo.parameterModel);
+                            dartTypes.getName(pInfo.parameterModel);
                         };
 
                 return
@@ -2046,6 +2047,99 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 };
             });
+
+    "Generate statements to assign default values to parameters for defaulted arguments
+     of methods that are refinements, `formal`, or `default`. In these cases, static
+     method calls are made to determine default values. The Dart static methods are
+     members of the Dart class for the method's original declaring class or interface."
+    [DartStatement*] generateDefaultValueAssignmentsStatic
+            (DScope scope, FunctionModel functionModel) {
+
+        value parameterModels
+            =   CeylonList(functionModel.firstParameterList.parameters);
+
+        value dartArguments
+            =   parameterModels[0:parameterModels.size - 1].collect((parameterModel)
+                =>  withLhs {
+                        null;
+                        parameterModel.model;
+                        () => dartTypes.invocableForBaseExpression {
+                            scope; parameterModel.model; false;
+                        }.expressionForLocalCapture();
+                    });
+
+        value defaultedParameters
+            =   parameterModels.indexed.filter((entry)
+                =>  entry.item.defaulted);
+
+        return
+        defaultedParameters.collect((entry) {
+            value i -> parameterModel = entry;
+
+            value parameterModelModel
+                =   parameterModel.model;
+
+            value paramName
+                =   DartSimpleIdentifier {
+                        dartTypes.getName(parameterModel);
+                    };
+
+            value refinedParameter
+                =   dartTypes.refinedParameter {
+                        parameterModel.model;
+                    }.initializerParameter;
+
+            value refinedParameterClassOrInterface
+                =   getContainingClassOrInterface(refinedParameter.declaration);
+
+            "A refined parameter must be contained by a class or interface."
+            assert (exists refinedParameterClassOrInterface);
+
+            return
+            DartIfStatement {
+                // If (parm === default)
+                DartFunctionExpressionInvocation {
+                    dartTypes.dartIdentical;
+                    DartArgumentList {
+                        [paramName, dartTypes.dartDefault(scope)];
+                    };
+                };
+                // Then set to default expression
+                DartExpressionStatement {
+                    DartAssignmentExpression {
+                        paramName;
+                        DartAssignmentOperator.equal;
+                        withLhs {
+                            null;
+                            parameterModelModel;
+                            () =>  DartFunctionExpressionInvocation {
+                                // qualified reference to the static interface method
+                                DartPropertyAccess {
+                                    dartTypes.dartIdentifierForClassOrInterface {
+                                        scope;
+                                        refinedParameterClassOrInterface;
+                                    };
+                                    dartTypes.dartIdentifierForDefaultedParameterMethod {
+                                        scope;
+                                        dartTypes.refinedParameter {
+                                            parameterModel.model;
+                                        }.initializerParameter;
+                                    };
+                                };
+                                DartArgumentList {
+                                    [
+                                        dartTypes.expressionForThis(scope),
+                                        // preceding arguments
+                                        *dartArguments[...i - 1]
+                                    ];
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        });
+    }
 
     shared
     DartVariableDeclarationList generateForValueDefinition(ValueDefinition that) {
@@ -2605,7 +2699,7 @@ class BaseGenerator(CompilationContext ctx)
             functionModel = info.declarationModel;
         }
         case (is DefaultedCallableParameter) {
-            value info = ParameterInfo(that);
+            value info = parameterInfo(that);
             parameterLists = that.parameter.parameterLists;
             definition = that.specifier;
             assert (is FunctionModel m = info.parameterModel.model);
@@ -2643,14 +2737,30 @@ class BaseGenerator(CompilationContext ctx)
                 result = generateNewCallable(scope, functionModel, previous, i+1);
             }
 
-            //Defaulted Parameters:
-            //If any exist, use a block (not lazy specifier)
-            //At start of block, assign values as necessary
+            value parameterInfos
+                =   list.parameters.collect(parameterInfo);
+
+            value hasDefaultedParameters
+                =   parameterInfos
+                    .map(ParameterInfo.parameterModel)
+                    .any(ParameterModel.defaulted);
+
+            value useStaticDefaultArgumentMethods
+                =   hasDefaultedParameters
+                        && (functionModel.default
+                            || functionModel.refinedDeclaration.default
+                            || functionModel.refinedDeclaration.formal);
+
             value defaultedParameters
-                =   [ for (p in list.parameters) if (is DefaultedParameter p) p ];
+                =   if (hasDefaultedParameters && !useStaticDefaultArgumentMethods)
+                    then [ for (p in list.parameters) if (is DefaultedParameter p) p ]
+                    else [];
 
             DartFunctionBody body;
-            if (defaultedParameters.empty && !isVoid) {
+
+            // If defaulted parameters exist, use a block (not lazy specifier)
+            // At start of block, assign values as necessary
+            if (!hasDefaultedParameters && !isVoid) {
                 // no defaulted parameters
                 if (i == parameterLists.size - 1) {
                     // the actual function body
@@ -2680,12 +2790,22 @@ class BaseGenerator(CompilationContext ctx)
                 value statements = LinkedList<DartStatement>();
 
                 // assign default values to defaulted arguments
-                statements.addAll {
-                    generateDefaultValueAssignments {
-                        scope;
-                        defaultedParameters;
+                if (useStaticDefaultArgumentMethods) {
+                    statements.addAll {
+                        generateDefaultValueAssignmentsStatic {
+                            scope;
+                            functionModel;
+                        };
                     };
-                };
+                }
+                else if (!defaultedParameters.empty) {
+                    statements.addAll {
+                        generateDefaultValueAssignments {
+                            scope;
+                            defaultedParameters;
+                        };
+                    };
+                }
 
                 // the rest of the dart function body
                 if (i == parameterLists.size - 1) {
@@ -2748,13 +2868,18 @@ class BaseGenerator(CompilationContext ctx)
              type should be erased-to-object."
             Boolean noDefaults=false) {
 
+        // FIXME noDefaults pretty much works as required, but not as advertised.
+        //       dartTypes.dartTypeNameForDeclaration erases to Object for defaulted
+        //       parameters, and we are using it regardless of the noDefaults arg.
+        //       *But*, dartTypeNameForDeclaration doesn't always erase to Object?
+
         value parameterList
             =   if (is Parameters parameters) then
                     parameters.parameters.map(
-                        compose(ParameterInfo.parameterModel, ParameterInfo))
+                        compose(ParameterInfo.parameterModel, parameterInfo))
                 else if (is {Parameter*} parameters) then
                     parameters.map(
-                        compose(ParameterInfo.parameterModel, ParameterInfo))
+                        compose(ParameterInfo.parameterModel, parameterInfo))
                 else parameters;
 
         if (parameterList.empty) {

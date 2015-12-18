@@ -1,7 +1,6 @@
 import ceylon.ast.core {
     ForClause,
     IsCase,
-    Parameter,
     Construction,
     Type,
     Comprehension,
@@ -18,7 +17,10 @@ import ceylon.ast.core {
     IfClause,
     CatchClause,
     ForIterator,
-    CompilationUnit
+    CompilationUnit,
+    RequiredParameter,
+    VariadicParameter,
+    DefaultedParameter
 }
 import ceylon.interop.java {
     CeylonList
@@ -267,9 +269,19 @@ class IsCaseInfo(shared actual IsCase node)
     shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
 }
 
-shared
-class ParameterInfo(shared actual Parameter node)
+shared abstract
+class ParameterInfo()
+        of RequiredParameterInfo | DefaultedParameterInfo | VariadicParameterInfo
         extends NodeInfo() {
+
+    shared actual formal Tree.Parameter tcNode;
+
+    shared ParameterModel parameterModel => tcNode.parameterModel;
+}
+
+shared
+class DefaultedParameterInfo(shared actual DefaultedParameter node)
+        extends ParameterInfo() {
 
     shared alias TcNodeType => Tree.Parameter;
     value lazyTcNode {
@@ -277,8 +289,30 @@ class ParameterInfo(shared actual Parameter node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+}
 
-    shared ParameterModel parameterModel => tcNode.parameterModel;
+shared
+class RequiredParameterInfo(shared actual RequiredParameter node)
+        extends ParameterInfo() {
+
+    shared alias TcNodeType => Tree.Parameter;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class VariadicParameterInfo(shared actual VariadicParameter node)
+        extends ParameterInfo() {
+
+    shared alias TcNodeType => Tree.Parameter;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
 }
 
 shared

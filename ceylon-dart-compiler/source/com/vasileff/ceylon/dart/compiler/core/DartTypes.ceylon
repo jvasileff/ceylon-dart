@@ -46,12 +46,12 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpression,
     DartPropertyAccess
 }
-import com.vasileff.jl4c.guava.collect {
-    ImmutableMap
-}
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     UnspecifiedVariableInfo,
     VariadicVariableInfo
+}
+import com.vasileff.jl4c.guava.collect {
+    ImmutableMap
 }
 
 shared
@@ -565,7 +565,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  let(dartModel = dartTypeModelForDeclaration(declaration))
             dartTypeNameForDartModel(scope, dartModel);
 
-    function refinedParameter(FunctionOrValueModel declaration) {
+    shared
+    FunctionOrValueModel refinedParameter(FunctionOrValueModel declaration) {
         // FIXME This is a bit sloppy and trusting, and needs review
         //       Before, we were using the parameter name as a key. But... parameter
         //       names may change on refinement.
@@ -743,6 +744,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartSimpleIdentifier dartIdentifierForClassOrInterfaceDeclaration
             (ClassOrInterfaceModel declaration)
         =>  DartSimpleIdentifier(getName(declaration));
+
+    "The identifier to use for the static method that calculates the default value
+     for the given parameter."
+    shared
+    DartSimpleIdentifier dartIdentifierForDefaultedParameterMethod
+            (DScope scope, ParameterModel parameter)
+        =>  DartSimpleIdentifier(
+                  "$" + getName(parameter.declaration)
+                + "$" + getName(parameter));
 
     shared
     DartSimpleIdentifier expressionForThis(DScope scope)

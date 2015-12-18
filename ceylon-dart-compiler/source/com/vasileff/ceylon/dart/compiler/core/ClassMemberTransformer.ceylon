@@ -26,7 +26,8 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    DefaultedParameter
+    DefaultedParameter,
+    DefaultedCallableParameter
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -52,7 +53,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFieldDeclaration,
     DartVariableDeclarationList,
     DartVariableDeclaration,
-    DartFunctionExpression
+    DartFunctionExpression,
+    DartExpressionFunctionBody,
+    DartFormalParameter
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -68,7 +71,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     anyValueInfo,
     declarationInfo,
     nodeInfo,
-    FunctionDefinitionInfo
+    FunctionDefinitionInfo,
+    DeclarationInfo,
+    DefaultedParameterInfo
 }
 
 shared
@@ -165,7 +170,7 @@ class ClassMemberTransformer(CompilationContext ctx)
     }
 
     shared actual
-    []|[DartMethodDeclaration] transformFunctionDeclaration(FunctionDeclaration that) {
+    [DartMethodDeclaration*] transformFunctionDeclaration(FunctionDeclaration that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
@@ -189,7 +194,8 @@ class ClassMemberTransformer(CompilationContext ctx)
                      parameters not yet supported.");
         }
 
-        return [generateMethodGetterOrSetterDeclaration(that)];
+        return [generateMethodGetterOrSetterDeclaration(that),
+                *generateDefaultValueStaticMethods(info)];
     }
 
     shared actual
@@ -265,9 +271,118 @@ class ClassMemberTransformer(CompilationContext ctx)
             else if (info.declarationModel.container is InterfaceModel
                     && info.declarationModel.shared) then
                 [generateMethodGetterOrSetterDeclaration(that),
-                 generateMethodDefinition(that)]
+                 generateMethodDefinition(that),
+                 *generateDefaultValueStaticMethods(info)]
             else
-                [generateMethodDefinition(that)];
+                [generateMethodDefinition(that),
+                 *generateDefaultValueStaticMethods(info)];
+
+    [DartMethodDeclaration*] generateDefaultValueStaticMethods(DeclarationInfo info) {
+        if (!is AnyFunctionInfo info) {
+            return [];
+        }
+
+        // Only calculate values for defaulted parameters in static methods for
+        // 'formal' and 'default' methods (otherwise, just do the work in the function
+        // body.
+        if (!(info.declarationModel.formal || info.declarationModel.default)) {
+            return [];
+        }
+
+        value parameters
+            =   info.node.parameterLists.first.parameters;
+
+        value dartParameters
+            =   generateFormalParameterList {
+                    false; false;
+                    info;
+                    parameters;
+                    // use true once we handle variable captures?
+                    // FIXME does this even work when we pass true? Or do we still
+                    //       pretty much just get dart$core.Object?
+                    //       For now, we want 'Object' but not the default value, which
+                    //       we suspiciously get with 'true'.
+                    noDefaults = true;
+                }.parameters;
+
+        return [
+            for (i->p in parameters.indexed)
+                if (is DefaultedParameter p)
+                    generateDefaultValueStaticMethod {
+                        DefaultedParameterInfo(p);
+                        dartParameters[...i - 1];
+                    }
+        ];
+    }
+
+    see(`function BaseGenerator.generateDefaultValueAssignments`)
+    DartMethodDeclaration generateDefaultValueStaticMethod
+            (DefaultedParameterInfo info, {DartFormalParameter*} precedingParameters) {
+
+        "A parameter for a method is sure to have a containing class or interface."
+        assert (exists container
+            =   getContainingClassOrInterface(info));
+
+        value that
+            =   info.node;
+
+        return
+        DartMethodDeclaration {
+            false;
+            "static";
+            // FIXME we're getting Callable rather than Object here... see
+            //       generateFormalParameterList() for a special case that overrides
+            //       to Object, but the special case shouldn't be necessary and is wrong?
+            dartTypes.dartTypeNameForDeclaration {
+                info;
+                info.parameterModel.model;
+            };
+            null;
+            false;
+            dartTypes.dartIdentifierForDefaultedParameterMethod {
+                info; info.parameterModel;
+            };
+            DartFormalParameterList {
+                false; false;
+                [   // $this parameter
+                    DartSimpleFormalParameter {
+                        true; false;
+                        dartTypes.dartTypeName {
+                            info;
+                            container.type;
+                            false; false;
+                        };
+                        DartSimpleIdentifier("$this");
+                    },
+                    *precedingParameters
+                ];
+            };
+            DartExpressionFunctionBody {
+                false;
+                if (is DefaultedCallableParameter that,
+                    is FunctionModel model = info.parameterModel.model) then
+                    // Generate a Callable for the default function value
+                    withLhs {
+                        null;
+                        model;
+                        () => generateNewCallable {
+                            info;
+                            model;
+                            generateFunctionExpression(that);
+                            0; false;
+                        };
+                    }
+                else
+                    // Simple ValueModel default value
+                    withLhs {
+                        null;
+                        info.parameterModel.model;
+                        () => that.specifier.expression
+                                .transform(expressionTransformer);
+                    };
+            };
+        };
+    }
 
     "Generates a method or getter declaration (not to be confused with *definition*).
      Note: Setter declarations for `AnyValue`s are *not* generated by this method, and

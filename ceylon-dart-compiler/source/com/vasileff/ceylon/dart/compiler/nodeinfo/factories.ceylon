@@ -34,6 +34,9 @@ import ceylon.ast.core {
     LazySpecification,
     FunctionDeclaration,
     FunctionDefinition,
+    DefaultedParameter,
+    RequiredParameter,
+    VariadicParameter,
     AnyFunction,
     FunctionShortcutDefinition,
     NonemptyCondition,
@@ -84,6 +87,7 @@ NodeInfo nodeInfo(Node astNode)
         case (is NamedArgument) namedArgumentInfo(astNode)
         case (is Condition) conditionInfo(astNode)
         case (is Variable) variableInfo(astNode)
+        case (is Parameter) parameterInfo(astNode)
         case (is ArgumentList) ArgumentListInfo(astNode)
         case (is CompilationUnit) CompilationUnitInfo(astNode)
         case (is Comprehension) ComprehensionInfo(astNode)
@@ -92,7 +96,6 @@ NodeInfo nodeInfo(Node astNode)
         case (is ForClause) ForClauseInfo(astNode)
         case (is ForIterator) ForIteratorInfo(astNode)
         case (is IsCase) IsCaseInfo(astNode)
-        case (is Parameter) ParameterInfo(astNode)
         case (is SpreadArgument) SpreadArgumentInfo(astNode)
         case (is Type) TypeInfo(astNode)
         case (is TypeNameWithTypeArguments) TypeNameWithTypeArgumentsInfo(astNode)
@@ -145,6 +148,13 @@ NamedArgumentInfo namedArgumentInfo(NamedArgument astNode)
         case (is ValueArgument) ValueArgumentInfo(astNode)
         case (is FunctionArgument) FunctionArgumentInfo(astNode)
         case (is ObjectArgument) ObjectArgumentInfo(astNode);
+
+shared
+ParameterInfo parameterInfo(Parameter astNode)
+    =>  switch (astNode)
+        case (is DefaultedParameter) DefaultedParameterInfo(astNode)
+        case (is RequiredParameter) RequiredParameterInfo(astNode)
+        case (is VariadicParameter) VariadicParameterInfo(astNode);
 
 shared
 SpreadArgumentInfo | ComprehensionInfo sequenceArgumentInfo

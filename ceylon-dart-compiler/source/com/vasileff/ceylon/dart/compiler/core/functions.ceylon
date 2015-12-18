@@ -356,9 +356,7 @@ Boolean isScopeDefaultedParameterOfFormal(DScope | ScopeModel scope)
    evaluate expressions for default values)"
 Boolean isSelfAParameter(DScope scope)
     =>  getContainingClassOrInterface(scope) is InterfaceModel
-        // TODO uncomment to support static methods for
-        //      calculating values of defaulted parameters.
-            ;//|| isScopeDefaultedParameterOfFormal(scope);
+            || isScopeDefaultedParameterOfFormal(scope);
 
 "Does the expression represent a constant. That is, `outer`, `this`, or a base expression
  to a non-transient, non-variable, non-formal & non-default value."

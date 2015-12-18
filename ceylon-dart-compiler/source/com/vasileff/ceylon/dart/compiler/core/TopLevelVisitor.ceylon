@@ -92,11 +92,11 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ObjectDefinitionInfo,
     ObjectExpressionInfo,
     ObjectArgumentInfo,
-    ParameterInfo,
     ConstructorDefinitionInfo,
     anyFunctionInfo,
     extensionOrConstructionInfo,
-    nodeInfo
+    nodeInfo,
+    parameterInfo
 }
 
 "For Dart TopLevel declarations."
@@ -417,7 +417,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value fieldsForInitializerParameters
             =   (parameters?.parameters else []).collect {
                     (parameter) =>
-                    let (model = ParameterInfo(parameter).parameterModel)
+                    let (model = parameterInfo(parameter).parameterModel)
                     DartFieldDeclaration {
                         false;
                             DartVariableDeclarationList {
@@ -658,7 +658,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   parameters.collect {
                     (p) => DartSimpleIdentifier {
                         dartTypes.getName {
-                            ParameterInfo(p).parameterModel;
+                            parameterInfo(p).parameterModel;
                         };
                     };
                 };
