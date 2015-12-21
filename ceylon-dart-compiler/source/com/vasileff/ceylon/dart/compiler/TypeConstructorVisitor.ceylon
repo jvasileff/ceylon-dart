@@ -129,4 +129,14 @@ object typeConstructorVisitor extends Visitor() {
         }
         super.visit(that);
     }
+
+    shared actual
+    void visit(Tree.TypeArgumentList that) {
+        for (i in 0:that.types.size()) {
+            if (is Tree.TypeConstructor typeConstructor = that.types.get(i)) {
+                that.types.set(i, dummyBaseType(typeConstructor));
+            }
+        }
+        super.visit(that);
+    }
 }
