@@ -537,8 +537,6 @@ class ClassMemberTransformer(CompilationContext ctx)
             =   functionExpression.parameters
                 else dartFormalParameterListEmpty;
 
-        // TODO defaulted parameters! (see also transformFunctionDefinition)
-
         // For interfaces, the implementation is always a static method.
         // For classes, the implementation may be a function or getter.
 
