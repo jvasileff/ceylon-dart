@@ -16,7 +16,6 @@ import ceylon.ast.core {
     IsCondition,
     Expression,
     DefaultedCallableParameter,
-    ValueDeclaration,
     ValueDefinition,
     Specifier,
     ValueGetterDefinition,
@@ -145,7 +144,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     VariadicVariableInfo,
     expressionInfo,
     anyFunctionInfo,
-    anyValueInfo,
     existsOrNonemptyConditionInfo,
     nodeInfo,
     parameterInfo
@@ -1906,40 +1904,24 @@ class BaseGenerator(CompilationContext ctx)
         return generateExpression(resolvedIsType);
     }
 
-    "Generate a dart *declaration* for a [[ValueDeclaration]] or [[ValueDefinition]]. The
-     latter is supported for eager class values which must be declared as members but
-     initialized in a dart constructor."
+    "Generate a dart variable declaration. This is *not* to be used for class or interface
+     members."
     shared
-    DartVariableDeclarationList generateForValueDeclaration
-            (ValueDeclaration | ValueDefinition that)
-        =>  let (info = anyValueInfo(that))
-            generateForValueDeclarationRaw(info, info.declarationModel);
-
-    "Generate a dart *declaration*."
-    shared see(`function generateForValueDeclaration`)
     DartVariableDeclarationList generateForValueDeclarationRaw
-            (DScope scope, ValueModel declarationModel) {
-
-        // TODO Handle translations to/from value/function, like toString.
-        //      What about `variable`s?
-        //      Find out where else this could be used, and use it
-        //      Combine with similar functionality for declaring functions?
-
-        return
-        DartVariableDeclarationList {
-            null;
-            dartTypes.dartTypeNameForDeclaration {
-                scope;
-                declarationModel;
-            };
-            [DartVariableDeclaration {
-                DartSimpleIdentifier {
-                    dartTypes.getPackagePrefixedName(declarationModel);
+            (DScope scope, ValueModel declarationModel)
+        =>  DartVariableDeclarationList {
+                null;
+                dartTypes.dartTypeNameForDeclaration {
+                    scope;
+                    declarationModel;
                 };
-                initializer = null;
-            }];
-        };
-    }
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier {
+                        dartTypes.getPackagePrefixedName(declarationModel);
+                    };
+                    initializer = null;
+                }];
+            };
 
     shared
     DartVariableDeclarationList generateForObjectDefinition(ObjectDefinition that) {
@@ -2289,6 +2271,7 @@ class BaseGenerator(CompilationContext ctx)
             =   dartTypes.dartInvocable {
                     info;
                     declarationModel;
+                    true;
                 }.oldPairSimple;
 
         return
@@ -2299,6 +2282,7 @@ class BaseGenerator(CompilationContext ctx)
                     "void";
                 };
             };
+            // Will be a dartFunction for values inside functions
             dartElementType == dartValue then "set";
             identifier;
             DartFunctionExpression {

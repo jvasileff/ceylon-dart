@@ -766,7 +766,7 @@ class StatementTransformer(CompilationContext ctx)
         // Seems like this should be fine... Dart supports forward declarations
         return
         [DartVariableDeclarationStatement {
-            generateForValueDeclaration(that);
+            generateForValueDeclarationRaw(info, info.declarationModel);
         }];
     }
 

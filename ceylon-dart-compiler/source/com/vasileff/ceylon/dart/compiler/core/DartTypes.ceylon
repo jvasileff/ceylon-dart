@@ -1155,7 +1155,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 =   mappedFunctionOrValue(refinedDeclaration(declaration));
 
             value [name, dartElementType]
-                =   if (exists mapped) then [
+                =   if (exists mapped, !setter || mapped[1] == dartValue) then [
+                        // For mapped non-setters, or setters that are mapped to
+                        // dartValues. This includes hash -> hashCode, but excludes
+                        // string -> toString(), for which we want to use 'string' for
+                        // the setter. Same for dartPrefixOperator's like negated -> '-'
                         mapped[0],
                         mapped[1]
                     ] else [

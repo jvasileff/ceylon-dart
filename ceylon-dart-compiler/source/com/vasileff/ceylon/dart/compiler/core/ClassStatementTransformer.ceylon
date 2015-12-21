@@ -25,14 +25,14 @@ import ceylon.ast.core {
 }
 
 import com.vasileff.ceylon.dart.compiler.dartast {
-    DartVariableDeclarationStatement,
     DartAssignmentExpression,
     DartAssignmentOperator,
     DartExpressionStatement,
     DartStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    LazySpecificationInfo
+    LazySpecificationInfo,
+    ValueDefinitionInfo
 }
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
@@ -65,33 +65,38 @@ class ClassStatementTransformer(CompilationContext ctx)
     "The value may be a class member. So:
 
      1. If this is a getter (has a LazySpecifier), ignore
-     2. Otherwise, assign the value to the member (but don't declaration a new variable)
-    "
+     2. Otherwise, assign the value to the member (but don't declare a new variable)"
     shared actual
     DartStatement[] transformValueDefinition(ValueDefinition that) {
+        value info = ValueDefinitionInfo(that);
+
         switch (definition = that.definition)
         case (is LazySpecifier) {
             return [];
         }
         case (is Specifier) {
-            "A DartVariableDeclarationStatement that will be scrapped for parts."
-            assert (is DartVariableDeclarationStatement declarationStatement
-                =   that.transform(statementTransformer).first);
+            // Basically the same as StatementTransformer.transformAssignmentStatement()
 
-            value dartVariableDeclaration
-                =   declarationStatement.variableList.variables.first;
+            value invocable
+                =   dartTypes.invocableForBaseExpression {
+                        info;
+                        info.declarationModel;
+                        true;
+                    };
 
-            assert (exists initializer
-                =   dartVariableDeclaration.initializer);
-
-            return
-            [DartExpressionStatement {
-                DartAssignmentExpression {
-                    dartVariableDeclaration.name;
-                    DartAssignmentOperator.equal;
-                    initializer;
-                };
-            }];
+            return withLhsNoType {
+                () => [DartExpressionStatement {
+                    invocable.expressionForInvocation {
+                        [withLhs {
+                            null;
+                            info.declarationModel;
+                            () => that.definition.expression.transform {
+                                expressionTransformer;
+                            };
+                        }];
+                    };
+                }];
+            };
         }
     }
 

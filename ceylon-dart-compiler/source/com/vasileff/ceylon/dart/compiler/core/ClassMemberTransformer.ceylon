@@ -198,12 +198,88 @@ class ClassMemberTransformer(CompilationContext ctx)
         // Eager values and variables are declared here and initialized in a class
         // body or constructor.
         if (that.definition is Specifier) {
+            // Similar to BaseGenerator.generateForValueDeclarationRaw()
+
+            "The invocable for the *getter*. If the dart type is not a dartValue, we'll
+             need to add a forwarding method or operator getter that returns the value
+             of the dart property used to store the value."
+            value invocableGetter
+                =   dartTypes.dartInvocable {
+                        info;
+                        info.declarationModel;
+                        false;
+                    };
+
+            "ClassOrInterface members always have simple identifiers."
+            assert (is DartSimpleIdentifier getterIdentifier
+                =   invocableGetter.reference);
+
+            DartMethodDeclaration? bridgeMethod;
+            DartSimpleIdentifier fieldIdentifer;
+
+            if (invocableGetter.elementType != dartValue) {
+                // Generate a forwarding method
+
+                "The invocable for the *setter* to determine the backing dart property which
+                 may be different than the getter if this member is mapped, e.g.
+                 string => toString()"
+                value invocableSetter
+                    =   dartTypes.dartInvocable {
+                            info;
+                            info.declarationModel;
+                            true;
+                        };
+
+                "ClassOrInterface members always have simple identifiers."
+                assert (is DartSimpleIdentifier setterIdentifier
+                    =   invocableSetter.reference);
+
+                // Note: the scope `info` is the ValueDefinition, not the class body
+                // where this method actually goes.
+
+                fieldIdentifer
+                    =   setterIdentifier;
+
+                bridgeMethod
+                    =   DartMethodDeclaration {
+                            false;
+                            null;
+                            generateFunctionReturnType {
+                                info;
+                                info.declarationModel;
+                            };
+                            null;
+                            invocableGetter.elementType is DartOperator;
+                            getterIdentifier;
+                            dartFormalParameterListEmpty;
+                            DartExpressionFunctionBody {
+                                false;
+                                // boxing and casting should never be required...
+                                setterIdentifier;
+                            };
+                        };
+            }
+            else {
+                fieldIdentifer = getterIdentifier;
+                bridgeMethod = null;
+            }
+
             return [
                 DartFieldDeclaration {
                     false;
-                    generateForValueDeclaration(that);
-                }
-            ];
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            info;
+                            info.declarationModel;
+                        };
+                        [DartVariableDeclaration {
+                            fieldIdentifer;
+                        }];
+                    };
+                },
+                bridgeMethod
+            ].coalesced.sequence();
         }
 
         // NOTE getters cannot be variable, so not worrying about setter declarations
@@ -245,7 +321,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 [] // skip native declarations entirely, for now
             else if (info.declarationModel.container is InterfaceModel
                     && info.declarationModel.shared) then
-                [generateMethodGetterOrSetterDeclaration(that),
+                [generateMethodGetterOrSetterDeclaration(that), // FIXME test toString() and hashCode
                  generateMethodDefinition(that),
                  *generateDefaultValueStaticMethods(info)]
             else
