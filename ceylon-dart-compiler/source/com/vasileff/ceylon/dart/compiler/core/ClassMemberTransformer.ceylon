@@ -181,7 +181,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (info.declarationModel.parameter) {
             return [];
         }
-
+        if (!info.declarationModel.formal) {
+            addError(that, "forward function declarations not yet supported");
+            return [];
+        }
         return [generateMethodGetterOrSetterDeclaration(that),
                 *generateDefaultValueStaticMethods(info)];
     }
