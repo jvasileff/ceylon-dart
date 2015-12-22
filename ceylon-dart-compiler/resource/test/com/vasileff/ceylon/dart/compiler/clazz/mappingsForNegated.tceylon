@@ -1,0 +1,60 @@
+void negatedAssign() {
+    class A(shared Integer id) satisfies Invertible<A> {
+        variable value x = {A(1)};
+        shared actual A negated => x.first;
+        assign negated { x = {negated}; }
+        shared actual A plus(A other) => this;
+    }
+    value a = A(0);
+    assert (a.negated.id == 1);
+    a.negated = A(2);
+    assert (a.negated.id == 2);
+}
+
+void negatedReference() {
+    class A(shared Integer id) satisfies Invertible<A> {
+        shared actual default A negated => this;
+        shared actual A plus(A other) => this;
+    }
+    class B(Integer id) extends A(id) {
+        shared actual default A negated = A(1);
+    }
+    value a = B(0);
+    assert (a.negated.id == 1);
+}
+
+void negatedReferenceVariable() {
+    class A(shared Integer id) satisfies Invertible<A> {
+        shared actual default A negated => this;
+        shared actual A plus(A other) => this;
+    }
+    class B(Integer id) extends A(id) {
+        shared actual default variable A negated = A(1);
+    }
+    value a = B(1);
+    assert (a.negated.id == 1);
+    a.negated = B(2);
+    assert (a.negated.id == 2);
+}
+
+void negatedInterface() {
+    interface I satisfies Invertible<I> {
+        shared Integer id => 1;
+        shared actual default I negated => this;
+        assign negated {
+            print(negated);
+        }
+        shared actual I plus(I other) => this;
+    }
+    object o satisfies I {
+        shared actual Boolean equals(Object that) => that is \Io;
+    }
+    assert (o.negated.id == 1);
+}
+
+shared void run() {
+    negatedAssign();
+    negatedReference();
+    negatedReferenceVariable();
+    negatedInterface();
+}

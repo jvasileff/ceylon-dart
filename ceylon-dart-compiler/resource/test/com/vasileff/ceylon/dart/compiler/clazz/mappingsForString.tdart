@@ -1,0 +1,92 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class stringAssign$A {
+    stringAssign$A() {
+        _$x = "1";
+    }
+    $dart$core.String _$x;
+    $dart$core.String toString() => _$x;
+    void set string($dart$core.String string) {
+        _$x = string;
+    }
+}
+void $package$stringAssign() {
+    stringAssign$A a = new stringAssign$A();
+    if (!(a.toString() == "1")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+    }
+    a.string = "2";
+    if (!(a.toString() == "2")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
+    }
+}
+
+void stringAssign() => $package$stringAssign();
+
+class stringReference$A {
+    stringReference$A() {
+        string = "1";
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+void $package$stringReference() {
+    stringReference$A a = new stringReference$A();
+    if (!(a.toString() == "1")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+    }
+}
+
+void stringReference() => $package$stringReference();
+
+class stringReferenceVariable$A {
+    stringReferenceVariable$A() {
+        string = "1";
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+void $package$stringReferenceVariable() {
+    stringReferenceVariable$A a = new stringReferenceVariable$A();
+    if (!(a.toString() == "1")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+    }
+    a.string = "2";
+    if (!(a.toString() == "2")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
+    }
+}
+
+void stringReferenceVariable() => $package$stringReferenceVariable();
+
+abstract class stringInterface$I {
+    $dart$core.String toString();
+    static $dart$core.String $get$string([final stringInterface$I $this]) => "1";
+    void set string($dart$core.String string);
+    static void $set$string([final stringInterface$I $this, $dart$core.String string]) {
+        $ceylon$language.print($ceylon$language.String.instance(string));
+    }
+}
+class stringInterface$o_ implements stringInterface$I {
+    stringInterface$o_() {}
+    $dart$core.String toString() => stringInterface$I.$get$string(this);
+    void set string($dart$core.String string) => stringInterface$I.$set$string(this, string);
+}
+void $package$stringInterface() {
+    final stringInterface$o_ o = new stringInterface$o_();
+    if (!(o.toString() == "1")) {
+        throw new $ceylon$language.AssertionError("Violated: o.string == \"1\"");
+    }
+}
+
+void stringInterface() => $package$stringInterface();
+
+void $package$run() {
+    $package$stringAssign();
+    $package$stringReference();
+    $package$stringReferenceVariable();
+    $package$stringInterface();
+}
+
+void run() => $package$run();

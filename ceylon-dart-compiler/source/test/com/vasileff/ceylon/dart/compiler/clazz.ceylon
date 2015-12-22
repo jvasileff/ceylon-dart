@@ -134,4 +134,16 @@ object clazz {
     shared test
     void functionDeclarationInConstructor()
         =>  compileAndCompare2("clazz/functionDeclarationInConstructor");
+
+    shared test
+    void mappingsForString()
+        =>  compileAndCompare2("clazz/mappingsForString");
+
+    shared test
+    void mappingsForHash()
+        =>  compileAndCompare2("clazz/mappingsForHash");
+
+    shared test
+    void mappingsForNegated()
+        =>  compileAndCompare2("clazz/mappingsForNegated");
 }

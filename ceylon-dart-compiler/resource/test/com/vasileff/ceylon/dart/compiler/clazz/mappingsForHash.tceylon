@@ -1,0 +1,49 @@
+void hashAssign() {
+    class A() {
+        variable value x = 1;
+        shared actual Integer hash => x;
+        assign hash { x = hash; }
+    }
+    value a = A();
+    assert (a.hash == 1);
+    a.hash = 2;
+    assert (a.hash == 2);
+}
+
+void hashReference() {
+    class A() {
+        shared actual Integer hash = 1;
+    }
+    value a = A();
+    assert (a.hash == 1);
+}
+
+void hashReferenceVariable() {
+    class A() {
+        shared actual variable Integer hash = 1;
+    }
+    value a = A();
+    assert (a.hash == 1);
+    a.hash = 2;
+    assert (a.hash == 2);
+}
+
+void hashInterface() {
+    interface I {
+        shared actual default Integer hash => 1;
+        assign hash {
+            print(hash);
+        }
+    }
+    object o extends Object() satisfies I {
+        shared actual Boolean equals(Object that) => that is \Io;
+    }
+    assert (o.hash == 1);
+}
+
+shared void run() {
+    hashAssign();
+    hashReference();
+    hashReferenceVariable();
+    hashInterface();
+}

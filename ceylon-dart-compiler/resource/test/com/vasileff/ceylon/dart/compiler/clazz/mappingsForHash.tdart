@@ -1,0 +1,91 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class hashAssign$A {
+    hashAssign$A() {
+        _$x = 1;
+    }
+    $dart$core.int _$x;
+    $dart$core.int get hashCode => _$x;
+    void set hashCode($dart$core.int hash) {
+        _$x = hash;
+    }
+}
+void $package$hashAssign() {
+    hashAssign$A a = new hashAssign$A();
+    if (!(a.hashCode == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+    }
+    a.hashCode = 2;
+    if (!(a.hashCode == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
+    }
+}
+
+void hashAssign() => $package$hashAssign();
+
+class hashReference$A {
+    hashReference$A() {
+        hashCode = 1;
+    }
+    $dart$core.int hashCode;
+}
+void $package$hashReference() {
+    hashReference$A a = new hashReference$A();
+    if (!(a.hashCode == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+    }
+}
+
+void hashReference() => $package$hashReference();
+
+class hashReferenceVariable$A {
+    hashReferenceVariable$A() {
+        hashCode = 1;
+    }
+    $dart$core.int hashCode;
+}
+void $package$hashReferenceVariable() {
+    hashReferenceVariable$A a = new hashReferenceVariable$A();
+    if (!(a.hashCode == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+    }
+    a.hashCode = 2;
+    if (!(a.hashCode == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
+    }
+}
+
+void hashReferenceVariable() => $package$hashReferenceVariable();
+
+abstract class hashInterface$I {
+    $dart$core.int get hashCode;
+    static $dart$core.int $get$hash([final hashInterface$I $this]) => 1;
+    void set hashCode($dart$core.int hash);
+    static void $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
+        $ceylon$language.print($ceylon$language.Integer.instance(hash));
+    }
+}
+class hashInterface$o_ implements hashInterface$I {
+    hashInterface$o_() {}
+    $dart$core.bool operator ==($dart$core.Object that) => that is hashInterface$o_;
+    $dart$core.int get hashCode => hashInterface$I.$get$hash(this);
+    void set hashCode($dart$core.int hash) => hashInterface$I.$set$hash(this, hash);
+}
+void $package$hashInterface() {
+    final hashInterface$o_ o = new hashInterface$o_();
+    if (!(o.hashCode == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: o.hash == 1");
+    }
+}
+
+void hashInterface() => $package$hashInterface();
+
+void $package$run() {
+    $package$hashAssign();
+    $package$hashReference();
+    $package$hashReferenceVariable();
+    $package$hashInterface();
+}
+
+void run() => $package$run();

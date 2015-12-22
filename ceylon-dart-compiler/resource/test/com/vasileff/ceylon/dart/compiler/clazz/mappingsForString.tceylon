@@ -1,0 +1,47 @@
+void stringAssign() {
+    class A() {
+        variable value x = "1";
+        shared actual String string => x;
+        assign string { x = string; }
+    }
+    value a = A();
+    assert (a.string == "1");
+    a.string = "2";
+    assert (a.string == "2");
+}
+
+void stringReference() {
+    class A() {
+        shared actual String string = "1";
+    }
+    value a = A();
+    assert (a.string == "1");
+}
+
+void stringReferenceVariable() {
+    class A() {
+        shared actual variable String string = "1";
+    }
+    value a = A();
+    assert (a.string == "1");
+    a.string = "2";
+    assert (a.string == "2");
+}
+
+void stringInterface() {
+    interface I {
+        shared actual String string => "1";
+        assign string {
+            print(string);
+        }
+    }
+    object o satisfies I {}
+    assert (o.string == "1");
+}
+
+shared void run() {
+    stringAssign();
+    stringReference();
+    stringReferenceVariable();
+    stringInterface();
+}

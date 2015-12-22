@@ -1,0 +1,138 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class negatedAssign$A implements $ceylon$language.Invertible {
+    negatedAssign$A([$dart$core.int id]) {
+        this.id = id;
+        _$x = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+            switch ($i$) {
+            case 0 :
+            return new negatedAssign$A(1);
+            }
+        }, null);
+    }
+    $dart$core.int id;
+    $ceylon$language.Iterable _$x;
+    negatedAssign$A operator -() => _$x.first as negatedAssign$A;
+    void set negated(negatedAssign$A negated) {
+        _$x = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+            switch ($i$) {
+            case 0 :
+            return negated;
+            }
+        }, null);
+    }
+    negatedAssign$A operator +(negatedAssign$A other) => this;
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+void $package$negatedAssign() {
+    negatedAssign$A a = new negatedAssign$A(0);
+    if (!((-a).id == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.negated.id == 1");
+    }
+    a.negated = new negatedAssign$A(2);
+    if (!((-a).id == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: a.negated.id == 2");
+    }
+}
+
+void negatedAssign() => $package$negatedAssign();
+
+class negatedReference$A implements $ceylon$language.Invertible {
+    negatedReference$A([$dart$core.int id]) {
+        this.id = id;
+    }
+    $dart$core.int id;
+    negatedReference$A operator -() => this;
+    negatedReference$A operator +(negatedReference$A other) => this;
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+class negatedReference$B  extends negatedReference$A {
+    negatedReference$B([$dart$core.int _$id]) : super(_$id) {
+        this._$id = _$id;
+        negated = new negatedReference$A(1);
+    }
+    $dart$core.int _$id;
+    negatedReference$A negated;
+    negatedReference$A operator -() => negated;
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+void $package$negatedReference() {
+    negatedReference$B a = new negatedReference$B(0);
+    if (!((-a).id == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.negated.id == 1");
+    }
+}
+
+void negatedReference() => $package$negatedReference();
+
+class negatedReferenceVariable$A implements $ceylon$language.Invertible {
+    negatedReferenceVariable$A([$dart$core.int id]) {
+        this.id = id;
+    }
+    $dart$core.int id;
+    negatedReferenceVariable$A operator -() => this;
+    negatedReferenceVariable$A operator +(negatedReferenceVariable$A other) => this;
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+class negatedReferenceVariable$B  extends negatedReferenceVariable$A {
+    negatedReferenceVariable$B([$dart$core.int _$id]) : super(_$id) {
+        this._$id = _$id;
+        negated = new negatedReferenceVariable$A(1);
+    }
+    $dart$core.int _$id;
+    negatedReferenceVariable$A negated;
+    negatedReferenceVariable$A operator -() => negated;
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+void $package$negatedReferenceVariable() {
+    negatedReferenceVariable$B a = new negatedReferenceVariable$B(1);
+    if (!((-a).id == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.negated.id == 1");
+    }
+    a.negated = new negatedReferenceVariable$B(2);
+    if (!((-a).id == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: a.negated.id == 2");
+    }
+}
+
+void negatedReferenceVariable() => $package$negatedReferenceVariable();
+
+abstract class negatedInterface$I implements $ceylon$language.Invertible {
+    $dart$core.int get id;
+    static $dart$core.int $get$id([final negatedInterface$I $this]) => 1;
+    negatedInterface$I operator -();
+    static negatedInterface$I $get$negated([final negatedInterface$I $this]) => $this;
+    void set negated(negatedInterface$I negated);
+    static void $set$negated([final negatedInterface$I $this, negatedInterface$I negated]) {
+        $ceylon$language.print(negated);
+    }
+    negatedInterface$I operator +(negatedInterface$I other);
+    static negatedInterface$I $plus([final negatedInterface$I $this, negatedInterface$I other]) => $this;
+}
+class negatedInterface$o_ implements negatedInterface$I {
+    negatedInterface$o_() {}
+    $dart$core.bool operator ==($dart$core.Object that) => that is negatedInterface$o_;
+    $dart$core.int get id => negatedInterface$I.$get$id(this);
+    negatedInterface$I operator -() => negatedInterface$I.$get$negated(this);
+    void set negated(negatedInterface$I negated) => negatedInterface$I.$set$negated(this, negated);
+    negatedInterface$I operator +(negatedInterface$I other) => negatedInterface$I.$plus(this, other);
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+void $package$negatedInterface() {
+    final negatedInterface$o_ o = new negatedInterface$o_();
+    if (!((-o).id == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: o.negated.id == 1");
+    }
+}
+
+void negatedInterface() => $package$negatedInterface();
+
+void $package$run() {
+    $package$negatedAssign();
+    $package$negatedReference();
+    $package$negatedReferenceVariable();
+    $package$negatedInterface();
+}
+
+void run() => $package$run();
