@@ -148,4 +148,8 @@ object interfaces {
     shared test
     void invokeLocalFunction()
         =>  compileAndCompare2("interfaces/invokeLocalFunction");
+
+    shared test
+    void bridgeSetter()
+        =>  compileAndCompare2("interfaces/bridgeSetter");
 }

@@ -1,0 +1,8 @@
+interface I {
+    shared String x => "";
+    assign x { print(x); }
+}
+
+object o satisfies I {}
+
+

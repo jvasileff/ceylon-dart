@@ -1114,22 +1114,27 @@ class TopLevelVisitor(CompilationContext ctx)
         "The container of the target of a bridge method is surely an Interface."
         assert (is InterfaceModel interfaceModel);
 
+        value isSetter
+            =   declaration is SetterModel;
+
         return
         DartMethodDeclaration {
             false; null;
             generateFunctionReturnType(scope, declaration);
             dartElementType == dartValue then (
-                if (declaration is SetterModel)
+                if (isSetter)
                 then "set"
                 else "get"
             );
             dartElementType is DartOperator;
             identifier;
-            dartElementType != dartValue then generateFormalParameterList {
-                !dartElementType is DartOperator; false;
-                scope;
-                parameterModels;
-            };
+            (dartElementType != dartValue || isSetter)
+                then generateFormalParameterList {
+                    !dartElementType is DartOperator && !isSetter;
+                    false;
+                    scope;
+                    parameterModels;
+                };
             DartExpressionFunctionBody {
                 false;
                 DartMethodInvocation {

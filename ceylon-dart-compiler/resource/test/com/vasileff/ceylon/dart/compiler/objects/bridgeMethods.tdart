@@ -29,8 +29,8 @@ class o_ implements I {
     $dart$core.String get s2 => I.$get$s2(this);
     $dart$core.String s3() => I.$s3(this);
     $dart$core.String s4() => I.$s4(this);
-    void set s1 => I.$set$s1(this, s1);
-    void set s2 => I.$set$s2(this, s2);
+    void set s1($dart$core.String s1) => I.$set$s1(this, s1);
+    void set s2($dart$core.String s2) => I.$set$s2(this, s2);
 }
 final o_ $package$o = new o_();
 
