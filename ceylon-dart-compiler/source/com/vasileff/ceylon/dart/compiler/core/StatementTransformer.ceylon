@@ -42,7 +42,8 @@ import ceylon.ast.core {
     DynamicValue,
     Destructure,
     TryCatchFinally,
-    Type
+    Type,
+    LazySpecification
 }
 import ceylon.collection {
     LinkedList
@@ -75,7 +76,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPrefixExpression,
     DartStatement,
     DartContinueStatement,
-    DartNullLiteral,
     DartTryStatement,
     DartCatchClause,
     DartRethrowExpression,
@@ -92,7 +92,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     FunctionDeclarationInfo,
     UnspecifiedVariableInfo,
     expressionInfo,
-    nodeInfo
+    nodeInfo,
+    LazySpecificationInfo
 }
 
 import org.antlr.runtime {
@@ -460,9 +461,30 @@ class StatementTransformer(CompilationContext ctx)
     [DartStatement] transformValueSpecification(ValueSpecification that) {
         value info = ValueSpecificationInfo(that);
         if (info.declaration is FunctionModel) {
-            addError(that,
-                "specification of forward declared functions not yet supported");
-            return [DartExpressionStatement(DartNullLiteral())];
+            // Specification for a forward declared function. Assign to the synthetic
+            // variable that holds the Callable.
+
+            value callableType
+                =   info.declaration.typedReference.fullType;
+
+            value callableVariableName
+                =   dartTypes.getName(info.declaration) + "$c";
+
+            value callableVariable
+                =   DartSimpleIdentifier(callableVariableName);
+
+            return
+            [DartExpressionStatement {
+                DartAssignmentExpression {
+                    callableVariable;
+                    DartAssignmentOperator.equal;
+                    withLhs {
+                        callableType;
+                        null;
+                        () => that.specifier.expression.transform(expressionTransformer);
+                    };
+                };
+            }];
         }
 
         return  [DartExpressionStatement {
@@ -474,6 +496,67 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 };
             }];
+    }
+
+    shared actual
+    DartStatement[] transformLazySpecification(LazySpecification that) {
+        value info = LazySpecificationInfo(that);
+
+        if (!info.declaration.shortcutRefinement,
+                is FunctionModel functionModel = info.declaration) {
+            // Specification for a forward declared function. Assign to the synthetic
+            // variable that holds the Callable.
+
+            value callableType
+                =   info.declaration.typedReference.fullType;
+
+            value callableVariableName
+                =   dartTypes.getName(info.declaration) + "$c";
+
+            value callableVariable
+                =   DartSimpleIdentifier(callableVariableName);
+
+            assert (nonempty parameterLists
+                =   that.parameterLists);
+
+            // TODO This produces tremendously ugly code. Compare the results of
+            //
+            //          shared String f(String a);
+            //          f = (String s) => s; // good
+            //          f(String s) => s;    // bad (too much boxing)
+            //
+            // It would be nice to exclude functions that are forward declared from
+            // dartTypes.erasedToNative(). *But*, only when generating this Callable
+            // since the actual function must follow normal conventions if it's shared.
+            // This may not be possible though, since within the function definition
+            // may be a call to the function itself (which would be for the erased
+            // forwarding function, not the non-erased Callable.)
+
+            return
+            [DartExpressionStatement {
+                DartAssignmentExpression {
+                    callableVariable;
+                    DartAssignmentOperator.equal;
+                    withLhs {
+                        callableType;
+                        null;
+                        () => generateNewCallable {
+                            info;
+                            functionModel;
+                            generateFunctionExpressionRaw {
+                                info;
+                                functionModel;
+                                parameterLists;
+                                that.specifier;
+                            };
+                        };
+                    };
+                };
+            }];
+        }
+        else {
+            return super.transformLazySpecification(that);
+        }
     }
 
     shared actual
