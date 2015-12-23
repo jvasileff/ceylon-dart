@@ -79,7 +79,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartTryStatement,
     DartCatchClause,
     DartRethrowExpression,
-    createIfStatement
+    createIfStatement,
+    DartFunctionDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -808,8 +809,56 @@ class StatementTransformer(CompilationContext ctx)
             // ignore; must be a declaration for a callable parameter
             return [];
         }
-        addError(that, "forward function declarations not yet supported");
-        return  [];
+
+        value callableVariableName
+            =   dartTypes.getName(info.declarationModel) + "$c";
+
+        value callableVariable
+            =   DartSimpleIdentifier(callableVariableName);
+
+        value functionExpression
+            =   generateForwardDeclaredForwarder(that);
+
+        // Toplevel and local functions will never be implemented as Dart values
+        // or operators. Just grab the identifier and define a function.
+        value functionIdentifier
+            =   dartTypes.dartInvocable {
+                    info;
+                    info.declarationModel;
+                    false;
+                }.reference;
+
+        "Functions have simple identifiers."
+        assert (is DartSimpleIdentifier functionIdentifier);
+
+        return [
+            // Field to hold the Callable for the forward declared function
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeName {
+                        info;
+                        info.declarationModel.typedReference.fullType;
+                    };
+                    [DartVariableDeclaration {
+                        callableVariable;
+                    }];
+                };
+            },
+            // The method, which forwards to the callableVariable
+            DartFunctionDeclarationStatement {
+                DartFunctionDeclaration {
+                    false;
+                    generateFunctionReturnType {
+                        info;
+                        info.declarationModel;
+                    };
+                    null;
+                    functionIdentifier;
+                    functionExpression;
+                };
+            }
+        ];
     }
 
     shared actual

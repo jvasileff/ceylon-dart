@@ -40,7 +40,8 @@ import ceylon.ast.core {
     SpreadMemberOperator,
     Pattern,
     TuplePattern,
-    EntryPattern
+    EntryPattern,
+    FunctionDeclaration
 }
 import ceylon.collection {
     LinkedList
@@ -146,7 +147,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     anyFunctionInfo,
     existsOrNonemptyConditionInfo,
     nodeInfo,
-    parameterInfo
+    parameterInfo,
+    FunctionDeclarationInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -1101,6 +1103,193 @@ class BaseGenerator(CompilationContext ctx)
                     [signature, arguments];
             }
         ];
+    }
+
+    shared
+    DartFunctionExpression generateForwardDeclaredForwarder(FunctionDeclaration that) {
+        // For multiple parameter lists, eagerly call the delegate in case there are side
+        // effects. https://github.com/ceylon/ceylon/issues/3916
+
+        value info
+            =   FunctionDeclarationInfo(that);
+
+        value callableVariableName
+            =   dartTypes.getName(info.declarationModel) + "$c";
+
+        value callableVariable
+            =   DartSimpleIdentifier(callableVariableName);
+
+        value functionModel
+            =   info.declarationModel;
+
+        value parameterLists
+            =   that.parameterLists;
+
+        value isVoid
+            =   functionModel.declaredVoid;
+
+        variable DartExpression? result = null;
+
+        value [identifier, dartElementType]
+            =   dartTypes.dartInvocable {
+                    info;
+                    functionModel;
+                }.oldPairSimple;
+
+        for (i -> list in parameterLists.indexed.sequence().reversed) {
+
+            if (i < parameterLists.size - 1) {
+                // wrap nested function in a callable
+                assert(exists inner = result);
+
+                // generateNewCallable() *thinks* the innermost call returns a native
+                // value, but it doesn't since we're really invoking another Callable.
+                // So, we're boxing/unboxing as nec. to make the Callable *look* like a
+                // regular function. Unfortunately, this causes some wasteful box-unbox
+                // combos. Better would be to teach generateNewCallable that our return
+                // values are never erased-to-native.
+                result = generateNewCallable(info, functionModel, inner, i+1);
+            }
+
+            value defaultedParameters
+                =   [ for (p in list.parameters) if (is DefaultedParameter p) p ];
+
+            value delegateIdentifier
+                =   if (i == 0)
+                    then callableVariable
+                    else DartSimpleIdentifier(callableVariableName + i.string);
+
+            value innerDelegateIdentifier
+                =   DartSimpleIdentifier(callableVariableName + (i + 1).string);
+
+            value arguments
+                =   list.parameters.collect((p) {
+                        value pInfo = parameterInfo(p);
+
+                        // we're invoking a Callable, so all arguments must be boxed
+                        return
+                        withLhsNonNative {
+                            pInfo.parameterModel.type;
+                            () => withBoxing {
+                                info;
+                                pInfo.parameterModel.type;
+                                pInfo.parameterModel.model;
+                                DartSimpleIdentifier {
+                                    dartTypes.getName(pInfo.parameterModel);
+                                };
+                            };
+                        };
+                    });
+
+            value defaultArgumentAssignments
+                =   if (!defaultedParameters.empty) then
+                        generateDefaultValueAssignments {
+                            info;
+                            defaultedParameters;
+                        }
+                    else [];
+
+            [DartStatement*] statements;
+
+            if (i == parameterLists.size - 1) {
+                // the innermost function body
+
+                value invocation
+                    =   DartFunctionExpressionInvocation {
+                            DartPropertyAccess {
+                                delegateIdentifier;
+                                DartSimpleIdentifier("f");
+                            };
+                            DartArgumentList(arguments);
+                        };
+
+                if (isVoid) {
+                    statements
+                        =   [DartExpressionStatement {
+                                // no boxing; returning void
+                                invocation;
+                            }];
+                }
+                else {
+                    statements
+                        =   [DartReturnStatement {
+                                withLhs {
+                                    null;
+                                    functionModel;
+                                    () => withBoxingNonNative {
+                                        info;
+                                        functionModel.type;
+                                        invocation;
+                                    };
+                                };
+                            }];
+                }
+            }
+            else {
+                // an outer function body that returns a Callable
+
+                assert(exists inner = result);
+
+                statements
+                    =   [// Invoke the delegate to acquire the next Callable, which
+                         // is called by code that was generated in the previous
+                         // iteration.
+                         DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeName {
+                                    info;
+                                    ceylonTypes.callableAnythingType;
+                                };
+                                [DartVariableDeclaration {
+                                    innerDelegateIdentifier;
+                                    // Don't bother boxing. We're calling
+                                    // a Callable, and the return, which
+                                    // will be a Callable, is being used
+                                    // as another Callable's return.
+                                    DartFunctionExpressionInvocation {
+                                        DartPropertyAccess {
+                                            delegateIdentifier;
+                                            DartSimpleIdentifier("f");
+                                        };
+                                        DartArgumentList(arguments);
+                                    };
+                                }];
+                            };
+                        },
+                        // Return the previously generated inner Callable
+                        DartReturnStatement {
+                            inner;
+                        }];
+            }
+
+            result
+                =   DartFunctionExpression {
+                        generateFormalParameterList {
+                            // For the outermost parameter list, if the function is a
+                            // DartOperator, don't use a positional argument list.
+                            if (i == 0)
+                                then !dartElementType is DartOperator
+                                else false;
+                            false;
+                            info;
+                            list;
+                        };
+                        DartBlockFunctionBody {
+                            null; false;
+                            DartBlock {
+                                concatenate {
+                                    defaultArgumentAssignments,
+                                    statements
+                                };
+                            };
+                        };
+                    };
+        }
+
+        assert (is DartFunctionExpression r = result);
+
+        return r;
     }
 
     shared
