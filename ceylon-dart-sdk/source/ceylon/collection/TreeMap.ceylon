@@ -11,9 +11,7 @@ shared class TreeMap<Key, Item>
         given Key satisfies Object {
     
     "A comparator function used to sort the entries."
-// FIXME Dart workaround
-//    Comparison compare(Key x, Key y);
-    Comparison(Key, Key) compare;
+    Comparison compare(Key x, Key y);
     
     "The root node of the tree."
     variable Node? root = null;
