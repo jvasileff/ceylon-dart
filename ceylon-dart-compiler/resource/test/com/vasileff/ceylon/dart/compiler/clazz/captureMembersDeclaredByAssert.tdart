@@ -9,11 +9,11 @@ class Foo {
         if (!(_$si1 is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String si1");
         }
-        si1$0 = $ceylon$language.String.nativeValue(_$si1 as $ceylon$language.String);
+        si1$0 = $ceylon$language.String.nativeValue(this._$si1 as $ceylon$language.String);
         if (!(_$si2 is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String si2");
         }
-        si2$1 = $ceylon$language.String.nativeValue(_$si2 as $ceylon$language.String);
+        si2$1 = $ceylon$language.String.nativeValue(this._$si2 as $ceylon$language.String);
         if (!((_$isf is $ceylon$language.String) || (_$isf is $ceylon$language.Integer))) {
             throw new $ceylon$language.AssertionError("Violated: is String | Integer isf");
         }

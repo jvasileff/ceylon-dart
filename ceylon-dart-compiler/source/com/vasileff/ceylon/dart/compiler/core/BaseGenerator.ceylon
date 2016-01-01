@@ -1745,9 +1745,10 @@ class BaseGenerator(CompilationContext ctx)
                         // will be null for non-initial declarations
                         // (is refinedDeclaration propagated?)
                         originalDeclaration;
-                        DartSimpleIdentifier {
-                            dartTypes.getName(originalDeclaration);
-                        };
+                        dartTypes.invocableForBaseExpression {
+                            scope;
+                            originalDeclaration;
+                        }.expressionForInvocation();
                     };
                 };
             };
