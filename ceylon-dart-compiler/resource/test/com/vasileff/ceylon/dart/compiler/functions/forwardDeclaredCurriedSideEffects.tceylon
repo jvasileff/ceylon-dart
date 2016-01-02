@@ -1,0 +1,22 @@
+shared void run() {
+    variable Integer i = 0;
+
+    Integer f()()();
+
+    f = () {
+        value i1 = i;
+        return () {
+            value i2 = i;
+                return () {
+                    return i1 + i2 + i;
+                };
+            };
+        };
+
+    value f1 = f(); // capture 0
+    i = 1;
+    value f2 = f1(); // capture 1
+    i = 10;
+
+    assert (f2() == 11);
+}

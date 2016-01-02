@@ -50,7 +50,8 @@ import ceylon.collection {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
-    FunctionModel=Function
+    FunctionModel=Function,
+    FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -94,7 +95,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     UnspecifiedVariableInfo,
     expressionInfo,
     nodeInfo,
-    LazySpecificationInfo
+    LazySpecificationInfo,
+    parameterInfo,
+    ParametersInfo,
+    ParameterInfo
 }
 
 import org.antlr.runtime {
@@ -117,11 +121,19 @@ class StatementTransformer(CompilationContext ctx)
     [DartReturnStatement] transformReturn(Return that)
         =>  if (exists result = that.result) then
                 [DartReturnStatement {
-                    withLhs {
-                        null;
-                        ctx.assertedReturnDeclaration;
-                        () => result.transform(expressionTransformer);
-                    };
+                    switch (returnType = ctx.assertedReturnDeclaration)
+                    case (is TypeDetails)
+                        withLhs {
+                            returnType;
+                            null;
+                            () => result.transform(expressionTransformer);
+                        }
+                    case (is FunctionOrValueModel)
+                        withLhs {
+                            null;
+                            returnType;
+                            () => result.transform(expressionTransformer);
+                        };
                 }]
             else
                 [DartReturnStatement()];
@@ -508,6 +520,19 @@ class StatementTransformer(CompilationContext ctx)
             // Specification for a forward declared function. Assign to the synthetic
             // variable that holds the Callable.
 
+            value allParameterModels
+                =>  that.parameterLists
+                            .flatMap((pl) => pl.parameters)
+                            .map(parameterInfo)
+                            .map(ParameterInfo.parameterModel);
+
+            for (p in allParameterModels) {
+                // TODO this should be in a separate visitor, probably.
+                // Since we're generating Callables, force all parameters to be
+                // non-native, to avoid lots of unnecessary boxing/unboxing.
+                ctx.disableErasureToNative.add(p.model);
+            }
+
             value callableType
                 =   info.declaration.typedReference.fullType;
 
@@ -520,18 +545,15 @@ class StatementTransformer(CompilationContext ctx)
             assert (nonempty parameterLists
                 =   that.parameterLists);
 
-            // TODO This produces tremendously ugly code. Compare the results of
+            // NOTE: forceNonNativeReturn & hasForcedNonNativeReturn are used to eliminate
+            // unnecessary boxing that would occur with the second example below, since
+            // the functionModel would indicate erase-to-native, but what we want here
+            // is to create a Callable.
             //
             //          shared String f(String a);
-            //          f = (String s) => s; // good
-            //          f(String s) => s;    // bad (too much boxing)
-            //
-            // It would be nice to exclude functions that are forward declared from
-            // dartTypes.erasedToNative(). *But*, only when generating this Callable
-            // since the actual function must follow normal conventions if it's shared.
-            // This may not be possible though, since within the function definition
-            // may be a call to the function itself (which would be for the erased
-            // forwarding function, not the non-erased Callable.)
+            //          f = (String s) => s; // ok; standard logic indicates non-native
+            //          f(String s) => s;    // would have native return that is
+            //                                  immediately boxed w/o the special effort
 
             return
             [DartExpressionStatement {
@@ -549,7 +571,10 @@ class StatementTransformer(CompilationContext ctx)
                                 functionModel;
                                 parameterLists;
                                 that.specifier;
+                                forceNonNativeReturn = true;
                             };
+                            parameterList = ParametersInfo(parameterLists.first).model;
+                            hasForcedNonNativeReturn =  true;
                         };
                     };
                 };

@@ -36,7 +36,7 @@ class NodeInfo()
           | ExtensionOrConstructionInfo | NamedArgumentInfo | ArgumentListInfo
           | CompilationUnitInfo | ComprehensionInfo |ComprehensionClauseInfo
           | ElseClauseInfo | ForClauseInfo | ForIteratorInfo | IsCaseInfo
-          | ParameterInfo | SpreadArgumentInfo | StatementInfo
+          | ParameterInfo | ParametersInfo | SpreadArgumentInfo | StatementInfo
           | TypeInfo | TypeNameWithTypeArgumentsInfo
           | VariableInfo | ControlClauseInfo | DefaultNodeInfo
         satisfies DScope {

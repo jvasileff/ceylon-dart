@@ -1329,6 +1329,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // If there are multiple parameter lists, the function returns a Callable, not
         // the ultimate return type as advertised by the declaration.
         if (is FunctionModel declaration, declaration.parameterLists.size() > 1) {
+            // FIXME but should be true from inside the function, for the return?
             return false;
         }
 

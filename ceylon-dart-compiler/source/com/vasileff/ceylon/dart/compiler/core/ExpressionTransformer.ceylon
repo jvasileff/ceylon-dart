@@ -1188,13 +1188,12 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformFunctionExpression(FunctionExpression that)
-        // FunctionExpressions are always wrapped in a Callable, although we probably
-        // could optimize for expressions that are immediately invoked
         =>  let (info = FunctionExpressionInfo(that))
-            generateNewCallable(
-                info,
-                info.declarationModel,
-                generateFunctionExpression(that), 0, false);
+            generateNewCallable {
+                info;
+                info.declarationModel;
+                generateFunctionExpression(that);
+            };
 
     DartExpression generateBooleanExpression(
             DScope scope,

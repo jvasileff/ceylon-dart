@@ -497,7 +497,6 @@ class ClassMemberTransformer(CompilationContext ctx)
                             info;
                             model;
                             generateFunctionExpression(that);
-                            0; false;
                         };
                     }
                 else

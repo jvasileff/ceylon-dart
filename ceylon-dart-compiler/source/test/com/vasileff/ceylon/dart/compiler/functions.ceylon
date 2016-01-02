@@ -51,4 +51,28 @@ object functions {
     shared test
     void useBlocksVoidFunctions()
         =>  compileAndCompare2("functions/useBlocksVoidFunctions");
+
+    shared test
+    void forwardDeclaredSimple()
+        =>  compileAndCompare2("functions/forwardDeclaredSimple");
+
+    shared test
+    void forwardDeclaredCurried()
+        =>  compileAndCompare2("functions/forwardDeclaredCurried");
+
+    shared test
+    void forwardDeclaredCurriedSideEffects()
+        =>  compileAndCompare2("functions/forwardDeclaredCurriedSideEffects");
+
+    shared test
+    void forwardDeclaredMember()
+        =>  compileAndCompare2("functions/forwardDeclaredMember");
+
+    shared test
+    void forwardDeclaredVoid()
+        =>  compileAndCompare2("functions/forwardDeclaredVoid");
+
+    shared test
+    void forwardDeclaredDefaultArg()
+        =>  compileAndCompare2("functions/forwardDeclaredDefaultArg");
 }

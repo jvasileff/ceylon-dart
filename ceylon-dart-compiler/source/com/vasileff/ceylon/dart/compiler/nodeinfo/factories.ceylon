@@ -74,7 +74,8 @@ import ceylon.ast.core {
     ExpressionStatement,
     Assertion,
     Directive,
-    Destructure
+    Destructure,
+    Parameters
 }
 
 shared
@@ -88,6 +89,7 @@ NodeInfo nodeInfo(Node astNode)
         case (is Condition) conditionInfo(astNode)
         case (is Variable) variableInfo(astNode)
         case (is Parameter) parameterInfo(astNode)
+        case (is Parameters) ParametersInfo(astNode)
         case (is ArgumentList) ArgumentListInfo(astNode)
         case (is CompilationUnit) CompilationUnitInfo(astNode)
         case (is Comprehension) ComprehensionInfo(astNode)

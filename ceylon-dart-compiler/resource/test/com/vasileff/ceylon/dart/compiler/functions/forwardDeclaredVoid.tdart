@@ -1,0 +1,63 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $ceylon$language.Callable f1a$c;
+    void f1a() {
+        f1a$c.f();
+    }
+
+    $ceylon$language.Callable f1b$c;
+    void f1b() {
+        f1b$c.f();
+    }
+
+    $ceylon$language.Callable f2a$c;
+    $ceylon$language.Callable f2a() {
+        $ceylon$language.Callable f2a$c1 = f2a$c.f();
+        return new $ceylon$language.dart$Callable(() {
+            f2a$c1.f();
+        });
+    }
+
+    $ceylon$language.Callable f2b$c;
+    $ceylon$language.Callable f2b() {
+        $ceylon$language.Callable f2b$c1 = f2b$c.f();
+        return new $ceylon$language.dart$Callable(() {
+            f2b$c1.f();
+        });
+    }
+
+    $dart$core.bool t1a = false;
+    $dart$core.bool t1b = false;
+    $dart$core.bool t2a = false;
+    $dart$core.bool t2b = false;
+    f1a$c = new $ceylon$language.dart$Callable(() => $ceylon$language.Boolean.instance(t1a = true));
+    f1b$c = new $ceylon$language.dart$Callable(() {
+        t1b = true;
+    });
+    f2a$c = new $ceylon$language.dart$Callable(() => new $ceylon$language.dart$Callable(() => $ceylon$language.Boolean.instance(t2a = true)));
+    f2b$c = new $ceylon$language.dart$Callable(() {
+        return new $ceylon$language.dart$Callable(() {
+            t2b = true;
+        });
+    });
+    f1a();
+    f1b();
+    f2a().f();
+    f2b().f();
+    if (!t1a) {
+        throw new $ceylon$language.AssertionError("Violated: t1a");
+    }
+    if (!t1b) {
+        throw new $ceylon$language.AssertionError("Violated: t1b");
+    }
+    if (!t2a) {
+        throw new $ceylon$language.AssertionError("Violated: t2a");
+    }
+    if (!t2b) {
+        throw new $ceylon$language.AssertionError("Violated: t2b");
+    }
+}
+
+void run() => $package$run();

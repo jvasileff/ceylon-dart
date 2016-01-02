@@ -148,7 +148,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     existsOrNonemptyConditionInfo,
     nodeInfo,
     parameterInfo,
-    FunctionDeclarationInfo
+    FunctionDeclarationInfo,
+    ParametersInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -2204,7 +2205,6 @@ class BaseGenerator(CompilationContext ctx)
                                         scope;
                                         parameterModelModel;
                                         generateFunctionExpression(param);
-                                        0; false;
                                     };
                                 }
                             else
@@ -2899,7 +2899,8 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             FunctionModel functionModel,
             [Parameters+] parameterLists,
-            LazySpecifier|Block definition) {
+            LazySpecifier|Block definition,
+            Boolean forceNonNativeReturn = false) {
 
         variable DartExpression? result = null;
         value isVoid = functionModel.declaredVoid;
@@ -2908,7 +2909,16 @@ class BaseGenerator(CompilationContext ctx)
             if (i < parameterLists.size - 1) {
                 // wrap nested function in a callable
                 assert(exists previous = result);
-                result = generateNewCallable(scope, functionModel, previous, i+1);
+                assert(exists previousPList = parameterLists[i+1]);
+                result
+                    =   generateNewCallable {
+                            scope;
+                            functionModel;
+                            previous;
+                            i+1;
+                            parameterList = ParametersInfo(previousPList).model;
+                            hasForcedNonNativeReturn = forceNonNativeReturn;
+                        };
             }
 
             value parameterInfos
@@ -2932,6 +2942,20 @@ class BaseGenerator(CompilationContext ctx)
 
             DartFunctionBody body;
 
+
+            // Note: the forceNonNativeReturn case can only happen in the
+            //       !hasDefaultedParameters w/LazySpecifier case, since specifications
+            //       for forward declared functions cannot be Blocks or define default
+            //       arguments.
+            value returnTypeDetails
+                =   TypeDetails {
+                        functionModel.type;
+                        if (forceNonNativeReturn)
+                            then false
+                            else dartTypes.erasedToNative(functionModel);
+                        dartTypes.erasedToObject(functionModel);
+                    };
+
             // If defaulted parameters exist, use a block (not lazy specifier)
             // At start of block, assign values as necessary
             if (!hasDefaultedParameters && !isVoid) {
@@ -2940,17 +2964,24 @@ class BaseGenerator(CompilationContext ctx)
                     // the actual function body
                     switch (definition)
                     case (is Block) {
-                        body = withReturn(
-                            functionModel,
-                            () => DartBlockFunctionBody(null, false, statementTransformer
-                                    .transformBlock(definition)[0]));
+                        body = withReturn {
+                            returnTypeDetails;
+                            () => DartBlockFunctionBody {
+                                null; false;
+                                statementTransformer.transformBlock(definition)[0];
+                            };
+                        };
                     }
                     case (is LazySpecifier) {
-                        body = DartExpressionFunctionBody(false, withLhs(
-                            functionModel.type,
-                            functionModel,
-                            () => definition.expression
-                                    .transform(expressionTransformer)));
+                        body = DartExpressionFunctionBody {
+                            false;
+                            withLhs {
+                                returnTypeDetails;
+                                null;
+                                () => definition.expression.transform(
+                                        expressionTransformer);
+                            };
+                        };
                     }
                 }
                 else {
@@ -2986,9 +3017,16 @@ class BaseGenerator(CompilationContext ctx)
                     // the actual function body
                     switch (definition)
                     case (is Block) {
-                        statements.addAll(expand(withReturn(
-                            functionModel,
-                            () => definition.transformChildren(statementTransformer))));
+                        statements.addAll {
+                            expand {
+                                withReturn {
+                                    returnTypeDetails;
+                                    () => definition.transformChildren {
+                                        statementTransformer;
+                                    };
+                                };
+                            };
+                        };
                     }
                     case (is LazySpecifier) {
                         // for FunctionShortcutDefinition
@@ -3006,8 +3044,8 @@ class BaseGenerator(CompilationContext ctx)
                             statements.add {
                                 DartReturnStatement {
                                     withLhs {
+                                        returnTypeDetails;
                                         null;
-                                        functionModel;
                                         () => definition.expression.transform(
                                                 expressionTransformer);
                                     };
@@ -3499,19 +3537,29 @@ class BaseGenerator(CompilationContext ctx)
             FunctionModel | ClassModel | ConstructorModel functionModel,
             DartExpression? delegateFunction = null,
             Integer parameterListNumber = 0,
-            Boolean delegateReturnsCallable =
-                    parameterListNumber <
-                    functionModel.parameterLists.size() - 1) {
+            "The parameterList, which may be different than the one indicated by the
+             functionModel if the function is specified separately from its declaration,
+             as is the case with forward declared functions."
+            ParameterListModel parameterList
+                =   functionModel.parameterLists.get(parameterListNumber),
+            "Does the delegateFunction return a non-erased-to-native value despite the
+             functionModel possibly indicating erased-to-native? This is useful when
+             generating callables for forward declared functions, to avoid unnecessary
+             boxing."
+            Boolean hasForcedNonNativeReturn = false) {
 
         // TODO take the Callable's TypeModel as an argument in order to have
         //      correct (non-erased-to-Object) parameter and return types for
         //      generic functions
 
+        value returnsCallable
+            =   parameterListNumber < functionModel.parameterLists.size() - 1;
+
         DartExpression outerFunction;
 
         TypeModel returnType;
         FunctionOrValueModel | ClassModel | ConstructorModel? returnDeclaration;
-        if (delegateReturnsCallable) {
+        if (returnsCallable) {
             returnType = ceylonTypes.callableDeclaration.type;
             returnDeclaration = null;
         }
@@ -3520,14 +3568,14 @@ class BaseGenerator(CompilationContext ctx)
             returnDeclaration = functionModel;
         }
 
-        value parameters = CeylonList(functionModel.parameterLists
-                .get(parameterListNumber).parameters);
+        value parameters = CeylonList(parameterList.parameters);
 
         "True if boxing is required. If `true`, an extra outer function will be created
          to handle boxing and null safety."
         value needsWrapperFunction =
                 functionModel is ClassModel | ConstructorModel
-                || (!delegateReturnsCallable
+                || (!returnsCallable
+                    && !hasForcedNonNativeReturn
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
                     =>  dartTypes.erasedToNative(parameterModel.model));
@@ -3677,7 +3725,13 @@ class BaseGenerator(CompilationContext ctx)
                     // the invocation of the original function
                     withLhsNonNative {
                         returnType;
-                        () => withBoxing {
+                        () => if (hasForcedNonNativeReturn)
+                        then withBoxingNonNative {
+                            scope;
+                            returnType;
+                            invocation;
+                        }
+                        else withBoxing {
                             scope;
                             returnType;
                             returnDeclaration;
@@ -4264,7 +4318,6 @@ class BaseGenerator(CompilationContext ctx)
                                                 parameterLists;
                                                 lazySpecification.specifier;
                                             };
-                                            0; false;
                                         };
                                     };
                         }
@@ -4325,7 +4378,6 @@ class BaseGenerator(CompilationContext ctx)
                                         argumentInfo;
                                         argumentInfo.declarationModel;
                                         generateFunctionExpression(argumentInfo.node);
-                                        0; false;
                                     };
                                 };
                     }

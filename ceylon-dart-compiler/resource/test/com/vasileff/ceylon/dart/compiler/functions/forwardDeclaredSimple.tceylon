@@ -1,0 +1,13 @@
+shared void run() {
+    String echo1(String s);
+    String echo2(String s);
+    String echo3(String s);
+
+    echo1(String s) => s;
+    echo2 = (String s) => s;
+    echo3 = identity<String>;
+
+    assert(echo1("works") == "works");
+    assert(echo2("works") == "works");
+    assert(echo3("works") == "works");
+}

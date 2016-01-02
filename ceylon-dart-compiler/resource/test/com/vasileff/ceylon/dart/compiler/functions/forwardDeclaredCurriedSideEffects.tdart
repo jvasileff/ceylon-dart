@@ -1,0 +1,35 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.int i = 0;
+    $ceylon$language.Callable f$c;
+    $ceylon$language.Callable f() {
+        $ceylon$language.Callable f$c1 = f$c.f();
+        return new $ceylon$language.dart$Callable(() {
+            $ceylon$language.Callable f$c2 = f$c1.f();
+            return new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance((() {
+                return $ceylon$language.Integer.nativeValue(f$c2.f());
+            })()));
+        });
+    }
+
+    f$c = new $ceylon$language.dart$Callable(() {
+        $dart$core.int i1 = i;
+        return new $ceylon$language.dart$Callable(() {
+            $dart$core.int i2 = i;
+            return new $ceylon$language.dart$Callable(() {
+                return $ceylon$language.Integer.instance((i1 + i2) + i);
+            });
+        });
+    });
+    $ceylon$language.Callable f1 = f();
+    i = 1;
+    $ceylon$language.Callable f2 = f1.f() as $ceylon$language.Callable;
+    i = 10;
+    if (!($ceylon$language.Integer.nativeValue(f2.f() as $ceylon$language.Integer) == 11)) {
+        throw new $ceylon$language.AssertionError("Violated: f2() == 11");
+    }
+}
+
+void run() => $package$run();

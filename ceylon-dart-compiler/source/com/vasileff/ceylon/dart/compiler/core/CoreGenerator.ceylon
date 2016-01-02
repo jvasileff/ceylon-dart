@@ -374,16 +374,6 @@ class CoreGenerator(CompilationContext ctx) {
             };
         }
 
-        //if (exists lhsDeclaration, isCallableParameterOrParamOf(lhsDeclaration)) {
-        //    // Callable parameters are `Callable` values and are never erased to native
-        //    return withLhsValues {
-        //        lhsType = lhsType else lhsDeclaration.typedReference.fullType;
-        //        false;
-        //        false;
-        //        fun;
-        //    };
-        //}
-
         if (exists lhsDeclaration) {
             return withLhsValues {
                 lhsType = lhsType else lhsDeclaration.type;
@@ -478,17 +468,30 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     Result withReturn<Result>(
-            FunctionOrValueModel functionDeclaration,
+            TypeDetails | FunctionOrValueModel typeOrDeclaration,
             Result fun()) {
-        value save = ctx.returnDeclarationTop;
+        value save = ctx.returnTypeOrDeclarationTop;
         try {
-            ctx.returnDeclarationTop = functionDeclaration;
+            ctx.returnTypeOrDeclarationTop = typeOrDeclaration;
             return fun();
         }
         finally {
-            ctx.returnDeclarationTop = save;
+            ctx.returnTypeOrDeclarationTop = save;
         }
     }
+
+    shared
+    Result withReturnCustom<Result>(
+            TypeModel lhsType, Boolean lhsErasedToNative,
+            Boolean lhsErasedToObject, Result fun())
+        =>  withReturn {
+                TypeDetails {
+                    lhsType;
+                    lhsErasedToNative;
+                    lhsErasedToObject;
+                };
+                fun;
+            };
 
     shared
     Result withInConstructor<Result>(

@@ -20,7 +20,8 @@ import ceylon.ast.core {
     CompilationUnit,
     RequiredParameter,
     VariadicParameter,
-    DefaultedParameter
+    DefaultedParameter,
+    Parameters
 }
 import ceylon.interop.java {
     CeylonList
@@ -38,7 +39,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     ConstructorModel=Constructor,
     ControlBlockModel=ControlBlock,
-    ParameterModel=Parameter
+    ParameterModel=Parameter,
+    ParameterListModel=ParameterList
 }
 
 shared final
@@ -277,6 +279,20 @@ class ParameterInfo()
     shared actual formal Tree.Parameter tcNode;
 
     shared ParameterModel parameterModel => tcNode.parameterModel;
+}
+
+shared
+class ParametersInfo(shared actual Parameters node)
+        extends NodeInfo() {
+
+    shared alias TcNodeType => Tree.ParameterList;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared ParameterListModel model => tcNode.model;
 }
 
 shared

@@ -99,7 +99,7 @@ class CompilationContext(PhasedUnit phasedUnit) {
     Boolean? lhsErasedToObjectTop = null;
 
     shared variable
-    FunctionOrValueModel? returnDeclarationTop = null;
+    FunctionOrValueModel | TypeDetails | Null returnTypeOrDeclarationTop = null;
 
     "Classes for which we are currently generating a Dart constructor, and therefore need
      to qualify members that are also parameters with `this`"
@@ -175,8 +175,8 @@ class CompilationContext(PhasedUnit phasedUnit) {
     }
 
     shared
-    FunctionOrValueModel assertedReturnDeclaration {
-        assert(exists top = returnDeclarationTop);
+    FunctionOrValueModel | TypeDetails assertedReturnDeclaration {
+        assert(exists top = returnTypeOrDeclarationTop);
         return top;
     }
 

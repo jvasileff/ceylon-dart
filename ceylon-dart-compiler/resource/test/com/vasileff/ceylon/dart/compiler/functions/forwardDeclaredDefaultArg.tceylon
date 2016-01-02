@@ -1,0 +1,13 @@
+shared void run() {
+    Integer f1(Integer s = 1);
+    f1 = (Integer s = 2) => s;
+
+    Integer f2(Integer s = 1)(Integer t);
+    f2 = (Integer s = 2)(Integer t) => s + t;
+
+    assert (f1() == 1);
+    assert (f1(2) == 2);
+
+    assert (f2()(1) == 2);
+    assert (f2(2)(1) == 3);
+}

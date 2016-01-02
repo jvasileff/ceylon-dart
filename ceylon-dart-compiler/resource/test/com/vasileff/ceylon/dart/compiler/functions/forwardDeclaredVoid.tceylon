@@ -1,0 +1,27 @@
+shared void run() {
+    void f1a();
+    void f1b();
+    void f2a()();
+    void f2b()();
+
+    variable Boolean t1a = false;
+    variable Boolean t1b = false;
+    variable Boolean t2a = false;
+    variable Boolean t2b = false;
+
+    f1a = () => t1a = true;
+    f1b() => t1b = true;
+
+    f2a = ()() => t2a = true;
+    f2b()() => t2b = true;
+
+    f1a();
+    f1b();
+    f2a()();
+    f2b()();
+
+    assert(t1a);
+    assert(t1b);
+    assert(t2a);
+    assert(t2b);
+}

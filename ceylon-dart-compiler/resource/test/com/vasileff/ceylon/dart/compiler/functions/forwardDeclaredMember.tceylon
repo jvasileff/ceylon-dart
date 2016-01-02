@@ -1,0 +1,15 @@
+shared void run() {
+    class C() {
+        shared String echo1(String s);
+        shared String echo2(String s);
+        shared String echo3(String s);
+
+        echo1(String s) => s;
+        echo2 = (String s) => s;
+        echo3 = identity<String>;
+    }
+
+    assert(C().echo1("works") == "works");
+    assert(C().echo2("works") == "works");
+    assert(C().echo3("works") == "works");
+}

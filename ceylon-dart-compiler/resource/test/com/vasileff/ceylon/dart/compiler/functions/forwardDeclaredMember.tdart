@@ -1,0 +1,35 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$C {
+    run$C() {
+        echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        echo2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        echo3$c = new $ceylon$language.dart$Callable($ceylon$language.identity);
+    }
+    $ceylon$language.Callable echo1$c;
+    $dart$core.String echo1([$dart$core.String s]) {
+        return $ceylon$language.String.nativeValue(echo1$c.f($ceylon$language.String.instance(s)));
+    }
+    $ceylon$language.Callable echo2$c;
+    $dart$core.String echo2([$dart$core.String s]) {
+        return $ceylon$language.String.nativeValue(echo2$c.f($ceylon$language.String.instance(s)));
+    }
+    $ceylon$language.Callable echo3$c;
+    $dart$core.String echo3([$dart$core.String s]) {
+        return $ceylon$language.String.nativeValue(echo3$c.f($ceylon$language.String.instance(s)));
+    }
+}
+void $package$run() {
+    if (!((new run$C()).echo1("works") == "works")) {
+        throw new $ceylon$language.AssertionError("Violated: C().echo1(\"works\") == \"works\"");
+    }
+    if (!((new run$C()).echo2("works") == "works")) {
+        throw new $ceylon$language.AssertionError("Violated: C().echo2(\"works\") == \"works\"");
+    }
+    if (!((new run$C()).echo3("works") == "works")) {
+        throw new $ceylon$language.AssertionError("Violated: C().echo3(\"works\") == \"works\"");
+    }
+}
+
+void run() => $package$run();
