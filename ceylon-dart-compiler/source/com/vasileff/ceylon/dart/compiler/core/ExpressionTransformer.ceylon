@@ -727,9 +727,62 @@ class ExpressionTransformer(CompilationContext ctx)
          generate `Callable`s via `that.invoked.transform(this)` which are then
          immediately invoked."
         function indirectInvocationOnCallable() {
+            value arguments = that.arguments;
 
-            "NamedArguments not supported for indirect invocations."
-            assert (!is NamedArguments arguments = that.arguments);
+            if (is NamedArguments arguments) {
+                // Callable values for callable parameters may be invoked with named
+                // arguments (so not really an indirect invocation)
+
+                // TODO It would be better to just have "dartInvocable" handle this
+                //      case, so all Function calls would be handled the same way in the
+                //      code below rather than delegating to indirectInvocationOnCallable.
+
+                "If there are named arguments, this must actually be a Ceylon function."
+                assert (is FunctionModel invokedDeclaration);
+
+                value signature
+                    =   CeylonList {
+                            ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
+                        };
+
+                value [argsSetup, argumentList]
+                    =   generateArgumentListFromArguments {
+                            info;
+                            that.arguments;
+                            signature;
+                            invokedDeclaration;
+                        };
+
+                return
+                createExpressionEvaluationWithSetup {
+                    argsSetup;
+                    withBoxing {
+                        info;
+                        info.typeModel;
+                        // If there are multiple parameter lists, the function returns a
+                        // Callable, not the ultimate return type as advertised by the
+                        // declaration.
+                        invokedDeclaration.parameterLists.size() == 1
+                            then invokedDeclaration;
+                        DartFunctionExpressionInvocation {
+                            // resolve the f/s property of the Callable
+                            DartPropertyAccess {
+                                withLhsDenotable {
+                                    ceylonTypes.callableDeclaration;
+                                    () => that.invoked.transform(this);
+                                };
+                                DartSimpleIdentifier {
+                                    //if (hasSpread) then "s" else "f";
+                                    "f";
+                                };
+                            };
+                            argumentList;
+                        };
+                    };
+                };
+            }
+
+            // else, we have positional arguments
 
             value [argumentList, hasSpread]
                 =   generateArgumentListForIndirectInvocation(arguments.argumentList);
