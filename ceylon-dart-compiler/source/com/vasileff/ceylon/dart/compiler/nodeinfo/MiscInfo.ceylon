@@ -18,10 +18,12 @@ import ceylon.ast.core {
     CatchClause,
     ForIterator,
     CompilationUnit,
-    RequiredParameter,
     VariadicParameter,
     DefaultedParameter,
-    Parameters
+    Parameters,
+    ValueParameter,
+    CallableParameter,
+    ParameterReference
 }
 import ceylon.interop.java {
     CeylonList
@@ -40,7 +42,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ConstructorModel=Constructor,
     ControlBlockModel=ControlBlock,
     ParameterModel=Parameter,
-    ParameterListModel=ParameterList
+    ParameterListModel=ParameterList,
+    FunctionModel=Function
 }
 
 shared final
@@ -307,9 +310,47 @@ class DefaultedParameterInfo(shared actual DefaultedParameter node)
     shared actual TcNodeType tcNode = lazyTcNode;
 }
 
-shared
-class RequiredParameterInfo(shared actual RequiredParameter node)
+shared abstract
+class RequiredParameterInfo()
+        of ValueParameterInfo | CallableParameterInfo | ParameterReferenceInfo
         extends ParameterInfo() {
+
+    shared actual formal Tree.Parameter tcNode;
+}
+
+shared
+class ValueParameterInfo(shared actual ValueParameter node)
+        extends RequiredParameterInfo() {
+
+    shared alias TcNodeType => Tree.Parameter;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class CallableParameterInfo(shared actual CallableParameter node)
+        extends RequiredParameterInfo() {
+
+    shared alias TcNodeType => Tree.Parameter;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    "The same as `parameterModel.model`, but narrowed."
+    shared FunctionModel functionModel {
+        assert (is FunctionModel m = tcNode.parameterModel.model);
+        return m;
+    }
+}
+
+shared
+class ParameterReferenceInfo(shared actual ParameterReference node)
+        extends RequiredParameterInfo() {
 
     shared alias TcNodeType => Tree.Parameter;
     value lazyTcNode {

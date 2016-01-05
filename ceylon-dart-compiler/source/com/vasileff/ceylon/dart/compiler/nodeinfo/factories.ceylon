@@ -35,8 +35,8 @@ import ceylon.ast.core {
     FunctionDeclaration,
     FunctionDefinition,
     DefaultedParameter,
-    RequiredParameter,
     VariadicParameter,
+    ValueParameter,
     AnyFunction,
     FunctionShortcutDefinition,
     NonemptyCondition,
@@ -75,7 +75,9 @@ import ceylon.ast.core {
     Assertion,
     Directive,
     Destructure,
-    Parameters
+    Parameters,
+    CallableParameter,
+    ParameterReference
 }
 
 shared
@@ -155,8 +157,10 @@ shared
 ParameterInfo parameterInfo(Parameter astNode)
     =>  switch (astNode)
         case (is DefaultedParameter) DefaultedParameterInfo(astNode)
-        case (is RequiredParameter) RequiredParameterInfo(astNode)
-        case (is VariadicParameter) VariadicParameterInfo(astNode);
+        case (is VariadicParameter) VariadicParameterInfo(astNode)
+        case (is ValueParameter) ValueParameterInfo(astNode)
+        case (is CallableParameter) CallableParameterInfo(astNode)
+        case (is ParameterReference) ParameterReferenceInfo(astNode);
 
 shared
 SpreadArgumentInfo | ComprehensionInfo sequenceArgumentInfo
