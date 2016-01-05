@@ -13,7 +13,7 @@ class C {
     C.$s([$dart$core.List a]) : this.$w(a[0]);
     C.$w([$ceylon$language.Callable _$f]) {
         this._$f = _$f;
-        (this._$f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(5));
+        this._$f.f($ceylon$language.Integer.instance(5));
     }
     $ceylon$language.Callable _$f;
 }

@@ -17,7 +17,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartConstructorName,
     DartInstanceCreationExpression,
     DartPropertyAccess,
-    DartPrefixedIdentifier
+    DartPrefixedIdentifier,
+    DartTypeName,
+    DartAsExpression
 }
 
 shared
@@ -27,8 +29,18 @@ class DartInvocable(
         shared DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
                     | DartConstructorName reference,
         shared DartElementType elementType,
-        shared Boolean setter) {
+        shared Boolean setter,
+        shared Boolean callableParameter = false,
+        "If not null, cast to the provided type. [[callableCast]] should be provided when
+         [[callableParameter]] is `true`, and the Dart variable holding the `Callable`
+         is of type `dart.core.Object`, which happens for defaulted callable parameters."
+        shared DartTypeName? callableCast = null) {
 
+    "Cannot be both a setter and a callableParameter."
+    assert (!(setter && callableParameter));
+
+    "Callable parameters must be [[dartValue]]s."
+    assert (!(callableParameter && elementType != dartValue));
 
     // TODO remove this function
     shared
@@ -42,8 +54,10 @@ class DartInvocable(
             DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
                     | DartConstructorName reference = this.reference,
             DartElementType elementType = this.elementType,
-            Boolean setter = this.setter)
-        =>  DartInvocable(reference, elementType, setter);
+            Boolean setter = this.setter,
+            Boolean callableParameter = this.callableParameter,
+            DartTypeName? callableCast = this.callableCast)
+        =>  DartInvocable(reference, elementType, setter, callableParameter);
 
     function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
         =>  if (is DartArgumentList arguments)
@@ -79,6 +93,8 @@ class DartInvocable(
         return reference;
     }
 
+    "Return a reference to the Dart element for this invocable, as in, an expression to
+     a Dart function or variable."
     shared
     DartExpression expressionForLocalCapture(DartExpression? receiver) {
         // Local function and values *initially* do not have receivers (they are not
@@ -110,7 +126,9 @@ class DartInvocable(
     shared
     DartExpression expressionForInvocation(
             DartExpression? receiver = null,
-            DartArgumentList|[DartExpression*] arguments = []) {
+            DartArgumentList|[DartExpression*] arguments = [],
+            "Is the last argument a spread argument?"
+            Boolean hasSpread = false) {
 
         switch (elementType)
         case (dartFunction) {
@@ -165,7 +183,27 @@ class DartInvocable(
                 target = createDartPropertyAccess(receiver, reference);
             }
 
-            if (!setter) {
+            if (callableParameter) {
+                return
+                DartFunctionExpressionInvocation {
+                    // resolve the f/s property of the Callable
+                    DartPropertyAccess {
+                        if (exists callableCast) then
+                            DartAsExpression {
+                                target;
+                                callableCast;
+                            }
+                        else target;
+                        DartSimpleIdentifier {
+                            if (hasSpread) then "s" else "f";
+                        };
+                    };
+                    dartArgumentList {
+                        arguments;
+                    };
+                };
+            }
+            else if (!setter) {
                 "Arguments must be empty when accessing values"
                 assert (dartArgumentSequence(arguments).empty);
 
@@ -292,10 +330,15 @@ class DartInvocable(
         }
     }
 
+    "Returns an expression of type $dart$core.Function."
     shared
     DartExpression expressionForClosure(DartExpression? receiver) {
         "Cannot closurize setters."
         assert (!setter);
+
+        "Don't call this for callable parameter values, just obtain the Callable
+         with [[expressionForLocalCapture]]!"
+        assert (!callableParameter);
 
         switch (elementType)
         case (dartFunction) {
@@ -315,7 +358,8 @@ class DartInvocable(
             "Dart values are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 
-            // no known cases of this...
+            "no known cases of this..."
+            assert(1==0);
 
             if (!receiver exists) {
                 DartFunctionExpression {

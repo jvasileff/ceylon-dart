@@ -40,8 +40,7 @@ import ceylon.ast.core {
     SpreadMemberOperator,
     Pattern,
     TuplePattern,
-    EntryPattern,
-    FunctionDeclaration
+    EntryPattern
 }
 import ceylon.collection {
     LinkedList
@@ -148,7 +147,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     existsOrNonemptyConditionInfo,
     nodeInfo,
     parameterInfo,
-    FunctionDeclarationInfo,
     ParametersInfo
 }
 import com.vasileff.jl4c.guava.collect {
@@ -528,21 +526,21 @@ class BaseGenerator(CompilationContext ctx)
         };
     }
 
-    [[DartStatement*], [DartExpression*]] generateArguments(
+    [[DartStatement*], [DartExpression*], Boolean] generateArguments(
             DScope scope,
             List<TypeModel | TypeDetails> signature,
             FunctionModel | ClassModel | ConstructorModel declarationModel,
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
         if (is PositionalArguments | NamedArguments arguments) {
-            value [a, b, _]
+            value [a, b, c]
                 =   generateArgumentListFromArguments {
                         scope;
                         arguments;
                         signature;
                         declarationModel;
                     };
-            return [a, b.arguments];
+            return [a, b.arguments, c];
         }
 
         [DartStatement*] argsSetup;
@@ -568,7 +566,7 @@ class BaseGenerator(CompilationContext ctx)
                     }
                 ];
 
-        return [argsSetup, argExpressions];
+        return [argsSetup, argExpressions, false];
     }
 
     "Generate an invocation or propery access expression."
@@ -609,7 +607,7 @@ class BaseGenerator(CompilationContext ctx)
 
         function standardArgs() {
             if (!exists signatureAndArguments) {
-                return [[], []];
+                return [[], [], false];
             }
             assert (!is ValueModel | SetterModel memberDeclaration);
             return generateArguments {
@@ -624,7 +622,7 @@ class BaseGenerator(CompilationContext ctx)
         TypeModel? optimizedNativeRhsType;
 
         "The arguments."
-        [[DartStatement*], [DartExpression*]] argsSetupAndExpressions;
+        [[DartStatement*], [DartExpression*], Boolean] argsSetupAndExpressions;
 
         "The receiver object (outer for constructors of member classes)."
         DartExpression dartReceiver;
@@ -891,7 +889,7 @@ class BaseGenerator(CompilationContext ctx)
                         };
 
                 argsSetupAndExpressions
-                    =   [[], []];
+                    =   [[], [], false];
             }
             else {
                 // Determine usable receiver type. Computing `dartReceiver` with
@@ -924,12 +922,34 @@ class BaseGenerator(CompilationContext ctx)
                             generateReceiver;
                         };
 
-                dartFunctionOrValue
+                value dartFunctionOrValueTemplate
                     =   dartTypes.dartInvocable {
                             scope;
                             memberDeclaration;
                             false;
                         };
+
+                // Handle a rare case in which a defaulted callable parameter's
+                // expression includes an invocation on a defaulted callable parameter of
+                // another instance of the same type. Something like
+                // '... => C().someCallableParam()'.
+                //
+                // Due to the way naming for defaulted callable parameters work in our
+                // Dart constructors, we need to alter the name to point to the private
+                // member holding the Callable.
+                dartFunctionOrValue
+                    =   if (ctx.withinConstructorDefaultsSet.contains(container),
+                                is FunctionModel memberDeclaration,
+                                memberDeclaration.shared,
+                                dartTypes.isCallableValue(memberDeclaration))
+                        then dartFunctionOrValueTemplate.with {
+                            reference = DartSimpleIdentifier {
+                                // TODO consolidate naming code
+                                "_" + dartTypes.getName(memberDeclaration)  + "$c";
+                            };
+                        }
+                        else
+                            dartFunctionOrValueTemplate;
 
                 argsSetupAndExpressions
                     =   standardArgs();
@@ -954,6 +974,7 @@ class BaseGenerator(CompilationContext ctx)
                                     dartFunctionOrValue.expressionForInvocation {
                                         DartSimpleIdentifier("$r");
                                         argsSetupAndExpressions[1];
+                                        argsSetupAndExpressions[2];
                                     };
                                 };
                     }
@@ -963,6 +984,7 @@ class BaseGenerator(CompilationContext ctx)
                         dartFunctionOrValue.expressionForInvocation {
                             dartReceiver;
                             argsSetupAndExpressions[1];
+                            argsSetupAndExpressions[2];
                         };
                     };
 
@@ -3467,6 +3489,10 @@ class BaseGenerator(CompilationContext ctx)
                     receiverModel;
                 };
 
+        // TODO Optimization: for callable values, just use the value for 'callable'
+        //      if not a nullsafe member operator. Be sure to use a boxed "$r" for the
+        //      receiver if 'eagerlyEvaluateReceiver'.
+
         "The outer function, serving as the delegate for the Callable. This function
          accepts and returns non-erased types."
         value outerFunction
@@ -3564,6 +3590,11 @@ class BaseGenerator(CompilationContext ctx)
         // TODO take the Callable's TypeModel as an argument in order to have
         //      correct (non-erased-to-Object) parameter and return types for
         //      generic functions
+
+        // NOTE Don't optimize to return Callable values for for callable parameters,
+        //      because this function is used to create them, when they are defaulted!
+        //      Optimizations should be performed by callers. This function always
+        //      produces code to create a new Callable.
 
         value returnsCallable
             =   parameterListNumber < functionModel.parameterLists.size() - 1;

@@ -107,7 +107,6 @@ import ceylon.ast.core {
     ExpressionComprehensionClause,
     TypeNameWithTypeArguments,
     PositionalArguments,
-    NamedArguments,
     Meta,
     DynamicModifier,
     DynamicInterfaceDefinition,
@@ -923,39 +922,34 @@ class ExpressionTransformer(CompilationContext ctx)
             // BaseExpression, QualifiedExpression w/Package "receiver", or
             // QualifiedExpression to static method
             else {
-                if (dartTypes.isCallableValue(invokedDeclaration)) {
-                    // Invoking a Callable parameter
-                    return indirectInvocationOnCallable(invokedDeclaration);
-                }
-                else {
-                    value [argsSetup, argumentList, _]
-                        =   generateArgumentListFromArguments {
-                                info;
-                                that.arguments;
-                                signature;
-                                invokedDeclaration;
-                            };
-
-                    return
-                    createExpressionEvaluationWithSetup {
-                        argsSetup;
-                        withBoxing {
+                value [argsSetup, argumentList, hasSpread]
+                    =   generateArgumentListFromArguments {
                             info;
-                            info.typeModel;
-                            // If there are multiple parameter lists, the function returns a
-                            // Callable, not the ultimate return type as advertised by the
-                            // declaration.
-                            invokedDeclaration.parameterLists.size() == 1
-                                then invokedDeclaration;
-                            dartTypes.invocableForBaseExpression {
-                                info;
-                                invokedDeclaration;
-                            }.expressionForInvocation {
-                                argumentList;
-                            };
+                            that.arguments;
+                            signature;
+                            invokedDeclaration;
+                        };
+
+                return
+                createExpressionEvaluationWithSetup {
+                    argsSetup;
+                    withBoxing {
+                        info;
+                        info.typeModel;
+                        // If there are multiple parameter lists, the function returns a
+                        // Callable, not the ultimate return type as advertised by the
+                        // declaration.
+                        invokedDeclaration.parameterLists.size() == 1
+                            then invokedDeclaration;
+                        dartTypes.invocableForBaseExpression {
+                            info;
+                            invokedDeclaration;
+                        }.expressionForInvocation {
+                            argumentList;
+                            hasSpread;
                         };
                     };
-                }
+                };
             }
         }
         case (is ValueModel?) {

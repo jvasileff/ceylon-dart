@@ -1013,7 +1013,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                 originalDeclaration;
                             };
                         };
-                        DartInvocable {
+                        invocable.with {
                             // Note on identifier name: we're using `declaration`, not
                             // originalDeclaration, since when class declarations are
                             // made, we don't know which replacements have been elided,
@@ -1027,13 +1027,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             //      so that we *can* acknowledge elided replacements, and
                             //      in some cases consolidate/de-dup captures. And, make
                             //      sure the types all line up....
-                            identifierForCapture(declaration);
+
+                            reference = identifierForCapture(declaration);
 
                             // operators become functions when closurized
-                            switch (et = invocable.elementType)
-                            case (package.dartFunction | dartValue) et
-                            case (is DartOperator) package.dartFunction;
-                            setter; // FIXME not really supported.
+                            elementType = switch (et = invocable.elementType)
+                                          case (package.dartFunction | dartValue) et
+                                          case (is DartOperator) package.dartFunction;
+
+                            setter = setter; // FIXME not really supported.
                         };
                     };
                 }
@@ -1120,6 +1122,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
 
         // it's a FunctionOrValueModel
+
+        "Is the Function implemented as a value?"
+        value callableValue
+            =   if (is FunctionModel declaration)
+                then isCallableValue(declaration)
+                else false;
+
+        "Cast the Callable if held by a variable of type $dart$core.Object"
+        value callableCast
+            =   if (callableValue,
+                    is FunctionModel declaration,
+                    declaration.initializerParameter.defaulted,
+                    !withinClass(declaration)
+                        || ctx.withinConstructorDefaultsSet.contains(declaration))
+                then dartTypeName {
+                    scope;
+                    ceylonTypes.callableAnythingType;
+                }
+                else null;
+
         switch (container = declaration.container)
         case (is PackageModel) {
             return DartInvocable {
@@ -1172,7 +1194,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         mapped[1]
                     ] else [
                         getPackagePrefixedName(declaration),
-                        if (is FunctionModel declaration, !isCallableValue(declaration))
+                        if (is FunctionModel declaration, !callableValue)
                         then package.dartFunction
                         else dartValue
                     ];
@@ -1183,6 +1205,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
                 dartElementType;
                 setter;
+                callableValue;
+                callableCast;
             };
         }
         case (is FunctionOrValueModel
@@ -1192,11 +1216,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
             value name
                 =   getPackagePrefixedName(declaration);
-
-            value dartElementType
-                =   if (declaration is FunctionModel && !declaration.parameter)
-                    then package.dartFunction
-                    else dartValue;
 
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
@@ -1210,12 +1229,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
             else {
+                value dartElementType
+                    =   if (declaration is FunctionModel && !callableValue)
+                        then package.dartFunction
+                        else dartValue;
+
                 return DartInvocable {
                     DartSimpleIdentifier {
                         name;
                     };
                     dartElementType;
                     setter;
+                    callableValue;
+                    callableCast;
                 };
             }
         }

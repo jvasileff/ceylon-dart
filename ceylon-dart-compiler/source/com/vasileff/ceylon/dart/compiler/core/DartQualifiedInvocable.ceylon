@@ -21,8 +21,9 @@ class DartQualifiedInvocable(
 
     shared
     DartExpression expressionForInvocation(
-            DartArgumentList|[DartExpression*] arguments = [])
-        =>  invocable.expressionForInvocation(receiver, arguments);
+            DartArgumentList|[DartExpression*] arguments = [],
+            Boolean hasSpread = false)
+        =>  invocable.expressionForInvocation(receiver, arguments, hasSpread);
 
     shared
     DartExpression expressionForClosure()
