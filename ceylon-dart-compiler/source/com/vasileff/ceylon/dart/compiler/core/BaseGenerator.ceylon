@@ -1176,7 +1176,7 @@ class BaseGenerator(CompilationContext ctx)
                                 pInfo.parameterModel.type;
                                 pInfo.parameterModel.model;
                                 DartSimpleIdentifier {
-                                    dartTypes.getName(pInfo.parameterModel);
+                                    dartTypes.getName(pInfo.parameterModel.model);
                                 };
                             };
                         };
@@ -2178,7 +2178,7 @@ class BaseGenerator(CompilationContext ctx)
 
                 value paramName
                     =   DartSimpleIdentifier {
-                            dartTypes.getName(pInfo.parameterModel);
+                            dartTypes.getName(pInfo.parameterModel.model);
                         };
 
                 return
@@ -2253,7 +2253,7 @@ class BaseGenerator(CompilationContext ctx)
 
             value paramName
                 =   DartSimpleIdentifier {
-                        dartTypes.getName(parameterModel);
+                        dartTypes.getName(parameterModel.model);
                     };
 
             value refinedParameter
@@ -3114,7 +3114,7 @@ class BaseGenerator(CompilationContext ctx)
                 false; false;
                 dartParameterType;
                 DartSimpleIdentifier {
-                    dartTypes.getName(parameterModel);
+                    dartTypes.getName(parameterModel.model);
                 };
             };
 

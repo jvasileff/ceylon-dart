@@ -287,7 +287,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
             case (is FunctionModel) {
-                if (targetDeclaration.parameter) {
+                if (dartTypes.isCallableValue(targetDeclaration)) {
                     // The Callable parameter, which is not erased.
                     //
                     // `withBoxing` cannot be used when taking a reference to a callable
@@ -907,7 +907,7 @@ class ExpressionTransformer(CompilationContext ctx)
             // BaseExpression, QualifiedExpression w/Package "receiver", or
             // QualifiedExpression to static method
             else {
-                if (invokedDeclaration.parameter) {
+                if (dartTypes.isCallableValue(invokedDeclaration)) {
                     // Invoking a Callable parameter
                     return indirectInvocationOnCallable();
                 }

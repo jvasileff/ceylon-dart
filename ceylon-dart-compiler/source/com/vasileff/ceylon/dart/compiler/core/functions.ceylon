@@ -322,18 +322,6 @@ Boolean isParameterInNonFirstParamList(FunctionOrValueModel declaration)
         else
             false;
 
-"Is the declaration a Function that is a parameter? Callable parameters are implemented
- as values, but are presented as Functions by the model."
-Boolean isCallableParameterOrParamOf(FunctionOrValueModel declaration)
-    =>  if (declaration.parameter && declaration is FunctionModel) then
-            true
-        else if (declaration.parameter,
-                 is FunctionModel f = declaration.container,
-                 f.parameter) then
-            true
-        else
-            false;
-
 "Is the given [[scope]] a defaulted parameter of a `formal` or `default` method?
 
  This is useful to determine if the default value expression or function definition

@@ -197,7 +197,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 else "");
 
     shared
-    String getName(DeclarationModel|ParameterModel declaration) {
+    Boolean isCallableValue(FunctionModel declaration)
+        =>  declaration.parameter
+                && (!declaration.shared
+                    || ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                    || ctx.withinConstructorSignatureSet.contains(declaration.container));
+
+    shared
+    String getName(DeclarationModel declaration) {
         // TODO it might make sense to make this private, and have callers
         //      use `dartIdentifierForX()` methods that can also handle
         //      function <-> value mappings.
@@ -217,7 +224,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
-        case (is SetterModel | ValueModel | FunctionModel | ParameterModel) {
+        case (is SetterModel | ValueModel | FunctionModel) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
@@ -227,6 +234,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration);
         }
         else {
+            // TODO let's encode this is the method signature
             throw Exception("declaration type not yet supported \
                              for ``className(declaration)``");
         }
@@ -502,8 +510,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return ctx.dartTypes.dartFunction;
         }
 
-        if (declaration is FunctionModel && !declaration.parameter) {
-            // A Ceylon function that is *not* a callable parameter
+        if (is FunctionModel declaration, !isCallableValue(declaration)) {
+            // A Ceylon function that is *not* a value for a callable parameter
             return ctx.dartTypes.dartFunction;
         }
 
@@ -516,13 +524,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     }
 
     "For the Value, or the return type of the Function, or Callable for
-     callable parameters."
+     callable parameters that are implemented as values."
     shared
     DartTypeName dartTypeNameForDeclaration(
             DScope scope, FunctionOrValueModel declaration,
             TypeModel | TypeDetails | Null type = null)
         =>  let (dartModel
-                =   if (declaration is FunctionModel, declaration.parameter)
+                =   if (is FunctionModel declaration, isCallableValue(declaration))
                     then dartTypeModel(ceylonTypes.callableAnythingType)
                     else dartTypeModelForDeclaration(declaration, type))
             dartTypeNameForDartModel(scope, dartModel);
@@ -752,7 +760,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             (DScope scope, ParameterModel parameter)
         =>  DartSimpleIdentifier(
                   "$" + getName(parameter.declaration)
-                + "$" + getName(parameter));
+                + "$" + getName(parameter.model));
 
     shared
     DartSimpleIdentifier expressionForThis(DScope scope)
@@ -1164,13 +1172,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         mapped[1]
                     ] else [
                         getPackagePrefixedName(declaration),
-                        if (declaration is FunctionModel
-                            // TODO Callable parameters that are shared class members
-                            //      should have forwarding functions. But, support for
-                            //      callable parameters for class initializers is
-                            //      incomplete, and existing tests expect us to treat
-                            //      them as values.
-                            && !declaration.parameter)
+                        if (is FunctionModel declaration, !isCallableValue(declaration))
                         then package.dartFunction
                         else dartValue
                     ];
@@ -1291,6 +1293,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
+    "Is the declaration a Function that is implemented as a value, as callable parameters
+     often are?"
+    Boolean isCallableValueOrOrParamOf(FunctionOrValueModel declaration)
+        =>  if (is FunctionModel declaration, isCallableValue(declaration)) then
+                true
+            else if (declaration.parameter,
+                     is FunctionModel f = declaration.container,
+                     isCallableValue(f)) then
+                true
+            else
+                false;
+
     "For the Value, or the return type of the Function, *unless* it's a Function that is
      a callable parameter, in which case the result will be false.
 
@@ -1310,7 +1324,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 false
             case (is FunctionOrValueModel)
                 !ctx.disableErasureToNative.contains(declaration)
-                && !isCallableParameterOrParamOf(declaration)
+                && !isCallableValueOrOrParamOf(declaration)
                 && !isAnonymousFunctionOrParamOf(declaration)
                 && !isFunctionArgumentOrParamOf(declaration)
                 && !isParameterInNonFirstParamList(declaration)
@@ -1334,7 +1348,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
 
         // The return for Callable parameters is always erased to object.
-        if (is FunctionModel declaration, declaration.parameter) {
+        if (is FunctionModel declaration, isCallableValue(declaration)) {
             return true;
         }
 

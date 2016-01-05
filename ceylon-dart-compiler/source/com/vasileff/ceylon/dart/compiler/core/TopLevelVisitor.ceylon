@@ -428,7 +428,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 };
                                 [DartVariableDeclaration {
                                     DartSimpleIdentifier {
-                                        dartTypes.getName(model);
+                                        dartTypes.getName(model.model);
                                     };
                                     initializer = null;
                                 }];
@@ -658,7 +658,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   parameters.collect {
                     (p) => DartSimpleIdentifier {
                         dartTypes.getName {
-                            parameterInfo(p).parameterModel;
+                            parameterInfo(p).parameterModel.model;
                         };
                     };
                 };
@@ -1079,7 +1079,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             DartArgumentList {
                                 parameterModels.collect { (parameterModel) =>
                                     DartSimpleIdentifier {
-                                        dartTypes.getName(parameterModel);
+                                        dartTypes.getName(parameterModel.model);
                                     };
                                 };
                             };
@@ -1149,7 +1149,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         [DartSimpleIdentifier("this"),
                          *parameterModels.collect { (parameterModel) =>
                             DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel);
+                                dartTypes.getName(parameterModel.model);
                             };
                         }];
                     };
