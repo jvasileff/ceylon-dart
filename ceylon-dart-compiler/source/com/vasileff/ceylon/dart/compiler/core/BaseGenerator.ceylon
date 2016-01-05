@@ -3341,7 +3341,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared see(`function generateInvocation`)
-    DartExpression generateNewCallableForQualifiedExpression(
+    DartExpression generateCallableForQualifiedExpression(
             DScope scope,
             "The type of the receiver, which may be:
              -  the type of an expression if [[generateReceiver]] is not null, or

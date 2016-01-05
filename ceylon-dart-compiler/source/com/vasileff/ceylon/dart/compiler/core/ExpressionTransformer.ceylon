@@ -471,7 +471,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 "A Callable that invokes `memberDeclaration`."
                 value innerCallable
-                    =   generateNewCallableForQualifiedExpression {
+                    =   generateCallableForQualifiedExpression {
                             info;
                             containerType;
                             generateReceiver()
@@ -554,7 +554,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
             // QualifiedExpression with a `super` receiver
             if (exists superType = denotableSuperType(that.receiverExpression)) {
-                return generateNewCallableForQualifiedExpression {
+                return generateCallableForQualifiedExpression {
                     info;
                     superType;
                     null;
@@ -566,7 +566,7 @@ class ExpressionTransformer(CompilationContext ctx)
             }
 
             // QualifiedExpression with a non-`super` receiver
-            return generateNewCallableForQualifiedExpression {
+            return generateCallableForQualifiedExpression {
                 info;
                 receiverInfo.typeModel;
                 () => that.receiverExpression.transform(this);
@@ -1099,7 +1099,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     =   positionalArguments.argumentList.listedArguments.first);
 
                 return
-                generateNewCallableForQualifiedExpression {
+                generateCallableForQualifiedExpression {
                     info;
                     expressionInfo(argument).typeModel;
                     () => argument.transform(expressionTransformer);
