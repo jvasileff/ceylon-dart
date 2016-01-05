@@ -31,7 +31,9 @@ import ceylon.ast.core {
     DynamicModifier,
     DynamicInterfaceDefinition,
     DynamicBlock,
-    DynamicValue
+    DynamicValue,
+    DefaultedCallableParameter,
+    CallableParameter
 }
 import ceylon.interop.java {
     CeylonList
@@ -96,7 +98,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     anyFunctionInfo,
     extensionOrConstructionInfo,
     nodeInfo,
-    parameterInfo
+    parameterInfo,
+    ParameterInfo,
+    CallableParameterInfo
 }
 
 "For Dart TopLevel declarations."
@@ -415,22 +419,103 @@ class TopLevelVisitor(CompilationContext ctx)
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
         value fieldsForInitializerParameters
-            =   (parameters?.parameters else []).collect {
-                    (parameter) =>
-                    let (model = parameterInfo(parameter).parameterModel)
-                    DartFieldDeclaration {
+            =   (parameters?.parameters else [])
+                .map {
+                    (p) => parameterInfo(p).parameterModel.model;
+                }.filter {
+                    // Don't generate fields for the Callable for *shared* Callable
+                    // Parameters; they will have a synthetic name and are handled below.
+                    (model) => !model is FunctionModel || !model.shared;
+                }.collect {
+                    (model) => DartFieldDeclaration {
                         false;
                             DartVariableDeclarationList {
                                 null;
                                 dartTypes.dartTypeNameForDeclaration {
                                     scope;
-                                    model.model;
+                                    model;
                                 };
                                 [DartVariableDeclaration {
                                     DartSimpleIdentifier {
-                                        dartTypes.getName(model.model);
+                                        dartTypes.getName(model);
                                     };
                                     initializer = null;
+                                }];
+                            };
+                        };
+                    };
+
+        "All shared callable parameters in the class initializer parameter list."
+        value sharedCallableParameterInfos
+            =   (parameters?.parameters else [])
+                .map {
+                    (p) => switch (p)
+                    case (is DefaultedCallableParameter) p.parameter
+                    case (is CallableParameter) p
+                    else null;
+                }.coalesced.map {
+                    CallableParameterInfo;
+                }
+                .filter {
+                    (pInfo) => pInfo.functionModel.shared;
+                };
+
+        "Methods that forward to Callable values for shared Ceylon methods that are
+         defined by callable parameters in the intializer parameter list."
+        value callableParameterForwarders
+            =   sharedCallableParameterInfos
+                .collect {
+                    (pInfo) {
+                        value functionExpression
+                            =   generateForwardDeclaredForwarder {
+                                    pInfo;
+                                    pInfo.functionModel;
+                                    pInfo.node.parameterLists;
+                                };
+
+                        value [identifier, dartElementType]
+                            =   dartTypes.dartInvocable {
+                                    pInfo;
+                                    pInfo.functionModel;
+                                }.oldPairSimple;
+
+                        assert (dartElementType is \IdartFunction | DartOperator);
+
+                        return
+                        DartMethodDeclaration {
+                            false;
+                            null;
+                            generateFunctionReturnType {
+                                pInfo;
+                                pInfo.functionModel;
+                            };
+                            null;
+                            dartElementType is DartOperator;
+                            identifier;
+                            functionExpression.parameters;
+                            functionExpression.body;
+                        };
+                    };
+                };
+
+        "Fields to hold Callable values for shared callable parameters, which are
+         synthetic."
+        value fieldsForCallableValues
+            =   sharedCallableParameterInfos
+                .collect {
+                    (pInfo) => DartFieldDeclaration {
+                        false;
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeName {
+                                    scope;
+                                    ceylonTypes.callableAnythingType;
+                                };
+                                [DartVariableDeclaration {
+                                    DartSimpleIdentifier {
+                                        // TODO consolidate naming logic
+                                        "_" + dartTypes.getName(pInfo.functionModel) + "$c";
+                                    };
                                 }];
                             };
                         };
@@ -608,7 +693,9 @@ class TopLevelVisitor(CompilationContext ctx)
                 captureFields,
                 constructors,
                 fieldsForInitializerParameters,
+                fieldsForCallableValues,
                 members,
+                callableParameterForwarders,
                 bridgeFunctions
             };
         };
@@ -633,8 +720,14 @@ class TopLevelVisitor(CompilationContext ctx)
         "Initializer parameters."
         value standardParameters
             =   if (!parameters.empty)
-                then generateFormalParameterList(
-                        true, false, scope, parameters).parameters
+                then withInConstructorSignature {
+                    classModel;
+                    () => generateFormalParameterList {
+                        true; false;
+                        scope;
+                        parameters;
+                    }.parameters;
+                }
                 else [];
 
         value hasDefaultedParameter
@@ -642,23 +735,65 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "Non-defaulted class initializer parameters."
         value standardParametersNonDefaulted
-            =   hasDefaultedParameter then (
-                if (!parameters.empty)
-                then generateFormalParameterList(
-                        true, false, scope, parameters, true).parameters
-                else []);
-
+            =   if (hasDefaultedParameter)
+                then withInConstructorSignature {
+                    classModel;
+                    () => generateFormalParameterList {
+                        true; false;
+                        scope;
+                        parameters;
+                        // don't use "$dart$core.Object"
+                        noDefaults = true;
+                    }.parameters;
+                }
+                else standardParameters;
 
         "Explicit super call with arguments."
         value superInvocation
-            =   generateSuperInvocation(extendedType);
+            =   generateSuperInvocation(classModel, extendedType);
 
-        "Dart identifiers for each parameter."
-        value parameterIdentifiers
-            =   parameters.collect {
-                    (p) => DartSimpleIdentifier {
-                        dartTypes.getName {
-                            parameterInfo(p).parameterModel.model;
+        "Assign parameters to corresponding `this.` fields. Eventually, we'll just do
+         this for the ones we want to capture."
+        value memberParameterInitializers
+            =   parameters
+                .map {
+                    (p) => parameterInfo(p).parameterModel.model;
+                }.filter {
+                    // Skip assignments for *shared* callable parameters; they will have
+                    // a synthetic name and are handled below.
+                    (model) => !model is FunctionModel || !model.shared;
+                }.map {
+                    (model) => DartSimpleIdentifier(dartTypes.getName(model));
+                }.collect {
+                    (id) => DartExpressionStatement {
+                        DartAssignmentExpression {
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("this");
+                                id;
+                            };
+                            DartAssignmentOperator.equal;
+                            id;
+                        };
+                    };
+                };
+
+        "Assign values *for `shared` callable parameters* to `this.` fields."
+        value sharedCallableValueMemberParameterInitializers
+            =   parameters
+                .map {
+                    (p) => parameterInfo(p).parameterModel.model;
+                }.filter {
+                    (model) => model is FunctionModel && model.shared;
+                }.collect {
+                    (model) => DartExpressionStatement {
+                        DartAssignmentExpression {
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("this");
+                                DartSimpleIdentifier(
+                                    "_" + dartTypes.getName(model) + "$c");
+                            };
+                            DartAssignmentOperator.equal;
+                            DartSimpleIdentifier(dartTypes.getName(model));
                         };
                     };
                 };
@@ -765,7 +900,15 @@ class TopLevelVisitor(CompilationContext ctx)
                                             captureConstructorParameters.map {
                                                 DartSimpleFormalParameter.identifier;
                                             },
-                                            parameterIdentifiers
+                                            parameters.map {
+                                                (p) => DartSimpleIdentifier {
+                                                    dartTypes.getName {
+                                                        parameterInfo(p)
+                                                                .parameterModel
+                                                                .model;
+                                                    };
+                                                };
+                                            }
                                         };
                                     };
                                 }];
@@ -844,23 +987,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartBlock {
                         concatenate {
                             outerAndCaptureMemberInitializers,
-                            // Assign parameters to corresponding 'this.' members.
-                            // Eventually, we'll just do this for the ones we want to
-                            // capture. Not supporting defaulted parameters yet.
-                            parameterIdentifiers.map {
-                                // This might get ugly with replacements like
-                                // string/toString().
-                                (id) => DartExpressionStatement {
-                                    DartAssignmentExpression {
-                                        DartPrefixedIdentifier {
-                                            DartSimpleIdentifier("this");
-                                            id;
-                                        };
-                                        DartAssignmentOperator.equal;
-                                        id;
-                                    };
-                                };
-                            },
+                            memberParameterInitializers,
+                            sharedCallableValueMemberParameterInitializers,
                             *withInConstructorBody {
                                 classModel;
                                 () => classBody.transformChildren {
@@ -884,7 +1012,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             outerFieldConstructorParameter,
                             captureConstructorParameters,
                             // this constructor never handles defaulted parameters
-                            standardParametersNonDefaulted else standardParameters
+                            standardParametersNonDefaulted
                         };
                     };
                     if (exists superInvocation)
@@ -902,7 +1030,9 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     "Explicit super call with arguments."
-    DartSuperConstructorInvocation? generateSuperInvocation(ExtendedType? extendedType) {
+    DartSuperConstructorInvocation? generateSuperInvocation(
+            ClassModel classModel, ExtendedType? extendedType) {
+
         if (exists extendedType) {
             value extensionOrConstruction = extendedType.target;
 
@@ -945,12 +1075,19 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartArgumentList {
                         concatenate {
                             outerAndCaptureArguments,
-                            generateArgumentListFromArguments {
-                                ecInfo;
-                                arguments;
-                                signature;
-                                parameterList;
-                            }[1].arguments
+                            // Use 'withInConstructorSignature' since we may be passing
+                            // along callable parameters, which are actually Callable
+                            // values at this point.
+                            // TODO get rid of ugly casts like 'f as $c$l.Callable'
+                            withInConstructorSignature {
+                                classModel;
+                                () => generateArgumentListFromArguments {
+                                    ecInfo;
+                                    arguments;
+                                    signature;
+                                    parameterList;
+                                }[1].arguments;
+                            }
                         };
                     };
                 };

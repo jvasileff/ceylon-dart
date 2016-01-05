@@ -771,8 +771,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
         if (is FunctionModel | ValueModel invokedDeclaration,
                 !invokedDeclaration.shared,
-                // callable parameters are local values!
-                !invokedDeclaration.parameter,
                 is InterfaceModel invokedContainer
                     =   container(invokedDeclaration),
                 is BaseExpression invoked
