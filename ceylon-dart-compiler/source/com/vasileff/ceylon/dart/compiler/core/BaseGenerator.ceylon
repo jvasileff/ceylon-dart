@@ -1113,8 +1113,11 @@ class BaseGenerator(CompilationContext ctx)
         // For multiple parameter lists, eagerly call the delegate in case there are side
         // effects. https://github.com/ceylon/ceylon/issues/3916
 
+        // TODO centralize naming logic.
         value callableVariableName
-            =   dartTypes.getName(functionModel) + "$c";
+            =   if (withinClass(functionModel) && functionModel.parameter)
+                then "_" + dartTypes.getName(functionModel) + "$c"
+                else dartTypes.getName(functionModel) + "$c";
 
         value callableVariable
             =   DartSimpleIdentifier(callableVariableName);
@@ -1145,9 +1148,6 @@ class BaseGenerator(CompilationContext ctx)
                 result = generateNewCallable(scope, functionModel, inner, i+1);
             }
 
-            value defaultedParameters
-                =   [ for (p in list.parameters) if (is DefaultedParameter p) p ];
-
             value delegateIdentifier
                 =   if (i == 0)
                     then callableVariable
@@ -1175,13 +1175,32 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     });
 
+            value hasDefaultedParameters
+                =   list.parameters
+                    .map(parameterInfo)
+                    .map(ParameterInfo.parameterModel)
+                    .any(ParameterModel.defaulted);
+
+            value useStaticDefaultArgumentMethods
+                =   hasDefaultedParameters
+                        && (functionModel.default
+                            || functionModel.refinedDeclaration.default
+                            || functionModel.refinedDeclaration.formal);
+
             value defaultArgumentAssignments
-                =   if (!defaultedParameters.empty) then
+                =   if (!hasDefaultedParameters) then
+                        []
+                    else if (useStaticDefaultArgumentMethods) then
+                        generateDefaultValueAssignmentsStatic {
+                            scope;
+                            functionModel;
+                        }
+                    else
                         generateDefaultValueAssignments {
                             scope;
-                            defaultedParameters;
-                        }
-                    else [];
+                            [ for (p in list.parameters)
+                              if (is DefaultedParameter p) p];
+                        };
 
             [DartStatement*] statements;
 
