@@ -494,15 +494,18 @@ class CoreGenerator(CompilationContext ctx) {
             };
 
     shared
-    Result withInConstructor<Result>(
+    Result withInConstructorBody<Result>(
             ClassModel classDeclaration,
             Result fun()) {
+        variable Boolean remove = true;
         try {
-            ctx.withinConstructorSet.add(classDeclaration);
+            remove = ctx.withinConstructorBodySet.add(classDeclaration);
             return fun();
         }
         finally {
-            ctx.withinConstructorSet.remove(classDeclaration);
+            if (remove) {
+                ctx.withinConstructorBodySet.remove(classDeclaration);
+            }
         }
     }
 
@@ -510,12 +513,31 @@ class CoreGenerator(CompilationContext ctx) {
     Result withInConstructorDefaults<Result>(
             ClassModel classDeclaration,
             Result fun()) {
+        variable Boolean remove = true;
         try {
-            ctx.withinConstructorDefaultsSet.add(classDeclaration);
+            remove = ctx.withinConstructorDefaultsSet.add(classDeclaration);
             return fun();
         }
         finally {
-            ctx.withinConstructorDefaultsSet.remove(classDeclaration);
+            if (remove) {
+                ctx.withinConstructorDefaultsSet.remove(classDeclaration);
+            }
+        }
+    }
+
+    shared
+    Result withInConstructorSignature<Result>(
+            ClassModel classDeclaration,
+            Result fun()) {
+        variable Boolean remove = true;
+        try {
+            remove = ctx.withinConstructorSignatureSet.add(classDeclaration);
+            return fun();
+        }
+        finally {
+            if (remove) {
+                ctx.withinConstructorSignatureSet.remove(classDeclaration);
+            }
         }
     }
 

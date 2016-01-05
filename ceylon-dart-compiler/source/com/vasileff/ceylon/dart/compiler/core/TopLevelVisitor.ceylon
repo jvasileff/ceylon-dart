@@ -861,7 +861,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                     };
                                 };
                             },
-                            *withInConstructor {
+                            *withInConstructorBody {
                                 classModel;
                                 () => classBody.transformChildren {
                                     classStatementTransformer;

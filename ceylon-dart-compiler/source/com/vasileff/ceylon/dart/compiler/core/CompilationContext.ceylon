@@ -103,13 +103,18 @@ class CompilationContext(PhasedUnit phasedUnit) {
 
     "Classes for which we are currently generating a Dart constructor, and therefore need
      to qualify members that are also parameters with `this`"
-    shared variable
-    MutableSet<ClassModel> withinConstructorSet = HashSet<ClassModel>();
+    shared
+    MutableSet<ClassModel> withinConstructorBodySet = HashSet<ClassModel>();
 
     "Classes for which we are currently calculating default values for parameters of a
      Dart constructor, and therefore need to consider erased to $dart$core.Object."
-    shared variable
+    shared
     MutableSet<ClassModel> withinConstructorDefaultsSet = HashSet<ClassModel>();
+
+    "Classes for which we are currently calculating initializer parameter lists or extends
+     clauses, and therefore need to treat shared callable parameters as Callable values."
+    shared
+    MutableSet<ClassModel> withinConstructorSignatureSet = HashSet<ClassModel>();
 
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
@@ -182,5 +187,5 @@ class CompilationContext(PhasedUnit phasedUnit) {
 
     shared
     Boolean withinConstructor(ClassOrInterfaceModel classDeclaration)
-        =>  withinConstructorSet.contains(classDeclaration);
+        =>  withinConstructorBodySet.contains(classDeclaration);
 }
