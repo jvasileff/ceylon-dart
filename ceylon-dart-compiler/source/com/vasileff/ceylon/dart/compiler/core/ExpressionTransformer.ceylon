@@ -303,7 +303,9 @@ class ExpressionTransformer(CompilationContext ctx)
                         dartTypes.invocableForBaseExpression {
                             info;
                             targetDeclaration;
-                        }.expressionForInvocation();// it's a value, so we "invoke" it.
+                        }
+                        // get an expression for the Dart reference to the Callable:
+                        .expressionForLocalCapture();
                     };
                 }
                 else {
