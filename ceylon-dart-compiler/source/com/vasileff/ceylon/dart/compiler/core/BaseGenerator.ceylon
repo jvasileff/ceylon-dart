@@ -531,7 +531,7 @@ class BaseGenerator(CompilationContext ctx)
     [[DartStatement*], [DartExpression*]] generateArguments(
             DScope scope,
             List<TypeModel | TypeDetails> signature,
-            ParameterListModel parameterList,
+            FunctionModel | ClassModel | ConstructorModel declarationModel,
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
         if (is PositionalArguments | NamedArguments arguments) {
@@ -540,7 +540,7 @@ class BaseGenerator(CompilationContext ctx)
                         scope;
                         arguments;
                         signature;
-                        parameterList;
+                        declarationModel;
                     };
             return [a, b.arguments];
         }
@@ -562,7 +562,8 @@ class BaseGenerator(CompilationContext ctx)
             =   [for (i -> argument in argGenerators.indexed)
                     withLhs {
                         signature[i];
-                        parameterList.parameters.get(i)?.model;
+                        declarationModel.firstParameterList
+                                .parameters.get(i)?.model;
                         argument;
                     }
                 ];
@@ -614,7 +615,7 @@ class BaseGenerator(CompilationContext ctx)
             return generateArguments {
                 scope;
                 signatureAndArguments[0];
-                memberDeclaration.firstParameterList;
+                memberDeclaration;
                 a;
             };
         }
@@ -854,7 +855,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   generateArguments {
                             scope;
                             [rightOperandTypeDetail];
-                            memberDeclaration.firstParameterList;
+                            memberDeclaration;
                             a;
                         };
             }
@@ -4205,22 +4206,21 @@ class BaseGenerator(CompilationContext ctx)
             Arguments arguments,
             // TODO accept {TypeModel*} signature instead
             List<TypeModel | TypeDetails> signature,
-            ParameterListModel | FunctionModel | ValueModel
-                    | ClassModel | ConstructorModel declarationOrParameterList) {
+            FunctionModel | ValueModel
+                    | ClassModel | ConstructorModel declarationModel) {
 
-        if (is ValueModel declarationOrParameterList) {
+        if (is ValueModel declarationModel) {
             // Values won't have arguments.
             return [[], DartArgumentList()];
         }
 
         value pList
-            =   switch(declarationOrParameterList)
-                case (is ParameterListModel) declarationOrParameterList
-                case (is FunctionModel) declarationOrParameterList.firstParameterList
+            =   switch(declarationModel)
+                case (is FunctionModel) declarationModel.firstParameterList
                 // FIXME parameterList may be null here...
-                case (is ClassModel) declarationOrParameterList.parameterList
+                case (is ClassModel) declarationModel.parameterList
                 // FIXME parameterList may be null here...
-                case (is ConstructorModel) declarationOrParameterList.parameterList;
+                case (is ConstructorModel) declarationModel.parameterList;
 
         switch (arguments)
         case (is PositionalArguments) {

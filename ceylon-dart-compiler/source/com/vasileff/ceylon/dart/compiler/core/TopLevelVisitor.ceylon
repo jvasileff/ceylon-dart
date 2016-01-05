@@ -99,7 +99,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     extensionOrConstructionInfo,
     nodeInfo,
     parameterInfo,
-    ParameterInfo,
     CallableParameterInfo
 }
 
@@ -1058,8 +1057,8 @@ class TopLevelVisitor(CompilationContext ctx)
 
             if (!arguments.argumentList.children.empty) {
 
-                assert (exists parameterList
-                    =   ecInfo.declaration?.firstParameterList);
+                assert (exists extendedDeclaration
+                    =   ecInfo.declaration);
 
                 assert (exists callableType
                     =   ecInfo.typeModel);
@@ -1085,7 +1084,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                     ecInfo;
                                     arguments;
                                     signature;
-                                    parameterList;
+                                    extendedDeclaration;
                                 }[1].arguments;
                             }
                         };
