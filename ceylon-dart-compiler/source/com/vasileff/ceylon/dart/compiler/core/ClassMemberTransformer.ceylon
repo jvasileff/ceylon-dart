@@ -182,7 +182,11 @@ class ClassMemberTransformer(CompilationContext ctx)
             =   anyFunctionInfo(that);
 
         value functionExpression
-            =   generateForwardDeclaredForwarder(that);
+            =   generateForwardDeclaredForwarder {
+                    info;
+                    info.declarationModel;
+                    that.parameterLists;
+                };
 
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
@@ -190,7 +194,6 @@ class ClassMemberTransformer(CompilationContext ctx)
                     info.declarationModel;
                 }.oldPairSimple;
 
-        // FIXME WIP is this ok?
         assert (dartElementType is \IdartFunction | DartOperator);
 
         return

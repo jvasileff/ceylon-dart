@@ -842,7 +842,11 @@ class StatementTransformer(CompilationContext ctx)
             =   DartSimpleIdentifier(callableVariableName);
 
         value functionExpression
-            =   generateForwardDeclaredForwarder(that);
+            =   generateForwardDeclaredForwarder {
+                    info;
+                    info.declarationModel;
+                    that.parameterLists;
+                };
 
         // Toplevel and local functions will never be implemented as Dart values
         // or operators. Just grab the identifier and define a function.
@@ -870,7 +874,7 @@ class StatementTransformer(CompilationContext ctx)
                     }];
                 };
             },
-            // The method, which forwards to the callableVariable
+            // The function that forwards to the callableVariable
             DartFunctionDeclarationStatement {
                 DartFunctionDeclaration {
                     false;

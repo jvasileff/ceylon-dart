@@ -1107,24 +1107,17 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartFunctionExpression generateForwardDeclaredForwarder(FunctionDeclaration that) {
+    DartFunctionExpression generateForwardDeclaredForwarder
+            (DScope scope, FunctionModel functionModel, [Parameters+] parameterLists) {
+
         // For multiple parameter lists, eagerly call the delegate in case there are side
         // effects. https://github.com/ceylon/ceylon/issues/3916
 
-        value info
-            =   FunctionDeclarationInfo(that);
-
         value callableVariableName
-            =   dartTypes.getName(info.declarationModel) + "$c";
+            =   dartTypes.getName(functionModel) + "$c";
 
         value callableVariable
             =   DartSimpleIdentifier(callableVariableName);
-
-        value functionModel
-            =   info.declarationModel;
-
-        value parameterLists
-            =   that.parameterLists;
 
         value isVoid
             =   functionModel.declaredVoid;
@@ -1133,7 +1126,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
-                    info;
+                    scope;
                     functionModel;
                 }.oldPairSimple;
 
@@ -1149,7 +1142,7 @@ class BaseGenerator(CompilationContext ctx)
                 // regular function. Unfortunately, this causes some wasteful box-unbox
                 // combos. Better would be to teach generateNewCallable that our return
                 // values are never erased-to-native.
-                result = generateNewCallable(info, functionModel, inner, i+1);
+                result = generateNewCallable(scope, functionModel, inner, i+1);
             }
 
             value defaultedParameters
@@ -1172,7 +1165,7 @@ class BaseGenerator(CompilationContext ctx)
                         withLhsNonNative {
                             pInfo.parameterModel.type;
                             () => withBoxing {
-                                info;
+                                scope;
                                 pInfo.parameterModel.type;
                                 pInfo.parameterModel.model;
                                 DartSimpleIdentifier {
@@ -1185,7 +1178,7 @@ class BaseGenerator(CompilationContext ctx)
             value defaultArgumentAssignments
                 =   if (!defaultedParameters.empty) then
                         generateDefaultValueAssignments {
-                            info;
+                            scope;
                             defaultedParameters;
                         }
                     else [];
@@ -1218,7 +1211,7 @@ class BaseGenerator(CompilationContext ctx)
                                     null;
                                     functionModel;
                                     () => withBoxingNonNative {
-                                        info;
+                                        scope;
                                         functionModel.type;
                                         invocation;
                                     };
@@ -1239,7 +1232,7 @@ class BaseGenerator(CompilationContext ctx)
                             DartVariableDeclarationList {
                                 null;
                                 dartTypes.dartTypeName {
-                                    info;
+                                    scope;
                                     ceylonTypes.callableAnythingType;
                                 };
                                 [DartVariableDeclaration {
@@ -1273,7 +1266,7 @@ class BaseGenerator(CompilationContext ctx)
                                 then !dartElementType is DartOperator
                                 else false;
                             false;
-                            info;
+                            scope;
                             list;
                         };
                         DartBlockFunctionBody {
