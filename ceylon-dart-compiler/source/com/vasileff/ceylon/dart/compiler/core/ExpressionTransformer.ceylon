@@ -695,25 +695,19 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformInvocation(Invocation that) {
-        value info = InvocationInfo(that);
+        value info
+            =   InvocationInfo(that);
 
         value invokedInfo
-            =   switch (invoked = that.invoked)
-                case (is BaseExpression)
-                    BaseExpressionInfo(invoked)
-                case (is QualifiedExpression)
-                    QualifiedExpressionInfo(invoked)
-                else
-                    expressionInfo(invoked);
+            =   expressionInfo(that.invoked);
 
-        DeclarationModel? invokedDeclaration
+        value invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
                            case (is BaseExpression)
                                 BaseExpressionInfo(invoked).declaration
                            case (is QualifiedExpression)
                                 QualifiedExpressionInfo(invoked).declaration
-                           else
-                                null) // some other expression that yields a Callable
+                           else null) // some other expression that yields a Callable
                 // Constructor invocations present the invoked as a Function,
                 // but let's use the Constructor declaration.
                 replaceFunctionWithConstructor(d);
@@ -726,88 +720,51 @@ class ExpressionTransformer(CompilationContext ctx)
          relying on [[transformBaseExpression]] and [[transformQualifiedExpression]] to
          generate `Callable`s via `that.invoked.transform(this)` which are then
          immediately invoked."
-        function indirectInvocationOnCallable() {
-            value arguments = that.arguments;
+        function indirectInvocationOnCallable(
+                "The model for the invoked declaration, or [[null]] if the invocation
+                 will be on a newly-generated Callable that cannot properly be represented
+                 by the original declaration, as is the case for invocations of static
+                 references."
+                FunctionModel | ValueModel | ClassModel | ConstructorModel | Null
+                invokedDeclaration) {
 
-            if (is NamedArguments arguments) {
-                // Callable values for callable parameters may be invoked with named
-                // arguments (so not really an indirect invocation)
+            value signature
+                =   CeylonList {
+                        ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
+                    };
 
-                // TODO It would be better to just have "dartInvocable" handle this
-                //      case, so all Function calls would be handled the same way in the
-                //      code below rather than delegating to indirectInvocationOnCallable.
-
-                "If there are named arguments, this must actually be a Ceylon function."
-                assert (is FunctionModel invokedDeclaration);
-
-                value signature
-                    =   CeylonList {
-                            ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
-                        };
-
-                value [argsSetup, argumentList]
-                    =   generateArgumentListFromArguments {
-                            info;
-                            that.arguments;
-                            signature;
-                            invokedDeclaration;
-                        };
-
-                return
-                createExpressionEvaluationWithSetup {
-                    argsSetup;
-                    withBoxing {
+            value [argsSetup, argumentList, hasSpread]
+                =   generateArgumentListFromArguments {
                         info;
-                        info.typeModel;
-                        // If there are multiple parameter lists, the function returns a
-                        // Callable, not the ultimate return type as advertised by the
-                        // declaration.
-                        invokedDeclaration.parameterLists.size() == 1
-                            then invokedDeclaration;
-                        DartFunctionExpressionInvocation {
-                            // resolve the f/s property of the Callable
-                            DartPropertyAccess {
-                                withLhsDenotable {
-                                    ceylonTypes.callableDeclaration;
-                                    () => that.invoked.transform(this);
-                                };
-                                DartSimpleIdentifier {
-                                    //if (hasSpread) then "s" else "f";
-                                    "f";
-                                };
-                            };
-                            argumentList;
-                        };
+                        that.arguments;
+                        signature;
+                        invokedDeclaration;
                     };
-                };
-            }
 
-            // else, we have positional arguments
-
-            value [argumentList, hasSpread]
-                =   generateArgumentListForIndirectInvocation(arguments.argumentList);
-
-            // Callables (being generic) always erase to `core.Object`.
-            // We don't have a declaration to to use, so explicitly
-            // specify erasure:
             return
-            withBoxingCustom {
-                info;
-                info.typeModel;
-                rhsErasedToNative = false;
-                rhsErasedToObject = true;
-                DartFunctionExpressionInvocation {
-                    // resolve the f/s property of the Callable
-                    DartPropertyAccess {
-                        withLhsDenotable {
-                            ceylonTypes.callableDeclaration;
-                            () => that.invoked.transform(this);
+            createExpressionEvaluationWithSetup {
+                argsSetup;
+                // Callables (being generic) always erase to `core.Object`.
+                // We may not have a declaration to to use, so explicitly
+                // specify erasure:
+                withBoxingCustom {
+                    info;
+                    info.typeModel;
+                    rhsErasedToNative = false;
+                    rhsErasedToObject = true;
+                    DartFunctionExpressionInvocation {
+                        // resolve the f/s property of the Callable
+                        DartPropertyAccess {
+                            withLhsDenotable {
+                                ceylonTypes.callableDeclaration;
+                                () => that.invoked.transform(this);
+                            };
+                            DartSimpleIdentifier {
+                                if (hasSpread) then "s" else "f";
+                            };
                         };
-                        DartSimpleIdentifier {
-                            if (hasSpread) then "s" else "f";
-                        };
+                        argumentList;
                     };
-                    argumentList;
                 };
             };
         }
@@ -862,7 +819,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         };
                     };
 
-            value [argsSetup, argumentList]
+            value [argsSetup, argumentList, _]
                 =   generateArgumentListFromArguments {
                         info;
                         that.arguments;
@@ -930,14 +887,20 @@ class ExpressionTransformer(CompilationContext ctx)
                     !invoked.receiverExpression is Package,
                     !invokedDeclaration.staticallyImportable) {
 
-                value invokedQEInfo = QualifiedExpressionInfo(invoked);
+                assert (is QualifiedExpressionInfo invokedInfo);
 
-                if(invokedQEInfo.staticMethodReference) {
+                if(invokedInfo.staticMethodReference) {
                     // Note: Needs optimization! This causes a Callable to be created for
                     // the function ref, which is immediately invoked with the argument,
                     // returning a Callable that can be used to invoke the now bound
                     // method.
-                    return(indirectInvocationOnCallable());
+
+                    // Passing "null" to avoid having the FunctionModel incorrectly
+                    // considered as providing useful information about the necessary
+                    // arguments. The required argument is an instance of the qualifying
+                    // type for the static reference, and not the arguments required by
+                    // the function itself.
+                    return(indirectInvocationOnCallable(null));
                 }
 
                 value receiverInfo = expressionInfo(invoked.receiverExpression);
@@ -960,10 +923,10 @@ class ExpressionTransformer(CompilationContext ctx)
             else {
                 if (dartTypes.isCallableValue(invokedDeclaration)) {
                     // Invoking a Callable parameter
-                    return indirectInvocationOnCallable();
+                    return indirectInvocationOnCallable(invokedDeclaration);
                 }
                 else {
-                    value [argsSetup, argumentList]
+                    value [argsSetup, argumentList, _]
                         =   generateArgumentListFromArguments {
                                 info;
                                 that.arguments;
@@ -994,7 +957,7 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
         case (is ValueModel?) {
-            return indirectInvocationOnCallable();
+            return indirectInvocationOnCallable(invokedDeclaration);
         }
         case (is ClassModel | ConstructorModel) {
             assert (is ClassModel classModel
@@ -1039,7 +1002,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             classModel;
                         };
 
-                value [argsSetup, argumentList]
+                value [argsSetup, argumentList, _]
                     =   generateArgumentListFromArguments {
                             info;
                             that.arguments;

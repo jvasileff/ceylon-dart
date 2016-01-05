@@ -535,7 +535,7 @@ class BaseGenerator(CompilationContext ctx)
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
         if (is PositionalArguments | NamedArguments arguments) {
-            value [a, b]
+            value [a, b, _]
                 =   generateArgumentListFromArguments {
                         scope;
                         arguments;
@@ -4179,43 +4179,45 @@ class BaseGenerator(CompilationContext ctx)
         return [dartStatements.sequence(), dartArguments.sequence()];
     }
 
-    "Returns the DartArgumentList (with non-native and erased-to-object arguments), and
-     possibly a trailing spread argument. If a spread argument exists, the returned
-     boolean will be true."
+    "Returns a tuple containing:
+        - Statements required to pre-calculate argument expressions
+        - The [[DartArgumentList]]
+        - The boolean value `true` if the final argument in the returned argument list
+          is a sequenced argument and the invoked declaration is a Function that is
+          implemented as a Callable value, or false otherwise. This is used when invoking
+          [[Callable]]s, for which the `.s()` method must be used to spread sequenced
+          arguments (rather than the `.f()` method)."
     shared
-    [DartArgumentList, Boolean] generateArgumentListForIndirectInvocation
-            (ArgumentList argumentList)
-        =>  [DartArgumentList {
-                argumentList.children.collect {
-                        (argument)
-                    =>  withLhsNonNative {
-                            ceylonTypes.anythingType;
-                            () => switch (argument)
-                            case (is Expression)
-                                argument.transform(expressionTransformer)
-                            case (is SpreadArgument|Comprehension)
-                                generateSequentialFromArgument(argument);
-                        };
-                };
-            },
-            argumentList.sequenceArgument exists];
-
-    shared
-    [[DartStatement*], DartArgumentList] generateArgumentListFromArguments(
+    [[DartStatement*], DartArgumentList, Boolean] generateArgumentListFromArguments(
             DScope scope,
             Arguments arguments,
             // TODO accept {TypeModel*} signature instead
             List<TypeModel | TypeDetails> signature,
-            FunctionModel | ValueModel
-                    | ClassModel | ConstructorModel declarationModel) {
+            FunctionModel | ValueModel | ClassModel | ConstructorModel | Null
+                    declarationModel) {
 
-        if (is ValueModel declarationModel) {
-            // Values won't have arguments.
-            return [[], DartArgumentList()];
-        }
+        "Returns the DartArgumentList (with non-native and erased-to-object arguments),
+         and possibly a trailing spread argument. If a spread argument exists, the
+         returned boolean will be true."
+        function generateArgumentListForIndirectInvocation(ArgumentList argumentList)
+            =>  [[],
+                DartArgumentList {
+                    argumentList.children.collect {
+                            (argument)
+                        =>  withLhsNonNative {
+                                ceylonTypes.anythingType;
+                                () => switch (argument)
+                                case (is Expression)
+                                    argument.transform(expressionTransformer)
+                                case (is SpreadArgument|Comprehension)
+                                    generateSequentialFromArgument(argument);
+                            };
+                    };
+                },
+                argumentList.sequenceArgument exists];
 
-        value pList
-            =   switch(declarationModel)
+        function pList(FunctionModel | ClassModel | ConstructorModel declarationModel)
+            =>  switch(declarationModel)
                 case (is FunctionModel) declarationModel.firstParameterList
                 // FIXME parameterList may be null here...
                 case (is ClassModel) declarationModel.parameterList
@@ -4224,24 +4226,40 @@ class BaseGenerator(CompilationContext ctx)
 
         switch (arguments)
         case (is PositionalArguments) {
+            if (is FunctionModel declarationModel,
+                    dartTypes.isCallableValue(declarationModel)) {
+                return generateArgumentListForIndirectInvocation(arguments.argumentList);
+            }
+
+            if (is ValueModel | Null declarationModel) {
+                // surely a Callable (or perhaps just a regular value with no-args that
+                // got caught up in this mess...)
+                return generateArgumentListForIndirectInvocation(arguments.argumentList);
+            }
+
             value [argsSetup, argExpressions]
                 =   generateArgumentsFromPositionalArguments {
                         arguments;
                         signature;
-                        pList;
+                        pList(declarationModel);
                     };
 
-            return [argsSetup, DartArgumentList(argExpressions)];
+            return [argsSetup, DartArgumentList(argExpressions),
+                    arguments.argumentList.sequenceArgument exists];
         }
         case (is NamedArguments) {
+            "A non-value declaration must exist for named argument invocations; named
+             argument lists are not supported for indirect invocations."
+            assert (is FunctionModel | ClassModel | ConstructorModel declarationModel);
+
             value [argsSetup, argExpressions]
                 =   generateArgumentsFromNamedArguments {
                         arguments;
                         signature;
-                        pList;
+                        pList(declarationModel);
                     };
 
-            return [argsSetup, DartArgumentList(argExpressions)];
+            return [argsSetup, DartArgumentList(argExpressions), false];
         }
     }
 
