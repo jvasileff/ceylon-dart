@@ -1199,10 +1199,14 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformFunctionExpression(FunctionExpression that)
         =>  let (info = FunctionExpressionInfo(that))
-            generateNewCallable {
+            withBoxingNonNative {
                 info;
-                info.declarationModel;
-                generateFunctionExpression(that);
+                info.typeModel;
+                generateNewCallable {
+                    info;
+                    info.declarationModel;
+                    generateFunctionExpression(that);
+                };
             };
 
     DartExpression generateBooleanExpression(

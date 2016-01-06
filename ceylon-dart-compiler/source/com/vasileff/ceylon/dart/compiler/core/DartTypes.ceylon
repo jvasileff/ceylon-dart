@@ -1135,7 +1135,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     is FunctionModel declaration,
                     declaration.initializerParameter.defaulted,
                     !withinClass(declaration)
-                        || ctx.withinConstructorDefaultsSet.contains(declaration))
+                        || ctx.withinConstructorDefaultsSet.contains(
+                                    declaration.container))
                 then dartTypeName {
                     scope;
                     ceylonTypes.callableAnythingType;
@@ -1331,17 +1332,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else
                 false;
 
-    "For the Value, or the return type of the Function, *unless* it's a Function that is
-     a callable parameter, in which case the result will be false.
-
-     Regarding callable parameters:
-
-     - When invoked, non-native values are returned
-     - They may also appear as the lhs type, in which case they are treated as
-       `Callable` values, which of course are not erased. (Although, the lhs case should
-       be handled by `withLhs`, preempting a call to this function.)
-     - They may also appear as the rhs type (when taking a reference to a Function), in
-       which case they are treated as `Callable` values, which of course are not erased."
+    "For the Value, or the return type of the Function. If the declaration is a Function
+     that is a callable parameter that is implemented as a Callable value, the result will
+     be false."
     shared
     Boolean erasedToNative
             (FunctionOrValueModel | ClassModel | ConstructorModel declaration)

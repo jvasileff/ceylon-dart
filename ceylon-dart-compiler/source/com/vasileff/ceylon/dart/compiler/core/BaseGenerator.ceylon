@@ -563,6 +563,7 @@ class BaseGenerator(CompilationContext ctx)
                         declarationModel.firstParameterList
                                 .parameters.get(i)?.model;
                         argument;
+                        lhsIsParameter = true;
                     }
                 ];
 
@@ -3592,7 +3593,7 @@ class BaseGenerator(CompilationContext ctx)
         //      generic functions
 
         // NOTE Don't optimize to return Callable values for for callable parameters,
-        //      because this function is used to create them, when they are defaulted!
+        //      because this function is used to create them when they are defaulted!
         //      Optimizations should be performed by callers. This function always
         //      produces code to create a new Callable.
 
@@ -3882,6 +3883,7 @@ class BaseGenerator(CompilationContext ctx)
                                 listedArguments[i...]; // may be []
                                 sequenceArg; // may be null
                             };
+                            lhsIsParameter = true;
                         };
                     };
                 }
@@ -3928,6 +3930,7 @@ class BaseGenerator(CompilationContext ctx)
                                 // Return the argument
                                 tmpVariable;
                             };
+                            lhsIsParameter = true;
                         };
                     };
                 }
@@ -3938,6 +3941,7 @@ class BaseGenerator(CompilationContext ctx)
                             parameterType;
                             parameter.model;
                             () => expression.transform(expressionTransformer);
+                            lhsIsParameter = true;
                         };
                     };
                 }
@@ -4349,6 +4353,7 @@ class BaseGenerator(CompilationContext ctx)
                                     () => argumentInfo.node.expression.transform {
                                         expressionTransformer;
                                     };
+                                    lhsIsParameter = true;
                                 };
                     }
                     case (is SpecifiedArgumentInfo) {
@@ -4369,7 +4374,7 @@ class BaseGenerator(CompilationContext ctx)
                             dartExpression
                                 =   withLhs {
                                         typeModel;
-                                        null;
+                                        parameterModelModel;
                                         () => generateNewCallable {
                                             argumentInfo;
                                             declarationModel;
@@ -4380,6 +4385,7 @@ class BaseGenerator(CompilationContext ctx)
                                                 lazySpecification.specifier;
                                             };
                                         };
+                                        lhsIsParameter = true;
                                     };
                         }
                         else {
@@ -4394,6 +4400,7 @@ class BaseGenerator(CompilationContext ctx)
                                                 .expression.transform {
                                             expressionTransformer;
                                         };
+                                        lhsIsParameter = true;
                                     };
                         }
                     }
@@ -4409,6 +4416,7 @@ class BaseGenerator(CompilationContext ctx)
                                         () => definition.expression.transform {
                                             expressionTransformer;
                                         };
+                                        lhsIsParameter = true;
                                     }
                                 case (is Block)
                                     // TODO split generateDefinitionForValueModelGetter?
@@ -4434,12 +4442,13 @@ class BaseGenerator(CompilationContext ctx)
                         dartExpression
                             =   withLhs {
                                     typeModel;
-                                    null;
+                                    parameterModelModel;
                                     () => generateNewCallable {
                                         argumentInfo;
                                         argumentInfo.declarationModel;
                                         generateFunctionExpression(argumentInfo.node);
                                     };
+                                    lhsIsParameter = true;
                                 };
                     }
                     case (is ObjectArgumentInfo) {
@@ -4448,11 +4457,12 @@ class BaseGenerator(CompilationContext ctx)
                         dartExpression
                             =   withLhs {
                                     typeModel;
-                                    null;
+                                    parameterModelModel;
                                     () => generateObjectInstantiation {
                                         argumentInfo;
                                         argumentInfo.anonymousClass;
                                     };
+                                    lhsIsParameter = true;
                                 };
                     }
 

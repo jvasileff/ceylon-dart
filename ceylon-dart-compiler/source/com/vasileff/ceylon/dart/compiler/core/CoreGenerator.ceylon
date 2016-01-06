@@ -6,6 +6,7 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     FunctionOrValueModel=FunctionOrValue,
     ClassModel=Class,
+    FunctionModel=Function,
     ConstructorModel=Constructor,
     ClassOrInterfaceModel=ClassOrInterface
 }
@@ -267,6 +268,7 @@ class CoreGenerator(CompilationContext ctx) {
             DScope scope,
             TypeModel rhsType,
             DartExpression dartExpression)
+        // TODO do callers always *know* that the rhs is rhsType, and not erasedToObject?
         =>  withBoxingForType {
                 scope;
                 rhsType;
@@ -351,18 +353,15 @@ class CoreGenerator(CompilationContext ctx) {
             TypeModel | TypeDetails | Null lhsType,
             "For the Value, or the return type of the Function.
 
-             Regarding callable parameters:
-
-             - For Functions that are callable parameters, the lhsType will be defaulted
-               to the type of the function (`d.typedReference.fullType`) rather than the
-               return type (`d.type`). This supports the idea that callable parameters
-               act as *values*.
-
-             - But, when using `withLhs` when generating a default value for a callable
-               parameter, what's needed is the *return* type of the function. For this,
-               callers *must* provide `lhsType = functionDeclaration.type`."
+             For callable parameters, the return type will be used as default. For
+             *assignments* to callable parameters (rather than function returns), set
+             [[lhsIsParameter]] to `true`."
             FunctionOrValueModel? lhsDeclaration,
-            Result fun()) {
+            Result fun(),
+            "Are we are 'assigning' to a parameter? If `true`, `FunctionModel`
+             declarations will be considered as a value rather than inspecting their
+             return types."
+            Boolean lhsIsParameter = false) {
 
         if (is TypeDetails lhsType) {
             // TypeDetals overrides everything
@@ -376,9 +375,16 @@ class CoreGenerator(CompilationContext ctx) {
 
         if (exists lhsDeclaration) {
             return withLhsValues {
-                lhsType = lhsType else lhsDeclaration.type;
-                dartTypes.erasedToNative(lhsDeclaration);
-                dartTypes.erasedToObject(lhsDeclaration);
+                lhsType = lhsType else (
+                    if (lhsIsParameter && lhsDeclaration is FunctionModel)
+                        then lhsDeclaration.typedReference.fullType
+                        else lhsDeclaration.type);
+                if (lhsIsParameter && lhsDeclaration is FunctionModel)
+                    then false
+                    else dartTypes.erasedToNative(lhsDeclaration);
+                if (lhsIsParameter && lhsDeclaration is FunctionModel)
+                    then !lhsDeclaration.initializerParameter.defaulted
+                    else dartTypes.erasedToObject(lhsDeclaration);
                 fun;
             };
         }
