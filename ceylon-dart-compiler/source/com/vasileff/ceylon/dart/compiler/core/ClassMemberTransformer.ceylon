@@ -54,7 +54,14 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclaration,
     DartFunctionExpression,
     DartExpressionFunctionBody,
-    DartFormalParameter
+    DartFormalParameter,
+    DartBlockFunctionBody,
+    DartReturnStatement,
+    DartBlock,
+    DartVariableDeclarationStatement,
+    DartAssignmentExpression,
+    DartExpressionStatement,
+    DartAssignmentOperator
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -488,29 +495,57 @@ class ClassMemberTransformer(CompilationContext ctx)
                     *precedingParameters
                 ];
             };
-            DartExpressionFunctionBody {
-                false;
-                if (is DefaultedCallableParameter that,
+            if (is DefaultedCallableParameter that,
                     is FunctionModel model = info.parameterModel.model) then
-                    // Generate a Callable for the default function value
-                    withLhs {
-                        null;
-                        model;
-                        () => generateNewCallable {
-                            info;
-                            model;
-                            generateFunctionExpression(that);
-                        };
-                    }
-                else
+                // The funcion definition may be recursive! So declare a variable for the
+                // Callable first in case the expression references it.
+                let (identifier = DartSimpleIdentifier(dartTypes.getName(
+                                    info.parameterModel.model)))
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        [DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartObject;
+                                [DartVariableDeclaration {
+                                    identifier;
+                                    null;
+                                }];
+                            };
+                        },
+                        DartExpressionStatement {
+                            DartAssignmentExpression {
+                                identifier;
+                                DartAssignmentOperator.equal;
+                                generateNewCallable {
+                                    info;
+                                    model;
+                                    generateFunctionExpression(that);
+                                };
+                            };
+                        },
+                        DartReturnStatement {
+                            withLhs {
+                                null;
+                                model;
+                                () => identifier;
+                                lhsIsParameter = true;
+                            };
+                        }];
+                    };
+                }
+            else
+                DartExpressionFunctionBody {
                     // Simple ValueModel default value
+                    false;
                     withLhs {
                         null;
                         info.parameterModel.model;
                         () => that.specifier.expression
                                 .transform(expressionTransformer);
                     };
-            };
+                };
         };
     }
 
