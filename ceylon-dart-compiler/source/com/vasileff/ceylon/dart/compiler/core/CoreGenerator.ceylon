@@ -382,8 +382,9 @@ class CoreGenerator(CompilationContext ctx) {
                 if (lhsIsParameter && lhsDeclaration is FunctionModel)
                     then false
                     else dartTypes.erasedToNative(lhsDeclaration);
-                if (lhsIsParameter && lhsDeclaration is FunctionModel)
-                    then !lhsDeclaration.initializerParameter.defaulted
+                if (lhsIsParameter, lhsDeclaration is FunctionModel)
+                    then dartTypes.erasedToObjectCallableParam(
+                            lhsDeclaration.initializerParameter)
                     else dartTypes.erasedToObject(lhsDeclaration);
                 fun;
             };

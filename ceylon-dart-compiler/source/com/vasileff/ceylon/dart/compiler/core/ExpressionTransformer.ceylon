@@ -297,8 +297,9 @@ class ExpressionTransformer(CompilationContext ctx)
                         info;
                         info.typeModel;
                         false;
-                        // erased-to-object if defaulted
-                        targetDeclaration.initializerParameter.defaulted;
+                        dartTypes.erasedToObjectCallableParam {
+                            targetDeclaration.initializerParameter;
+                        };
                         dartTypes.invocableForBaseExpression {
                             info;
                             targetDeclaration;

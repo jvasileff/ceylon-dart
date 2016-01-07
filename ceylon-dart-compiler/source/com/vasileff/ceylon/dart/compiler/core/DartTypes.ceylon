@@ -1131,12 +1131,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         "Cast the Callable if held by a variable of type $dart$core.Object"
         value callableCast
-            =   if (callableValue,
-                    is FunctionModel declaration,
-                    declaration.initializerParameter.defaulted,
-                    !withinClass(declaration)
-                        || ctx.withinConstructorDefaultsSet.contains(
-                                    declaration.container))
+            =   if (callableValue &&
+                    erasedToObjectCallableParam(declaration.initializerParameter))
                 then dartTypeName {
                     scope;
                     ceylonTypes.callableAnythingType;
@@ -1387,6 +1383,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // Non-denotable types are of course erased to object.
         return !denotable(declaration.type.resolveAliases());
     }
+
+    shared
+    Boolean erasedToObjectCallableParam(ParameterModel parameter)
+        =>  parameter.defaulted
+            && (!withinClass(parameter.model)
+                || ctx.withinConstructorDefaultsSet.contains(
+                            parameter.model.container));
 
     "For a given Ceylon declaration, the closest original declaration that was actually
      used to create a Dart declaration.
