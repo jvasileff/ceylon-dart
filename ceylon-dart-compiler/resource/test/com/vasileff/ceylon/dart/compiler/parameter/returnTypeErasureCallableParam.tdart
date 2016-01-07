@@ -1,0 +1,41 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class returnTypeErasureCallableParam$I {
+    $dart$core.Object echoObj([$dart$core.Object t]);
+    $dart$core.String echoStr([$dart$core.String t]);
+}
+class returnTypeErasureCallableParam$C implements returnTypeErasureCallableParam$I {
+    returnTypeErasureCallableParam$C([$dart$core.Object echoObj = $ceylon$language.dart$default, $dart$core.Object echoStr = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(echoObj, $ceylon$language.dart$default)) {
+            echoObj = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        }
+        if ($dart$core.identical(echoStr, $ceylon$language.dart$default)) {
+            echoStr = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        }
+        return [echoObj, echoStr];
+    })());
+    returnTypeErasureCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+    returnTypeErasureCallableParam$C.$w([$ceylon$language.Callable echoObj, $ceylon$language.Callable echoStr]) {
+        this._echoObj$c = echoObj;
+        this._echoStr$c = echoStr;
+    }
+    $ceylon$language.Callable _echoObj$c;
+    $ceylon$language.Callable _echoStr$c;
+    $ceylon$language.String echoObj([$ceylon$language.String s]) {
+        return _echoObj$c.f(s);
+    }
+    $dart$core.String echoStr([$dart$core.String s]) {
+        return $ceylon$language.String.nativeValue(_echoStr$c.f($ceylon$language.String.instance(s)));
+    }
+}
+void $package$returnTypeErasureCallableParam() {
+    if (!(($ceylon$language.String.nativeValue((new returnTypeErasureCallableParam$C()).echoObj($ceylon$language.String.instance("a"))) + "b") == "ab")) {
+        throw new $ceylon$language.AssertionError("Violated: C().echoObj(\"a\") + \"b\" == \"ab\"");
+    }
+    if (!(((new returnTypeErasureCallableParam$C()).echoStr("a") + "b") == "ab")) {
+        throw new $ceylon$language.AssertionError("Violated: C().echoStr(\"a\") + \"b\" == \"ab\"");
+    }
+}
+
+void returnTypeErasureCallableParam() => $package$returnTypeErasureCallableParam();

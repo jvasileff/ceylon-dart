@@ -1,0 +1,17 @@
+shared void referenceToCallableParamQE() {
+    class C(shared Integer echoShared(Integer i),
+            Integer echoNonShared(Integer i),
+            shared Integer echoSharedDefaulted(Integer i) => i,
+            Integer echoNonSharedDefaulted(Integer i) => i) {
+        value echoSharedRef = this.echoShared;
+        value echoNonSharedRef = this.echoNonShared;
+        value echoSharedDefaultedRef = this.echoSharedDefaulted;
+        value echoNonSharedDefaultedRef = this.echoNonSharedDefaulted;
+        assert(echoSharedRef(1) == 1);
+        assert(echoNonSharedRef(1) == 1);
+        assert(echoSharedDefaultedRef(1) == 1);
+        assert(echoNonSharedDefaultedRef(1) == 1);
+    }
+    function echo(Integer i) => i;
+    C(echo, echo);
+}

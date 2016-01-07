@@ -1,0 +1,24 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class recursiveNonSharedDefaultedCallableClass$C {
+    recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object _$factNonShared = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$factNonShared, $ceylon$language.dart$default)) {
+            _$factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.Integer.nativeValue(i) < 2 ? i : $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) * $ceylon$language.Integer.nativeValue((_$factNonShared as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1)) as $ceylon$language.Integer)));
+        }
+        return [_$factNonShared];
+    })());
+    recursiveNonSharedDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
+    recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable _$factNonShared]) {
+        this._$factNonShared = _$factNonShared;
+    }
+    $ceylon$language.Callable _$factNonShared;
+    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.Integer.nativeValue(_$factNonShared.f($ceylon$language.Integer.instance(i)) as $ceylon$language.Integer);
+}
+void $package$recursiveNonSharedDefaultedCallableClass() {
+    if (!((new recursiveNonSharedDefaultedCallableClass$C()).fact(4) == 24)) {
+        throw new $ceylon$language.AssertionError("Violated: C().fact(4) == 24");
+    }
+}
+
+void recursiveNonSharedDefaultedCallableClass() => $package$recursiveNonSharedDefaultedCallableClass();

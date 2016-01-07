@@ -1,0 +1,44 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class callNonDefaultedCallableParamClass$C {
+    callNonDefaultedCallableParamClass$C([$ceylon$language.Callable a, $ceylon$language.Callable _$b, $ceylon$language.Callable c]) {
+        this._$b = _$b;
+        this._a$c = a;
+        this._c$c = c;
+    }
+    $ceylon$language.Callable _$b;
+    $ceylon$language.Callable _a$c;
+    $ceylon$language.Callable _c$c;
+    $dart$core.int callA([$dart$core.int i]) => a(i);
+    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.Integer.nativeValue(_$b.f($ceylon$language.Integer.instance(i)) as $ceylon$language.Integer);
+    $dart$core.int callC([$dart$core.int i]) => c(i);
+    $dart$core.int a([$dart$core.int i]) {
+        return $ceylon$language.Integer.nativeValue(_a$c.f($ceylon$language.Integer.instance(i)));
+    }
+    $dart$core.int c([$dart$core.int i]) {
+        return $ceylon$language.Integer.nativeValue(_c$c.f($ceylon$language.Integer.instance(i)));
+    }
+}
+void $package$callNonDefaultedCallableParamClass() {
+    $dart$core.int id([$dart$core.int i]) => i;
+
+    callNonDefaultedCallableParamClass$C c = new callNonDefaultedCallableParamClass$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))));
+    if (!(c.a(1) == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: c.a(1) == 1");
+    }
+    if (!(c.c(1) == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: c.c(1) == 1");
+    }
+    if (!(c.callA(1) == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: c.callA(1) == 1");
+    }
+    if (!(c.callB(1) == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: c.callB(1) == 1");
+    }
+    if (!(c.callC(1) == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: c.callC(1) == 1");
+    }
+}
+
+void callNonDefaultedCallableParamClass() => $package$callNonDefaultedCallableParamClass();

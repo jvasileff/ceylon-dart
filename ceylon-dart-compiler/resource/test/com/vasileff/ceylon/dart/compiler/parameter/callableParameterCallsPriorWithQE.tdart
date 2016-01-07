@@ -1,0 +1,42 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class callableParameterCallsPriorWithQE$B {
+    callableParameterCallsPriorWithQE$B([$dart$core.Object _$x, $dart$core.Object _$y]) {
+        this._$x = _$x;
+        this._$y = _$y;
+    }
+    $dart$core.Object _$x;
+    $dart$core.Object _$y;
+    $dart$core.int f([$dart$core.int i]);
+    $dart$core.int g([$dart$core.int j]);
+}
+class callableParameterCallsPriorWithQE$C  extends callableParameterCallsPriorWithQE$B {
+    callableParameterCallsPriorWithQE$C([$dart$core.Object f = $ceylon$language.dart$default, $dart$core.Object g = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+            f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
+        }
+        if ($dart$core.identical(g, $ceylon$language.dart$default)) {
+            g = new $ceylon$language.dart$Callable(([$ceylon$language.Integer j]) => $ceylon$language.Integer.instance(((($ceylon$language.Integer.nativeValue(j) + $ceylon$language.Integer.nativeValue((new callableParameterCallsPriorWithQE$C())._f$c.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer)) + $ceylon$language.Integer.nativeValue((f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer)) + $ceylon$language.Integer.nativeValue((new callableParameterCallsPriorWithQE$C())._g$c.f($ceylon$language.Integer.instance(3)) as $ceylon$language.Integer)) + $ceylon$language.Integer.nativeValue((g as $ceylon$language.Callable).f($ceylon$language.Integer.instance(4)) as $ceylon$language.Integer)));
+        }
+        return [f, g];
+    })());
+    callableParameterCallsPriorWithQE$C.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+    callableParameterCallsPriorWithQE$C.$w([$ceylon$language.Callable f, $ceylon$language.Callable g]) : super(f, g) {
+        this._f$c = f;
+        this._g$c = g;
+    }
+    $ceylon$language.Callable _f$c;
+    $ceylon$language.Callable _g$c;
+    $dart$core.int f([$dart$core.int i]) {
+        return $ceylon$language.Integer.nativeValue(_f$c.f($ceylon$language.Integer.instance(i)));
+    }
+    $dart$core.int g([$dart$core.int j]) {
+        return $ceylon$language.Integer.nativeValue(_g$c.f($ceylon$language.Integer.instance(j)));
+    }
+}
+void $package$callableParameterCallsPriorWithQE() {
+    new callableParameterCallsPriorWithQE$C();
+}
+
+void callableParameterCallsPriorWithQE() => $package$callableParameterCallsPriorWithQE();

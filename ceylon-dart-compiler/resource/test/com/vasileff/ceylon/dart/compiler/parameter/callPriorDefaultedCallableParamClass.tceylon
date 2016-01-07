@@ -1,0 +1,15 @@
+shared void callPriorDefaultedCallableParamClass() {
+    class C(
+            shared Integer a(Integer i) => i,
+            Integer b(Integer i) => a(i),
+            shared Integer c(Integer i) => b(i)) {
+        shared Integer callA(Integer i) => a(i);
+        shared Integer callB(Integer i) => b(i);
+        shared Integer callC(Integer i) => c(i);
+    }
+    assert(C().a(1) == 1);
+    assert(C().c(1) == 1);
+    assert(C().callA(1) == 1);
+    assert(C().callB(1) == 1);
+    assert(C().callC(1) == 1);
+}

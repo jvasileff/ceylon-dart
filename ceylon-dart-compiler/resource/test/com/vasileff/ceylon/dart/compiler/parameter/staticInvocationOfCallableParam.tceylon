@@ -1,0 +1,9 @@
+shared void staticInvocationOfCallableParam() {
+    class CP(String echo(String s) => s) {
+        shared void test() {
+            assert (CP.echo(CP())("hello") == "hello");
+            assert (CP.echo(CP())(*["hello"]) == "hello");
+        }
+    }
+    CP().test();
+}

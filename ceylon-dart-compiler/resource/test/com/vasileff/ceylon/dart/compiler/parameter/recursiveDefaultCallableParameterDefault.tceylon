@@ -1,0 +1,15 @@
+shared void recursiveDefaultCallableParameterDefault() {
+    class C() {
+        shared default Integer
+        returnX(Integer x = 5,
+                Integer f(Integer i)
+                        =>  switch (i <=> x)
+                            case (smaller) f(i + 1)
+                            case (larger) f(i - 1)
+                            case (equal) i) {
+            return f(0);
+        }
+    }
+    assert (C().returnX() == 5);
+    assert (C().returnX(10) == 10);
+}

@@ -1,0 +1,12 @@
+shared void callableParameterCallsPriorWithQE() {
+    abstract class B(Anything x, Anything y) {
+        shared formal Integer f(Integer i);
+        shared formal Integer g(Integer j);
+    }
+    class C(shared actual Integer f(Integer i) => i,
+            shared actual Integer g(Integer j) => j
+                    + C().f(1) + f(2)
+                    + C().g(3) + g(4))
+        extends B(f, g) {}
+    C();
+}

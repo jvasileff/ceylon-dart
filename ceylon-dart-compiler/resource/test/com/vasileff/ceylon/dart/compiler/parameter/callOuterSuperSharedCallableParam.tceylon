@@ -1,0 +1,16 @@
+shared void callOuterSuperSharedCallableParam() {
+    class Outer(shared default Integer foo() => 1) {
+        shared class Inner
+                (shared actual Integer foo() => outer.foo())
+                extends Outer() {
+
+            shared void test() {
+                assert (foo() + 1 == 2);
+                assert (outer.foo() + 1 == 2);
+                assert (super.foo() + 1 == 2);
+            }
+        }
+    }
+    Outer().Inner().test();
+    assert(Outer().foo() + 1 == 2);
+}

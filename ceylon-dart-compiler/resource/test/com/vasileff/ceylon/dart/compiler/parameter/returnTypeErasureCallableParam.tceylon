@@ -1,0 +1,11 @@
+shared void returnTypeErasureCallableParam() {
+    interface I<T> {
+        shared formal T echoObj(T t);
+        shared formal String echoStr(String t);
+    }
+    class C(shared actual String echoObj(String s) => s,
+            shared actual String echoStr(String s) => s)
+            satisfies I<String> {}
+    assert(C().echoObj("a") + "b" == "ab");
+    assert(C().echoStr("a") + "b" == "ab");
+}

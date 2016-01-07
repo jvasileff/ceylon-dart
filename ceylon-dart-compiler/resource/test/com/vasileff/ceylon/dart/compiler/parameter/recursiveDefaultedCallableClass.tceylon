@@ -1,0 +1,8 @@
+shared void recursiveDefaultedCallableClass() {
+    class C(
+        shared Integer fact(Integer i)
+            =>  if (i < 2)
+                then i
+                else i * fact(i-1)) {}
+    assert(C().fact(4) == 24);
+}

@@ -1,0 +1,14 @@
+shared void callOuterSuperNonSharedCallableParam() {
+    class Outer(Integer foo() => 1) {
+        shared class Inner(Integer foo2() => outer.foo())
+                extends Outer() {
+
+            shared void test() {
+                assert (foo2() + 1 == 2);
+                assert (outer.foo() + 1 == 2);
+                assert (super.foo() + 1 == 2);
+            }
+        }
+    }
+    Outer().Inner().test();
+}

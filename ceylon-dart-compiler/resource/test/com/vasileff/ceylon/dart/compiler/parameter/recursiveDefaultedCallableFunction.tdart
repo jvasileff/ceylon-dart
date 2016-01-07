@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$recursiveDefaultedCallableFunction() {
+    void testFact([$dart$core.Object fact = $ceylon$language.dart$default]) {
+        if ($dart$core.identical(fact, $ceylon$language.dart$default)) {
+            fact = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.Integer.nativeValue(i) < 2 ? i : $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) * $ceylon$language.Integer.nativeValue((fact as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1)) as $ceylon$language.Integer)));
+        }
+        if (!($ceylon$language.Integer.nativeValue((fact as $ceylon$language.Callable).f($ceylon$language.Integer.instance(4)) as $ceylon$language.Integer) == 24)) {
+            throw new $ceylon$language.AssertionError("Violated: fact(4) == 24");
+        }
+    }
+
+    testFact();
+}
+
+void recursiveDefaultedCallableFunction() => $package$recursiveDefaultedCallableFunction();

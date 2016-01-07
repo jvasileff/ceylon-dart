@@ -1,0 +1,12 @@
+shared void callPriorDefaultedCallableParamFunction() {
+    void fun(
+            Integer a(Integer i) => i,
+            Integer b(Integer i) => a(i)) {
+        assert(a(1) == 1);
+        assert(b(1) == 1);
+    }
+    function id(Integer i) => i;
+    fun();
+    fun(id);
+    fun(id, id);
+}

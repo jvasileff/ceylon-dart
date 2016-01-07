@@ -1,0 +1,10 @@
+shared void recursiveNonSharedDefaultedCallableClass() {
+    class C(
+        Integer factNonShared(Integer i)
+            =>  if (i < 2)
+                then i
+                else i * factNonShared(i-1)) {
+        shared Integer fact(Integer i) => factNonShared(i);
+    }
+    assert(C().fact(4) == 24);
+}

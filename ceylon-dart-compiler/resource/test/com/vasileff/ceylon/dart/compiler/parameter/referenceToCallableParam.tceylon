@@ -1,0 +1,17 @@
+shared void referenceToCallableParam() {
+    class C(shared Integer echoShared(Integer i),
+            Integer echoNonShared(Integer i),
+            shared Integer echoSharedDefaulted(Integer i) => i,
+            Integer echoNonSharedDefaulted(Integer i) => i) {
+        value echoSharedRef = echoShared;
+        value echoNonSharedRef = echoNonShared;
+        value echoSharedDefaultedRef = echoSharedDefaulted;
+        value echoNonSharedDefaultedRef = echoNonSharedDefaulted;
+        assert(echoSharedRef(1) == 1);
+        assert(echoNonSharedRef(1) == 1);
+        assert(echoSharedDefaultedRef(1) == 1);
+        assert(echoNonSharedDefaultedRef(1) == 1);
+    }
+    function echo(Integer i) => i;
+    C(echo, echo);
+}

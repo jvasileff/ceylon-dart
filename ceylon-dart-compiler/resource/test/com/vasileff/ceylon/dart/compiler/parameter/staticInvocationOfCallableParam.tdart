@@ -1,0 +1,29 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class staticInvocationOfCallableParam$CP {
+    staticInvocationOfCallableParam$CP([$dart$core.Object _$echo = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$echo, $ceylon$language.dart$default)) {
+            _$echo = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        }
+        return [_$echo];
+    })());
+    staticInvocationOfCallableParam$CP.$s([$dart$core.List a]) : this.$w(a[0]);
+    staticInvocationOfCallableParam$CP.$w([$ceylon$language.Callable _$echo]) {
+        this._$echo = _$echo;
+    }
+    $ceylon$language.Callable _$echo;
+    void test() {
+        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.String.instance("hello")) as $ceylon$language.String) == "hello")) {
+            throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(\"hello\") == \"hello\"");
+        }
+        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("hello")])) as $ceylon$language.String) == "hello")) {
+            throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(*[\"hello\"]) == \"hello\"");
+        }
+    }
+}
+void $package$staticInvocationOfCallableParam() {
+    (new staticInvocationOfCallableParam$CP()).test();
+}
+
+void staticInvocationOfCallableParam() => $package$staticInvocationOfCallableParam();

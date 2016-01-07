@@ -1,0 +1,17 @@
+shared void callNonDefaultedCallableParamClass() {
+    class C(
+            shared Integer a(Integer i),
+            Integer b(Integer i),
+            shared Integer c(Integer i)) {
+        shared Integer callA(Integer i) => a(i);
+        shared Integer callB(Integer i) => b(i);
+        shared Integer callC(Integer i) => c(i);
+    }
+    function id(Integer i) => i;
+    value c = C(id, id, id);
+    assert(c.a(1) == 1);
+    assert(c.c(1) == 1);
+    assert(c.callA(1) == 1);
+    assert(c.callB(1) == 1);
+    assert(c.callC(1) == 1);
+}

@@ -1,0 +1,42 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class recursiveDefaultCallableParameterDefault$C {
+    recursiveDefaultCallableParameterDefault$C() {}
+    $dart$core.int returnX([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object f = $ceylon$language.dart$default]) {
+        if ($dart$core.identical(x, $ceylon$language.dart$default)) {
+            x = recursiveDefaultCallableParameterDefault$C.$returnX$x(this);
+        }
+        if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+            f = recursiveDefaultCallableParameterDefault$C.$returnX$f(this, x);
+        }
+        return $ceylon$language.Integer.nativeValue((f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer);
+    }
+    static $dart$core.Object $returnX$x(final recursiveDefaultCallableParameterDefault$C $this) => 5;
+    static $ceylon$language.Callable $returnX$f(final recursiveDefaultCallableParameterDefault$C $this, $dart$core.Object x) {
+        $dart$core.Object f;
+        f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (() {
+            $ceylon$language.Comparison switch$0 = i.compare($ceylon$language.Integer.instance(x as $dart$core.int));
+            if (switch$0 == $ceylon$language.smaller) {
+                return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) + 1));
+            } else if (switch$0 == $ceylon$language.larger) {
+                return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1));
+            } else if (switch$0 == $ceylon$language.equal) {
+                return i;
+            } else {
+                throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+            }
+        })());
+        return f;
+    }
+}
+void $package$recursiveDefaultCallableParameterDefault() {
+    if (!((new recursiveDefaultCallableParameterDefault$C()).returnX() == 5)) {
+        throw new $ceylon$language.AssertionError("Violated: C().returnX() == 5");
+    }
+    if (!((new recursiveDefaultCallableParameterDefault$C()).returnX(10) == 10)) {
+        throw new $ceylon$language.AssertionError("Violated: C().returnX(10) == 10");
+    }
+}
+
+void recursiveDefaultCallableParameterDefault() => $package$recursiveDefaultCallableParameterDefault();

@@ -1,0 +1,10 @@
+shared void callPriorNonDefaultedCallableParamFunction() {
+    void fun(
+            Integer a(Integer i),
+            Integer b(Integer i)) {
+        assert(a(1) == 1);
+        assert(b(1) == 1);
+    }
+    function id(Integer i) => i;
+    fun(id, id);
+}

@@ -1,0 +1,10 @@
+shared void superAndOuterSharedCallableParam() {
+    class Outer(shared String f(String s) => s + "_outer") {
+        shared class Inner() extends Outer((String s) => s + "_inner") {
+            shared String foo() => super.f("works");
+            shared String bar() => outer.f("works");
+        }
+    }
+    assert (Outer().Inner().foo() == "works_inner");
+    assert (Outer().Inner().bar() == "works_outer");
+}
