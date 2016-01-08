@@ -182,11 +182,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      part of the containing module's base package, with `.` replaced
      by `$`, and a trailing `$` if nonempty."
     shared
-    String identifierPackagePrefix(DeclarationModel | ParameterModel declaration);
+    String identifierPackagePrefix(DeclarationModel declaration);
 
     identifierPackagePrefix
-        =   memoize((DeclarationModel | ParameterModel declaration)
-            =>  if (!is ParameterModel declaration, isToplevel(declaration))
+        =   memoize((DeclarationModel declaration)
+            =>  if (isToplevel(declaration))
                 then (
                     CeylonIterable(getPackage(declaration).name)
                         .skip(getModule(declaration).name.size())
@@ -208,6 +208,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // TODO it might make sense to make this private, and have callers
         //      use `dartIdentifierForX()` methods that can also handle
         //      function <-> value mappings.
+
+        // If mapping a value to a value (e.g. hash->hashCode), use the Dart name. For
+        // non-Dart-values, we'll return the Ceylon name, which may be used for a
+        // synthetic field or setter.
+        if (declaration is ValueModel,
+            exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
+                mapped[1] == dartValue) {
+            return mapped[0];
+        }
 
         String classOrInterfacePrefix(DeclarationModel member)
             // for member classes/interfaces, prepend with outer type names
@@ -1175,15 +1184,24 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
 
+            "The mapped Dart program element name and type, if any. See
+             [[mappedFunctionOrValue]] for the list of mapped declarations.
+
+             `mapped` will be `null` if the declaration is currently being used within
+             an extends clause or default argument expressions. IOW, treat 'equals' and
+             'string' as values (ignore Function and Operator mapping)."
             value mapped
-                =   mappedFunctionOrValue(refinedDeclaration(declaration));
+                =   if (!ctx.withinConstructorSignatureSet.contains(container)
+                            && !ctx.withinConstructorDefaultsSet.contains(container))
+                    then mappedFunctionOrValue(refinedDeclaration(declaration))
+                    else null;
 
             value [name, dartElementType]
                 =   if (exists mapped, !setter || mapped[1] == dartValue) then [
                         // For mapped non-setters, or setters that are mapped to
                         // dartValues. This includes hash -> hashCode, but excludes
                         // string -> toString(), for which we want to use 'string' for
-                        // the setter. Same for dartPrefixOperator's like negated -> '-'
+                        // the setter. Same for dartPrefixOperators like negated -> '-'
                         mapped[0],
                         mapped[1]
                     ] else [
@@ -1249,6 +1267,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
     }
+
+    shared
+    Boolean valueMappedToNonField(ValueModel valueModel)
+        =>  if (exists mapped = mappedFunctionOrValue(valueModel.refinedDeclaration))
+            then mapped[1] != dartValue
+            else false;
 
     shared
     BoxingConversion? boxingConversionFor(

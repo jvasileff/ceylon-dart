@@ -161,12 +161,30 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-        // FIXME ok to just skip these?
-        //       Skipping for now to avoid dup declarations w/classes where init params
-        //       are declared in the body.
         value info = ValueDeclarationInfo(that);
+
+        // Avoid duplicate declarations where initializer parameters are
+        // declared in the body.
         if (info.declarationModel.parameter) {
             return [];
+        }
+
+        if (!info.declarationModel.formal
+                && !info.declarationModel.transient
+                && dartTypes.valueMappedToNonField(info.declarationModel)) {
+            // For Ceylon reference values that are translated to non-value Dart elements
+            // (like string -> toString()), we need a synthetic field for the reference
+            // (e.g. string) and a bridge method (e.g. toString()).
+            return [
+                generateFieldDeclaration {
+                    info;
+                    info.declarationModel;
+                },
+                generateMethodToReferenceForwarder {
+                    info;
+                    info.declarationModel;
+                }
+            ];
         }
 
         if (info.declarationModel.variable
@@ -228,9 +246,8 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value info = FunctionDeclarationInfo(that);
 
-        // FIXME ok to just skip these?
-        //       Skipping for now to avoid dup declarations w/classes where init params
-        //       are declared in the body.
+        // Avoid duplicate declarations where initializer parameters are
+        // declared in the body.
         if (info.declarationModel.parameter) {
             return [];
         }
@@ -287,85 +304,22 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (that.definition is Specifier) {
             // Similar to BaseGenerator.generateForValueDeclarationRaw()
 
-            "The invocable for the *getter*. If the dart type is not a dartValue, we'll
-             need to add a forwarding method or operator getter that returns the value
-             of the dart property used to store the value."
-            value invocableGetter
-                =   dartTypes.dartInvocable {
-                        info;
-                        info.declarationModel;
-                        false;
-                    };
-
-            "ClassOrInterface members always have simple identifiers."
-            assert (is DartSimpleIdentifier getterIdentifier
-                =   invocableGetter.reference);
-
-            DartMethodDeclaration? bridgeMethod;
-            DartSimpleIdentifier fieldIdentifer;
-
-            if (invocableGetter.elementType != dartValue) {
-                // Generate a forwarding method
-
-                "The invocable for the *setter* to determine the backing dart property which
-                 may be different than the getter if this member is mapped, e.g.
-                 string => toString()"
-                value invocableSetter
-                    =   dartTypes.dartInvocable {
-                            info;
-                            info.declarationModel;
-                            true;
-                        };
-
-                "ClassOrInterface members always have simple identifiers."
-                assert (is DartSimpleIdentifier setterIdentifier
-                    =   invocableSetter.reference);
-
-                // Note: the scope `info` is the ValueDefinition, not the class body
-                // where this method actually goes.
-
-                fieldIdentifer
-                    =   setterIdentifier;
-
-                bridgeMethod
-                    =   DartMethodDeclaration {
-                            false;
-                            null;
-                            generateFunctionReturnType {
-                                info;
-                                info.declarationModel;
-                            };
-                            null;
-                            invocableGetter.elementType is DartOperator;
-                            getterIdentifier;
-                            dartFormalParameterListEmpty;
-                            DartExpressionFunctionBody {
-                                false;
-                                // boxing and casting should never be required...
-                                setterIdentifier;
-                            };
-                        };
-            }
-            else {
-                fieldIdentifer = getterIdentifier;
-                bridgeMethod = null;
-            }
+            "If the Dart element type for the *getter* is not dartValue, we'll need to add
+             a forwarding method or operator getter that returns the value of the dart
+             property used to store the value."
+            value needsForwarder
+                =   dartTypes.valueMappedToNonField(info.declarationModel);
 
             return [
-                DartFieldDeclaration {
-                    false;
-                    DartVariableDeclarationList {
-                        null;
-                        dartTypes.dartTypeNameForDeclaration {
-                            info;
-                            info.declarationModel;
-                        };
-                        [DartVariableDeclaration {
-                            fieldIdentifer;
-                        }];
-                    };
+                generateFieldDeclaration {
+                    info;
+                    info.declarationModel;
                 },
-                bridgeMethod
+                needsForwarder then
+                generateMethodToReferenceForwarder {
+                    info;
+                    info.declarationModel;
+                }
             ].coalesced.sequence();
         }
 

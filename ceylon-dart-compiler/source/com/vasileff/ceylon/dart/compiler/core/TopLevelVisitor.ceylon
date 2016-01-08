@@ -415,34 +415,30 @@ class TopLevelVisitor(CompilationContext ctx)
                 }
                 else null;
 
+        value parameterModelModels
+            =   (parameters?.parameters else []).collect {
+                    (p) => parameterInfo(p).parameterModel.model;
+                };
+
         "Fields to capture initializer parameters. See also
          [[ClassMemberTransformer.transformValueDefinition]]."
         value fieldsForInitializerParameters
-            =   (parameters?.parameters else [])
-                .map {
-                    (p) => parameterInfo(p).parameterModel.model;
-                }.filter {
+            =   parameterModelModels
+                .filter {
                     // Don't generate fields for the Callable for *shared* Callable
                     // Parameters; they will have a synthetic name and are handled below.
                     (model) => !model is FunctionModel || !model.shared;
                 }.collect {
-                    (model) => DartFieldDeclaration {
-                        false;
-                            DartVariableDeclarationList {
-                                null;
-                                dartTypes.dartTypeNameForDeclaration {
-                                    scope;
-                                    model;
-                                };
-                                [DartVariableDeclaration {
-                                    DartSimpleIdentifier {
-                                        dartTypes.getName(model);
-                                    };
-                                    initializer = null;
-                                }];
-                            };
-                        };
-                    };
+                    (model) => generateFieldDeclaration(scope, model);
+                };
+
+        "If the Dart element type for the *getter* is not dartValue, we'll need to add
+         a forwarding method or operator getter that returns the value of the dart
+         property used to store the value."
+        value getterMethodBridgesForCeylonValues
+            =   [for (model in parameterModelModels) if (is ValueModel model) model]
+                .filter(dartTypes.valueMappedToNonField)
+                .collect((model) => generateMethodToReferenceForwarder(scope, model));
 
         "All shared callable parameters in the class initializer parameter list."
         value sharedCallableParameterInfos
@@ -692,6 +688,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 captureFields,
                 constructors,
                 fieldsForInitializerParameters,
+                getterMethodBridgesForCeylonValues,
                 fieldsForCallableValues,
                 members,
                 callableParameterForwarders,

@@ -1,0 +1,38 @@
+shared void mappedInitializerParameters() {
+    class C(shared actual default String string = "") {}
+    class D(shared actual variable String string = "s", String a = string)
+            extends C(string) {
+        shared void test() {
+            assert (a == "s");
+            assert (string == "s");
+            string = "ss";
+            assert (string == "ss");
+            //assert (super.string == "s"); // CURRENTLY BROKEN!
+        }
+    }
+    class E(shared actual default Integer hash = 1) {}
+    class F(shared actual variable Integer hash = 2,
+            Integer a = hash)
+            extends E(hash) {
+        shared void test() {
+            assert (a == 2);
+            assert (hash == 2);
+            hash = 3;
+            assert (hash == 3);
+            //assert (super.hash == 3); // CURRENTLY BROKEN!
+        }
+    }
+    class G(shared actual default Boolean equals(Object other) => false) {}
+    class H(shared actual Boolean equals(Object other) => true,
+            Boolean(Object) a = equals)
+            extends G(equals) {
+        shared void test() {
+            assert (a("") == true);
+            assert (equals("") == true);
+            assert (super.equals("") == true);
+        }
+    }
+    D().test();
+    F().test();
+    H().test();
+}

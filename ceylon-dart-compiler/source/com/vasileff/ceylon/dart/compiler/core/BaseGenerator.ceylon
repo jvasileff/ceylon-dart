@@ -110,7 +110,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSwitchStatement,
     DartListLiteral,
     createNullSafeExpression,
-    createExpressionEvaluationWithSetup
+    createExpressionEvaluationWithSetup,
+    DartFieldDeclaration,
+    DartMethodDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     FunctionExpressionInfo,
@@ -4702,6 +4704,82 @@ class BaseGenerator(CompilationContext ctx)
                     "sequence";
                     [];
                 };
+
+    "Generate a Dart field declaration for the Ceylon function or value member. This
+     may be:
+
+        - just a regular field for Ceylon value, or
+
+        - a synthetic field for mapped members, such as 'string', which will also need a
+          'toString()' getter, or
+
+        - a field to hold the Callable for a non-shared callable parameter"
+    shared
+    DartFieldDeclaration generateFieldDeclaration
+            (DScope scope, FunctionOrValueModel valueModel)
+        =>  DartFieldDeclaration {
+                false;
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        scope;
+                        valueModel;
+                    };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            // could be a backing field for dart functions like
+                            // toString(), and therefore may be named differently
+                            // than the getter. getName() gives us 'string', and also
+                            // takes care of mapping 'hash' to 'hashCode'
+                            dartTypes.getName(valueModel);
+                        };
+                    }];
+                };
+            };
+
+    "Generate a getter method for a Ceylon value that maps to a Dart method, such as
+     `toString()`."
+    shared
+    DartMethodDeclaration generateMethodToReferenceForwarder
+            (DScope scope, ValueModel declarationModel) {
+
+        "The invocable for the *getter* the Ceylon value maps to."
+        value invocableGetter
+            =   dartTypes.dartInvocable {
+                    scope;
+                    declarationModel;
+                    false;
+                };
+
+        "Don't generate bridge methods for values that can be implemented as values."
+        assert (invocableGetter.elementType != dartValue);
+
+        "ClassOrInterface members always have simple identifiers."
+        assert (is DartSimpleIdentifier getterIdentifier
+            =   invocableGetter.reference);
+
+        return DartMethodDeclaration {
+            false;
+            null;
+            generateFunctionReturnType {
+                scope;
+                declarationModel;
+            };
+            null;
+            invocableGetter.elementType is DartOperator;
+            getterIdentifier;
+            dartFormalParameterListEmpty;
+            DartExpressionFunctionBody {
+                false;
+                // boxing and casting should never be required...
+                DartSimpleIdentifier {
+                    // The backing field uses the normal Ceylon name, except
+                    // for hash->hashCode, which getName() handles.
+                    dartTypes.getName(declarationModel);
+                };
+            };
+        };
+    }
 
     shared
     DartExpression generateSequentialFromComprehension(Comprehension that)

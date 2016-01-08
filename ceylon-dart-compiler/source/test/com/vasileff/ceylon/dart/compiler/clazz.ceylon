@@ -146,4 +146,12 @@ object clazz {
     shared test
     void mappingsForNegated()
         =>  compileAndCompare2("clazz/mappingsForNegated");
+
+    shared test
+    void mappedMembersAsParameters()
+        =>  compileAndCompare2("clazz/mappedMembersAsParameters");
+
+    shared test
+    void mappedMembersAsDeclarations()
+        =>  compileAndCompare2("clazz/mappedMembersAsDeclarations");
 }
