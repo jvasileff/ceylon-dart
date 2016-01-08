@@ -436,9 +436,21 @@ class TopLevelVisitor(CompilationContext ctx)
          a forwarding method or operator getter that returns the value of the dart
          property used to store the value."
         value getterMethodBridgesForCeylonValues
-            =   [for (model in parameterModelModels) if (is ValueModel model) model]
+            =   {for (model in parameterModelModels) if (is ValueModel model) model}
                 .filter(dartTypes.valueMappedToNonField)
                 .collect((model) => generateMethodToReferenceForwarder(scope, model));
+
+        "A getter and setter to a sythentic field, if necessary.
+         See [[generateBridgesToSyntheticField]]"
+        value bridgesToSyntheticFields
+            =   {for (model in parameterModelModels)
+                   if (is ValueModel model,
+                        model.default
+                        && !model.transient)
+                     model}
+                .flatMap((model) => generateBridgesToSyntheticField(scope, model))
+                .sequence();
+
 
         "All shared callable parameters in the class initializer parameter list."
         value sharedCallableParameterInfos
@@ -689,6 +701,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 constructors,
                 fieldsForInitializerParameters,
                 getterMethodBridgesForCeylonValues,
+                bridgesToSyntheticFields,
                 fieldsForCallableValues,
                 members,
                 callableParameterForwarders,
@@ -758,17 +771,17 @@ class TopLevelVisitor(CompilationContext ctx)
                     // Skip assignments for *shared* callable parameters; they will have
                     // a synthetic name and are handled below.
                     (model) => !model is FunctionModel || !model.shared;
-                }.map {
-                    (model) => DartSimpleIdentifier(dartTypes.getName(model));
                 }.collect {
-                    (id) => DartExpressionStatement {
+                    (model) => DartExpressionStatement {
                         DartAssignmentExpression {
                             DartPrefixedIdentifier {
                                 DartSimpleIdentifier("this");
-                                id;
+                                // The field for the Callable or the possibly synthetic
+                                // field for the value
+                                dartTypes.identifierForField(model);
                             };
                             DartAssignmentOperator.equal;
-                            id;
+                            DartSimpleIdentifier(dartTypes.getName(model));
                         };
                     };
                 };

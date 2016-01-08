@@ -68,7 +68,10 @@ class ClassStatementTransformer(CompilationContext ctx)
     "The value may be a class member. So:
 
      1. If this is a getter (has a LazySpecifier), ignore
-     2. Otherwise, assign the value to the member (but don't declare a new variable)"
+     2. Otherwise, assign the value to the member (but don't declare a new variable)
+
+     Note: for item 2, we need to assign to a synthetic field if the declaration is
+     overridable (not `default`)."
     shared actual
     DartStatement[] transformValueDefinition(ValueDefinition that) {
         value info = ValueDefinitionInfo(that);
@@ -78,25 +81,23 @@ class ClassStatementTransformer(CompilationContext ctx)
             return [];
         }
         case (is Specifier) {
-            // Basically the same as StatementTransformer.transformAssignmentStatement()
-
-            value invocable
-                =   dartTypes.invocableForBaseExpression {
-                        info;
-                        info.declarationModel;
-                        true;
-                    };
+            // Similar to StatementTransformer.transformAssignmentStatement(), but we
+            // can get away with using getName() and DartAssignmentExpression here since
+            // we'll never be dealing with a capture, something that needs 'this.', etc.
 
             return withLhsNoType {
                 () => [DartExpressionStatement {
-                    invocable.expressionForInvocation {
-                        [withLhs {
+                    DartAssignmentExpression {
+                        // The possibly synthetic field for the value
+                        dartTypes.identifierForField(info.declarationModel);
+                        DartAssignmentOperator.equal;
+                        withLhs {
                             null;
                             info.declarationModel;
                             () => that.definition.expression.transform {
                                 expressionTransformer;
                             };
-                        }];
+                        };
                     };
                 }];
             };

@@ -304,10 +304,18 @@ class ClassMemberTransformer(CompilationContext ctx)
         if (that.definition is Specifier) {
             // Similar to BaseGenerator.generateForValueDeclarationRaw()
 
+            "Bridge to a synthetic field for this value if one exists, and one will
+             for `default` and non-transient values. Note: [[generateFieldDeclaration]]
+             is responsible for declaring the synthetic field."
+            value bridgesToSyntheticField
+                =   if (info.declarationModel.default)
+                    then generateBridgesToSyntheticField(info, info.declarationModel)
+                    else [];
+
             "If the Dart element type for the *getter* is not dartValue, we'll need to add
              a forwarding method or operator getter that returns the value of the dart
              property used to store the value."
-            value needsForwarder
+            value needBridgeForMappedMember
                 =   dartTypes.valueMappedToNonField(info.declarationModel);
 
             return [
@@ -315,11 +323,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                     info;
                     info.declarationModel;
                 },
-                needsForwarder then
+                needBridgeForMappedMember then
                 generateMethodToReferenceForwarder {
                     info;
                     info.declarationModel;
-                }
+                },
+                *bridgesToSyntheticField
             ].coalesced.sequence();
         }
 

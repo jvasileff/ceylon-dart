@@ -1075,6 +1075,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  supertypeDeclarations(by).any((d)
             =>  ctx.captures.contains(d->target));
 
+    "A stream containing the given [[declaration]] followed by declarations for all
+     of [[declaration]]'s ancestors, including all declarations and control blocks.
+     See also [[ancestorChain]]."
+    {DeclarationModel|ControlBlockModel+} ancestorDeclarations
+            (DeclarationModel declaration)
+        =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)
+            =>  if (is DeclarationModel|ControlBlockModel result = d.container)
+                then result
+                else finished);
+
     """
        Produces an identifier of the form "$capture$" followed by each declaration's name
        separated by '$' starting with the most distant ancestor of [[declaration]]—the
@@ -1085,25 +1095,43 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        since declarations in sibling control blocks are not visible to each other.
     """
     shared
-    DartSimpleIdentifier identifierForCapture(FunctionOrValueModel declaration) {
-        value declarations
-            =   loop<DeclarationModel|ControlBlockModel>(declaration)((d)
-                =>  if (is DeclarationModel|ControlBlockModel result = d.container)
-                    then result
-                    else finished);
+    DartSimpleIdentifier identifierForCapture(FunctionOrValueModel declaration)
+        =>  DartSimpleIdentifier {
+                ancestorDeclarations(declaration)
+                    .collect((d)
+                        =>  if (is ControlBlockModel d)
+                            then ""
+                            else getName(d))
+                    .reversed
+                    .interpose("$")
+                    .fold("$capture$")(plus);
+            };
 
-        return
-        DartSimpleIdentifier {
-            declarations
-                .collect((d)
-                    =>  if (is ControlBlockModel d)
-                        then ""
-                        else getName(d))
-                .reversed
-                .interpose("$")
-                .fold("$capture$")(plus);
-        };
-    }
+    "The identifier for the Dart field to store the Ceylon Callable or Value."
+    see(`function identifierForSyntheticField`)
+    see(`function BaseGenerator.generateBridgesToSyntheticField`)
+    shared
+    DartSimpleIdentifier identifierForField(FunctionOrValueModel valueModel)
+        =>  if (is ValueModel valueModel,
+                valueRequiresSyntheticField(valueModel))
+            then identifierForSyntheticField(valueModel)
+            else DartSimpleIdentifier(getName(valueModel));
+
+    "The identifier for synthetic Dart field for a Ceylon Value."
+    see(`function BaseGenerator.generateBridgesToSyntheticField`)
+    shared
+    DartSimpleIdentifier identifierForSyntheticField(ValueModel declaration)
+        =>  DartSimpleIdentifier {
+                "_$s" +
+                ancestorDeclarations(declaration)
+                    .collect((d)
+                        =>  if (is ControlBlockModel d)
+                            then ""
+                            else getName(d))
+                    .reversed
+                    .interpose("$")
+                    .fold("$")(plus);
+            };
 
     "Returns a [[DartInvocable]] suitable for use from [[scope]].
 
@@ -1273,6 +1301,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  if (exists mapped = mappedFunctionOrValue(valueModel.refinedDeclaration))
             then mapped[1] != dartValue
             else false;
+
+    shared
+    Boolean valueRequiresSyntheticField(ValueModel valueModel)
+        =>  !valueModel.transient && valueModel.default;
 
     shared
     BoxingConversion? boxingConversionFor(
