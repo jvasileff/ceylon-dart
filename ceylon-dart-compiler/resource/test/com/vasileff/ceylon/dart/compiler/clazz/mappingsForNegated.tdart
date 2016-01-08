@@ -50,11 +50,11 @@ class negatedReference$A implements $ceylon$language.Invertible {
 class negatedReference$B  extends negatedReference$A {
     negatedReference$B([$dart$core.int _$id]) : super(_$id) {
         this._$id = _$id;
-        negated = new negatedReference$A(1);
+        _$s$negatedReference$negatedReference$B$negated = new negatedReference$A(1);
     }
     $dart$core.int _$id;
-    negatedReference$A negated;
-    negatedReference$A operator -() => negated;
+    negatedReference$A _$s$negatedReference$negatedReference$B$negated;
+    negatedReference$A operator -() => _$s$negatedReference$negatedReference$B$negated;
     $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
 }
 void $package$negatedReference() {
@@ -78,11 +78,14 @@ class negatedReferenceVariable$A implements $ceylon$language.Invertible {
 class negatedReferenceVariable$B  extends negatedReferenceVariable$A {
     negatedReferenceVariable$B([$dart$core.int _$id]) : super(_$id) {
         this._$id = _$id;
-        negated = new negatedReferenceVariable$A(1);
+        _$s$negatedReferenceVariable$negatedReferenceVariable$B$negated = new negatedReferenceVariable$A(1);
     }
     $dart$core.int _$id;
-    negatedReferenceVariable$A negated;
-    negatedReferenceVariable$A operator -() => negated;
+    negatedReferenceVariable$A _$s$negatedReferenceVariable$negatedReferenceVariable$B$negated;
+    negatedReferenceVariable$A operator -() => _$s$negatedReferenceVariable$negatedReferenceVariable$B$negated;
+    set negated(negatedReferenceVariable$A $v) {
+        _$s$negatedReferenceVariable$negatedReferenceVariable$B$negated = $v;
+    }
     $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
 }
 void $package$negatedReferenceVariable() {

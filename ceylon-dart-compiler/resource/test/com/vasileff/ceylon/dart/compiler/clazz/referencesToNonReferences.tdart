@@ -3,11 +3,16 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C {
     C() {
-        c1 = "";
-        c2 = "";
+        _$s$C$c1 = "";
+        _$s$C$c2 = "";
     }
-    $dart$core.String c1;
-    $dart$core.String c2;
+    $dart$core.String _$s$C$c1;
+    $dart$core.String get c1 => _$s$C$c1;
+    $dart$core.String _$s$C$c2;
+    $dart$core.String get c2 => _$s$C$c2;
+    set c2($dart$core.String $v) {
+        _$s$C$c2 = $v;
+    }
 }
 class D  extends C {
     D() {}

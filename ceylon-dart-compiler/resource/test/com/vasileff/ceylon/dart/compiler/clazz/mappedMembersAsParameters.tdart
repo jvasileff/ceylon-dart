@@ -10,10 +10,10 @@ class mappedInitializerParameters$C {
     })());
     mappedInitializerParameters$C.$s([$dart$core.List a]) : this.$w(a[0]);
     mappedInitializerParameters$C.$w([$dart$core.String string]) {
-        this.string = string;
+        this._$s$mappedInitializerParameters$mappedInitializerParameters$C$string = string;
     }
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+    $dart$core.String _$s$mappedInitializerParameters$mappedInitializerParameters$C$string;
+    $dart$core.String toString() => _$s$mappedInitializerParameters$mappedInitializerParameters$C$string;
 }
 class mappedInitializerParameters$D  extends mappedInitializerParameters$C {
     mappedInitializerParameters$D([$dart$core.Object string = $ceylon$language.dart$default, $dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
@@ -44,6 +44,9 @@ class mappedInitializerParameters$D  extends mappedInitializerParameters$C {
         if (!(toString() == "ss")) {
             throw new $ceylon$language.AssertionError("Violated: string == \"ss\"");
         }
+        if (!(super.toString() == "s")) {
+            throw new $ceylon$language.AssertionError("Violated: super.string == \"s\"");
+        }
     }
 }
 class mappedInitializerParameters$E {
@@ -55,9 +58,10 @@ class mappedInitializerParameters$E {
     })());
     mappedInitializerParameters$E.$s([$dart$core.List a]) : this.$w(a[0]);
     mappedInitializerParameters$E.$w([$dart$core.int hashCode]) {
-        this.hashCode = hashCode;
+        this._$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode = hashCode;
     }
-    $dart$core.int hashCode;
+    $dart$core.int _$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode;
+    $dart$core.int get hashCode => _$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode;
 }
 class mappedInitializerParameters$F  extends mappedInitializerParameters$E {
     mappedInitializerParameters$F([$dart$core.Object hashCode = $ceylon$language.dart$default, $dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
@@ -86,6 +90,9 @@ class mappedInitializerParameters$F  extends mappedInitializerParameters$E {
         hashCode = 3;
         if (!(hashCode == 3)) {
             throw new $ceylon$language.AssertionError("Violated: hash == 3");
+        }
+        if (!(super.hashCode == 2)) {
+            throw new $ceylon$language.AssertionError("Violated: super.hash == 2");
         }
     }
 }

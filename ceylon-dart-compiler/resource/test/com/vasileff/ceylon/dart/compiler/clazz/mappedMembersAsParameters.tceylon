@@ -7,7 +7,7 @@ shared void mappedInitializerParameters() {
             assert (string == "s");
             string = "ss";
             assert (string == "ss");
-            //assert (super.string == "s"); // CURRENTLY BROKEN!
+            assert (super.string == "s");
         }
     }
     class E(shared actual default Integer hash = 1) {}
@@ -19,7 +19,7 @@ shared void mappedInitializerParameters() {
             assert (hash == 2);
             hash = 3;
             assert (hash == 3);
-            //assert (super.hash == 3); // CURRENTLY BROKEN!
+            assert (super.hash == 2);
         }
     }
     class G(shared actual default Boolean equals(Object other) => false) {}

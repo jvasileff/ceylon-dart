@@ -23,9 +23,10 @@ class run$A {
 }
 class run$C {
     run$C() {
-        other = 1;
+        _$s$run$run$C$other = 1;
     }
-    $dart$core.int other;
+    $dart$core.int _$s$run$run$C$other;
+    $dart$core.int get other => _$s$run$run$C$other;
     void foo() {
         $ceylon$language.Callable q = (() {
             $ceylon$language.Integer $r = $ceylon$language.Integer.instance(other);
