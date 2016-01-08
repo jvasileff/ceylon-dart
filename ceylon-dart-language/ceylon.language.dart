@@ -362,7 +362,7 @@ class ArraySequence implements Sequence {
         }
     }
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -824,6 +824,7 @@ abstract class Comparison {
         this.string = string;
     }
     $dart$core.String string;
+    $dart$core.String toString() => string;
     Comparison get reversed;
 }
 class equal_  extends Comparison {
@@ -1403,7 +1404,7 @@ class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
                         Character next;
                         next = next$8 as Character;
                         doElse$7 = false;
-                        _$peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
+                        _$peekedWasSeparator = Boolean.nativeValue($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting.f(next) as Boolean);
                     }
                 }
                 if (doElse$7) {
@@ -1684,7 +1685,7 @@ abstract class Empty implements Sequential, Ranged {
 class empty_ implements Empty {
     empty_() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Empty.$get$string(this);
     $dart$core.Object getFromLast([$dart$core.int index]) => Empty.$getFromLast(this, index);
     $dart$core.Object getFromFirst([$dart$core.int index]) => Empty.$getFromFirst(this, index);
@@ -2152,7 +2153,7 @@ abstract class impl$BaseIterator implements Iterator {
 abstract class impl$BaseMap implements Map {
     impl$BaseMap() {}
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => Map.$getOrDefault(this, key, $default);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
@@ -2227,7 +2228,7 @@ abstract class impl$BaseMap implements Map {
 abstract class impl$BaseList implements SearchableList {
     impl$BaseList() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool occursAt([$dart$core.int index, $dart$core.Object element]) => SearchableList.$occursAt(this, index, element);
     Iterable occurrences([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurrences(this, element, from, length);
@@ -2328,7 +2329,7 @@ abstract class impl$BaseList implements SearchableList {
 abstract class impl$BaseCharacterList implements SearchableList {
     impl$BaseCharacterList() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool occursAt([$dart$core.int index, $dart$core.Object element]) => SearchableList.$occursAt(this, index, element);
     Iterable occurrences([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurrences(this, element, from, length);
@@ -2429,7 +2430,7 @@ abstract class impl$BaseCharacterList implements SearchableList {
 abstract class impl$BaseSequence implements Sequence {
     impl$BaseSequence() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -4590,7 +4591,7 @@ class Iterable$summarize$$anonymous$36_ implements Map {
         }
     })();
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
@@ -5712,7 +5713,7 @@ class ElementEntry implements Sequence {
     }
     Iterator iterator() => new ElementEntry$$anonymous$38_(this);
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -5878,7 +5879,7 @@ class List$collect$list_ implements List {
     $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (index >= 0) && (index < size) ? $capture$List$collect$collecting.f(List.$_$getElement($outer$ceylon$language$List, index)) : null;
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -6008,7 +6009,7 @@ class List$Indexes implements List {
     })();
     Iterator iterator() => new List$Indexes$$anonymous$3_(this);
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
@@ -6137,7 +6138,7 @@ class List$Rest implements List {
         return new List$Rest$$anonymous$4_(this, o);
     })();
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -6266,7 +6267,7 @@ class List$Sublist implements List {
         return new List$Sublist$$anonymous$5_(this, iter);
     })();
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -6373,7 +6374,7 @@ class List$Repeat implements List {
     Iterator iterator() => new CycledIterator($outer$ceylon$language$List, _$times);
     $dart$core.String toString() => ((("(" + $outer$ceylon$language$List.toString()) + ").repeat(") + _$times.toString()) + ")";
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
@@ -6524,7 +6525,7 @@ class List$Patch implements List {
         return new List$Patch$$anonymous$6_(this, iter, patchIter);
     })();
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -6667,7 +6668,7 @@ class List$Reversed implements List {
         return new List$Reversed$$anonymous$7_(this, outerList);
     })();
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get([Integer index]) => List.$get(this, index);
     $dart$core.Object getFromLast([$dart$core.int index]) => List.$getFromLast(this, index);
@@ -6881,7 +6882,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         }
     }
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final List $this]) {
+    static $dart$core.int $get$hashCode([final List $this]) {
         $dart$core.int hash = 1;
         {
             $dart$core.Object element$14;
@@ -7576,7 +7577,7 @@ class Map$mapItems$$anonymous$3_ implements Map {
     $dart$core.int get size => $outer$ceylon$language$Map.size;
     Map clone() => $outer$ceylon$language$Map.clone().mapItems($capture$Map$mapItems$mapping);
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
@@ -7692,7 +7693,7 @@ class Map$filterKeys$$anonymous$5_ implements Map {
     Iterator iterator() => $outer$ceylon$language$Map.filter($package$forKey($capture$Map$filterKeys$filtering)).iterator();
     Map clone() => $outer$ceylon$language$Map.clone().filterKeys($capture$Map$filterKeys$filtering);
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
@@ -7803,7 +7804,7 @@ class Map$patch$$anonymous$6_ implements Map {
     $dart$core.int get size => $outer$ceylon$language$Map.size + $capture$Map$patch$other.keys.count($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($outer$ceylon$language$Map.defines($0)))));
     Iterator iterator() => new ChainedIterator($capture$Map$patch$other, $outer$ceylon$language$Map.filter($package$not(new dart$Callable(([$dart$core.Object $0]) => Boolean.instance($capture$Map$patch$other.contains($0))))));
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
     Collection get keys => Map.$get$keys(this);
@@ -7948,7 +7949,7 @@ class Map$coalescedMap$$anonymous$7_ implements Map {
     })).iterator();
     Map clone() => $outer$ceylon$language$Map.clone().coalescedMap;
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool contains([$dart$core.Object entry]) => Map.$contains(this, entry);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
@@ -8145,7 +8146,7 @@ abstract class Map implements Collection, Correspondence {
         }
     }
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Map $this]) {
+    static $dart$core.int $get$hashCode([final Map $this]) {
         $dart$core.int hashCode = 0;
         {
             $dart$core.Object element$16;
@@ -8214,7 +8215,7 @@ class emptyMap_ implements Map {
     Iterable by([$dart$core.int step]) => this;
     void each([Callable step]) {}
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
-    $dart$core.int get hashCode => Map.$get$hash(this);
+    $dart$core.int get hashCode => Map.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Map.$defaultNullElements(this, defaultValue);
     Map inverse() => Map.$inverse(this);
@@ -8563,7 +8564,7 @@ class Measure  extends Range {
             })());
         }
     }
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);
@@ -9895,7 +9896,7 @@ abstract class Range implements Sequence {
     $dart$core.bool get decreasing;
     Range get coalesced => this;
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -10477,7 +10478,7 @@ class Sequence$collect$list_ implements List {
     $dart$core.int size;
     $dart$core.Object getFromFirst([$dart$core.int index]) => (index >= 0) && (index < size) ? $capture$Sequence$collect$collecting.f(Sequence.$_$getElement($outer$ceylon$language$Sequence, index)) : null;
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.Object get first => List.$get$first(this);
     $dart$core.Object get last => List.$get$last(this);
@@ -10621,7 +10622,7 @@ class Sequence$Reverse implements Sequence {
         return new Sequence$Reverse$$anonymous$0_(this, outerList);
     })();
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -10727,7 +10728,7 @@ class Sequence$Repeat implements Sequence {
     })();
     Iterator iterator() => new CycledIterator($outer$ceylon$language$Sequence, _$times);
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -11008,7 +11009,7 @@ class JoinedSequence implements Sequence {
     }
     Iterator iterator() => new ChainedIterator(_$firstSeq, _$secondSeq);
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.String toString() => Sequence.$get$string(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     $dart$core.int get lastIndex => Sequence.$get$lastIndex(this);
@@ -11741,7 +11742,7 @@ abstract class Set implements Collection {
         return false;
     }
     $dart$core.int get hashCode;
-    static $dart$core.int $get$hash([final Set $this]) {
+    static $dart$core.int $get$hashCode([final Set $this]) {
         $dart$core.int hashCode = 0;
         {
             $dart$core.Object element$8;
@@ -11767,7 +11768,7 @@ class set$$anonymous$4_ implements Set {
             $dart$core.bool doElse$11 = true;
             if (!(null == current)) {
                 doElse$11 = false;
-                return ($capture$set$choosing as Callable).f(current, element);
+                return $capture$set$choosing.f(current, element);
             }
             if (doElse$11) {
                 return element;
@@ -11781,7 +11782,7 @@ class set$$anonymous$4_ implements Set {
     $dart$core.bool get empty => _$elements.empty;
     Set clone() => this;
     $dart$core.bool operator ==($dart$core.Object that) => Set.$equals(this, that);
-    $dart$core.int get hashCode => Set.$get$hash(this);
+    $dart$core.int get hashCode => Set.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     $dart$core.bool superset([Set set]) => Set.$superset(this, set);
     $dart$core.bool subset([Set set]) => Set.$subset(this, set);
@@ -11889,7 +11890,7 @@ class emptySet_ implements Set {
     Iterable by([$dart$core.int step]) => this;
     void each([Callable step]) {}
     $dart$core.bool operator ==($dart$core.Object that) => Set.$equals(this, that);
-    $dart$core.int get hashCode => Set.$get$hash(this);
+    $dart$core.int get hashCode => Set.$get$hashCode(this);
     $dart$core.String toString() => Collection.$get$string(this);
     Iterable defaultNullElements([$dart$core.Object defaultValue]) => Set.$defaultNullElements(this, defaultValue);
     Iterable get distinct => Set.$get$distinct(this);
@@ -12471,7 +12472,7 @@ class Span  extends Range {
             }
         }
     }
-    $dart$core.int get hashCode => List.$get$hash(this);
+    $dart$core.int get hashCode => List.$get$hashCode(this);
     $dart$core.bool get empty => Sequence.$get$empty(this);
     Range get keys => Sequence.$get$keys(this);
     Range indexes() => Sequence.$indexes(this);
