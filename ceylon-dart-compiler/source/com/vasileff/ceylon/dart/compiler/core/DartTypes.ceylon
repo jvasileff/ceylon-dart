@@ -284,13 +284,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "The Dart library prefix for the Ceylon module."
     shared
     String moduleImportPrefix
-            (DScope|Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration);
-
-    // FIXME uneffective memoization
-    moduleImportPrefix
-        =   memoize((DScope | Node | ElementModel | UnitModel
-                    | ModuleModel | ScopeModel declaration)
-            =>  package.moduleImportPrefix(getModule(declaration)));
+            (DScope|Node|ElementModel|UnitModel|ModuleModel|ScopeModel declaration)
+        =>  package.moduleImportPrefix(getModule(declaration));
 
     shared
     String getPackagePrefixedName(FunctionOrValueModel declaration) {
@@ -394,10 +389,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     DartSimpleIdentifier("dart$default");
                 };
 
+    // FIXME don't hardcode package
     shared
     DartTypeModel dartLazyIterable
         =>  DartTypeModel("$ceylon$language", "LazyIterable");
 
+    // FIXME don't hardcode package
     shared
     DartTypeModel dartFunctionIterableFactory
         =>  DartTypeModel("$ceylon$language", "functionIterable");
@@ -410,7 +407,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartTypeModel dartBoolModel
         =   DartTypeModel("$dart$core", "bool");
 
-// FIXME shouldn't have hardcoded package!
+    // FIXME don't hardcode package
     shared
     DartTypeModel dartCallableModel
         =>  DartTypeModel("$ceylon$language", "dart$Callable");
