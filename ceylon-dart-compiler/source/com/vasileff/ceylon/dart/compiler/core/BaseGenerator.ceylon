@@ -4624,10 +4624,8 @@ class BaseGenerator(CompilationContext ctx)
     generateAssignment(
             DScope scope,
             BaseExpression | QualifiedExpression target,
+            TypeOrNoType expressionType,
             DartExpression() rhsExpression) {
-
-        // TODO Make sure setters return the new value, or handle that here when there
-        //      is a lhs type.
 
         TypeModel valueType;
         ValueModel valueDeclaration;
@@ -4763,23 +4761,65 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
 
-        // Using the Value's type for the rhs, which may be less precise than the rhs
-        // expressions type, and may result in unnecessary casts.
-        //
-        // Dart and Ceylon both use the rhs type as the type for assignment expressions,
-        // but 1) we don't have it, and 2) it wouldn't be useful for invocations of
-        // static interface setters and setter functions for Setters that occur inside
-        // Functions, since they are not Dart assignments (their return types are that of
-        // the Value).
-
-        // FIXME the less precise rhs type also results in failed type coercion for the
-        //       code below. So we really need the rhs type, and to perform a double
-        //       cast if calling a static interface method.
+        // The Ceylon type of assignment expressions is the type of the right operand.
+        // The right operand's type is also the type of Dart assignment expressions.
+        // However, not all Ceylon assignment expressions translate to Dart assignment
+        // expressions (some are function calls.) And, we need to support code like:
         //
         //      shared void run() {
         //          variable Anything x = null;
-        //          print(1.0 + (x = 1));
+        //          // note the coercion
+        //          Float two = 1.0 + (x = 1);
+        //          assert (x is Integer);
         //      }
+        //
+        // A few notes:
+        //
+        //  1.  withBoxing() always needs the exact type used by the typechecker in order
+        //      for Float->Integer coercions to work. We can't get away with using a more
+        //      use a more general type.
+        //
+        //  2.  when 'invocable.invocable.elementType == dartFunction', the type of the
+        //      dart expression for the assignment will be that of the getter declaration.
+        //      The code below is optimized for this scenario.
+        //
+        //  3.  when 'invocable.invocable.elementType == dartValue', the type of the
+        //      dart assignment expression will be whatever the rhs of the assignment
+        //      winds up being, which is the result of boxing/casting/coercion of the
+        //      innermost "withLhs" that forms the right operand of the assignment. This
+        //      may be more specific than the type we are using (see item 2), but the only
+        //      downside is the potential of an extra cast in the inner 'withBoxing()'.
+        //
+        // For dart assignment expressions, we could probably just use withBoxingCustom()
+        // with the right operand's type and the valueDeclaration's erasure. But that
+        // would still leave something on the table for erasedToObject values. And, let's
+        // not push our luck right now.
+
+        if (!ctx.lhsTypeTop is NoType, !is NoType expressionType) {
+            return withBoxingCustom {
+                scope;
+                expressionType;
+                dartTypes.erasedToNative(valueDeclaration);
+                dartTypes.erasedToObject(valueDeclaration);
+                withLhsCustom {
+                    expressionType;
+                    dartTypes.erasedToNative(valueDeclaration);
+                    dartTypes.erasedToObject(valueDeclaration);
+                    () => withBoxing {
+                        scope;
+                        valueType;
+                        valueDeclaration;
+                        invocable.expressionForInvocation {
+                            [withLhs {
+                                valueType;
+                                valueDeclaration;
+                                rhsExpression;
+                            }];
+                        };
+                    };
+                };
+            };
+        }
 
         return withBoxing {
             scope;

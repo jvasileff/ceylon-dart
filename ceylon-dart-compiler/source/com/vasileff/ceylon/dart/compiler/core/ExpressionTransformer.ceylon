@@ -1304,12 +1304,13 @@ class ExpressionTransformer(CompilationContext ctx)
 
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
-        value info = nodeInfo(that);
+        value info = expressionInfo(that);
 
         return
         generateAssignment {
             info;
             operand;
+            info.typeModel;
             () => generateInvocationFromName {
                 info;
                 that.operand;
@@ -1327,7 +1328,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
         assert (is BaseExpression | QualifiedExpression operand = that.operand);
 
-        value info = nodeInfo(that);
+        value info = expressionInfo(that);
 
         // the expected type after boxing
         TypeModel tempVarType;
@@ -1339,6 +1340,7 @@ class ExpressionTransformer(CompilationContext ctx)
             generateAssignment {
                 info;
                 operand;
+                noType;
                 () => generateInvocationFromName {
                     info;
                     that.operand;
@@ -1381,6 +1383,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 generateAssignment {
                     info;
                     operand;
+                    info.typeModel;
                     () => generateInvocationFromName {
                         info;
                         that.operand;
@@ -1693,10 +1696,11 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformAssignOperation(AssignOperation that) {
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-        // passthrough; no new lhs
+        value info = expressionInfo(that);
         return generateAssignment {
-            nodeInfo(that);
+            info;
             leftOperand;
+            info.typeModel;
             () => that.rightOperand.transform(expressionTransformer);
         };
     }
@@ -1714,11 +1718,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is RemainderAssignmentOperation) "remainder";
 
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
+        value info = expressionInfo(that);
         return generateAssignment {
-            nodeInfo(that);
+            info;
             leftOperand;
+            info.typeModel;
             () => generateInvocationForBinaryOperation(that, methodName);
         };
     }
@@ -1732,24 +1736,24 @@ class ExpressionTransformer(CompilationContext ctx)
                 case (is ComplementAssignmentOperation) "complement";
 
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
-        // passthrough; no new lhs
+        value info = expressionInfo(that);
         return generateAssignment {
-            nodeInfo(that);
+            info;
             leftOperand;
+            info.typeModel;
             () => generateInvocationForBinaryOperation(that, methodName);
         };
     }
 
     shared actual
     DartExpression transformLogicalAssignmentOperation(LogicalAssignmentOperation that) {
-        value info = nodeInfo(that);
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
+        value info = expressionInfo(that);
         return
         generateAssignment {
-            nodeInfo(that);
+            info;
             leftOperand;
+            info.typeModel;
             () => let (dartOperator
                         =   switch (that)
                             case (is AndAssignmentOperation) "&&"

@@ -505,6 +505,7 @@ class StatementTransformer(CompilationContext ctx)
                     () => generateAssignment {
                         nodeInfo(that);
                         ValueSpecificationInfo(that).target;
+                        noType;
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
                 };

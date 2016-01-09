@@ -44,4 +44,8 @@ object expression {
     shared test
     void elseOpDenotableLhs()
         =>  compileAndCompare2("expression/elseOpDenotableLhs");
+
+    shared test
+    void assignmentExpressionCoercion()
+        =>  compileAndCompare2("expression/assignmentExpressionCoercion");
 }

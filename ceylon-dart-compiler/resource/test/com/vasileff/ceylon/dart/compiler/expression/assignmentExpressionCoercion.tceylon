@@ -1,0 +1,7 @@
+shared void assignmentExpressionCoercion() {
+    variable Anything x = null;
+    // note the coercion
+    Float two = 1.0 + (x = 1);
+    assert (two == 2.0);
+    assert (x is Integer);
+}
