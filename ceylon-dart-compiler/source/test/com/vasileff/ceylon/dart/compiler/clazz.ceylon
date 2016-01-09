@@ -154,4 +154,12 @@ object clazz {
     shared test
     void mappedMembersAsDeclarations()
         =>  compileAndCompare2("clazz/mappedMembersAsDeclarations");
+
+    shared test
+    void superRefsMember()
+        =>  compileAndCompare2("clazz/superRefsMember");
+
+    shared test
+    void superRefsParam()
+        =>  compileAndCompare2("clazz/superRefsParam");
 }

@@ -1,0 +1,27 @@
+shared void superRefsMember() {
+    class Super() {
+        shared default variable Integer v = 1;
+        shared void superAssign(Integer x) {
+            v = x;
+        }
+        shared Integer superV => v;
+    }
+    class Sub() extends Super() {
+        shared actual variable Integer v = 2;
+        shared void test() {
+            assert (v == 2);
+            assert (superV == 2);
+            assert (super.v == 1);
+            v = 3;
+            super.v = 4;
+            assert (v == 3);
+            assert (superV == 3);
+            assert (super.v == 4);
+            superAssign(5);
+            assert (v == 5);
+            assert (superV == 5);
+            assert (super.v == 4);
+        }
+    }
+    Sub().test();
+}

@@ -1,0 +1,16 @@
+shared void assignToNonSharedInterfaceValue() {
+    interface I {
+        String s => "s";
+        assign s { print("Assigning value ``s``"); }
+        shared void test() {
+            print(s = "theNewValue");
+        }
+        shared class C() {
+            shared void test() {
+                print(s = "theNewValueC");
+            }
+        }
+    }
+    object satisfies I {}.test();
+    object satisfies I {}.C().test();
+}

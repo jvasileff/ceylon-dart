@@ -1,0 +1,25 @@
+shared void assignToSuperValues() {
+    interface Top {
+        shared default String val => "topVal";
+        assign val { }
+    }
+    interface Left satisfies Top {
+        shared actual default String val => "leftVal";
+        assign val { }
+    }
+    interface Right satisfies Top {
+        shared actual default String val => "rightVal";
+        assign val { }
+    }
+    class C(shared actual variable String val = "cVal")
+            satisfies Left & Right {
+        shared void test() {
+            assert(((super of Left).val = "hello") == "hello");
+            assert(((super of Right).val = "hello") == "hello");
+            assert(val == "cVal");
+            assert((super of Left).val == "leftVal");
+            assert((super of Right).val == "rightVal");
+        }
+    }
+    C().test();
+}

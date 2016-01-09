@@ -1,0 +1,62 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class assignToSuperValues$Top {
+    $dart$core.String get val;
+    static $dart$core.String $get$val([final assignToSuperValues$Top $this]) => "topVal";
+    void set val($dart$core.String val);
+    static $dart$core.String $set$val([final assignToSuperValues$Top $this, $dart$core.String val]) {
+        return val;
+    }
+}
+abstract class assignToSuperValues$Left implements assignToSuperValues$Top {
+    $dart$core.String get val;
+    static $dart$core.String $get$val([final assignToSuperValues$Left $this]) => "leftVal";
+    void set val($dart$core.String val);
+    static $dart$core.String $set$val([final assignToSuperValues$Left $this, $dart$core.String val]) {
+        return val;
+    }
+}
+abstract class assignToSuperValues$Right implements assignToSuperValues$Top {
+    $dart$core.String get val;
+    static $dart$core.String $get$val([final assignToSuperValues$Right $this]) => "rightVal";
+    void set val($dart$core.String val);
+    static $dart$core.String $set$val([final assignToSuperValues$Right $this, $dart$core.String val]) {
+        return val;
+    }
+}
+class assignToSuperValues$C implements assignToSuperValues$Left, assignToSuperValues$Right {
+    assignToSuperValues$C([$dart$core.Object val = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(val, $ceylon$language.dart$default)) {
+            val = "cVal";
+        }
+        return [val];
+    })());
+    assignToSuperValues$C.$s([$dart$core.List a]) : this.$w(a[0]);
+    assignToSuperValues$C.$w([$dart$core.String val]) {
+        this.val = val;
+    }
+    $dart$core.String val;
+    void test() {
+        if (!(assignToSuperValues$Left.$set$val(this, "hello") == "hello")) {
+            throw new $ceylon$language.AssertionError("Violated: ((super of Left).val = \"hello\") == \"hello\"");
+        }
+        if (!(assignToSuperValues$Right.$set$val(this, "hello") == "hello")) {
+            throw new $ceylon$language.AssertionError("Violated: ((super of Right).val = \"hello\") == \"hello\"");
+        }
+        if (!(val == "cVal")) {
+            throw new $ceylon$language.AssertionError("Violated: val == \"cVal\"");
+        }
+        if (!(assignToSuperValues$Left.$get$val(this) == "leftVal")) {
+            throw new $ceylon$language.AssertionError("Violated: (super of Left).val == \"leftVal\"");
+        }
+        if (!(assignToSuperValues$Right.$get$val(this) == "rightVal")) {
+            throw new $ceylon$language.AssertionError("Violated: (super of Right).val == \"rightVal\"");
+        }
+    }
+}
+void $package$assignToSuperValues() {
+    (new assignToSuperValues$C()).test();
+}
+
+void assignToSuperValues() => $package$assignToSuperValues();

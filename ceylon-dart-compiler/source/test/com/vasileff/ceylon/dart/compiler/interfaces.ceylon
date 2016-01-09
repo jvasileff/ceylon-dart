@@ -152,4 +152,16 @@ object interfaces {
     shared test
     void bridgeSetter()
         =>  compileAndCompare2("interfaces/bridgeSetter");
+
+    shared test
+    void assignToSuperValues()
+        =>  compileAndCompare2("interfaces/assignToSuperValues");
+
+    shared test
+    void assignToNonSharedInterfaceValue()
+        =>  compileAndCompare2("interfaces/assignToNonSharedInterfaceValue");
+
+    shared test
+    void bridgeAssignmentExpression()
+        =>  compileAndCompare2("interfaces/bridgeAssignmentExpression");
 }

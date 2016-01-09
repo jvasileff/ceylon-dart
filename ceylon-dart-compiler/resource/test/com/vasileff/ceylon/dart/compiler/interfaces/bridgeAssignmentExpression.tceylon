@@ -1,0 +1,11 @@
+shared void bridgeAssignmentExpression() {
+    interface I {
+        shared String s => "sValue";
+        assign s {}
+    }
+    class C() satisfies I {
+        shared String test(String v)
+            =>  s = v;
+    }
+    assert (C().test("newValue") == "newValue");
+}

@@ -1,0 +1,26 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class bridgeAssignmentExpression$I {
+    $dart$core.String get s;
+    static $dart$core.String $get$s([final bridgeAssignmentExpression$I $this]) => "sValue";
+    void set s($dart$core.String s);
+    static $dart$core.String $set$s([final bridgeAssignmentExpression$I $this, $dart$core.String s]) {
+        return s;
+    }
+}
+class bridgeAssignmentExpression$C implements bridgeAssignmentExpression$I {
+    bridgeAssignmentExpression$C() {}
+    $dart$core.String test([$dart$core.String v]) => s = v;
+    $dart$core.String get s => bridgeAssignmentExpression$I.$get$s(this);
+    void set s($dart$core.String s) {
+        bridgeAssignmentExpression$I.$set$s(this, s);
+    }
+}
+void $package$bridgeAssignmentExpression() {
+    if (!((new bridgeAssignmentExpression$C()).test("newValue") == "newValue")) {
+        throw new $ceylon$language.AssertionError("Violated: C().test(\"newValue\") == \"newValue\"");
+    }
+}
+
+void bridgeAssignmentExpression() => $package$bridgeAssignmentExpression();

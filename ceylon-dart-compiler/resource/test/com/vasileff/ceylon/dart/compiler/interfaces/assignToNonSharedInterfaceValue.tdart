@@ -1,0 +1,37 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class assignToNonSharedInterfaceValue$I$C {
+    assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I;
+    assignToNonSharedInterfaceValue$I$C([assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I]) {
+        this.$outer$default$assignToNonSharedInterfaceValue$I = $outer$default$assignToNonSharedInterfaceValue$I;
+    }
+    void test() {
+        $ceylon$language.print($ceylon$language.String.instance(assignToNonSharedInterfaceValue$I.$set$_$s($outer$default$assignToNonSharedInterfaceValue$I, "theNewValueC")));
+    }
+}
+abstract class assignToNonSharedInterfaceValue$I {
+    static $dart$core.String $get$_$s([final assignToNonSharedInterfaceValue$I $this]) => "s";
+    static $dart$core.String $set$_$s([final assignToNonSharedInterfaceValue$I $this, $dart$core.String s]) {
+        $ceylon$language.print($ceylon$language.String.instance(("Assigning value " + s) + ""));
+        return s;
+    }
+    void test();
+    static void $test([final assignToNonSharedInterfaceValue$I $this]) {
+        $ceylon$language.print($ceylon$language.String.instance(assignToNonSharedInterfaceValue$I.$set$_$s($this, "theNewValue")));
+    }
+}
+class assignToNonSharedInterfaceValue$$anonymous$0_ implements assignToNonSharedInterfaceValue$I {
+    assignToNonSharedInterfaceValue$$anonymous$0_() {}
+    void test() => assignToNonSharedInterfaceValue$I.$test(this);
+}
+class assignToNonSharedInterfaceValue$$anonymous$1_ implements assignToNonSharedInterfaceValue$I {
+    assignToNonSharedInterfaceValue$$anonymous$1_() {}
+    void test() => assignToNonSharedInterfaceValue$I.$test(this);
+}
+void $package$assignToNonSharedInterfaceValue() {
+    (new assignToNonSharedInterfaceValue$$anonymous$0_()).test();
+    (new assignToNonSharedInterfaceValue$I$C(new assignToNonSharedInterfaceValue$$anonymous$1_())).test();
+}
+
+void assignToNonSharedInterfaceValue() => $package$assignToNonSharedInterfaceValue();

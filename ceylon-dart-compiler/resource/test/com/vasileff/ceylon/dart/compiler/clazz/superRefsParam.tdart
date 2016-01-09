@@ -1,0 +1,67 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class superRefsParam$Super {
+    superRefsParam$Super([$dart$core.Object v = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(v, $ceylon$language.dart$default)) {
+            v = 1;
+        }
+        return [v];
+    })());
+    superRefsParam$Super.$s([$dart$core.List a]) : this.$w(a[0]);
+    superRefsParam$Super.$w([$dart$core.int v]) {
+        this._$s$superRefsParam$superRefsParam$Super$v = v;
+    }
+    $dart$core.int _$s$superRefsParam$superRefsParam$Super$v;
+    $dart$core.int get v => _$s$superRefsParam$superRefsParam$Super$v;
+    set v($dart$core.int $v) {
+        _$s$superRefsParam$superRefsParam$Super$v = $v;
+    }
+    void superAssign([$dart$core.int x]) {
+        v = x;
+    }
+    $dart$core.int get superV => v;
+}
+class superRefsParam$Sub  extends superRefsParam$Super {
+    superRefsParam$Sub() {
+        v = 2;
+    }
+    $dart$core.int v;
+    void test() {
+        if (!(v == 2)) {
+            throw new $ceylon$language.AssertionError("Violated: v == 2");
+        }
+        if (!(superV == 2)) {
+            throw new $ceylon$language.AssertionError("Violated: superV == 2");
+        }
+        if (!(super.v == 1)) {
+            throw new $ceylon$language.AssertionError("Violated: super.v == 1");
+        }
+        v = 3;
+        super.v = 4;
+        if (!(v == 3)) {
+            throw new $ceylon$language.AssertionError("Violated: v == 3");
+        }
+        if (!(superV == 3)) {
+            throw new $ceylon$language.AssertionError("Violated: superV == 3");
+        }
+        if (!(super.v == 4)) {
+            throw new $ceylon$language.AssertionError("Violated: super.v == 4");
+        }
+        superAssign(5);
+        if (!(v == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: v == 5");
+        }
+        if (!(superV == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: superV == 5");
+        }
+        if (!(super.v == 4)) {
+            throw new $ceylon$language.AssertionError("Violated: super.v == 4");
+        }
+    }
+}
+void $package$superRefsParam() {
+    (new superRefsParam$Sub()).test();
+}
+
+void superRefsParam() => $package$superRefsParam();
