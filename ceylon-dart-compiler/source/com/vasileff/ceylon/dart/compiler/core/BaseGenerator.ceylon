@@ -4581,9 +4581,14 @@ class BaseGenerator(CompilationContext ctx)
         return [argsSetup, arguments];
     }
 
+    "Generate an assignment expression.
+
+     This function is basically a setter version of
+     [[ExpressionTransformer.transformInvocation]] and [[generateInvocation]] combined.
+     But, simpler since less can be done with setters."
     shared
     DartExpression
-    generateAssignmentExpression(
+    generateAssignment(
             DScope scope,
             BaseExpression | QualifiedExpression target,
             DartExpression() rhsExpression) {

@@ -1307,7 +1307,7 @@ class ExpressionTransformer(CompilationContext ctx)
         value info = nodeInfo(that);
 
         return
-        generateAssignmentExpression {
+        generateAssignment {
             info;
             operand;
             () => generateInvocationFromName {
@@ -1336,7 +1336,7 @@ class ExpressionTransformer(CompilationContext ctx)
         case (is NoType) {
             // no need to save and return original value
             return
-            generateAssignmentExpression {
+            generateAssignment {
                 info;
                 operand;
                 () => generateInvocationFromName {
@@ -1378,7 +1378,7 @@ class ExpressionTransformer(CompilationContext ctx)
             },
             // perform the postfix operation
             DartExpressionStatement {
-                generateAssignmentExpression {
+                generateAssignment {
                     info;
                     operand;
                     () => generateInvocationFromName {
@@ -1694,7 +1694,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformAssignOperation(AssignOperation that) {
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
         // passthrough; no new lhs
-        return generateAssignmentExpression {
+        return generateAssignment {
             nodeInfo(that);
             leftOperand;
             () => that.rightOperand.transform(expressionTransformer);
@@ -1716,7 +1716,7 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
         // passthrough; no new lhs
-        return generateAssignmentExpression {
+        return generateAssignment {
             nodeInfo(that);
             leftOperand;
             () => generateInvocationForBinaryOperation(that, methodName);
@@ -1734,7 +1734,7 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
         // passthrough; no new lhs
-        return generateAssignmentExpression {
+        return generateAssignment {
             nodeInfo(that);
             leftOperand;
             () => generateInvocationForBinaryOperation(that, methodName);
@@ -1747,7 +1747,7 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
 
         return
-        generateAssignmentExpression {
+        generateAssignment {
             nodeInfo(that);
             leftOperand;
             () => let (dartOperator

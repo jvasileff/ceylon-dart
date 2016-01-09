@@ -502,7 +502,7 @@ class StatementTransformer(CompilationContext ctx)
 
         return  [DartExpressionStatement {
                 withLhsNoType {
-                    () => generateAssignmentExpression {
+                    () => generateAssignment {
                         nodeInfo(that);
                         ValueSpecificationInfo(that).target;
                         () => that.specifier.expression.transform(expressionTransformer);
