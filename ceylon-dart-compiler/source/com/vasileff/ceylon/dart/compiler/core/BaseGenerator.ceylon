@@ -2525,8 +2525,8 @@ class BaseGenerator(CompilationContext ctx)
                                 declarationModel.getter;
                             };
                             DartSimpleIdentifier {
-                                // use the attribute's name as the parameter name
-                                dartTypes.getName(declarationModel);
+                                // use the declaration for the parameter to the setter
+                                dartTypes.getName(declarationModel.parameter.model);
                             };
                         }
                     ];
