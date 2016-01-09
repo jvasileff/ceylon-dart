@@ -396,7 +396,14 @@ SetterModel|FunctionModel|ValueModel? mostRefined
     DeclarationModel? result = bottom.getMember(declaration.name, null, false);
     if (setter) {
         assert (is ValueModel result);
-        return result.setter;
+        value setterModel = result.setter else null;
+        if (!exists setterModel) {
+            // Must be a variable reference value if there is no Setter declaration.
+            // Just return the ValueModel.
+            assert (!result.transient && result.variable);
+            return result;
+        }
+        return setterModel;
     }
     else {
         assert (is FunctionModel | ValueModel | Null result);

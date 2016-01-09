@@ -92,8 +92,6 @@ import ceylon.ast.core {
     BooleanCondition,
     Condition,
     ObjectExpression,
-    Super,
-    Primary,
     SwitchCaseElseExpression,
     IsCase,
     MatchCase,
@@ -191,7 +189,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     TypeInfo,
     IfElseExpressionInfo,
     ObjectExpressionInfo,
-    SuperInfo,
     IsCaseInfo,
     TypeNameWithTypeArgumentsInfo,
     expressionInfo,
@@ -526,7 +523,8 @@ class ExpressionTransformer(CompilationContext ctx)
             // Return an expression that will yield the value
             // See transformInvocation()
 
-            if (exists superType = denotableSuperType(that.receiverExpression)) {
+            if (exists superType = dartTypes.denotableSuperType(
+                                        that.receiverExpression)) {
                 // QualifiedExpression with a `super` receiver
                 return generateInvocation {
                     info;
@@ -555,7 +553,8 @@ class ExpressionTransformer(CompilationContext ctx)
             // Return a new Callable.
 
             // QualifiedExpression with a `super` receiver
-            if (exists superType = denotableSuperType(that.receiverExpression)) {
+            if (exists superType = dartTypes.denotableSuperType(
+                                        that.receiverExpression)) {
                 return generateCallableForQualifiedExpression {
                     info;
                     superType;
@@ -680,21 +679,6 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformSpreadArgument(SpreadArgument that)
         =>  that.argument.transform(this);
 
-    "The non-intersection type of a `super` reference; should map directly to a Dart type."
-    TypeModel? denotableSuperType(
-            "Primary may be `super` or `(super of T)`"
-            Primary primary)
-        =>  if (is Super primary) then
-                let (superInfo = SuperInfo(primary))
-                superInfo.typeModel.getSupertype(superInfo.declarationModel)
-            else if (is GroupedExpression primary,
-                     is OfOperation ofOp = primary.innerExpression,
-                     is Super s = ofOp.operand) then
-                let (superInfo = SuperInfo(s))
-                superInfo.typeModel.getSupertype(superInfo.declarationModel)
-            else
-                null;
-
     shared actual
     DartExpression transformInvocation(Invocation that) {
         value info
@@ -801,11 +785,9 @@ class ExpressionTransformer(CompilationContext ctx)
              to the Dart static implementation of invokedDeclaration."
             DartExpression thisExpression;
 
-            // Find a value for the receiver ($this argument), starting from the
-            // container and searching ancestors until a match is found.
-            //
-            // It's simply the thisOrOuter for the exact type of the member's
-            // (invokedDeclaration's) interface.
+            // Find the receiver (the $this argument) starting from the scope's
+            // container and searching ancestors until an exact match for the
+            // target's interface is found. (dartTypes.expressionToOuter() does this)
 
             "The scope of a BaseExpression to a function or value member of a class
              or interface will have a containing class or interface."
@@ -813,13 +795,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 =   getContainingClassOrInterface(that));
 
             thisExpression
-                =   dartTypes.expressionToThisOrOuter {
-                        info;
-                        dartTypes.ancestorChainToExactDeclaration {
-                            scopeContainer;
-                            invokedContainer;
-                        };
-                    };
+                =   dartTypes.expressionToOuter(info, invokedContainer);
 
             value [argsSetup, argumentList, _]
                 =   generateArgumentListFromArguments {
@@ -868,7 +844,8 @@ class ExpressionTransformer(CompilationContext ctx)
 
             // QualifiedExpression with a `super` receiver
             if (is QualifiedExpression invoked,
-                exists superType = denotableSuperType(invoked.receiverExpression)) {
+                exists superType = dartTypes.denotableSuperType(
+                                        invoked.receiverExpression)) {
 
                 return generateInvocation {
                     info;
@@ -1716,7 +1693,6 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformAssignOperation(AssignOperation that) {
         assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
-
         // passthrough; no new lhs
         return generateAssignmentExpression {
             nodeInfo(that);

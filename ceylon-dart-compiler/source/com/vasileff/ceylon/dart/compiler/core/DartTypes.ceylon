@@ -3,7 +3,11 @@ import ceylon.ast.core {
     EntryPattern,
     VariablePattern,
     TuplePattern,
-    Pattern
+    Pattern,
+    GroupedExpression,
+    Primary,
+    Super,
+    OfOperation
 }
 import ceylon.interop.java {
     CeylonIterable
@@ -48,7 +52,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     UnspecifiedVariableInfo,
-    VariadicVariableInfo
+    VariadicVariableInfo,
+    SuperInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -1132,6 +1137,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     .interpose("$")
                     .fold("$")(plus);
             };
+
+    "The non-intersection type of a `super` reference; should map directly to a Dart
+     type."
+    shared
+    TypeModel? denotableSuperType(
+            "Primary may be `super` or `(super of T)`"
+            Primary primary)
+        =>  if (is Super primary) then
+                let (superInfo = SuperInfo(primary))
+                superInfo.typeModel.getSupertype(superInfo.declarationModel)
+            else if (is GroupedExpression primary,
+                     is OfOperation ofOp = primary.innerExpression,
+                     is Super s = ofOp.operand) then
+                let (superInfo = SuperInfo(s))
+                superInfo.typeModel.getSupertype(superInfo.declarationModel)
+            else
+                null;
 
     "Returns a [[DartInvocable]] suitable for use from [[scope]].
 

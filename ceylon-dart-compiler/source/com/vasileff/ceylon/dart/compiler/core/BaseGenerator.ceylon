@@ -4584,14 +4584,12 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression
     generateAssignmentExpression(
-            DScope that,
+            DScope scope,
             BaseExpression | QualifiedExpression target,
             DartExpression() rhsExpression) {
 
         // TODO Make sure setters return the new value, or handle that here when there
         //      is a lhs type.
-
-        // TODO handle interface setters (shared and non-shared)
 
         TypeModel valueType;
         ValueModel valueDeclaration;
@@ -4604,12 +4602,49 @@ class BaseGenerator(CompilationContext ctx)
             valueDeclaration = d;
             valueType = info.typeModel;
 
-            invocable
-                =   dartTypes.invocableForBaseExpression {
-                        that;
-                        valueDeclaration;
-                        true;
-                    };
+            if (!valueDeclaration.shared,
+                is InterfaceModel targetContainer = container(valueDeclaration)) {
+                // Special case: invoking private interface member using a BaseExpression.
+
+                // Find the receiver (the $this argument) starting from the scope's
+                // container and searching ancestors until an exact match for the
+                // target's interface is found. (dartTypes.expressionToOuter() does this)
+
+                "The scope of a BaseExpression to a function or value member of a class
+                 or interface will have a containing class or interface."
+                assert (exists scopeContainer
+                    =   getContainingClassOrInterface(scope));
+
+                value dartFunctionOrValue
+                    =   DartInvocable {
+                            DartPropertyAccess {
+                                dartTypes.dartIdentifierForClassOrInterface {
+                                    scope;
+                                    targetContainer;
+                                };
+                                dartTypes.getStaticInterfaceMethodIdentifier {
+                                    valueDeclaration;
+                                    isSetter = true;
+                                };
+                            };
+                            dartFunction; // Static interface functions are... functions
+                            false;
+                        };
+
+                invocable
+                    =   DartQualifiedInvocable {
+                            dartTypes.expressionToOuter(scope, targetContainer);
+                            dartFunctionOrValue;
+                        };
+            }
+            else {
+                invocable
+                    =   dartTypes.invocableForBaseExpression {
+                            scope;
+                            valueDeclaration;
+                            true;
+                        };
+            }
         }
         case (is QualifiedExpression) {
             value info = QualifiedExpressionInfo(target);
@@ -4617,38 +4652,94 @@ class BaseGenerator(CompilationContext ctx)
             valueDeclaration = d;
             valueType = info.typeModel;
 
-            assert (is ClassOrInterfaceModel container
+            assert (is ClassOrInterfaceModel targetContainer
                 =   valueDeclaration.container);
 
-            invocable
-                =   DartQualifiedInvocable {
-                        withLhsDenotable {
-                            container;
-                            () => target.receiverExpression.transform {
-                                expressionTransformer;
+            if (exists superType = dartTypes.denotableSuperType(
+                    target.receiverExpression)) {
+
+                // super receiver
+
+                if (superType.declaration is ClassModel) {
+                    // super refers to the superclass
+
+                    invocable
+                        =   DartQualifiedInvocable {
+                                DartSimpleIdentifier("super");
+                                dartTypes.dartInvocable {
+                                    scope; valueDeclaration; true;
+                                };
+                            };
+                }
+                else {
+                    // super referes to an interface; call static interface method
+
+                    // Abandon polymorphism and invoke the Dart static method directly.
+                    // This also works when `super` is used to invoke private interface
+                    // methods, which must *always* use the static methods.
+
+                    // Note: It's nice that we have the declaration pointed to by
+                    //       referenced by `super`, but it's also completely useless.
+                    //
+                    //       Instead, we'll ues the interface that is the container of
+                    //       memberDeclaration, which will be a supertype of `super` if
+                    //       `super` doesn't refine the member. (Since we're calling a
+                    //       static method, we need the interface that actually provides
+                    //       the definition.)
+
+                    invocable
+                        =   DartQualifiedInvocable {
+                                dartTypes.expressionForThis(scope);
+                                DartInvocable {
+                                    DartPropertyAccess {
+                                        dartTypes.dartIdentifierForClassOrInterface {
+                                            scope;
+                                            targetContainer;
+                                        };
+                                        dartTypes.getStaticInterfaceMethodIdentifier {
+                                            valueDeclaration;
+                                            isSetter = true;
+                                        };
+                                    };
+                                    dartFunction; // Static interface functions are functions
+                                    false;
+                                };
+
+                            };
+                }
+            }
+            else {
+                // receiver is not super, evaluate expression for receiver
+
+                invocable
+                    =   DartQualifiedInvocable {
+                            withLhsDenotable {
+                                targetContainer;
+                                () => target.receiverExpression.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                            dartTypes.dartInvocable {
+                                scope; valueDeclaration; true;
                             };
                         };
-                        dartTypes.dartInvocable {
-                            that; valueDeclaration; true;
-                        };
-                    };
+            }
         }
-
-        value rhs
-            =   withLhs {
-                    valueType;
-                    valueDeclaration;
-                    rhsExpression;
-                };
 
         // TODO use the rhs type, since that's what Dart uses for the expression type
         //      (and so does Ceylon). So we'll need 1) the rhs type, and 2) to calculate
         //      erasure on our own. The only symptom is unnecessary casts.
         return withBoxing {
-            that;
+            scope;
             valueType;
             valueDeclaration;
-            invocable.expressionForInvocation([rhs]);
+            invocable.expressionForInvocation {
+                [withLhs {
+                    valueType;
+                    valueDeclaration;
+                    rhsExpression;
+                }];
+            };
         };
     }
 
