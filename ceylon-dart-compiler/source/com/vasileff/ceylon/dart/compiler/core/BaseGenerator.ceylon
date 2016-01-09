@@ -4709,7 +4709,6 @@ class BaseGenerator(CompilationContext ctx)
                                     dartFunction; // Static interface functions are functions
                                     false;
                                 };
-
                             };
                 }
             }
@@ -4731,9 +4730,23 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
 
-        // TODO use the rhs type, since that's what Dart uses for the expression type
-        //      (and so does Ceylon). So we'll need 1) the rhs type, and 2) to calculate
-        //      erasure on our own. The only symptom is unnecessary casts.
+        // Using the Value's type for the rhs, which may be less precise than the rhs
+        // expressions type, and may result in unnecessary casts.
+        //
+        // Dart and Ceylon both use the rhs type as the type for assignment expressions,
+        // but 1) we don't have it, and 2) it wouldn't be useful for invocations of
+        // static interface setters, since they are not Dart assignments (their return
+        // types are that of the Value).
+
+        // FIXME the less precise rhs type also results in failed type coercion for the
+        //       code below. So we really need the rhs type, and to perform a double
+        //       cast if calling a static interface method.
+        //
+        //      shared void run() {
+        //          variable Anything x = null;
+        //          print(1.0 + (x = 1));
+        //      }
+
         return withBoxing {
             scope;
             valueType;
