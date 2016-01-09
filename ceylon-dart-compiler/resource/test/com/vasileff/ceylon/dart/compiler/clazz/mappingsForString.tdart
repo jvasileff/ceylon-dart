@@ -64,14 +64,17 @@ abstract class stringInterface$I {
     $dart$core.String toString();
     static $dart$core.String $get$string([final stringInterface$I $this]) => "1";
     void set string($dart$core.String string);
-    static void $set$string([final stringInterface$I $this, $dart$core.String string]) {
+    static $dart$core.String $set$string([final stringInterface$I $this, $dart$core.String string]) {
         $ceylon$language.print($ceylon$language.String.instance(string));
+        return string;
     }
 }
 class stringInterface$o_ implements stringInterface$I {
     stringInterface$o_() {}
     $dart$core.String toString() => stringInterface$I.$get$string(this);
-    void set string($dart$core.String string) => stringInterface$I.$set$string(this, string);
+    void set string($dart$core.String string) {
+        stringInterface$I.$set$string(this, string);
+    }
 }
 void $package$stringInterface() {
     final stringInterface$o_ o = new stringInterface$o_();

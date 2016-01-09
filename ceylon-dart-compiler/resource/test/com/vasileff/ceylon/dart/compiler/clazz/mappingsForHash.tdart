@@ -62,15 +62,18 @@ abstract class hashInterface$I {
     $dart$core.int get hashCode;
     static $dart$core.int $get$hashCode([final hashInterface$I $this]) => 1;
     void set hashCode($dart$core.int hash);
-    static void $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
+    static $dart$core.int $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
         $ceylon$language.print($ceylon$language.Integer.instance(hash));
+        return hash;
     }
 }
 class hashInterface$o_ implements hashInterface$I {
     hashInterface$o_() {}
     $dart$core.bool operator ==($dart$core.Object that) => that is hashInterface$o_;
     $dart$core.int get hashCode => hashInterface$I.$get$hashCode(this);
-    void set hashCode($dart$core.int hash) => hashInterface$I.$set$hash(this, hash);
+    void set hashCode($dart$core.int hash) {
+        hashInterface$I.$set$hash(this, hash);
+    }
 }
 void $package$hashInterface() {
     final hashInterface$o_ o = new hashInterface$o_();

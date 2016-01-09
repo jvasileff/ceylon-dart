@@ -5860,7 +5860,7 @@ class List$iterator$$anonymous$0_ implements Iterator {
     }
     $dart$core.int _$index;
     $dart$core.int _$size;
-    $dart$core.Object next() => (($dart$core.Object $lhs$) => null == $lhs$ ? List.$_$getElement(this.$outer$ceylon$language$List, (() {
+    $dart$core.Object next() => (($dart$core.Object $lhs$) => null == $lhs$ ? List.$_$getElement($outer$ceylon$language$List, (() {
         $dart$core.int tmp$5 = _$index;
         _$index = Integer.nativeValue(Integer.instance(_$index).successor);
         return tmp$5;

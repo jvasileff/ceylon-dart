@@ -2488,11 +2488,6 @@ class BaseGenerator(CompilationContext ctx)
         //      within functions, regular methods
         //      within classes and interfaces, setters, but MethodDeclaration instead
 
-        // FIXME setter functions should return the argument (and not be void) to help
-        //       with assignment expressions.
-
-        // FIXME setter *static* functions for interfaces should also return the arg.
-
         value info = ValueSetterDefinitionInfo(that);
         value declarationModel = info.declarationModel;
 
@@ -2503,16 +2498,37 @@ class BaseGenerator(CompilationContext ctx)
                     true;
                 }.oldPairSimple;
 
+        "Is the implementation a method (as opposed to a Dart setter)?
+
+         Note: dartInvocable tells us how declarations will be *called*, but not
+         necessarily *implemented*. For setters declarations inside interfaces, the
+         implementation is a method despite calls using a bridge implemented as a Dart
+         setter."
+        value implementedAsFunction
+            =   dartElementType != dartValue
+                || withinInterface(declarationModel);
+
+        value identifierForParameter
+            =   DartSimpleIdentifier {
+                    // use the declaration for the parameter to the setter
+                    dartTypes.getName(declarationModel.parameter.model);
+                };
+
         return
         DartFunctionDeclaration {
             false;
-            DartTypeName {
-                DartSimpleIdentifier {
-                    "void";
+            if (implementedAsFunction) then
+                dartTypes.dartReturnTypeNameForDeclaration {
+                    info;
+                    declarationModel.getter;
+                }
+            else
+                DartTypeName {
+                    DartSimpleIdentifier {
+                        "void";
+                    };
                 };
-            };
-            // Will be a dartFunction for values inside functions
-            dartElementType == dartValue then "set";
+            implementedAsFunction then "set";
             identifier;
             DartFunctionExpression {
                 DartFormalParameterList {
@@ -2524,32 +2540,49 @@ class BaseGenerator(CompilationContext ctx)
                                 info;
                                 declarationModel.getter;
                             };
-                            DartSimpleIdentifier {
-                                // use the declaration for the parameter to the setter
-                                dartTypes.getName(declarationModel.parameter.model);
-                            };
+                            identifierForParameter;
                         }
                     ];
                 };
                 switch (definition = that.definition)
                 case (is LazySpecifier)
-                    // TODO if function, convert to block and return passed in value
-                    DartExpressionFunctionBody {
-                        false;
-                        withLhsNoType {
-                            () => definition.expression.transform(expressionTransformer);
-                        };
-                    }
-                case (is Block)
-                    // TODO if function, return passed in value
                     DartBlockFunctionBody {
                         null;
                         false;
-                        withReturn {
-                            declarationModel.getter;
-                            () => statementTransformer.transformBlock {
-                                definition;
-                            }.first;
+                        DartBlock {
+                            [DartExpressionStatement {
+                                withLhsNoType {
+                                    () => definition.expression.transform {
+                                        expressionTransformer;
+                                    };
+                                };
+                            },
+                            implementedAsFunction then
+                            DartReturnStatement {
+                                identifierForParameter;
+                            }].coalesced.sequence();
+                        };
+                    }
+                case (is Block)
+                    DartBlockFunctionBody {
+                        null;
+                        false;
+                        DartBlock {
+                            concatenate {
+                                withReturn {
+                                    // Really should be NoType, but there shouldn't be
+                                    // a return statement.
+                                    declarationModel.getter;
+                                    () => statementTransformer.transformBlock {
+                                        definition;
+                                    }.first.statements;
+                                },
+                                if (implementedAsFunction) then
+                                    [DartReturnStatement {
+                                        identifierForParameter;
+                                    }]
+                                else []
+                            };
                         };
                     };
             };
@@ -4735,8 +4768,9 @@ class BaseGenerator(CompilationContext ctx)
         //
         // Dart and Ceylon both use the rhs type as the type for assignment expressions,
         // but 1) we don't have it, and 2) it wouldn't be useful for invocations of
-        // static interface setters, since they are not Dart assignments (their return
-        // types are that of the Value).
+        // static interface setters and setter functions for Setters that occur inside
+        // Functions, since they are not Dart assignments (their return types are that of
+        // the Value).
 
         // FIXME the less precise rhs type also results in failed type coercion for the
         //       code below. So we really need the rhs type, and to perform a double

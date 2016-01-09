@@ -700,7 +700,13 @@ class ClassMemberTransformer(CompilationContext ctx)
             DartMethodDeclaration {
                 false;
                 "static";
-                generateFunctionReturnType(scope, declarationModel);
+                if (is SetterModel declarationModel) then
+                    dartTypes.dartReturnTypeNameForDeclaration {
+                        scope;
+                        declarationModel.getter;
+                    }
+                else
+                    generateFunctionReturnType(scope, declarationModel);
                 null;
                 false;
                 DartSimpleIdentifier {
@@ -723,7 +729,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                         },
                         // value parameters
                         *standardParameters.parameters
-                    ].coalesced.sequence();
+                    ].sequence();
                 };
                 functionExpression.body;
             };

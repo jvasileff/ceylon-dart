@@ -1263,6 +1263,25 @@ class TopLevelVisitor(CompilationContext ctx)
         value isSetter
             =   declaration is SetterModel;
 
+        value invocation
+            =   DartMethodInvocation {
+                    dartTypes.dartIdentifierForClassOrInterface {
+                        scope;
+                        interfaceModel;
+                    };
+                    dartTypes.getStaticInterfaceMethodIdentifier {
+                        declaration;
+                    };
+                    DartArgumentList {
+                        [DartSimpleIdentifier("this"),
+                         *parameterModels.collect { (parameterModel) =>
+                            DartSimpleIdentifier {
+                                dartTypes.getName(parameterModel.model);
+                            };
+                        }];
+                    };
+                };
+
         return
         DartMethodDeclaration {
             false; null;
@@ -1281,26 +1300,22 @@ class TopLevelVisitor(CompilationContext ctx)
                     scope;
                     parameterModels;
                 };
-            DartExpressionFunctionBody {
-                false;
-                DartMethodInvocation {
-                    dartTypes.dartIdentifierForClassOrInterface {
-                        scope;
-                        interfaceModel;
-                    };
-                    dartTypes.getStaticInterfaceMethodIdentifier {
-                        declaration;
-                    };
-                    DartArgumentList {
-                        [DartSimpleIdentifier("this"),
-                         *parameterModels.collect { (parameterModel) =>
-                            DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel.model);
-                            };
+            if (isSetter) then
+                // Dart doesn't like expression bodies for void functions with non-void
+                // expressions.
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        [DartExpressionStatement {
+                            invocation;
                         }];
                     };
+                }
+            else
+                DartExpressionFunctionBody {
+                    false;
+                    invocation;
                 };
-            };
         };
     }
 }

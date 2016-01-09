@@ -5,14 +5,17 @@ abstract class I {
     $dart$core.String get x;
     static $dart$core.String $get$x([final I $this]) => "";
     void set x($dart$core.String x);
-    static void $set$x([final I $this, $dart$core.String x]) {
+    static $dart$core.String $set$x([final I $this, $dart$core.String x]) {
         $ceylon$language.print($ceylon$language.String.instance(x));
+        return x;
     }
 }
 class o_ implements I {
     o_() {}
     $dart$core.String get x => I.$get$x(this);
-    void set x($dart$core.String x) => I.$set$x(this, x);
+    void set x($dart$core.String x) {
+        I.$set$x(this, x);
+    }
 }
 final o_ $package$o = new o_();
 

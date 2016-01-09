@@ -107,8 +107,9 @@ abstract class negatedInterface$I implements $ceylon$language.Invertible {
     negatedInterface$I operator -();
     static negatedInterface$I $get$negated([final negatedInterface$I $this]) => $this;
     void set negated(negatedInterface$I negated);
-    static void $set$negated([final negatedInterface$I $this, negatedInterface$I negated]) {
+    static negatedInterface$I $set$negated([final negatedInterface$I $this, negatedInterface$I negated]) {
         $ceylon$language.print(negated);
+        return negated;
     }
     negatedInterface$I operator +(negatedInterface$I other);
     static negatedInterface$I $plus([final negatedInterface$I $this, negatedInterface$I other]) => $this;
@@ -118,7 +119,9 @@ class negatedInterface$o_ implements negatedInterface$I {
     $dart$core.bool operator ==($dart$core.Object that) => that is negatedInterface$o_;
     $dart$core.int get id => negatedInterface$I.$get$id(this);
     negatedInterface$I operator -() => negatedInterface$I.$get$negated(this);
-    void set negated(negatedInterface$I negated) => negatedInterface$I.$set$negated(this, negated);
+    void set negated(negatedInterface$I negated) {
+        negatedInterface$I.$set$negated(this, negated);
+    }
     negatedInterface$I operator +(negatedInterface$I other) => negatedInterface$I.$plus(this, other);
     $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
 }
