@@ -255,9 +255,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration);
         }
         case (is ParameterModel) {
-            // If for a ValueModel, treat like the ValueModel case but do not mangle
-            // the name to the capture box name. For non-values, unwrap and try again.
-            if (is ValueModel valueModel = declaration.model) {
+            // For captured reference values, treat like the ValueModel case but do not
+            // mangle the name to the capture box name. For non-values, unwrap and try
+            // again. (This won't conflict with "mapped" logic, because "mapped" is for
+            // members, and captures always have non-class-or-interface containers.)
+            if (is ValueModel valueModel = declaration.model,
+                    capturedReferenceValue(valueModel)) {
                 return identifierPackagePrefix(valueModel)
                         + getUnprefixedName(declaration);
             }
