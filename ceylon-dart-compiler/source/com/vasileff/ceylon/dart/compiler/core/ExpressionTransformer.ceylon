@@ -109,7 +109,8 @@ import ceylon.ast.core {
     DynamicModifier,
     DynamicInterfaceDefinition,
     DynamicBlock,
-    DynamicValue
+    DynamicValue,
+    MemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -129,7 +130,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
-    ConstructorModel=Constructor
+    ConstructorModel=Constructor,
+    TypedReference
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -390,124 +392,44 @@ class ExpressionTransformer(CompilationContext ctx)
                     case (is BaseExpressionInfo) receiverInfo.target
                     case (is QualifiedExpressionInfo) receiverInfo.target);
 
-            switch (memberDeclaration)
-            case (is ValueModel) {
-                // Return a Callable that takes a `containerType` and returns the result
-                // of the invocation of memberDeclaration
+            "Null safe and spread not allowed for static member references."
+            assert (is MemberOperator memberOperator = that.memberOperator);
 
-                "The type of the value member."
-                value memberReturnType
-                    =   info.target.type;
+            if (is ConstructorModel memberDeclaration,
+                is BaseExpressionInfo receiverInfo) {
 
-                "The invocation of `memberDeclaration` on `$r` which is the
-                 parameter to the `Callable`."
-                value invocation
-                    =   withLhsNonNative {
-                            memberReturnType;
-                            () => generateInvocation {
-                                info;
-                                memberReturnType;
-                                containerType;
-                                generateReceiver()
-                                    =>  withBoxingNonNative {
-                                            info;
-                                            // Callable argument; erasedToObject
-                                            ceylonTypes.anythingType;
-                                            DartSimpleIdentifier("$r");
-                                        };
-                                memberDeclaration;
-                            };
-                        };
+                // The receiver is a BaseExpression, which is *never* itself a
+                // staticMethodReference, and can therefore provide its own `outer`
+                // if it is a member class. (Something like `Foo.create`, and if
+                // `Foo` is a member class, the expression will be in the scope of
+                // the container to use for the `Foo`.)
 
-                "A Dart function that takes a receiver of `containerType` and returns
-                 the result of the invoking `memberDeclaration` on the receiver."
-                value outerFunction
-                    =   DartFunctionExpression {
-                            DartFormalParameterList {
-                                true; false;
-                                // takes the container
-                                [DartSimpleFormalParameter {
-                                    false; false;
-                                    // dartObject since Callable is generic
-                                    dartTypes.dartObject;
-                                    DartSimpleIdentifier("$r");
-                                }];
-                            };
-                            DartExpressionFunctionBody {
-                                false;
-                                invocation;
-                            };
-                        };
+                // So, this is a staticMethodReference to the *Constructor*, but it
+                // is not a static reference to the constructor's container.
 
-                // The Callable that takes a `containerType`
-                return createCallable(info, outerFunction);
+                // GenerateNewCallable will provide the necessary `outer` reference.
+                // The returned value will be a Callable for the constructor,
+                // rather than a Callable that takes an `outer` and returns a
+                // callable for the constructor.
+                return generateNewCallable {
+                    info;
+                    memberDeclaration;
+                };
             }
-            case (is FunctionModel | ClassModel | ConstructorModel) {
-                if (is ConstructorModel memberDeclaration,
-                    is BaseExpressionInfo receiverInfo) {
-
-                    // The receiver is a BaseExpression, which is *never* itself a
-                    // staticMethodReference, and can therefore provide its own `outer`
-                    // if it is a member class. (Something like `Foo.create`, and if
-                    // `Foo` is a member class, the expression will be in the scope of
-                    // the container to use for the `Foo`.)
-
-                    // So, this is a staticMethodReference to the *Constructor*, but it
-                    // is not a static reference to the constructor's container.
-
-                    // GenerateNewCallable will provide the necessary `outer` reference.
-                    // The returned value will be a Callable for the constructor,
-                    // rather than a Callable that takes an `outer` and returns a
-                    // callable for the constructor.
-                    return generateNewCallable {
-                        info;
-                        memberDeclaration;
-                    };
-                }
+            else if (is ValueModel | FunctionModel
+                    | ClassModel | ConstructorModel memberDeclaration) {
 
                 // Return a `Callable` that takes a `containerType` and returns a
                 // `Callable` that can be used to invoke the `memberDeclaration`
-
-                "A Callable that invokes `memberDeclaration`."
-                value innerCallable
-                    =   generateCallableForQualifiedExpression {
-                            info;
-                            containerType;
-                            generateReceiver()
-                                =>  withBoxingNonNative {
-                                        info;
-                                        // Callable argument; erasedToObject
-                                        ceylonTypes.anythingType;
-                                        DartSimpleIdentifier("$r");
-                                    };
-                            false;
-                            memberDeclaration;
-                            info.target.fullType;
-                            that.memberOperator;
-                        };
-
-                "A Dart function that takes a receiver of `containerType` and returns
-                 a Callable that invokes `memberDeclaration`."
-                value outerFunction
-                    =   DartFunctionExpression {
-                            DartFormalParameterList {
-                                true; false;
-                                // takes the container
-                                [DartSimpleFormalParameter {
-                                    false; false;
-                                    // dartObject since Callable is generic
-                                    dartTypes.dartObject;
-                                    DartSimpleIdentifier("$r");
-                                }];
-                            };
-                            DartExpressionFunctionBody {
-                                false;
-                                innerCallable;
-                            };
-                        };
-
-                // The Callable that takes a `containerType`
-                return createCallable(info, outerFunction);
+                return generateCallableForStaticMemberReference {
+                    info;
+                    containerType;
+                    // The type of the value member or
+                    // the Callable type of the function
+                    info.target.fullType;
+                    memberDeclaration;
+                    memberOperator;
+                };
             }
             else {
                 addError(that,

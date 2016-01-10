@@ -587,7 +587,8 @@ class BaseGenerator(CompilationContext ctx)
              -  the type of an expression if [[generateReceiver]] is not null, or
              -  an interface that is the container of the [[memberDeclaration]] to invoke
                 [[generateReceiver]] is null, indicating that the receiver is a `super`
-                reference."
+                reference.
+             -  a class, indicating the receiver is `super` for the current scope."
             TypeModel receiverType,
             "A function to generate the receiver of type [[receiverType]], or null if the
              receiver is a `super` reference."
@@ -3733,6 +3734,110 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
         return callable;
+    }
+
+    shared
+    DartExpression generateCallableForStaticMemberReference(
+            DScope scope,
+            "The applied container type, like Iterable<String>"
+            TypeModel containerType,
+            "The applied fullType of the member (i.e. Callable if it's functional)"
+            TypeModel memberType,
+            ValueModel | FunctionModel | ClassModel | ConstructorModel memberDeclaration,
+            "The MemberOperator. Null safe and spread are not supported."
+            MemberOperator memberOperator = MemberOperator()) {
+
+        switch (memberDeclaration)
+        case (is ValueModel) {
+            "The invocation of `memberDeclaration` on `$r` which is the
+             parameter to the `Callable`."
+            value invocation
+                =   withLhsNonNative {
+                        memberType;
+                        () => generateInvocation {
+                            scope;
+                            memberType;
+                            containerType;
+                            generateReceiver()
+                                =>  withBoxingNonNative {
+                                        scope;
+                                        // Callable argument; erasedToObject
+                                        ceylonTypes.anythingType;
+                                        DartSimpleIdentifier("$r");
+                                    };
+                            memberDeclaration;
+                        };
+                    };
+
+            "A Dart function that takes a receiver of `containerType` and returns
+             the result of the invoking `memberDeclaration` on the receiver."
+            value outerFunction
+                =   DartFunctionExpression {
+                        DartFormalParameterList {
+                            true; false;
+                            // takes the container
+                            [DartSimpleFormalParameter {
+                                false; false;
+                                // dartObject since Callable is generic
+                                dartTypes.dartObject;
+                                DartSimpleIdentifier("$r");
+                            }];
+                        };
+                        DartExpressionFunctionBody {
+                            false;
+                            invocation;
+                        };
+                    };
+
+            // The Callable that takes a `containerType`
+            return createCallable(scope, outerFunction);
+        }
+        case (is FunctionModel | ClassModel | ConstructorModel) {
+
+            // Return a `Callable` that takes a `containerType` and returns a
+            // `Callable` that can be used to invoke the `memberDeclaration`
+
+            "A Callable that invokes `memberDeclaration`."
+            value innerCallable
+                =   generateCallableForQualifiedExpression {
+                        scope;
+                        containerType;
+                        generateReceiver()
+                            =>  withBoxingNonNative {
+                                    scope;
+                                    // Callable argument; erasedToObject
+                                    ceylonTypes.anythingType;
+                                    DartSimpleIdentifier("$r");
+                                };
+                        false;
+                        memberDeclaration;
+                        memberType;
+                        memberOperator;
+                    };
+
+            "A Dart function that takes a receiver of `containerType` and returns
+             a Callable that invokes `memberDeclaration`."
+            value outerFunction
+                =   DartFunctionExpression {
+                        DartFormalParameterList {
+                            true; false;
+                            // takes the container
+                            [DartSimpleFormalParameter {
+                                false; false;
+                                // dartObject since Callable is generic
+                                dartTypes.dartObject;
+                                DartSimpleIdentifier("$r");
+                            }];
+                        };
+                        DartExpressionFunctionBody {
+                            false;
+                            innerCallable;
+                        };
+                    };
+
+            // The Callable that takes a `containerType`
+            return createCallable(scope, outerFunction);
+        }
     }
 
     shared

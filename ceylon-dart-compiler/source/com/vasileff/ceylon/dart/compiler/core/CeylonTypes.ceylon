@@ -475,7 +475,7 @@ class CeylonTypes(Unit unit) {
             return iterableType;
         }
 
-        value iteratedType = unit.getIteratedType(iterableType);
+        value iteratedType = getIteratedType(iterableType);
         if (unit.isNonemptyIterableType(iterableType)) {
             return unit.getSequenceType(iteratedType);
         }
@@ -483,6 +483,10 @@ class CeylonTypes(Unit unit) {
             return unit.getSequentialType(iteratedType);
         }
     }
+
+    shared
+    Type getIteratedType(Type iterableType)
+        =>  unit.getIteratedType(iterableType);
 
     shared
     Boolean equalDeclarations(Declaration first, Declaration second)
