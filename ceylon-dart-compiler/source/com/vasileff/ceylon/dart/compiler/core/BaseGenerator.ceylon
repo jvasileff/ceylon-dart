@@ -2528,7 +2528,7 @@ class BaseGenerator(CompilationContext ctx)
                         "void";
                     };
                 };
-            implementedAsFunction then "set";
+            !implementedAsFunction then "set";
             identifier;
             DartFunctionExpression {
                 DartFormalParameterList {
