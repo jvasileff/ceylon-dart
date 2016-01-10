@@ -111,9 +111,6 @@ class DartInvocable(
         // members), but, if a capture is re-captured, it will have a receiver the
         // for the second capture! (The receiver would be the first capturer.)
 
-        "Setters are not yet supported for capture."
-        assert (!setter);
-
         "Constructors and Dart static methods are not captured."
         assert (!is DartConstructorName | DartPropertyAccess reference);
 

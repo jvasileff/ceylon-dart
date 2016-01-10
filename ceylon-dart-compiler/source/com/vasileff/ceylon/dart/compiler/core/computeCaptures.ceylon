@@ -13,7 +13,8 @@ import ceylon.ast.core {
 
 import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
-    ClassOrInterfaceModel=ClassOrInterface
+    ClassOrInterfaceModel=ClassOrInterface,
+    ValueModel=Value
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
@@ -81,6 +82,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             //
             //      For now, hack in an exception to not try to create a NodeInfo if
             //      this ValueSpecification is for a named argument.
+
             if (getTcNode(that) is Tree.SpecifierStatement) {
                 value info = ValueSpecificationInfo(that);
                 info.target.visit(this);
@@ -121,6 +123,16 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
                     targetsClassOrInterface;
                     expressionsClassOrInterface;
                 };
+
+                // Also capture the setter, if one exists
+                if (is ValueModel targetDeclaration,
+                        exists setter = targetDeclaration.setter) {
+                    capture {
+                        setter;
+                        targetsClassOrInterface;
+                        expressionsClassOrInterface;
+                    };
+                }
             }
         }
 

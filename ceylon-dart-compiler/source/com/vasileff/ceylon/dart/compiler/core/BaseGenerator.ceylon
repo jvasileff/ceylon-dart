@@ -3342,11 +3342,10 @@ class BaseGenerator(CompilationContext ctx)
 
         value classModel = getClassModelForConstructor(declaration);
 
-        // FIXME setters?
         value captureExpressions
             =   dartTypes.captureDeclarationsForClass(classModel)
                     .map((capture)
-                        =>  dartTypes.invocableForBaseExpression(scope, capture, false))
+                        =>  dartTypes.invocableForBaseExpression(scope, capture))
                     .map(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
 
         value outerExpression

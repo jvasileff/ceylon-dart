@@ -3,25 +3,25 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I {
     $dart$core.String get accessVal;
-    static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val();
-    $dart$core.Function $capture$run$val;
+    static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val$get();
+    $dart$core.Function $capture$run$val$get;
 }
 class run$C implements run$I {
-    $dart$core.Function $capture$run$val;
-    run$C([$dart$core.Function $capture$run$val]) {
-        this.$capture$run$val = $capture$run$val;
+    $dart$core.Function $capture$run$val$get;
+    run$C([$dart$core.Function $capture$run$val$get]) {
+        this.$capture$run$val$get = $capture$run$val$get;
     }
-    $dart$core.String get accessVal => $capture$run$val();
+    $dart$core.String get accessVal => $capture$run$val$get();
 }
 class run$D implements run$I {
-    $dart$core.Function $capture$run$val;
-    run$D([$dart$core.Function $capture$run$val]) {
-        this.$capture$run$val = $capture$run$val;
+    $dart$core.Function $capture$run$val$get;
+    run$D([$dart$core.Function $capture$run$val$get]) {
+        this.$capture$run$val$get = $capture$run$val$get;
     }
-    run$D.create([$dart$core.Function $capture$run$val]) {
-        this.$capture$run$val = $capture$run$val;
+    run$D.create([$dart$core.Function $capture$run$val$get]) {
+        this.$capture$run$val$get = $capture$run$val$get;
     }
-    $dart$core.String get accessVal => $capture$run$val();
+    $dart$core.String get accessVal => $capture$run$val$get();
 }
 void $package$run() {
     $dart$core.String val$get() => "hello";

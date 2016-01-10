@@ -246,6 +246,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         + getUnprefixedName(container) + "$"
                 else "";
 
+        String getterSetterSuffix(ValueModel | SetterModel declaration)
+            =>  if (useGetterSetterMethods(declaration))
+                then (if (declaration is SetterModel) then "$set" else "$get")
+                else "";
+
         switch (declaration)
         case (is ConstructorModel) {
             if (!declaration.name exists) {
@@ -274,9 +279,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             if (capturedReferenceValue(declaration)) {
                 return "$b$" + result;
             }
-            return result;
+            return result + getterSetterSuffix(declaration);
         }
-        case (is SetterModel | FunctionModel) {
+        case (is SetterModel) {
+            return identifierPackagePrefix(declaration)
+                    + getUnprefixedName(declaration)
+                    + getterSetterSuffix(declaration);
+        }
+        case (is FunctionModel) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
@@ -974,15 +984,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartQualifiedInvocable invocableForBaseExpression(
             DScope scope,
             FunctionOrValueModel declaration,
-            Boolean setter = false) {
+            Boolean setter = declaration is SetterModel) {
+
+        // The typechecker always gives us a ValueModel for ValueSpecifications, but we
+        // need the SetterModel, if available.
+        value validDeclaration
+            =   correctDeclaration(declaration, setter);
 
         "By definition."
-        assert (is FunctionModel | ValueModel | SetterModel declaration);
+        assert (is FunctionModel | ValueModel | SetterModel validDeclaration);
 
         "Use the correct original declaration, given that we may have ignored some
          replacement declarations."
         value originalDeclaration
-            =   declarationConsideringElidedReplacements(declaration);
+            =   declarationConsideringElidedReplacements(validDeclaration);
 
         value invocable
             =   dartInvocable {
@@ -1058,11 +1073,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
-                    if (setter && declaration.transient) {
-                        addError(scope, "invoking captured setters not yet supported.");
-                        return dummyDartQualifiedInvocable;
-                    }
-
                     return DartQualifiedInvocable {
                         expressionToThisOrOuterStripThis {
                             scope;
@@ -1087,7 +1097,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             //      sure the types all line up....
 
                             reference
-                                =   identifierForCapture(declaration);
+                                =   identifierForCapture(validDeclaration);
 
                             // operators become functions when closurized
                             elementType
@@ -1099,8 +1109,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                 =   setter;
 
                             capturedReferenceValue
-                                =   if (is ValueModel declaration)
-                                    then capturedReferenceValue(declaration)
+                                =   if (is ValueModel validDeclaration)
+                                    then capturedReferenceValue(validDeclaration)
                                     else false;
                         };
                     };
@@ -1210,6 +1220,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else
                 null;
 
+    "Swap ValueModel for SetterModel or vice-versa if necessary."
+    FunctionModel | ValueModel | SetterModel | ClassModel | ConstructorModel
+    correctDeclaration(
+            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
+            Boolean setter) {
+        value result
+            =   if (setter, is ValueModel declaration,
+                    exists setterModel = declaration.setter) then
+                    setterModel
+                else if (!setter, is SetterModel declaration) then
+                    declaration.getter
+                else
+                    declaration;
+
+        "By definition."
+        assert (is FunctionModel | ValueModel | SetterModel
+                    | ClassModel | ConstructorModel result);
+
+        return result;
+    }
+
     "Returns a [[DartInvocable]] suitable for use from [[scope]].
 
      **Note** this function should not be used for base expressions since they may
@@ -1220,12 +1251,17 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             FunctionOrValueModel | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
+        // The typechecker always gives us a ValueModel for ValueSpecifications, but we
+        // need the SetterModel, if available.
+        value validDeclaration
+            =   correctDeclaration(declaration, setter);
+
         // handle constructors first
-        if (is ClassModel | ConstructorModel declaration) {
+        if (is ClassModel | ConstructorModel validDeclaration) {
             return DartInvocable {
                 dartConstructorName {
                     scope;
-                    declaration;
+                    validDeclaration;
                 };
                 package.dartFunction; // Constructor, really
                 false;
@@ -1236,53 +1272,53 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         "Is the Function implemented as a value?"
         value callableValue
-            =   if (is FunctionModel declaration)
-                then isCallableValue(declaration)
+            =   if (is FunctionModel validDeclaration)
+                then isCallableValue(validDeclaration)
                 else false;
 
         "Cast the Callable if held by a variable of type $dart$core.Object"
         value callableCast
             =   if (callableValue &&
-                    erasedToObjectCallableParam(declaration.initializerParameter))
+                    erasedToObjectCallableParam(validDeclaration.initializerParameter))
                 then dartTypeName {
                     scope;
                     ceylonTypes.callableAnythingType;
                 }
                 else null;
 
-        switch (container = declaration.container)
+        switch (container = container(validDeclaration))
         case (is PackageModel) {
             return DartInvocable {
-                if (!sameModule(scope, declaration)) then
+                if (!sameModule(scope, validDeclaration)) then
                     DartPrefixedIdentifier {
                         DartSimpleIdentifier {
-                            moduleImportPrefix(declaration);
+                            moduleImportPrefix(validDeclaration);
                         };
                         DartSimpleIdentifier {
-                            getName(declaration);
+                            getName(validDeclaration);
                         };
                     }
                 else
                     DartSimpleIdentifier {
                         // toplevel functions and values from the same dart package
                         // get a prefix to avoid shadowing problems
-                        getPackagePrefixedName(declaration);
+                        getPackagePrefixedName(validDeclaration);
                     };
-                if (declaration is FunctionModel)
+                if (validDeclaration is FunctionModel)
                     then package.dartFunction
                     else dartValue;
                 setter;
             };
         }
         case (is ClassOrInterfaceModel) {
-            if (declaration.staticallyImportable) {
+            if (validDeclaration.staticallyImportable) {
                 // Special case: Dart static member
                 return DartInvocable {
                     DartPropertyAccess {
                         dartIdentifierForClassOrInterface(scope, container);
-                        DartSimpleIdentifier(getPackagePrefixedName(declaration));
+                        DartSimpleIdentifier(getPackagePrefixedName(validDeclaration));
                     };
-                    if (declaration is FunctionModel)
+                    if (validDeclaration is FunctionModel)
                     then package.dartFunction
                     else dartValue;
                     setter;
@@ -1298,7 +1334,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             value mapped
                 =   if (!ctx.withinConstructorSignatureSet.contains(container)
                             && !ctx.withinConstructorDefaultsSet.contains(container))
-                    then mappedFunctionOrValue(refinedDeclaration(declaration))
+                    then mappedFunctionOrValue(refinedDeclaration(validDeclaration))
                     else null;
 
             value [name, dartElementType]
@@ -1310,8 +1346,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         mapped[0],
                         mapped[1]
                     ] else [
-                        getPackagePrefixedName(declaration),
-                        if (is FunctionModel declaration, !callableValue)
+                        getPackagePrefixedName(validDeclaration),
+                        if (is FunctionModel validDeclaration, !callableValue)
                         then package.dartFunction
                         else dartValue
                     ];
@@ -1332,9 +1368,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | SpecificationModel) {
 
             value name
-                =   getPackagePrefixedName(declaration);
+                =   getPackagePrefixedName(validDeclaration);
 
-            if (is ValueModel declaration, capturedReferenceValue(declaration)) {
+            if (is ValueModel validDeclaration,
+                    capturedReferenceValue(validDeclaration)) {
                 // The Value is stored in a capture box
                 return DartInvocable {
                     DartSimpleIdentifier {
@@ -1346,11 +1383,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
 
-            if (is ValueModel|SetterModel declaration,
-                    useGetterSetterMethods(declaration)) {
+            if (is ValueModel | SetterModel validDeclaration,
+                    useGetterSetterMethods(validDeclaration)) {
                 return DartInvocable {
                     DartSimpleIdentifier {
-                        name + (if (setter) then "$set" else "$get");
+                        name;
                     };
                     // override previously calculated type
                     package.dartFunction;
@@ -1359,7 +1396,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
             else {
                 value dartElementType
-                    =   if (declaration is FunctionModel && !callableValue)
+                    =   if (validDeclaration is FunctionModel && !callableValue)
                         then package.dartFunction
                         else dartValue;
 
