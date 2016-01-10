@@ -240,12 +240,12 @@ class ExpressionTransformer(CompilationContext ctx)
             // Is this a Function that's really a Constructor?
             if (is FunctionModel targetDeclaration,
                 exists constructorModel = getConstructor(targetDeclaration)) {
-                // generateNewCallable() can handle constructors and will take care
-                // of the implicit `outer` argument if the constructor's class is a
-                // member class.
+                // generateCallableForBE() can handle constructors and will take care of
+                // the implicit `outer` argument if the constructor's class is a member
+                // class.
 
                 // Return a Callable that returns an instance of a class:
-                return generateNewCallable {
+                return generateCallableForBE {
                     info;
                     constructorModel;
                 };
@@ -312,7 +312,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     return withBoxingNonNative {
                         info;
                         info.typeModel;
-                        generateNewCallable {
+                        generateCallableForBE {
                             info;
                             targetDeclaration;
                         };
@@ -330,8 +330,8 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (is ClassModel declaration = typeNameInfo.declarationModel);
 
             // Note: if `declaration` is not toplevel, the Dart constructor may need
-            // some outers and captures. `generateNewCallable` will take care of that.
-            return generateNewCallable {
+            // some outers and captures. `generateCallableForBE` will take care of that.
+            return generateCallableForBE {
                 info;
                 declaration;
             };
@@ -407,11 +407,11 @@ class ExpressionTransformer(CompilationContext ctx)
                 // So, this is a staticMethodReference to the *Constructor*, but it
                 // is not a static reference to the constructor's container.
 
-                // GenerateNewCallable will provide the necessary `outer` reference.
-                // The returned value will be a Callable for the constructor,
-                // rather than a Callable that takes an `outer` and returns a
-                // callable for the constructor.
-                return generateNewCallable {
+                // generateCallableForBE will provide the necessary `outer` reference.
+                // The returned value will be a Callable for the constructor, rather than
+                // a Callable that takes an `outer` and returns a callable for the
+                // constructor.
+                return generateCallableForBE {
                     info;
                     memberDeclaration;
                 };
@@ -477,7 +477,7 @@ class ExpressionTransformer(CompilationContext ctx)
             // QualifiedExpression with a `super` receiver
             if (exists superType = dartTypes.denotableSuperType(
                                         that.receiverExpression)) {
-                return generateCallableForQualifiedExpression {
+                return generateCallableForQE {
                     info;
                     superType;
                     null;
@@ -489,7 +489,7 @@ class ExpressionTransformer(CompilationContext ctx)
             }
 
             // QualifiedExpression with a non-`super` receiver
-            return generateCallableForQualifiedExpression {
+            return generateCallableForQE {
                 info;
                 receiverInfo.typeModel;
                 () => that.receiverExpression.transform(this);
@@ -958,7 +958,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     =   positionalArguments.argumentList.listedArguments.first);
 
                 return
-                generateCallableForQualifiedExpression {
+                generateCallableForQE {
                     info;
                     expressionInfo(argument).typeModel;
                     () => argument.transform(expressionTransformer);
@@ -1102,7 +1102,7 @@ class ExpressionTransformer(CompilationContext ctx)
             withBoxingNonNative {
                 info;
                 info.typeModel;
-                generateNewCallable {
+                generateCallableForBE {
                     info;
                     info.declarationModel;
                     generateFunctionExpression(that);

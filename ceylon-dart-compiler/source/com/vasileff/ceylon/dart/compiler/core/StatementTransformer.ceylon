@@ -564,7 +564,7 @@ class StatementTransformer(CompilationContext ctx)
                     withLhs {
                         callableType;
                         null;
-                        () => generateNewCallable {
+                        () => generateCallableForBE {
                             info;
                             functionModel;
                             generateFunctionExpressionRaw {

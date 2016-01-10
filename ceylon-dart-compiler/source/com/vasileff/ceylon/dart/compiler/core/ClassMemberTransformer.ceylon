@@ -481,7 +481,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             DartAssignmentExpression {
                                 identifier;
                                 DartAssignmentOperator.equal;
-                                generateNewCallable {
+                                generateCallableForBE {
                                     info;
                                     model;
                                     generateFunctionExpression(that);

@@ -1169,13 +1169,13 @@ class BaseGenerator(CompilationContext ctx)
                 // wrap nested function in a callable
                 assert(exists inner = result);
 
-                // generateNewCallable() *thinks* the innermost call returns a native
-                // value, but it doesn't since we're really invoking another Callable.
-                // So, we're boxing/unboxing as nec. to make the Callable *look* like a
+                // generateCallableForBE() *thinks* the innermost call returns a native
+                // value, but it doesn't since we're really invoking another Callable. So,
+                // we're boxing/unboxing as nec. to make the Callable *look* like a
                 // regular function. Unfortunately, this causes some wasteful box-unbox
-                // combos. Better would be to teach generateNewCallable that our return
+                // combos. Better would be to teach generateCallableForBE that our return
                 // values are never erased-to-native.
-                result = generateNewCallable(scope, functionModel, inner, i+1);
+                result = generateCallableForBE(scope, functionModel, inner, i+1);
             }
 
             value delegateIdentifier
@@ -2301,7 +2301,7 @@ class BaseGenerator(CompilationContext ctx)
                             withLhs {
                                 null;
                                 parameterModelModel;
-                                () => generateNewCallable {
+                                () => generateCallableForBE {
                                     scope;
                                     parameterModelModel;
                                     generateFunctionExpression(param);
@@ -3066,7 +3066,7 @@ class BaseGenerator(CompilationContext ctx)
                 assert(exists previous = result);
                 assert(exists previousPList = parameterLists[i+1]);
                 result
-                    =   generateNewCallable {
+                    =   generateCallableForBE {
                             scope;
                             functionModel;
                             previous;
@@ -3529,7 +3529,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared see(`function generateInvocation`)
-    DartExpression generateCallableForQualifiedExpression(
+    DartExpression generateCallableForQE(
             DScope scope,
             "The type of the receiver, which may be:
              -  the type of an expression if [[generateReceiver]] is not null, or
@@ -3799,7 +3799,7 @@ class BaseGenerator(CompilationContext ctx)
 
             "A Callable that invokes `memberDeclaration`."
             value innerCallable
-                =   generateCallableForQualifiedExpression {
+                =   generateCallableForQE {
                         scope;
                         containerType;
                         generateReceiver()
@@ -3841,7 +3841,7 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartInstanceCreationExpression generateNewCallable(
+    DartInstanceCreationExpression generateCallableForBE(
             DScope scope,
             FunctionModel | ClassModel | ConstructorModel functionModel,
             DartExpression? delegateFunction = null,
@@ -4644,7 +4644,7 @@ class BaseGenerator(CompilationContext ctx)
                                 =   withLhs {
                                         typeModel;
                                         parameterModelModel;
-                                        () => generateNewCallable {
+                                        () => generateCallableForBE {
                                             argumentInfo;
                                             declarationModel;
                                             generateFunctionExpressionRaw {
@@ -4712,7 +4712,7 @@ class BaseGenerator(CompilationContext ctx)
                             =   withLhs {
                                     typeModel;
                                     parameterModelModel;
-                                    () => generateNewCallable {
+                                    () => generateCallableForBE {
                                         argumentInfo;
                                         argumentInfo.declarationModel;
                                         generateFunctionExpression(argumentInfo.node);
