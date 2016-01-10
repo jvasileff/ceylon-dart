@@ -209,7 +209,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     || ctx.withinConstructorSignatureSet.contains(declaration.container));
 
     shared
-    String getName(DeclarationModel declaration) {
+    Boolean valueMappedToNonField(ValueModel valueModel)
+        =>  if (exists mapped = mappedFunctionOrValue(valueModel.refinedDeclaration))
+            then mapped[1] != dartValue
+            else false;
+
+    shared
+    Boolean valueRequiresSyntheticField(ValueModel valueModel)
+        =>  !valueModel.transient && valueModel.default;
+
+    shared
+    Boolean capturedReferenceValue(ValueModel valueModel)
+        =>  !valueModel.transient
+                && valueModel.variable
+                && ctx.capturedDeclarations.defines(valueModel);
+
+    shared
+    String getName(DeclarationModel | ParameterModel declaration) {
         // TODO it might make sense to make this private, and have callers
         //      use `dartIdentifierForX()` methods that can also handle
         //      function <-> value mappings.
@@ -217,7 +233,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // If mapping a value to a value (e.g. hash->hashCode), use the Dart name. For
         // non-Dart-values, we'll return the Ceylon name, which may be used for a
         // synthetic field or setter.
-        if (declaration is ValueModel,
+        if (is ValueModel declaration,
             exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
                 mapped[1] == dartValue) {
             return mapped[0];
@@ -238,7 +254,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
-        case (is SetterModel | ValueModel | FunctionModel) {
+        case (is ParameterModel) {
+            // If for a ValueModel, treat like the ValueModel case but do not mangle
+            // the name to the capture box name. For non-values, unwrap and try again.
+            if (is ValueModel valueModel = declaration.model) {
+                return identifierPackagePrefix(valueModel)
+                        + getUnprefixedName(declaration);
+            }
+            return getName(declaration.model);
+        }
+        case (is ValueModel) {
+            value result
+                =   identifierPackagePrefix(declaration)
+                        + getUnprefixedName(declaration);
+
+            if (capturedReferenceValue(declaration)) {
+                return "$b$" + result;
+            }
+            return result;
+        }
+        case (is SetterModel | FunctionModel) {
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
@@ -403,12 +438,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     DartSimpleIdentifier("dart$default");
                 };
 
-    // FIXME don't hardcode package
     shared
     DartTypeModel dartLazyIterable
         =>  DartTypeModel("$ceylon$language", "LazyIterable");
 
-    // FIXME don't hardcode package
     shared
     DartTypeModel dartFunctionIterableFactory
         =>  DartTypeModel("$ceylon$language", "functionIterable");
@@ -421,7 +454,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartTypeModel dartBoolModel
         =   DartTypeModel("$dart$core", "bool");
 
-    // FIXME don't hardcode package
     shared
     DartTypeModel dartCallableModel
         =>  DartTypeModel("$ceylon$language", "dart$Callable");
@@ -441,6 +473,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartTypeModel dartStringModel
         =   DartTypeModel("$dart$core", "String");
+
+    shared
+    DartTypeModel dartVariableBox
+        =>  DartTypeModel("$ceylon$language", "dart$VariableBox");
 
     shared
     DartConstructorName dartConstructorName(
@@ -505,7 +541,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "The Dart implementation type for the Declaration. This is useful for captures where
      Dart functions are captured as `$dart$core$Function`s rather than wrapped as
-     `Callable`s."
+     `Callable`s. It's also useful for non-transient variable value captures that are
+     stored in variable boxes."
     shared
     see(`function dartTypeNameForDeclaration`)
     DartTypeName dartCaptureTypeNameForDeclaration(
@@ -519,6 +556,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         if (is ValueModel | SetterModel declaration,
                 useGetterSetterMethods(declaration)) {
             return ctx.dartTypes.dartFunction;
+        }
+
+        if (is ValueModel declaration, capturedReferenceValue(declaration)) {
+            return dartTypeNameForDartModel {
+                scope;
+                ctx.dartTypes.dartVariableBox;
+            };
         }
 
         if (is FunctionModel declaration, !isCallableValue(declaration)) {
@@ -1011,8 +1055,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // The capture must have been made by $this, a supertype of $this,
                     // some $outer, or a supertype of some $outer.
 
-                    if (setter) {
-                        addError(scope, "invoking setters on captures not yet supported.");
+                    if (setter && declaration.transient) {
+                        addError(scope, "invoking captured setters not yet supported.");
                         return dummyDartQualifiedInvocable;
                     }
 
@@ -1039,14 +1083,22 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             //      in some cases consolidate/de-dup captures. And, make
                             //      sure the types all line up....
 
-                            reference = identifierForCapture(declaration);
+                            reference
+                                =   identifierForCapture(declaration);
 
                             // operators become functions when closurized
-                            elementType = switch (et = invocable.elementType)
-                                          case (package.dartFunction | dartValue) et
-                                          case (is DartOperator) package.dartFunction;
+                            elementType
+                                =   switch (et = invocable.elementType)
+                                    case (package.dartFunction | dartValue) et
+                                    case (is DartOperator) package.dartFunction;
 
-                            setter = setter; // FIXME not really supported.
+                            setter
+                                =   setter;
+
+                            capturedReferenceValue
+                                =   if (is ValueModel declaration)
+                                    then capturedReferenceValue(declaration)
+                                    else false;
                         };
                     };
                 }
@@ -1279,6 +1331,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             value name
                 =   getPackagePrefixedName(declaration);
 
+            if (is ValueModel declaration, capturedReferenceValue(declaration)) {
+                // The Value is stored in a capture box
+                return DartInvocable {
+                    DartSimpleIdentifier {
+                        name;
+                    };
+                    package.dartValue;
+                    setter;
+                    capturedReferenceValue = true;
+                };
+            }
+
             if (is ValueModel|SetterModel declaration,
                     useGetterSetterMethods(declaration)) {
                 return DartInvocable {
@@ -1317,16 +1381,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
     }
-
-    shared
-    Boolean valueMappedToNonField(ValueModel valueModel)
-        =>  if (exists mapped = mappedFunctionOrValue(valueModel.refinedDeclaration))
-            then mapped[1] != dartValue
-            else false;
-
-    shared
-    Boolean valueRequiresSyntheticField(ValueModel valueModel)
-        =>  !valueModel.transient && valueModel.default;
 
     shared
     BoxingConversion? boxingConversionFor(

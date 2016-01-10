@@ -1225,7 +1225,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             DartArgumentList {
                                 parameterModels.collect { (parameterModel) =>
                                     DartSimpleIdentifier {
-                                        dartTypes.getName(parameterModel.model);
+                                        dartTypes.getName(parameterModel);
                                     };
                                 };
                             };

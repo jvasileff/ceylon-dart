@@ -40,7 +40,9 @@ import ceylon.ast.core {
     SpreadMemberOperator,
     Pattern,
     TuplePattern,
-    EntryPattern
+    EntryPattern,
+    DefaultedValueParameter,
+    DefaultedParameterReference
 }
 import ceylon.collection {
     LinkedList
@@ -2139,19 +2141,41 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartVariableDeclarationList generateForValueDeclarationRaw
             (DScope scope, ValueModel declarationModel)
-        =>  DartVariableDeclarationList {
-                null;
-                dartTypes.dartTypeNameForDeclaration {
-                    scope;
-                    declarationModel;
-                };
-                [DartVariableDeclaration {
-                    DartSimpleIdentifier {
-                        dartTypes.getPackagePrefixedName(declarationModel);
+        =>  if (dartTypes.capturedReferenceValue(declarationModel)) then
+                let (boxDartType = dartTypes.dartTypeNameForDartModel(
+                        scope, dartTypes.dartVariableBox))
+                DartVariableDeclarationList {
+                    null;
+                    boxDartType;
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.getPackagePrefixedName(declarationModel);
+                        };
+                        DartInstanceCreationExpression {
+                            false;
+                            DartConstructorName {
+                                boxDartType;
+                            };
+                            DartArgumentList {
+                                [DartNullLiteral()];
+                            };
+                        };
+                    }];
+                }
+            else
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeNameForDeclaration {
+                        scope;
+                        declarationModel;
                     };
-                    initializer = null;
-                }];
-            };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.getPackagePrefixedName(declarationModel);
+                        };
+                        initializer = null;
+                    }];
+                };
 
     shared
     DartVariableDeclarationList generateForObjectDefinition(ObjectDefinition that) {
@@ -2220,6 +2244,44 @@ class BaseGenerator(CompilationContext ctx)
                             dartTypes.getName(pInfo.parameterModel.model);
                         };
 
+                if (is DefaultedValueParameter | DefaultedParameterReference param) {
+                    assert (is ValueModel parameterModelModel);
+                    // use dartInvocable for the get & set operations so we don't have to
+                    // deal with capture boxes and any other special cases
+
+                    return
+                    DartIfStatement {
+                        // If (parm === default)
+                        DartFunctionExpressionInvocation {
+                            dartTypes.dartIdentical;
+                            DartArgumentList {
+                                [dartTypes.dartInvocable {
+                                    scope;
+                                    parameterModelModel;
+                                }.expressionForInvocation(),
+                                dartTypes.dartDefault(scope)];
+                            };
+                        };
+                        DartExpressionStatement {
+                            dartTypes.dartInvocable {
+                                scope;
+                                parameterModelModel;
+                                true;
+                            }.expressionForInvocation {
+                                null;
+                                [withLhs {
+                                    null;
+                                    parameterModelModel;
+                                    () => param.specifier.expression
+                                            .transform(expressionTransformer);
+                                }];
+                            };
+                        };
+                    };
+                }
+
+                assert (is FunctionModel parameterModelModel);
+
                 return
                 DartIfStatement {
                     // If (parm === default)
@@ -2234,26 +2296,16 @@ class BaseGenerator(CompilationContext ctx)
                         DartAssignmentExpression {
                             paramName;
                             DartAssignmentOperator.equal;
-                            if (is DefaultedCallableParameter param,
-                                is FunctionModel parameterModelModel) then
-                                // Generate a Callable for the default function value
-                                withLhs {
-                                    null;
+                            // Generate a Callable for the default function value
+                            withLhs {
+                                null;
+                                parameterModelModel;
+                                () => generateNewCallable {
+                                    scope;
                                     parameterModelModel;
-                                    () => generateNewCallable {
-                                        scope;
-                                        parameterModelModel;
-                                        generateFunctionExpression(param);
-                                    };
-                                }
-                            else
-                                // Simple ValueModel default value
-                                withLhs {
-                                    null;
-                                    parameterModelModel;
-                                    () => param.specifier.expression
-                                            .transform(expressionTransformer);
+                                    generateFunctionExpression(param);
                                 };
+                            };
                         };
                     };
                 };
@@ -2365,26 +2417,56 @@ class BaseGenerator(CompilationContext ctx)
             };
         }
 
-        value info = ValueDefinitionInfo(that);
+        value info
+            =   ValueDefinitionInfo(that);
 
-        return
-        DartVariableDeclarationList {
-            null;
-            dartTypes.dartTypeNameForDeclaration {
-                info;
-                info.declarationModel;
-            };
-            [DartVariableDeclaration {
-                DartSimpleIdentifier {
-                    dartTypes.getPackagePrefixedName(info.declarationModel);
-                };
-                withLhs {
+        value initializerValue
+            =   withLhs {
                     null;
                     info.declarationModel;
                     () => that.definition.expression.transform(expressionTransformer);
                 };
-            }];
-        };
+
+        if (dartTypes.capturedReferenceValue(info.declarationModel)) {
+            value boxDartType
+                =   dartTypes.dartTypeNameForDartModel(info, dartTypes.dartVariableBox);
+
+            return
+            DartVariableDeclarationList {
+                null;
+                boxDartType;
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier {
+                        dartTypes.getPackagePrefixedName(info.declarationModel);
+                    };
+                    DartInstanceCreationExpression {
+                        false;
+                        DartConstructorName {
+                            boxDartType;
+                        };
+                        DartArgumentList {
+                            [initializerValue];
+                        };
+                    };
+                }];
+            };
+        }
+        else {
+            return
+            DartVariableDeclarationList {
+                null;
+                dartTypes.dartTypeNameForDeclaration {
+                    info;
+                    info.declarationModel;
+                };
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier {
+                        dartTypes.getPackagePrefixedName(info.declarationModel);
+                    };
+                    initializerValue;
+                }];
+            };
+        }
     }
 
     "Handles toplevel, class and interface member, and statement `ValueDefinition`s with
@@ -3001,6 +3083,16 @@ class BaseGenerator(CompilationContext ctx)
                     .map(ParameterInfo.parameterModel)
                     .any(ParameterModel.defaulted);
 
+            value capturedReferenceValueParameters
+                =   parameterInfos
+                    .map((info) => info.parameterModel.model)
+                    .map((d) => if (is ValueModel d,
+                                    dartTypes.capturedReferenceValue(d))
+                                then d
+                                else null)
+                    .coalesced
+                    .sequence();
+
             value useStaticDefaultArgumentMethods
                 =   hasDefaultedParameters
                         && (functionModel.default
@@ -3013,7 +3105,6 @@ class BaseGenerator(CompilationContext ctx)
                     else [];
 
             DartFunctionBody body;
-
 
             // Note: the forceNonNativeReturn case can only happen in the
             //       !hasDefaultedParameters w/LazySpecifier case, since specifications
@@ -3028,9 +3119,10 @@ class BaseGenerator(CompilationContext ctx)
                         dartTypes.erasedToObject(functionModel);
                     };
 
-            // If defaulted parameters exist, use a block (not lazy specifier)
-            // At start of block, assign values as necessary
-            if (!hasDefaultedParameters && !isVoid) {
+            // If defaulted parameters exist, if we need to instantiate capture boxes
+            // or if we need to avoid a return for void, use a block (not lazy specifier)
+            if (!hasDefaultedParameters && !isVoid
+                    && capturedReferenceValueParameters.empty) {
                 // no defaulted parameters
                 if (i == parameterLists.size - 1) {
                     // the actual function body
@@ -3065,6 +3157,43 @@ class BaseGenerator(CompilationContext ctx)
                 // defaulted parameters exist, or the function is void
 
                 value statements = LinkedList<DartStatement>();
+
+                // create capture boxes
+                for (valueModel in capturedReferenceValueParameters) {
+                    value boxDartType
+                        =   dartTypes.dartTypeNameForDartModel {
+                                scope;
+                                dartTypes.dartVariableBox;
+                            };
+
+                    value initializerValue
+                        =   DartSimpleIdentifier {
+                                dartTypes.getName(valueModel.initializerParameter);
+                            };
+
+                    statements.add {
+                        DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                boxDartType;
+                                [DartVariableDeclaration {
+                                    DartSimpleIdentifier {
+                                        dartTypes.getName(valueModel);
+                                    };
+                                    DartInstanceCreationExpression {
+                                        false;
+                                        DartConstructorName {
+                                            boxDartType;
+                                        };
+                                        DartArgumentList {
+                                            [initializerValue];
+                                        };
+                                    };
+                                }];
+                            };
+                        };
+                    };
+                }
 
                 // assign default values to defaulted arguments
                 if (useStaticDefaultArgumentMethods) {
@@ -3186,7 +3315,7 @@ class BaseGenerator(CompilationContext ctx)
                 false; false;
                 dartParameterType;
                 DartSimpleIdentifier {
-                    dartTypes.getName(parameterModel.model);
+                    dartTypes.getName(parameterModel);
                 };
             };
 

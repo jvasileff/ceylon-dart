@@ -34,13 +34,20 @@ class DartInvocable(
         "If not null, cast to the provided type. [[callableCast]] should be provided when
          [[callableParameter]] is `true`, and the Dart variable holding the `Callable`
          is of type `dart.core.Object`, which happens for defaulted callable parameters."
-        shared DartTypeName? callableCast = null) {
+        shared DartTypeName? callableCast = null,
+        shared Boolean capturedReferenceValue = false) {
+
+    "Cannot be both a capturedReferenceValue and a callableParameter."
+    assert (!(capturedReferenceValue && callableParameter));
 
     "Cannot be both a setter and a callableParameter."
     assert (!(setter && callableParameter));
 
     "Callable parameters must be [[dartValue]]s."
     assert (!(callableParameter && elementType != dartValue));
+
+    "Callable casts are only valid for callable parameters."
+    assert (!(callableCast exists && !callableParameter));
 
     // TODO remove this function
     shared
@@ -56,8 +63,11 @@ class DartInvocable(
             DartElementType elementType = this.elementType,
             Boolean setter = this.setter,
             Boolean callableParameter = this.callableParameter,
-            DartTypeName? callableCast = this.callableCast)
-        =>  DartInvocable(reference, elementType, setter, callableParameter);
+            DartTypeName? callableCast = this.callableCast,
+            Boolean capturedReferenceValue = this.capturedReferenceValue)
+        =>  DartInvocable(
+                reference, elementType, setter, callableParameter, callableCast,
+                capturedReferenceValue);
 
     function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
         =>  if (is DartArgumentList arguments)
@@ -207,7 +217,9 @@ class DartInvocable(
                 "Arguments must be empty when accessing values"
                 assert (dartArgumentSequence(arguments).empty);
 
-                return target;
+                return if (capturedReferenceValue)
+                then DartPropertyAccess(target, DartSimpleIdentifier("v"))
+                else target;
             }
             else {
                 "Assignment operations must have an argument."
@@ -217,7 +229,9 @@ class DartInvocable(
                 assert (dartArgumentSequence(arguments).size == 1);
 
                 return DartAssignmentExpression {
-                    target;
+                    if (capturedReferenceValue)
+                    then DartPropertyAccess(target, DartSimpleIdentifier("v"))
+                    else target;
                     DartAssignmentOperator.equal;
                     val;
                 };

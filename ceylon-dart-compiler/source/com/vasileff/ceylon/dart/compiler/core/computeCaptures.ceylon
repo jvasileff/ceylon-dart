@@ -17,11 +17,15 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
-    ValueSpecificationInfo
+    ValueSpecificationInfo,
+    getTcNode
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
     ImmutableSetMultimap
+}
+import com.redhat.ceylon.compiler.typechecker.tree {
+    Tree
 }
 
 "Identify captured functions and values. For each class and interface, determine list of
@@ -69,10 +73,18 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
         shared actual
         void visitValueSpecification(ValueSpecification that) {
-            value info = ValueSpecificationInfo(that);
             // TODO ask Lucas to include the BaseExpression | QualifiedExpression as
             //      a child node, so we don't have to create our own.
-            info.target.visit(this);
+            //      And, use separate nodes for named-args vs non-named-args
+            //      specifications. Trying to re-use the same class for two very
+            //      different things will be very difficult.
+            //
+            //      For now, hack in an exception to not try to create a NodeInfo if
+            //      this ValueSpecification is for a named argument.
+            if (getTcNode(that) is Tree.SpecifierStatement) {
+                value info = ValueSpecificationInfo(that);
+                info.target.visit(this);
+            }
             that.specifier.visit(this);
         }
 

@@ -18,6 +18,7 @@ object keys {
     Key<NodeBox> tcNode = ScopedKey<NodeBox>(`value keys`, "tcNode");
 }
 
+shared
 TcNode getTcNode(Node astNode) {
     assert (exists nodeBox = astNode.get(keys.tcNode));
     return nodeBox.node;
