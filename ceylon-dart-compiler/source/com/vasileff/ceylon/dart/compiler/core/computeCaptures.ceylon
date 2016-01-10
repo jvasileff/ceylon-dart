@@ -7,7 +7,8 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicModifier,
     DynamicValue,
-    Node
+    Node,
+    ValueSpecification
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -15,7 +16,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    BaseExpressionInfo
+    BaseExpressionInfo,
+    ValueSpecificationInfo
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
@@ -64,6 +66,15 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
         shared actual
         void visitDynamicValue(DynamicValue that) {}
+
+        shared actual
+        void visitValueSpecification(ValueSpecification that) {
+            value info = ValueSpecificationInfo(that);
+            // TODO ask Lucas to include the BaseExpression | QualifiedExpression as
+            //      a child node, so we don't have to create our own.
+            info.target.visit(this);
+            that.specifier.visit(this);
+        }
 
         shared actual
         void visitBaseExpression(BaseExpression that) {
