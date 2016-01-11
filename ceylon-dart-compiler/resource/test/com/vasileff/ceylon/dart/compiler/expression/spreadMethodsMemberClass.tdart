@@ -1,0 +1,36 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class spreadMethodsMemberClass$C$D {
+    spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C;
+    spreadMethodsMemberClass$C$D([spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C, $dart$core.int i]) {
+        this.$outer$default$spreadMethodsMemberClass$C = $outer$default$spreadMethodsMemberClass$C;
+        this.i = i;
+    }
+    $dart$core.int i;
+}
+class spreadMethodsMemberClass$C {
+    spreadMethodsMemberClass$C() {}
+}
+void $package$spreadMethodsMemberClass() {
+    $ceylon$language.Sequence a = (() {
+        $ceylon$language.Iterable $r = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+            switch ($i$) {
+            case 0 :
+            return new spreadMethodsMemberClass$C();
+            }
+        }, null);
+        return ($r.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new spreadMethodsMemberClass$C$D($r, $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($ceylon$language.Integer.instance(5)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
+    })();
+    if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
+        throw new $ceylon$language.AssertionError("Violated: (a[0] of Anything) is C.D");
+    }
+    if (!(a.size == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.size == 1");
+    }
+    if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D).i == 5)) {
+        throw new $ceylon$language.AssertionError("Violated: a[0].i == 5");
+    }
+}
+
+void spreadMethodsMemberClass() => $package$spreadMethodsMemberClass();

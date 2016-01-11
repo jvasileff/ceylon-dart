@@ -48,4 +48,16 @@ object expression {
     shared test
     void assignmentExpressionCoercion()
         =>  compileAndCompare2("expression/assignmentExpressionCoercion");
+
+    shared test
+    void spreadMethodsMemberClass()
+        =>  compileAndCompare2("expression/spreadMethodsMemberClass");
+
+    shared test
+    void spreadAttributes()
+        =>  compileAndCompare2("expression/spreadAttributes");
+
+    shared test
+    void spreadMethods()
+        =>  compileAndCompare2("expression/spreadMethods");
 }

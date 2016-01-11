@@ -1,0 +1,29 @@
+shared void spreadMethods() {
+    {Integer+} ints1 = {1,2,3};
+    {Integer*} ints2 = {1,2,3};
+    {Integer*} ints3 = {};
+
+    value a1 = ints1*.plusInteger(10);
+    value a2 = ints2*.plusInteger(10);
+    value a3 = ints3*.plusInteger(10);
+
+    value b1 = ints1*.plusInteger;
+    value b2 = ints2*.plusInteger;
+    value b3 = ints3*.plusInteger;
+
+    assert (a1 == [11,12,13]);
+    assert (a2 == [11,12,13]);
+    assert (a3 == []);
+
+    assert (b1(10) == [11,12,13]);
+    assert (b2(10) == [11,12,13]);
+    assert (b3(10) == []);
+
+    value lists = [['a'], ['b']];
+
+    value c1 = lists*.withLeading<Integer>(1);
+    value c2 = lists*.withLeading<Integer>;
+
+    assert (c1 == [[1, 'a'], [1, 'b']]);
+    assert (c2(1) == [[1, 'a'], [1, 'b']]);
+}

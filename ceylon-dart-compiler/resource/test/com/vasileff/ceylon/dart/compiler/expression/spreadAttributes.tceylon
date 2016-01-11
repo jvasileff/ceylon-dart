@@ -1,0 +1,13 @@
+shared void spreadAttributes() {
+    {Integer+} ints1 = {1,2,3};
+    {Integer*} ints2 = {1,2,3};
+    {Integer*} ints3 = {};
+
+    value a1 = ints1*.successor;
+    value a2 = ints2*.successor;
+    value a3 = ints3*.successor;
+
+    assert (a1 == [2,3,4]);
+    assert (a2 == [2,3,4]);
+    assert (a3 == []);
+}
