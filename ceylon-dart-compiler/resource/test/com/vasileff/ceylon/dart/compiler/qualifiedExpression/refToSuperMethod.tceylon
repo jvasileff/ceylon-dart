@@ -1,0 +1,10 @@
+shared class C() {
+    shared default String id() => "C";
+}
+shared class D() extends C() {
+    shared actual String id() => "D";
+    shared String() superId => super.id;
+}
+shared void run() {
+    print(D().superId()); // prints C on JVM, error on JS
+}

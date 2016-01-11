@@ -1,0 +1,17 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C() {}
+    $dart$core.String id() => "C";
+}
+class D  extends C {
+    D() {}
+    $dart$core.String id() => "D";
+    $ceylon$language.Callable get superId => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(super.id()));
+}
+void $package$run() {
+    $ceylon$language.print((new D()).superId.f());
+}
+
+void run() => $package$run();

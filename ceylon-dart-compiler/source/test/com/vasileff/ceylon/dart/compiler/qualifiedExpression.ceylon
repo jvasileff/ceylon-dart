@@ -59,4 +59,8 @@ object qualifiedExpression {
     shared test
     void eagerReceiverEvaluation()
         =>  compileAndCompare2("qualifiedExpression/eagerReceiverEvaluation");
+
+    shared test
+    void refToSuperMethod()
+        =>  compileAndCompare2("qualifiedExpression/refToSuperMethod");
 }
