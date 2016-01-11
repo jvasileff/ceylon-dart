@@ -1,0 +1,24 @@
+shared class C {
+    shared Integer i;
+    shared new (Integer a) {
+        this.i = a;
+    }
+    shared new create(Integer a, Integer b) {
+        this.i = a + b;
+    }
+}
+
+shared class CAlias(Integer x) => C(x);
+shared class CCreateAlias(Integer x, Integer y) => C.create(x, y);
+
+shared void run() {
+    Anything c = CAlias(10);
+    Anything cc = CCreateAlias(10, 20);
+
+    assert ((c of Anything) is C);
+    assert ((c of Anything) is CAlias);
+    assert ((c of Anything) is CCreateAlias);
+    assert ((cc of Anything) is C);
+    assert ((cc of Anything) is CAlias);
+    assert ((cc of Anything) is CCreateAlias);
+}

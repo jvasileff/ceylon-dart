@@ -1,0 +1,53 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C([$dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = 10;
+        }
+        return [a];
+    })());
+    C.$s([$dart$core.List a]) : this.$w(a[0]);
+    C.$w([$dart$core.Object a]) {
+        this.i = a as $dart$core.int;
+    }
+    C.create([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default]) : this.create$s((() {
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = 10;
+        }
+        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+            b = 20;
+        }
+        return [a, b];
+    })());
+    C.create$s([$dart$core.List a]) : this.create$w(a[0], a[1]);
+    C.create$w([$dart$core.Object a, $dart$core.Object b]) {
+        this.i = (a as $dart$core.int) + (b as $dart$core.int);
+    }
+    $dart$core.int i;
+}
+void $package$run() {
+    if (!((new C.create(10, 20)).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias.create(10, 20).i == 30");
+    }
+    if (!((new C.create()).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias.create().i == 30");
+    }
+    if (!((() {
+        $dart$core.Object arg$0$0 = 10;
+        $dart$core.Object arg$0$1 = 20;
+        return new C.create(arg$0$0, arg$0$1);
+    })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias.create {a = 10; b = 20;}.i == 30");
+    }
+    if (!((() {
+        $dart$core.Object arg$1$0 = 10;
+        $dart$core.Object arg$1$1 = 20;
+        return new C.create(arg$1$0, arg$1$1);
+    })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias.create {a = 10; b = 20;}.i == 30");
+    }
+}
+
+void run() => $package$run();

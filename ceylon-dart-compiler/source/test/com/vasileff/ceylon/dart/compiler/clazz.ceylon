@@ -162,4 +162,27 @@ object clazz {
     shared test
     void superRefsParam()
         =>  compileAndCompare2("clazz/superRefsParam");
+
+    // TODO uncomment lines in tests once we can extend constructors
+    shared test
+    void toplevelClassAlias()
+        =>  compileAndCompare2("clazz/toplevelClassAlias");
+
+    // TODO uncomment lines in tests once we can extend constructors
+    shared test
+    void toplevelClassAliasDefaults()
+        =>  compileAndCompare2("clazz/toplevelClassAliasDefaults");
+
+    // TODO uncomment lines in tests once we can extend constructors
+    shared test
+    void toplevelClassAliasConstructors()
+        =>  compileAndCompare2("clazz/toplevelClassAliasConstructors");
+
+    shared test
+    void toplevelClassAliasRefs()
+        =>  compileAndCompare2("clazz/toplevelClassAliasRefs");
+
+    shared test
+    void toplevelClassAliasTypes()
+        =>  compileAndCompare2("clazz/toplevelClassAliasTypes");
 }

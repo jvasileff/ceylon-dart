@@ -1,0 +1,31 @@
+// Defaulted parameters not supported for class aliases,
+// so this test is pretty simple.
+shared class C {
+    shared Integer i;
+    shared new (Integer a = 10) {
+        this.i = a;
+    }
+    shared new create(Integer a = 20, Integer b = 30) {
+        this.i = a + b;
+    }
+}
+
+shared class CAlias(Integer x) => C(x);
+//shared class CCreateAlias(Integer x, Integer y) => C.create(x, y);
+
+shared class D(Integer p) extends CAlias(p) {}
+//shared class DCreate(Integer p, Integer q) extends CCreateAlias(p, q) {}
+
+shared void run() {
+    assert (CAlias(10).i == 10);
+    //assert (CCreateAlias(10, 20).i == 30);
+
+    assert (CAlias {x = 10;}.i == 10);
+    //assert (CCreateAlias {x = 10; y = 20;}.i == 30);
+
+    assert (D(10).i == 10);
+    //assert (DCreate(10, 20).i == 30);
+
+    assert (D {p = 10;}.i == 10);
+    //assert (DCreate {p = 10; q = 20;}.i == 30);
+}

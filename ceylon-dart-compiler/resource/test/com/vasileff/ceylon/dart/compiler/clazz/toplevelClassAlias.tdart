@@ -1,0 +1,40 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C([$dart$core.int a]) {
+        this.i = a;
+    }
+    C.create([$dart$core.int a, $dart$core.int b]) {
+        this.i = a + b;
+    }
+    $dart$core.int i;
+}
+class D  extends C {
+    D([$dart$core.int _$p]) : super(_$p) {
+        this._$p = _$p;
+    }
+    $dart$core.int _$p;
+}
+void $package$run() {
+    if (!((new C(10)).i == 10)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias(10).i == 10");
+    }
+    if (!((() {
+        $dart$core.int arg$0$0 = 10;
+        return new C(arg$0$0);
+    })().i == 10)) {
+        throw new $ceylon$language.AssertionError("Violated: CAlias {x = 10;}.i == 10");
+    }
+    if (!((new D(10)).i == 10)) {
+        throw new $ceylon$language.AssertionError("Violated: D(10).i == 10");
+    }
+    if (!((() {
+        $dart$core.int arg$1$0 = 10;
+        return new D(arg$1$0);
+    })().i == 10)) {
+        throw new $ceylon$language.AssertionError("Violated: D {p = 10;}.i == 10");
+    }
+}
+
+void run() => $package$run();

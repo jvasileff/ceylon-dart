@@ -1,0 +1,36 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C([$dart$core.int a]) {
+        this.i = a;
+    }
+    C.create([$dart$core.int a, $dart$core.int b]) {
+        this.i = a + b;
+    }
+    $dart$core.int i;
+}
+void $package$run() {
+    $dart$core.Object c = new C(10);
+    $dart$core.Object cc = new C.create(10, 20);
+    if (!(c is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is C");
+    }
+    if (!(c is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is CAlias");
+    }
+    if (!(c is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is CCreateAlias");
+    }
+    if (!(cc is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (cc of Anything) is C");
+    }
+    if (!(cc is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (cc of Anything) is CAlias");
+    }
+    if (!(cc is C)) {
+        throw new $ceylon$language.AssertionError("Violated: (cc of Anything) is CCreateAlias");
+    }
+}
+
+void run() => $package$run();
