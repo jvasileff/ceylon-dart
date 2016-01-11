@@ -3,15 +3,17 @@ shared void spreadMethodsMemberClass() {
         shared class D(shared Integer i) {}
     }
 
+    value cs = {C()};
+
     value a = {C()}*.D(5);
-    //value b = {C()}*.D;
+    value b = {C()}*.D;
 
     assert ((a[0] of Anything) is C.D);
-    //assert ((b(5)[0] of Anything) is C.D);
+    assert ((b(5)[0] of Anything) is C.D);
 
     assert (a.size == 1);
-    //assert (b(5).size == 1);
+    assert (b(5).size == 1);
 
     assert (a[0].i == 5);
-    //assert (b(5)[0].i == 5);
+    assert (b(5)[0].i == 5);
 }
