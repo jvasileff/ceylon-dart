@@ -707,15 +707,11 @@ class BaseGenerator(CompilationContext ctx)
                     =   generateInvocationDetailsSynthetic {
                             scope;
                             receiverType;
-                            // generateReceiver() will be eagerly evaluated to $r
-                            // below, so use $r for the receiver here.
-                            () => withBoxingNonNative {
-                                scope;
-                                receiverType;
-                                DartSimpleIdentifier {
-                                    "$r";
-                                };
-                            };
+                            // No need to worry about eager evaluation;
+                            // generateCallableForQE handles eager evaluation of
+                            // the receiver (generateReceiver may actually yield
+                            // something like '$r')
+                             generateReceiver;
                             "spread";
                             [callableArgument];
                         };
@@ -727,30 +723,7 @@ class BaseGenerator(CompilationContext ctx)
 
                 return
                 createExpressionEvaluationWithSetup {
-                    [
-                        // Evaluate generateReceiver() to $r
-                        DartVariableDeclarationStatement {
-                            DartVariableDeclarationList {
-                                null;
-                                dartTypes.dartTypeName {
-                                    scope;
-                                    receiverType;
-                                    eraseToNative = false;
-                                };
-                                [DartVariableDeclaration {
-                                    DartSimpleIdentifier {
-                                        "$r";
-                                    };
-                                    withLhsNonNative {
-                                        receiverType;
-                                        generateReceiver;
-                                    };
-                                }];
-                            };
-                        },
-                        // Setup variables for args, if necessary
-                        *argsSetup
-                    ];
+                    argsSetup;
                     // Call sequence()
                     generateInvocationSynthetic {
                         scope;
@@ -762,9 +735,8 @@ class BaseGenerator(CompilationContext ctx)
                             ceylonTypes.getCallableReturnType(spreadInvocationReturnType);
                             rhsErasedToNative = false;
                             rhsErasedToObject = true;
-                            // call the Callable result of the call to Iterable.spread()
+                            // Call the Callable result of the call to Iterable.spread()
                             DartFunctionExpressionInvocation {
-                                // resolve the f/s property of the Callable
                                 DartPropertyAccess {
                                     withLhsDenotable {
                                         ceylonTypes.callableDeclaration;
