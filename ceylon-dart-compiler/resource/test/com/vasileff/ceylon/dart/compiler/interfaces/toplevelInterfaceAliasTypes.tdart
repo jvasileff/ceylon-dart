@@ -1,0 +1,49 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $dart$core.String get id;
+    static $dart$core.String $get$id([final I $this]) => "I";
+}
+class C implements I {
+    C() {}
+    $dart$core.String get id => "C";
+    $dart$core.String get id_i => I.$get$id(this);
+    $dart$core.String get id_iAlias => I.$get$id(this);
+    $dart$core.String get id_iAliasAlias => I.$get$id(this);
+}
+void $package$run() {
+    C c = new C();
+    if (!(c.id == "C")) {
+        throw new $ceylon$language.AssertionError("Violated: c.id == \"C\"");
+    }
+    if (!(c.id_i == "I")) {
+        throw new $ceylon$language.AssertionError("Violated: c.id_i == \"I\"");
+    }
+    if (!(c.id_iAlias == "I")) {
+        throw new $ceylon$language.AssertionError("Violated: c.id_iAlias == \"I\"");
+    }
+    if (!(c.id_iAliasAlias == "I")) {
+        throw new $ceylon$language.AssertionError("Violated: c.id_iAliasAlias == \"I\"");
+    }
+    if (!(c is I)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is I");
+    }
+    if (!(c is I)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is IAlias");
+    }
+    if (!(c is I)) {
+        throw new $ceylon$language.AssertionError("Violated: (c of Anything) is IAliasAlias");
+    }
+    if (!(!($ceylon$language.String.instance("") is I))) {
+        throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is I");
+    }
+    if (!(!($ceylon$language.String.instance("") is I))) {
+        throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is IAlias");
+    }
+    if (!(!($ceylon$language.String.instance("") is I))) {
+        throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is IAliasAlias");
+    }
+}
+
+void run() => $package$run();

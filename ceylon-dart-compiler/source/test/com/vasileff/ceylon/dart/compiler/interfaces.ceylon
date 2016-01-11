@@ -164,4 +164,12 @@ object interfaces {
     shared test
     void bridgeAssignmentExpression()
         =>  compileAndCompare2("interfaces/bridgeAssignmentExpression");
+
+    shared test
+    void toplevelInterfaceAlias()
+        =>  compileAndCompare2("interfaces/toplevelInterfaceAlias");
+
+    shared test
+    void toplevelInterfaceAliasTypes()
+        =>  compileAndCompare2("interfaces/toplevelInterfaceAliasTypes");
 }

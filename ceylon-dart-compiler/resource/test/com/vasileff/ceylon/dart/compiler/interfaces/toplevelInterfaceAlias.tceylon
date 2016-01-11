@@ -1,0 +1,27 @@
+interface I {
+    shared default String id => "I";
+}
+
+interface IAlias => I;
+interface IAliasAlias => IAlias;
+
+class C1() satisfies IAlias {
+    shared actual String id => "C";
+    shared String id_i => super.id;
+}
+
+class C2() satisfies IAliasAlias {
+    shared actual String id => "C";
+    shared String id_i => super.id;
+}
+
+shared void run() {
+    value c1 = C1();
+    value c2 = C2();
+
+    assert (c1.id == "C");
+    assert (c1.id_i == "I");
+
+    assert (c2.id == "C");
+    assert (c2.id_i == "I");
+}

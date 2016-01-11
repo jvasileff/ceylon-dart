@@ -1,0 +1,30 @@
+interface I {
+    shared default String id => "I";
+}
+
+interface IAlias => I;
+interface IAliasAlias => IAlias;
+
+class C() satisfies I {
+    shared actual String id => "C";
+    shared String id_i => super.id;
+    shared String id_iAlias => (super of IAlias).id;
+    shared String id_iAliasAlias => (super of IAliasAlias).id;
+}
+
+shared void run() {
+    value c = C();
+
+    assert (c.id == "C");
+    assert (c.id_i == "I");
+    assert (c.id_iAlias == "I");
+    assert (c.id_iAliasAlias == "I");
+
+    assert ((c of Anything) is I);
+    assert ((c of Anything) is IAlias);
+    assert ((c of Anything) is IAliasAlias);
+
+    assert (!("" of Anything) is I);
+    assert (!("" of Anything) is IAlias);
+    assert (!("" of Anything) is IAliasAlias);
+}
