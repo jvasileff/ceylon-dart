@@ -462,7 +462,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
         }
-        case (is FunctionModel) {
+        case (is FunctionModel | ClassModel) {
             // Return a new Callable.
 
             // QualifiedExpression with a `super` receiver
