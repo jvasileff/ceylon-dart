@@ -136,9 +136,7 @@ shared interface Collection<out Element=Anything>
                 }
                 return
                     if (nonempty permutation 
-// FIXME Dart workaround
-//                        = elements*.item) 
-                        = elements.collect(Entry.item))
+                        = elements*.item) 
                     then permutation 
                     else finished;
             }
