@@ -27,7 +27,6 @@ import ceylon.ast.core {
     Node,
     ElseOperation,
     ThenOperation,
-    SpreadMemberOperator,
     NotOperation,
     AssignOperation,
     PostfixIncrementOperation,
@@ -130,8 +129,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
-    ConstructorModel=Constructor,
-    TypedReference
+    ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -164,7 +162,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartBooleanLiteral,
     DartExpressionStatement,
     DartConditionalExpression,
-    DartSimpleFormalParameter,
     DartStatement,
     DartAssignmentExpression,
     DartAssignmentOperator,
@@ -176,7 +173,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartIsExpression,
     DartTypeName,
     DartContinueStatement,
-    DartExpressionFunctionBody,
     createExpressionEvaluationWithSetup,
     createInlineDartStatements,
     createNullSafeExpression
@@ -348,11 +344,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.nameAndArgs;
                 QualifiedExpressionInfo(that).declaration;
             };
-        }
-
-        if (that.memberOperator is SpreadMemberOperator) {
-            addError(that, "Spread member operator not yet supported");
-            return DartNullLiteral();
         }
 
         value info

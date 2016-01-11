@@ -320,6 +320,14 @@ class CeylonTypes(Unit unit) {
         =>  unit.iterableDeclaration;
 
     shared
+    Function iterableMapDeclaration
+        =>  assertFunction(iterableDeclaration.getMember("map", null, false));
+
+    shared
+    Function iterableSequenceDeclaration
+        =>  assertFunction(iterableDeclaration.getMember("sequence", null, false));
+
+    shared
     Interface iteratorDeclaration
         =>  unit.iteratorDeclaration;
 
@@ -487,6 +495,10 @@ class CeylonTypes(Unit unit) {
     shared
     Type getIteratedType(Type iterableType)
         =>  unit.getIteratedType(iterableType);
+
+    shared
+    Type getCallableReturnType(Type callableType)
+        =>  unit.getCallableReturnType(callableType);
 
     shared
     Boolean equalDeclarations(Declaration first, Declaration second)

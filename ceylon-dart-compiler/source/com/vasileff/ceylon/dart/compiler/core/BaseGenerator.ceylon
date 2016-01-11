@@ -42,7 +42,8 @@ import ceylon.ast.core {
     TuplePattern,
     EntryPattern,
     DefaultedValueParameter,
-    DefaultedParameterReference
+    DefaultedParameterReference,
+    MemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -534,7 +535,7 @@ class BaseGenerator(CompilationContext ctx)
     [[DartStatement*], [DartExpression*], Boolean] generateArguments(
             DScope scope,
             List<TypeModel | TypeDetails> signature,
-            FunctionModel | ClassModel | ConstructorModel declarationModel,
+            FunctionModel | ClassModel | ConstructorModel | Null declarationModel,
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
         if (is PositionalArguments | NamedArguments arguments) {
@@ -562,15 +563,26 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         value argExpressions
-            =   [for (i -> argument in argGenerators.indexed)
-                    withLhs {
-                        signature[i];
-                        declarationModel.firstParameterList
-                                .parameters.get(i)?.model;
-                        argument;
-                        lhsIsParameter = true;
-                    }
-                ];
+            =   if (exists declarationModel) then
+                    [for (i -> argument in argGenerators.indexed)
+                        withLhs {
+                            signature[i];
+                            declarationModel.firstParameterList
+                                    .parameters.get(i)?.model;
+                            argument;
+                            lhsIsParameter = true;
+                        }
+                    ]
+                else
+                    [for (i -> argument in argGenerators.indexed)
+                        withLhsNonNative {
+                            TypeModel|TypeDetails lhsType {
+                                assert (exists type = signature[i]);
+                                return type;
+                            }
+                            fun = argument;
+                        }
+                    ];
 
         return [argsSetup, argExpressions, false];
     }
@@ -603,16 +615,12 @@ class BaseGenerator(CompilationContext ctx)
         assert (is FunctionModel | ValueModel | SetterModel
                     | ClassModel | ConstructorModel memberDeclaration);
 
-        if (is SpreadMemberOperator memberOperator) {
-            addError(memberOperator, "Spread member operator not yet supported");
-            return DartNullLiteral();
-        }
-
-        value safeMemberOperator = memberOperator is SafeMemberOperator;
-
         value [signature, a] = signatureAndArguments else [null, []];
 
-        function standardArgs() {
+        function standardArgs(
+                "If true, ignore the memberDeclaration and prepare non-native arguments
+                 to use for invoking the Callable."
+                Boolean isCallable = false) {
             if (!exists signatureAndArguments) {
                 return [[], [], false];
             }
@@ -620,10 +628,166 @@ class BaseGenerator(CompilationContext ctx)
             return generateArguments {
                 scope;
                 signatureAndArguments[0];
-                memberDeclaration;
+                !isCallable then memberDeclaration;
                 a;
             };
         }
+
+        if (is SpreadMemberOperator memberOperator) {
+            // TODO support constructors after
+            //      https://github.com/ceylon/ceylon/issues/5896
+
+            "Spread operators can only be used with function, value, and class members."
+            assert (is FunctionModel | ValueModel | ClassModel memberDeclaration);
+
+            if (!exists generateReceiver) {
+                // This doesn't actually trigger right now because of inconsistent
+                // type and declaration data provided by the typechecker for `super*.x`.
+
+                // If we do ever want to support `super`, we'll need to improve
+                // generateCallableForStaticMemberReference() to support super
+                // invocations, or DIY callable gen here.
+                addError(scope, "super not supported for spread member operations.");
+                return DartNullLiteral();
+            }
+
+            value containerType
+                =   ceylonTypes.getIteratedType(receiverType);
+
+            "The Callable for the memberDeclaration, which will be passed to `map` or
+             `spread`."
+            value callableArgument
+                =   () => generateCallableForStaticMemberReference {
+                        scope;
+                        containerType = containerType;
+                        // NOTE We are completely cheating by providing "null" for the
+                        //      type arguments of a potentially generic function. Really,
+                        //      generateInvocation() needs to take a list of type
+                        //      arguments when we reifiy. Note: the type arguments are
+                        //      available from
+                        //      qualifiedExpressionInfo.target.typeArguments
+                        memberType
+                            =   switch (memberDeclaration)
+                                case (is ClassModel)
+                                    memberDeclaration.appliedType(
+                                            containerType, null).fullType
+                                case (is FunctionOrValueModel)
+                                    memberDeclaration.appliedTypedReference(
+                                            containerType, null).fullType;
+                        memberDeclaration;
+                    };
+
+            switch (memberDeclaration)
+            case (is ValueModel) {
+                // spread attribute operator
+
+                value [mapInvocationReturnType, _, mapInvocationGenerator]
+                    =   generateInvocationDetailsSynthetic {
+                            scope;
+                            receiverType;
+                            generateReceiver;
+                            "map";
+                            [callableArgument];
+                        };
+
+                return
+                generateInvocationSynthetic {
+                    scope;
+                    mapInvocationReturnType;
+                    mapInvocationGenerator;
+                    "sequence";
+                    [];
+                };
+            }
+            case (is FunctionModel | ClassModel) {
+                // spread method operator
+
+                // Invocation details for Iterable.spread()
+                value [spreadInvocationReturnType, __, spreadInvocationGenerator]
+                    =   generateInvocationDetailsSynthetic {
+                            scope;
+                            receiverType;
+                            // generateReceiver() will be eagerly evaluated to $r
+                            // below, so use $r for the receiver here.
+                            () => withBoxingNonNative {
+                                scope;
+                                receiverType;
+                                DartSimpleIdentifier {
+                                    "$r";
+                                };
+                            };
+                            "spread";
+                            [callableArgument];
+                        };
+
+                // Now, invoke the spread result with the provided arguments, and call
+                // sequence() on that.
+
+                value [argsSetup, argumentList, hasSpread] = standardArgs(true);
+
+                return
+                createExpressionEvaluationWithSetup {
+                    [
+                        // Evaluate generateReceiver() to $r
+                        DartVariableDeclarationStatement {
+                            DartVariableDeclarationList {
+                                null;
+                                dartTypes.dartTypeName {
+                                    scope;
+                                    receiverType;
+                                    eraseToNative = false;
+                                };
+                                [DartVariableDeclaration {
+                                    DartSimpleIdentifier {
+                                        "$r";
+                                    };
+                                    withLhsNonNative {
+                                        receiverType;
+                                        generateReceiver;
+                                    };
+                                }];
+                            };
+                        },
+                        // Setup variables for args, if necessary
+                        *argsSetup
+                    ];
+                    // Call sequence()
+                    generateInvocationSynthetic {
+                        scope;
+                        // The Iterable type returned by Interable.spread()()
+                        ceylonTypes.getCallableReturnType(spreadInvocationReturnType);
+                        () =>  withBoxingCustom {
+                            scope;
+                            // The Iterable type returned by Interable.spread()()
+                            ceylonTypes.getCallableReturnType(spreadInvocationReturnType);
+                            rhsErasedToNative = false;
+                            rhsErasedToObject = true;
+                            // call the Callable result of the call to Iterable.spread()
+                            DartFunctionExpressionInvocation {
+                                // resolve the f/s property of the Callable
+                                DartPropertyAccess {
+                                    withLhsDenotable {
+                                        ceylonTypes.callableDeclaration;
+                                        spreadInvocationGenerator;
+                                    };
+                                    DartSimpleIdentifier {
+                                        if (hasSpread) then "s" else "f";
+                                    };
+                                };
+                                // the arguments to memberDeclaration
+                                DartArgumentList {
+                                    argumentList;
+                                };
+                            };
+                        };
+                        "sequence";
+                        [];
+                    };
+                };
+            }
+        }
+
+        value safeMemberOperator = memberOperator is SafeMemberOperator;
 
         "For optimized invocations, the result type. Null for non-optimized invocations."
         TypeModel? optimizedNativeRhsType;
@@ -3561,7 +3725,7 @@ class BaseGenerator(CompilationContext ctx)
         value parameters = CeylonList(memberDeclaration.firstParameterList.parameters);
 
         "The actual return type given the receiver's parameterization"
-        value resultType = ctx.unit.getCallableReturnType(callableType);
+        value resultType = ceylonTypes.getCallableReturnType(callableType);
 
         "The actual signature given the receiver's parameterization"
         value signature = CeylonList(ctx.unit.getCallableArgumentTypes(callableType));
