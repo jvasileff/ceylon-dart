@@ -387,7 +387,7 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (is MemberOperator memberOperator = that.memberOperator);
 
             if (is ConstructorModel memberDeclaration,
-                is BaseExpressionInfo receiverInfo) {
+                receiverInfo is BaseExpressionInfo) {
 
                 // The receiver is a BaseExpression, which is *never* itself a
                 // staticMethodReference, and can therefore provide its own `outer`
@@ -405,6 +405,34 @@ class ExpressionTransformer(CompilationContext ctx)
                 return generateCallableForBE {
                     info;
                     memberDeclaration;
+                };
+            }
+            else if (is ConstructorModel memberDeclaration,
+                    is QualifiedExpressionInfo receiverInfo,
+                        !receiverInfo.staticMethodReference) {
+
+                // Similar to the previous case, this is a staticMethodReference to
+                // a Constructor, but not to the constructor's class's container.
+                //
+                // The receiverExpression of this QE is a QualifiedExpression to the
+                // constructor's class, and it's receiverExpression is for an instance
+                // of the class's qualifying type. For example:
+                //
+                //      C().D.create
+                //
+                // where "create" is a Constructor.
+
+                return
+                generateCallableForQE {
+                    info;
+                    containerType;
+                    () => receiverInfo.node.receiverExpression.transform {
+                        expressionTransformer;
+                    };
+                    !isConstant(receiverInfo.node.receiverExpression);
+                    memberDeclaration;
+                    info.target.fullType;
+                    memberOperator;
                 };
             }
             else if (is ValueModel | FunctionModel
