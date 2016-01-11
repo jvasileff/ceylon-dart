@@ -27,14 +27,14 @@ import ceylon.ast.core {
     DefaultedParameter,
     Parameter,
     ConstructorDefinition,
-    Construction,
     DynamicModifier,
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
     DefaultedCallableParameter,
     CallableParameter,
-    ClassAliasDefinition
+    ClassAliasDefinition,
+    InterfaceAliasDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -1124,6 +1124,11 @@ class TopLevelVisitor(CompilationContext ctx)
     shared actual
     void visitClassAliasDefinition(ClassAliasDefinition that) {
         // toplevel class aliases are not reified
+    }
+
+    shared actual
+    void visitInterfaceAliasDefinition(InterfaceAliasDefinition that) {
+        // toplevel interface aliases are not reified
     }
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
