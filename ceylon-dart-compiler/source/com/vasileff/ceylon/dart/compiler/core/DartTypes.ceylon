@@ -36,7 +36,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ControlBlockModel=ControlBlock,
     ConstructorModel=Constructor,
     SpecificationModel=Specification,
-    NamedArgumentListModel=NamedArgumentList
+    NamedArgumentListModel=NamedArgumentList,
+    ClassAliasModel=ClassAlias
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -495,18 +496,24 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartConstructorName dartConstructorName(
             DScope scope,
             ClassModel|ConstructorModel declaration) {
-        switch (declaration)
+
+        assert (is ClassModel | ConstructorModel resolvedDeclaration
+            =   if (is ClassAliasModel declaration)
+                then declaration.constructor
+                else declaration);
+
+        switch (resolvedDeclaration)
         case (is ClassModel) {
             return DartConstructorName {
-                dartTypeName(scope, declaration.type, false, false);
+                dartTypeName(scope, resolvedDeclaration.type, false, false);
                 null;
             };
         }
         case (is ConstructorModel) {
-            assert (is ClassModel container = declaration.container);
+            assert (is ClassModel container = resolvedDeclaration.container);
             return DartConstructorName {
                 dartTypeName(scope, container.type, false, false);
-                DartSimpleIdentifier(getName(declaration));
+                DartSimpleIdentifier(getName(resolvedDeclaration));
             };
         }
     }

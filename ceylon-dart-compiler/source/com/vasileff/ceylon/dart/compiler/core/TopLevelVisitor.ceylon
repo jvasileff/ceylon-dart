@@ -33,7 +33,8 @@ import ceylon.ast.core {
     DynamicBlock,
     DynamicValue,
     DefaultedCallableParameter,
-    CallableParameter
+    CallableParameter,
+    ClassAliasDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -47,7 +48,8 @@ import com.redhat.ceylon.model.typechecker.model {
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
-    FunctionOrValueModel=FunctionOrValue
+    FunctionOrValueModel=FunctionOrValue,
+    ClassAliasModel=ClassAlias
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -1045,16 +1047,21 @@ class TopLevelVisitor(CompilationContext ctx)
         if (exists extendedType) {
             value extensionOrConstruction = extendedType.target;
 
-            if (is Construction extensionOrConstruction) {
+            value ecInfo
+                =   extensionOrConstructionInfo(extensionOrConstruction);
+
+            assert (is ClassModel | ConstructorModel | Null resolvedExtendedDeclaration
+                =   switch (m = ecInfo.declaration)
+                    case (is ClassAliasModel) m.constructor
+                    else m);
+
+            if (is ConstructorModel resolvedExtendedDeclaration) {
                 addError(extendedType, "Extending constructors not yet supported.");
                 return null;
             }
 
             "Arguments must exist for constructor or ininitializer extends"
             assert (exists arguments = extensionOrConstruction.arguments);
-
-            value ecInfo
-                =   extensionOrConstructionInfo(extensionOrConstruction);
 
             value outerAndCaptureArguments
                 =   switch (extendedClass = ecInfo.declaration)
@@ -1080,10 +1087,14 @@ class TopLevelVisitor(CompilationContext ctx)
 
                 return
                 DartSuperConstructorInvocation {
-                    null;
+                    null; // TODO constructor name, once we support extending constructors
                     DartArgumentList {
                         concatenate {
                             outerAndCaptureArguments,
+                            // Don't use "resolved" here, since class alias may use
+                            // different parameter names than the aliased class or
+                            // constructor.
+
                             // Use 'withInConstructorSignature' since we may be passing
                             // along callable parameters, which are actually Callable
                             // values at this point.
@@ -1106,7 +1117,14 @@ class TopLevelVisitor(CompilationContext ctx)
     }
 
     shared actual
-    void visitTypeAliasDefinition(TypeAliasDefinition that) {}
+    void visitTypeAliasDefinition(TypeAliasDefinition that) {
+        // type aliases are not reified (at least until we have reified generics)
+    }
+
+    shared actual
+    void visitClassAliasDefinition(ClassAliasDefinition that) {
+        // toplevel class aliases are not reified
+    }
 
     [DartFunctionDeclaration*] generateForwardingGetterSetter
             (ValueDefinition | ValueGetterDefinition | ObjectDefinition that) {
