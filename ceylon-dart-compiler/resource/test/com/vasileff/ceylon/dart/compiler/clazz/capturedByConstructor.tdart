@@ -1,0 +1,29 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$C {
+    $dart$core.int $capture$run$a;
+    $dart$core.int $capture$run$b;
+    run$C.newa([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
+        this.$capture$run$a = $capture$run$a;
+        this.$capture$run$b = $capture$run$b;
+        if (!($capture$run$a == 1)) {
+            throw new $ceylon$language.AssertionError("Violated: a == 1");
+        }
+    }
+    run$C.newb([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
+        this.$capture$run$a = $capture$run$a;
+        this.$capture$run$b = $capture$run$b;
+        if (!($capture$run$b == 2)) {
+            throw new $ceylon$language.AssertionError("Violated: b == 2");
+        }
+    }
+}
+void $package$run() {
+    $dart$core.int a = 1;
+    $dart$core.int b = 2;
+    new run$C.newa(a, b);
+    new run$C.newb(a, b);
+}
+
+void run() => $package$run();

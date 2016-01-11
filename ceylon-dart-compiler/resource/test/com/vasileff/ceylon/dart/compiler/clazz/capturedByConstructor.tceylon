@@ -1,0 +1,14 @@
+shared void run() {
+    Integer a = 1;
+    Integer b = 2;
+    class C {
+        shared new newa() {
+            assert(a == 1);
+        }
+        shared new newb() {
+            assert(b == 2);
+        }
+    }
+    C.newa();
+    C.newb();
+}

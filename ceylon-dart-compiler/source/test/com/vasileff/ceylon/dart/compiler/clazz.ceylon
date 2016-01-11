@@ -185,4 +185,8 @@ object clazz {
     shared test
     void toplevelClassAliasTypes()
         =>  compileAndCompare2("clazz/toplevelClassAliasTypes");
+
+    shared test
+    void capturedByConstructor()
+        =>  compileAndCompare2("clazz/capturedByConstructor");
 }
