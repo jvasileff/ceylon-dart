@@ -244,42 +244,18 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
     }
 
-    DartMethodDeclaration generateForwardDeclaredForwarderMethod
-            (FunctionDeclaration that) {
-
-        value info
-            =   anyFunctionInfo(that);
-
-        value functionExpression
-            =   generateForwardDeclaredForwarder {
+    DartMethodDeclaration generateBridgeForForwardDeclaredMethod
+            (FunctionDeclaration that)
+        =>  let (info = anyFunctionInfo(that))
+            generateMethodDefinitionRaw {
+                info;
+                info.declarationModel;
+                generateForwardDeclaredForwarder {
                     info;
                     info.declarationModel;
                     that.parameterLists;
                 };
-
-        value [identifier, dartElementType]
-            =   dartTypes.dartInvocable {
-                    info;
-                    info.declarationModel;
-                }.oldPairSimple;
-
-        assert (dartElementType is \IdartFunction | DartOperator);
-
-        return
-        DartMethodDeclaration {
-            false;
-            null;
-            generateFunctionReturnType {
-                info;
-                info.declarationModel;
             };
-            null;
-            dartElementType is DartOperator;
-            identifier;
-            functionExpression.parameters;
-            functionExpression.body;
-        };
-    }
 
     shared actual
     [DartClassMember*] transformFunctionDeclaration(FunctionDeclaration that) {
@@ -321,7 +297,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                     };
                 },
                 // The method, which forwards to the callableVariable
-                generateForwardDeclaredForwarderMethod(that)
+                generateBridgeForForwardDeclaredMethod(that)
                 // No need to generateDefaultValueStaticMethods since forward declared
                 // methods may not be 'default' (There may be default arguments, but the
                 // method may not be overriden, and therefore the afformentioned function

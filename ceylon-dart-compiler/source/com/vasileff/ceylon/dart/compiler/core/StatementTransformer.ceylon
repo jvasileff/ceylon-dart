@@ -870,6 +870,8 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformFunctionDeclaration(FunctionDeclaration that) {
+        // Must be a forward declared function
+
         value info = FunctionDeclarationInfo(that);
         if (info.declarationModel.parameter) {
             // ignore; must be a declaration for a callable parameter
