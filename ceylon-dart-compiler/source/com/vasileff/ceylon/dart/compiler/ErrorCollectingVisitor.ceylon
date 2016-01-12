@@ -55,8 +55,17 @@ class ErrorCollectingVisitor2() extends Visitor() {
 
     shared
     Integer errorCount
+        =>  analysisErrorCount + recognitionErrorCount;
+
+    shared
+    Integer analysisErrorCount
         =>  analysisErrors.map(PositionedMessage.message)
                 .narrow<AnalysisError|UnexpectedError>().size;
+
+    shared
+    Integer recognitionErrorCount
+        =>  recognitionErrors.map(PositionedMessage.message).size;
+
     shared
     PositionedMessage[] positionedMessages
         =>  if (! recognitionErrors.empty)
