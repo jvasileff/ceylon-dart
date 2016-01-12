@@ -511,9 +511,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
         case (is ConstructorModel) {
             assert (is ClassModel container = resolvedDeclaration.container);
+            value constructorName = getName(resolvedDeclaration);
             return DartConstructorName {
                 dartTypeName(scope, container.type, false, false);
-                DartSimpleIdentifier(getName(resolvedDeclaration));
+                (!constructorName.empty) then
+                    DartSimpleIdentifier(getName(resolvedDeclaration));
             };
         }
     }
