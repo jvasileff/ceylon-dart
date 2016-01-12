@@ -24,9 +24,6 @@ import ceylon.ast.core {
     DynamicValue
 }
 
-import com.redhat.ceylon.model.typechecker.model {
-    FunctionModel=Function
-}
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartAssignmentExpression,
     DartAssignmentOperator,
@@ -108,20 +105,13 @@ class ClassStatementTransformer(CompilationContext ctx)
     DartStatement[] transformLazySpecification(LazySpecification that) {
         value info = LazySpecificationInfo(that);
 
-        if (!info.declaration.shortcutRefinement,
-                is FunctionModel functionModel = info.declaration) {
-            // Specification for a forward declared function.
+        if (!info.declaration.shortcutRefinement) {
+            // Specification for a forward declared function or value.
             return that.transform(statementTransformer);
         }
 
-        if (!info.refined exists) {
-            addError(that,
-                "LazySpecifications that are not shortcut refinements or specifications
-                 for forward declared functions are not yet supported.");
-            return [];
-        }
-
-        // Functions and Values are (currently) always declared as members.
+        // It's a shortcut refinement. Functions and Values are (currently) always
+        // declared as members.
         return [];
     }
 

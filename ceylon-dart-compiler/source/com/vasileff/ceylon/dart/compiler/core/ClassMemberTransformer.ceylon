@@ -61,7 +61,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
     DartAssignmentExpression,
     DartExpressionStatement,
-    DartAssignmentOperator
+    DartAssignmentOperator,
+    DartFunctionExpressionInvocation,
+    DartArgumentList
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -98,17 +100,9 @@ class ClassMemberTransformer(CompilationContext ctx)
     DartClassMember[] transformLazySpecification(LazySpecification that) {
         value info = LazySpecificationInfo(that);
 
-        if (!info.declaration.shortcutRefinement,
-                is FunctionModel functionModel = info.declaration) {
-            // Specification for a forward declared function. Will be handled by
-            // ClassStatementTransformer (or StatementTransformer)
-            return [];
-        }
-
         if (!info.declaration.shortcutRefinement) {
-            addError(that,
-                "LazySpecifications that are not shortcut refinements or specifications
-                 for forward declared functions are not yet supported.");
+            // Specification for a forward declared function or value that will be
+            // handled by ClassStatementTransformer (or StatementTransformer)
             return [];
         }
 
@@ -154,6 +148,29 @@ class ClassMemberTransformer(CompilationContext ctx)
         return [dartDeclaration, dartDefinition].coalesced.sequence();
     }
 
+    DartMethodDeclaration generateBridgeForForwardDeclaredValue
+            (ValueDeclaration that)
+        =>  let (info = anyValueInfo(that))
+            generateMethodDefinitionRaw {
+                info;
+                info.declarationModel;
+                DartFunctionExpression {
+                    dartFormalParameterListEmpty;
+                    DartExpressionFunctionBody {
+                        false;
+                        // No boxing since we're using a native dart Function for $f, and
+                        // it will return the expected native type for native values.
+                        DartFunctionExpressionInvocation {
+                            DartSimpleIdentifier {
+                                // TODO consolidate naming logic.
+                                "_" + dartTypes.getName(info.declarationModel) + "$f";
+                            };
+                            DartArgumentList([]);
+                        };
+                    };
+                };
+            };
+
     shared actual
     [DartClassMember*] transformValueDeclaration(ValueDeclaration that) {
         // skip native declarations entirely, for now
@@ -184,6 +201,33 @@ class ClassMemberTransformer(CompilationContext ctx)
                     info;
                     info.declarationModel;
                 }
+            ];
+        }
+
+        if (!info.declarationModel.formal && info.declarationModel.transient) {
+            // A forward declared lazy value
+
+            // TODO consolidate naming
+            value callableVariableName
+                =   "_" + dartTypes.getName(info.declarationModel) + "$f";
+
+            value callableVariable
+                =   DartSimpleIdentifier(callableVariableName);
+
+            return [
+                // Field to hold the Callable for the forward declared function
+                DartFieldDeclaration {
+                    false;
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartFunction;
+                        [DartVariableDeclaration {
+                            callableVariable;
+                        }];
+                    };
+                },
+                // The method, which forwards to the callableVariable
+                generateBridgeForForwardDeclaredValue(that)
             ];
         }
 

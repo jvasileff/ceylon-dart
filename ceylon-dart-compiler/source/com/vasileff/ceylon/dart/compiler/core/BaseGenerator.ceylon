@@ -2657,6 +2657,40 @@ class BaseGenerator(CompilationContext ctx)
         //    are re-written in ClassMemberTransformer.generateMethodDefinitionRaw.
         //    So we do not have to handle operators here.
 
+        return
+        generateDefinitionForValueModelGetterRaw {
+            scope;
+            declarationModel;
+            switch (definition)
+            case (is LazySpecifier)
+                DartExpressionFunctionBody {
+                    false;
+                    withLhs {
+                        null;
+                        declarationModel;
+                        () => definition.expression.transform(expressionTransformer);
+                    };
+                }
+            case (is Block)
+                DartBlockFunctionBody {
+                    null;
+                    false;
+                    withReturn {
+                        declarationModel;
+                        () => statementTransformer.transformBlock {
+                            definition;
+                        }.first;
+                    };
+                };
+        };
+    }
+
+    shared
+    DartFunctionDeclaration generateDefinitionForValueModelGetterRaw(
+            DScope scope,
+            ValueModel declarationModel,
+            DartFunctionBody functionBody) {
+
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
                     scope;
@@ -2674,27 +2708,7 @@ class BaseGenerator(CompilationContext ctx)
             identifier;
             DartFunctionExpression {
                 dartElementType == dartFunction then dartFormalParameterListEmpty;
-                switch (definition)
-                case (is LazySpecifier)
-                    DartExpressionFunctionBody {
-                        false;
-                        withLhs {
-                            null;
-                            declarationModel;
-                            () => definition.expression.transform(expressionTransformer);
-                        };
-                    }
-                case (is Block)
-                    DartBlockFunctionBody {
-                        null;
-                        false;
-                        withReturn {
-                            declarationModel;
-                            () => statementTransformer.transformBlock {
-                                definition;
-                            }.first;
-                        };
-                    };
+                functionBody;
             };
         };
     }

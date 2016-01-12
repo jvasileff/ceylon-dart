@@ -51,7 +51,9 @@ import ceylon.collection {
 
 import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
-    FunctionOrValueModel=FunctionOrValue
+    FunctionOrValueModel=FunctionOrValue,
+    ValueModel=Value,
+    ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -81,7 +83,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartCatchClause,
     DartRethrowExpression,
     createIfStatement,
-    DartFunctionDeclaration
+    DartFunctionDeclaration,
+    DartFunctionExpression,
+    dartFormalParameterListEmpty,
+    DartExpressionFunctionBody
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -516,8 +521,11 @@ class StatementTransformer(CompilationContext ctx)
     DartStatement[] transformLazySpecification(LazySpecification that) {
         value info = LazySpecificationInfo(that);
 
-        if (!info.declaration.shortcutRefinement,
-                is FunctionModel functionModel = info.declaration) {
+        "StatementTransformer doesn't handle shortcut refinements."
+        assert (!info.declaration.shortcutRefinement);
+
+        switch (declarationModel = info.declaration)
+        case (is FunctionModel) {
             // Specification for a forward declared function. Assign to the synthetic
             // variable that holds the Callable.
 
@@ -566,10 +574,10 @@ class StatementTransformer(CompilationContext ctx)
                         null;
                         () => generateCallableForBE {
                             info;
-                            functionModel;
+                            declarationModel;
                             generateFunctionExpressionRaw {
                                 info;
-                                functionModel;
+                                declarationModel;
                                 parameterLists;
                                 that.specifier;
                                 forceNonNativeReturn = true;
@@ -581,8 +589,40 @@ class StatementTransformer(CompilationContext ctx)
                 };
             }];
         }
-        else {
-            return super.transformLazySpecification(that);
+        case (is ValueModel) {
+            // A definition for a forward declared value
+
+            value callableVariableName
+                =   switch (container = declarationModel.container)
+                    // The field for the Dart Function
+                    case (is ClassModel) "_" + dartTypes.getName(declarationModel) + "$f"
+                    // For getters in functions, assign to the actual $get function, which
+                    // is implemented as a Dart variable of type Function.
+                    else dartTypes.getName(declarationModel);
+
+            return
+            [DartExpressionStatement {
+                DartAssignmentExpression {
+                    DartSimpleIdentifier {
+                        callableVariableName;
+                    };
+                    DartAssignmentOperator.equal;
+                    DartFunctionExpression {
+                        dartFormalParameterListEmpty;
+                        // same as in BG.generateDefinitionForValueModelGetter()
+                        DartExpressionFunctionBody {
+                            false;
+                            withLhs {
+                                null;
+                                declarationModel;
+                                () => that.specifier.expression.transform {
+                                    expressionTransformer;
+                                };
+                            };
+                        };
+                    };
+                };
+            }];
         }
     }
 
@@ -836,6 +876,7 @@ class StatementTransformer(CompilationContext ctx)
             return [];
         }
 
+        // TODO consolidate naming logic
         value callableVariableName
             =   dartTypes.getName(info.declarationModel) + "$c";
 
@@ -908,8 +949,6 @@ class StatementTransformer(CompilationContext ctx)
         // Dart block's only have Statements. Declarations are wrapped:
         //      FunctionDeclarationStatement(FunctionDeclaration)
         //      VariableDeclarationStatement(VariableDeclarationList)
-        //
-        // TODO classes and interfaces need jump back to toplevel w/captures
         =>  [DartBlock([*expand(that.transformChildren(this))])];
 
     shared actual
@@ -925,7 +964,28 @@ class StatementTransformer(CompilationContext ctx)
             return [];
         }
 
-        // Seems like this should be fine... Dart supports forward declarations
+        if (info.declarationModel.transient) {
+            // Forward declared value; one or more lazy specifications will follow.
+            // Don't worry about setters; they are not allowed for transient forward
+            // declared values.
+            return [
+                // Variable to hold the Function used to obtain the value
+                DartVariableDeclarationStatement {
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartFunction;
+                        [DartVariableDeclaration {
+                            //callableVariable;
+                            DartSimpleIdentifier {
+                                dartTypes.getName(info.declarationModel);
+                            };
+                        }];
+                    };
+                }
+            ];
+        }
+
+        // For a non-transient (reference) forward declared value.
         return
         [DartVariableDeclarationStatement {
             generateForValueDeclarationRaw(info, info.declarationModel);
