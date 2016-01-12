@@ -433,9 +433,11 @@ class BaseGenerator(CompilationContext ctx)
     "For the Value, or the return type of the Function"
     shared
     DartTypeName generateFunctionReturnType
-            (DScope scope, FunctionOrValueModel declaration) {
+            (DScope scope, FunctionOrValueModel
+                | ClassModel | ConstructorModel declaration) {
 
-        assert (is FunctionModel | ValueModel | SetterModel declaration);
+        assert (is FunctionModel | ValueModel | SetterModel
+                | ClassModel | ConstructorModel declaration);
 
         return switch (declaration)
             case (is FunctionModel)
@@ -456,6 +458,18 @@ class BaseGenerator(CompilationContext ctx)
                 else
                     // hacky way to create a void keyword
                     DartTypeName(DartSimpleIdentifier("void"))
+            case (is ClassModel)
+                dartTypes.dartTypeName {
+                    scope;
+                    declaration.type;
+                    false;
+                }
+            case (is ConstructorModel)
+                dartTypes.dartTypeName {
+                    scope;
+                    getClassOfConstructor(declaration).type;
+                    false;
+                }
             case (is ValueModel)
                 dartTypes.dartReturnTypeNameForDeclaration {
                         scope;
@@ -3491,13 +3505,11 @@ class BaseGenerator(CompilationContext ctx)
     [DartExpression*] generateArgumentsForOuterAndCaptures
             (DScope scope, ClassModel | ConstructorModel declaration) {
 
-        value classModel = getClassModelForConstructor(declaration);
+        value classModel
+            =   getClassOfConstructor(declaration);
 
         value captureExpressions
-            =   dartTypes.captureDeclarationsForClass(classModel)
-                    .map((capture)
-                        =>  dartTypes.invocableForBaseExpression(scope, capture))
-                    .map(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
+            =   generateArgumentsForCaptures(scope, declaration);
 
         value outerExpression
             =   if (exists outerCI = getContainingClassOrInterface(classModel.container))
@@ -3506,6 +3518,14 @@ class BaseGenerator(CompilationContext ctx)
 
         return concatenate { outerExpression, captureExpressions };
     }
+
+    shared
+    [DartExpression*] generateArgumentsForCaptures
+            (DScope scope, ClassModel | ConstructorModel declaration)
+        =>  let (classModel = getClassOfConstructor(declaration))
+            dartTypes.captureDeclarationsForClass(classModel)
+                .map((capture) => dartTypes.invocableForBaseExpression(scope, capture))
+                .collect(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
 
     "Generate a condition expression for a MatchCase of a switch statement or expression."
     shared
@@ -3909,10 +3929,11 @@ class BaseGenerator(CompilationContext ctx)
                             memberType;
                             containerType;
                             generateReceiver()
-                                =>  withBoxingNonNative {
+                                =>  withBoxingCustom {
                                         scope;
-                                        // Callable argument; erasedToObject
-                                        ceylonTypes.anythingType;
+                                        containerType;
+                                        rhsErasedToNative = false;
+                                        rhsErasedToObject = true; // it's a callable.
                                         DartSimpleIdentifier("$r");
                                     };
                             memberDeclaration;
@@ -3943,7 +3964,6 @@ class BaseGenerator(CompilationContext ctx)
             return createCallable(scope, outerFunction);
         }
         case (is FunctionModel | ClassModel | ConstructorModel) {
-
             // Return a `Callable` that takes a `containerType` and returns a
             // `Callable` that can be used to invoke the `memberDeclaration`
 
@@ -3953,10 +3973,11 @@ class BaseGenerator(CompilationContext ctx)
                         scope;
                         containerType;
                         generateReceiver()
-                            =>  withBoxingNonNative {
+                            =>  withBoxingCustom {
                                     scope;
-                                    // Callable argument; erasedToObject
-                                    ceylonTypes.anythingType;
+                                    containerType;
+                                    rhsErasedToNative = false;
+                                    rhsErasedToObject = true; // it's a callable.
                                     DartSimpleIdentifier("$r");
                                 };
                         false;
@@ -4034,6 +4055,9 @@ class BaseGenerator(CompilationContext ctx)
 
         value parameters = CeylonList(parameterList.parameters);
 
+        // TODO now that we have factory methods for member classes, we can probably
+        //      optimize away wrappers for most shared classes and constructors.
+
         "True if boxing is required. If `true`, an extra outer function will be created
          to handle boxing and null safety."
         value needsWrapperFunction =
@@ -4094,15 +4118,6 @@ class BaseGenerator(CompilationContext ctx)
                 }
             });
 
-            "Extra leading arguments for non-toplevel classes."
-            value outerAndCaptureArguments
-                =   if (is ClassModel | ConstructorModel functionModel) then
-                        generateArgumentsForOuterAndCaptures {
-                            scope;
-                            functionModel;
-                        }
-                    else [];
-
             "Arguments that are part of the public signature for the class or function.
              They have corresponding parameters in the generated Callable."
             value innerArguments = parameters.collect((parameterModel) {
@@ -4161,14 +4176,16 @@ class BaseGenerator(CompilationContext ctx)
             }
             case (is ClassModel | ConstructorModel) {
                 invocation
-                    =   dartTypes.dartInvocable {
+                    =   dartTypes.invocableForBaseExpression {
                             scope;
                             functionModel; // really class or constructor
                             false;
                         }.expressionForInvocation {
-                            null;
                             concatenate {
-                                outerAndCaptureArguments,
+                                generateArgumentsForCaptures {
+                                    scope;
+                                    functionModel;
+                                },
                                 innerArguments
                             };
                         };

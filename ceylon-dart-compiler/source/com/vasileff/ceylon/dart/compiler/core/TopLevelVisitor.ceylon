@@ -44,8 +44,8 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     ClassModel=Class,
     ConstructorModel=Constructor,
+    DeclarationModel=Declaration,
     SetterModel=Setter,
-    TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ValueModel=Value,
     FunctionOrValueModel=FunctionOrValue,
@@ -659,18 +659,18 @@ class TopLevelVisitor(CompilationContext ctx)
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
 
-        "Functions and values for which the most refined member is contained by
-         an Interface."
+        "Functions, values, classes (or their constructors) for which the most refined
+         member is contained by an Interface."
         value declarationsToBridge
             // Shouldn't there be a better way?
             =   supertypeDeclarations(classModel)
                     .flatMap((d) => CeylonList(d.members))
                     .map((declaration)
-                        =>  if (is FunctionOrValueModel declaration)
+                        =>  if (is FunctionOrValueModel | ClassModel declaration)
                             then declaration
                             else null)
                     .coalesced
-                    .filter(FunctionOrValueModel.shared)
+                    .filter(DeclarationModel.shared)
                     .map(curry(mostRefined)(classModel))
                     .distinct
                     .map((m) {
@@ -680,12 +680,13 @@ class TopLevelVisitor(CompilationContext ctx)
                     })
                     .filter((m) => container(m) is InterfaceModel)
                     .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
-                    .filter(not(FunctionOrValueModel.formal))
+                    .filter(not(DeclarationModel.formal))
+                    .flatMap(replaceClassWithSharedConstructors)
                     .sequence();
 
         value bridgeFunctions
-            =   declarationsToBridge.map((f)
-                =>  generateBridgeMethodOrField(scope, f));
+            =   declarationsToBridge.map((member)
+                =>  generateBridgeMethodOrField(scope, member));
 
         return
         DartClassDeclaration {
@@ -1258,9 +1259,11 @@ class TopLevelVisitor(CompilationContext ctx)
             };
 
     DartMethodDeclaration generateBridgeMethodOrField
-            (DScope scope, FunctionOrValueModel declaration) {
+            (DScope scope,
+            FunctionOrValueModel | ClassModel | ConstructorModel declaration) {
 
-        assert (is FunctionModel|ValueModel|SetterModel declaration);
+        assert (is FunctionModel | ValueModel | SetterModel
+                    | ClassModel | ConstructorModel declaration);
 
         value [identifier, dartElementType]
             =   dartTypes.dartInvocable {
@@ -1272,13 +1275,19 @@ class TopLevelVisitor(CompilationContext ctx)
             =   switch (declaration)
                 case (is FunctionModel)
                     CeylonList(declaration.firstParameterList.parameters)
+                case (is ClassModel)
+                    CeylonList(declaration.parameterList.parameters)
+                case (is ConstructorModel)
+                    CeylonList(declaration.parameterList.parameters)
                 case (is SetterModel)
                     [declaration.parameter]
                 case (is ValueModel)
                     [];
 
         value interfaceModel
-            =   (declaration of TypedDeclarationModel).container;
+            =   if (is ConstructorModel declaration)
+                then declaration.container.container
+                else (declaration of DeclarationModel).container;
 
         "The container of the target of a bridge method is surely an Interface."
         assert (is InterfaceModel interfaceModel);

@@ -53,7 +53,8 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     TypeDeclarationModel=TypeDeclaration,
     TypeModel=Type,
-    ModuleImportModel=ModuleImport
+    ModuleImportModel=ModuleImport,
+    TypedReferenceModel=TypedReference
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
@@ -69,7 +70,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     DeclarationInfo,
     BaseExpressionInfo,
     declarationInfo,
-    nodeInfo
+    nodeInfo,
+    QualifiedExpressionInfo,
+    expressionInfo
 }
 
 import java.lang {
@@ -217,17 +220,6 @@ getRealScope(ElementModel scope) {
     return result;
 }
 
-ClassModel getClassModelForConstructor(ClassModel | ConstructorModel model) {
-    switch (model)
-    case (is ClassModel) {
-        return model;
-    }
-    case (is ConstructorModel) {
-        assert (is ClassModel result = model.container);
-        return result;
-    }
-}
-
 ConstructorModel? getConstructor(FunctionModel model)
     =>  if (is ConstructorModel c = model.type.declaration)
         then c
@@ -239,6 +231,34 @@ ConstructorModel|Declaration replaceFunctionWithConstructor<Declaration>
             is ConstructorModel c = (model of FunctionModel).type.declaration)
         then c
         else model;
+
+"The class, or the constructor's class."
+ClassModel getClassOfConstructor(ClassModel | ConstructorModel constructor) {
+    switch (constructor)
+    case (is ConstructorModel) {
+        assert (is ClassModel classModel = constructor.container);
+        return classModel;
+    }
+    case (is ClassModel) {
+        return constructor;
+    }
+}
+
+"Return the `target` property of the base or qualified expression."
+TypeModel | TypedReferenceModel targetForExpressionInfo(
+        QualifiedExpressionInfo | BaseExpressionInfo info)
+    =>  switch (info)
+        case (is BaseExpressionInfo) info.target
+        case (is QualifiedExpressionInfo) info.target;
+
+"All *shared* constructors for the class if the class has constructors.
+ Otherwise, the class."
+[Declaration | ConstructorModel*] replaceClassWithSharedConstructors<Declaration>
+        (Declaration declaration)
+    =>  if (is ClassModel declaration, declaration.hasConstructors())
+        then [ for (c in CeylonList(declaration.members))
+               if (is ConstructorModel c, c.shared) c ]
+        else [declaration];
 
 "The nearest containing scope that is not a [[ConditionScopeModel]]. This differs from
  [[ScopeModel.container]] in that the latter does not exclude [[ConditionScopeModel]]s
@@ -380,8 +400,9 @@ Boolean isForDartBackend(Declaration | DeclarationInfo | DeclarationModel
         backends.none() || backends.supports(dartBackend);
 
 shared
-SetterModel|FunctionModel|ValueModel? mostRefined
-        (ClassOrInterfaceModel bottom, FunctionOrValueModel declaration) {
+SetterModel | FunctionModel | ValueModel | ClassModel? mostRefined
+        (ClassOrInterfaceModel bottom, FunctionOrValueModel | ClassModel declaration) {
+
     if (!declaration.name exists) {
         // Nameless constructors appear (as annoying?) class members of the
         // form: `function C.() => C.null`
@@ -406,7 +427,7 @@ SetterModel|FunctionModel|ValueModel? mostRefined
         return setterModel;
     }
     else {
-        assert (is FunctionModel | ValueModel | Null result);
+        assert (is FunctionModel | ValueModel | ClassModel | Null result);
         return result;
     }
 }

@@ -140,6 +140,7 @@ class DartInvocable(
         switch (elementType)
         case (dartFunction) {
             switch (reference)
+            // Normal object.member invocation
             case (is DartSimpleIdentifier) {
                 return
                 DartFunctionExpressionInvocation {
@@ -163,6 +164,7 @@ class DartInvocable(
                     };
                 };
             }
+            // It's not a function, it's a constructor
             case (is DartConstructorName) {
                 return
                 DartInstanceCreationExpression {

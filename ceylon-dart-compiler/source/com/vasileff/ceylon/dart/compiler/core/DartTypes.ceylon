@@ -773,20 +773,32 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartSimpleIdentifier identifierForOuter(ClassOrInterfaceModel declaration)
         =>  DartSimpleIdentifier(outerFieldName(declaration));
 
-    ClassModel getConstructorsClass(ConstructorModel constructor) {
-        assert (is ClassModel container = constructor.container);
-        return container;
-    }
+    "The identifier for the class or interface member. For member classes and
+     constructors of member classes, the returned identifier is for the synthetic
+     factory method of the member's containing class."
+    shared
+    DartSimpleIdentifier identifierForMember(
+            FunctionOrValueModel | ClassModel | ConstructorModel member)
+        =>  switch (member)
+            case (is ClassModel | ConstructorModel)
+                identifierForMemberFactory(member, false)
+            else
+                DartSimpleIdentifier(getName(member));
 
     shared
     DartSimpleIdentifier identifierForMemberFactory
             (ClassModel | ConstructorModel declaration, Boolean static)
         =>  DartSimpleIdentifier {
                 (if (static) then "$" else "") +
-                (if (is ClassModel declaration)
-                then "$c$" + getName(declaration)
-                else "$c$" + getName(getConstructorsClass(declaration)) + "$"
-                           + getName(declaration));
+                (if (is ClassModel declaration) then
+                    "$new$" + getName(declaration.refinedDeclaration)
+                 else if (getName(declaration).empty) then
+                    "$new$" + getName(getClassOfConstructor(declaration)
+                                        .refinedDeclaration)
+                 else
+                    "$new$" + getName(getClassOfConstructor(declaration)
+                                        .refinedDeclaration)
+                          + "$" + getName(declaration));
             };
 
     // TODO improve naming and functional consistency for get...Name and identifierFor...
@@ -809,7 +821,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartSimpleIdentifier getStaticInterfaceMethodIdentifier(
-            FunctionModel|ValueModel|SetterModel declaration,
+            FunctionModel | ValueModel | SetterModel
+                    | ClassModel | ConstructorModel declaration,
             Boolean isSetter = declaration is SetterModel)
         =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
 
@@ -831,6 +844,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  supertypeDeclarations(declaration)
                 .flatMap(ctx.captures.get)
                 .distinct;
+
+    shared
+    DartPrefixedIdentifier | DartSimpleIdentifier
+    identifierForToplevel(DScope scope, FunctionOrValueModel declaration)
+        =>  if (!sameModule(scope, declaration)) then
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier(moduleImportPrefix(declaration));
+                    DartSimpleIdentifier(getName(declaration));
+                }
+            else
+                DartSimpleIdentifier {
+                    // toplevel functions and values from the same dart package
+                    // get a prefix to avoid shadowing problems
+                    getPackagePrefixedName(declaration);
+                };
 
     shared
     DartIdentifier dartIdentifierForClassOrInterface(
@@ -1013,21 +1041,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartQualifiedInvocable invocableForBaseExpression(
             DScope scope,
-            FunctionOrValueModel declaration,
+            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
-        // The typechecker always gives us a ValueModel for ValueSpecifications, but we
-        // need the SetterModel, if available.
+        "The declaration to invoke, taking care to use the SetterModel if a setter is
+         desired and one exists (they don't exist for variable non-transient values)."
         value validDeclaration
             =   correctDeclaration(declaration, setter);
-
-        "By definition."
-        assert (is FunctionModel | ValueModel | SetterModel validDeclaration);
 
         "Use the correct original declaration, given that we may have ignored some
          replacement declarations."
         value originalDeclaration
-            =   declarationConsideringElidedReplacements(validDeclaration);
+            =   if (is ClassModel | ConstructorModel validDeclaration)
+                then validDeclaration
+                else declarationConsideringElidedReplacements(validDeclaration);
 
         value invocable
             =   dartInvocable {
@@ -1036,19 +1063,34 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     setter;
                 };
 
-        if (exists container = getContainingClassOrInterface(scope)) {
+        if (exists scopeContainer = getContainingClassOrInterface(scope)) {
 
-            value declarationContainer = getRealContainingScope(originalDeclaration);
+            "The declaration's container, or in the case of a Constructor, the
+             Constructor's class's container."
+            value declarationContainer
+                =   if (is ConstructorModel originalDeclaration)
+                    then getRealContainingScope(
+                            getClassOfConstructor(originalDeclaration))
+                    else getRealContainingScope(originalDeclaration);
 
             "Arguments in named argument lists cannot be referenced."
             assert(!is NamedArgumentListModel declarationContainer);
 
             switch (declarationContainer)
             case (is ClassOrInterfaceModel) {
-
-                "Identifiers for members will always be simple identifiers (not prefixed
-                 as toplevels may be.)"
-                assert (is DartSimpleIdentifier identifier = invocable.reference);
+                // Some member of a class or interface: a function, value, class, or
+                // or class's constructor.
+                //
+                // Usually, this will be a normal invocation like 'receiver.member()',
+                // with 'receiver' being 'this' or some 'outer' calculated below.
+                //
+                // But, for non-shared member classes and non-shared constructors, the
+                // result will be a Dart instance creation expression (invocation of a
+                // Dart constructor) with the "receiver" being passed as the first
+                // argument.
+                //
+                // All we need to do is determine the receiver. The 'invocable' we already
+                // have handles the form of the invocation.
 
                 return
                 DartQualifiedInvocable {
@@ -1059,16 +1101,21 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     //
                     // - when the invocation requires an operator
                     //
+                    // - when invoking a Dart Constructor rather than a method, which is
+                    //   the case for non-shared member classes/constructors. The
+                    //   constructor must have an 'outer' as the first argument.
+                    //
                     // Note: using `LoneThis()` we don't need `this` when referencing
                     //       outers, like (what would be)
                     //       `this.$outer$ceylon$language$.cap`.
                     if (invocable.elementType is DartOperator
+                        || !invocable.reference is DartSimpleIdentifier
                         || (originalDeclaration.parameter
                             && ctx.withinConstructor(declarationContainer))) then
                         expressionToThisOrOuterStripNonLoneThis {
                             scope;
                             ancestorChainToInheritingDeclaration {
-                                container;
+                                scopeContainer;
                                 declarationContainer;
                             };
                         }
@@ -1076,7 +1123,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         expressionToThisOrOuterStripThis {
                             scope;
                             ancestorChainToInheritingDeclaration {
-                                container;
+                                scopeContainer;
                                 declarationContainer;
                             };
                         };
@@ -1086,10 +1133,34 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             case (is ConstructorModel | ControlBlockModel
                     | FunctionOrValueModel | SpecificationModel) {
 
+                if (is ClassModel | ConstructorModel originalDeclaration) {
+                        assert (is ClassModel | ConstructorModel validDeclaration);
+
+                    // It's a non-member class (or constructor), but it does need a
+                    // reference to the outer class or interface if there is one. The
+                    // 'outer' capture looks pretty much like a qualifying instance.
+                    return DartQualifiedInvocable {
+                        if (exists outerCI = getContainingClassOrInterface {
+                            getClassOfConstructor(validDeclaration).container;
+                        })
+                        then expressionToOuter(scope, outerCI)
+                        else null;
+                        invocable;
+                    };
+                }
+
+                "This was just handled, but we don't have guards yet."
+                assert (!is ClassModel | ConstructorModel validDeclaration);
+
+                // Handle the non-class & constructor cases.
+
                 value declarationsClassOrInterface
                     =   getContainingClassOrInterface(originalDeclaration);
 
-                if (eq(container, declarationsClassOrInterface)) {
+                if (eq(scopeContainer, declarationsClassOrInterface)) {
+                    // The declaration's outer class or interface is the same as the
+                    // current scope's class or interface. So it's not a capture, and we
+                    // can reference it directly.
                     return DartQualifiedInvocable {
                         null;
                         invocable;
@@ -1107,7 +1178,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         expressionToThisOrOuterStripThis {
                             scope;
                             ancestorChainToCapturerOfDeclaration {
-                                container;
+                                scopeContainer;
                                 originalDeclaration;
                             };
                         };
@@ -1281,34 +1352,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             FunctionOrValueModel | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
-        // The typechecker always gives us a ValueModel for ValueSpecifications, but we
-        // need the SetterModel, if available.
+        "The delcaration to use. The typechecker always gives us a ValueModel for
+         ValueSpecifications, but we need the SetterModel, if available."
         value validDeclaration
             =   correctDeclaration(declaration, setter);
 
-        // handle constructors first
-        if (is ClassModel | ConstructorModel validDeclaration) {
-            return DartInvocable {
-                dartConstructorName {
-                    scope;
-                    validDeclaration;
-                };
-                package.dartFunction; // Constructor, really
-                false;
-            };
-        }
+        "The container, treating constructors as being contained by their class's
+         container."
+        value container
+            =   switch (validDeclaration)
+                case (is ConstructorModel) validDeclaration.container.container
+                else package.container(validDeclaration);
 
-        // it's a FunctionOrValueModel
-
-        "Is the Function implemented as a value?"
+        "Is it a Function implemented as a value?"
         value callableValue
             =   if (is FunctionModel validDeclaration)
                 then isCallableValue(validDeclaration)
                 else false;
 
-        "Cast the Callable if held by a variable of type $dart$core.Object"
+        "Cast callableValues if held in a variable of type $dart$core.Object"
         value callableCast
-            =   if (callableValue &&
+            =   if (is FunctionModel validDeclaration,
+                    callableValue &&
                     erasedToObjectCallableParam(validDeclaration.initializerParameter))
                 then dartTypeName {
                     scope;
@@ -1316,24 +1381,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 }
                 else null;
 
-        switch (container = container(validDeclaration))
+        switch (container)
         case (is PackageModel) {
-            return DartInvocable {
-                if (!sameModule(scope, validDeclaration)) then
-                    DartPrefixedIdentifier {
-                        DartSimpleIdentifier {
-                            moduleImportPrefix(validDeclaration);
-                        };
-                        DartSimpleIdentifier {
-                            getName(validDeclaration);
-                        };
-                    }
-                else
-                    DartSimpleIdentifier {
-                        // toplevel functions and values from the same dart package
-                        // get a prefix to avoid shadowing problems
-                        getPackagePrefixedName(validDeclaration);
+            // Toplevel class or constructor. Easy.
+            if (is ClassModel | ConstructorModel validDeclaration) {
+                return DartInvocable {
+                    dartConstructorName {
+                        scope;
+                        validDeclaration;
                     };
+                    package.dartFunction; // Constructor, really
+                    false;
+                };
+            }
+
+            // Toplevel function or value. Also easy.
+            return DartInvocable {
+                identifierForToplevel {
+                    scope;
+                    validDeclaration;
+                };
                 if (validDeclaration is FunctionModel)
                     then package.dartFunction
                     else dartValue;
@@ -1341,8 +1408,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
         case (is ClassOrInterfaceModel) {
+            // Static function or value for interop
             if (validDeclaration.staticallyImportable) {
-                // Special case: Dart static member
+                "Dart doesn't have member classes"
+                assert (!is ClassModel | ConstructorModel validDeclaration);
+
                 return DartInvocable {
                     DartPropertyAccess {
                         dartIdentifierForClassOrInterface(scope, container);
@@ -1354,6 +1424,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     setter;
                 };
             }
+
+            // Non-shared classes, constructors, and constructors of non-shared classes,
+            // which are invoked statically
+            if (is ClassModel | ConstructorModel validDeclaration,
+                    !validDeclaration.shared
+                    || !getClassOfConstructor(validDeclaration).shared) {
+
+                return DartInvocable {
+                    dartConstructorName {
+                        scope;
+                        validDeclaration;
+                    };
+                    package.dartFunction; // Constructor, really
+                    false;
+                };
+            }
+
+            // Else, a member function, value, class, or class's constructor. If it's
+            // a function or value, it may be mapped to something like "+", toString() or
+            // hashCode
 
             "The mapped Dart program element name and type, if any. See
              [[mappedFunctionOrValue]] for the list of mapped declarations.
@@ -1367,25 +1457,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     then mappedFunctionOrValue(refinedDeclaration(validDeclaration))
                     else null;
 
-            value [name, dartElementType]
+// FIXME WIP
+// FIXME idea: assert(false) if attempting to return an invocable for a private interface member that must be invoked statically?
+
+            value [memberIdentifier, dartElementType]
                 =   if (exists mapped, !setter || mapped[1] == dartValue) then [
                         // For mapped non-setters, or setters that are mapped to
                         // dartValues. This includes hash -> hashCode, but excludes
                         // string -> toString(), for which we want to use 'string' for
                         // the setter. Same for dartPrefixOperators like negated -> '-'
-                        mapped[0],
+                        DartSimpleIdentifier(mapped[0]),
                         mapped[1]
                     ] else [
-                        getPackagePrefixedName(validDeclaration),
-                        if (is FunctionModel validDeclaration, !callableValue)
+                        identifierForMember(validDeclaration),
+                        if (!is ValueModel | SetterModel validDeclaration,
+                            !callableValue)
                         then package.dartFunction
                         else dartValue
                     ];
 
             return DartInvocable {
-                DartSimpleIdentifier {
-                    name;
-                };
+                memberIdentifier;
                 dartElementType;
                 setter;
                 callableValue;
@@ -1397,49 +1489,66 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     | ConstructorModel
                     | SpecificationModel) {
 
-            value name
-                =   getPackagePrefixedName(validDeclaration);
+            // Non-member constructors are invoked statically. The caller will will need
+            // to provide outer & captures as arguments.
+            if (is ClassModel | ConstructorModel validDeclaration) {
+                return DartInvocable {
+                    dartConstructorName {
+                        scope;
+                        validDeclaration;
+                    };
+                    package.dartFunction; // Constructor, really
+                    false;
+                };
+            }
 
+            value identifier
+                =   DartSimpleIdentifier(getPackagePrefixedName(validDeclaration));
+
+            // A variable reference Value that is stored in a capture box
             if (is ValueModel validDeclaration,
                     capturedReferenceValue(validDeclaration)) {
-                // The Value is stored in a capture box
+
                 return DartInvocable {
-                    DartSimpleIdentifier {
-                        name;
-                    };
+                    identifier;
                     package.dartValue;
                     setter;
                     capturedReferenceValue = true;
                 };
             }
 
+            // A transient Value that is not a member that uses $get and $set methods
+            // rather than Dart property methods.
             if (is ValueModel | SetterModel validDeclaration,
                     useGetterSetterMethods(validDeclaration)) {
+
                 return DartInvocable {
-                    DartSimpleIdentifier {
-                        name;
-                    };
-                    // override previously calculated type
+                    identifier;
                     package.dartFunction;
                     setter;
                 };
             }
-            else {
-                value dartElementType
-                    =   if (validDeclaration is FunctionModel && !callableValue)
-                        then package.dartFunction
-                        else dartValue;
 
+            // A callable value (a Function that is a callable parameter that is stored
+            // as a Callable
+            if (callableValue) {
                 return DartInvocable {
-                    DartSimpleIdentifier {
-                        name;
-                    };
-                    dartElementType;
+                    identifier;
+                    dartValue;
                     setter;
                     callableValue;
                     callableCast;
                 };
             }
+
+            // Else, a regular non-member function, value, or setter.
+            return DartInvocable {
+                identifier;
+                if (validDeclaration is FunctionModel)
+                    then package.dartFunction
+                    else dartValue;
+                setter;
+            };
         }
         else {
             addError(scope, "Unexpected container.");

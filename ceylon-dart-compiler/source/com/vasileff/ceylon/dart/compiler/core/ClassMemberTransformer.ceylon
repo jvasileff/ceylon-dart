@@ -29,6 +29,9 @@ import ceylon.ast.core {
     DefaultedParameter,
     DefaultedCallableParameter
 }
+import ceylon.interop.java {
+    CeylonList
+}
 
 import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
@@ -86,11 +89,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     DeclarationInfo,
     DefaultedParameterInfo,
     anyFunctionInfo,
-    AnyClassInfo,
-    ConstructorDefinitionInfo
-}
-import ceylon.interop.java {
-    CeylonList
+    AnyClassInfo
 }
 
 shared
@@ -821,7 +820,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value info = AnyClassInfo(that);
 
-        // If not shared, we're done
+        // Don't generate factory methods for non-shared member classes
         if (!info.declarationModel.shared) {
             return [];
         }
@@ -837,10 +836,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         "The [[DartTypeName]] for the member class."
         value memberType
-            =   dartTypes.dartTypeName {
-                    info;
-                    info.declarationModel.type;
-                };
+            =   generateFunctionReturnType(info, info.declarationModel);
 
         function generateFactory(
                 ConstructorModel | ClassModel constructor, Boolean static) {
@@ -913,19 +909,8 @@ class ClassMemberTransformer(CompilationContext ctx)
             }
         }
 
-        return
-        if (! info.declarationModel.hasConstructors())
-        then generateFactories(info.declarationModel)
-        else that.body.content
-            .map((node)
-                =>  if (is ConstructorDefinition node)
-                    then node
-                    else null)
-            .coalesced
-            .map(ConstructorDefinitionInfo)
-            .map(ConstructorDefinitionInfo.constructorModel)
-            .flatMap(generateFactories)
-            .sequence();
+        return replaceClassWithSharedConstructors(info.declarationModel)
+                .flatMap(generateFactories).sequence();
     }
 
     shared actual

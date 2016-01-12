@@ -109,7 +109,8 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    MemberOperator
+    MemberOperator,
+    Primary
 }
 import ceylon.collection {
     LinkedList
@@ -124,8 +125,10 @@ import ceylon.language.meta {
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
     FunctionModel=Function,
+    FunctionOrValueModel=FunctionOrValue,
     ValueModel=Value,
     TypeModel=Type,
+    TypedReferenceModel=TypedReference,
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
@@ -350,10 +353,7 @@ class ExpressionTransformer(CompilationContext ctx)
             =   QualifiedExpressionInfo(that);
 
         value receiverInfo
-            =   switch (receiver = that.receiverExpression)
-                case (is BaseExpression) BaseExpressionInfo(receiver)
-                case (is QualifiedExpression) QualifiedExpressionInfo(receiver)
-                else expressionInfo(receiver);
+            =   expressionInfo(that.receiverExpression);
 
         value memberDeclaration
             =   if (is FunctionModel d = info.declaration,
@@ -374,14 +374,6 @@ class ExpressionTransformer(CompilationContext ctx)
             "The receiver of a qualified expression that is a static reference will
              be a BaseExpression or QualifiedExpression."
             assert (is BaseExpressionInfo | QualifiedExpressionInfo receiverInfo);
-
-            "The target of the receiver expression of a qualified expression that is
-             a static member reference will be a Type, since the receiver is a class or
-             interface."
-            assert (is TypeModel containerType
-                =   switch (receiverInfo)
-                    case (is BaseExpressionInfo) receiverInfo.target
-                    case (is QualifiedExpressionInfo) receiverInfo.target);
 
             "Null safe and spread not allowed for static member references."
             assert (is MemberOperator memberOperator = that.memberOperator);
@@ -408,8 +400,8 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
             else if (is ConstructorModel memberDeclaration,
-                    is QualifiedExpressionInfo receiverInfo,
-                        !receiverInfo.staticMethodReference) {
+                     is QualifiedExpressionInfo receiverInfo,
+                     !receiverInfo.staticMethodReference) {
 
                 // Similar to the previous case, this is a staticMethodReference to
                 // a Constructor, but not to the constructor's class's container.
@@ -422,11 +414,22 @@ class ExpressionTransformer(CompilationContext ctx)
                 //
                 // where "create" is a Constructor.
 
+                "The type of the containing class or interface for the receiver of the
+                 invocation the returned callable will make, which is the qualified
+                 expression's receiver.receiver's target."
+                value receiverType
+                    =   expressionInfo(receiverInfo.node.receiverExpression).typeModel;
+
+                "The ast node for the receiver of the invocation the returned callable
+                 will make, which is the qualified expression's receiver.receiver."
+                value receiverNode
+                    =   receiverInfo.node.receiverExpression;
+
                 return
                 generateCallableForQE {
                     info;
-                    containerType;
-                    () => receiverInfo.node.receiverExpression.transform {
+                    receiverType;
+                    () => receiverNode.transform {
                         expressionTransformer;
                     };
                     !isConstant(receiverInfo.node.receiverExpression);
@@ -442,10 +445,8 @@ class ExpressionTransformer(CompilationContext ctx)
                 // `Callable` that can be used to invoke the `memberDeclaration`
                 return generateCallableForStaticMemberReference {
                     info;
-                    containerType;
-                    // The type of the value member or
-                    // the Callable type of the function
-                    info.target.fullType;
+                    ctx.unit.getCallableArgumentTypes(info.typeModel).get(0);
+                    info.target.fullType; // FIXME what good is this one? Do we want info.type instead?
                     memberDeclaration;
                     memberOperator;
                 };
@@ -911,12 +912,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 // - Class initializer of member class called from within
                 //   scope of `outer`, so no explicit receiver.
 
-                value captureArguments
-                    =   generateArgumentsForOuterAndCaptures {
-                            info;
-                            classModel;
-                        };
-
                 value [argsSetup, argumentList, _]
                     =   generateArgumentListFromArguments {
                             info;
@@ -931,15 +926,13 @@ class ExpressionTransformer(CompilationContext ctx)
                     withBoxingNonNative {
                         info;
                         info.typeModel;
-                        DartInstanceCreationExpression {
-                            false;
-                            dartTypes.dartConstructorName {
-                                info;
-                                invokedDeclaration;
-                            };
+                        dartTypes.invocableForBaseExpression {
+                            info;
+                            invokedDeclaration;
+                        }.expressionForInvocation {
                             DartArgumentList {
                                 concatenate {
-                                    captureArguments,
+                                    generateArgumentsForCaptures(info, classModel),
                                     argumentList.arguments
                                 };
                             };
