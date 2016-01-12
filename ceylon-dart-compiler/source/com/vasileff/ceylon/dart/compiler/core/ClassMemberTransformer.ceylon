@@ -34,8 +34,11 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     SetterModel=Setter,
     FunctionModel=Function,
+    ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue,
     ValueModel=Value,
+    ConstructorModel=Constructor,
+    FunctionalModel=Functional,
     ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler {
@@ -63,7 +66,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpressionStatement,
     DartAssignmentOperator,
     DartFunctionExpressionInvocation,
-    DartArgumentList
+    DartArgumentList,
+    DartInstanceCreationExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -81,7 +85,12 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo,
     DeclarationInfo,
     DefaultedParameterInfo,
-    anyFunctionInfo
+    anyFunctionInfo,
+    AnyClassInfo,
+    ConstructorDefinitionInfo
+}
+import ceylon.interop.java {
+    CeylonList
 }
 
 shared
@@ -465,16 +474,8 @@ class ClassMemberTransformer(CompilationContext ctx)
             };
             DartFormalParameterList {
                 false; false;
-                [   // $this parameter
-                    DartSimpleFormalParameter {
-                        true; false;
-                        dartTypes.dartTypeName {
-                            info;
-                            container.type;
-                            false; false;
-                        };
-                        DartSimpleIdentifier("$this");
-                    },
+                [
+                    generateParameterForThis(info, container), // $this parameter
                     *precedingParameters
                 ];
             };
@@ -737,18 +738,8 @@ class ClassMemberTransformer(CompilationContext ctx)
                 DartFormalParameterList {
                     true; false;
                     [
-                        // $this parameter
-                        DartSimpleFormalParameter {
-                            true; false;
-                            dartTypes.dartTypeName {
-                                scope;
-                                container.type;
-                                false; false;
-                            };
-                            DartSimpleIdentifier("$this");
-                        },
-                        // value parameters
-                        *standardParameters.parameters
+                        generateParameterForThis(scope, container), // $this parameter
+                        *standardParameters.parameters // value parameters
                     ].sequence();
                 };
                 functionExpression.body;
@@ -802,17 +793,139 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
     }
 
+    "A parameter for $this for static interface methods."
+    DartSimpleFormalParameter generateParameterForThis(
+            DScope scope,
+            "Must always be an interface, but too inconvenient for callers to use the
+             more specific type.to constrain the type."
+            ClassOrInterfaceModel interfaceModel)
+        =>  DartSimpleFormalParameter {
+                true; false;
+                dartTypes.dartTypeName {
+                    scope;
+                    interfaceModel.type;
+                    false; false;
+                };
+                DartSimpleIdentifier("$this");
+            };
+
     shared actual
-    [] transformClassDefinition(ClassDefinition that) {
+    [DartMethodDeclaration*] transformClassDefinition(ClassDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
 
+        // Generate the class
         that.visit(topLevelVisitor);
 
-        // We might have somethiing later for type families. For now, nada.
-        return [];
+        value info = AnyClassInfo(that);
+
+        // If not shared, we're done
+        if (!info.declarationModel.shared) {
+            return [];
+        }
+
+        "A member class will have a container class or interface."
+        assert (is ClassModel | InterfaceModel container
+            =   info.declarationModel.container);
+
+        "The scope for the container for use when generating helper methods for the
+         containing class or interface."
+        value containerScope
+            =   dScope(info, container);
+
+        "The [[DartTypeName]] for the member class."
+        value memberType
+            =   dartTypes.dartTypeName {
+                    info;
+                    info.declarationModel.type;
+                };
+
+        function generateFactory(
+                ConstructorModel | ClassModel constructor, Boolean static) {
+
+            assert (is ClassModel classModel
+                =   if (is ClassModel constructor)
+                    then constructor
+                    else constructor.container);
+
+            "Initializer parameters."
+            value standardParameters
+                =   withInConstructorSignature {
+                        info.declarationModel;
+                        () => generateFormalParameterList {
+                            true; false;
+                            info;
+                            CeylonList {
+                                (constructor of FunctionalModel)
+                                        .firstParameterList.parameters;
+                            };
+                        }.parameters;
+                    };
+
+            return
+            DartMethodDeclaration {
+                false;
+                static then "static";
+                memberType;
+                null;
+                false;
+                dartTypes.identifierForMemberFactory(constructor, static);
+                DartFormalParameterList {
+                    true; false;
+                    if (static)
+                    then [generateParameterForThis(info, container),
+                          *standardParameters]
+                    else standardParameters;
+                };
+                !classModel.formal && (static || container is ClassModel) then
+                DartExpressionFunctionBody {
+                    false;
+                    DartInstanceCreationExpression {
+                        false;
+                        dartTypes.dartConstructorName {
+                            info;
+                            constructor;
+                        };
+                        DartArgumentList {
+                            [
+                              dartTypes.expressionForThis(containerScope),
+                              for (p in standardParameters) p.identifier
+                            ];
+                        };
+                    };
+                };
+            };
+        }
+
+        "For class containers, generate the factory. For interfaces, generate a static
+         factory and a non-static method declaration."
+        function generateFactories(
+                ConstructorModel | ClassModel constructor) {
+            switch (container)
+            case (is ClassModel) {
+                return [generateFactory(constructor, false)];
+            }
+            case (is InterfaceModel) {
+                return [generateFactory(constructor, true),
+                        generateFactory(constructor, false)];
+            }
+        }
+
+        return
+        if (! info.declarationModel.hasConstructors())
+        then generateFactories(info.declarationModel)
+        else that.body.content
+            .map((node)
+                =>  if (is ConstructorDefinition node)
+                    then node
+                    else null)
+            .coalesced
+            .map(ConstructorDefinitionInfo)
+            .map(ConstructorDefinitionInfo.constructorModel)
+            .flatMap(generateFactories)
+            .sequence();
     }
 
     shared actual

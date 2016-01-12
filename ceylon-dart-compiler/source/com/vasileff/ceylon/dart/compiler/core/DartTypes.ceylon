@@ -303,25 +303,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
     }
 
-    "The name of the static method used for the implementation of
-     non-formal interface methods."
-    shared
-    String getStaticInterfaceMethodName(
-            FunctionModel|ValueModel|SetterModel declaration,
-            Boolean isSetter = declaration is SetterModel)
-        =>  if (declaration is FunctionModel) then
-                "$" + getName(declaration)
-            else if (isSetter) then
-                "$set$" + getName(declaration)
-            else
-                "$get$" + getName(declaration);
-
-    shared
-    DartSimpleIdentifier getStaticInterfaceMethodIdentifier(
-            FunctionModel|ValueModel|SetterModel declaration,
-            Boolean isSetter = declaration is SetterModel)
-        =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
-
     shared
     String getOrCreateReplacementName(ValueModel declaration) {
         // Must be idempotent!!!
@@ -791,6 +772,46 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartSimpleIdentifier identifierForOuter(ClassOrInterfaceModel declaration)
         =>  DartSimpleIdentifier(outerFieldName(declaration));
+
+    ClassModel getConstructorsClass(ConstructorModel constructor) {
+        assert (is ClassModel container = constructor.container);
+        return container;
+    }
+
+    shared
+    DartSimpleIdentifier identifierForMemberFactory
+            (ClassModel | ConstructorModel declaration, Boolean static)
+        =>  DartSimpleIdentifier {
+                (if (static) then "$" else "") +
+                (if (is ClassModel declaration)
+                then "$c$" + getName(declaration)
+                else "$c$" + getName(getConstructorsClass(declaration)) + "$"
+                           + getName(declaration));
+            };
+
+    // TODO improve naming and functional consistency for get...Name and identifierFor...
+
+    "The name of the static method used for the implementation of
+     non-formal interface methods."
+    shared
+    String getStaticInterfaceMethodName(
+            FunctionModel | ValueModel | SetterModel | ClassModel | ConstructorModel
+            declaration,
+            Boolean isSetter = declaration is SetterModel)
+        =>  if (is FunctionModel declaration) then
+                "$" + getName(declaration)
+            else if (is ClassModel | ConstructorModel declaration) then
+                identifierForMemberFactory(declaration, true).identifier
+            else if (isSetter) then
+                "$set$" + getName(declaration)
+            else
+                "$get$" + getName(declaration);
+
+    shared
+    DartSimpleIdentifier getStaticInterfaceMethodIdentifier(
+            FunctionModel|ValueModel|SetterModel declaration,
+            Boolean isSetter = declaration is SetterModel)
+        =>  DartSimpleIdentifier(getStaticInterfaceMethodName(declaration, isSetter));
 
     "Outer declarations for the given [[declaration]] and all supertype (extended and
      satisfied) declarations."
