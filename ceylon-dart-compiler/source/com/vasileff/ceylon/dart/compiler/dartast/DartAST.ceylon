@@ -916,7 +916,9 @@ shared abstract
 class DartFormalParameter()
         of DartNormalFormalParameter
             | DartDefaultFormalParameter
-        extends DartNode() {}
+        extends DartNode() {
+    shared formal DartSimpleIdentifier identifier;
+}
 
 "A formal parameter that is required (is not optional)."
 shared abstract
@@ -938,7 +940,7 @@ class DartSimpleFormalParameter
     shared Boolean final; // false
     shared Boolean var; // false
     shared DartTypeName? type;
-    shared DartSimpleIdentifier identifier;
+    shared actual DartSimpleIdentifier identifier;
 
     "Can only have one of final and var"
     assert (!(final && var));
@@ -972,7 +974,7 @@ class DartFieldFormalParameter
     shared Boolean final; // false
     shared Boolean const; // false
     shared DartTypeName? type;
-    shared DartSimpleIdentifier identifier;
+    shared actual DartSimpleIdentifier identifier;
     // shared FormalParameterList? parameters
 
     "Can only have one of final and const"
@@ -1010,6 +1012,8 @@ class DartDefaultFormalParameter
     shared DartNormalFormalParameter parameter;
     // ParameterKind ???
     shared DartExpression defaultValue;
+
+    shared actual DartSimpleIdentifier identifier => parameter.identifier;
 
     shared actual
     void write(CodeWriter writer) {
