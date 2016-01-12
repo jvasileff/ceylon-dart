@@ -1,0 +1,26 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class ForwardSuper {
+    ForwardSuper() {}
+    $dart$core.int get i => 10;
+}
+class ForwardAttributes  extends ForwardSuper {
+    ForwardAttributes() {
+        if (1 == 1) {
+            _i$f = () => 1;
+        } else {
+            _i$f = () => 2;
+        }
+        if (!(i == 1)) {
+            throw new $ceylon$language.AssertionError("Violated: i == 1");
+        }
+    }
+    $dart$core.Function _i$f;
+    $dart$core.int get i => _i$f();
+}
+void $package$run() {
+    new ForwardAttributes();
+}
+
+void run() => $package$run();

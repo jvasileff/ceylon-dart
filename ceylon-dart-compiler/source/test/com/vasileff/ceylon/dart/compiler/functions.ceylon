@@ -75,4 +75,8 @@ object functions {
     shared test
     void forwardDeclaredDefaultArg()
         =>  compileAndCompare2("functions/forwardDeclaredDefaultArg");
+
+    shared test
+    void forwardDeclaredValue()
+        =>  compileAndCompare2("functions/forwardDeclaredValue");
 }

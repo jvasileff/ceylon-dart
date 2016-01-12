@@ -1,0 +1,13 @@
+class ForwardSuper() {
+    shared default Integer i => 10;
+}
+class ForwardAttributes() extends ForwardSuper() {
+    shared actual Integer i;
+    if (1==1) {
+        i => 1;
+    } else {
+        i => 2;
+    }
+    assert (i == 1);
+}
+shared void run() => ForwardAttributes();

@@ -189,4 +189,12 @@ object clazz {
     shared test
     void capturedByConstructor()
         =>  compileAndCompare2("clazz/capturedByConstructor");
+
+    shared test
+    void forwardDeclaredValue()
+        =>  compileAndCompare2("clazz/forwardDeclaredValue");
+
+    shared test
+    void forwardDeclaredValueMapped()
+        =>  compileAndCompare2("clazz/forwardDeclaredValueMapped");
 }

@@ -1,0 +1,16 @@
+void forwardDeclaredValueMapped() {
+    class A() satisfies Invertible<A> {
+        shared actual A plus(A other) => nothing;
+
+        shared actual A negated;
+        shared actual String string;
+        shared actual Integer hash;
+
+        negated => nothing;
+        string => "hello";
+        hash => 1;
+    }
+    value a = A();
+    assert (a.string == "hello");
+    assert (a.hash == 1);
+}

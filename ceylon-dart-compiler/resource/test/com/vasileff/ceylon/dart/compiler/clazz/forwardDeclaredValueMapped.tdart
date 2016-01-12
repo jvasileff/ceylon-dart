@@ -1,0 +1,29 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class forwardDeclaredValueMapped$A implements $ceylon$language.Invertible {
+    forwardDeclaredValueMapped$A() {
+        _negated$f = () => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
+        _string$f = () => "hello";
+        _hashCode$f = () => 1;
+    }
+    forwardDeclaredValueMapped$A operator +(forwardDeclaredValueMapped$A other) => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
+    $dart$core.Function _negated$f;
+    forwardDeclaredValueMapped$A operator -() => _negated$f();
+    $dart$core.Function _string$f;
+    $dart$core.String toString() => _string$f();
+    $dart$core.Function _hashCode$f;
+    $dart$core.int get hashCode => _hashCode$f();
+    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+}
+void $package$forwardDeclaredValueMapped() {
+    forwardDeclaredValueMapped$A a = new forwardDeclaredValueMapped$A();
+    if (!(a.toString() == "hello")) {
+        throw new $ceylon$language.AssertionError("Violated: a.string == \"hello\"");
+    }
+    if (!(a.hashCode == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+    }
+}
+
+void forwardDeclaredValueMapped() => $package$forwardDeclaredValueMapped();
