@@ -368,7 +368,7 @@ shared
                 javaClass<Warning>(), suppressedWarnings);
 
     // exit early if errors exist
-    value errorVisitor = ErrorCollectingVisitor2();
+    value errorVisitor = ErrorCollectingVisitor();
     phasedUnits.map(PhasedUnit.compilationUnit).each((cu) => cu.visit(errorVisitor));
     if (errorVisitor.errorCount > 0) {
         // if there are dependency errors, report only them

@@ -49,7 +49,7 @@ class PositionedMessage {
 PositionedMessage(*<[AnalysisMessage]|[Node, RecognitionError]>) positionedMessage
     =   flatten(PositionedMessage);
 
-class ErrorCollectingVisitor2() extends Visitor() {
+class ErrorCollectingVisitor() extends Visitor() {
     value analysisErrors = LinkedList<PositionedMessage>();
     value recognitionErrors = LinkedList<PositionedMessage>();
 
