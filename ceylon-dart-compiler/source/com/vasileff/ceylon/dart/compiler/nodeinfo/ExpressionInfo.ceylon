@@ -90,6 +90,7 @@ class BaseExpressionInfo(shared actual BaseExpression node)
     shared TypedReferenceModel? targetParameter => tcNode.targetParameter;
     shared TypeModel? parameterType => tcNode.parameterType;
     shared Boolean staticMethodReference => tcNode.staticMethodReference;
+    shared Boolean staticMethodReferencePrimary => tcNode.staticMethodReferencePrimary;
 }
 
 shared

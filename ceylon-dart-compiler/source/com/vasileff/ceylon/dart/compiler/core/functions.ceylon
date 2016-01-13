@@ -4,7 +4,9 @@ import ceylon.ast.core {
     This,
     BaseExpression,
     Expression,
-    Outer
+    Outer,
+    Primary,
+    QualifiedExpression
 }
 import ceylon.ast.redhat {
     RedHatTransformer,
@@ -72,7 +74,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     declarationInfo,
     nodeInfo,
     QualifiedExpressionInfo,
-    expressionInfo
+    ExpressionInfo
 }
 
 import java.lang {
@@ -250,6 +252,62 @@ TypeModel | TypedReferenceModel targetForExpressionInfo(
     =>  switch (info)
         case (is BaseExpressionInfo) info.target
         case (is QualifiedExpressionInfo) info.target;
+
+"If the expression is a base or qualified expression, is it a static reference?"
+Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
+    =>  switch (expressionInfo)
+        case (is BaseExpressionInfo) expressionInfo.staticMethodReferencePrimary
+        case (is QualifiedExpressionInfo) expressionInfo.staticMethodReferencePrimary
+        else false;
+
+"For non-constructors, return the [[QualifiedExpression.receiverExpression]] and the
+ declaration model for the target of the given [[QualifiedExpression]].
+
+ For constructors, if the receiverExpression is a [[BaseExpression]], return null for the
+ [[Primary]]. Otherwise, the `receiverExpression` will itself be a qualified expression,
+ and the returned `Primary` will be *that* qualified expressions's `receiverExpression`.
+
+ For constructors, the returned declaration will be a [[ConstructorModel]], rather than
+ the [[FunctionModel]] made available by the typechecker.
+
+ The idea is that for qualified expressions for constructors, the qualifier always
+ includes the constructor's class, making the constructor appear as if its qualifying
+ type is the class it constructs. This function strips away the extra layer, so that as
+ it pertains to qualifying types, constructors can be treated more similarly to classes,
+ functions, and values.
+
+ For example:
+
+    - the returned `Primary` for `C().D.create` will be `C()`, and not `C().D`,
+      which would be the given qualified expression's `receiverExpression`.
+
+    - the returned `Primary` for `D.create` will be `null`, since an expression of this
+      form doesn't have a receiver instance; it is more like a [BaseExpression] for the
+      constructor `create`."
+[Primary?, DeclarationModel] effectiveReceiverAndMemberDeclaration
+        (QualifiedExpression qualifiedExpression) {
+
+    value info
+        =   QualifiedExpressionInfo(qualifiedExpression);
+
+    value constructor
+        =   if (is FunctionModel d = info.declaration,
+                is ConstructorModel cm = d.type.declaration)
+            then cm
+            else null;
+
+    if (! exists constructor) {
+        return [qualifiedExpression.receiverExpression, info.declaration];
+    }
+
+    assert (is BaseExpression | QualifiedExpression receiver
+        =   qualifiedExpression.receiverExpression);
+
+    return
+        switch (receiver)
+        case (is QualifiedExpression) [receiver.receiverExpression, constructor]
+        case (is BaseExpression) [null, constructor];
+}
 
 "All *shared* constructors for the class if the class has constructors.
  Otherwise, the class."

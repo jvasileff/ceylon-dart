@@ -3911,7 +3911,9 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             "The applied container type, like Iterable<String>"
             TypeModel containerType,
-            "The applied fullType of the member (i.e. Callable if it's functional)"
+            "The applied fullType of the member (i.e. Callable if it's functional).
+             Note: this is not the expected type of the returned expression, which
+             will be a callable that *returns* [[memberType]]."
             TypeModel memberType,
             ValueModel | FunctionModel | ClassModel | ConstructorModel memberDeclaration,
             "The MemberOperator. Null safe and spread are not supported."

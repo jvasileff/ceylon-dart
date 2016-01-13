@@ -5,9 +5,9 @@ import ceylon.ast.core {
     TuplePattern,
     Pattern,
     GroupedExpression,
-    Primary,
     Super,
-    OfOperation
+    OfOperation,
+    Expression
 }
 import ceylon.interop.java {
     CeylonIterable
@@ -1309,7 +1309,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     TypeModel? denotableSuperType(
             "Primary may be `super` or `(super of T)`"
-            Primary primary)
+            Expression primary)
         =>  if (is Super primary) then
                 let (superInfo = SuperInfo(primary))
                 superInfo.typeModel.getSupertype(superInfo.declarationModel)

@@ -109,8 +109,7 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    MemberOperator,
-    Primary
+    MemberOperator
 }
 import ceylon.collection {
     LinkedList
@@ -118,17 +117,12 @@ import ceylon.collection {
 import ceylon.interop.java {
     CeylonList
 }
-import ceylon.language.meta {
-    type
-}
 
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
     FunctionModel=Function,
-    FunctionOrValueModel=FunctionOrValue,
     ValueModel=Value,
     TypeModel=Type,
-    TypedReferenceModel=TypedReference,
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
@@ -352,121 +346,79 @@ class ExpressionTransformer(CompilationContext ctx)
         value info
             =   QualifiedExpressionInfo(that);
 
+        // Simplify qualified expressions for constructors.
+        value [receiver, memberDeclaration]
+            =   effectiveReceiverAndMemberDeclaration(that);
+
         value receiverInfo
-            =   expressionInfo(that.receiverExpression);
+            =   if (exists receiver)
+                then expressionInfo(receiver)
+                else null;
 
-        value memberDeclaration
-            =   if (is FunctionModel d = info.declaration,
-                    is ConstructorModel constructor = d.type.declaration) then
-                    // Constructors are presented as Functions, but lets use the
-                    // Constructor declaration instead.
-                    constructor
-                else
-                    info.declaration;
+        "Qualified expressions not involving assignments or specifications must not be
+         Setters."
+        assert (is ValueModel | FunctionModel | ClassModel
+                    | ConstructorModel memberDeclaration);
 
-        value memberContainer
-            =   memberDeclaration.container;
+        if (!exists receiverInfo) {
+            "If there is no receiver, the original receiver must have been an expression
+             for a constructor's class."
+            assert (is ConstructorModel memberDeclaration);
 
-        "What else would the container be than a Class or Interface?"
-        assert (is ClassModel | InterfaceModel memberContainer);
+            // Special case:
+            //
+            // This is more like a base expression. It is only a qualified expression
+            // syntactically since constructors appear as regular class members in the
+            // ast.
+            //
+            // The actual receiver/container, if this is a constructor for a *member*
+            // class, must be determined from the scope. For example, an expression like
+            // `Foo.create`, and if `Foo` is a member class, the expression will be in the
+            // scope of the container to use for `Foo`.
+            //
+            // Bottom line: this is a staticMethodReference to the *Constructor*, but
+            // it is not a static reference to the constructor's container.
 
-        if (info.staticMethodReference) {
-            "The receiver of a qualified expression that is a static reference will
-             be a BaseExpression or QualifiedExpression."
-            assert (is BaseExpressionInfo | QualifiedExpressionInfo receiverInfo);
+            // Returne a Callable that takes arguments for the constructor and returns
+            // an instance of the constructor's class.
+            return generateCallableForBE {
+                info;
+                memberDeclaration;
+            };
+        }
 
+        if (isStaticMethodReferencePrimary(receiverInfo)) {
             "Null safe and spread not allowed for static member references."
             assert (is MemberOperator memberOperator = that.memberOperator);
 
-            if (is ConstructorModel memberDeclaration,
-                receiverInfo is BaseExpressionInfo) {
+            "The receiver of a static method reference must be a base or qualified
+             expression to a type."
+            assert (is QualifiedExpressionInfo | BaseExpressionInfo receiverInfo);
 
-                // The receiver is a BaseExpression, which is *never* itself a
-                // staticMethodReference, and can therefore provide its own `outer`
-                // if it is a member class. (Something like `Foo.create`, and if
-                // `Foo` is a member class, the expression will be in the scope of
-                // the container to use for the `Foo`.)
+            "The receiver's target must be the qualifying type for the member."
+            assert (is TypeModel receiverType
+                =   targetForExpressionInfo(receiverInfo));
 
-                // So, this is a staticMethodReference to the *Constructor*, but it
-                // is not a static reference to the constructor's container.
-
-                // generateCallableForBE will provide the necessary `outer` reference.
-                // The returned value will be a Callable for the constructor, rather than
-                // a Callable that takes an `outer` and returns a callable for the
-                // constructor.
-                return generateCallableForBE {
-                    info;
-                    memberDeclaration;
-                };
-            }
-            else if (is ConstructorModel memberDeclaration,
-                     is QualifiedExpressionInfo receiverInfo,
-                     !receiverInfo.staticMethodReference) {
-
-                // Similar to the previous case, this is a staticMethodReference to
-                // a Constructor, but not to the constructor's class's container.
-                //
-                // The receiverExpression of this QE is a QualifiedExpression to the
-                // constructor's class, and it's receiverExpression is for an instance
-                // of the class's qualifying type. For example:
-                //
-                //      C().D.create
-                //
-                // where "create" is a Constructor.
-
-                "The type of the containing class or interface for the receiver of the
-                 invocation the returned callable will make, which is the qualified
-                 expression's receiver.receiver's target."
-                value receiverType
-                    =   expressionInfo(receiverInfo.node.receiverExpression).typeModel;
-
-                "The ast node for the receiver of the invocation the returned callable
-                 will make, which is the qualified expression's receiver.receiver."
-                value receiverNode
-                    =   receiverInfo.node.receiverExpression;
-
-                return
-                generateCallableForQE {
-                    info;
-                    receiverType;
-                    () => receiverNode.transform {
-                        expressionTransformer;
-                    };
-                    !isConstant(receiverInfo.node.receiverExpression);
-                    memberDeclaration;
-                    info.target.fullType;
-                    memberOperator;
-                };
-            }
-            else if (is ValueModel | FunctionModel
-                    | ClassModel | ConstructorModel memberDeclaration) {
-
-                // Return a `Callable` that takes a `containerType` and returns a
-                // `Callable` that can be used to invoke the `memberDeclaration`
-                return generateCallableForStaticMemberReference {
-                    info;
-                    ctx.unit.getCallableArgumentTypes(info.typeModel).get(0);
-                    info.target.fullType; // FIXME what good is this one? Do we want info.type instead?
-                    memberDeclaration;
-                    memberOperator;
-                };
-            }
-            else {
-                addError(that,
-                    "Unsupported type member type for qualified expression: "
-                    + type(memberDeclaration).string);
-                return DartNullLiteral();
-            }
+            // Return a `Callable` that takes a `containerType` and returns a
+            // `Callable` that can be used to invoke the `memberDeclaration`
+            return generateCallableForStaticMemberReference {
+                info;
+                receiverType;
+                info.target.fullType;
+                memberDeclaration;
+                memberOperator;
+            };
         }
 
-        // The QualifiedExpression expression is *not* a static member reference
+        // Else, the QualifiedExpression expression is not a static reference
+
         switch (memberDeclaration)
         case (is ValueModel) {
-            // Return an expression that will yield the value
-            // See transformInvocation()
+            // Return an expression that will yield the value.
 
-            if (exists superType = dartTypes.denotableSuperType(
-                                        that.receiverExpression)) {
+            if (exists superType
+                    =   dartTypes.denotableSuperType(receiverInfo.node)) {
+
                 // QualifiedExpression with a `super` receiver
                 return generateInvocation {
                     info;
@@ -484,19 +436,20 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     info.typeModel;
                     receiverInfo.typeModel;
-                    () => that.receiverExpression.transform(this);
+                    () => receiverInfo.node.transform(this);
                     memberDeclaration;
                     null;
                     that.memberOperator;
                 };
             }
         }
-        case (is FunctionModel | ClassModel) {
+        case (is FunctionModel | ClassModel | ConstructorModel) {
             // Return a new Callable.
 
             // QualifiedExpression with a `super` receiver
-            if (exists superType = dartTypes.denotableSuperType(
-                                        that.receiverExpression)) {
+            if (exists superType
+                    =   dartTypes.denotableSuperType(receiverInfo.node)) {
+
                 return generateCallableForQE {
                     info;
                     superType;
@@ -512,18 +465,12 @@ class ExpressionTransformer(CompilationContext ctx)
             return generateCallableForQE {
                 info;
                 receiverInfo.typeModel;
-                () => that.receiverExpression.transform(this);
-                !isConstant(that.receiverExpression);
+                () => receiverInfo.node.transform(this);
+                !isConstant(receiverInfo.node);
                 memberDeclaration;
                 info.typeModel;
                 that.memberOperator;
             };
-        }
-        else {
-            addError(that,
-                "Unsupported member type for qualified expression: \
-                 ``type(memberDeclaration)``");
-            return DartNullLiteral();
         }
     }
 
