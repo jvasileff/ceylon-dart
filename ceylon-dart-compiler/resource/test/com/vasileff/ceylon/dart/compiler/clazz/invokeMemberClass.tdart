@@ -11,14 +11,15 @@ class C$D {
 }
 class C {
     C() {
-        d1 = new C$D(this, "d1");
-        d2 = new C$D(new C(), "d2");
+        d1 = $new$C$D("d1");
+        d2 = (new C()).$new$C$D("d2");
     }
+    C$D $new$C$D([$dart$core.String _$s]) => new C$D(this, _$s);
     C$D d1;
     C$D d2;
 }
 void $package$run() {
-    C$D d3 = new C$D(new C(), "d3");
+    C$D d3 = (new C()).$new$C$D("d3");
 }
 
 void run() => $package$run();

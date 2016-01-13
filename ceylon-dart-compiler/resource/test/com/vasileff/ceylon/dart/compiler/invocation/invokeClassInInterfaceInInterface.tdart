@@ -9,12 +9,15 @@ class I$J$C {
 }
 abstract class I$J {
     I get $outer$default$I;
+    static I$J$C $$new$I$J$C([final I$J $this]) => new I$J$C($this);
+    I$J$C $new$I$J$C();
 }
 class I$j$$anonymous$0_ implements I$J {
     I $outer$default$I;
     I$j$$anonymous$0_([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
     }
+    I$J$C $new$I$J$C() => I$J.$$new$I$J$C(this);
 }
 abstract class I {
     I$J get j;
@@ -28,6 +31,6 @@ I$J $package$j = (new j$$anonymous$1_()).j;
 
 I$J get j => $package$j;
 
-$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(() => new I$J$C($package$j));
+$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(() => $package$j.$new$I$J$C());
 
 $ceylon$language.Callable get newC => $package$newC;

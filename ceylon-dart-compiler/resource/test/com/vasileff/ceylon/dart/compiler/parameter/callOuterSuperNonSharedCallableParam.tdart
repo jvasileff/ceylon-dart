@@ -39,9 +39,10 @@ class callOuterSuperNonSharedCallableParam$Outer {
         this._$foo = _$foo;
     }
     $ceylon$language.Callable _$foo;
+    callOuterSuperNonSharedCallableParam$Outer$Inner $new$callOuterSuperNonSharedCallableParam$Outer$Inner([$dart$core.Object _$foo2 = $ceylon$language.dart$default]) => new callOuterSuperNonSharedCallableParam$Outer$Inner(this, _$foo2);
 }
 void $package$callOuterSuperNonSharedCallableParam() {
-    (new callOuterSuperNonSharedCallableParam$Outer$Inner(new callOuterSuperNonSharedCallableParam$Outer())).test();
+    (new callOuterSuperNonSharedCallableParam$Outer()).$new$callOuterSuperNonSharedCallableParam$Outer$Inner().test();
 }
 
 void callOuterSuperNonSharedCallableParam() => $package$callOuterSuperNonSharedCallableParam();

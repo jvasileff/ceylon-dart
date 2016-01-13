@@ -25,7 +25,7 @@ class run$Foo {
         this.$capture$run$runString1 = $capture$run$runString1;
         this.$capture$run$runString2 = $capture$run$runString2;
         this._$fooInt = _$fooInt;
-        x = new run$Foo$FooMember(this, (() {
+        x = $new$run$Foo$FooMember((() {
             $dart$core.int tmp$0 = $package$counter;
             $package$counter = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$counter).successor);
             return tmp$0;
@@ -33,6 +33,7 @@ class run$Foo {
     }
     $dart$core.int _$fooInt;
     $dart$core.String get _$fooString1 => $capture$run$runString1;
+    run$Foo$FooMember $new$run$Foo$FooMember([$dart$core.int _$fooMemberInt]) => new run$Foo$FooMember(this, _$fooMemberInt);
     run$Foo$FooMember x;
 }
 void $package$run() {

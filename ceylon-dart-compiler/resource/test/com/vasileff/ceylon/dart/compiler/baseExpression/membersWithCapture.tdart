@@ -16,8 +16,8 @@ class A$B$C {
     A$B $outer$default$A$B;
     A$B$C([A$B $outer$default$A$B]) {
         this.$outer$default$A$B = $outer$default$A$B;
-        _$newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r)));
-        _$newB2 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r)));
+        _$newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
+        _$newB2 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
         _$newB3 = new $ceylon$language.dart$Callable(() => new A$B$C($outer$default$A$B));
     }
     $ceylon$language.Callable _$newB1;
@@ -32,7 +32,7 @@ class A$B {
     A $outer$default$A;
     A$B([A $outer$default$A]) {
         this.$outer$default$A = $outer$default$A;
-        _$newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B($r)));
+        _$newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B($r as A)));
         _$newB2 = new $ceylon$language.dart$Callable(() => new A$B($outer$default$A));
     }
     $ceylon$language.Callable _$newB1;

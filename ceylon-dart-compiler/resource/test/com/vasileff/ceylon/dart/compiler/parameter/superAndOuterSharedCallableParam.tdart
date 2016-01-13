@@ -21,15 +21,16 @@ class superAndOuterSharedCallableParam$Outer {
         this._f$c = f;
     }
     $ceylon$language.Callable _f$c;
+    superAndOuterSharedCallableParam$Outer$Inner $new$superAndOuterSharedCallableParam$Outer$Inner() => new superAndOuterSharedCallableParam$Outer$Inner(this);
     $dart$core.String f([$dart$core.String s]) {
         return $ceylon$language.String.nativeValue(_f$c.f($ceylon$language.String.instance(s)));
     }
 }
 void $package$superAndOuterSharedCallableParam() {
-    if (!((new superAndOuterSharedCallableParam$Outer$Inner(new superAndOuterSharedCallableParam$Outer())).foo() == "works_inner")) {
+    if (!((new superAndOuterSharedCallableParam$Outer()).$new$superAndOuterSharedCallableParam$Outer$Inner().foo() == "works_inner")) {
         throw new $ceylon$language.AssertionError("Violated: Outer().Inner().foo() == \"works_inner\"");
     }
-    if (!((new superAndOuterSharedCallableParam$Outer$Inner(new superAndOuterSharedCallableParam$Outer())).bar() == "works_outer")) {
+    if (!((new superAndOuterSharedCallableParam$Outer()).$new$superAndOuterSharedCallableParam$Outer$Inner().bar() == "works_outer")) {
         throw new $ceylon$language.AssertionError("Violated: Outer().Inner().bar() == \"works_outer\"");
     }
 }

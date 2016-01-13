@@ -23,14 +23,16 @@ class run$C$Middle implements run$I {
     run$C$Middle([run$C $outer$default$run$C]) {
         this.$outer$default$run$C = $outer$default$run$C;
     }
+    run$C$Middle$D $new$run$C$Middle$D() => new run$C$Middle$D(this);
     $dart$core.String get fooI => run$I.$get$fooI(this);
 }
 class run$C implements run$I {
     run$C() {}
     $dart$core.String get fooI => "fooI from C";
+    run$C$Middle $new$run$C$Middle() => new run$C$Middle(this);
 }
 void $package$run() {
-    if (!((new run$C$Middle$D(new run$C$Middle(new run$C()))).fooIJ == "fooI")) {
+    if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().fooIJ == "fooI")) {
         throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
     }
     $ceylon$language.print($ceylon$language.String.instance("done."));

@@ -24,17 +24,19 @@ class run$C$Middle {
     run$C$Middle([run$C $outer$default$run$C]) {
         this.$outer$default$run$C = $outer$default$run$C;
     }
+    run$C$Middle$D $new$run$C$Middle$D() => new run$C$Middle$D(this);
 }
 class run$C implements run$I {
     run$C() {}
     $dart$core.int get b => 2;
+    run$C$Middle $new$run$C$Middle() => new run$C$Middle(this);
     $dart$core.int get a => run$I.$get$a(this);
 }
 void $package$run() {
-    if (!((new run$C$Middle$D(new run$C$Middle(new run$C()))).oa == 1)) {
+    if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().oa == 1)) {
         throw new $ceylon$language.AssertionError("Violated: C().Middle().D().oa == 1");
     }
-    if (!((new run$C$Middle$D(new run$C$Middle(new run$C()))).ob == 2)) {
+    if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().ob == 2)) {
         throw new $ceylon$language.AssertionError("Violated: C().Middle().D().ob == 2");
     }
     $ceylon$language.print($ceylon$language.String.instance("done"));

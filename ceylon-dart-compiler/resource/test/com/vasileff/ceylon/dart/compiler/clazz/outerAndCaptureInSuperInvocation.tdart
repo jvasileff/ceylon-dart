@@ -15,6 +15,7 @@ class run$A$B {
         this._$s = _$s;
     }
     $dart$core.String _$s;
+    run$A$B$C $new$run$A$B$C() => new run$A$B$C(this);
 }
 class run$A$D  extends run$A$B {
     run$A $outer$default$run$A;
@@ -40,6 +41,9 @@ class run$A {
     void myFoo() {
         $capture$run$foo();
     }
+    run$A$B $new$run$A$B([$dart$core.String _$s]) => new run$A$B(this, _$s);
+    run$A$D $new$run$A$D() => new run$A$D(this);
+    run$A$E $new$run$A$E() => new run$A$E(this);
 }
 void $package$run() {
     void foo() {}

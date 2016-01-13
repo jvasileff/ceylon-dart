@@ -22,13 +22,14 @@ class run$C$D implements run$I$J {
 class run$C implements run$I {
     run$C() {}
     $dart$core.int get b => 2;
+    run$C$D $new$run$C$D() => new run$C$D(this);
     $dart$core.int get a => run$I.$get$a(this);
 }
 void $package$run() {
-    if (!((new run$C$D(new run$C())).a == 1)) {
+    if (!((new run$C()).$new$run$C$D().a == 1)) {
         throw new $ceylon$language.AssertionError("Violated: C().D().a == 1");
     }
-    if (!((new run$C$D(new run$C())).b == 2)) {
+    if (!((new run$C()).$new$run$C$D().b == 2)) {
         throw new $ceylon$language.AssertionError("Violated: C().D().b == 2");
     }
     $ceylon$language.print($ceylon$language.String.instance("done"));

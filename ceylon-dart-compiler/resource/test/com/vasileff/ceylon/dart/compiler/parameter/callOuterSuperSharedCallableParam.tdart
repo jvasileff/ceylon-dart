@@ -42,12 +42,13 @@ class callOuterSuperSharedCallableParam$Outer {
         this._foo$c = foo;
     }
     $ceylon$language.Callable _foo$c;
+    callOuterSuperSharedCallableParam$Outer$Inner $new$callOuterSuperSharedCallableParam$Outer$Inner([$dart$core.Object foo = $ceylon$language.dart$default]) => new callOuterSuperSharedCallableParam$Outer$Inner(this, foo);
     $dart$core.int foo() {
         return $ceylon$language.Integer.nativeValue(_foo$c.f());
     }
 }
 void $package$callOuterSuperSharedCallableParam() {
-    (new callOuterSuperSharedCallableParam$Outer$Inner(new callOuterSuperSharedCallableParam$Outer())).test();
+    (new callOuterSuperSharedCallableParam$Outer()).$new$callOuterSuperSharedCallableParam$Outer$Inner().test();
     if (!(((new callOuterSuperSharedCallableParam$Outer()).foo() + 1) == 2)) {
         throw new $ceylon$language.AssertionError("Violated: Outer().foo() + 1 == 2");
     }

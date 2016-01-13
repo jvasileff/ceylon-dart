@@ -11,9 +11,11 @@ class I$J$C {
 }
 abstract class I$J {
     I get $outer$default$I;
+    static I$J$C $$new$I$J$C([final I$J $this, $dart$core.String _$s]) => new I$J$C($this, _$s);
+    I$J$C $new$I$J$C([$dart$core.String _$s]);
 }
 abstract class I {
 }
-$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new I$J$C($r, $ceylon$language.String.nativeValue($0 as $ceylon$language.String))));
+$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as I$J).$new$I$J$C($ceylon$language.String.nativeValue($0 as $ceylon$language.String))));
 
 $ceylon$language.Callable get newC => $package$newC;

@@ -27,17 +27,19 @@ class run$OuterClass$MiddleClass implements run$OuterInterface, run$OuterInterfa
     }
     $dart$core.String get outerIdentFromMiddle => outerIdent;
     $dart$core.String get outerInterfaceIdent => "OuterInterface; MiddleClass impl";
+    run$OuterClass$MiddleClass$InnerClass $new$run$OuterClass$MiddleClass$InnerClass() => new run$OuterClass$MiddleClass$InnerClass(this);
     $dart$core.String get outerIdent => run$OuterInterface$InnerInterface.$get$outerIdent(this);
 }
 class run$OuterClass implements run$OuterInterface {
     run$OuterClass() {}
     $dart$core.String get outerInterfaceIdent => "OuterInterface; OuterClass impl";
+    run$OuterClass$MiddleClass $new$run$OuterClass$MiddleClass() => new run$OuterClass$MiddleClass(this);
 }
 void $package$run() {
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass$MiddleClass$InnerClass(new run$OuterClass$MiddleClass(new run$OuterClass()))).outerIdent));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass$MiddleClass$InnerClass(new run$OuterClass$MiddleClass(new run$OuterClass()))).outerIdentFromMiddle));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass$MiddleClass(new run$OuterClass())).outerIdent));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass$MiddleClass(new run$OuterClass())).outerIdentFromMiddle));
+    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdent));
+    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdentFromMiddle));
+    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdent));
+    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdentFromMiddle));
 }
 
 void run() => $package$run();

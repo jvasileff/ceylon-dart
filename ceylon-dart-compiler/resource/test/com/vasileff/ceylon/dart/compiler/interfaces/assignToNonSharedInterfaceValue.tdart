@@ -20,18 +20,22 @@ abstract class assignToNonSharedInterfaceValue$I {
     static void $test([final assignToNonSharedInterfaceValue$I $this]) {
         $ceylon$language.print($ceylon$language.String.instance(assignToNonSharedInterfaceValue$I.$set$_$s($this, "theNewValue")));
     }
+    static assignToNonSharedInterfaceValue$I$C $$new$assignToNonSharedInterfaceValue$I$C([final assignToNonSharedInterfaceValue$I $this]) => new assignToNonSharedInterfaceValue$I$C($this);
+    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C();
 }
 class assignToNonSharedInterfaceValue$$anonymous$0_ implements assignToNonSharedInterfaceValue$I {
     assignToNonSharedInterfaceValue$$anonymous$0_() {}
     void test() => assignToNonSharedInterfaceValue$I.$test(this);
+    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
 }
 class assignToNonSharedInterfaceValue$$anonymous$1_ implements assignToNonSharedInterfaceValue$I {
     assignToNonSharedInterfaceValue$$anonymous$1_() {}
     void test() => assignToNonSharedInterfaceValue$I.$test(this);
+    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
 }
 void $package$assignToNonSharedInterfaceValue() {
     (new assignToNonSharedInterfaceValue$$anonymous$0_()).test();
-    (new assignToNonSharedInterfaceValue$I$C(new assignToNonSharedInterfaceValue$$anonymous$1_())).test();
+    (new assignToNonSharedInterfaceValue$$anonymous$1_()).$new$assignToNonSharedInterfaceValue$I$C().test();
 }
 
 void assignToNonSharedInterfaceValue() => $package$assignToNonSharedInterfaceValue();

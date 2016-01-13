@@ -13,6 +13,7 @@ class I1$I2$C implements I1$I2 {
     $dart$core.String get couterIdent => $outer$default$I1$I2.ident;
     $dart$core.String get ident => ("i2byC-" + _$version.toString()) + "";
     $dart$core.String get outerIdent => I1$I2.$get$outerIdent(this);
+    I1$I2$C $new$I1$I2$C([$dart$core.int _$version]) => I1$I2.$$new$I1$I2$C(this, _$version);
 }
 abstract class I1$I2 {
     I1 get $outer$default$I1;
@@ -20,6 +21,8 @@ abstract class I1$I2 {
     static $dart$core.String $get$ident([final I1$I2 $this]) => "i2";
     $dart$core.String get outerIdent;
     static $dart$core.String $get$outerIdent([final I1$I2 $this]) => $this.$outer$default$I1.ident;
+    static I1$I2$C $$new$I1$I2$C([final I1$I2 $this, $dart$core.int _$version]) => new I1$I2$C($this, _$version);
+    I1$I2$C $new$I1$I2$C([$dart$core.int _$version]);
 }
 abstract class I1 {
     $dart$core.String get ident;
@@ -34,6 +37,7 @@ class run$i1o$$anonymous$0_$i2$$anonymous$1_ implements I1$I2 {
     }
     $dart$core.String get ident => "i2o";
     $dart$core.String get outerIdent => $outer$default$run$i1o$$anonymous$0_.ident;
+    I1$I2$C $new$I1$I2$C([$dart$core.int _$version]) => I1$I2.$$new$I1$I2$C(this, _$version);
 }
 class run$i1o$$anonymous$0_ implements I1 {
     run$i1o$$anonymous$0_() {}
@@ -43,16 +47,16 @@ class run$i1o$$anonymous$0_ implements I1 {
 void $package$run() {
     I1 i1o$get() => new run$i1o$$anonymous$0_();
 
-    $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new I1$I2$C($r, $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))));
+    $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as I1$I2).$new$I1$I2$C($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))));
 
     I1$I2$C c = (newC$get().f(i1o$get().i2) as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1)) as I1$I2$C;
     I1$I2$C c1 = (() {
         I1$I2 $r = i1o$get().i2;
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new I1$I2$C($r, $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
+        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
     })().f($ceylon$language.Integer.instance(1)) as I1$I2$C;
     I1$I2$C c2 = (() {
         I1$I2 $r = i1o$get().i2;
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => new I1$I2$C($r, $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
+        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer)));
     })().f($ceylon$language.Integer.instance(1)) as I1$I2$C;
     if (!(c.cident == "c-1")) {
         throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");

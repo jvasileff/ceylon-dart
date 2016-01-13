@@ -21,12 +21,13 @@ class superAndOuterCallableParam$Outer {
         this._$f = _$f;
     }
     $ceylon$language.Callable _$f;
+    superAndOuterCallableParam$Outer$Inner $new$superAndOuterCallableParam$Outer$Inner() => new superAndOuterCallableParam$Outer$Inner(this);
 }
 void $package$superAndOuterCallableParam() {
-    if (!((new superAndOuterCallableParam$Outer$Inner(new superAndOuterCallableParam$Outer())).foo() == "works_inner")) {
+    if (!((new superAndOuterCallableParam$Outer()).$new$superAndOuterCallableParam$Outer$Inner().foo() == "works_inner")) {
         throw new $ceylon$language.AssertionError("Violated: Outer().Inner().foo() == \"works_inner\"");
     }
-    if (!((new superAndOuterCallableParam$Outer$Inner(new superAndOuterCallableParam$Outer())).bar() == "works_outer")) {
+    if (!((new superAndOuterCallableParam$Outer()).$new$superAndOuterCallableParam$Outer$Inner().bar() == "works_outer")) {
         throw new $ceylon$language.AssertionError("Violated: Outer().Inner().bar() == \"works_outer\"");
     }
 }

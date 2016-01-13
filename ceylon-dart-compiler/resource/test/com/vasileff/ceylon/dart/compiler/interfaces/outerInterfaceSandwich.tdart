@@ -13,6 +13,8 @@ abstract class A$I {
     A get $outer$default$A;
     $dart$core.String get si;
     static $dart$core.String $get$si([final A$I $this]) => $this.$outer$default$A.s;
+    static A$I$B $$new$A$I$B([final A$I $this]) => new A$I$B($this);
+    A$I$B $new$A$I$B();
 }
 class A$i_ implements A$I {
     A $outer$default$A;
@@ -20,6 +22,7 @@ class A$i_ implements A$I {
         this.$outer$default$A = $outer$default$A;
     }
     $dart$core.String get si => A$I.$get$si(this);
+    A$I$B $new$A$I$B() => A$I.$$new$A$I$B(this);
 }
 class A {
     A() {
@@ -31,7 +34,7 @@ class A {
 void $package$run() {
     A a = new A();
     $dart$core.Object i = a.i;
-    A$I$B b = (new $ceylon$language.dart$Callable(() => new A$I$B(i as A$I))).f() as A$I$B;
+    A$I$B b = (new $ceylon$language.dart$Callable(() => (i as A$I).$new$A$I$B())).f() as A$I$B;
     if (!(a.s == "s")) {
         throw new $ceylon$language.AssertionError("Violated: a.s == \"s\"");
     }
