@@ -8,25 +8,32 @@ import ceylon.ast.core {
     DynamicModifier,
     DynamicValue,
     Node,
-    ValueSpecification
+    ValueSpecification,
+    ClassAliasDefinition,
+    ClassDefinition
 }
 
+import com.redhat.ceylon.compiler.typechecker.tree {
+    Tree
+}
 import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue,
     ClassOrInterfaceModel=ClassOrInterface,
-    ValueModel=Value
+    ValueModel=Value,
+    ClassModel=Class,
+    ConstructorModel=Constructor,
+    InterfaceModel=Interface
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
     ValueSpecificationInfo,
-    getTcNode
+    getTcNode,
+    AnyClassInfo,
+    NodeInfo
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
     ImmutableSetMultimap
-}
-import com.redhat.ceylon.compiler.typechecker.tree {
-    Tree
 }
 
 "Identify captured functions and values. For each class and interface, determine list of
@@ -91,6 +98,30 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         }
 
         shared actual
+        void visitClassAliasDefinition(ClassAliasDefinition that) {
+            value info = AnyClassInfo(that);
+
+            // Only capture for shared member classes aliases
+            if (info.declarationModel.shared && !info.declarationModel.toplevel) {
+                captureForClass(info, info.declarationModel);
+            }
+        }
+
+        shared actual
+        void visitClassDefinition(ClassDefinition that) {
+            value info = AnyClassInfo(that);
+
+            // Only capture for shared member classes
+            if (info.declarationModel.shared && !info.declarationModel.toplevel) {
+                // Capture any captures made by the supertypes of the member class!
+                // We'll need these for the generated member class factory method.
+                captureForClass(info, info.declarationModel);
+            }
+
+            super.visitClassDefinition(that);
+        }
+
+        shared actual
         void visitBaseExpression(BaseExpression that) {
             value info
                 =   BaseExpressionInfo(that);
@@ -98,39 +129,82 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             value targetDeclaration
                 =   info.declaration;
 
-            if (!is FunctionOrValueModel targetDeclaration) {
+            assert (is FunctionOrValueModel | InterfaceModel
+                    | ClassModel | ConstructorModel targetDeclaration);
+
+            switch (targetDeclaration)
+            case (is InterfaceModel) {
                 return;
             }
+            case (is ClassModel | ConstructorModel) {
+                captureForClass(info, targetDeclaration);
+            }
+            case (is FunctionOrValueModel) {
+                maybeCapture {
+                    targetDeclaration;
+                    getContainingClassOrInterface(toScopeModel(targetDeclaration));
+                    getContainingClassOrInterface(info.scope);
+                };
+            }
+        }
 
-            value expressionsClassOrInterface
-                =   getContainingClassOrInterface(info.scope);
+        void captureForClass(
+            NodeInfo info,
+            ClassModel | ConstructorModel declaration) {
 
-            value targetsClassOrInterface
-                =>  getContainingClassOrInterface(toScopeModel(targetDeclaration));
+            value classModel
+                =   getClassOfConstructor(resolveClassAliases(declaration));
+
+            // capture all that the class captures.
+            value targets
+                =   supertypeDeclarations(classModel)
+                        .flatMap(builder.get)
+                        .distinct;
+
+            for (target in targets) {
+                value expressionsClassOrInterface
+                    =   getContainingClassOrInterface(info.scope);
+
+                value targetsClassOrInterface
+                    =>  getContainingClassOrInterface(toScopeModel(target));
+
+                maybeCapture {
+                    target;
+                    targetsClassOrInterface;
+                    expressionsClassOrInterface;
+                };
+            }
+        }
+
+        void maybeCapture(
+                FunctionOrValueModel target,
+                ClassOrInterfaceModel? targetsClassOrInterface,
+                ClassOrInterfaceModel? by) {
 
             // Capture is not required for:
             //  - class or interface members, which can be accessed via "outer" refs
             //  - toplevels, which can be accessed directly
             //  - declarations in the same class or interface as the expression,
             //    which can be accessed directly
-            if (exists expressionsClassOrInterface,
-                !isClassOrInterfaceMember(targetDeclaration)
-                    && !isToplevel(targetDeclaration)
-                    && !eq(expressionsClassOrInterface, targetsClassOrInterface)) {
+
+            if (exists by,
+                !isClassOrInterfaceMember(target)
+                    && !isToplevel(target)
+                    && !eq(by, targetsClassOrInterface)) {
 
                 capture {
-                    targetDeclaration;
+                    target;
                     targetsClassOrInterface;
-                    expressionsClassOrInterface;
+                    by;
                 };
 
                 // Also capture the setter, if one exists
-                if (is ValueModel targetDeclaration,
-                        exists setter = targetDeclaration.setter) {
+                if (is ValueModel target,
+                        exists setter = target.setter) {
                     capture {
                         setter;
                         targetsClassOrInterface;
-                        expressionsClassOrInterface;
+                        by;
                     };
                 }
             }
@@ -155,18 +229,19 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         void capture(FunctionOrValueModel target,
                 ClassOrInterfaceModel? targetsClassOrInterface,
                 variable ClassOrInterfaceModel by) {
+
             // TODO Replacement declarations are captured even if we are not defining new
             //      Dart variables for them. We should problaby capture the original
             //      declaration in this case
 
             while (true) {
-                value bysClassOrInterface = getContainingClassOrInterface(by.container);
-                if (eq(targetsClassOrInterface, bysClassOrInterface)) {
+                value byClassOrInterface = getContainingClassOrInterface(by.container);
+                if (eq(targetsClassOrInterface, byClassOrInterface)) {
                     builder.put(by, target);
                     return;
                 }
-                assert (exists bysClassOrInterface);
-                by = bysClassOrInterface;
+                assert (exists byClassOrInterface);
+                by = byClassOrInterface;
             }
         }
     }
