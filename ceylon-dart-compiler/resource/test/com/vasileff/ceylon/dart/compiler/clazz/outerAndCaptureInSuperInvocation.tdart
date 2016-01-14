@@ -43,7 +43,7 @@ class run$A {
     }
     run$A$B $new$run$A$B([$dart$core.String _$s]) => new run$A$B(this, _$s);
     run$A$D $new$run$A$D() => new run$A$D(this);
-    run$A$E $new$run$A$E() => new run$A$E(this);
+    run$A$E $new$run$A$E() => new run$A$E(this, $capture$run$foo);
 }
 void $package$run() {
     void foo() {}
