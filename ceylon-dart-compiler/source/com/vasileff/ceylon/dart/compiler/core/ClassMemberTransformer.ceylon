@@ -904,6 +904,9 @@ class ClassMemberTransformer(CompilationContext ctx)
                 return [generateFactory(constructor, false)];
             }
             case (is InterfaceModel) {
+                if (constructor.formal) {
+                    return [generateFactory(constructor, false)];
+                }
                 return [generateFactory(constructor, true),
                         generateFactory(constructor, false)];
             }

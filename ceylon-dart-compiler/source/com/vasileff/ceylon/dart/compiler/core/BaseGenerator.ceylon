@@ -790,56 +790,7 @@ class BaseGenerator(CompilationContext ctx)
         "The Dart function, value, or constructor to invoking."
         DartInvocable dartFunctionOrValue;
 
-        if (is ClassModel | ConstructorModel memberDeclaration) {
-            if (!exists generateReceiver) {
-                addError(scope,
-                    "Member class and constructor invocations on super not supported.");
-                return DartNullLiteral();
-            }
-
-            // Invoking a member class; must call the statically known Dart constructor,
-            // passing the receiver (outer) as the first argument.
-
-            "The container of a member class invoked with a receiver must be a class
-             or interface."
-            assert (is ClassOrInterfaceModel memberContainer
-                 =  getContainingClassOrInterface {
-                        switch (memberDeclaration)
-                        case (is ClassModel)
-                            memberDeclaration.container
-                        case (is ConstructorModel)
-                            memberDeclaration.container.container;
-                    });
-
-            optimizedNativeRhsType
-                =   null;
-
-            dartReceiverType
-                =   dartTypes.dartTypeName {
-                        scope;
-                        ceylonTypes.denotableType {
-                            receiverType;
-                            memberContainer;
-                        };
-                        eraseToNative = false;
-                    };
-
-            dartReceiver
-                =   withLhsDenotable {
-                        memberContainer;
-                        generateReceiver;
-                    };
-
-            dartFunctionOrValue
-                =   dartTypes.dartInvocable {
-                        scope;
-                        memberDeclaration;
-                    };
-
-            argsSetupAndExpressions
-                =   standardArgs();
-        }
-        else if (!exists generateReceiver) {
+        if (!exists generateReceiver) {
             // Receiver is `super`
 
             // dartReceiverType is only used for null safe operator, and `super` is never
@@ -911,6 +862,49 @@ class BaseGenerator(CompilationContext ctx)
                 argsSetupAndExpressions
                     =   standardArgs();
             }
+        }
+        else if (is ClassModel | ConstructorModel memberDeclaration) {
+            // Invoking a member class; must call the statically known Dart constructor,
+            // passing the receiver (outer) as the first argument.
+
+            "The container of a member class invoked with a receiver must be a class
+             or interface."
+            assert (is ClassOrInterfaceModel memberContainer
+                 =  getContainingClassOrInterface {
+                        switch (memberDeclaration)
+                        case (is ClassModel)
+                            memberDeclaration.container
+                        case (is ConstructorModel)
+                            memberDeclaration.container.container;
+                    });
+
+            optimizedNativeRhsType
+                =   null;
+
+            dartReceiverType
+                =   dartTypes.dartTypeName {
+                        scope;
+                        ceylonTypes.denotableType {
+                            receiverType;
+                            memberContainer;
+                        };
+                        eraseToNative = false;
+                    };
+
+            dartReceiver
+                =   withLhsDenotable {
+                        memberContainer;
+                        generateReceiver;
+                    };
+
+            dartFunctionOrValue
+                =   dartTypes.dartInvocable {
+                        scope;
+                        memberDeclaration;
+                    };
+
+            argsSetupAndExpressions
+                =   standardArgs();
         }
         else if (!memberDeclaration.shared,
                  is InterfaceModel memberContainer

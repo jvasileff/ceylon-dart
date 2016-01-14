@@ -859,10 +859,26 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
 
+            // QualifiedExpression with a `super` receiver
+            if (exists superType
+                    =   dartTypes.denotableSuperType(invoked.receiverExpression)) {
+
+                return generateInvocation {
+                    info;
+                    info.typeModel;
+                    superType;
+                    null;
+                    invokedDeclaration;
+                    signatureAndArguments = [
+                        signature,
+                        that.arguments
+                    ];
+                    invoked.memberOperator;
+                };
+            }
+
             // Normal case, receiver is an object.
-
             value receiverInfo = expressionInfo(invoked.receiverExpression);
-
             return generateInvocation {
                 info;
                 info.typeModel;
