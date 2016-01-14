@@ -1,0 +1,32 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class fun$A {
+    $dart$core.String get id;
+    static $dart$core.String $get$id([final fun$A $this]) => $this.$capture$fun$idForA$get();
+    $dart$core.Function $capture$fun$idForA$get;
+}
+class fun$moreFun$B$X implements fun$A {
+    fun$moreFun$B $outer$default$fun$moreFun$B;
+    $dart$core.Function $capture$fun$idForA$get;
+    fun$moreFun$B$X([fun$moreFun$B $outer$default$fun$moreFun$B, $dart$core.Function $capture$fun$idForA$get]) {
+        this.$outer$default$fun$moreFun$B = $outer$default$fun$moreFun$B;
+        this.$capture$fun$idForA$get = $capture$fun$idForA$get;
+    }
+    $dart$core.String get id => fun$A.$get$id(this);
+}
+class fun$moreFun$B {
+    $dart$core.Function $capture$fun$idForA$get;
+    fun$moreFun$B([$dart$core.Function $capture$fun$idForA$get]) {
+        this.$capture$fun$idForA$get = $capture$fun$idForA$get;
+    }
+    fun$moreFun$B$X $new$fun$moreFun$B$X() => new fun$moreFun$B$X(this, $capture$fun$idForA$get);
+}
+void $package$fun() {
+    $dart$core.String idForA$get() => "A";
+
+    void moreFun() {}
+
+}
+
+void fun() => $package$fun();

@@ -1,0 +1,31 @@
+shared interface HasTrouble {
+    shared default class Trouble() {
+        shared default String causeTrouble => "no trouble";
+    }
+}
+shared class MakeTrouble() {
+    HasTrouble.Trouble fun() {
+        String idForA => "A";
+        class A() {
+            shared default String id => idForA;
+        }
+        HasTrouble moreFun() {
+            String trouble => "trouble";
+            class B() {
+                shared class C() satisfies HasTrouble {
+                    shared actual class Trouble() extends super.Trouble() {
+                        shared class X() => A();
+                        causeTrouble => trouble;
+                    }
+                    shared A createA => A();
+                }
+            }
+            return B().C();
+        }
+        class Box(String s) => Singleton<String>(s);
+        print(Box("box"));
+        print(moreFun().Trouble().causeTrouble);
+        return moreFun().Trouble();
+    }
+    fun();
+}

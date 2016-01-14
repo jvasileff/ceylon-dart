@@ -63,4 +63,12 @@ object qualifiedExpression {
     shared test
     void refToSuperMethod()
         =>  compileAndCompare2("qualifiedExpression/refToSuperMethod");
+
+    shared test
+    void nonStaticConstructorReference()
+        =>  compileAndCompare2("qualifiedExpression/nonStaticConstructorReference");
+
+    shared test
+    void staticToplevelConstructorReference()
+        =>  compileAndCompare2("qualifiedExpression/staticToplevelConstructorReference");
 }

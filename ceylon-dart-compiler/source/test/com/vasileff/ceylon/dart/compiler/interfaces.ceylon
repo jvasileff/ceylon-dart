@@ -172,4 +172,8 @@ object interfaces {
     shared test
     void toplevelInterfaceAliasTypes()
         =>  compileAndCompare2("interfaces/toplevelInterfaceAliasTypes");
+
+    shared test
+    void outerInvocationOfNonSharedMembers()
+        =>  compileAndCompare2("interfaces/outerInvocationOfNonSharedMembers");
 }

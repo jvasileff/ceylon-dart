@@ -1,0 +1,32 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C$D {
+    C $outer$default$C;
+    C$D.create([C $outer$default$C]) {
+        this.$outer$default$C = $outer$default$C;
+    }
+}
+class C$E {
+    C $outer$default$C;
+    C$E([C $outer$default$C]) {
+        this.$outer$default$C = $outer$default$C;
+    }
+}
+class C {
+    C() {}
+    C$D $new$C$D$create() => new C$D.create(this);
+    C$E $new$C$E() => new C$E(this);
+}
+void $package$run() {
+    $ceylon$language.Callable f = (() {
+        C $r = new C();
+        return new $ceylon$language.dart$Callable(() => $r.$new$C$D$create());
+    })();
+    $ceylon$language.Callable g = (() {
+        C $r = new C();
+        return new $ceylon$language.dart$Callable(() => $r.$new$C$E());
+    })();
+}
+
+void run() => $package$run();

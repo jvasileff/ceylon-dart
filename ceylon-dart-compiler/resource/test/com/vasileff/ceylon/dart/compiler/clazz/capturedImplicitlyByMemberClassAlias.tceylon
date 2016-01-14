@@ -1,0 +1,13 @@
+void fun() {
+    String idForA => "A";
+    class A() {
+        // A captures idForA:
+        shared default String id => idForA;
+    }
+    void moreFun() {
+        class B() {
+            // requires that B capture idForA
+            shared class X() => A();
+        }
+    }
+}

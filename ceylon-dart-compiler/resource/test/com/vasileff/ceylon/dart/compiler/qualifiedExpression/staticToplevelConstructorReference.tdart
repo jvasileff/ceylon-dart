@@ -1,0 +1,9 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C {
+    C.create() {}
+}
+$dart$core.Object get $package$ref => new $ceylon$language.dart$Callable(() => new C.create());
+
+$dart$core.Object get ref => $package$ref;

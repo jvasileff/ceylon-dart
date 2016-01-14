@@ -197,4 +197,36 @@ object clazz {
     shared test
     void forwardDeclaredValueMapped()
         =>  compileAndCompare2("clazz/forwardDeclaredValueMapped");
+
+    shared test
+    void capturedImplicitlyByInstantiation()
+        =>  compileAndCompare2("clazz/capturedImplicitlyByInstantiation");
+
+    shared test
+    void capturedImplicitlyByMemberClassAlias()
+        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassAlias");
+
+    shared test
+    void capturedImplicitlyByMemberClassSuper()
+        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassSuper");
+
+    shared test
+    void capturedImplicitlyByMemberClassSatisfied()
+        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassSatisfied");
+
+    shared test
+    void superMemberClassInstantiations()
+        =>  compileAndCompare2("clazz/superMemberClassInstantiations");
+
+    shared test
+    void memberClassRefinement()
+        =>  compileAndCompare2("clazz/memberClassRefinement");
+
+    shared test
+    void memberClassAliases()
+        =>  compileAndCompare2("clazz/memberClassAliases");
+
+    shared test
+    void memberClassAliasesComplex()
+        =>  compileAndCompare2("clazz/memberClassAliasesComplex");
 }

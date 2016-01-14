@@ -1,0 +1,10 @@
+shared void memberClassAliases() {
+    class C () {
+        class BoxPrivate(String s) => Singleton<String>(s);
+        shared class BoxShared(String s) => Singleton<String>(s);
+
+        print(BoxPrivate("1"));
+        print(BoxShared("2"));
+    }
+    print(C().BoxShared("3"));
+}

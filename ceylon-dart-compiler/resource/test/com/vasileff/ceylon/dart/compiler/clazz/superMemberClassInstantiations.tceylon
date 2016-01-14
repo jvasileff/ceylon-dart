@@ -1,0 +1,34 @@
+interface I {
+    shared default class IC1() {}
+    shared default class IC2() {}
+    shared formal class IC3() {}
+}
+abstract
+class C() {
+    shared default class CC1() {}
+    shared default class CC2() {}
+    shared formal class CC3() {}
+}
+class D() extends C() satisfies I {
+    shared actual class IC1() extends super.IC1() {}
+    shared actual class IC3() extends super.IC3() {}
+    shared actual class CC1() extends super.CC1() {}
+    shared actual class CC3() extends super.CC3() {}
+    suppressWarnings("unusedDeclaration")
+    shared void test() {
+        value d_ic1   = IC1();
+        value c_ic1_1 = super.IC1();
+        value c_ic1_2 = (super of I).IC1();
+        value d_ic2   = IC2();
+        value c_ic2_1 = super.IC2();
+        value c_ic2_2 = (super of I).IC2();
+        value d_ic3   = IC3();
+        value d_cc1   = CC1();
+        value c_cc1_1 = super.CC1();
+        value c_cc1_2 = (super of C).CC1();
+        value d_cc2   = CC2();
+        value c_cc2_1 = super.CC2();
+        value c_cc2_2 = (super of C).CC2();
+        value d_cc3   = CC3();
+    }
+}

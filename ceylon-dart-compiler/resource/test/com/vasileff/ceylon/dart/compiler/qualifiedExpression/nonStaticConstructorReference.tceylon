@@ -1,0 +1,10 @@
+class C() {
+    shared class D {
+        shared new create() {}
+    }
+    shared class E() {}
+}
+shared void run() {
+    C.D() f = C().D.create;
+    C.E() g = C().E;
+}

@@ -1,0 +1,69 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class HasTrouble$Trouble {
+    HasTrouble $outer$default$HasTrouble;
+    HasTrouble$Trouble([HasTrouble $outer$default$HasTrouble]) {
+        this.$outer$default$HasTrouble = $outer$default$HasTrouble;
+    }
+    $dart$core.String get causeTrouble => "no trouble";
+}
+abstract class HasTrouble {
+    static HasTrouble$Trouble $$new$HasTrouble$Trouble([final HasTrouble $this]) => new HasTrouble$Trouble($this);
+    HasTrouble$Trouble $new$HasTrouble$Trouble();
+}
+class MakeTrouble$_$fun$A {
+    MakeTrouble $outer$default$MakeTrouble;
+    $dart$core.Function $capture$MakeTrouble$_$fun$idForA$get;
+    MakeTrouble$_$fun$A([MakeTrouble $outer$default$MakeTrouble, $dart$core.Function $capture$MakeTrouble$_$fun$idForA$get]) {
+        this.$outer$default$MakeTrouble = $outer$default$MakeTrouble;
+        this.$capture$MakeTrouble$_$fun$idForA$get = $capture$MakeTrouble$_$fun$idForA$get;
+    }
+    $dart$core.String get id => $capture$MakeTrouble$_$fun$idForA$get();
+}
+class MakeTrouble$_$fun$moreFun$B$C$Trouble  extends HasTrouble$Trouble {
+    MakeTrouble$_$fun$moreFun$B$C $outer$default$MakeTrouble$_$fun$moreFun$B$C;
+    HasTrouble get $outer$default$HasTrouble => $outer$default$MakeTrouble$_$fun$moreFun$B$C;
+    MakeTrouble$_$fun$moreFun$B$C$Trouble([MakeTrouble$_$fun$moreFun$B$C $outer$default$MakeTrouble$_$fun$moreFun$B$C]) {
+        this.$outer$default$MakeTrouble$_$fun$moreFun$B$C = $outer$default$MakeTrouble$_$fun$moreFun$B$C;
+    }
+    MakeTrouble$_$fun$A $new$MakeTrouble$_$fun$moreFun$B$C$Trouble$X() => new MakeTrouble$_$fun$A($outer$default$MakeTrouble$_$fun$moreFun$B$C.$outer$default$MakeTrouble$_$fun$moreFun$B.$outer$default$MakeTrouble, $outer$default$MakeTrouble$_$fun$moreFun$B$C.$outer$default$MakeTrouble$_$fun$moreFun$B.$capture$MakeTrouble$_$fun$idForA$get);
+    $dart$core.String get causeTrouble => $outer$default$MakeTrouble$_$fun$moreFun$B$C.$outer$default$MakeTrouble$_$fun$moreFun$B.$capture$MakeTrouble$_$fun$moreFun$trouble$get();
+}
+class MakeTrouble$_$fun$moreFun$B$C implements HasTrouble {
+    MakeTrouble$_$fun$moreFun$B $outer$default$MakeTrouble$_$fun$moreFun$B;
+    MakeTrouble$_$fun$moreFun$B$C([MakeTrouble$_$fun$moreFun$B $outer$default$MakeTrouble$_$fun$moreFun$B]) {
+        this.$outer$default$MakeTrouble$_$fun$moreFun$B = $outer$default$MakeTrouble$_$fun$moreFun$B;
+    }
+    MakeTrouble$_$fun$moreFun$B$C$Trouble $new$HasTrouble$Trouble() => new MakeTrouble$_$fun$moreFun$B$C$Trouble(this);
+    MakeTrouble$_$fun$A get createA => new MakeTrouble$_$fun$A($outer$default$MakeTrouble$_$fun$moreFun$B.$outer$default$MakeTrouble, $outer$default$MakeTrouble$_$fun$moreFun$B.$capture$MakeTrouble$_$fun$idForA$get);
+}
+class MakeTrouble$_$fun$moreFun$B {
+    MakeTrouble $outer$default$MakeTrouble;
+    $dart$core.Function $capture$MakeTrouble$_$fun$idForA$get;
+    $dart$core.Function $capture$MakeTrouble$_$fun$moreFun$trouble$get;
+    MakeTrouble$_$fun$moreFun$B([MakeTrouble $outer$default$MakeTrouble, $dart$core.Function $capture$MakeTrouble$_$fun$idForA$get, $dart$core.Function $capture$MakeTrouble$_$fun$moreFun$trouble$get]) {
+        this.$outer$default$MakeTrouble = $outer$default$MakeTrouble;
+        this.$capture$MakeTrouble$_$fun$idForA$get = $capture$MakeTrouble$_$fun$idForA$get;
+        this.$capture$MakeTrouble$_$fun$moreFun$trouble$get = $capture$MakeTrouble$_$fun$moreFun$trouble$get;
+    }
+    MakeTrouble$_$fun$moreFun$B$C $new$MakeTrouble$_$fun$moreFun$B$C() => new MakeTrouble$_$fun$moreFun$B$C(this);
+}
+class MakeTrouble {
+    MakeTrouble() {
+        _$fun();
+    }
+    HasTrouble$Trouble _$fun() {
+        $dart$core.String idForA$get() => "A";
+
+        HasTrouble moreFun() {
+            $dart$core.String trouble$get() => "trouble";
+
+            return (new MakeTrouble$_$fun$moreFun$B(this, idForA$get, trouble$get)).$new$MakeTrouble$_$fun$moreFun$B$C();
+        }
+
+        $ceylon$language.print(new $ceylon$language.Singleton("box"));
+        $ceylon$language.print($ceylon$language.String.instance(moreFun().$new$HasTrouble$Trouble().causeTrouble));
+        return moreFun().$new$HasTrouble$Trouble();
+    }
+}

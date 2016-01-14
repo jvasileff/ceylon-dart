@@ -1,0 +1,14 @@
+shared void memberClassRefinement() {
+    class Super() {
+        shared default class Inner() {
+            shared default actual String string => "Super.inner";
+            shared Inner newInner => Inner();
+        }
+    }
+    class Sub() extends Super() {
+        shared actual class Inner() extends super.Inner() {
+            shared default actual String string => "Sub.inner";
+        }
+    }
+    assert (Sub().Inner().newInner is Sub.Inner);
+}

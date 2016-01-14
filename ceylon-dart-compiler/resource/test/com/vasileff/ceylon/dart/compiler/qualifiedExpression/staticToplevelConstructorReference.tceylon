@@ -1,0 +1,4 @@
+class C {
+    shared new create() {}
+}
+shared Anything ref => C.create;

@@ -1,0 +1,35 @@
+interface I {
+    shared Anything sharedInt() => 1;
+    Anything nonSharedInt() => 1;
+
+    shared Anything sharedTransient => 1;
+    Anything nonSharedTransient => 1;
+
+    assign sharedTransient {}
+    assign nonSharedTransient {}
+
+    shared class SharedClass() {}
+    class NonSharedClass() {}
+
+    class C() {
+        shared void test() {
+            sharedInt();
+            nonSharedInt();
+
+            value si = sharedInt;
+            value nsi = nonSharedInt;
+
+            SharedClass();
+            NonSharedClass();
+
+            value sc = SharedClass;
+            value nsc = NonSharedClass;
+
+            noop(sharedTransient);
+            noop(nonSharedTransient);
+
+            sharedTransient = 4;
+            nonSharedTransient = 5;
+        }
+    }
+}

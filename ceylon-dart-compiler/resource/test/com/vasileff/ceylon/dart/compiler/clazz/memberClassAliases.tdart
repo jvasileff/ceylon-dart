@@ -1,0 +1,15 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class memberClassAliases$C {
+    memberClassAliases$C() {
+        $ceylon$language.print(new $ceylon$language.Singleton("1"));
+        $ceylon$language.print($new$memberClassAliases$C$BoxShared("2"));
+    }
+    $ceylon$language.Singleton $new$memberClassAliases$C$BoxShared([$dart$core.String _$s]) => new $ceylon$language.Singleton(_$s);
+}
+void $package$memberClassAliases() {
+    $ceylon$language.print((new memberClassAliases$C()).$new$memberClassAliases$C$BoxShared("3"));
+}
+
+void memberClassAliases() => $package$memberClassAliases();
