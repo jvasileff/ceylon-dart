@@ -43,7 +43,9 @@ import ceylon.ast.core {
     Destructure,
     TryCatchFinally,
     Type,
-    LazySpecification
+    LazySpecification,
+    ClassAliasDefinition,
+    InterfaceAliasDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -954,8 +956,13 @@ class StatementTransformer(CompilationContext ctx)
         =>  [DartBlock([*expand(that.transformChildren(this))])];
 
     shared actual
-    [] transformTypeAliasDefinition(TypeAliasDefinition that)
-        =>  [];
+    [] transformTypeAliasDefinition(TypeAliasDefinition that) => [];
+
+    shared actual
+    [] transformClassAliasDefinition(ClassAliasDefinition that) => [];
+
+    shared actual
+    [] transformInterfaceAliasDefinition(InterfaceAliasDefinition that) => [];
 
     shared actual
     [DartStatement*] transformValueDeclaration(ValueDeclaration that) {

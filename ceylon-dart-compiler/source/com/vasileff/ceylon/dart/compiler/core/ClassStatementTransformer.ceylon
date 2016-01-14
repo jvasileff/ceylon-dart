@@ -21,7 +21,9 @@ import ceylon.ast.core {
     DynamicModifier,
     DynamicInterfaceDefinition,
     DynamicBlock,
-    DynamicValue
+    DynamicValue,
+    ClassAliasDefinition,
+    InterfaceAliasDefinition
 }
 
 import com.vasileff.ceylon.dart.compiler.dartast {
@@ -54,8 +56,15 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     "Ignore type aliases for now."
     shared actual
-    [] transformTypeAliasDefinition(TypeAliasDefinition that)
-        =>  [];
+    [] transformTypeAliasDefinition(TypeAliasDefinition that) => [];
+
+    "Class aliases are handled by [[ClassMemberTransformer.transformAnyClass]]."
+    shared actual
+    [] transformClassAliasDefinition(ClassAliasDefinition that) => [];
+
+    "Interface aliases are not reified."
+    shared actual
+    [] transformInterfaceAliasDefinition(InterfaceAliasDefinition that) => [];
 
     "Don't transform Constructors; they are handled elsewhere."
     shared actual
