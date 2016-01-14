@@ -810,7 +810,13 @@ class ExpressionTransformer(CompilationContext ctx)
                         }.expressionForInvocation {
                             DartArgumentList {
                                 concatenate {
-                                    generateArgumentsForCaptures(info, classModel),
+                                    // only capture for non-toplevel non-members or
+                                    // members that are not shared. For members, we call
+                                    // a factory that handles captures.
+                                    if (!classModel.shared
+                                            || !getClassOfConstructor(classModel).shared)
+                                    then generateArgumentsForCaptures(info, classModel)
+                                    else [],
                                     argumentList.arguments
                                 };
                             };

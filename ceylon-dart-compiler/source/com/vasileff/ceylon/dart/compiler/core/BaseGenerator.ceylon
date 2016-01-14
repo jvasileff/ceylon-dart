@@ -3497,26 +3497,26 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     [DartExpression*] generateArgumentsForOuterAndCaptures
-            (DScope scope, ClassModel | ConstructorModel declaration) {
+            (DScope scope, ClassModel | ConstructorModel declaration)
+        =>  concatenate {
+                generateArgumentForOuter(scope, declaration),
+                generateArgumentsForCaptures(scope, declaration)
+            };
 
-        value classModel
-            =   getClassOfConstructor(declaration);
-
-        value captureExpressions
-            =   generateArgumentsForCaptures(scope, declaration);
-
-        value outerExpression
-            =   if (exists outerCI = getContainingClassOrInterface(classModel.container))
+    shared
+    [DartExpression]|[] generateArgumentForOuter
+            (DScope scope, ClassModel | ConstructorModel declaration)
+        =>  let (resolved = resolveClassAliases(declaration))
+            let (classModel = getClassOfConstructor(resolved))
+            if (exists outerCI = getContainingClassOrInterface(classModel.container))
                 then [dartTypes.expressionToOuter(scope, outerCI)]
                 else []; // No outer if no containing class or interface.
-
-        return concatenate { outerExpression, captureExpressions };
-    }
 
     shared
     [DartExpression*] generateArgumentsForCaptures
             (DScope scope, ClassModel | ConstructorModel declaration)
-        =>  let (classModel = getClassOfConstructor(declaration))
+        =>  let (resolved = resolveClassAliases(declaration),
+                 classModel = getClassOfConstructor(declaration))
             dartTypes.captureDeclarationsForClass(classModel)
                 .map((capture) => dartTypes.invocableForBaseExpression(scope, capture))
                 .collect(uncurry(DartQualifiedInvocable.expressionForLocalCapture));
@@ -4055,7 +4055,7 @@ class BaseGenerator(CompilationContext ctx)
         //      optimize away wrappers for most shared classes and constructors.
 
         // TODO there should be a better way to test for functions that require $this
-        //      rather than the last or condition below.
+        //      rather than the last || condition below.
 
         // TODO rework DartInvocable.expressionForClosure(). It currently only helps
         //      with plain functions and methods (need to add shared member classes),
@@ -4191,10 +4191,13 @@ class BaseGenerator(CompilationContext ctx)
                             functionModel; // really class or constructor
                         }.expressionForInvocation {
                             concatenate {
-                                generateArgumentsForCaptures {
-                                    scope;
-                                    functionModel;
-                                },
+                                // only capture for non-toplevel non-members or
+                                // members that are not shared. For members, we call
+                                // a factory that handles captures.
+                                if (!getClassOfConstructor(functionModel).shared
+                                        || !functionModel.shared)
+                                then generateArgumentsForCaptures(scope, functionModel)
+                                else [],
                                 innerArguments
                             };
                         };

@@ -13,7 +13,6 @@ import ceylon.ast.core {
     AnyFunction,
     ValueSetterDefinition,
     TypedDeclaration,
-    ClassDefinition,
     ObjectDefinition,
     Specifier,
     LazySpecification,
@@ -27,7 +26,8 @@ import ceylon.ast.core {
     DynamicBlock,
     DynamicValue,
     DefaultedParameter,
-    DefaultedCallableParameter
+    DefaultedCallableParameter,
+    AnyClass
 }
 import ceylon.interop.java {
     CeylonList
@@ -39,6 +39,7 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue,
+    ClassAliasModel=ClassAlias,
     ValueModel=Value,
     ConstructorModel=Constructor,
     FunctionalModel=Functional,
@@ -809,7 +810,9 @@ class ClassMemberTransformer(CompilationContext ctx)
             };
 
     shared actual
-    [DartMethodDeclaration*] transformClassDefinition(ClassDefinition that) {
+    DartClassMember[] transformAnyClass(AnyClass that) {
+        // ClassAliasDefinition & ClassDefinition
+
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
@@ -860,6 +863,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                         }.parameters;
                     };
 
+
+            assert (is ClassModel | ConstructorModel resolvedConstructor
+                =   if (is ClassAliasModel constructor)
+                    then constructor.constructor
+                    else constructor);
+
             return
             DartMethodDeclaration {
                 false;
@@ -885,10 +894,13 @@ class ClassMemberTransformer(CompilationContext ctx)
                             constructor;
                         };
                         DartArgumentList {
-                            [
-                              dartTypes.expressionForThis(containerScope),
-                              for (p in standardParameters) p.identifier
-                            ];
+                            concatenate {
+                                generateArgumentsForOuterAndCaptures {
+                                    containerScope;
+                                    constructor;
+                                },
+                                [ for (p in standardParameters) p.identifier ]
+                            };
                         };
                     };
                 };

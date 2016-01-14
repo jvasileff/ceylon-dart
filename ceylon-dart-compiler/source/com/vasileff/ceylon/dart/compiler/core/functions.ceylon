@@ -56,7 +56,8 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeDeclarationModel=TypeDeclaration,
     TypeModel=Type,
     ModuleImportModel=ModuleImport,
-    TypedReferenceModel=TypedReference
+    TypedReferenceModel=TypedReference,
+    ClassAliasModel=ClassAlias
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
@@ -488,6 +489,16 @@ SetterModel | FunctionModel | ValueModel | ClassModel? mostRefined
         assert (is FunctionModel | ValueModel | ClassModel | Null result);
         return result;
     }
+}
+
+ClassModel | ConstructorModel resolveClassAliases(
+        ClassModel | ConstructorModel constructor) {
+    if (is ClassAliasModel constructor) {
+        assert (is ClassModel | ConstructorModel resolved
+            =   constructor.constructor);
+        return resolveClassAliases(resolved);
+    }
+    return constructor;
 }
 
 NodeInfo getNodeInfo(Node node)

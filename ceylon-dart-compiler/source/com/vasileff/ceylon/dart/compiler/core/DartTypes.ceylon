@@ -67,6 +67,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     value nameCache => ctx.nameCache;
 
+    // TODO remove this ugliness.
+    BaseGenerator baseGenerator => ctx.expressionTransformer;
+
     [String, DartElementType]?(DeclarationModel) mappedFunctionOrValue = (() {
         return ImmutableMap {
             ceylonTypes.objectDeclaration.getMember("string", null, false)
@@ -1092,6 +1095,22 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // All we need to do is determine the receiver. The 'invocable' we already
                 // have handles the form of the invocation.
 
+                // Non-shared declarations do not have factory methods, so we'll be
+                // instantiating the class directly. And, the class may be a ClassAlias
+                // to a class with a *different* container than that of the ClassAlias's.
+                if (is ClassModel | ConstructorModel validDeclaration,
+                        !getClassOfConstructor(validDeclaration).shared
+                        || !validDeclaration.shared) {
+
+                    return DartQualifiedInvocable {
+                        baseGenerator.generateArgumentForOuter {
+                            scope;
+                            validDeclaration;
+                        }[0];
+                        invocable;
+                    };
+                }
+
                 return
                 DartQualifiedInvocable {
                     // We need to qualify with `this`
@@ -1101,15 +1120,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     //
                     // - when the invocation requires an operator
                     //
-                    // - when invoking a Dart Constructor rather than a method, which is
-                    //   the case for non-shared member classes/constructors. The
-                    //   constructor must have an 'outer' as the first argument.
-                    //
                     // Note: using `LoneThis()` we don't need `this` when referencing
                     //       outers, like (what would be)
                     //       `this.$outer$ceylon$language$.cap`.
                     if (invocable.elementType is DartOperator
-                        || !invocable.reference is DartSimpleIdentifier
                         || (originalDeclaration.parameter
                             && ctx.withinConstructor(declarationContainer))) then
                         expressionToThisOrOuterStripNonLoneThis {
@@ -1140,11 +1154,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // reference to the outer class or interface if there is one. The
                     // 'outer' capture looks pretty much like a qualifying instance.
                     return DartQualifiedInvocable {
-                        if (exists outerCI = getContainingClassOrInterface {
-                            getClassOfConstructor(validDeclaration).container;
-                        })
-                        then expressionToOuter(scope, outerCI)
-                        else null;
+                        baseGenerator.generateArgumentForOuter {
+                            scope;
+                            validDeclaration;
+                        }[0];
                         invocable;
                     };
                 }
