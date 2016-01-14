@@ -1441,6 +1441,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
 
+            // Non-shared interface functions and values
+            if (is InterfaceModel container,
+                    is FunctionOrValueModel validDeclaration,
+                    !validDeclaration.shared) {
+
+                return DartInvocable {
+                    DartPropertyAccess {
+                        dartIdentifierForClassOrInterface {
+                            scope;
+                            container;
+                        };
+                        DartSimpleIdentifier {
+                            getStaticInterfaceMethodName(validDeclaration);
+                        };
+                    };
+                    package.dartFunction; // Constructor, really
+                    false;
+                };
+            }
+
             // Else, a member function, value, class, or class's constructor. If it's
             // a function or value, it may be mapped to something like "+", toString() or
             // hashCode
@@ -1456,9 +1476,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             && !ctx.withinConstructorDefaultsSet.contains(container))
                     then mappedFunctionOrValue(refinedDeclaration(validDeclaration))
                     else null;
-
-// FIXME WIP
-// FIXME idea: assert(false) if attempting to return an invocable for a private interface member that must be invoked statically?
 
             value [memberIdentifier, dartElementType]
                 =   if (exists mapped, !setter || mapped[1] == dartValue) then [

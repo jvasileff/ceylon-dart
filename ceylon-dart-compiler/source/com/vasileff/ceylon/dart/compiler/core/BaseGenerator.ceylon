@@ -4060,15 +4060,24 @@ class BaseGenerator(CompilationContext ctx)
         // TODO now that we have factory methods for member classes, we can probably
         //      optimize away wrappers for most shared classes and constructors.
 
-        "True if boxing is required. If `true`, an extra outer function will be created
-         to handle boxing and null safety."
+        // TODO there should be a better way to test for functions that require $this
+        //      rather than the last or condition below.
+
+        // TODO rework DartInvocable.expressionForClosure(). It currently only helps
+        //      with plain functions and methods (need to add shared member classes),
+        //      and it throws if called for something it doesn't support.
+
+        "True if boxing is required, if it's a Dart constructor, or if a $this argument
+         must be passed to the Dart function. If `true`, an extra outer function will be
+         created to handle boxing and null safety."
         value needsWrapperFunction =
                 functionModel is ClassModel | ConstructorModel
                 || (!returnsCallable
                     && !hasForcedNonNativeReturn
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
-                    =>  dartTypes.erasedToNative(parameterModel.model));
+                    =>  dartTypes.erasedToNative(parameterModel.model))
+                || !functionModel.shared && container(functionModel) is InterfaceModel;
 
         if (!needsWrapperFunction) {
             "A bit ugly, but we do know it's not a ClassModel | ConstructorModel
@@ -4165,23 +4174,27 @@ class BaseGenerator(CompilationContext ctx)
             switch (functionModel)
             case (is FunctionModel) {
                 invocation
-                    =   DartFunctionExpressionInvocation {
-                            delegateFunction
-                            else dartTypes.invocableForBaseExpression {
+                    =   if (exists delegateFunction) then
+                            DartFunctionExpressionInvocation {
+                                delegateFunction;
+                                DartArgumentList {
+                                    innerArguments;
+                                };
+                            }
+                        else
+                            dartTypes.invocableForBaseExpression {
                                 scope;
                                 functionModel;
-                            }.expressionForClosure();
-                            DartArgumentList {
+                            }.expressionForInvocation {
                                 innerArguments;
                             };
-                        };
+
             }
             case (is ClassModel | ConstructorModel) {
                 invocation
                     =   dartTypes.invocableForBaseExpression {
                             scope;
                             functionModel; // really class or constructor
-                            false;
                         }.expressionForInvocation {
                             concatenate {
                                 generateArgumentsForCaptures {

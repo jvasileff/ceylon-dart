@@ -654,76 +654,10 @@ class ExpressionTransformer(CompilationContext ctx)
                     ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
                 };
 
-        if (is FunctionModel | ValueModel invokedDeclaration,
-                !invokedDeclaration.shared,
-                is InterfaceModel invokedContainer
-                    =   container(invokedDeclaration),
-                is BaseExpression invoked
-                    =   that.invoked) {
-
-            // Special case: invoking private interface member using a BaseExpression.
-            //
-            // Private interface members are not polymorphic and cannot be accessed
-            // through $this. Instead, we must invoke the `getStaticInterfaceMethodName`
-            // directly, passing in a suitable `$this` value.
-            //
-            // Note: private interface members may also be invoked using a
-            // QualifiedExpression, but that can be handled by `generateInvocation`.
-
-            "The 'reciever' of the invocation, that will be passed as the first argument
-             to the Dart static implementation of invokedDeclaration."
-            DartExpression thisExpression;
-
-            // Find the receiver (the $this argument) starting from the scope's
-            // container and searching ancestors until an exact match for the
-            // target's interface is found. (dartTypes.expressionToOuter() does this)
-
-            "The scope of a BaseExpression to a function or value member of a class
-             or interface will have a containing class or interface."
-            assert (exists scopeContainer
-                =   getContainingClassOrInterface(that));
-
-            thisExpression
-                =   dartTypes.expressionToOuter(info, invokedContainer);
-
-            value [argsSetup, argumentList, _]
-                =   generateArgumentListFromArguments {
-                        info;
-                        that.arguments;
-                        signature;
-                        invokedDeclaration;
-                    };
-
-            return
-            createExpressionEvaluationWithSetup {
-                argsSetup;
-                withBoxing {
-                    info;
-                    info.typeModel;
-                    invokedDeclaration;
-                    DartFunctionExpressionInvocation {
-                        // qualified reference to the static interface method
-                        DartPropertyAccess {
-                            dartTypes.dartIdentifierForClassOrInterface {
-                                info;
-                                invokedContainer;
-                            };
-                            DartSimpleIdentifier {
-                                dartTypes.getStaticInterfaceMethodName(invokedDeclaration);
-                            };
-                        };
-                        DartArgumentList {
-                            concatenate {
-                                [thisExpression],
-                                argumentList.arguments
-                            };
-                        };
-                    };
-                };
-            };
-        }
-
         switch (invokedDeclaration)
+        case (is ValueModel?) {
+            return indirectInvocationOnCallable(invokedDeclaration);
+        }
         case (is FunctionModel) {
             // Invoke a Dart function (*probably* not a Callable value)
 
@@ -818,9 +752,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 };
             }
-        }
-        case (is ValueModel?) {
-            return indirectInvocationOnCallable(invokedDeclaration);
         }
         case (is ClassModel | ConstructorModel) {
             assert (is ClassModel classModel

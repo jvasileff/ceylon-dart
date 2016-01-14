@@ -52,8 +52,21 @@ class DartInvocable(
     // TODO remove this function
     shared
     [DartSimpleIdentifier, DartElementType] oldPairSimple {
-        assert (is DartSimpleIdentifier reference);
-        return [reference, elementType];
+        // The `reference` may be a property access or prefixed identifier for things
+        // like static interface methods, but callers are trying to make declarations,
+        // so let's extract a DartSimpleIdentifier. It's likely that in these cases
+        // the identifier will not ultimately be used anyway.
+
+        assert (is DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
+                reference);
+
+        value simpleIdentifier
+            =   switch (reference)
+                case (is DartSimpleIdentifier) reference
+                case (is DartPropertyAccess) reference.propertyName
+                case (is DartPrefixedIdentifier) reference.identifier;
+
+        return [simpleIdentifier, elementType];
     }
 
     shared
