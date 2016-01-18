@@ -964,7 +964,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         return
         expressionToThisOrOuterStripNonLoneThis {
             scope;
-            classOrInterfaceContainerPath(innerDeclaration, outerDeclaration.equals);
+            classOrInterfaceContainerPath {
+                innerDeclaration;
+                // outer may be exact, or may be a supertype of inner's outer in
+                // the case of a member class inner
+                (m) => m.inherits(outerDeclaration);
+            };
         };
     }
 
