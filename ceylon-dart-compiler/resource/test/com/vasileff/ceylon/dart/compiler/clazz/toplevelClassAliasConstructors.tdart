@@ -2,28 +2,38 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C {
-    C([$dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
-            a = 10;
+    void _$init$C([$dart$core.int $bitmap, $dart$core.Object $create$a, $dart$core.Object $create$b, $dart$core.Object $$a]) {
+        if (0 != ($bitmap & 2)) {
+            this.i = $$a as $dart$core.int;
         }
-        return [a];
-    })());
-    C.$s([$dart$core.List a]) : this.$w(a[0]);
-    C.$w([$dart$core.Object a]) {
-        this.i = a as $dart$core.int;
+        if (0 != ($bitmap & 1)) {
+            this.i = ($create$a as $dart$core.int) + ($create$b as $dart$core.int);
+        }
     }
-    C.create([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default]) : this.create$s((() {
-        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
-            a = 10;
+    C([$dart$core.Object a = $ceylon$language.dart$default]) : this.$d(2, null, null, a);
+    C.$d([$dart$core.int $bitmap, $dart$core.Object $create$a, $dart$core.Object $create$b, $dart$core.Object $$a = $ceylon$language.dart$default]) : this.$s($bitmap | 2, $create$a, $create$b, (() {
+        if ($dart$core.identical($$a, $ceylon$language.dart$default)) {
+            $$a = 10;
         }
-        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-            b = 20;
-        }
-        return [a, b];
+        return [$$a];
     })());
-    C.create$s([$dart$core.List a]) : this.create$w(a[0], a[1]);
-    C.create$w([$dart$core.Object a, $dart$core.Object b]) {
-        this.i = (a as $dart$core.int) + (b as $dart$core.int);
+    C.$s([$dart$core.int $bitmap, $dart$core.Object $create$a, $dart$core.Object $create$b, $dart$core.List a]) : this.$w($bitmap, $create$a, $create$b, a[0]);
+    C.$w([$dart$core.int $bitmap, $dart$core.Object $create$a, $dart$core.Object $create$b, $dart$core.Object $$a]) {
+        _$init$C($bitmap | 2, $create$a, $create$b, $$a);
+    }
+    C.create([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default]) : this.create$d(1, a, b);
+    C.create$d([$dart$core.int $bitmap, $dart$core.Object $create$a = $ceylon$language.dart$default, $dart$core.Object $create$b = $ceylon$language.dart$default]) : this.create$s($bitmap | 1, (() {
+        if ($dart$core.identical($create$a, $ceylon$language.dart$default)) {
+            $create$a = 10;
+        }
+        if ($dart$core.identical($create$b, $ceylon$language.dart$default)) {
+            $create$b = 20;
+        }
+        return [$create$a, $create$b];
+    })());
+    C.create$s([$dart$core.int $bitmap, $dart$core.List a]) : this.create$w($bitmap, a[0], a[1]);
+    C.create$w([$dart$core.int $bitmap, $dart$core.Object $create$a, $dart$core.Object $create$b]) {
+        _$init$C($bitmap | 1, $create$a, $create$b);
     }
     $dart$core.int i;
 }

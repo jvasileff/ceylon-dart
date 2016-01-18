@@ -4,19 +4,29 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class run$C {
     $dart$core.int $capture$run$a;
     $dart$core.int $capture$run$b;
-    run$C.newa([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
-        this.$capture$run$a = $capture$run$a;
-        this.$capture$run$b = $capture$run$b;
-        if (!($capture$run$a == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: a == 1");
+    void _$init$run$run$C([$dart$core.int $bitmap, $dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
+        if (0 != ($bitmap & 2)) {
+            this.$capture$run$a = $capture$run$a;
+            this.$capture$run$b = $capture$run$b;
+            if (!($capture$run$a == 1)) {
+                throw new $ceylon$language.AssertionError("Violated: a == 1");
+            }
+        }
+        if (0 != ($bitmap & 1)) {
+            this.$capture$run$a = $capture$run$a;
+            this.$capture$run$b = $capture$run$b;
+            if (!($capture$run$b == 2)) {
+                throw new $ceylon$language.AssertionError("Violated: b == 2");
+            }
         }
     }
-    run$C.newb([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
-        this.$capture$run$a = $capture$run$a;
-        this.$capture$run$b = $capture$run$b;
-        if (!($capture$run$b == 2)) {
-            throw new $ceylon$language.AssertionError("Violated: b == 2");
-        }
+    run$C.newa([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) : this.newa$d(2, $capture$run$a, $capture$run$b);
+    run$C.newa$d([$dart$core.int $bitmap, $dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
+        _$init$run$run$C($bitmap | 2, $capture$run$a, $capture$run$b);
+    }
+    run$C.newb([$dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) : this.newb$d(1, $capture$run$a, $capture$run$b);
+    run$C.newb$d([$dart$core.int $bitmap, $dart$core.int $capture$run$a, $dart$core.int $capture$run$b]) {
+        _$init$run$run$C($bitmap | 1, $capture$run$a, $capture$run$b);
     }
 }
 void $package$run() {

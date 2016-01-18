@@ -3,8 +3,14 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C$D {
     C $outer$default$C;
-    C$D.create([C $outer$default$C]) {
-        this.$outer$default$C = $outer$default$C;
+    void _$init$C$C$D([$dart$core.int $bitmap, C $outer$default$C]) {
+        if (0 != ($bitmap & 1)) {
+            this.$outer$default$C = $outer$default$C;
+        }
+    }
+    C$D.create([C $outer$default$C]) : this.create$d(1, $outer$default$C);
+    C$D.create$d([$dart$core.int $bitmap, C $outer$default$C]) {
+        _$init$C$C$D($bitmap | 1, $outer$default$C);
     }
 }
 class C$E {

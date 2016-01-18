@@ -1,4 +1,3 @@
-
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
@@ -12,7 +11,7 @@ class fun$A {
 class fun$moreFun$B$X  extends fun$A {
     fun$moreFun$B $outer$default$fun$moreFun$B;
     $dart$core.Function $capture$fun$idForA$get;
-    fun$moreFun$B$X([fun$moreFun$B $outer$default$fun$moreFun$B, $dart$core.Function $capture$fun$idForA$get]) {
+    fun$moreFun$B$X([fun$moreFun$B $outer$default$fun$moreFun$B, $dart$core.Function $capture$fun$idForA$get]) : super($capture$fun$idForA$get) {
         this.$outer$default$fun$moreFun$B = $outer$default$fun$moreFun$B;
         this.$capture$fun$idForA$get = $capture$fun$idForA$get;
     }

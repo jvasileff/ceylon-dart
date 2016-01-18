@@ -53,28 +53,28 @@ abstract class C {
 class D$IC1  extends I$IC1 {
     D $outer$default$D;
     I get $outer$default$I => $outer$default$D;
-    D$IC1([D $outer$default$D]) {
+    D$IC1([D $outer$default$D]) : super($outer$default$D) {
         this.$outer$default$D = $outer$default$D;
     }
 }
 class D$IC3  extends I$IC3 {
     D $outer$default$D;
     I get $outer$default$I => $outer$default$D;
-    D$IC3([D $outer$default$D]) {
+    D$IC3([D $outer$default$D]) : super($outer$default$D) {
         this.$outer$default$D = $outer$default$D;
     }
 }
 class D$CC1  extends C$CC1 {
     D $outer$default$D;
     C get $outer$default$C => $outer$default$D;
-    D$CC1([D $outer$default$D]) {
+    D$CC1([D $outer$default$D]) : super($outer$default$D) {
         this.$outer$default$D = $outer$default$D;
     }
 }
 class D$CC3  extends C$CC3 {
     D $outer$default$D;
     C get $outer$default$C => $outer$default$D;
-    D$CC3([D $outer$default$D]) {
+    D$CC3([D $outer$default$D]) : super($outer$default$D) {
         this.$outer$default$D = $outer$default$D;
     }
 }

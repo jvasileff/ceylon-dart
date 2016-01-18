@@ -24,7 +24,7 @@ class MakeTrouble$_$fun$A {
 class MakeTrouble$_$fun$moreFun$B$C$Trouble  extends HasTrouble$Trouble {
     MakeTrouble$_$fun$moreFun$B$C $outer$default$MakeTrouble$_$fun$moreFun$B$C;
     HasTrouble get $outer$default$HasTrouble => $outer$default$MakeTrouble$_$fun$moreFun$B$C;
-    MakeTrouble$_$fun$moreFun$B$C$Trouble([MakeTrouble$_$fun$moreFun$B$C $outer$default$MakeTrouble$_$fun$moreFun$B$C]) {
+    MakeTrouble$_$fun$moreFun$B$C$Trouble([MakeTrouble$_$fun$moreFun$B$C $outer$default$MakeTrouble$_$fun$moreFun$B$C]) : super($outer$default$MakeTrouble$_$fun$moreFun$B$C) {
         this.$outer$default$MakeTrouble$_$fun$moreFun$B$C = $outer$default$MakeTrouble$_$fun$moreFun$B$C;
     }
     MakeTrouble$_$fun$A $new$MakeTrouble$_$fun$moreFun$B$C$Trouble$X() => new MakeTrouble$_$fun$A($outer$default$MakeTrouble$_$fun$moreFun$B$C.$outer$default$MakeTrouble$_$fun$moreFun$B.$outer$default$MakeTrouble, $outer$default$MakeTrouble$_$fun$moreFun$B$C.$outer$default$MakeTrouble$_$fun$moreFun$B.$capture$MakeTrouble$_$fun$idForA$get);

@@ -23,7 +23,7 @@ class run$OuterClass$MiddleClass$InnerClass  extends run$OuterClass$MiddleClass 
     run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
     run$OuterClass get $outer$default$run$OuterClass => $outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass;
     run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass$MiddleClass;
-    run$OuterClass$MiddleClass$InnerClass([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) {
+    run$OuterClass$MiddleClass$InnerClass([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) : super($outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass) {
         this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
     }
     $dart$core.Object get someT => outerT;

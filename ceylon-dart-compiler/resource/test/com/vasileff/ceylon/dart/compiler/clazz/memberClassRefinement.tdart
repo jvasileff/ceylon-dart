@@ -16,7 +16,7 @@ class memberClassRefinement$Super {
 class memberClassRefinement$Sub$Inner  extends memberClassRefinement$Super$Inner {
     memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub;
     memberClassRefinement$Super get $outer$default$memberClassRefinement$Super => $outer$default$memberClassRefinement$Sub;
-    memberClassRefinement$Sub$Inner([memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub]) {
+    memberClassRefinement$Sub$Inner([memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub]) : super($outer$default$memberClassRefinement$Sub) {
         this.$outer$default$memberClassRefinement$Sub = $outer$default$memberClassRefinement$Sub;
     }
     $dart$core.String toString() => "Sub.inner";

@@ -2,11 +2,17 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C {
-    C() {
-        $dart$core.String s() => "s2";
+    void _$init$C([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {
+            $dart$core.String s() => "s2";
 
-        $ceylon$language.print($ceylon$language.String.instance(this.s()));
-        $ceylon$language.print($ceylon$language.String.instance(s()));
+            $ceylon$language.print($ceylon$language.String.instance(this.s()));
+            $ceylon$language.print($ceylon$language.String.instance(s()));
+        }
+    }
+    C() : this.$d(1);
+    C.$d([$dart$core.int $bitmap]) {
+        _$init$C($bitmap | 1);
     }
     $dart$core.String s() => "s1";
 }

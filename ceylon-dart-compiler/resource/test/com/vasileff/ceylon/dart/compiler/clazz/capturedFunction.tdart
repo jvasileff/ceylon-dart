@@ -19,11 +19,21 @@ class run$C implements run$I {
 }
 class run$D implements run$I {
     $dart$core.Function $capture$run$fun;
-    run$D([$dart$core.Function $capture$run$fun]) {
-        this.$capture$run$fun = $capture$run$fun;
+    void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$fun]) {
+        if (0 != ($bitmap & 2)) {
+            this.$capture$run$fun = $capture$run$fun;
+        }
+        if (0 != ($bitmap & 1)) {
+            this.$capture$run$fun = $capture$run$fun;
+        }
     }
-    run$D.create([$dart$core.Function $capture$run$fun]) {
-        this.$capture$run$fun = $capture$run$fun;
+    run$D([$dart$core.Function $capture$run$fun]) : this.$d(2, $capture$run$fun);
+    run$D.$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$fun]) {
+        _$init$run$run$D($bitmap | 2, $capture$run$fun);
+    }
+    run$D.create([$dart$core.Function $capture$run$fun]) : this.create$d(1, $capture$run$fun);
+    run$D.create$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$fun]) {
+        _$init$run$run$D($bitmap | 1, $capture$run$fun);
     }
     void callFun() {
         $capture$run$fun();

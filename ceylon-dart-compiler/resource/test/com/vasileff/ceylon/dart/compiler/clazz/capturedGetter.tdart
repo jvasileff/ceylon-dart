@@ -15,11 +15,21 @@ class run$C implements run$I {
 }
 class run$D implements run$I {
     $dart$core.Function $capture$run$val$get;
-    run$D([$dart$core.Function $capture$run$val$get]) {
-        this.$capture$run$val$get = $capture$run$val$get;
+    void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+        if (0 != ($bitmap & 2)) {
+            this.$capture$run$val$get = $capture$run$val$get;
+        }
+        if (0 != ($bitmap & 1)) {
+            this.$capture$run$val$get = $capture$run$val$get;
+        }
     }
-    run$D.create([$dart$core.Function $capture$run$val$get]) {
-        this.$capture$run$val$get = $capture$run$val$get;
+    run$D([$dart$core.Function $capture$run$val$get]) : this.$d(2, $capture$run$val$get);
+    run$D.$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+        _$init$run$run$D($bitmap | 2, $capture$run$val$get);
+    }
+    run$D.create([$dart$core.Function $capture$run$val$get]) : this.create$d(1, $capture$run$val$get);
+    run$D.create$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+        _$init$run$run$D($bitmap | 1, $capture$run$val$get);
     }
     $dart$core.String get accessVal => $capture$run$val$get();
 }

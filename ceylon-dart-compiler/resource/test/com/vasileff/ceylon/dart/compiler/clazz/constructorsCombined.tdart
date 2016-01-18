@@ -15,10 +15,16 @@ d_ get d => $package$d;
 
 class A$B$C {
     A$B $outer$default$A$B;
-    A$B$C.createC([A$B $outer$default$A$B, $dart$core.int i, $ceylon$language.Destroyable d]) {
-        this.$outer$default$A$B = $outer$default$A$B;
-        this._$i = i;
-        this._$d = d;
+    void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B, $dart$core.int $createC$i, $ceylon$language.Destroyable $createC$d]) {
+        if (0 != ($bitmap & 1)) {
+            this.$outer$default$A$B = $outer$default$A$B;
+            this._$i = $createC$i;
+            this._$d = $createC$d;
+        }
+    }
+    A$B$C.createC([A$B $outer$default$A$B, $dart$core.int i, $ceylon$language.Destroyable d]) : this.createC$d(1, $outer$default$A$B, i, d);
+    A$B$C.createC$d([$dart$core.int $bitmap, A$B $outer$default$A$B, $dart$core.int $createC$i, $ceylon$language.Destroyable $createC$d]) {
+        _$init$A$A$B$A$B$C($bitmap | 1, $outer$default$A$B, $createC$i, $createC$d);
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;
@@ -49,10 +55,16 @@ class A$B$C {
 }
 class A$B {
     A $outer$default$A;
-    A$B.createB([A $outer$default$A, $dart$core.int i, $ceylon$language.Destroyable d]) {
-        this.$outer$default$A = $outer$default$A;
-        this._$i = i;
-        this._$d = d;
+    void _$init$A$A$B([$dart$core.int $bitmap, A $outer$default$A, $dart$core.int $createB$i, $ceylon$language.Destroyable $createB$d]) {
+        if (0 != ($bitmap & 1)) {
+            this.$outer$default$A = $outer$default$A;
+            this._$i = $createB$i;
+            this._$d = $createB$d;
+        }
+    }
+    A$B.createB([A $outer$default$A, $dart$core.int i, $ceylon$language.Destroyable d]) : this.createB$d(1, $outer$default$A, i, d);
+    A$B.createB$d([$dart$core.int $bitmap, A $outer$default$A, $dart$core.int $createB$i, $ceylon$language.Destroyable $createB$d]) {
+        _$init$A$A$B($bitmap | 1, $outer$default$A, $createB$i, $createB$d);
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;

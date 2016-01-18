@@ -2,7 +2,13 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C {
-    C.create() {}
+    void _$init$C([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    C.create() : this.create$d(1);
+    C.create$d([$dart$core.int $bitmap]) {
+        _$init$C($bitmap | 1);
+    }
 }
 $dart$core.Object get $package$ref => new $ceylon$language.dart$Callable(() => new C.create());
 

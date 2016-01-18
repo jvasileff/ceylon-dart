@@ -2,11 +2,21 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C {
-    C([$dart$core.int a]) {
-        this.i = a;
+    void _$init$C([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
+        if (0 != ($bitmap & 2)) {
+            this.i = $$a;
+        }
+        if (0 != ($bitmap & 1)) {
+            this.i = $create$a + $create$b;
+        }
     }
-    C.create([$dart$core.int a, $dart$core.int b]) {
-        this.i = a + b;
+    C([$dart$core.int a]) : this.$d(2, null, null, a);
+    C.$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
+        _$init$C($bitmap | 2, $create$a, $create$b, $$a);
+    }
+    C.create([$dart$core.int a, $dart$core.int b]) : this.create$d(1, a, b);
+    C.create$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b]) {
+        _$init$C($bitmap | 1, $create$a, $create$b);
     }
     $dart$core.int i;
 }
