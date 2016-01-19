@@ -88,7 +88,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionDeclaration,
     DartFunctionExpression,
     dartFormalParameterListEmpty,
-    DartExpressionFunctionBody
+    DartExpressionFunctionBody,
+    createVariableDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -1224,33 +1225,27 @@ class StatementTransformer(CompilationContext ctx)
                                         typeInfo.typeModel;
                                     },
                                     DartBlock {
-                                        // really need a convenience fn for this...
-                                        [DartVariableDeclarationStatement {
-                                            DartVariableDeclarationList {
-                                                null;
-                                                dartTypes.dartTypeNameForDeclaration {
+                                        [createVariableDeclaration {
+                                            dartTypes.dartTypeNameForDeclaration {
                                                     variableInfo;
                                                     variableInfo.declarationModel;
+                                            };
+                                            DartSimpleIdentifier {
+                                                dartTypes.getName {
+                                                    variableInfo.declarationModel;
                                                 };
-                                                [DartVariableDeclaration {
-                                                    DartSimpleIdentifier {
-                                                        dartTypes.getName {
-                                                            variableInfo.declarationModel;
-                                                        };
-                                                    };
-                                                    withLhs {
-                                                        null;
-                                                        variableInfo.declarationModel;
-                                                        () => withBoxing {
-                                                            variableInfo;
-                                                            // Typed as `Anything` as
-                                                            // noted above.
-                                                            ceylonTypes.anythingType;
-                                                            null;
-                                                            exceptionVariable;
-                                                        };
-                                                    };
-                                                }];
+                                            };
+                                            withLhs {
+                                                null;
+                                                variableInfo.declarationModel;
+                                                () => withBoxing {
+                                                    variableInfo;
+                                                    // Typed as `Anything` as
+                                                    // noted above.
+                                                    ceylonTypes.anythingType;
+                                                    null;
+                                                    exceptionVariable;
+                                                };
                                             };
                                         },
                                         *transformBlock(clause.block).first.statements];
