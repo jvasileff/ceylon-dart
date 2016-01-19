@@ -103,6 +103,9 @@ class CeylonTypes(Unit unit) {
             sequentialDeclaration, anythingType);
 
     shared
+    Type throwableType => unit.throwableType;
+
+    shared
     Type tupleAnythingType => ModelUtil.appliedType(
             tupleDeclaration, anythingType, anythingType, sequentialAnythingType);
 

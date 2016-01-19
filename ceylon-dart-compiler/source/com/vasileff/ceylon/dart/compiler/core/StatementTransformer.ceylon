@@ -5,6 +5,7 @@ import ceylon.ast.core {
     ValueDefinition,
     Return,
     FunctionShortcutDefinition,
+    Expression,
     Assertion,
     IsCondition,
     ValueSpecification,
@@ -25,6 +26,7 @@ import ceylon.ast.core {
     Continue,
     LazySpecifier,
     Specifier,
+    Resource,
     ValueGetterDefinition,
     ValueSetterDefinition,
     ObjectDefinition,
@@ -45,7 +47,8 @@ import ceylon.ast.core {
     Type,
     LazySpecification,
     ClassAliasDefinition,
-    InterfaceAliasDefinition
+    InterfaceAliasDefinition,
+    SpecifiedVariable
 }
 import ceylon.collection {
     LinkedList
@@ -55,7 +58,8 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     FunctionOrValueModel=FunctionOrValue,
     ValueModel=Value,
-    ClassModel=Class
+    ClassModel=Class,
+    TypeModel=Type
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -89,7 +93,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionExpression,
     dartFormalParameterListEmpty,
     DartExpressionFunctionBody,
-    createVariableDeclaration
+    createVariableDeclaration,
+    DartTypeName,
+    DartBinaryExpression,
+    DartNullLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -106,7 +113,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     LazySpecificationInfo,
     parameterInfo,
     ParametersInfo,
-    ParameterInfo
+    ParameterInfo,
+    SpecifiedVariableInfo,
+    ExpressionInfo
 }
 
 import org.antlr.runtime {
@@ -1189,9 +1198,249 @@ class StatementTransformer(CompilationContext ctx)
         // an interop exception type that wraps Anything (but generic!) that can be
         // caught, consistent with Ceylon's rules. We would need to unwrap on throw.
 
-        if (that.tryClause.resources exists) {
-            addError(that, "try with resources not yet supported.");
-            return [];
+        /*
+            For each Destroyable resource:
+                - Initialize the resource (use a tmp var if necessary)
+                - Declare a variable to hold a throwable for use in the following
+                  catch and finally blocks
+                - try block
+                    - execute program code from the original try
+                - catch block
+                    - save the caught throwable in the temp variable created earlier
+                - finally block
+                    - in a try, attempt to call `destroy` on the resource, passing
+                      in the possibly null temp var for the throwable
+                    - in a catch, `addSuppressed(theNewThrowable)` to the temp var
+                      (if the temp var is not null)
+
+            For obtainable, same as destroyable, but also call obtain().
+         */
+
+        DartBlock wrapBlockWithResource(Resource resource, DartBlock block) {
+            value rInfo
+                =   switch (r = resource.resource)
+                    case (is Expression) expressionInfo(r)
+                    case (is SpecifiedVariable) SpecifiedVariableInfo(r);
+
+            DartTypeName dartTypeName;
+            DartSimpleIdentifier variableIdentifier;
+            TypeModel typeModel;
+            ValueModel? valueModel;
+            Expression expression;
+
+            switch (rInfo)
+            case (is ExpressionInfo) {
+                typeModel
+                    =   rInfo.typeModel;
+
+                valueModel
+                    =   null;
+
+                dartTypeName
+                    =   dartTypes.dartTypeName {
+                            rInfo;
+                            typeModel;
+                        };
+
+                variableIdentifier
+                    =   DartSimpleIdentifier {
+                            dartTypes.createTempNameCustom("u");
+                        };
+
+                expression
+                    = rInfo.node;
+            }
+            case (is SpecifiedVariableInfo) {
+                typeModel
+                    =   rInfo.declarationModel.type;
+
+                valueModel
+                    =   rInfo.declarationModel;
+
+                dartTypeName
+                    =   dartTypes.dartTypeNameForDeclaration {
+                            rInfo;
+                            rInfo.declarationModel;
+                            typeModel;
+                        };
+
+                variableIdentifier
+                    =   DartSimpleIdentifier {
+                            dartTypes.getName(rInfo.declarationModel);
+                        };
+
+                expression
+                    =   rInfo.node.specifier.expression;
+            }
+
+            value isObtainable // else it's Destroyable
+                =   ceylonTypes.obtainableType.isSupertypeOf(typeModel);
+
+            value exceptionVariable
+                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e"));
+
+            value setup
+                =   // define variable for resource and assign resource
+                    [createVariableDeclaration {
+                        dartTypeName;
+                        variableIdentifier;
+                        withLhs {
+                            typeModel;
+                            valueModel;
+                            () => expression.transform(expressionTransformer);
+                        };
+                    },
+                    createVariableDeclaration {
+                        dartTypes.dartTypeName {
+                            rInfo;
+                            ceylonTypes.throwableType;
+                        };
+                        exceptionVariable;
+                        null;
+                    },
+                    // if obtainable, obtain()
+                    isObtainable then DartExpressionStatement {
+                        withLhsNoType {
+                            () => generateInvocationSynthetic {
+                                rInfo;
+                                typeModel;
+                                () => withBoxing {
+                                    rInfo;
+                                    typeModel;
+                                    valueModel;
+                                    variableIdentifier;
+                                };
+                                "obtain";
+                                [];
+                            };
+                        };
+                    }].coalesced.sequence();
+
+            value catchVariable
+                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e"));
+
+            value catchClause
+                =   DartCatchClause {
+                        dartTypes.dartTypeName {
+                            rInfo;
+                            ceylonTypes.throwableType;
+                        };
+                        catchVariable;
+                        null;
+                        DartBlock {[
+                            DartExpressionStatement {
+                                DartAssignmentExpression {
+                                    exceptionVariable;
+                                    DartAssignmentOperator.equal;
+                                    catchVariable;
+                                };
+                            },
+                            DartExpressionStatement {
+                                DartRethrowExpression.instance;
+                            }];
+                        };
+                    };
+
+            value closeStatement
+                =   DartExpressionStatement {
+                        withLhsNoType {
+                            () => generateInvocationSynthetic {
+                                rInfo;
+                                typeModel;
+                                () => withBoxing {
+                                    rInfo;
+                                    typeModel;
+                                    valueModel;
+                                    variableIdentifier;
+                                };
+                                if (isObtainable)
+                                    then "release"
+                                    else "destroy";
+                                [() => withBoxing {
+                                    rInfo;
+                                    ceylonTypes.throwableType;
+                                    null;
+                                    exceptionVariable;
+                                }];
+                            };
+                        };
+                    };
+
+            value catchVariable2
+                =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e"));
+
+            value tearDown
+                =   DartIfStatement {
+                        DartBinaryExpression {
+                            exceptionVariable;
+                            "!=";
+                            DartNullLiteral();
+                        };
+                        DartTryStatement {
+                            DartBlock {
+                                [closeStatement];
+                            };
+                            [DartCatchClause {
+                                dartTypes.dartTypeName {
+                                    rInfo;
+                                    ceylonTypes.throwableType;
+                                };
+                                catchVariable2;
+                                null;
+                                DartBlock {
+                                    [withLhsNoType {
+                                        () => DartExpressionStatement {
+                                            generateInvocationSynthetic {
+                                                rInfo;
+                                                ceylonTypes.throwableType.type;
+                                                () => withBoxing {
+                                                    rInfo;
+                                                    ceylonTypes.throwableType;
+                                                    null;
+                                                    exceptionVariable;
+                                                };
+                                                "addSuppressed";
+                                                [() => withBoxing {
+                                                    rInfo;
+                                                    ceylonTypes.throwableType;
+                                                    null;
+                                                    catchVariable2;
+                                                }];
+                                            };
+                                        };
+                                    }];
+                                };
+                            }];
+                        };
+                        closeStatement;
+                    };
+
+            return
+            DartBlock {
+                concatenate {
+                    setup,
+                    [
+                        DartTryStatement {
+                            block;
+                            [catchClause];
+                            DartBlock([tearDown]);
+                        }
+                    ]
+                };
+            };
+        }
+
+        DartBlock wrapBlockWithResources([Resource*] resources, DartBlock block) {
+            DartBlock f([Resource*] resources, DartBlock block) {
+                if (!nonempty resources) {
+                    return block;
+                }
+                return f {
+                    resources.rest;
+                    wrapBlockWithResource(resources.first, block);
+                };
+            }
+            return f(resources.reversed, block);
         }
 
         function assertType(Anything a) {
@@ -1202,8 +1451,8 @@ class StatementTransformer(CompilationContext ctx)
         value dartCatchClause
             =   switch (catchClauses = that.catchClauses)
                 case (is Empty) null
-                else let (exceptionVariable = DartSimpleIdentifier(
-                                dartTypes.createTempNameCustom("e")))
+                else let (exceptionVariable
+                        =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e")))
                     DartCatchClause {
                         null;
                         exceptionVariable;
@@ -1262,7 +1511,10 @@ class StatementTransformer(CompilationContext ctx)
 
         return
         [DartTryStatement {
-            transformBlock(that.tryClause.block).first;
+            wrapBlockWithResources {
+                that.tryClause.resources?.children else [];
+                transformBlock(that.tryClause.block).first;
+            };
             emptyOrSingleton(dartCatchClause);
             if (exists finallyBlock = that.finallyClause?.block)
             then transformBlock(finallyBlock).first
