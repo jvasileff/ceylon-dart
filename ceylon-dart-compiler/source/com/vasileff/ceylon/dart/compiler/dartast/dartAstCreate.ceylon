@@ -110,3 +110,17 @@ DartIfStatement createIfStatement
             else finalElse;
         };
 
+shared
+DartVariableDeclarationStatement createVariableDeclaration(
+        DartTypeName dartTypeName, DartSimpleIdentifier identifier,
+        DartExpression? initializer)
+    =>  DartVariableDeclarationStatement {
+            DartVariableDeclarationList {
+                null;
+                dartTypeName;
+                [DartVariableDeclaration {
+                    identifier;
+                    initializer;
+                }];
+            };
+        };

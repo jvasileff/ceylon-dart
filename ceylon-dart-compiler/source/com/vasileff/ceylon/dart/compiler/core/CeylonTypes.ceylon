@@ -58,6 +58,9 @@ class CeylonTypes(Unit unit) {
     Type characterType => unit.characterType;
 
     shared
+    Type destroyableType => unit.destroyableType;
+
+    shared
     Type entryAnythingType => ModelUtil.appliedType(
             entryDeclaration, anythingType, anythingType);
 
@@ -87,6 +90,9 @@ class CeylonTypes(Unit unit) {
     shared
     Type listAnythingType => ModelUtil.appliedType(
             listDeclaration, anythingType);
+
+    shared
+    Type obtainableType => unit.obtainableType;
 
     shared
     Type sequenceAnythingType => ModelUtil.appliedType(
