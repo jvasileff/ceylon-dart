@@ -229,4 +229,16 @@ object clazz {
     shared test
     void memberClassAliasesComplex()
         =>  compileAndCompare2("clazz/memberClassAliasesComplex");
+
+    shared test
+    void extendConstructorAnotherClass()
+        =>  compileAndCompare2("clazz/extendConstructorAnotherClass");
+
+    shared test
+    void extendDefaultConstructor()
+        =>  compileAndCompare2("clazz/extendDefaultConstructor");
+
+    shared test
+    void extendConstructorWithDefaults()
+        =>  compileAndCompare2("clazz/extendConstructorWithDefaults");
 }

@@ -1,0 +1,12 @@
+class A {
+    shared actual variable String string = "";
+    shared new create(String s) {
+        this.string = s;
+    }
+}
+class B extends A {
+    shared new create(String s) extends A.create(s) {}
+}
+shared void run() {
+    assert(B.create("works").string == "works");
+}

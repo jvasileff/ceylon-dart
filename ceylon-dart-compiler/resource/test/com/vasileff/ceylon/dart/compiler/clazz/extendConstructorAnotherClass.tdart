@@ -1,0 +1,33 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class A {
+    void _$init$A([$dart$core.int $bitmap, $dart$core.String $create$s]) {
+        string = "";
+        if (0 != ($bitmap & 1)) {
+            this.string = $create$s;
+        }
+    }
+    A.create([$dart$core.String s]) : this.create$d(1, s);
+    A.create$d([$dart$core.int $bitmap, $dart$core.String $create$s]) {
+        _$init$A($bitmap | 1, $create$s);
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+class B  extends A {
+    void _$init$B([$dart$core.int $bitmap, $dart$core.String $create$s]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    B.create([$dart$core.String s]) : this.create$d(1, s);
+    B.create$d([$dart$core.int $bitmap, $dart$core.String $create$s]) : super.create($create$s) {
+        _$init$B($bitmap | 1, $create$s);
+    }
+}
+void $package$run() {
+    if (!((new B.create("works")).toString() == "works")) {
+        throw new $ceylon$language.AssertionError("Violated: B.create(\"works\").string == \"works\"");
+    }
+}
+
+void run() => $package$run();

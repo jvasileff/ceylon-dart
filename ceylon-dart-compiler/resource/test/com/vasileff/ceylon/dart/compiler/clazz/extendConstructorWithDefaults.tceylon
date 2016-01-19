@@ -1,0 +1,14 @@
+class A {
+    shared actual variable String string = "";
+    shared new create1(String s) {
+        string = s;
+    }
+    shared new create2(String s = "2") extends A.create1(s) {}
+    shared new create3(String s) extends A.create1(s) {}
+}
+shared void run() {
+    assert (A.create1("1").string == "1");
+    assert (A.create2().string == "2");
+    assert (A.create2("3").string == "3");
+    assert (A.create3("4").string == "4");
+}
