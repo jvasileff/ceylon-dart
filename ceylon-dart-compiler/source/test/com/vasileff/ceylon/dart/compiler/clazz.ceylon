@@ -47,10 +47,6 @@ object clazz {
 
     shared test
     void nonVariableGetters()
-        // TODO LazySpecifications that are not shortcut refinements
-        //      are not yet supported.
-        //shared String c5;
-        //c5 => "c5-1";
         =>  compileAndCompare2("clazz/nonVariableGetters");
 
     shared test
@@ -88,7 +84,6 @@ object clazz {
 
     shared test
     void defaultedCallableParameter()
-        // TODO this has an ugly cast `this._$f as $ceylon$language.Callable`
         =>  compileAndCompare2("clazz/defaultedCallableParameter");
 
     shared test
@@ -163,17 +158,14 @@ object clazz {
     void superRefsParam()
         =>  compileAndCompare2("clazz/superRefsParam");
 
-    // TODO uncomment lines in tests once we can extend constructors
     shared test
     void toplevelClassAlias()
         =>  compileAndCompare2("clazz/toplevelClassAlias");
 
-    // TODO uncomment lines in tests once we can extend constructors
     shared test
     void toplevelClassAliasDefaults()
         =>  compileAndCompare2("clazz/toplevelClassAliasDefaults");
 
-    // TODO uncomment lines in tests once we can extend constructors
     shared test
     void toplevelClassAliasConstructors()
         =>  compileAndCompare2("clazz/toplevelClassAliasConstructors");

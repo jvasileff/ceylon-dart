@@ -9,22 +9,22 @@ shared class C {
 }
 
 shared class CAlias(Integer x) => C(x);
-//shared class CCreateAlias(Integer x, Integer y) => C.create(x, y);
+shared class CCreateAlias(Integer x, Integer y) => C.create(x, y);
 
 shared void run() {
     // positional args
     assert (CAlias.create(10, 20).i == 30);
-    //assert (CCreateAlias.create(10, 20).i == 30);
+    assert (CCreateAlias.create(10, 20).i == 30);
 
     // positional args using defaults
     assert (CAlias.create().i == 30);
-    //assert (CCreateAlias.create().i == 30);
+    assert (CCreateAlias.create().i == 30);
 
     // named args
     assert (CAlias.create {a = 10; b = 20;}.i == 30);
-    //assert (CCreateAlias.create {a = 10; b = 20;}.i == 30);
+    assert (CCreateAlias.create {a = 10; b = 20;}.i == 30);
 
     // named args using defaults
     assert (CAlias.create {a = 10; b = 20;}.i == 30);
-    //assert (CCreateAlias.create {a = 10; b = 20;}.i == 30);
+    assert (CCreateAlias.create {a = 10; b = 20;}.i == 30);
 }

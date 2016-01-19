@@ -13,8 +13,6 @@ class C() satisfies I {
     String c3 => "";
     String c4 => c3;
 
-    // TODO LazySpecifications that are not shortcut refinements
-    //      are not yet supported.
-    //shared String c5;
-    //c5 => "c5-1";
+    shared String c5;
+    c5 => "c5-1";
 }

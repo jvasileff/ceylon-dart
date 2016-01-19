@@ -43,9 +43,20 @@ class D  extends C {
     }
     $dart$core.int _$p;
 }
+class DCreate  extends C {
+    DCreate([$dart$core.int _$p, $dart$core.int _$q]) : super.create(_$p, _$q) {
+        this._$p = _$p;
+        this._$q = _$q;
+    }
+    $dart$core.int _$p;
+    $dart$core.int _$q;
+}
 void $package$run() {
     if (!((new C(10)).i == 10)) {
         throw new $ceylon$language.AssertionError("Violated: CAlias(10).i == 10");
+    }
+    if (!((new C.create(10, 20)).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias(10, 20).i == 30");
     }
     if (!((() {
         $dart$core.int arg$0$0 = 10;
@@ -53,14 +64,31 @@ void $package$run() {
     })().i == 10)) {
         throw new $ceylon$language.AssertionError("Violated: CAlias {x = 10;}.i == 10");
     }
+    if (!((() {
+        $dart$core.int arg$1$0 = 10;
+        $dart$core.int arg$1$1 = 20;
+        return new C.create(arg$1$0, arg$1$1);
+    })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias {x = 10; y = 20;}.i == 30");
+    }
     if (!((new D(10)).i == 10)) {
         throw new $ceylon$language.AssertionError("Violated: D(10).i == 10");
     }
+    if (!((new DCreate(10, 20)).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: DCreate(10, 20).i == 30");
+    }
     if (!((() {
-        $dart$core.int arg$1$0 = 10;
-        return new D(arg$1$0);
+        $dart$core.int arg$2$0 = 10;
+        return new D(arg$2$0);
     })().i == 10)) {
         throw new $ceylon$language.AssertionError("Violated: D {p = 10;}.i == 10");
+    }
+    if (!((() {
+        $dart$core.int arg$3$0 = 10;
+        $dart$core.int arg$3$1 = 20;
+        return new DCreate(arg$3$0, arg$3$1);
+    })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: DCreate {p = 10; q = 20;}.i == 30");
     }
 }
 

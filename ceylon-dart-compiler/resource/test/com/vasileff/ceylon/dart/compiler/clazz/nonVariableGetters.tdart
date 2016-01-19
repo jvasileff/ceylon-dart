@@ -6,11 +6,15 @@ abstract class I {
     $dart$core.String get i2;
 }
 class C implements I {
-    C() {}
+    C() {
+        _c5$f = () => "c5-1";
+    }
     $dart$core.String get i1 => "";
     $dart$core.String get i2 => i1;
     $dart$core.String get c1 => "";
     $dart$core.String get c2 => c1;
     $dart$core.String get _$c3 => "";
     $dart$core.String get _$c4 => _$c3;
+    $dart$core.Function _c5$f;
+    $dart$core.String get c5 => _c5$f();
 }

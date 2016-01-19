@@ -41,8 +41,14 @@ void $package$run() {
     if (!((new C.create(10, 20)).i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: CAlias.create(10, 20).i == 30");
     }
+    if (!((new C.create(10, 20)).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias.create(10, 20).i == 30");
+    }
     if (!((new C.create()).i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: CAlias.create().i == 30");
+    }
+    if (!((new C.create()).i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias.create().i == 30");
     }
     if (!((() {
         $dart$core.Object arg$0$0 = 10;
@@ -56,7 +62,21 @@ void $package$run() {
         $dart$core.Object arg$1$1 = 20;
         return new C.create(arg$1$0, arg$1$1);
     })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias.create {a = 10; b = 20;}.i == 30");
+    }
+    if (!((() {
+        $dart$core.Object arg$2$0 = 10;
+        $dart$core.Object arg$2$1 = 20;
+        return new C.create(arg$2$0, arg$2$1);
+    })().i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: CAlias.create {a = 10; b = 20;}.i == 30");
+    }
+    if (!((() {
+        $dart$core.Object arg$3$0 = 10;
+        $dart$core.Object arg$3$1 = 20;
+        return new C.create(arg$3$0, arg$3$1);
+    })().i == 30)) {
+        throw new $ceylon$language.AssertionError("Violated: CCreateAlias.create {a = 10; b = 20;}.i == 30");
     }
 }
 
