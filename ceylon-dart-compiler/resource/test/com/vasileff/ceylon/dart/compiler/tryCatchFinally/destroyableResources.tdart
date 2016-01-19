@@ -1,0 +1,58 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class tryDestroyable$DResource implements $ceylon$language.Destroyable {
+    tryDestroyable$DResource() {}
+    void destroy([$ceylon$language.Throwable error]) {}
+}
+void $package$tryDestroyable() {
+    try {
+        tryDestroyable$DResource d1 = new tryDestroyable$DResource();
+        $ceylon$language.Throwable e$5;
+        try {
+            tryDestroyable$DResource u$1 = new tryDestroyable$DResource();
+            $ceylon$language.Throwable e$2;
+            try {
+                $ceylon$language.print($ceylon$language.String.instance("trying"));
+            } on $ceylon$language.Throwable catch (e$3) {
+                e$2 = e$3;
+                rethrow;
+            } finally {
+                if (e$2 != null) {
+                    try {
+                        u$1.destroy(e$2);
+                    } on $ceylon$language.Throwable catch (e$4) {
+                        e$2.addSuppressed(e$4);
+                    }
+                } else {
+                    u$1.destroy(e$2);
+                }
+            }
+        } on $ceylon$language.Throwable catch (e$6) {
+            e$5 = e$6;
+            rethrow;
+        } finally {
+            if (e$5 != null) {
+                try {
+                    d1.destroy(e$5);
+                } on $ceylon$language.Throwable catch (e$7) {
+                    e$5.addSuppressed(e$7);
+                }
+            } else {
+                d1.destroy(e$5);
+            }
+        }
+    } catch (e$0) {
+        if (e$0 is $ceylon$language.Throwable) {
+            $ceylon$language.Throwable e = e$0 as $ceylon$language.Throwable;
+            $ceylon$language.print($ceylon$language.String.instance("caught something"));
+            throw e;
+        } else {
+            rethrow;
+        }
+    } finally {
+        $ceylon$language.print($ceylon$language.String.instance("finally do some cleanup."));
+    }
+}
+
+void tryDestroyable() => $package$tryDestroyable();

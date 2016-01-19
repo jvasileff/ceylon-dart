@@ -1,0 +1,16 @@
+shared void tryDestroyable() {
+    class DResource() satisfies Destroyable {
+        shared actual void destroy(Throwable? error) {}
+    }
+
+    try (d1 = DResource(), DResource()) {
+        print("trying");
+    }
+    catch (Throwable e) {
+        print("caught something");
+        throw e;
+    }
+    finally {
+        print("finally do some cleanup.");
+    }
+}

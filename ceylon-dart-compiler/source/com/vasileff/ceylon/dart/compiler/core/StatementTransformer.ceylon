@@ -1200,6 +1200,7 @@ class StatementTransformer(CompilationContext ctx)
 
         /*
             For each Destroyable resource:
+
                 - Initialize the resource (use a tmp var if necessary)
                 - Declare a variable to hold a throwable for use in the following
                   catch and finally blocks
@@ -1213,7 +1214,7 @@ class StatementTransformer(CompilationContext ctx)
                     - in a catch, `addSuppressed(theNewThrowable)` to the temp var
                       (if the temp var is not null)
 
-            For obtainable, same as destroyable, but also call obtain().
+            For Obtainables, do the same but also call obtain().
          */
 
         DartBlock wrapBlockWithResource(Resource resource, DartBlock block) {

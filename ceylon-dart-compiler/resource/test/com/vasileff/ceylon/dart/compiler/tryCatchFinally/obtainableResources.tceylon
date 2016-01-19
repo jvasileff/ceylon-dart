@@ -1,0 +1,17 @@
+shared void tryObtainable() {
+    class OResource() satisfies Obtainable {
+        shared actual void obtain() {}
+        shared actual void release(Throwable? error) {}
+    }
+
+    try (d1 = OResource(), OResource()) {
+        print("trying");
+    }
+    catch (Exception e) {
+        print("caught something");
+        throw e;
+    }
+    finally {
+        print("finally do some cleanup.");
+    }
+}
