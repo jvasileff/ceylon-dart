@@ -517,6 +517,22 @@ class CoreGenerator(CompilationContext ctx) {
     }
 
     shared
+    Result withInConsolidatedConstructor<Result>(
+            ClassModel classDeclaration,
+            Result fun()) {
+        variable Boolean remove = true;
+        try {
+            remove = ctx.withinConsolidatedConstructorSet.add(classDeclaration);
+            return fun();
+        }
+        finally {
+            if (remove) {
+                ctx.withinConsolidatedConstructorSet.remove(classDeclaration);
+            }
+        }
+    }
+
+    shared
     Result withInConstructorDefaults<Result>(
             ClassModel classDeclaration,
             Result fun()) {

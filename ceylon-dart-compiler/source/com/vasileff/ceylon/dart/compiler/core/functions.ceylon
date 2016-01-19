@@ -45,6 +45,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ElementModel=Element,
     ModuleModel=Module,
     ClassModel=Class,
+    TypedDeclarationModel=TypedDeclaration,
     ConstructorModel=Constructor,
     InterfaceModel=Interface,
     ClassOrInterfaceModel=ClassOrInterface,
@@ -164,6 +165,20 @@ ScopeModel toScopeModel(DScope|Node|NodeInfo|ScopeModel|ElementModel scope) {
         "Shouldn't happen; aren't all concrete `Element`s `Scope`s?"
         assert (false);
     }
+}
+
+DeclarationType getOriginalDeclaration<DeclarationType>(DeclarationType declaration)
+        given DeclarationType satisfies DeclarationModel {
+
+    if (!is TypedDeclarationModel declaration) {
+        return declaration;
+    }
+    variable TypedDeclarationModel result = declaration;
+    while (exists original = result.originalDeclaration) {
+        result = original;
+    }
+    assert (is DeclarationType typedResult = result);
+    return typedResult;
 }
 
 ClassModel|InterfaceModel? getContainingClassOrInterface

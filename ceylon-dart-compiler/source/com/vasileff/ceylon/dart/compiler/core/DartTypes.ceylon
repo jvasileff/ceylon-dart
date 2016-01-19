@@ -124,6 +124,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 else
                     declaration.name;
 
+        // TODO refactor this code to reduce chance of caching a mangled name!!! As it
+        // stands, only explicitly requested replacement names will be cached, so we're
+        // fine, but this is dangerous. Mangling should probably happen further out,
+        // perhaps managed by getName().
+        function mangleName(DeclarationModel declaration, String name) {
+            value originalDeclaration
+                =   getOriginalDeclaration(declaration);
+
+            if (declaration.parameter,
+                    is ConstructorModel constructorModel = originalDeclaration.container,
+                    ctx.withinConsolidatedConstructorSet.contains(
+                            constructorModel.container)) {
+                return "$" + getUnprefixedName(constructorModel) + "$" + name;
+            }
+            return name;
+        }
+
         if (is SetterModel declaration) {
             return getUnprefixedName(declaration.getter);
         }
@@ -137,7 +154,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             variable value model = declaration;
             while (true) {
                 if (exists name = nameCache[model]) {
-                    return name;
+                    return mangleName(model, name);
                 }
                 if (exists parent = model.originalDeclaration) {
                     model = parent;
@@ -164,10 +181,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         switch (originalDeclaration)
         case (is ValueModel | FunctionModel) {
-            return makePrivate {
+            return mangleName {
                 originalDeclaration;
-                sanitizeIdentifier {
-                    usableShortName(originalDeclaration);
+                makePrivate {
+                    originalDeclaration;
+                    sanitizeIdentifier {
+                        usableShortName(originalDeclaration);
+                    };
                 };
             };
         }
@@ -175,7 +195,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return sanitizeIdentifier(usableShortName(originalDeclaration));
         }
         case (is ConstructorModel | InterfaceModel) {
-            return sanitizeIdentifier(originalDeclaration.name);
+            return sanitizeIdentifier(originalDeclaration.name else "");
         }
         case (is ParameterModel) {
             return getUnprefixedName(originalDeclaration.model);
@@ -1312,6 +1332,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartSimpleIdentifier identifierForSyntheticField(ValueModel declaration)
         =>  DartSimpleIdentifier {
                 "_$s" +
+                ancestorDeclarations(declaration)
+                    .collect((d)
+                        =>  if (is ControlBlockModel d)
+                            then ""
+                            else getName(d))
+                    .reversed
+                    .interpose("$")
+                    .fold("$")(plus);
+            };
+
+    "The identifier for the init method for classes with constructors. Name conflicts
+     must be avoided to avoid refinement!"
+    see(`function BaseGenerator.generateBridgesToSyntheticField`)
+    shared
+    DartSimpleIdentifier identifierForInitMethod(ClassModel declaration)
+        =>  DartSimpleIdentifier {
+                "_$init" +
                 ancestorDeclarations(declaration)
                     .collect((d)
                         =>  if (is ControlBlockModel d)

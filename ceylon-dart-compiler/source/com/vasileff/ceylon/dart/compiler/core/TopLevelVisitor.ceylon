@@ -34,7 +34,8 @@ import ceylon.ast.core {
     DefaultedCallableParameter,
     CallableParameter,
     ClassAliasDefinition,
-    InterfaceAliasDefinition
+    InterfaceAliasDefinition,
+    PositionalArguments
 }
 import ceylon.interop.java {
     CeylonList
@@ -48,8 +49,7 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     FunctionModel=Function,
     ValueModel=Value,
-    FunctionOrValueModel=FunctionOrValue,
-    ClassAliasModel=ClassAlias
+    FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -86,7 +86,13 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartIndexExpression,
     DartListLiteral,
     createExpressionEvaluationWithSetup,
-    DartExpression
+    DartExpression,
+    DartIfStatement,
+    DartFormalParameter,
+    DartConstructorInitializer,
+    DartBinaryExpression,
+    DartNullLiteral,
+    DartFunctionExpressionInvocation
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyInterfaceInfo,
@@ -622,7 +628,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value constructors
             =   if (!classModel.hasConstructors())
-                then generateDartConstructors {
+                then generateDartConstructorsInitializer {
                     scope;
                     classModel;
                     classBody;
@@ -635,14 +641,18 @@ class TopLevelVisitor(CompilationContext ctx)
                             then node
                             else null)
                     .coalesced
-                    .flatMap {
-                        (constructor) => generateDartConstructors {
+                    .flatMap { (constructor)
+                        =>  generateDartConstructors {
+                                scope;
+                                classModel;
+                                classBody;
+                                constructor;
+                            };
+                    }.follow {
+                        generateConsolidatedInitializer {
                             scope;
                             classModel;
                             classBody;
-                            constructor.extendedType;
-                            constructor.parameters.parameters;
-                            constructor;
                         };
                     }.sequence();
 
@@ -713,21 +723,12 @@ class TopLevelVisitor(CompilationContext ctx)
         };
     }
 
-    [DartConstructorDeclaration*] generateDartConstructors(
+    [DartConstructorDeclaration*] generateDartConstructorsInitializer(
             DScope scope, ClassModel classModel, ClassBody classBody,
-            ExtendedType? extendedType, [Parameter*] parameters,
-            ConstructorDefinition? constructor = null) {
+            ExtendedType? extendedType, [Parameter*] parameters) {
 
         value classIdentifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
-
-        value constructorInfo
-            =   if (exists constructor)
-                then ConstructorDefinitionInfo(constructor)
-                else null;
-
-        value constructorModel
-            =   constructorInfo?.constructorModel;
 
         "Initializer parameters."
         value standardParameters
@@ -759,10 +760,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     }.parameters;
                 }
                 else standardParameters;
-
-        "Explicit super call with arguments."
-        value superInvocation
-            =   generateSuperInvocation(classModel, extendedType);
 
         "Assign parameters to corresponding `this.` fields. Eventually, we'll just do
          this for the ones we want to capture."
@@ -810,67 +807,18 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        "Declarations for outer containers. We'll hold a reference to our immediate
-         container, and access the rest through that."
-        value outerDeclarations
-            =   [*dartTypes.outerDeclarationsForClass(classModel)];
-
-        "An $outer parameter, if there is an outer class or interface"
-        value outerFieldConstructorParameter
-            =   outerDeclarations.take(1).map {
-                    (declaration) =>
-                    DartSimpleFormalParameter {
-                        false; false;
-                        dartTypes.dartTypeName {
-                            scope;
-                            declaration.type;
-                            false; false;
-                        };
-                        dartTypes.identifierForOuter {
-                            declaration;
-                        };
-                    };
-                };
-
-        "declarations for captures we must hold references to."
-        value captureDeclarations
-            =   [*dartTypes.captureDeclarationsForClass(classModel)];
-
-        value captureConstructorParameters
-            =   captureDeclarations.map {
-                    (declaration) =>
-                    DartSimpleFormalParameter {
-                        false; false;
-                        dartTypes.dartCaptureTypeNameForDeclaration {
-                            scope;
-                            declaration;
-                        };
-                        dartTypes.identifierForCapture {
-                            declaration;
-                        };
-                    };
-                };
-
-        value constructorPrefix
-            =   if (exists constructorModel)
-                then dartTypes.getName(constructorModel)
-                else "";
-
-        value constructorName
-            // default constructors will have name of ""
-            =   !constructorPrefix.empty
-                then DartSimpleIdentifier(constructorPrefix);
+        value outerAndCaptureParameters
+            =   generateOuterAndCaptureParameters(scope, classModel);
 
         value argsIdentifier
             =   DartSimpleIdentifier("a");
 
         value spreadConstructorName
-            =   DartSimpleIdentifier(constructorPrefix + "$s");
+            =   DartSimpleIdentifier("$s");
 
         value workerConstructorName
-            =   if (hasDefaultedParameter)
-                then DartSimpleIdentifier(constructorPrefix + "$w")
-                else constructorName;
+            =   hasDefaultedParameter
+                then DartSimpleIdentifier("$w");
 
         "Resolves arguments against default value expressions, redirects to 'spread'
          constructor."
@@ -883,12 +831,11 @@ class TopLevelVisitor(CompilationContext ctx)
                         factory = false;
                         returnType = classIdentifier;
                         // Defaults constructors are always public facing
-                        constructorName;
+                        name = null;
                         DartFormalParameterList {
                             true; false;
                             concatenate {
-                                outerFieldConstructorParameter,
-                                captureConstructorParameters,
+                                outerAndCaptureParameters,
                                 standardParameters
                             };
                         };
@@ -906,10 +853,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                     DartListLiteral {
                                         false;
                                         concatenate {
-                                            outerFieldConstructorParameter.map {
-                                                DartSimpleFormalParameter.identifier;
-                                            },
-                                            captureConstructorParameters.map {
+                                            outerAndCaptureParameters.map {
                                                 DartSimpleFormalParameter.identifier;
                                             },
                                             parameters.map {
@@ -951,8 +895,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     [DartRedirectingConstructorInvocation {
                         workerConstructorName;
                         DartArgumentList {
-                            [ for (i in 0:(outerFieldConstructorParameter.size +
-                                            captureConstructorParameters.size +
+                            [ for (i in 0:(outerAndCaptureParameters.size +
                                             standardParameters.size))
                                 DartIndexExpression {
                                     argsIdentifier;
@@ -966,8 +909,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 });
 
         value outerAndCaptureMemberInitializers
-            =   outerFieldConstructorParameter
-                    .chain(captureConstructorParameters)
+            =   outerAndCaptureParameters
                     .map { DartSimpleFormalParameter.identifier; }
                     .map {
                         (id) => DartExpressionStatement {
@@ -983,32 +925,19 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
 
         value constructorBody
-            =   if (exists constructor) then
-                    DartBlock {
-                        concatenate {
-                            outerAndCaptureMemberInitializers,
-                            classBody.children.takeWhile(not(constructor.equals))
-                                .flatMap((s) => s.transform(classStatementTransformer)),
-                            constructor.block.children
-                                .flatMap((s) => s.transform(statementTransformer)),
-                            classBody.children.skipWhile(not(constructor.equals))
-                                .flatMap((s) => s.transform(classStatementTransformer))
-                        };
-                    }
-                else
-                    DartBlock {
-                        concatenate {
-                            outerAndCaptureMemberInitializers,
-                            memberParameterInitializers,
-                            sharedCallableValueMemberParameterInitializers,
-                            *withInConstructorBody {
-                                classModel;
-                                () => classBody.transformChildren {
-                                    classStatementTransformer;
-                                };
-                            }
-                        };
+            =   DartBlock {
+                    concatenate {
+                        outerAndCaptureMemberInitializers,
+                        memberParameterInitializers,
+                        sharedCallableValueMemberParameterInitializers,
+                        *withInConstructorBody {
+                            classModel;
+                            () => classBody.transformChildren {
+                                classStatementTransformer;
+                            };
+                        }
                     };
+                };
 
         "Constructor that does all the work. This constructor will have a private name if
          there are defaulted parameters."
@@ -1021,15 +950,14 @@ class TopLevelVisitor(CompilationContext ctx)
                     DartFormalParameterList {
                         true; false;
                         concatenate {
-                            outerFieldConstructorParameter,
-                            captureConstructorParameters,
+                            outerAndCaptureParameters,
                             // this constructor never handles defaulted parameters
                             standardParametersNonDefaulted
                         };
                     };
-                    if (exists superInvocation)
-                        then [superInvocation]
-                        else [];
+                    emptyOrSingleton {
+                        generateSuperInvocation(scope, classModel, extendedType);
+                    };
                     null;
                     DartBlockFunctionBody {
                         null; false;
@@ -1037,46 +965,648 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        return [
+            defaultsConstructor,
+            spreadConstructor,
+            workerConstructor
+        ].coalesced.sequence();
+    }
+
+    [DartSimpleFormalParameter*] generateOuterAndCaptureParameters
+            (DScope scope, ClassModel classModel)
+        =>  concatenate {
+                dartTypes.outerDeclarationsForClass(classModel).take(1).map {
+                    (declaration) =>
+                    DartSimpleFormalParameter {
+                        false; false;
+                        dartTypes.dartTypeName {
+                            scope;
+                            declaration.type;
+                            false; false;
+                        };
+                        dartTypes.identifierForOuter {
+                            declaration;
+                        };
+                    };
+                },
+                dartTypes.captureDeclarationsForClass(classModel).map {
+                    (declaration) =>
+                    DartSimpleFormalParameter {
+                        false; false;
+                        dartTypes.dartCaptureTypeNameForDeclaration {
+                            scope;
+                            declaration;
+                        };
+                        dartTypes.identifierForCapture {
+                            declaration;
+                        };
+                    };
+                }
+            };
+
+    [DartConstructorDeclaration*] generateDartConstructors(
+            DScope scope, ClassModel classModel, ClassBody classBody,
+            ConstructorDefinition constructor) {
+
+        value parameters
+            =   constructor.parameters.parameters;
+
+        value classIdentifier
+            =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
+
+        value constructorInfo
+            =   ConstructorDefinitionInfo(constructor);
+
+        value hasDefaultedParameter
+            =   parameters.any((p) => p is DefaultedParameter);
+
+        value dartParameters
+            =   generateFormalParameterList {
+                    true; false;
+                    scope;
+                    parameters;
+                }.parameters;
+
+        value dartArgs
+            =   dartParameters.collect(DartFormalParameter.identifier);
+
+        value mangledDartParameters
+            =   withInConsolidatedConstructor {
+                    classModel;
+                    () => generateFormalParameterList {
+                        true; false;
+                        scope;
+                        parameters;
+                    }.parameters;
+                };
+
+        value mangledDartParamsNoDefault
+            =   withInConsolidatedConstructor {
+                    classModel;
+                    () => generateFormalParameterList {
+                        true; false;
+                        scope;
+                        parameters;
+                        noDefaults = true;
+                    }.parameters;
+                };
+
+        value mangledDartArgs
+            =   mangledDartParameters.collect(DartFormalParameter.identifier);
+
+        value outerAndCaptureParameters
+            =   generateOuterAndCaptureParameters(scope, classModel);
+
+        value outerAndCaptureArgs
+            =   outerAndCaptureParameters.collect(DartFormalParameter.identifier);
+
+        value bitmapParameter
+            =   DartSimpleFormalParameter {
+                    false; false;
+                    dartTypes.dartInt;
+                    DartSimpleIdentifier("$bitmap");
+                };
+
+        value argsParameterIdentifier
+            =   DartSimpleIdentifier("a");
+
+        "Constructor within this class we are delegating to."
+        ConstructorModel | ClassModel | Null delegateConstructor;
+
+        PositionalArguments? argumentList;
+
+        ClassModel | ConstructorModel? resolvedExtendedDeclaration;
+
+        String? extendedConstructorName;
+
+        if (exists extendedType = constructor.extendedType) {
+            value ecInfo
+                =   extensionOrConstructionInfo(extendedType.target);
+
+            assert (exists extendedDeclaration
+                =   ecInfo.declaration);
+
+            resolvedExtendedDeclaration
+                =   resolveClassAliases(extendedDeclaration);
+
+            assert (exists resolvedExtendedDeclaration);
+
+            value resolvedExtendedClassModel
+                =   getClassOfConstructor(resolvedExtendedDeclaration);
+
+            value resolvedClassModel
+                =   resolveClassAliases(classModel);
+
+            value delegatesToSuper
+                =   resolvedClassModel != resolvedExtendedClassModel;
+
+            delegateConstructor
+                =   !delegatesToSuper then resolvedExtendedDeclaration;
+
+            extendedConstructorName
+                =   switch (delegateConstructor)
+                    case (is ConstructorModel) (delegateConstructor.name else "")
+                    case (is ClassModel) ""
+                    case (is Null) null;
+
+            argumentList
+                =   if (!delegatesToSuper)
+                    then extendedType.target.arguments
+                    else null;
+        }
+        else {
+            delegateConstructor = null;
+            argumentList = null;
+            resolvedExtendedDeclaration = null;
+            extendedConstructorName = null;
+        }
+
+        "Arguments for redirect clauses. Must be lazy to have expressions generated
+         in correct context!"
+        value delegateArguments {
+            if (exists argumentList, !argumentList.argumentList.children.empty) {
+                assert (exists delegateConstructor);
+                assert (exists extendedType = constructor.extendedType?.target);
+                value ecInfo = extensionOrConstructionInfo(extendedType);
+                assert (exists callableType = ecInfo.typeModel);
+                return generateArgumentListFromArguments {
+                    scope;
+                    argumentList;
+                    CeylonList {
+                        ctx.unit.getCallableArgumentTypes(callableType.fullType);
+                    };
+                    delegateConstructor;
+                }[1].arguments;
+            }
+            return [];
+        }
+
+        function parametersFollowing(String constructorName)
+            =>  classBody.children.reversed
+                    .map((n) => if (is ConstructorDefinition n) then n else null)
+                    .coalesced
+                    .takeWhile((c)
+                        // We have to use name since the typchecker gives us a
+                        // ClassModel (not ConstructorModel) when extending the default
+                        // constructor.
+                        =>  (ConstructorDefinitionInfo(c).constructorModel.name else "")
+                                !=  constructorName)
+                    .flatMap((c) => c.parameters.parameters)
+                    .sequence();
+
+        value followingConstructorParameters
+            =   parametersFollowing(constructorInfo.constructorModel.name else "");
+
+        value followingDelegateParameters
+            =   if (exists extendedConstructorName)
+                then parametersFollowing(extendedConstructorName)
+                else [];
+
+        value constructorIndex
+            =   classBody.children.reversed
+                    .map((n) => if (is ConstructorDefinition n) then n else null)
+                    .coalesced
+                    .map(ConstructorDefinitionInfo)
+                    .map(ConstructorDefinitionInfo.constructorModel)
+                    .takeWhile(not(constructorInfo.constructorModel.equals))
+                    .size;
+
+        value constructorPrefix
+            =   dartTypes.getName(constructorInfo.constructorModel);
+
+        value constructorIdentifier
+            // default constructors will have name of ""
+            =   !constructorPrefix.empty
+                then DartSimpleIdentifier(constructorPrefix);
+
+        "The identifier for the Dart constructor that evaluates default argument
+         expressions, or null if there are no defaulted parameters."
+        value defaultsConstructorIdentifier
+            =   hasDefaultedParameter then
+                DartSimpleIdentifier(constructorPrefix + "$d");
+
+        "The identifier for the Dart constructor that spreads the argument list generated
+         by the defaults constructor, or null."
+        value spreadConstructorIdentifier
+            =   DartSimpleIdentifier(constructorPrefix + "$s");
+
+        "The identifier for the Dart constructor that delegates to super() or another
+         Ceylon constructor in the same class."
+        value workerConstructorIdentifier
+            =   if (hasDefaultedParameter)
+                then DartSimpleIdentifier(constructorPrefix + "$w")
+                else DartSimpleIdentifier(constructorPrefix + "$d");
+
+        "The identifier for the Dart constructor for some other Ceylon constructor in this
+         class we are redirecting to, or null if extending super()."
+        value delegateConstructorIdentifier
+            =   switch (delegateConstructor)
+                case (is ConstructorModel)
+                    DartSimpleIdentifier(dartTypes.getName(delegateConstructor) + "$d")
+                case (is ClassModel) // the default constructor
+                    DartSimpleIdentifier("$d")
+                case (is Null)
+                    null;
+
+        value constructorBitmapValue
+            =   DartIntegerLiteral(1.leftLogicalShift(constructorIndex));
+
+        value mangledFollowingConstructorDartParams
+            =   withInConsolidatedConstructor {
+                    classModel;
+                    () => generateFormalParameterList {
+                        false; false;
+                        scope;
+                        followingConstructorParameters;
+                        noDefaults = true;
+                    }.parameters;
+                };
+
+        value mangledFollowingConstructorDartArgs
+            =   mangledFollowingConstructorDartParams.collect(
+                        DartFormalParameter.identifier);
+
+        "The first constructor in the chain, and for now, always redirects to a $d
+         constructor (either the defaults constructor or the worker constructor)."
+        value bridgeConstructor
+            =   DartConstructorDeclaration {
+                    false; false;
+                    classIdentifier;
+                    constructorIdentifier;
+                    DartFormalParameterList {
+                        true; false;
+                        concatenate {
+                            outerAndCaptureParameters,
+                            dartParameters
+                        };
+                    };
+                    // redirect to defaults or worker constructor
+                    [DartRedirectingConstructorInvocation {
+                        defaultsConstructorIdentifier else workerConstructorIdentifier;
+                        DartArgumentList {
+                            concatenate {
+                                [constructorBitmapValue],
+                                outerAndCaptureArgs,
+                                [DartNullLiteral()].repeat {
+                                    followingConstructorParameters.size;
+                                },
+                                dartArgs
+                            };
+                        };
+                    }];
+                    null;
+                    null;
+                };
+
+        "A consructor that evaluates default argument expressions, as necessary."
+        value defaultsConstructor
+            =   defaultsConstructorIdentifier exists then
+                withInConsolidatedConstructor {
+                    classModel;
+                    () => DartConstructorDeclaration {
+                        false; false;
+                        classIdentifier;
+                        defaultsConstructorIdentifier;
+                        DartFormalParameterList {
+                            true; false;
+                            concatenate {
+                                [bitmapParameter],
+                                outerAndCaptureParameters,
+                                mangledFollowingConstructorDartParams,
+                                mangledDartParameters
+                            };
+                        };
+                        // redirect to spread constructor
+                        [DartRedirectingConstructorInvocation {
+                            spreadConstructorIdentifier;
+                            DartArgumentList {
+                                concatenate {
+                                    // delegation bitmap
+                                    [DartBinaryExpression {
+                                        bitmapParameter.identifier;
+                                        "|";
+                                        constructorBitmapValue;
+                                    }],
+                                    outerAndCaptureArgs,
+                                    mangledFollowingConstructorDartArgs,
+                                    // calculated arguments passed in a Dart List
+                                    [createExpressionEvaluationWithSetup {
+                                        generateDefaultValueAssignments {
+                                            scope;
+                                            parameters.map((parameter)
+                                                =>  if (is DefaultedParameter parameter)
+                                                    then parameter
+                                                    else null).coalesced;
+                                        };
+                                        DartListLiteral {
+                                            false;
+                                            concatenate {
+                                                parameters.map {
+                                                    (p) => DartSimpleIdentifier {
+                                                        dartTypes.getName {
+                                                            parameterInfo(p)
+                                                                    .parameterModel
+                                                                    .model;
+                                                        };
+                                                    };
+                                                }
+                                            };
+                                        };
+                                    }]
+                                };
+                            };
+                        }];
+                        null;
+                        null;
+                    };
+                };
+
+        "A constructor to 'spread' the arguments calculated by the defaults constructor,
+         which are provided to this constructor as a Dart List."
+        value spreadConstructor
+            =   hasDefaultedParameter then
+                withInConsolidatedConstructor {
+                    classModel;
+                    () => DartConstructorDeclaration {
+                        const = false;
+                        factory = false;
+                        returnType = classIdentifier;
+                        spreadConstructorIdentifier;
+                        DartFormalParameterList {
+                            true; false;
+                            concatenate {
+                                [bitmapParameter],
+                                outerAndCaptureParameters,
+                                mangledFollowingConstructorDartParams,
+                                [DartSimpleFormalParameter {
+                                    false; false;
+                                    dartTypes.dartList;
+                                    argsParameterIdentifier;
+                                }]
+                            };
+                        };
+                        [DartRedirectingConstructorInvocation {
+                            workerConstructorIdentifier;
+                            DartArgumentList {
+                                concatenate {
+                                    [bitmapParameter.identifier],
+                                    outerAndCaptureArgs,
+                                    mangledFollowingConstructorDartArgs,
+                                    // spread List of arguments
+                                    [ for (i in 0:parameters.size)
+                                        DartIndexExpression {
+                                            argsParameterIdentifier;
+                                            DartIntegerLiteral(i);
+                                        }
+                                    ]
+                                };
+                            };
+                        }];
+                        null;
+                        null;
+                    };
+                };
+
+        "The last constructor in the chain, which will either be the $d or $w constructor.
+         This constructor:
+
+            - extends super() and invokes $init in its body, or
+            - redirects to another $d Ceylon constructor in the same class."
+        value workerConstructor
+            =   withInConsolidatedConstructor {
+                    classModel;
+                    () => DartConstructorDeclaration {
+                        false; false;
+                        classIdentifier;
+                        workerConstructorIdentifier;
+                        DartFormalParameterList {
+                            true; false;
+                            concatenate {
+                                [bitmapParameter],
+                                outerAndCaptureParameters,
+                                mangledFollowingConstructorDartParams,
+                                mangledDartParamsNoDefault
+                            };
+                        };
+                        // delegate to super()
+                        if (!exists delegateConstructor)
+                        then emptyOrSingleton {
+                            generateSuperInvocation {
+                                scope;
+                                classModel;
+                                constructor.extendedType;
+                            };
+                        }
+                        // redirect to another Ceylon constructor in the same class
+                        else [DartRedirectingConstructorInvocation {
+                            delegateConstructorIdentifier;
+                            DartArgumentList {
+                                concatenate {
+                                    // delegation bitmap
+                                    [DartBinaryExpression {
+                                        bitmapParameter.identifier;
+                                        "|";
+                                        constructorBitmapValue;
+                                    }],
+                                    outerAndCaptureArgs,
+                                    mangledFollowingConstructorDartArgs,
+                                    mangledDartArgs,
+                                    [DartNullLiteral()].repeat {
+                                        followingDelegateParameters.size
+                                            - mangledFollowingConstructorDartArgs.size
+                                            - mangledDartArgs.size;
+                                    },
+                                    delegateArguments
+                                };
+                            };
+                        }];
+                        null;
+                        (!delegateConstructor exists) then
+                        DartBlockFunctionBody {
+                            null;
+                            false;
+                            DartBlock {
+                                [DartExpressionStatement {
+                                    DartFunctionExpressionInvocation {
+                                        dartTypes.identifierForInitMethod(classModel);
+                                        DartArgumentList {
+                                            concatenate {
+                                                // delegation bitmap
+                                                [DartBinaryExpression {
+                                                    bitmapParameter.identifier;
+                                                    "|";
+                                                    constructorBitmapValue;
+                                                }],
+                                                outerAndCaptureArgs,
+                                                mangledFollowingConstructorDartArgs,
+                                                mangledDartArgs
+                                            };
+                                        };
+                                    };
+                                }];
+                            };
+                        };
+                    };
+                };
+
+        return [
+            bridgeConstructor,
+            defaultsConstructor,
+            spreadConstructor,
+            workerConstructor
+        ].coalesced.sequence();
+    }
+
+    DartMethodDeclaration generateConsolidatedInitializer(
+            DScope scope, ClassModel classModel, ClassBody classBody) {
+
+        value constructorCount
+            =   { for (n in classBody.children)
+                  if (is ConstructorDefinition n) 1 }.size;
+
+        if (constructorCount > 32) {
+            addError(scope, "a maximum of 32 constructors is supported on Dart.");
+        }
+
+        value consolidatedParameterList
+            =   withInConsolidatedConstructor {
+                    classModel;
+                    () => generateFormalParameterList {
+                        false; false;
+                        scope;
+                        classBody.children.reversed.flatMap {
+                            (node) => if (is ConstructorDefinition node)
+                                then node.parameters.parameters
+                                else [];
+                        };
+                        true;
+                    };
+                };
+
+        value constructorIndexes
+            =   map {
+                    [ for (node in classBody.children)
+                      if (is ConstructorDefinition node) node
+                    ].reversed.indexed
+                    .map { (entry)
+                        =>  entry.item -> entry.key;
+                    };
+                };
+
+        value bitmapIdentifier
+            =   DartSimpleIdentifier("$bitmap");
+
+        value outerAndCaptureParameters
+            =   generateOuterAndCaptureParameters(scope, classModel);
+
+        value outerAndCaptureMemberInitializers
+            =   outerAndCaptureParameters
+                    .map { DartSimpleFormalParameter.identifier; }
+                    .map {
+                        (id) => DartExpressionStatement {
+                            DartAssignmentExpression {
+                                DartPrefixedIdentifier {
+                                    DartSimpleIdentifier("this");
+                                    id;
+                                };
+                                DartAssignmentOperator.equal;
+                                id;
+                            };
+                        };
+                    };
+
         return
-        [defaultsConstructor, spreadConstructor, workerConstructor].coalesced.sequence();
+        withInConsolidatedConstructor {
+            classModel;
+            () => DartMethodDeclaration {
+                false; "void";
+                null;
+                null; false;
+                dartTypes.identifierForInitMethod(classModel);
+                DartFormalParameterList {
+                    true; false;
+                    concatenate {
+                        [DartSimpleFormalParameter {
+                            false; false;
+                            dartTypes.dartInt;
+                            bitmapIdentifier;
+                        }],
+                        outerAndCaptureParameters,
+                        consolidatedParameterList.parameters
+                    };
+                };
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        classBody.children.flatMap((node) {
+                            if (!is ConstructorDefinition node) {
+                                return node.transform(classStatementTransformer);
+                            }
+                            return [DartIfStatement {
+                                DartBinaryExpression {
+                                    DartIntegerLiteral(0);
+                                    "!=";
+                                    DartBinaryExpression {
+                                        bitmapIdentifier;
+                                        "&";
+                                        DartIntegerLiteral {
+                                            1.leftLogicalShift(
+                                                constructorIndexes[node] else 0);
+                                        };
+                                    };
+                                };
+                                DartBlock {
+                                    concatenate {
+                                        outerAndCaptureMemberInitializers,
+                                        *node.block.transformChildren {
+                                            statementTransformer;
+                                        }
+                                    };
+                                };
+                            }];
+                        }).coalesced.sequence();
+                    };
+                };
+            };
+        };
     }
 
     "Explicit super call with arguments."
-    DartSuperConstructorInvocation? generateSuperInvocation(
-            ClassModel classModel, ExtendedType? extendedType) {
+    DartConstructorInitializer? generateSuperInvocation(
+            DScope scope, ClassModel classModel, ExtendedType? extendedType) {
+
+        assert (is ClassModel extendedClassModel
+            =   classModel.extendedType.declaration);
+
+        value outerAndCaptureArguments
+            =   generateArgumentsForOuterAndCaptures {
+                    scope;
+                    extendedClassModel;
+                };
+
+        [DartExpression*] dartArguments;
+
+        ClassModel | ConstructorModel | Null resolvedExtendedDeclaration;
 
         if (exists extendedType) {
-            value extensionOrConstruction = extendedType.target;
+            value extensionOrConstruction
+                =   extendedType.target;
 
             value ecInfo
                 =   extensionOrConstructionInfo(extensionOrConstruction);
 
-            assert (is ClassModel | ConstructorModel | Null resolvedExtendedDeclaration
-                =   switch (m = ecInfo.declaration)
-                    case (is ClassAliasModel) m.constructor
-                    else m);
-
-            if (is ConstructorModel resolvedExtendedDeclaration) {
-                addError(extendedType, "Extending constructors not yet supported.");
-                return null;
-            }
-
-            "Arguments must exist for constructor or ininitializer extends"
+            "Arguments must exist for constructor or initializer extends"
             assert (exists arguments = extensionOrConstruction.arguments);
 
-            value outerAndCaptureArguments
-                =   switch (extendedClass = ecInfo.declaration)
-                    case (is ClassModel)
-                        generateArgumentsForOuterAndCaptures {
-                            nodeInfo(extendedType);
-                            extendedClass;
-                        }
-                    case (is ConstructorModel | Null) []; // TODO
+            assert (exists extendedDeclaration
+                =   ecInfo.declaration);
+
+            resolvedExtendedDeclaration
+                =   resolveClassAliases(extendedDeclaration);
+
+            assert (exists resolvedExtendedDeclaration);
 
             if (!arguments.argumentList.children.empty) {
-
-                assert (exists extendedDeclaration
-                    =   ecInfo.declaration);
 
                 assert (exists callableType
                     =   ecInfo.typeModel);
@@ -1086,34 +1616,50 @@ class TopLevelVisitor(CompilationContext ctx)
                             ctx.unit.getCallableArgumentTypes(callableType.fullType);
                         };
 
-                return
-                DartSuperConstructorInvocation {
-                    null; // TODO constructor name, once we support extending constructors
-                    DartArgumentList {
-                        concatenate {
-                            outerAndCaptureArguments,
-                            // Don't use "resolved" here, since class alias may use
-                            // different parameter names than the aliased class or
-                            // constructor.
+                // Don't use "resolved" here, since class alias may use
+                // different parameter names than the aliased class or
+                // constructor.
 
-                            // Use 'withInConstructorSignature' since we may be passing
-                            // along callable parameters, which are actually Callable
-                            // values at this point.
-                            // TODO get rid of ugly casts like 'f as $c$l.Callable'
-                            withInConstructorSignature {
-                                classModel;
-                                () => generateArgumentListFromArguments {
-                                    ecInfo;
-                                    arguments;
-                                    signature;
-                                    extendedDeclaration;
-                                }[1].arguments;
-                            }
+                // Use 'withInConstructorSignature' since we may be passing
+                // along callable parameters, which are actually Callable
+                // values at this point.
+                dartArguments
+                    =   withInConstructorSignature {
+                            classModel;
+                            () => generateArgumentListFromArguments {
+                                ecInfo;
+                                arguments;
+                                signature;
+                                extendedDeclaration;
+                            }[1].arguments;
                         };
-                    };
-                };
+            }
+            else {
+                dartArguments = [];
             }
         }
+        else {
+            dartArguments = [];
+            resolvedExtendedDeclaration = null;
+        }
+
+        if (!outerAndCaptureArguments.empty || !dartArguments.empty) {
+            return
+            DartSuperConstructorInvocation {
+                if (is ConstructorModel resolvedExtendedDeclaration)
+                then DartSimpleIdentifier {
+                    dartTypes.getName(resolvedExtendedDeclaration);
+                }
+                else null;
+                DartArgumentList {
+                    concatenate {
+                        outerAndCaptureArguments,
+                        dartArguments
+                    };
+                };
+            };
+        }
+
         return null;
     }
 

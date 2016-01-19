@@ -106,6 +106,12 @@ class CompilationContext(PhasedUnit phasedUnit) {
     shared
     MutableSet<ClassModel> withinConstructorBodySet = HashSet<ClassModel>();
 
+    "Classes for which we are currently generating a 'consolidated' Dart constructor, and
+     therefore need to qualify parameter names with their original constructor names by
+     prefixing them."
+    shared
+    MutableSet<ClassModel> withinConsolidatedConstructorSet = HashSet<ClassModel>();
+
     "Classes for which we are currently calculating default values for parameters of a
      Dart constructor, and therefore need to consider erased to $dart$core.Object."
     shared
