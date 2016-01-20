@@ -35,7 +35,9 @@ import ceylon.ast.core {
     CallableParameter,
     ClassAliasDefinition,
     InterfaceAliasDefinition,
-    PositionalArguments
+    PositionalArguments,
+    CallableConstructorDefinition,
+    ValueConstructorDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -107,7 +109,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     extensionOrConstructionInfo,
     nodeInfo,
     parameterInfo,
-    CallableParameterInfo
+    CallableParameterInfo,
+    CallableConstructorDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -626,6 +629,15 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        if (classModel.hasConstructors()) {
+            // add errors for value constructors
+            for (node in classBody.content) {
+                if (node is ValueConstructorDefinition) {
+                    addError(node, "value constructors are not yet supported.");
+                }
+            }
+        }
+
         value constructors
             =   if (!classModel.hasConstructors())
                 then generateDartConstructorsInitializer {
@@ -637,7 +649,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 }
                 else classBody.content
                     .map((node)
-                        =>  if (is ConstructorDefinition node)
+                        =>  if (is CallableConstructorDefinition node)
                             then node
                             else null)
                     .coalesced
@@ -1006,7 +1018,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     [DartConstructorDeclaration*] generateDartConstructors(
             DScope scope, ClassModel classModel, ClassBody classBody,
-            ConstructorDefinition constructor) {
+            CallableConstructorDefinition constructor) {
 
         value parameters
             =   constructor.parameters.parameters;
@@ -1015,7 +1027,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
 
         value constructorInfo
-            =   ConstructorDefinitionInfo(constructor);
+            =   CallableConstructorDefinitionInfo(constructor);
 
         value hasDefaultedParameter
             =   parameters.any((p) => p is DefaultedParameter);
@@ -1143,14 +1155,14 @@ class TopLevelVisitor(CompilationContext ctx)
 
         function parametersFollowing(String constructorName)
             =>  classBody.children.reversed
-                    .map((n) => if (is ConstructorDefinition n) then n else null)
+                    .map((n) => if (is CallableConstructorDefinition n) then n else null)
                     .coalesced
                     .takeWhile((c)
                         // We have to use name since the typchecker gives us a
                         // ClassModel (not ConstructorModel) when extending the default
                         // constructor.
-                        =>  (ConstructorDefinitionInfo(c).constructorModel.name else "")
-                                !=  constructorName)
+                        =>  (CallableConstructorDefinitionInfo(c)
+                                .constructorModel.name else "") !=  constructorName)
                     .flatMap((c) => c.parameters.parameters)
                     .sequence();
 
@@ -1164,9 +1176,9 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value constructorIndex
             =   classBody.children.reversed
-                    .map((n) => if (is ConstructorDefinition n) then n else null)
+                    .map((n) => if (is CallableConstructorDefinition n) then n else null)
                     .coalesced
-                    .map(ConstructorDefinitionInfo)
+                    .map(CallableConstructorDefinitionInfo)
                     .map(ConstructorDefinitionInfo.constructorModel)
                     .takeWhile(not(constructorInfo.constructorModel.equals))
                     .size;
@@ -1475,7 +1487,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         false; false;
                         scope;
                         classBody.children.reversed.flatMap {
-                            (node) => if (is ConstructorDefinition node)
+                            (node) => if (is CallableConstructorDefinition node)
                                 then node.parameters.parameters
                                 else [];
                         };

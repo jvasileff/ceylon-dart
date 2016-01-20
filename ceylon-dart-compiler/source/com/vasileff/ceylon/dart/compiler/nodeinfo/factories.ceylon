@@ -60,7 +60,6 @@ import ceylon.ast.core {
     QualifiedExpression,
     Super,
     This,
-    ConstructorDefinition,
     ObjectDefinition,
     TypedDeclaration,
     ValueSetterDefinition,
@@ -77,7 +76,9 @@ import ceylon.ast.core {
     Destructure,
     Parameters,
     CallableParameter,
-    ParameterReference
+    ParameterReference,
+    CallableConstructorDefinition,
+    ValueConstructorDefinition
 }
 
 shared
@@ -133,7 +134,8 @@ DeclarationInfo declarationInfo(Declaration astNode)
     =>  switch (astNode)
         case (is TypeDeclaration) typeDeclarationInfo(astNode)
         case (is TypedDeclaration) typedDeclarationInfo(astNode)
-        case (is ConstructorDefinition) ConstructorDefinitionInfo(astNode)
+        case (is CallableConstructorDefinition) CallableConstructorDefinitionInfo(astNode)
+        case (is ValueConstructorDefinition) ValueConstructorDefinitionInfo(astNode)
         case (is ObjectDefinition) ObjectDefinitionInfo(astNode)
         case (is ValueSetterDefinition) ValueSetterDefinitionInfo(astNode);
 

@@ -29,7 +29,9 @@ import ceylon.ast.core {
     FunctionDefinition,
     AnyFunction,
     FunctionShortcutDefinition,
-    ObjectDefinition
+    ObjectDefinition,
+    CallableConstructorDefinition,
+    ValueConstructorDefinition
 }
 
 shared abstract
@@ -136,9 +138,24 @@ class ValueSetterDefinitionInfo(shared actual ValueSetterDefinition node)
     SetterModel declarationModel => tcNode.declarationModel;
 }
 
-shared final
-class ConstructorDefinitionInfo(shared actual ConstructorDefinition node)
+shared abstract
+class ConstructorDefinitionInfo()
+        of CallableConstructorDefinitionInfo | ValueConstructorDefinitionInfo
         extends DeclarationInfo() {
+
+    shared actual formal ConstructorDefinition node;
+
+    shared actual formal Tree.Constructor tcNode;
+
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
+
+    shared ConstructorModel constructorModel => tcNode.constructor;
+}
+
+shared final
+class CallableConstructorDefinitionInfo
+        (shared actual CallableConstructorDefinition node)
+        extends ConstructorDefinitionInfo() {
 
     shared alias TcNodeType => Tree.Constructor;
     value lazyTcNode {
@@ -146,10 +163,18 @@ class ConstructorDefinitionInfo(shared actual ConstructorDefinition node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+}
 
-    shared actual FunctionModel declarationModel => tcNode.declarationModel;
+shared final
+class ValueConstructorDefinitionInfo(shared actual ValueConstructorDefinition node)
+        extends ConstructorDefinitionInfo() {
 
-    shared ConstructorModel constructorModel => tcNode.constructor;
+    shared alias TcNodeType => Tree.Constructor;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
 }
 
 shared abstract
