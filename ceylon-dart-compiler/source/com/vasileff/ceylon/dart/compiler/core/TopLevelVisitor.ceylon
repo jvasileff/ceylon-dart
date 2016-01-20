@@ -97,9 +97,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionExpressionInvocation
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    AnyInterfaceInfo,
     ValueDefinitionInfo,
-    AnyClassInfo,
     ValueGetterDefinitionInfo,
     ObjectDefinitionInfo,
     ObjectExpressionInfo,
@@ -110,7 +108,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo,
     parameterInfo,
     CallableParameterInfo,
-    CallableConstructorDefinitionInfo
+    CallableConstructorDefinitionInfo,
+    classDefinitionInfo,
+    interfaceDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -195,7 +195,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitClassDefinition(ClassDefinition that) {
-        value info = AnyClassInfo(that);
+        value info = classDefinitionInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {
@@ -251,7 +251,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitInterfaceDefinition(InterfaceDefinition that) {
-        value info = AnyInterfaceInfo(that);
+        value info = interfaceDefinitionInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {

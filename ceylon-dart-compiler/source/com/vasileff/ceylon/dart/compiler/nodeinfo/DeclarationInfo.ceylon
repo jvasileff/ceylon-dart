@@ -1,18 +1,3 @@
-import com.redhat.ceylon.compiler.typechecker.tree {
-    Tree
-}
-import com.redhat.ceylon.model.typechecker.model {
-    DeclarationModel=Declaration,
-    TypedDeclarationModel=TypedDeclaration,
-    ValueModel=Value,
-    SetterModel=Setter,
-    FunctionModel=Function,
-    ConstructorModel=Constructor,
-    TypeDeclarationModel=TypeDeclaration,
-    ClassModel=Class,
-    InterfaceModel=Interface,
-    ClassOrInterfaceModel=ClassOrInterface
-}
 import ceylon.ast.core {
     ValueGetterDefinition,
     ValueSetterDefinition,
@@ -31,16 +16,38 @@ import ceylon.ast.core {
     FunctionShortcutDefinition,
     ObjectDefinition,
     CallableConstructorDefinition,
-    ValueConstructorDefinition
+    ValueConstructorDefinition,
+    ClassAliasDefinition,
+    ClassDefinition,
+    AnyInterfaceDefinition,
+    InterfaceAliasDefinition,
+    DynamicInterfaceDefinition,
+    InterfaceDefinition
+}
+
+import com.redhat.ceylon.compiler.typechecker.tree {
+    Tree
+}
+import com.redhat.ceylon.model.typechecker.model {
+    DeclarationModel=Declaration,
+    TypedDeclarationModel=TypedDeclaration,
+    ValueModel=Value,
+    SetterModel=Setter,
+    FunctionModel=Function,
+    ConstructorModel=Constructor,
+    TypeDeclarationModel=TypeDeclaration,
+    ClassModel=Class,
+    InterfaceModel=Interface,
+    ClassOrInterfaceModel=ClassOrInterface
 }
 
 shared abstract
 class DeclarationInfo()
-        of ConstructorDefinitionInfo
-            | ObjectDefinitionInfo
-            | TypeDeclarationInfo
+        of TypeDeclarationInfo
             | TypedDeclarationInfo
+            | ObjectDefinitionInfo
             | ValueSetterDefinitionInfo
+            | ConstructorDefinitionInfo
         extends NodeInfo() {
 
     shared actual formal Tree.Declaration tcNode;
@@ -179,7 +186,7 @@ class ValueConstructorDefinitionInfo(shared actual ValueConstructorDefinition no
 
 shared abstract
 class TypeDeclarationInfo()
-        of ClassOrInterfaceDefinitionInfo | TypeAliasDefinitionInfo
+        of ClassOrInterfaceInfo | TypeAliasDefinitionInfo
         extends DeclarationInfo() {
 
     shared actual formal TypeDeclaration node;
@@ -204,7 +211,7 @@ class TypeAliasDefinitionInfo(shared actual TypeAliasDefinition node)
 }
 
 shared abstract
-class ClassOrInterfaceDefinitionInfo()
+class ClassOrInterfaceInfo()
         of AnyClassInfo | AnyInterfaceInfo
         extends TypeDeclarationInfo() {
 
@@ -217,13 +224,14 @@ class ClassOrInterfaceDefinitionInfo()
     }
 }
 
-shared final
-class AnyInterfaceInfo(shared actual AnyInterface node)
-        extends ClassOrInterfaceDefinitionInfo() {
+shared abstract
+class AnyInterfaceInfo(AnyInterface astNode)
+        of AnyInterfaceDefinitionInfo | InterfaceAliasDefinitionInfo
+        extends ClassOrInterfaceInfo() {
 
     shared alias TcNodeType => Tree.Declaration;
     value lazyTcNode {
-        assert (is TcNodeType node = getTcNode(node));
+        assert (is TcNodeType node = getTcNode(astNode));
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
@@ -233,15 +241,39 @@ class AnyInterfaceInfo(shared actual AnyInterface node)
         assert (is InterfaceModel result = super.declarationModel);
         return result;
     }
+
+    shared actual formal AnyInterface node;
 }
 
 shared final
-class AnyClassInfo(shared actual AnyClass node)
-        extends ClassOrInterfaceDefinitionInfo() {
+class InterfaceAliasDefinitionInfo(shared actual InterfaceAliasDefinition node)
+        extends AnyInterfaceInfo(node) {
+}
+
+shared abstract
+class AnyInterfaceDefinitionInfo(AnyInterfaceDefinition node)
+        of DynamicInterfaceDefinitionInfo | InterfaceDefinitionInfo
+        extends AnyInterfaceInfo(node) {
+}
+
+shared final
+class DynamicInterfaceDefinitionInfo(shared actual DynamicInterfaceDefinition node)
+        extends AnyInterfaceDefinitionInfo(node) {
+}
+
+shared final
+class InterfaceDefinitionInfo(shared actual InterfaceDefinition node)
+        extends AnyInterfaceDefinitionInfo(node) {
+}
+
+shared abstract
+class AnyClassInfo(AnyClass astNode)
+        of ClassAliasDefinitionInfo | ClassDefinitionInfo
+        extends ClassOrInterfaceInfo() {
 
     shared alias TcNodeType => Tree.Declaration;
     value lazyTcNode {
-        assert (is TcNodeType node = getTcNode(node));
+        assert (is TcNodeType node = getTcNode(astNode));
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
@@ -251,6 +283,18 @@ class AnyClassInfo(shared actual AnyClass node)
         assert (is ClassModel result = super.declarationModel);
         return result;
     }
+
+    shared actual formal AnyClass node;
+}
+
+shared final
+class ClassAliasDefinitionInfo(shared actual ClassAliasDefinition node)
+        extends AnyClassInfo(node) {
+}
+
+shared final
+class ClassDefinitionInfo(shared actual ClassDefinition node)
+        extends AnyClassInfo(node) {
 }
 
 shared abstract

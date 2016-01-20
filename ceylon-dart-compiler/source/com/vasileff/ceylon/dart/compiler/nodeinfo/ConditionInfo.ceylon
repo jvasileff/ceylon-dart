@@ -13,12 +13,12 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value
 }
 
-shared abstract
+shared abstract sealed
 class ConditionInfo()
         of BooleanConditionInfo | IsConditionInfo | ExistsOrNonemptyConditionInfo
         extends NodeInfo() {}
 
-shared final
+shared final sealed
 class BooleanConditionInfo(shared actual BooleanCondition node)
         extends ConditionInfo() {
 

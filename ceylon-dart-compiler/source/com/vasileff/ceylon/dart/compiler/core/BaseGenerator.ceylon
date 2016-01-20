@@ -144,7 +144,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ObjectArgumentInfo,
     NamedArgumentInfo,
     SpreadArgumentInfo,
-    sequenceArgumentInfo,
     ComprehensionInfo,
     LazySpecificationInfo,
     VariadicVariableInfo,
@@ -153,7 +152,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     existsOrNonemptyConditionInfo,
     nodeInfo,
     parameterInfo,
-    ParametersInfo
+    ParametersInfo,
+    sequenceArgumentInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,

@@ -10,7 +10,18 @@ import ceylon.ast.core {
     While,
     IfElse,
     SwitchCaseElse,
-    TryCatchFinally
+    TryCatchFinally,
+    ExpressionStatement,
+    Assertion,
+    Directive,
+    Destructure,
+    Return,
+    Throw,
+    Continue,
+    Break,
+    AssignmentStatement,
+    InvocationStatement,
+    PrefixPostfixStatement
 }
 import ceylon.ast.redhat {
     primaryToCeylon
@@ -39,10 +50,26 @@ class StatementInfo()
 
 shared
 class DefaultStatementInfo(shared actual Statement node)
+        // of ExpressionStatement | Assertion | Directive | Destructure
         extends StatementInfo() {
 
     shared actual TcNode tcNode = getTcNode(node);
 }
+
+shared class ExpressionStatementInfo(ExpressionStatement that) => DefaultStatementInfo(that);
+shared class AssignmentStatementInfo(AssignmentStatement that) => ExpressionStatementInfo(that);
+shared class InvocationStatementInfo(InvocationStatement that) => ExpressionStatementInfo(that);
+shared class PrefixPostfixStatementInfo(PrefixPostfixStatement that) => ExpressionStatementInfo(that);
+
+shared class AssertionInfo(Assertion that) => DefaultStatementInfo(that);
+
+shared class DirectiveInfo(Directive that) => DefaultStatementInfo(that);
+shared class ReturnInfo(Return that) => DirectiveInfo(that);
+shared class ThrowInfo(Throw that) => DirectiveInfo(that);
+shared class BreakInfo(Break that) => DirectiveInfo(that);
+shared class ContinueInfo(Continue that) => DirectiveInfo(that);
+
+shared class DestructureInfo(Destructure that) => DefaultStatementInfo(that);
 
 shared abstract
 class ControlStructureInfo()

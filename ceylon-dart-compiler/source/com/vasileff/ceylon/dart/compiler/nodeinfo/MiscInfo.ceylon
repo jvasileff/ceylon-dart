@@ -23,7 +23,41 @@ import ceylon.ast.core {
     Parameters,
     ValueParameter,
     CallableParameter,
-    ParameterReference
+    ParameterReference,
+    ModuleCompilationUnit,
+    PackageCompilationUnit,
+    MatchCase,
+    Node,
+    MemberNameWithTypeArguments,
+    VariadicType,
+    DefaultedType,
+    TypeList,
+    SpreadType,
+    TypeArgument,
+    TypeArguments,
+    PackageQualifier,
+    EntryType,
+    MainType,
+    UnionType,
+    UnionableType,
+    IntersectionType,
+    PrimaryType,
+    CallableType,
+    GroupedType,
+    IterableType,
+    OptionalType,
+    SequentialType,
+    SimpleType,
+    BaseType,
+    QualifiedType,
+    TupleType,
+    DefaultedValueParameter,
+    DefaultedCallableParameter,
+    DefaultedParameterReference,
+    InitialComprehensionClause,
+    ExpressionComprehensionClause,
+    ForComprehensionClause,
+    IfComprehensionClause
 }
 import ceylon.interop.java {
     CeylonList
@@ -71,9 +105,14 @@ class ArgumentListInfo(shared actual ArgumentList node)
                 else null;
 }
 
+shared abstract
+class AnyCompilationUnitInfo()
+        of CompilationUnitInfo | ModuleCompilationUnitInfo | PackageCompilationUnitInfo
+        extends NodeInfo() {}
+
 shared
 class CompilationUnitInfo(shared actual CompilationUnit node)
-        extends NodeInfo() {
+        extends AnyCompilationUnitInfo() {
 
     shared alias TcNodeType => Tree.CompilationUnit;
     value lazyTcNode {
@@ -81,6 +120,18 @@ class CompilationUnitInfo(shared actual CompilationUnit node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class ModuleCompilationUnitInfo(shared actual ModuleCompilationUnit node)
+        extends AnyCompilationUnitInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared
+class PackageCompilationUnitInfo(shared actual PackageCompilationUnit node)
+        extends AnyCompilationUnitInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
 }
 
 shared
@@ -98,6 +149,22 @@ class ComprehensionClauseInfo(shared actual ComprehensionClause node)
     shared TypeModel firstTypeModel => tcNode.firstTypeModel;
     shared Boolean possiblyEmpty => tcNode.possiblyEmpty;
 }
+
+shared
+class InitialComprehensionClauseInfo(InitialComprehensionClause that)
+    =>  ComprehensionClauseInfo(that);
+
+shared
+class ExpressionComprehensionClauseInfo(ExpressionComprehensionClause that)
+    =>  ComprehensionClauseInfo(that);
+
+shared
+class ForComprehensionClauseInfo(ForComprehensionClause that)
+    =>  InitialComprehensionClauseInfo(that);
+
+shared
+class IfComprehensionClauseInfo(IfComprehensionClause that)
+    =>  InitialComprehensionClauseInfo(that);
 
 shared
 class ComprehensionInfo(shared actual Comprehension node)
@@ -119,11 +186,14 @@ alias ControlClauseNodeType
     =>  CaseClause | CatchClause | FinallyClause | IfClause | TryClause;
 
 shared
-class ControlClauseInfo(ControlClauseNodeType tn)
-        extends NodeInfo() {
+interface ControlClauseInfo {
+    shared formal ControlBlockModel controlBlock;
+}
 
-    // FIXME backend bug; tn workaround
-    shared actual ControlClauseNodeType node = tn;
+shared
+class CaseClauseInfo(shared actual CaseClause node)
+        extends NodeInfo()
+        satisfies ControlClauseInfo {
 
     shared alias TcNodeType => Tree.ControlClause;
     value lazyTcNode {
@@ -132,7 +202,67 @@ class ControlClauseInfo(ControlClauseNodeType tn)
     }
     shared actual TcNodeType tcNode = lazyTcNode;
 
-    shared ControlBlockModel controlBlock => tcNode.controlBlock;
+    shared actual ControlBlockModel controlBlock => tcNode.controlBlock;
+}
+
+shared
+class CatchClauseInfo(shared actual CatchClause node)
+        extends NodeInfo()
+        satisfies ControlClauseInfo {
+
+    shared alias TcNodeType => Tree.ControlClause;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual ControlBlockModel controlBlock => tcNode.controlBlock;
+}
+
+shared
+class FinallyClauseInfo(shared actual FinallyClause node)
+        extends NodeInfo()
+        satisfies ControlClauseInfo {
+
+    shared alias TcNodeType => Tree.ControlClause;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual ControlBlockModel controlBlock => tcNode.controlBlock;
+}
+
+shared
+class IfClauseInfo(shared actual IfClause node)
+        extends NodeInfo()
+        satisfies ControlClauseInfo {
+
+    shared alias TcNodeType => Tree.ControlClause;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual ControlBlockModel controlBlock => tcNode.controlBlock;
+}
+
+shared
+class TryClauseInfo(shared actual TryClause node)
+        extends NodeInfo()
+        satisfies ControlClauseInfo {
+
+    shared alias TcNodeType => Tree.ControlClause;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual ControlBlockModel controlBlock => tcNode.controlBlock;
 }
 
 shared
@@ -260,9 +390,14 @@ class ForIteratorInfo(shared actual ForIterator node)
     shared actual TcNode tcNode = getTcNode(node);
 }
 
+shared abstract
+class CaseItemInfo()
+        of MatchCaseInfo | IsCaseInfo
+        extends NodeInfo() {}
+
 shared
 class IsCaseInfo(shared actual IsCase node)
-        extends NodeInfo() {
+        extends CaseItemInfo() {
 
     shared alias TcNodeType => Tree.IsCase;
     value lazyTcNode {
@@ -272,6 +407,12 @@ class IsCaseInfo(shared actual IsCase node)
     shared actual TcNodeType tcNode = lazyTcNode;
 
     shared ValueModel? variableDeclarationModel => tcNode.variable?.declarationModel;
+}
+
+shared
+class MatchCaseInfo(shared actual MatchCase node)
+        extends CaseItemInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
 }
 
 shared abstract
@@ -309,6 +450,18 @@ class DefaultedParameterInfo(shared actual DefaultedParameter node)
     }
     shared actual TcNodeType tcNode = lazyTcNode;
 }
+
+shared
+class DefaultedValueParameterInfo(DefaultedValueParameter that)
+    =>  DefaultedParameterInfo(that);
+
+shared
+class DefaultedCallableParameterInfo(DefaultedCallableParameter that)
+    =>  DefaultedParameterInfo(that);
+
+shared
+class DefaultedParameterReferenceInfo(DefaultedParameterReference that)
+    =>  DefaultedParameterInfo(that);
 
 shared abstract
 class RequiredParameterInfo()
@@ -387,9 +540,30 @@ class SpreadArgumentInfo(shared actual SpreadArgument node)
     shared ParameterModel? parameter => tcNode.parameter;
 }
 
+shared abstract
+class TypeIshInfo()
+        of NameWithTypeArgumentsInfo | DefaultTypeInfo | DefaultTypeIshInfo
+        extends NodeInfo() {}
+
 shared
-class TypeInfo(shared actual Type node)
-        extends NodeInfo() {
+class DefaultTypeIshInfo(shared actual Node node)
+        // of VariadicType | DefaultedType | TypeList | SpreadType | TypeArgument
+        //    | TypeArguments | PackageQualifier
+        extends TypeIshInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
+shared class VariadicTypeInfo(VariadicType that) => DefaultTypeIshInfo(that);
+shared class DefaultedTypeInfo(DefaultedType that) => DefaultTypeIshInfo(that);
+shared class TypeListInfo(TypeList that) => DefaultTypeIshInfo(that);
+shared class SpreadTypeInfo(SpreadType that) => DefaultTypeIshInfo(that);
+shared class TypeArgumentInfo(TypeArgument that) => DefaultTypeIshInfo(that);
+shared class TypeArgumentsInfo(TypeArguments that) => DefaultTypeIshInfo(that);
+shared class PackageQualifierInfo(PackageQualifier that) => DefaultTypeIshInfo(that);
+
+shared
+class DefaultTypeInfo(shared actual Type node)
+        extends TypeIshInfo() {
 
     shared alias TcNodeType => Tree.Type;
     value lazyTcNode {
@@ -401,9 +575,37 @@ class TypeInfo(shared actual Type node)
     shared TypeModel typeModel => tcNode.typeModel;
 }
 
+shared class TypeInfo(Type that) => DefaultTypeInfo(that);
+shared class EntryTypeInfo(EntryType that) => TypeInfo(that);
+shared class MainTypeInfo(MainType that) => TypeInfo(that);
+shared class UnionTypeInfo(UnionType that) => MainTypeInfo(that);
+shared class UnionableTypeInfo(UnionableType that) => MainTypeInfo(that);
+shared class IntersectionTypeInfo(IntersectionType that) => UnionableTypeInfo(that);
+shared class PrimaryTypeInfo(PrimaryType that) => UnionableTypeInfo(that);
+shared class CallableTypeInfo(CallableType that) => PrimaryTypeInfo(that);
+shared class GroupedTypeInfo(GroupedType that) => PrimaryTypeInfo(that);
+shared class IterableTypeInfo(IterableType that) => PrimaryTypeInfo(that);
+shared class OptionalTypeInfo(OptionalType that) => PrimaryTypeInfo(that);
+shared class SequentialTypeInfo(SequentialType that) => PrimaryTypeInfo(that);
+shared class SimpleTypeInfo(SimpleType that) => PrimaryTypeInfo(that);
+shared class BaseTypeInfo(BaseType that) => SimpleTypeInfo(that);
+shared class QualifiedTypeInfo(QualifiedType that) => SimpleTypeInfo(that);
+shared class TupleTypeInfo(TupleType that) => PrimaryTypeInfo(that);
+
+shared abstract
+class NameWithTypeArgumentsInfo()
+        of TypeNameWithTypeArgumentsInfo | MemberNameWithTypeArgumentsInfo
+        extends TypeIshInfo() {}
+
+shared
+class MemberNameWithTypeArgumentsInfo(shared actual MemberNameWithTypeArguments node)
+        extends NameWithTypeArgumentsInfo() {
+    shared actual TcNode tcNode = getTcNode(node);
+}
+
 shared
 class TypeNameWithTypeArgumentsInfo(shared actual TypeNameWithTypeArguments node)
-        extends NodeInfo() {
+        extends NameWithTypeArgumentsInfo() {
 
     shared alias TcNodeType
         =>  Tree.SimpleType | Tree.BaseTypeExpression | Tree.QualifiedTypeExpression;

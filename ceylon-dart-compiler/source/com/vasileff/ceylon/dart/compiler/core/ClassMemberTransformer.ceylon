@@ -90,7 +90,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     DeclarationInfo,
     DefaultedParameterInfo,
     anyFunctionInfo,
-    AnyClassInfo
+    anyClassInfo
 }
 
 shared
@@ -821,7 +821,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         // Generate the class
         that.visit(topLevelVisitor);
 
-        value info = AnyClassInfo(that);
+        value info = anyClassInfo(that);
 
         // Don't generate factory methods for non-shared member classes
         if (!info.declarationModel.shared) {

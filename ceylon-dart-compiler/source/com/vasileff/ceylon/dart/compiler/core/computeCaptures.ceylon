@@ -28,8 +28,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
     ValueSpecificationInfo,
     getTcNode,
-    AnyClassInfo,
-    NodeInfo
+    NodeInfo,
+    anyClassInfo
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
@@ -99,7 +99,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
         shared actual
         void visitClassAliasDefinition(ClassAliasDefinition that) {
-            value info = AnyClassInfo(that);
+            value info = anyClassInfo(that);
 
             // Only capture for shared member classes aliases
             if (info.declarationModel.shared && !info.declarationModel.toplevel) {
@@ -109,7 +109,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
         shared actual
         void visitClassDefinition(ClassDefinition that) {
-            value info = AnyClassInfo(that);
+            value info = anyClassInfo(that);
 
             // Only capture for shared member classes
             if (info.declarationModel.shared && !info.declarationModel.toplevel) {
