@@ -104,7 +104,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ValueDeclarationInfo,
     ForFailInfo,
     ElseClauseInfo,
-    TypeInfo,
     IsCaseInfo,
     FunctionDeclarationInfo,
     UnspecifiedVariableInfo,
@@ -112,10 +111,11 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo,
     LazySpecificationInfo,
     parameterInfo,
-    ParametersInfo,
     ParameterInfo,
     SpecifiedVariableInfo,
-    ExpressionInfo
+    ExpressionInfo,
+    typeInfo,
+    parametersInfo
 }
 
 import org.antlr.runtime {
@@ -208,7 +208,7 @@ class StatementTransformer(CompilationContext ctx)
                             switchedType;
                             switchedDeclaration;
                             switchedVariable;
-                            TypeInfo(caseItem.type).typeModel;
+                            typeInfo(caseItem.type).typeModel;
                         };
                         thenStatement = DartBlock {
                             concatenate {
@@ -594,7 +594,7 @@ class StatementTransformer(CompilationContext ctx)
                                 that.specifier;
                                 forceNonNativeReturn = true;
                             };
-                            parameterList = ParametersInfo(parameterLists.first).model;
+                            parameterList = parametersInfo(parameterLists.first).model;
                             hasForcedNonNativeReturn =  true;
                         };
                     };
@@ -1463,16 +1463,16 @@ class StatementTransformer(CompilationContext ctx)
                                 catchClauses.collect { (clause) =>
                                     let (variableInfo = UnspecifiedVariableInfo
                                             (clause.variable),
-                                        typeInfo = TypeInfo(assertType
+                                        tInfo = typeInfo(assertType
                                             (clause.variable.type)))
                                     [generateIsExpression {
-                                        typeInfo;
+                                        tInfo;
                                         // Could be `Anything`, since Dart allows non
                                         // Exception objects to be thrown
                                         ceylonTypes.anythingType;
                                         null;
                                         exceptionVariable;
-                                        typeInfo.typeModel;
+                                        tInfo.typeModel;
                                     },
                                     DartBlock {
                                         [createVariableDeclaration {

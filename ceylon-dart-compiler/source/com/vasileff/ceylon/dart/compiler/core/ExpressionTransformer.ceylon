@@ -178,16 +178,16 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
     FunctionExpressionInfo,
     QualifiedExpressionInfo,
-    InvocationInfo,
-    ThisInfo,
-    OuterInfo,
-    TypeInfo,
     IfElseExpressionInfo,
     ObjectExpressionInfo,
     IsCaseInfo,
     TypeNameWithTypeArgumentsInfo,
     expressionInfo,
-    nodeInfo
+    nodeInfo,
+    invocationInfo,
+    typeInfo,
+    thisInfo,
+    outerInfo
 }
 
 shared
@@ -571,7 +571,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformInvocation(Invocation that) {
         value info
-            =   InvocationInfo(that);
+            =   invocationInfo(that);
 
         value invokedInfo
             =   expressionInfo(that.invoked);
@@ -1072,7 +1072,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         operandInfo.typeModel;
                         () => that.operand.transform(this);
                     };
-                    TypeInfo(that.type).typeModel;
+                    typeInfo(that.type).typeModel;
                 };
             };
 
@@ -2430,7 +2430,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             switchedType;
                             switchedDeclaration;
                             switchedVariable;
-                            TypeInfo(caseItem.type).typeModel;
+                            typeInfo(caseItem.type).typeModel;
                         };
                         thenStatement = DartBlock {
                             concatenate {
@@ -2636,7 +2636,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformThis(This that)
-        =>  let (info = ThisInfo(that))
+        =>  let (info = thisInfo(that))
             withBoxing {
                 info;
                 info.typeModel;
@@ -2646,7 +2646,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformOuter(Outer that) {
-        value info = OuterInfo(that);
+        value info = outerInfo(that);
         assert (is ClassOrInterfaceModel ci = getContainingClassOrInterface(info.scope));
         assert (exists outerDeclaration = getContainingClassOrInterface(container(ci)));
         value outerIdentifier = dartTypes.identifierForOuter(outerDeclaration);

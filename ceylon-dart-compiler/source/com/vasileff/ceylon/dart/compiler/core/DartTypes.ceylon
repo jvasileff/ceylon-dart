@@ -54,7 +54,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     UnspecifiedVariableInfo,
     VariadicVariableInfo,
-    SuperInfo
+    superInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -1366,13 +1366,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             "Primary may be `super` or `(super of T)`"
             Expression primary)
         =>  if (is Super primary) then
-                let (superInfo = SuperInfo(primary))
-                superInfo.typeModel.getSupertype(superInfo.declarationModel)
+                let (sInfo = superInfo(primary))
+                sInfo.typeModel.getSupertype(sInfo.declarationModel)
             else if (is GroupedExpression primary,
                      is OfOperation ofOp = primary.innerExpression,
                      is Super s = ofOp.operand) then
-                let (superInfo = SuperInfo(s))
-                superInfo.typeModel.getSupertype(superInfo.declarationModel)
+                let (sInfo = superInfo(s))
+                sInfo.typeModel.getSupertype(sInfo.declarationModel)
             else
                 null;
 

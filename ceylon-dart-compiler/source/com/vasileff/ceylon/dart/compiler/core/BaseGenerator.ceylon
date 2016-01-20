@@ -128,7 +128,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ExpressionInfo,
     FunctionDefinitionInfo,
     IsConditionInfo,
-    TypeInfo,
     ValueDefinitionInfo,
     ValueGetterDefinitionInfo,
     UnspecifiedVariableInfo,
@@ -152,8 +151,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     existsOrNonemptyConditionInfo,
     nodeInfo,
     parameterInfo,
-    ParametersInfo,
-    sequenceArgumentInfo
+    sequenceArgumentInfo,
+    typeInfo,
+    parametersInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -1735,7 +1735,7 @@ class BaseGenerator(CompilationContext ctx)
         value info = IsConditionInfo(that);
 
         "The type we are testing for"
-        value isType = TypeInfo(that.variable.type).typeModel;
+        value isType = typeInfo(that.variable.type).typeModel;
 
         "The declaration model for the new variable"
         value variableDeclaration = info.variableDeclarationModel;
@@ -3229,7 +3229,7 @@ class BaseGenerator(CompilationContext ctx)
                             functionModel;
                             previous;
                             i+1;
-                            parameterList = ParametersInfo(previousPList).model;
+                            parameterList = parametersInfo(previousPList).model;
                             hasForcedNonNativeReturn = forceNonNativeReturn;
                         };
             }
