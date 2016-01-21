@@ -108,7 +108,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     moduleName,
                     null,
                     ModuleQuery.Type.\iDART,
-                    null, null);
+                    null, null, null, null);
 
         function newArtifactContext(String shortName) {
             value name

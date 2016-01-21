@@ -131,7 +131,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     moduleName,
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,
-                    null, null) else "";
+                    null, null, null, null) else "";
 
         value dependencies
             =   gatherDependencies(repositoryManager, moduleName, moduleVersion);
