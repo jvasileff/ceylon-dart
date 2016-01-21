@@ -48,9 +48,8 @@ shared void run() {
     testSatisfaction();
     print("Use-site variance");
     testUseSiteVariance();
-// FIXME Dart workaround
-    //print("Exceptions");
-    //exceptions();
+    print("Exceptions");
+    exceptions();
     print("Operators");
     operators();
     print("Miscellaneous");

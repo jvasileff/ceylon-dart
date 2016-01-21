@@ -281,7 +281,7 @@ shared void strings() {
     check(builder.size == 29, "StringBuilder.size");
     check(builder.insertCharacter(5,',').insert(12,"!!!").string=="hello, world!!! goodbye everyone ", "StringBuilder.insert");
     check(builder.delete(12,3).delete(5,1).string=="hello world goodbye everyone ", "StringBuilder.delete 1");
-/* FIXME Dart workaround
+
     try {
         builder.delete(99999,1);
         throw Exception("StringBuilder.delete index oob");
@@ -292,7 +292,7 @@ shared void strings() {
         throw Exception("StringBuilder.delete length oob");
     } catch (AssertionError e) {
     }
-*/
+
     check(builder.delete(28,1).string=="hello world goodbye everyone");
     check(builder.size==28, "StringBuilder.size 2");
     check(builder.clear().size==0, "StringBuilder.reset");

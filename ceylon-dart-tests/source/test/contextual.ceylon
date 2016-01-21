@@ -3,14 +3,19 @@
 shared void testContextual() {
     Contextual<String> stringValue = Contextual<String>();
     Contextual<Integer> intValue = Contextual<Integer>();
-    /* FIXME Dart workaround
+
     try (stringValue.Using("a"), intValue.Using(1)) {
         check(stringValue.get()=="a", "contextual string");
         check(intValue.get()==1, "contextual integer before");
         try (intValue.Using(2)) {
             check(intValue.get()==2, "contextual integer nested");
         }
+// FIXME Dart workaround: adding finally
+        finally {
+        }
         check(intValue.get()==1, "contextual integer after");
     }
-    */
+// FIXME Dart workaround: adding finally
+    finally {
+    }
 }

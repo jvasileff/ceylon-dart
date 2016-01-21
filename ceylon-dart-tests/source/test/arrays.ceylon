@@ -101,7 +101,7 @@ shared void testArrays() {
     check("[3]"==Array{1,2,3}.skip(2).sequence().string, "Array skip 2 ``Array{1,2,3}.skip(2)``");
     check("[]"==Array{1,2,3}.skip(3).sequence().string, "Array skip 3 ``Array{1,2,3}.skip(3)``");
     check("[]"==Array{1,2,3}.skip(4).sequence().string, "Array skip 4 ``Array{1,2,3}.skip(4)``");
-/* FIXME Dart workaround    
+
     try {
         Array{1,2,3}.by(-1);
         fail("Array by -1");
@@ -114,7 +114,7 @@ shared void testArrays() {
     } catch (AssertionError e) {
         
     }
-*/
+
     // Dart change to "[]" and add sequence(); we're just using the default methods that don't print
     // the same as Java's custom iterables
     check([1, 2, 3]==Array{1,2,3}.by(1), "Array by 1 ``Array{1,2,3}.by(1)``");
@@ -229,12 +229,13 @@ shared void testArrays() {
     value a13=Array.ofSize(5,1);
     check(a13.size==5, "Array.ofSize 1");
     check(every { for (i in a13) i==1 }, "Array.ofSize 2");
-/* FIXME Dart workaround    
+
     try {
         check(Array.ofSize(-1,1).size==0, "Array.ofSize(-1) should be empty");
     } catch (Throwable ex) {
         fail("Array.ofSize(-1)");
     }
+/* FIXME Dart workaround
     try {
         Array.ofSize(runtime.maxArraySize+1,1);
         fail("Array.ofSize(runtime.maxArraySize+1)");

@@ -83,15 +83,14 @@ shared void numbers() {
     check((-7).remainder(3)==-1, "-7 remainder 3");
     check(7.modulo(3)==1, "7 modulo 3");
     check((-7).modulo(3)==2, "-7 modulo 3");
-// FIXME Dart workaround
-/*
+
     try{
         7.modulo(-3);
         check(false, "modulo assertion");
     }catch(AssertionError x){
         check(true, "modulo assertion");
     }
-*/  
+
     checkWholePart();
     
     check((+2).sign==+1, "integer sign");
@@ -145,8 +144,7 @@ shared void numbers() {
     check(exp(0,0)==1, "exp(0,0)==0");
     check(exp(-1,0)==1, "exp(-1,0)==-1");
     check(exp(-2,0)==1, "exp(-2,0)==-2");
-// FIXME Dart workaround
-/*
+
     try { 
         exp(2,-1);
         fail("exp(2,-1) should throw");
@@ -176,7 +174,7 @@ shared void numbers() {
         exp(-2,-2);
         fail("exp(-2,-2) should throw");
     } catch (AssertionError e) {}
-*/    
+
     Integer twoToPowerTen = 2*2*2*2*2*2*2*2*2*2;
     check(exp(2,10)==twoToPowerTen, "exp(2,10)==twoToPowerTen");
     check(exp(2,20)==twoToPowerTen*twoToPowerTen, "exp(2,30)==twoToPowerTen*twoToPowerTen");
@@ -208,14 +206,13 @@ shared void numbers() {
     
     
     
-// FIXME Dart workaround
-/*
+
     try {
        fail("Should have thrown Overflow Exception: ``922337203685477632.float``");
     } catch(OverflowException ex) {
         check(ex.message == "922337203685477632 cannot be coerced into a 64 bit floating point value");
     }
-*/    
+
     check(922337203685477632.nearestFloat == 9.2233720368547763E17, "large nearest float 1");
     check((-922337203685477632).nearestFloat == -9.2233720368547763E17, "large negative nearest float");
     check(922337203685477635.nearestFloat == 9.2233720368547763E17, "large nearest float 2");
@@ -652,8 +649,7 @@ void checkParseInteger() {
     check(!parseInteger("123_456", 8) exists, "!parseInteger(123_456, 8) exists");
     check(!parseInteger("1234_5678", 8) exists, "!parseInteger(1234_5678, 8) exists");
     
-// FIXME Dart workaround
-/*
+
     try {
         parseInteger("0", 1);
         fail("parseInteger(0, 1) should throw");
@@ -666,7 +662,7 @@ void checkParseInteger() {
     } catch (AssertionError ex) {
         // OK
     }
-*/    
+
     print("Testing `` runtime.integerSize ``-bit integers");
     if (runtime.integerSize == 64) {
         check(9223372036854775807==(parseInteger("9223372036854775807") else ""), "parseInteger(9223372036854775807)");
@@ -770,8 +766,7 @@ void checkFormatInteger() {
     check("-1"==formatInteger(-1), "formatInteger(-1)");
     check("1234567890"==formatInteger(1234567890), "formatInteger(1234567890)");
     check("-1234567890"==formatInteger(-1234567890), "formatInteger(-1234567890)");
-// FIXME Dart workaround
-/*
+
     try {
         formatInteger(0, 1);
         fail("formatInteger(0, 1) should throw");
@@ -784,7 +779,7 @@ void checkFormatInteger() {
     } catch (AssertionError ex) {
         // OK
     }
-*/
+
     if (runtime.integerSize == 64) {
         Integer maxIntegerValue = 9_223_372_036_854_775_807;
         Integer minIntegerValue = -9_223_372_036_854_775_808;
@@ -889,8 +884,7 @@ void checkParseFloat() {
     check(0.flip(31).get(31), "logicalShift.get 8");
     check(2.divides(6), "Integer.divides 1");
     check(!5.divides(6), "Integer.divides 2");
-// FIXME Dart workaround
-/*
+
     try {
         runtime.maxIntegerValue.neighbour(1);
         fail("Integer.neighbour should throw");
@@ -903,7 +897,7 @@ void checkParseFloat() {
     } catch (OverflowException ex) {
         check(true);
     }
-*/
+
     check((1).neighbour(5)==6, "Integer.neighbour 1");
     check((1).neighbour(0)==1, "Integer.neighbour 2");
     check((1).neighbour(-5)==-4, "Integer.neighbour 3");

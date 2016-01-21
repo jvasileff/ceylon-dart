@@ -70,7 +70,7 @@ class Array extends impl$BaseList {
   }
 
   Array.ofSize($dart$core.int size, $dart$core.Object element) {
-    _list = new $dart$core.List.filled(size, element);
+    _list = new $dart$core.List.filled(size > 0 ? size : 0, element);
   }
 
   Array._withList($dart$core.List this._list);
@@ -266,7 +266,11 @@ class Character implements Comparable, Enumerable {
     _value = character._value;
   }
 
-  Character.$fromInt($dart$core.int this._value);
+  Character.$fromInt($dart$core.int this._value) {
+      if (_value > 0x10FFFF || _value < 0) {
+          throw new OverflowException(_value.toString() + " is not a possible Unicode code point");
+      }
+  }
 
   $dart$core.int get integer => _value;
 

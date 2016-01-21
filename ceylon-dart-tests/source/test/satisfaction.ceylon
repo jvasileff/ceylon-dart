@@ -29,9 +29,8 @@ shared interface Container<out Element, out Absent=Null>
     shared formal Absent|Element first;
     shared formal Absent|Element last;        
 }
-// FIXME Dart workaround
-//deprecated ("Will be removed in Ceylon 1.0.")
-//shared interface EmptyContainer => Container<Nothing,Null>;
+deprecated ("Will be removed in Ceylon 1.0.")
+shared interface EmptyContainer => Container<Nothing,Null>;
 class MyContainerWithLastElement() satisfies Container<Integer,Null> {
     shared actual Integer? first { return 1; }
     shared actual Integer? last { return 2; }
@@ -59,9 +58,7 @@ class MyObtainable() satisfies Obtainable {
     shared actual void obtain() {opened=true;}
     shared actual void release(Throwable? e) {opened=false;}
 }
-// FIXME Dart workaround
-//class MyContainer() satisfies EmptyContainer {
-class MyContainer() satisfies Container<Nothing,Null> {
+class MyContainer() satisfies EmptyContainer {
     shared actual Null first { return null; }
     shared actual Null last { return null; }
     shared actual Boolean empty = true;
