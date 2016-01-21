@@ -1510,17 +1510,23 @@ class StatementTransformer(CompilationContext ctx)
                         };
                     };
 
-        return
-        [DartTryStatement {
-            wrapBlockWithResources {
+        return [
+            if (!dartCatchClause exists && !that.finallyClause exists)
+            then wrapBlockWithResources {
                 that.tryClause.resources?.children else [];
                 transformBlock(that.tryClause.block).first;
-            };
-            emptyOrSingleton(dartCatchClause);
-            if (exists finallyBlock = that.finallyClause?.block)
-            then transformBlock(finallyBlock).first
-            else null;
-        }];
+            }
+            else DartTryStatement {
+                wrapBlockWithResources {
+                    that.tryClause.resources?.children else [];
+                    transformBlock(that.tryClause.block).first;
+                };
+                emptyOrSingleton(dartCatchClause);
+                if (exists finallyBlock = that.finallyClause?.block)
+                then transformBlock(finallyBlock).first
+                else null;
+            }
+        ];
     }
 
     shared actual default
