@@ -10,12 +10,6 @@ shared void testContextual() {
         try (intValue.Using(2)) {
             check(intValue.get()==2, "contextual integer nested");
         }
-// FIXME Dart workaround: adding finally
-        finally {
-        }
         check(intValue.get()==1, "contextual integer after");
-    }
-// FIXME Dart workaround: adding finally
-    finally {
     }
 }

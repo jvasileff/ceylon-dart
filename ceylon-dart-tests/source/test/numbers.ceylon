@@ -399,8 +399,7 @@ shared void numbers() {
     check(!(0.0/0.0).infinite, "NaN not infinite");
 
     //ArithmeticException
-// FIXME Dart workaround
-/*
+
     try {
         print(0/0);
         fail("0/0 should throw");
@@ -413,7 +412,7 @@ shared void numbers() {
     } catch (Exception ex) {
         check(true, "ArithmeticException");
     }
-*/
+
     checkParseInteger();
     checkFormatInteger();
     checkParseFloat();
