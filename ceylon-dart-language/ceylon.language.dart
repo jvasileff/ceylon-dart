@@ -5841,7 +5841,7 @@ abstract class Iterator {
 }
 class language_ {
     language_() {}
-    $dart$core.String get version => "1.2.0-DP2-SNAPSHOT";
+    $dart$core.String get version => "1.2.1-DP2-SNAPSHOT";
     $dart$core.int get majorVersion => 1;
     $dart$core.int get minorVersion => 2;
     $dart$core.int get releaseVersion => 1;

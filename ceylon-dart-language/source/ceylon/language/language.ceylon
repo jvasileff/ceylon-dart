@@ -49,7 +49,7 @@ shared native("js") object language {
 }
 
 shared native("dart") object language {
-    shared native("dart") String version => "1.2.0-DP2-SNAPSHOT";
+    shared native("dart") String version => "1.2.1-DP2-SNAPSHOT";
     shared native("dart") Integer majorVersion => 1;
     shared native("dart") Integer minorVersion => 2;
     shared native("dart") Integer releaseVersion => 1;
