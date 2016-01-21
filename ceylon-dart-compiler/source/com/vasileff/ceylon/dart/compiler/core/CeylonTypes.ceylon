@@ -13,7 +13,8 @@ import com.redhat.ceylon.model.typechecker.model {
     Value,
     Class,
     ClassOrInterface,
-    Function
+    Function,
+    Package
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
@@ -273,8 +274,17 @@ class CeylonTypes(Unit unit) {
         =>  unit.callableDeclaration;
 
     shared
+    Package ceylonLanguageDartPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.dart");
+
+    shared
     Interface comparableDeclaration
         =>  unit.comparableDeclaration;
+
+    shared
+    Function dartWrapThrownObjectDeclaration
+        =>  assertFunction(ceylonLanguageDartPackage
+                .getMember("wrapThrownObject", null, false));
 
     shared
     Class entryDeclaration

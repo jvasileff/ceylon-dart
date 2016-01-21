@@ -115,7 +115,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     SpecifiedVariableInfo,
     ExpressionInfo,
     typeInfo,
-    parametersInfo
+    parametersInfo,
+    tryCatchFinallyInfo
 }
 
 import org.antlr.runtime {
@@ -1215,7 +1216,9 @@ class StatementTransformer(CompilationContext ctx)
                       (if the temp var is not null)
 
             For Obtainables, do the same but also call obtain().
-         */
+        */
+
+        value info = tryCatchFinallyInfo(that);
 
         DartBlock wrapBlockWithResource(Resource resource, DartBlock block) {
             value rInfo
@@ -1322,10 +1325,7 @@ class StatementTransformer(CompilationContext ctx)
 
             value catchClause
                 =   DartCatchClause {
-                        dartTypes.dartTypeName {
-                            rInfo;
-                            ceylonTypes.throwableType;
-                        };
+                        null;
                         catchVariable;
                         null;
                         DartBlock {[
@@ -1333,7 +1333,12 @@ class StatementTransformer(CompilationContext ctx)
                                 DartAssignmentExpression {
                                     exceptionVariable;
                                     DartAssignmentOperator.equal;
-                                    catchVariable;
+                                    dartTypes.invocableForBaseExpression {
+                                        info;
+                                        ceylonTypes.dartWrapThrownObjectDeclaration;
+                                    }.expressionForInvocation {
+                                        [catchVariable];
+                                    };
                                 };
                             },
                             DartExpressionStatement {
@@ -1452,14 +1457,31 @@ class StatementTransformer(CompilationContext ctx)
         value dartCatchClause
             =   switch (catchClauses = that.catchClauses)
                 case (is Empty) null
-                else let (exceptionVariable
+                else let (catchVariable // implicitly final in Dart
+                        =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e")))
+                    let (exceptionVariable
                         =   DartSimpleIdentifier(dartTypes.createTempNameCustom("e")))
                     DartCatchClause {
                         null;
-                        exceptionVariable;
+                        catchVariable;
                         null;
                         DartBlock {
-                            [createIfStatement {
+                            [createVariableDeclaration {
+                                dartTypes.dartTypeName {
+                                    info;
+                                    ceylonTypes.throwableType;
+                                };
+                                exceptionVariable;
+                                // Dart allows any object to be thrown, so wrap the thrown
+                                // object in an Exception if necessary
+                                dartTypes.invocableForBaseExpression {
+                                    info;
+                                    ceylonTypes.dartWrapThrownObjectDeclaration;
+                                }.expressionForInvocation {
+                                    [catchVariable];
+                                };
+                            },
+                            createIfStatement {
                                 catchClauses.collect { (clause) =>
                                     let (variableInfo = UnspecifiedVariableInfo
                                             (clause.variable),
@@ -1467,9 +1489,7 @@ class StatementTransformer(CompilationContext ctx)
                                             (clause.variable.type)))
                                     [generateIsExpression {
                                         tInfo;
-                                        // Could be `Anything`, since Dart allows non
-                                        // Exception objects to be thrown
-                                        ceylonTypes.anythingType;
+                                        ceylonTypes.throwableType;
                                         null;
                                         exceptionVariable;
                                         tInfo.typeModel;
@@ -1490,9 +1510,7 @@ class StatementTransformer(CompilationContext ctx)
                                                 variableInfo.declarationModel;
                                                 () => withBoxing {
                                                     variableInfo;
-                                                    // Typed as `Anything` as
-                                                    // noted above.
-                                                    ceylonTypes.anythingType;
+                                                    ceylonTypes.throwableType;
                                                     null;
                                                     exceptionVariable;
                                                 };

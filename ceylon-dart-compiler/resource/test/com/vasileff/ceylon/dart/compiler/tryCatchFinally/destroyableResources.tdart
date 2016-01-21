@@ -8,43 +8,44 @@ class tryDestroyable$DResource implements $ceylon$language.Destroyable {
 void $package$tryDestroyable() {
     try {
         tryDestroyable$DResource d1 = new tryDestroyable$DResource();
-        $ceylon$language.Throwable e$5;
+        $ceylon$language.Throwable e$6;
         try {
-            tryDestroyable$DResource u$1 = new tryDestroyable$DResource();
-            $ceylon$language.Throwable e$2;
+            tryDestroyable$DResource u$2 = new tryDestroyable$DResource();
+            $ceylon$language.Throwable e$3;
             try {
                 $ceylon$language.print($ceylon$language.String.instance("trying"));
-            } on $ceylon$language.Throwable catch (e$3) {
-                e$2 = e$3;
+            } catch (e$4) {
+                e$3 = $ceylon$language.dart$wrapThrownObject(e$4);
                 rethrow;
             } finally {
-                if (e$2 != null) {
+                if (e$3 != null) {
                     try {
-                        u$1.destroy(e$2);
-                    } on $ceylon$language.Throwable catch (e$4) {
-                        e$2.addSuppressed(e$4);
+                        u$2.destroy(e$3);
+                    } on $ceylon$language.Throwable catch (e$5) {
+                        e$3.addSuppressed(e$5);
                     }
                 } else {
-                    u$1.destroy(e$2);
+                    u$2.destroy(e$3);
                 }
             }
-        } on $ceylon$language.Throwable catch (e$6) {
-            e$5 = e$6;
+        } catch (e$7) {
+            e$6 = $ceylon$language.dart$wrapThrownObject(e$7);
             rethrow;
         } finally {
-            if (e$5 != null) {
+            if (e$6 != null) {
                 try {
-                    d1.destroy(e$5);
-                } on $ceylon$language.Throwable catch (e$7) {
-                    e$5.addSuppressed(e$7);
+                    d1.destroy(e$6);
+                } on $ceylon$language.Throwable catch (e$8) {
+                    e$6.addSuppressed(e$8);
                 }
             } else {
-                d1.destroy(e$5);
+                d1.destroy(e$6);
             }
         }
     } catch (e$0) {
-        if (e$0 is $ceylon$language.Throwable) {
-            $ceylon$language.Throwable e = e$0 as $ceylon$language.Throwable;
+        $ceylon$language.Throwable e$1 = $ceylon$language.dart$wrapThrownObject(e$0);
+        if (e$1 is $ceylon$language.Throwable) {
+            $ceylon$language.Throwable e = e$1;
             $ceylon$language.print($ceylon$language.String.instance("caught something"));
             throw e;
         } else {
