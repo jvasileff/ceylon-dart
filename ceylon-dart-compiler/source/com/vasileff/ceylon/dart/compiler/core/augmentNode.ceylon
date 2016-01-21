@@ -34,5 +34,4 @@ void augmentNode(TcNode tcNode, Node node) {
     }
 }
 
-
 shared class NodeData(shared NodeInfo? info, shared TcNode tcNode) {}
