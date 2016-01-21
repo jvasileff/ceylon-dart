@@ -317,6 +317,17 @@ import ceylon.ast.core {
     PrimaryType,
     UnaryTypeOperation
 }
+import com.vasileff.ceylon.dart.compiler.core {
+    NodeData
+}
+import com.redhat.ceylon.compiler.typechecker.tree {
+    TcNode=Node
+}
+
+TcNode getTcNode(Node astNode) {
+    assert (is NodeData data = astNode.data);
+    return data.tcNode;
+}
 
 shared
 SpreadArgumentInfo | ComprehensionInfo sequenceArgumentInfo
@@ -326,2220 +337,1908 @@ SpreadArgumentInfo | ComprehensionInfo sequenceArgumentInfo
         case (is Comprehension) comprehensionInfo(astNode);
 
 shared
+NodeInfo nodeInfo(Node node) {
+    assert (is NodeData data = node.data);
+    if (exists info = data.info) {
+        return info;
+    }
+    value info = wrapNode(node);
+    node.data = NodeData(info, data.tcNode);
+    return info;
+}
+
+shared
 AddAssignmentOperationInfo addAssignmentOperationInfo(AddAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AddAssignmentOperationInfo result);
+    assert (is AddAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AliasDecInfo aliasDecInfo(AliasDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AliasDecInfo result);
+    assert (is AliasDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AndAssignmentOperationInfo andAssignmentOperationInfo(AndAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AndAssignmentOperationInfo result);
+    assert (is AndAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AndOperationInfo andOperationInfo(AndOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AndOperationInfo result);
+    assert (is AndOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnnotationInfo annotationInfo(Annotation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnnotationInfo result);
+    assert (is AnnotationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnnotationsInfo annotationsInfo(Annotations node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnnotationsInfo result);
+    assert (is AnnotationsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnonymousArgumentInfo anonymousArgumentInfo(AnonymousArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnonymousArgumentInfo result);
+    assert (is AnonymousArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyClassInfo anyClassInfo(AnyClass node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyClassInfo result);
+    assert (is AnyClassInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyCompilationUnitInfo anyCompilationUnitInfo(AnyCompilationUnit node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyCompilationUnitInfo result);
+    assert (is AnyCompilationUnitInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyFunctionInfo anyFunctionInfo(AnyFunction node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyFunctionInfo result);
+    assert (is AnyFunctionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyInterfaceInfo anyInterfaceInfo(AnyInterface node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyInterfaceInfo result);
+    assert (is AnyInterfaceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyInterfaceDefinitionInfo anyInterfaceDefinitionInfo(AnyInterfaceDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyInterfaceDefinitionInfo result);
+    assert (is AnyInterfaceDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyMemberOperatorInfo anyMemberOperatorInfo(AnyMemberOperator node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyMemberOperatorInfo result);
+    assert (is AnyMemberOperatorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnySpecifierInfo anySpecifierInfo(AnySpecifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnySpecifierInfo result);
+    assert (is AnySpecifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AnyValueInfo anyValueInfo(AnyValue node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AnyValueInfo result);
+    assert (is AnyValueInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ArgumentListInfo argumentListInfo(ArgumentList node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ArgumentListInfo result);
+    assert (is ArgumentListInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ArgumentsInfo argumentsInfo(Arguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ArgumentsInfo result);
+    assert (is ArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ArithmeticAssignmentOperationInfo arithmeticAssignmentOperationInfo(ArithmeticAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ArithmeticAssignmentOperationInfo result);
+    assert (is ArithmeticAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ArithmeticOperationInfo arithmeticOperationInfo(ArithmeticOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ArithmeticOperationInfo result);
+    assert (is ArithmeticOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AssertionInfo assertionInfo(Assertion node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AssertionInfo result);
+    assert (is AssertionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AssignOperationInfo assignOperationInfo(AssignOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AssignOperationInfo result);
+    assert (is AssignOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AssignmentOperationInfo assignmentOperationInfo(AssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AssignmentOperationInfo result);
+    assert (is AssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AssignmentStatementInfo assignmentStatementInfo(AssignmentStatement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AssignmentStatementInfo result);
+    assert (is AssignmentStatementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 AtomInfo atomInfo(Atom node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is AtomInfo result);
+    assert (is AtomInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BaseExpressionInfo baseExpressionInfo(BaseExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BaseExpressionInfo result);
+    assert (is BaseExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BaseMetaInfo baseMetaInfo(BaseMeta node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BaseMetaInfo result);
+    assert (is BaseMetaInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BaseTypeInfo baseTypeInfo(BaseType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BaseTypeInfo result);
+    assert (is BaseTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BinaryOperationInfo binaryOperationInfo(BinaryOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BinaryOperationInfo result);
+    assert (is BinaryOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BlockInfo blockInfo(Block node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BlockInfo result);
+    assert (is BlockInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BodyInfo bodyInfo(Body node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BodyInfo result);
+    assert (is BodyInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BooleanConditionInfo booleanConditionInfo(BooleanCondition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BooleanConditionInfo result);
+    assert (is BooleanConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BoundInfo boundInfo(Bound node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BoundInfo result);
+    assert (is BoundInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 BreakInfo breakInfo(Break node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is BreakInfo result);
+    assert (is BreakInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CallableConstructorDefinitionInfo callableConstructorDefinitionInfo(CallableConstructorDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CallableConstructorDefinitionInfo result);
+    assert (is CallableConstructorDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CallableParameterInfo callableParameterInfo(CallableParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CallableParameterInfo result);
+    assert (is CallableParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CallableTypeInfo callableTypeInfo(CallableType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CallableTypeInfo result);
+    assert (is CallableTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CaseClauseInfo caseClauseInfo(CaseClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CaseClauseInfo result);
+    assert (is CaseClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CaseExpressionInfo caseExpressionInfo(CaseExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CaseExpressionInfo result);
+    assert (is CaseExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CaseItemInfo caseItemInfo(CaseItem node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CaseItemInfo result);
+    assert (is CaseItemInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CaseTypesInfo caseTypesInfo(CaseTypes node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CaseTypesInfo result);
+    assert (is CaseTypesInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CatchClauseInfo catchClauseInfo(CatchClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CatchClauseInfo result);
+    assert (is CatchClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CharacterLiteralInfo characterLiteralInfo(CharacterLiteral node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CharacterLiteralInfo result);
+    assert (is CharacterLiteralInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassAliasDefinitionInfo classAliasDefinitionInfo(ClassAliasDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassAliasDefinitionInfo result);
+    assert (is ClassAliasDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassBodyInfo classBodyInfo(ClassBody node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassBodyInfo result);
+    assert (is ClassBodyInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassDecInfo classDecInfo(ClassDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassDecInfo result);
+    assert (is ClassDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassDefinitionInfo classDefinitionInfo(ClassDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassDefinitionInfo result);
+    assert (is ClassDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassOrInterfaceInfo classOrInterfaceInfo(ClassOrInterface node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassOrInterfaceInfo result);
+    assert (is ClassOrInterfaceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClassSpecifierInfo classSpecifierInfo(ClassSpecifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClassSpecifierInfo result);
+    assert (is ClassSpecifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ClosedBoundInfo closedBoundInfo(ClosedBound node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ClosedBoundInfo result);
+    assert (is ClosedBoundInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CompareOperationInfo compareOperationInfo(CompareOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CompareOperationInfo result);
+    assert (is CompareOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ComparisonOperationInfo comparisonOperationInfo(ComparisonOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ComparisonOperationInfo result);
+    assert (is ComparisonOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 CompilationUnitInfo compilationUnitInfo(CompilationUnit node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is CompilationUnitInfo result);
+    assert (is CompilationUnitInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ComplementAssignmentOperationInfo complementAssignmentOperationInfo(ComplementAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ComplementAssignmentOperationInfo result);
+    assert (is ComplementAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ComplementOperationInfo complementOperationInfo(ComplementOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ComplementOperationInfo result);
+    assert (is ComplementOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ComprehensionInfo comprehensionInfo(Comprehension node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ComprehensionInfo result);
+    assert (is ComprehensionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ComprehensionClauseInfo comprehensionClauseInfo(ComprehensionClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ComprehensionClauseInfo result);
+    assert (is ComprehensionClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConditionInfo conditionInfo(Condition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConditionInfo result);
+    assert (is ConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConditionalExpressionInfo conditionalExpressionInfo(ConditionalExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConditionalExpressionInfo result);
+    assert (is ConditionalExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConditionsInfo conditionsInfo(Conditions node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConditionsInfo result);
+    assert (is ConditionsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConstructionInfo constructionInfo(Construction node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConstructionInfo result);
+    assert (is ConstructionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConstructorDecInfo constructorDecInfo(ConstructorDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConstructorDecInfo result);
+    assert (is ConstructorDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ConstructorDefinitionInfo constructorDefinitionInfo(ConstructorDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ConstructorDefinitionInfo result);
+    assert (is ConstructorDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ContinueInfo continueInfo(Continue node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ContinueInfo result);
+    assert (is ContinueInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ControlStructureInfo controlStructureInfo(ControlStructure node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ControlStructureInfo result);
+    assert (is ControlStructureInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DecInfo decInfo(Dec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DecInfo result);
+    assert (is DecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DecQualifierInfo decQualifierInfo(DecQualifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DecQualifierInfo result);
+    assert (is DecQualifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DeclarationInfo declarationInfo(Declaration node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DeclarationInfo result);
+    assert (is DeclarationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DefaultedCallableParameterInfo defaultedCallableParameterInfo(DefaultedCallableParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DefaultedCallableParameterInfo result);
+    assert (is DefaultedCallableParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DefaultedParameterInfo defaultedParameterInfo(DefaultedParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DefaultedParameterInfo result);
+    assert (is DefaultedParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DefaultedParameterReferenceInfo defaultedParameterReferenceInfo(DefaultedParameterReference node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DefaultedParameterReferenceInfo result);
+    assert (is DefaultedParameterReferenceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DefaultedTypeInfo defaultedTypeInfo(DefaultedType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DefaultedTypeInfo result);
+    assert (is DefaultedTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DefaultedValueParameterInfo defaultedValueParameterInfo(DefaultedValueParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DefaultedValueParameterInfo result);
+    assert (is DefaultedValueParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DestructureInfo destructureInfo(Destructure node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DestructureInfo result);
+    assert (is DestructureInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DifferenceOperationInfo differenceOperationInfo(DifferenceOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DifferenceOperationInfo result);
+    assert (is DifferenceOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DirectiveInfo directiveInfo(Directive node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DirectiveInfo result);
+    assert (is DirectiveInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DivideAssignmentOperationInfo divideAssignmentOperationInfo(DivideAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DivideAssignmentOperationInfo result);
+    assert (is DivideAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DynamicBlockInfo dynamicBlockInfo(DynamicBlock node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DynamicBlockInfo result);
+    assert (is DynamicBlockInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DynamicInterfaceDefinitionInfo dynamicInterfaceDefinitionInfo(DynamicInterfaceDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DynamicInterfaceDefinitionInfo result);
+    assert (is DynamicInterfaceDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DynamicModifierInfo dynamicModifierInfo(DynamicModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DynamicModifierInfo result);
+    assert (is DynamicModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 DynamicValueInfo dynamicValueInfo(DynamicValue node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is DynamicValueInfo result);
+    assert (is DynamicValueInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ElementOrSubrangeExpressionInfo elementOrSubrangeExpressionInfo(ElementOrSubrangeExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ElementOrSubrangeExpressionInfo result);
+    assert (is ElementOrSubrangeExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ElseClauseInfo elseClauseInfo(ElseClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ElseClauseInfo result);
+    assert (is ElseClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ElseOperationInfo elseOperationInfo(ElseOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ElseOperationInfo result);
+    assert (is ElseOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 EntryOperationInfo entryOperationInfo(EntryOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is EntryOperationInfo result);
+    assert (is EntryOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 EntryPatternInfo entryPatternInfo(EntryPattern node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is EntryPatternInfo result);
+    assert (is EntryPatternInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 EntryTypeInfo entryTypeInfo(EntryType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is EntryTypeInfo result);
+    assert (is EntryTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 EqualOperationInfo equalOperationInfo(EqualOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is EqualOperationInfo result);
+    assert (is EqualOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 EqualityOperationInfo equalityOperationInfo(EqualityOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is EqualityOperationInfo result);
+    assert (is EqualityOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExistsConditionInfo existsConditionInfo(ExistsCondition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExistsConditionInfo result);
+    assert (is ExistsConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExistsOperationInfo existsOperationInfo(ExistsOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExistsOperationInfo result);
+    assert (is ExistsOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExistsOrNonemptyConditionInfo existsOrNonemptyConditionInfo(ExistsOrNonemptyCondition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExistsOrNonemptyConditionInfo result);
+    assert (is ExistsOrNonemptyConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExponentiationOperationInfo exponentiationOperationInfo(ExponentiationOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExponentiationOperationInfo result);
+    assert (is ExponentiationOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExpressionInfo expressionInfo(Expression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExpressionInfo result);
+    assert (is ExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExpressionComprehensionClauseInfo expressionComprehensionClauseInfo(ExpressionComprehensionClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExpressionComprehensionClauseInfo result);
+    assert (is ExpressionComprehensionClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExpressionStatementInfo expressionStatementInfo(ExpressionStatement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExpressionStatementInfo result);
+    assert (is ExpressionStatementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExtendedTypeInfo extendedTypeInfo(ExtendedType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExtendedTypeInfo result);
+    assert (is ExtendedTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExtensionInfo extensionInfo(Extension node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExtensionInfo result);
+    assert (is ExtensionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ExtensionOrConstructionInfo extensionOrConstructionInfo(ExtensionOrConstruction node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ExtensionOrConstructionInfo result);
+    assert (is ExtensionOrConstructionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FailClauseInfo failClauseInfo(FailClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FailClauseInfo result);
+    assert (is FailClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FinallyClauseInfo finallyClauseInfo(FinallyClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FinallyClauseInfo result);
+    assert (is FinallyClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FloatLiteralInfo floatLiteralInfo(FloatLiteral node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FloatLiteralInfo result);
+    assert (is FloatLiteralInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ForClauseInfo forClauseInfo(ForClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ForClauseInfo result);
+    assert (is ForClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ForComprehensionClauseInfo forComprehensionClauseInfo(ForComprehensionClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ForComprehensionClauseInfo result);
+    assert (is ForComprehensionClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ForFailInfo forFailInfo(ForFail node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ForFailInfo result);
+    assert (is ForFailInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ForIteratorInfo forIteratorInfo(ForIterator node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ForIteratorInfo result);
+    assert (is ForIteratorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FullPackageNameInfo fullPackageNameInfo(FullPackageName node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FullPackageNameInfo result);
+    assert (is FullPackageNameInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionArgumentInfo functionArgumentInfo(FunctionArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionArgumentInfo result);
+    assert (is FunctionArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionDecInfo functionDecInfo(FunctionDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionDecInfo result);
+    assert (is FunctionDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionDeclarationInfo functionDeclarationInfo(FunctionDeclaration node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionDeclarationInfo result);
+    assert (is FunctionDeclarationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionDefinitionInfo functionDefinitionInfo(FunctionDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionDefinitionInfo result);
+    assert (is FunctionDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionExpressionInfo functionExpressionInfo(FunctionExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionExpressionInfo result);
+    assert (is FunctionExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionModifierInfo functionModifierInfo(FunctionModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionModifierInfo result);
+    assert (is FunctionModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 FunctionShortcutDefinitionInfo functionShortcutDefinitionInfo(FunctionShortcutDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is FunctionShortcutDefinitionInfo result);
+    assert (is FunctionShortcutDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 GivenDecInfo givenDecInfo(GivenDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is GivenDecInfo result);
+    assert (is GivenDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 GroupedExpressionInfo groupedExpressionInfo(GroupedExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is GroupedExpressionInfo result);
+    assert (is GroupedExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 GroupedTypeInfo groupedTypeInfo(GroupedType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is GroupedTypeInfo result);
+    assert (is GroupedTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IdenticalOperationInfo identicalOperationInfo(IdenticalOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IdenticalOperationInfo result);
+    assert (is IdenticalOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IdentifierInfo identifierInfo(Identifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IdentifierInfo result);
+    assert (is IdentifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IdentityOperationInfo identityOperationInfo(IdentityOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IdentityOperationInfo result);
+    assert (is IdentityOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IfClauseInfo ifClauseInfo(IfClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IfClauseInfo result);
+    assert (is IfClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IfComprehensionClauseInfo ifComprehensionClauseInfo(IfComprehensionClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IfComprehensionClauseInfo result);
+    assert (is IfComprehensionClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IfElseInfo ifElseInfo(IfElse node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IfElseInfo result);
+    assert (is IfElseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IfElseExpressionInfo ifElseExpressionInfo(IfElseExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IfElseExpressionInfo result);
+    assert (is IfElseExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportInfo importInfo(Import node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportInfo result);
+    assert (is ImportInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportAliasInfo importAliasInfo(ImportAlias node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportAliasInfo result);
+    assert (is ImportAliasInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportElementInfo importElementInfo(ImportElement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportElementInfo result);
+    assert (is ImportElementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportElementsInfo importElementsInfo(ImportElements node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportElementsInfo result);
+    assert (is ImportElementsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportFunctionValueAliasInfo importFunctionValueAliasInfo(ImportFunctionValueAlias node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportFunctionValueAliasInfo result);
+    assert (is ImportFunctionValueAliasInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportFunctionValueElementInfo importFunctionValueElementInfo(ImportFunctionValueElement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportFunctionValueElementInfo result);
+    assert (is ImportFunctionValueElementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportTypeAliasInfo importTypeAliasInfo(ImportTypeAlias node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportTypeAliasInfo result);
+    assert (is ImportTypeAliasInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportTypeElementInfo importTypeElementInfo(ImportTypeElement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportTypeElementInfo result);
+    assert (is ImportTypeElementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ImportWildcardInfo importWildcardInfo(ImportWildcard node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ImportWildcardInfo result);
+    assert (is ImportWildcardInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InModifierInfo inModifierInfo(InModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InModifierInfo result);
+    assert (is InModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InOperationInfo inOperationInfo(InOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InOperationInfo result);
+    assert (is InOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InitialComprehensionClauseInfo initialComprehensionClauseInfo(InitialComprehensionClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InitialComprehensionClauseInfo result);
+    assert (is InitialComprehensionClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InlineDefinitionArgumentInfo inlineDefinitionArgumentInfo(InlineDefinitionArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InlineDefinitionArgumentInfo result);
+    assert (is InlineDefinitionArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IntegerLiteralInfo integerLiteralInfo(IntegerLiteral node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IntegerLiteralInfo result);
+    assert (is IntegerLiteralInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InterfaceAliasDefinitionInfo interfaceAliasDefinitionInfo(InterfaceAliasDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InterfaceAliasDefinitionInfo result);
+    assert (is InterfaceAliasDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InterfaceBodyInfo interfaceBodyInfo(InterfaceBody node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InterfaceBodyInfo result);
+    assert (is InterfaceBodyInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InterfaceDecInfo interfaceDecInfo(InterfaceDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InterfaceDecInfo result);
+    assert (is InterfaceDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InterfaceDefinitionInfo interfaceDefinitionInfo(InterfaceDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InterfaceDefinitionInfo result);
+    assert (is InterfaceDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IntersectAssignmentOperationInfo intersectAssignmentOperationInfo(IntersectAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IntersectAssignmentOperationInfo result);
+    assert (is IntersectAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IntersectionOperationInfo intersectionOperationInfo(IntersectionOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IntersectionOperationInfo result);
+    assert (is IntersectionOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IntersectionTypeInfo intersectionTypeInfo(IntersectionType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IntersectionTypeInfo result);
+    assert (is IntersectionTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InvocationInfo invocationInfo(Invocation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InvocationInfo result);
+    assert (is InvocationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 InvocationStatementInfo invocationStatementInfo(InvocationStatement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is InvocationStatementInfo result);
+    assert (is InvocationStatementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IsCaseInfo isCaseInfo(IsCase node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IsCaseInfo result);
+    assert (is IsCaseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IsConditionInfo isConditionInfo(IsCondition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IsConditionInfo result);
+    assert (is IsConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IsOperationInfo isOperationInfo(IsOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IsOperationInfo result);
+    assert (is IsOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IterableInfo iterableInfo(Iterable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IterableInfo result);
+    assert (is IterableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 IterableTypeInfo iterableTypeInfo(IterableType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is IterableTypeInfo result);
+    assert (is IterableTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 KeySubscriptInfo keySubscriptInfo(KeySubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is KeySubscriptInfo result);
+    assert (is KeySubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LIdentifierInfo lIdentifierInfo(LIdentifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LIdentifierInfo result);
+    assert (is LIdentifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LargeAsOperationInfo largeAsOperationInfo(LargeAsOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LargeAsOperationInfo result);
+    assert (is LargeAsOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LargerOperationInfo largerOperationInfo(LargerOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LargerOperationInfo result);
+    assert (is LargerOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LazySpecificationInfo lazySpecificationInfo(LazySpecification node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LazySpecificationInfo result);
+    assert (is LazySpecificationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LazySpecifierInfo lazySpecifierInfo(LazySpecifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LazySpecifierInfo result);
+    assert (is LazySpecifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LetExpressionInfo letExpressionInfo(LetExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LetExpressionInfo result);
+    assert (is LetExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LiteralInfo literalInfo(Literal node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LiteralInfo result);
+    assert (is LiteralInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LocalModifierInfo localModifierInfo(LocalModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LocalModifierInfo result);
+    assert (is LocalModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LogicalAssignmentOperationInfo logicalAssignmentOperationInfo(LogicalAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LogicalAssignmentOperationInfo result);
+    assert (is LogicalAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 LogicalOperationInfo logicalOperationInfo(LogicalOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is LogicalOperationInfo result);
+    assert (is LogicalOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MainTypeInfo mainTypeInfo(MainType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MainTypeInfo result);
+    assert (is MainTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MatchCaseInfo matchCaseInfo(MatchCase node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MatchCaseInfo result);
+    assert (is MatchCaseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MeasureOperationInfo measureOperationInfo(MeasureOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MeasureOperationInfo result);
+    assert (is MeasureOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MeasureSubscriptInfo measureSubscriptInfo(MeasureSubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MeasureSubscriptInfo result);
+    assert (is MeasureSubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MemberDecInfo memberDecInfo(MemberDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MemberDecInfo result);
+    assert (is MemberDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MemberMetaInfo memberMetaInfo(MemberMeta node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MemberMetaInfo result);
+    assert (is MemberMetaInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MemberNameWithTypeArgumentsInfo memberNameWithTypeArgumentsInfo(MemberNameWithTypeArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MemberNameWithTypeArgumentsInfo result);
+    assert (is MemberNameWithTypeArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MemberOperatorInfo memberOperatorInfo(MemberOperator node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MemberOperatorInfo result);
+    assert (is MemberOperatorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MetaInfo metaInfo(Meta node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MetaInfo result);
+    assert (is MetaInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModifierInfo modifierInfo(Modifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModifierInfo result);
+    assert (is ModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModuleBodyInfo moduleBodyInfo(ModuleBody node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModuleBodyInfo result);
+    assert (is ModuleBodyInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModuleCompilationUnitInfo moduleCompilationUnitInfo(ModuleCompilationUnit node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModuleCompilationUnitInfo result);
+    assert (is ModuleCompilationUnitInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModuleDecInfo moduleDecInfo(ModuleDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModuleDecInfo result);
+    assert (is ModuleDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModuleDescriptorInfo moduleDescriptorInfo(ModuleDescriptor node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModuleDescriptorInfo result);
+    assert (is ModuleDescriptorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ModuleImportInfo moduleImportInfo(ModuleImport node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ModuleImportInfo result);
+    assert (is ModuleImportInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 MultiplyAssignmentOperationInfo multiplyAssignmentOperationInfo(MultiplyAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is MultiplyAssignmentOperationInfo result);
+    assert (is MultiplyAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NameWithTypeArgumentsInfo nameWithTypeArgumentsInfo(NameWithTypeArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NameWithTypeArgumentsInfo result);
+    assert (is NameWithTypeArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NamedArgumentInfo namedArgumentInfo(NamedArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NamedArgumentInfo result);
+    assert (is NamedArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NamedArgumentsInfo namedArgumentsInfo(NamedArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NamedArgumentsInfo result);
+    assert (is NamedArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NegationOperationInfo negationOperationInfo(NegationOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NegationOperationInfo result);
-    return result;
-}
-
-shared
-NodeInfo nodeInfo(Node node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NodeInfo result);
+    assert (is NegationOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NonemptyConditionInfo nonemptyConditionInfo(NonemptyCondition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NonemptyConditionInfo result);
+    assert (is NonemptyConditionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NonemptyOperationInfo nonemptyOperationInfo(NonemptyOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NonemptyOperationInfo result);
+    assert (is NonemptyOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NotEqualOperationInfo notEqualOperationInfo(NotEqualOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NotEqualOperationInfo result);
+    assert (is NotEqualOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 NotOperationInfo notOperationInfo(NotOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is NotOperationInfo result);
+    assert (is NotOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ObjectArgumentInfo objectArgumentInfo(ObjectArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ObjectArgumentInfo result);
+    assert (is ObjectArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ObjectDefinitionInfo objectDefinitionInfo(ObjectDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ObjectDefinitionInfo result);
+    assert (is ObjectDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ObjectExpressionInfo objectExpressionInfo(ObjectExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ObjectExpressionInfo result);
+    assert (is ObjectExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OfOperationInfo ofOperationInfo(OfOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OfOperationInfo result);
+    assert (is OfOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OpenBoundInfo openBoundInfo(OpenBound node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OpenBoundInfo result);
+    assert (is OpenBoundInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OperationInfo operationInfo(Operation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OperationInfo result);
+    assert (is OperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OptionalTypeInfo optionalTypeInfo(OptionalType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OptionalTypeInfo result);
+    assert (is OptionalTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OrAssignmentOperationInfo orAssignmentOperationInfo(OrAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OrAssignmentOperationInfo result);
+    assert (is OrAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OrOperationInfo orOperationInfo(OrOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OrOperationInfo result);
+    assert (is OrOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OutModifierInfo outModifierInfo(OutModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OutModifierInfo result);
+    assert (is OutModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 OuterInfo outerInfo(Outer node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is OuterInfo result);
+    assert (is OuterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PackageInfo packageInfo(Package node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PackageInfo result);
+    assert (is PackageInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PackageCompilationUnitInfo packageCompilationUnitInfo(PackageCompilationUnit node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PackageCompilationUnitInfo result);
+    assert (is PackageCompilationUnitInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PackageDecInfo packageDecInfo(PackageDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PackageDecInfo result);
+    assert (is PackageDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PackageDescriptorInfo packageDescriptorInfo(PackageDescriptor node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PackageDescriptorInfo result);
+    assert (is PackageDescriptorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PackageQualifierInfo packageQualifierInfo(PackageQualifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PackageQualifierInfo result);
+    assert (is PackageQualifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ParameterInfo parameterInfo(Parameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ParameterInfo result);
+    assert (is ParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ParameterReferenceInfo parameterReferenceInfo(ParameterReference node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ParameterReferenceInfo result);
+    assert (is ParameterReferenceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ParametersInfo parametersInfo(Parameters node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ParametersInfo result);
+    assert (is ParametersInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PatternInfo patternInfo(Pattern node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PatternInfo result);
+    assert (is PatternInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PatternListInfo patternListInfo(PatternList node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PatternListInfo result);
+    assert (is PatternListInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PositionalArgumentsInfo positionalArgumentsInfo(PositionalArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PositionalArgumentsInfo result);
+    assert (is PositionalArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PostfixDecrementOperationInfo postfixDecrementOperationInfo(PostfixDecrementOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PostfixDecrementOperationInfo result);
+    assert (is PostfixDecrementOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PostfixIncrementOperationInfo postfixIncrementOperationInfo(PostfixIncrementOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PostfixIncrementOperationInfo result);
+    assert (is PostfixIncrementOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PostfixOperationInfo postfixOperationInfo(PostfixOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PostfixOperationInfo result);
+    assert (is PostfixOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrefixDecrementOperationInfo prefixDecrementOperationInfo(PrefixDecrementOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrefixDecrementOperationInfo result);
+    assert (is PrefixDecrementOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrefixIncrementOperationInfo prefixIncrementOperationInfo(PrefixIncrementOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrefixIncrementOperationInfo result);
+    assert (is PrefixIncrementOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrefixOperationInfo prefixOperationInfo(PrefixOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrefixOperationInfo result);
+    assert (is PrefixOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrefixPostfixStatementInfo prefixPostfixStatementInfo(PrefixPostfixStatement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrefixPostfixStatementInfo result);
+    assert (is PrefixPostfixStatementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrimaryInfo primaryInfo(Primary node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrimaryInfo result);
+    assert (is PrimaryInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 PrimaryTypeInfo primaryTypeInfo(PrimaryType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is PrimaryTypeInfo result);
+    assert (is PrimaryTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ProductOperationInfo productOperationInfo(ProductOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ProductOperationInfo result);
+    assert (is ProductOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 QualifiedExpressionInfo qualifiedExpressionInfo(QualifiedExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is QualifiedExpressionInfo result);
+    assert (is QualifiedExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 QualifiedTypeInfo qualifiedTypeInfo(QualifiedType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is QualifiedTypeInfo result);
+    assert (is QualifiedTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 QuotientOperationInfo quotientOperationInfo(QuotientOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is QuotientOperationInfo result);
+    assert (is QuotientOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 RangeSubscriptInfo rangeSubscriptInfo(RangeSubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is RangeSubscriptInfo result);
+    assert (is RangeSubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 RemainderAssignmentOperationInfo remainderAssignmentOperationInfo(RemainderAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is RemainderAssignmentOperationInfo result);
+    assert (is RemainderAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 RemainderOperationInfo remainderOperationInfo(RemainderOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is RemainderOperationInfo result);
+    assert (is RemainderOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 RequiredParameterInfo requiredParameterInfo(RequiredParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is RequiredParameterInfo result);
+    assert (is RequiredParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ResourceInfo resourceInfo(Resource node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ResourceInfo result);
+    assert (is ResourceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ResourcesInfo resourcesInfo(Resources node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ResourcesInfo result);
+    assert (is ResourcesInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ReturnInfo returnInfo(Return node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ReturnInfo result);
+    assert (is ReturnInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SafeMemberOperatorInfo safeMemberOperatorInfo(SafeMemberOperator node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SafeMemberOperatorInfo result);
+    assert (is SafeMemberOperatorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SatisfiedTypesInfo satisfiedTypesInfo(SatisfiedTypes node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SatisfiedTypesInfo result);
+    assert (is SatisfiedTypesInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ScaleOperationInfo scaleOperationInfo(ScaleOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ScaleOperationInfo result);
+    assert (is ScaleOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SelfReferenceInfo selfReferenceInfo(SelfReference node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SelfReferenceInfo result);
+    assert (is SelfReferenceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SequentialTypeInfo sequentialTypeInfo(SequentialType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SequentialTypeInfo result);
+    assert (is SequentialTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SetAssignmentOperationInfo setAssignmentOperationInfo(SetAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SetAssignmentOperationInfo result);
+    assert (is SetAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SetOperationInfo setOperationInfo(SetOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SetOperationInfo result);
+    assert (is SetOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SimpleTypeInfo simpleTypeInfo(SimpleType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SimpleTypeInfo result);
+    assert (is SimpleTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SmallAsOperationInfo smallAsOperationInfo(SmallAsOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SmallAsOperationInfo result);
+    assert (is SmallAsOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SmallerOperationInfo smallerOperationInfo(SmallerOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SmallerOperationInfo result);
+    assert (is SmallerOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpanFromSubscriptInfo spanFromSubscriptInfo(SpanFromSubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpanFromSubscriptInfo result);
+    assert (is SpanFromSubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpanOperationInfo spanOperationInfo(SpanOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpanOperationInfo result);
+    assert (is SpanOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpanSubscriptInfo spanSubscriptInfo(SpanSubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpanSubscriptInfo result);
+    assert (is SpanSubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpanToSubscriptInfo spanToSubscriptInfo(SpanToSubscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpanToSubscriptInfo result);
+    assert (is SpanToSubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpecificationInfo specificationInfo(Specification node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpecificationInfo result);
+    assert (is SpecificationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpecifiedArgumentInfo specifiedArgumentInfo(SpecifiedArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpecifiedArgumentInfo result);
+    assert (is SpecifiedArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpecifiedPatternInfo specifiedPatternInfo(SpecifiedPattern node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpecifiedPatternInfo result);
+    assert (is SpecifiedPatternInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpecifiedVariableInfo specifiedVariableInfo(SpecifiedVariable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpecifiedVariableInfo result);
+    assert (is SpecifiedVariableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpecifierInfo specifierInfo(Specifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpecifierInfo result);
+    assert (is SpecifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpreadArgumentInfo spreadArgumentInfo(SpreadArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpreadArgumentInfo result);
+    assert (is SpreadArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpreadMemberOperatorInfo spreadMemberOperatorInfo(SpreadMemberOperator node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpreadMemberOperatorInfo result);
+    assert (is SpreadMemberOperatorInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SpreadTypeInfo spreadTypeInfo(SpreadType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SpreadTypeInfo result);
+    assert (is SpreadTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 StatementInfo statementInfo(Statement node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is StatementInfo result);
+    assert (is StatementInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 StringLiteralInfo stringLiteralInfo(StringLiteral node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is StringLiteralInfo result);
+    assert (is StringLiteralInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 StringTemplateInfo stringTemplateInfo(StringTemplate node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is StringTemplateInfo result);
+    assert (is StringTemplateInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SubscriptInfo subscriptInfo(Subscript node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SubscriptInfo result);
+    assert (is SubscriptInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SubtractAssignmentOperationInfo subtractAssignmentOperationInfo(SubtractAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SubtractAssignmentOperationInfo result);
+    assert (is SubtractAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SumOperationInfo sumOperationInfo(SumOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SumOperationInfo result);
+    assert (is SumOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SuperInfo superInfo(Super node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SuperInfo result);
+    assert (is SuperInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SwitchCaseElseInfo switchCaseElseInfo(SwitchCaseElse node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SwitchCaseElseInfo result);
+    assert (is SwitchCaseElseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SwitchCaseElseExpressionInfo switchCaseElseExpressionInfo(SwitchCaseElseExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SwitchCaseElseExpressionInfo result);
+    assert (is SwitchCaseElseExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SwitchCasesInfo switchCasesInfo(SwitchCases node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SwitchCasesInfo result);
+    assert (is SwitchCasesInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 SwitchClauseInfo switchClauseInfo(SwitchClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is SwitchClauseInfo result);
+    assert (is SwitchClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ThenOperationInfo thenOperationInfo(ThenOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ThenOperationInfo result);
+    assert (is ThenOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ThisInfo thisInfo(This node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ThisInfo result);
+    assert (is ThisInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ThrowInfo throwInfo(Throw node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ThrowInfo result);
+    assert (is ThrowInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TryCatchFinallyInfo tryCatchFinallyInfo(TryCatchFinally node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TryCatchFinallyInfo result);
+    assert (is TryCatchFinallyInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TryClauseInfo tryClauseInfo(TryClause node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TryClauseInfo result);
+    assert (is TryClauseInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TupleInfo tupleInfo(Tuple node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TupleInfo result);
+    assert (is TupleInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TuplePatternInfo tuplePatternInfo(TuplePattern node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TuplePatternInfo result);
+    assert (is TuplePatternInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TupleTypeInfo tupleTypeInfo(TupleType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TupleTypeInfo result);
+    assert (is TupleTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeInfo typeInfo(Type node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeInfo result);
+    assert (is TypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeAliasDefinitionInfo typeAliasDefinitionInfo(TypeAliasDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeAliasDefinitionInfo result);
+    assert (is TypeAliasDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeArgumentInfo typeArgumentInfo(TypeArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeArgumentInfo result);
+    assert (is TypeArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeArgumentsInfo typeArgumentsInfo(TypeArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeArgumentsInfo result);
+    assert (is TypeArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeConstraintInfo typeConstraintInfo(TypeConstraint node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeConstraintInfo result);
+    assert (is TypeConstraintInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeDecInfo typeDecInfo(TypeDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeDecInfo result);
+    assert (is TypeDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeDeclarationInfo typeDeclarationInfo(TypeDeclaration node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeDeclarationInfo result);
+    assert (is TypeDeclarationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeIshInfo typeIshInfo(TypeIsh node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeIshInfo result);
+    assert (is TypeIshInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeListInfo typeListInfo(TypeList node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeListInfo result);
+    assert (is TypeListInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeMetaInfo typeMetaInfo(TypeMeta node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeMetaInfo result);
+    assert (is TypeMetaInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeModifierInfo typeModifierInfo(TypeModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeModifierInfo result);
+    assert (is TypeModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeNameWithTypeArgumentsInfo typeNameWithTypeArgumentsInfo(TypeNameWithTypeArguments node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeNameWithTypeArgumentsInfo result);
+    assert (is TypeNameWithTypeArgumentsInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeParameterInfo typeParameterInfo(TypeParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeParameterInfo result);
+    assert (is TypeParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeParametersInfo typeParametersInfo(TypeParameters node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeParametersInfo result);
+    assert (is TypeParametersInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypeSpecifierInfo typeSpecifierInfo(TypeSpecifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypeSpecifierInfo result);
+    assert (is TypeSpecifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypedDeclarationInfo typedDeclarationInfo(TypedDeclaration node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypedDeclarationInfo result);
+    assert (is TypedDeclarationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 TypedVariableInfo typedVariableInfo(TypedVariable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is TypedVariableInfo result);
+    assert (is TypedVariableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UIdentifierInfo uIdentifierInfo(UIdentifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UIdentifierInfo result);
+    assert (is UIdentifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnaryArithmeticOperationInfo unaryArithmeticOperationInfo(UnaryArithmeticOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnaryArithmeticOperationInfo result);
+    assert (is UnaryArithmeticOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnaryIshOperationInfo unaryIshOperationInfo(UnaryIshOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnaryIshOperationInfo result);
+    assert (is UnaryIshOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnaryOperationInfo unaryOperationInfo(UnaryOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnaryOperationInfo result);
+    assert (is UnaryOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnaryTypeOperationInfo unaryTypeOperationInfo(UnaryTypeOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnaryTypeOperationInfo result);
+    assert (is UnaryTypeOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnionAssignmentOperationInfo unionAssignmentOperationInfo(UnionAssignmentOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnionAssignmentOperationInfo result);
+    assert (is UnionAssignmentOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnionOperationInfo unionOperationInfo(UnionOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnionOperationInfo result);
+    assert (is UnionOperationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnionTypeInfo unionTypeInfo(UnionType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnionTypeInfo result);
+    assert (is UnionTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnionableTypeInfo unionableTypeInfo(UnionableType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnionableTypeInfo result);
+    assert (is UnionableTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 UnspecifiedVariableInfo unspecifiedVariableInfo(UnspecifiedVariable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is UnspecifiedVariableInfo result);
+    assert (is UnspecifiedVariableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueArgumentInfo valueArgumentInfo(ValueArgument node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueArgumentInfo result);
+    assert (is ValueArgumentInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueConstructorDefinitionInfo valueConstructorDefinitionInfo(ValueConstructorDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueConstructorDefinitionInfo result);
+    assert (is ValueConstructorDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueDecInfo valueDecInfo(ValueDec node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueDecInfo result);
+    assert (is ValueDecInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueDeclarationInfo valueDeclarationInfo(ValueDeclaration node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueDeclarationInfo result);
+    assert (is ValueDeclarationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueDefinitionInfo valueDefinitionInfo(ValueDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueDefinitionInfo result);
+    assert (is ValueDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueExpressionInfo valueExpressionInfo(ValueExpression node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueExpressionInfo result);
+    assert (is ValueExpressionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueGetterDefinitionInfo valueGetterDefinitionInfo(ValueGetterDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueGetterDefinitionInfo result);
+    assert (is ValueGetterDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueModifierInfo valueModifierInfo(ValueModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueModifierInfo result);
+    assert (is ValueModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueParameterInfo valueParameterInfo(ValueParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueParameterInfo result);
+    assert (is ValueParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueSetterDefinitionInfo valueSetterDefinitionInfo(ValueSetterDefinition node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueSetterDefinitionInfo result);
+    assert (is ValueSetterDefinitionInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 ValueSpecificationInfo valueSpecificationInfo(ValueSpecification node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is ValueSpecificationInfo result);
+    assert (is ValueSpecificationInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VariableInfo variableInfo(Variable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VariableInfo result);
+    assert (is VariableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VariablePatternInfo variablePatternInfo(VariablePattern node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VariablePatternInfo result);
+    assert (is VariablePatternInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VariadicParameterInfo variadicParameterInfo(VariadicParameter node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VariadicParameterInfo result);
+    assert (is VariadicParameterInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VariadicTypeInfo variadicTypeInfo(VariadicType node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VariadicTypeInfo result);
+    assert (is VariadicTypeInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VariadicVariableInfo variadicVariableInfo(VariadicVariable node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VariadicVariableInfo result);
+    assert (is VariadicVariableInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VarianceInfo varianceInfo(Variance node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VarianceInfo result);
+    assert (is VarianceInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 VoidModifierInfo voidModifierInfo(VoidModifier node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is VoidModifierInfo result);
+    assert (is VoidModifierInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 WhileInfo whileInfo(While node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is WhileInfo result);
+    assert (is WhileInfo result = nodeInfo(node));
     return result;
 }
 
 shared
 WithinOperationInfo withinOperationInfo(WithinOperation node) {
-    value result = node.data else (node.data = wrapNode(node));
-    assert (is WithinOperationInfo result);
+    assert (is WithinOperationInfo result = nodeInfo(node));
     return result;
 }

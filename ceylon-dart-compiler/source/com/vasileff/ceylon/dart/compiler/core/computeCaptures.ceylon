@@ -27,7 +27,6 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
     ValueSpecificationInfo,
-    getTcNode,
     NodeInfo,
     anyClassInfo
 }
