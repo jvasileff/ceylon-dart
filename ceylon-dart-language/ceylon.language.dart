@@ -228,7 +228,7 @@ $dart$core.bool $package$any([Iterable values]) {{
 
 $dart$core.bool any([Iterable values]) => $package$any(values);
 
-$dart$core.Object $package$apply([Callable f, $dart$core.Object args]) => $package$unflatten(f).f(args);
+$dart$core.Object $package$apply([Callable f, $dart$core.Object args]) => f.s(args);
 
 $dart$core.Object apply([Callable f, $dart$core.Object args]) => $package$apply(f, args);
 
@@ -5844,7 +5844,7 @@ class language_ {
     $dart$core.String get version => "1.2.0-DP2-SNAPSHOT";
     $dart$core.int get majorVersion => 1;
     $dart$core.int get minorVersion => 2;
-    $dart$core.int get releaseVersion => 0;
+    $dart$core.int get releaseVersion => 1;
     $dart$core.String get versionName => "A Series Of Unlikely Explanations";
     $dart$core.int get majorVersionBinary => 8;
     $dart$core.int get minorVersionBinary => 0;
