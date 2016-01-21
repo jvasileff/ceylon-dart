@@ -1,3 +1,16 @@
+import ceylon.collection {
+    LinkedList
+}
+
+import com.redhat.ceylon.common {
+    Backend
+}
+import com.redhat.ceylon.compiler.typechecker.analyzer {
+    AnalysisError
+}
+import com.redhat.ceylon.compiler.typechecker.parser {
+    RecognitionError
+}
 import com.redhat.ceylon.compiler.typechecker.tree {
     Visitor,
     Node,
@@ -8,21 +21,6 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     TreeUtil {
         isForBackend
     }
-}
-import ceylon.collection {
-    LinkedList
-}
-import com.redhat.ceylon.compiler.typechecker.parser {
-    RecognitionError
-}
-import com.redhat.ceylon.compiler.typechecker.analyzer {
-    AnalysisError
-}
-import ceylon.interop.java {
-    CeylonIterable
-}
-import com.redhat.ceylon.common {
-    Backend
 }
 import com.redhat.ceylon.model.typechecker.model {
     Unit
@@ -83,7 +81,7 @@ class ErrorCollectingVisitor() extends Visitor() {
             || isForBackend(annotations, Backend.\iHeader, unit);
 
     void addErrors(Node that) {
-        for (m in CeylonIterable(that.errors)) {
+        for (m in that.errors) {
             "By definition"
             assert (is AnalysisMessage | RecognitionError m);
 

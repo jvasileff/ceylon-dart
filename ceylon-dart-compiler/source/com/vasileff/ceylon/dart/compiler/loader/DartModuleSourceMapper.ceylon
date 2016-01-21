@@ -2,7 +2,6 @@ import ceylon.file {
     File
 }
 import ceylon.interop.java {
-    CeylonIterable,
     javaString,
     javaClass
 }
@@ -84,7 +83,7 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
         // clear the implicit langauge module import added by createModule()
         m.imports.clear();
 
-        for (dependency in CeylonIterable(dependencies)) {
+        for (dependency in dependencies) {
             // Add a ModuleImport to the module. The module will be resolved later, at
             // the request of ModuleValidator.
 
