@@ -6,7 +6,7 @@ tagged("Environment")
 shared native object language {
     
     "The Ceylon language version."
-    shared native String version => "1.2.0";
+    shared native String version => "1.2.1";
     
     "The Ceylon language major version."
     shared native Integer majorVersion => 1;
@@ -15,7 +15,7 @@ shared native object language {
     shared native Integer minorVersion => 2;
     
     "The Ceylon language release version."
-    shared native Integer releaseVersion => 0;
+    shared native Integer releaseVersion => 1;
     
     "The Ceylon language release name."
     shared native String versionName => "A Series Of Unlikely Explanations";
@@ -52,7 +52,7 @@ shared native("dart") object language {
     shared native("dart") String version => "1.2.0-DP2-SNAPSHOT";
     shared native("dart") Integer majorVersion => 1;
     shared native("dart") Integer minorVersion => 2;
-    shared native("dart") Integer releaseVersion => 0;
+    shared native("dart") Integer releaseVersion => 1;
     shared native("dart") String versionName => "A Series Of Unlikely Explanations";
     shared native("dart") Integer majorVersionBinary => 8;
     shared native("dart") Integer minorVersionBinary => 0;
