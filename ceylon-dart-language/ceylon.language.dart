@@ -662,7 +662,7 @@ class Collection$permutations$$anonymous$0_$$anonymous$5_ implements Iterator {
         return (() {
             $dart$core.bool doElse$11 = true;
             {
-                Sequential tmp$12 = _$elements.collect(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item));
+                Sequential tmp$12 = _$elements.map(new dart$Callable(([$dart$core.Object $r]) => ($r as Entry).item)).sequence();
                 if (tmp$12 is Sequence) {
                     Sequence permutation;
                     permutation = tmp$12 as Sequence;
@@ -998,6 +998,7 @@ class Contextual {
         }
         return result;
     }
+    Contextual$Using $new$Contextual$Using([$dart$core.Object _$newValue]) => new Contextual$Using(this, _$newValue);
 }
 class Correspondence$keys$$anonymous$0_ implements Category {
     Correspondence $outer$ceylon$language$Correspondence;
@@ -1404,7 +1405,7 @@ class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
                         Character next;
                         next = next$8 as Character;
                         doElse$7 = false;
-                        _$peekedWasSeparator = Boolean.nativeValue($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting.f(next) as Boolean);
+                        _$peekedWasSeparator = Boolean.nativeValue(($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
                     }
                 }
                 if (doElse$7) {
@@ -2544,13 +2545,19 @@ class impl$ElementImpl implements serialization$Element {
     }
 }
 class impl$MemberImpl implements serialization$Member {
-    impl$MemberImpl([meta$declaration$FunctionOrValueDeclaration attribute]) {
-        meta$declaration$ValueDeclaration attribute$0;
-        if (!(attribute is meta$declaration$ValueDeclaration)) {
-            throw new AssertionError("Violated: is ValueDeclaration attribute");
+    void _$init$impl$MemberImpl([$dart$core.int $bitmap, meta$declaration$FunctionOrValueDeclaration $$attribute]) {
+        if (0 != ($bitmap & 1)) {
+            meta$declaration$ValueDeclaration attribute$0;
+            if (!($$attribute is meta$declaration$ValueDeclaration)) {
+                throw new AssertionError("Violated: is ValueDeclaration attribute");
+            }
+            attribute$0 = $$attribute as meta$declaration$ValueDeclaration;
+            this.attribute = attribute$0;
         }
-        attribute$0 = attribute as meta$declaration$ValueDeclaration;
-        this.attribute = attribute$0;
+    }
+    impl$MemberImpl([meta$declaration$FunctionOrValueDeclaration attribute]) : this.$d(1, attribute);
+    impl$MemberImpl.$d([$dart$core.int $bitmap, meta$declaration$FunctionOrValueDeclaration $$attribute]) {
+        _$init$impl$MemberImpl($bitmap | 1, $$attribute);
     }
     meta$declaration$ValueDeclaration attribute;
     $dart$core.Object referred([$dart$core.Object instance]) {
@@ -11768,7 +11775,7 @@ class set$$anonymous$4_ implements Set {
             $dart$core.bool doElse$11 = true;
             if (!(null == current)) {
                 doElse$11 = false;
-                return $capture$set$choosing.f(current, element);
+                return ($capture$set$choosing as Callable).f(current, element);
             }
             if (doElse$11) {
                 return element;
