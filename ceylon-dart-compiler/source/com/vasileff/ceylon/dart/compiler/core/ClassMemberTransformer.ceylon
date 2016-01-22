@@ -27,7 +27,8 @@ import ceylon.ast.core {
     DynamicValue,
     DefaultedParameter,
     DefaultedCallableParameter,
-    AnyClass
+    AnyClass,
+    Parameters
 }
 import ceylon.interop.java {
     CeylonList
@@ -43,7 +44,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     ConstructorModel=Constructor,
     FunctionalModel=Functional,
-    ClassModel=Class
+    ClassModel=Class,
+    ParameterListModel=ParameterList
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -253,16 +255,16 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
     }
 
+// FIXME WIP document that parameters are required if available.
     DartMethodDeclaration generateBridgeForForwardDeclaredMethod
-            (FunctionDeclaration that)
-        =>  let (info = anyFunctionInfo(that))
-            generateMethodDefinitionRaw {
-                info;
-                info.declarationModel;
+            (DScope scope, FunctionModel declarationModel, [Parameters+]? parameters)
+        =>  generateMethodDefinitionRaw {
+                scope;
+                declarationModel;
                 generateForwardDeclaredForwarder {
-                    info;
-                    info.declarationModel;
-                    that.parameterLists;
+                    scope;
+                    declarationModel;
+                    parameters;
                 };
             };
 
@@ -306,7 +308,11 @@ class ClassMemberTransformer(CompilationContext ctx)
                     };
                 },
                 // The method, which forwards to the callableVariable
-                generateBridgeForForwardDeclaredMethod(that)
+                generateBridgeForForwardDeclaredMethod {
+                    info;
+                    info.declarationModel;
+                    info.node.parameterLists;
+                }
                 // No need to generateDefaultValueStaticMethods since forward declared
                 // methods may not be 'default' (There may be default arguments, but the
                 // method may not be overriden, and therefore the afformentioned function
@@ -375,10 +381,76 @@ class ClassMemberTransformer(CompilationContext ctx)
         =>  generateForMethodGetterOrSetterDefinition(that);
 
     shared actual
-    [DartClassMember*] transformValueSpecification(ValueSpecification that)
-        =>  if (ValueSpecificationInfo(that).declaration.shortcutRefinement)
-            then [generateMethodGetterOrSetterDeclaration(that)]
-            else [];
+    [DartClassMember*] transformValueSpecification(ValueSpecification that) {
+        value info = ValueSpecificationInfo(that);
+        value declarationModel = info.declaration;
+
+        if (!declarationModel.shortcutRefinement) {
+            // specifications that aren't shortcut refinements will be handled by the
+            // ClassStatementTransformer
+            return [];
+        }
+
+        // For shortcut refinements w/value specifications (i.e. 'member = x;'), make
+        // a field declaration here. Assignment to the field will be handled by
+        // ClassStatementTransformer
+
+        switch (declarationModel)
+        case (is ValueModel) {
+            // TODO reduce copy & paste from transformValueDeclaration()
+
+            if (dartTypes.valueMappedToNonField(declarationModel)) {
+                // For Ceylon reference values that are translated to non-value Dart
+                // elements. See transformValueDeclaration()
+                return [
+                    generateFieldDeclaration {
+                        info;
+                        declarationModel;
+                    },
+                    generateMethodToReferenceForwarder {
+                        info;
+                        declarationModel;
+                    }
+                ];
+            }
+            // Else, just a regular field.
+            return [generateMethodGetterOrSetterDeclaration(that)];
+        }
+        case (is FunctionModel) {
+            // TODO reduce copy & paste from transformFunctionDeclaration()
+
+            // This resembles a forward declared function
+
+            value callableVariableName
+                =   dartTypes.getName(declarationModel) + "$c";
+
+            value callableVariable
+                =   DartSimpleIdentifier(callableVariableName);
+
+            return [
+                // Field to hold the Callable for the forward declared function
+                DartFieldDeclaration {
+                    false;
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeName {
+                            info;
+                            declarationModel.typedReference.fullType;
+                        };
+                        [DartVariableDeclaration {
+                            callableVariable;
+                        }];
+                    };
+                },
+                // The method, which forwards to the callableVariable
+                generateBridgeForForwardDeclaredMethod {
+                    info;
+                    declarationModel;
+                    null;
+                }
+            ];
+        }
+    }
 
     shared actual
     [DartMethodDeclaration*] transformFunctionDefinition(FunctionDefinition that)

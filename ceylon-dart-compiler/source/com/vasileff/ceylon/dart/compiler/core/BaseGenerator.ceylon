@@ -1281,8 +1281,33 @@ class BaseGenerator(CompilationContext ctx)
     }
 
     shared
-    DartFunctionExpression generateForwardDeclaredForwarder
-            (DScope scope, FunctionModel functionModel, [Parameters+] parameterLists) {
+    DartFunctionExpression generateForwardDeclaredForwarder(
+            DScope scope, FunctionModel functionModel,
+            "The AST nodes for the function's parameter lists. These *must* be provided if
+             available, as they are necessary to generate default argument expressions.
+
+             [[parameters]] may be `null` for shortcut refinements made by value
+             specification, in which case there are no parameter lists. If `null`, the
+             parameters will be obtained from the [[functionModel]]."
+            [Parameters+]? parameters) {
+
+        [[ParameterModel*]*] parameterLists;
+        [Parameters+]? parameterNodes;
+
+        switch (parameters)
+        case (is Null) {
+            parameterNodes = null;
+
+            parameterLists = CeylonList(functionModel.parameterLists)
+                .collect((ps) => CeylonIterable(ps.parameters).sequence());
+        }
+        else { //(is [Parameters+]) {
+            parameterNodes = parameters;
+
+            parameterLists = parameters
+                .collect((ps) => ps.children.map(parameterInfo)
+                    .collect((i) =>  i.parameterModel));
+        }
 
         // For multiple parameter lists, eagerly call the delegate in case there are side
         // effects. https://github.com/ceylon/ceylon/issues/3916
@@ -1331,29 +1356,24 @@ class BaseGenerator(CompilationContext ctx)
                 =   DartSimpleIdentifier(callableVariableName + (i + 1).string);
 
             value arguments
-                =   list.parameters.collect((p) {
-                        value pInfo = parameterInfo(p);
-
+                =   list.collect((parameterModel) {
                         // we're invoking a Callable, so all arguments must be boxed
                         return
                         withLhsNonNative {
-                            pInfo.parameterModel.type;
+                            parameterModel.type;
                             () => withBoxing {
                                 scope;
-                                pInfo.parameterModel.type;
-                                pInfo.parameterModel.model;
+                                parameterModel.type;
+                                parameterModel.model;
                                 DartSimpleIdentifier {
-                                    dartTypes.getName(pInfo.parameterModel.model);
+                                    dartTypes.getName(parameterModel.model);
                                 };
                             };
                         };
                     });
 
             value hasDefaultedParameters
-                =   list.parameters
-                    .map(parameterInfo)
-                    .map(ParameterInfo.parameterModel)
-                    .any(ParameterModel.defaulted);
+                =   list.any(ParameterModel.defaulted);
 
             value useStaticDefaultArgumentMethods
                 =   hasDefaultedParameters
@@ -1372,7 +1392,7 @@ class BaseGenerator(CompilationContext ctx)
                     else
                         generateDefaultValueAssignments {
                             scope;
-                            [ for (p in list.parameters)
+                            [ for (p in (parameterNodes?.get(i)?.parameters else []))
                               if (is DefaultedParameter p) p];
                         };
 

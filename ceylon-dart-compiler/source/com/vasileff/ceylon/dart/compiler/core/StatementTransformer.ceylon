@@ -492,8 +492,8 @@ class StatementTransformer(CompilationContext ctx)
     [DartStatement] transformValueSpecification(ValueSpecification that) {
         value info = ValueSpecificationInfo(that);
         if (info.declaration is FunctionModel) {
-            // Specification for a forward declared function. Assign to the synthetic
-            // variable that holds the Callable.
+            // Specification for a forward declared function or shortcut refinement.
+            // Assign to the synthetic variable that holds the Callable.
 
             value callableType
                 =   info.declaration.typedReference.fullType;

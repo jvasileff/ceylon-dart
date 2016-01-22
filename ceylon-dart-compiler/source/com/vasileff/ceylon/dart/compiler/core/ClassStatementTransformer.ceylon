@@ -50,8 +50,9 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformValueSpecification(ValueSpecification that)
-        // This could be a specification for a forward declared function, but
-        // StatementTransformer will need to take care of that
+        // This could be a specification for a forward declared function or a shortcut
+        // refinement, but StatementTransformer will need to take care of those
+        // possibilities
         =>  that.transform(statementTransformer);
 
     "Ignore type aliases for now."
