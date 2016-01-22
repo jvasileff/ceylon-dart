@@ -44,8 +44,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     ConstructorModel=Constructor,
     FunctionalModel=Functional,
-    ClassModel=Class,
-    ParameterListModel=ParameterList
+    ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -91,7 +90,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo,
     DeclarationInfo,
     DefaultedParameterInfo,
-    anyFunctionInfo,
     anyClassInfo
 }
 
