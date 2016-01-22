@@ -1,0 +1,35 @@
+class X() {
+    string = "hello";
+}
+class Y() {
+    string => "hello";
+}
+class Z() {
+    shared actual String string = "hello";
+}
+
+
+String bar() => "";
+String barCurry()() => "";
+
+interface I {
+    shared formal String id;
+    shared default String foo() => "defaultFoo";
+}
+
+class A() satisfies I {
+    id = "hello";
+    foo = bar;
+}
+
+class B() satisfies I {
+    id => "hello";
+    value barCurryRef = barCurry;
+    foo = barCurryRef();
+}
+
+class C() satisfies I {
+    shared actual String id = "hello";
+    shared String fdf();
+    fdf = () => "fdfImpl";
+}

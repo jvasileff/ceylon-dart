@@ -1,0 +1,69 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class X {
+    X() {
+        string = "hello";
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+class Y {
+    Y() {}
+    $dart$core.String toString() => "hello";
+}
+class Z {
+    Z() {
+        string = "hello";
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+$dart$core.String $package$bar() => "";
+
+$dart$core.String bar() => $package$bar();
+
+$ceylon$language.Callable $package$barCurry() => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance((() => "")()));
+
+$ceylon$language.Callable barCurry() => $package$barCurry();
+
+abstract class I {
+    $dart$core.String get id;
+    $dart$core.String foo();
+    static $dart$core.String $foo([final I $this]) => "defaultFoo";
+}
+class A implements I {
+    A() {
+        id = "hello";
+        foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance($package$bar()));
+    }
+    $dart$core.String id;
+    $ceylon$language.Callable foo$c;
+    $dart$core.String foo() {
+        return $ceylon$language.String.nativeValue(foo$c.f());
+    }
+}
+class B implements I {
+    B() {
+        _$barCurryRef = new $ceylon$language.dart$Callable($package$barCurry);
+        foo$c = _$barCurryRef.f() as $ceylon$language.Callable;
+    }
+    $dart$core.String get id => "hello";
+    $ceylon$language.Callable _$barCurryRef;
+    $ceylon$language.Callable foo$c;
+    $dart$core.String foo() {
+        return $ceylon$language.String.nativeValue(foo$c.f());
+    }
+}
+class C implements I {
+    C() {
+        id = "hello";
+        fdf$c = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("fdfImpl"));
+    }
+    $dart$core.String id;
+    $ceylon$language.Callable fdf$c;
+    $dart$core.String fdf() {
+        return $ceylon$language.String.nativeValue(fdf$c.f());
+    }
+    $dart$core.String foo() => I.$foo(this);
+}

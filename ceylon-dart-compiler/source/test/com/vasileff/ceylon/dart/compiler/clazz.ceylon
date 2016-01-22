@@ -233,4 +233,8 @@ object clazz {
     shared test
     void extendConstructorWithDefaults()
         =>  compileAndCompare2("clazz/extendConstructorWithDefaults");
+
+    shared test
+    void shortcutRefinementBySpecification()
+        =>  compileAndCompare2("clazz/shortcutRefinementBySpecification");
 }
