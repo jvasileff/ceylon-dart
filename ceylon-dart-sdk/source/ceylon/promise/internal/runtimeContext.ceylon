@@ -68,3 +68,6 @@ shared object runtimeContext satisfies ExecutionContext {
     native("dart") shared actual ExecutionContext childContext() => this;
 }
 
+// dummy impl so we can compile and compile-js
+native("js", "jvm")
+void asyncRun(void task()) {}
