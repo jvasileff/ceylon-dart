@@ -109,7 +109,8 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    MemberOperator
+    MemberOperator,
+    Dec
 }
 import ceylon.collection {
     LinkedList
@@ -129,7 +130,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
@@ -2667,26 +2669,59 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformMeta(Meta that)
-        =>  let(info = expressionInfo(that))
-            DartThrowExpression {
-                DartInstanceCreationExpression {
-                    const = false;
-                    DartConstructorName {
-                        dartTypes.dartTypeName {
-                            info;
-                            ceylonTypes.assertionErrorType;
-                            false; false;
-                        };
-                    };
-                    DartArgumentList {
-                        [DartSimpleStringLiteral {
-                            "Meta expressions not yet supported at \
-                             '``info.filename``: ``info.location``'";
-                        }];
+    DartExpression transformMeta(Meta that) {
+        value info = expressionInfo(that);
+
+        // TODO unsupported feature warning type
+        addWarning(info, Warning.unknownWarning,
+            "**unsupported feature** metamodel expressions are not yet supported");
+
+        return DartThrowExpression {
+            DartInstanceCreationExpression {
+                const = false;
+                DartConstructorName {
+                    dartTypes.dartTypeName {
+                        info;
+                        ceylonTypes.assertionErrorType;
+                        false; false;
                     };
                 };
+                DartArgumentList {
+                    [DartSimpleStringLiteral {
+                        "Meta expressions not yet supported at \
+                         '``info.filename``: ``info.location``'";
+                    }];
+                };
             };
+        };
+    }
+
+    shared actual DartExpression transformDec(Dec that) {
+        value info = expressionInfo(that);
+
+        // TODO unsupported feature warning type
+        addWarning(info, Warning.unknownWarning,
+            "**unsupported feature** metamodel expressions are not yet supported");
+
+        return DartThrowExpression {
+            DartInstanceCreationExpression {
+                const = false;
+                DartConstructorName {
+                    dartTypes.dartTypeName {
+                        info;
+                        ceylonTypes.assertionErrorType;
+                        false; false;
+                    };
+                };
+                DartArgumentList {
+                    [DartSimpleStringLiteral {
+                        "Dec expressions not yet supported at \
+                         '``info.filename``: ``info.location``'";
+                    }];
+                };
+            };
+        };
+    }
 
     shared actual default
     DartExpression transformNode(Node that) {
