@@ -54,7 +54,8 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope
+    DScope,
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -633,7 +634,10 @@ class TopLevelVisitor(CompilationContext ctx)
             // add errors for value constructors
             for (node in classBody.content) {
                 if (node is ValueConstructorDefinition) {
-                    addError(node, "value constructors are not yet supported.");
+                    // TODO unsupported feature warning type
+                    addWarning(node, Warning.unknownWarning,
+                        "**unsupported feature** value constructors \
+                         are not yet supported");
                 }
             }
         }
