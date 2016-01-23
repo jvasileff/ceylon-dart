@@ -41,8 +41,6 @@ import ceylon.ast.core {
     Pattern,
     TuplePattern,
     EntryPattern,
-    DefaultedValueParameter,
-    DefaultedParameterReference,
     MemberOperator
 }
 import ceylon.collection {
@@ -2409,11 +2407,14 @@ class BaseGenerator(CompilationContext ctx)
                             dartTypes.getName(pInfo.parameterModel.model);
                         };
 
-                if (is DefaultedValueParameter | DefaultedParameterReference param) {
-                    assert (is ValueModel parameterModelModel);
+                "Parameters are always functions or values."
+                assert (is ValueModel | FunctionModel parameterModelModel);
+
+                if (is ValueModel parameterModelModel) {
+                    assert (!is DefaultedCallableParameter param);
+
                     // use dartInvocable for the get & set operations so we don't have to
                     // deal with capture boxes and any other special cases
-
                     return
                     DartIfStatement {
                         // If (parm === default)
@@ -2445,8 +2446,6 @@ class BaseGenerator(CompilationContext ctx)
                     };
                 }
 
-                assert (is FunctionModel parameterModelModel);
-
                 return
                 DartIfStatement {
                     // If (parm === default)
@@ -2461,15 +2460,21 @@ class BaseGenerator(CompilationContext ctx)
                         DartAssignmentExpression {
                             paramName;
                             DartAssignmentOperator.equal;
-                            // Generate a Callable for the default function value
+                            // Generate a Callable for the default function value, or,
+                            // if this is a specification (e.g. f = someFunc), evaluate
+                            // the specifier to obtain the Callable.
                             withLhs {
                                 null;
                                 parameterModelModel;
-                                () => generateCallableForBE {
-                                    scope;
-                                    parameterModelModel;
-                                    generateFunctionExpression(param);
-                                };
+                                () => if (is DefaultedCallableParameter param)
+                                    then generateCallableForBE {
+                                        scope;
+                                        parameterModelModel;
+                                        generateFunctionExpression(param);
+                                    }
+                                    else param.specifier.expression.transform {
+                                        expressionTransformer;
+                                    };
                             };
                         };
                     };

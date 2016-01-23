@@ -79,4 +79,8 @@ object parameter {
     shared test
     void callableParameterCallsPriorWithQE()
         =>  compileAndCompare2("parameter/callableParameterCallsPriorWithQE");
+
+    shared test
+    void callableParamDefaultedByValueSpecification()
+        =>  compileAndCompare2("parameter/callableParamDefaultedByValueSpecification");
 }

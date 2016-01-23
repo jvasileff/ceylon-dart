@@ -1,0 +1,36 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+$dart$core.int $package$two([$dart$core.Object f = $ceylon$language.dart$default]) {
+    if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+        f = new $ceylon$language.dart$Callable($ceylon$language.plus);
+    }
+    return $ceylon$language.Integer.nativeValue((f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(1)) as $ceylon$language.Integer);
+}
+
+$dart$core.int two([$dart$core.Object f = $ceylon$language.dart$default]) => $package$two(f);
+
+class Two {
+    Two([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
+            _$f = new $ceylon$language.dart$Callable($ceylon$language.plus);
+        }
+        return [_$f];
+    })());
+    Two.$s([$dart$core.List a]) : this.$w(a[0]);
+    Two.$w([$ceylon$language.Callable _$f]) {
+        this._$f = _$f;
+    }
+    $ceylon$language.Callable _$f;
+    $dart$core.int get val => $ceylon$language.Integer.nativeValue(_$f.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(1)) as $ceylon$language.Integer);
+}
+void $package$run() {
+    if (!($package$two() == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: two() == 2");
+    }
+    if (!((new Two()).val == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: Two().val == 2");
+    }
+}
+
+void run() => $package$run();
