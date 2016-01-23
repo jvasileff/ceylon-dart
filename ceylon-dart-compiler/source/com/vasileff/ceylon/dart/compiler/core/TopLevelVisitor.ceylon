@@ -643,7 +643,7 @@ class TopLevelVisitor(CompilationContext ctx)
         }
 
         value constructors
-            =   if (!classModel.hasConstructors())
+            =   if (!classModel.hasConstructors() && !classModel.hasEnumerated())
                 then generateDartConstructorsInitializer {
                     scope;
                     classModel;
@@ -1659,7 +1659,10 @@ class TopLevelVisitor(CompilationContext ctx)
             resolvedExtendedDeclaration = null;
         }
 
-        if (!outerAndCaptureArguments.empty || !dartArguments.empty) {
+        // Note: always include super invocation if we are extending a constructor
+
+        if (!outerAndCaptureArguments.empty || !dartArguments.empty
+                || resolvedExtendedDeclaration is ConstructorModel) {
             return
             DartSuperConstructorInvocation {
                 if (is ConstructorModel resolvedExtendedDeclaration)

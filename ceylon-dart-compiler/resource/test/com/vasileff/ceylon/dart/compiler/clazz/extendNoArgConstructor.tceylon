@@ -1,0 +1,28 @@
+class A {
+    shared new create() {}
+    shared actual String string => "A";
+}
+
+class ACreate() => A.create();
+
+class B() extends ACreate() {}
+
+class C extends ACreate {
+    shared new create() extends ACreate() {}
+}
+
+class D extends A {
+    shared new create() extends A.create() {}
+}
+
+//class E extends A {
+//    // Not allowed
+//    shared new create() extends ACreate() {}
+//}
+
+shared void run() {
+    assert (A.create().string == "A");
+    assert (B().string == "A");
+    assert (C.create().string == "A");
+    assert (D.create().string == "A");
+}

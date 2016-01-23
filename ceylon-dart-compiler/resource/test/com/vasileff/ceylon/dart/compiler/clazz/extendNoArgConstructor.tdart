@@ -1,0 +1,50 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class A {
+    void _$init$A([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    A.create() : this.create$d(1);
+    A.create$d([$dart$core.int $bitmap]) {
+        _$init$A($bitmap | 1);
+    }
+    $dart$core.String toString() => "A";
+}
+class B  extends A {
+    B() : super.create() {}
+}
+class C  extends A {
+    void _$init$C([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    C.create() : this.create$d(1);
+    C.create$d([$dart$core.int $bitmap]) : super.create() {
+        _$init$C($bitmap | 1);
+    }
+}
+class D  extends A {
+    void _$init$D([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    D.create() : this.create$d(1);
+    D.create$d([$dart$core.int $bitmap]) : super.create() {
+        _$init$D($bitmap | 1);
+    }
+}
+void $package$run() {
+    if (!((new A.create()).toString() == "A")) {
+        throw new $ceylon$language.AssertionError("Violated: A.create().string == \"A\"");
+    }
+    if (!((new B()).toString() == "A")) {
+        throw new $ceylon$language.AssertionError("Violated: B().string == \"A\"");
+    }
+    if (!((new C.create()).toString() == "A")) {
+        throw new $ceylon$language.AssertionError("Violated: C.create().string == \"A\"");
+    }
+    if (!((new D.create()).toString() == "A")) {
+        throw new $ceylon$language.AssertionError("Violated: D.create().string == \"A\"");
+    }
+}
+
+void run() => $package$run();
