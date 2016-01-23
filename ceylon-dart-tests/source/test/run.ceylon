@@ -58,9 +58,8 @@ shared void run() {
     switches();
     print("Sort");
     testSort();
-// FIXME Dart workaround
-    //print("Constructors");
-    //testConstructors();
+    print("Constructors");
+    testConstructors();
     print("Process, runtime, system, operatingSystem");
     testProcess();
     testRuntime();
