@@ -108,10 +108,13 @@ import ceylon.test.engine {
          at com.redhat.ceylon.launcher.Launcher.main(Launcher.java:21)
    ...
  ~~~"
-shared class TapReporter(write = print) satisfies TestListener {
+// FIXME Dart workaround
+// see https://github.com/jvasileff/ceylon-dart/issues/6
+//shared class TapReporter(write = print) satisfies TestListener {
+shared class TapReporter(Anything(String) write = print) satisfies TestListener {
     
-    "A function that logs the given line, for example [[print]]."
-    void write(String line);
+    //"A function that logs the given line, for example [[print]]."
+    //void write(String line);
     
     variable Integer count = 1;
     

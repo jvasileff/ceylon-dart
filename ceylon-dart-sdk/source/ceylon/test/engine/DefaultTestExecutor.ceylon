@@ -178,12 +178,16 @@ shared class DefaultTestExecutor(FunctionDeclaration functionDeclaration, ClassD
     
     shared default void evaluateTestConditions(TestExecutionContext context) {
         value conditions = findAnnotations<Annotation&TestCondition>(functionDeclaration, classDeclaration);
+// FIXME Dart workaround
+// typechecker bug, see https://github.com/ceylon/ceylon/issues/5946
+        /*
         for(condition in conditions) {
             value result = condition.evaluate(context);
             if (!result.successful) {
                 throw TestSkippedException(result.reason);
             }
         }
+        */
     }
         
     shared default void handleTestExecution(TestExecutionContext context, Object? instance, void execute())() {
