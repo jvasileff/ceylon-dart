@@ -629,7 +629,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        if (classModel.hasConstructors()) {
+        if (classModel.hasEnumerated()) {
             // add errors for value constructors
             for (node in classBody.content) {
                 if (node is ValueConstructorDefinition) {

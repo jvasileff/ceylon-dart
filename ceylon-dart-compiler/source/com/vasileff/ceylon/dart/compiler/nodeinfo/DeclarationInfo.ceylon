@@ -24,9 +24,6 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     InterfaceDefinition
 }
-import ceylon.language.meta {
-    type
-}
 
 import com.redhat.ceylon.compiler.typechecker.tree {
     Tree
