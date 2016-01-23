@@ -725,9 +725,17 @@ class StatementTransformer(CompilationContext ctx)
         value variableTriples
             =   generateForPattern {
                     that.forClause.iterator.pattern;
-                    // minus Finished, since this will be in the loop after
-                    // the test.
-                    loopVariableType.minus(ceylonTypes.finishedType);
+                    // minus Finished, since this will be in the loop after the test
+                    //loopVariableType.minus(ceylonTypes.finishedType);
+                    //
+                    // No longer using the above minus() since, 1) it triggers a
+                    // typechecker bug https://github.com/ceylon/ceylon/issues/5946, and
+                    // 2) the typechecker uses the less precise "getIteratedType()"
+                    // instead of the possibly refined 'next' type that we're using for
+                    // loopVariableType. So, we can use the less precise type too, likely
+                    // without risk of unnecessary casting.
+                    ctx.unit.getIteratedType (
+                            expressionInfo(that.forClause.iterator.iterated).typeModel);
                     () => withBoxing {
                         info;
                         loopVariableType;
