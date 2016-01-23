@@ -24,6 +24,9 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     InterfaceDefinition
 }
+import ceylon.language.meta {
+    type
+}
 
 import com.redhat.ceylon.compiler.typechecker.tree {
     Tree
@@ -152,11 +155,11 @@ class ConstructorDefinitionInfo()
 
     shared actual formal ConstructorDefinition node;
 
-    shared actual formal Tree.Constructor tcNode;
+    shared actual formal Tree.Constructor | Tree.Enumerated tcNode;
 
-    shared actual FunctionModel declarationModel => tcNode.declarationModel;
+    shared actual formal FunctionModel | ValueModel declarationModel;
 
-    shared ConstructorModel constructorModel => tcNode.constructor;
+    shared formal ConstructorModel constructorModel;
 }
 
 shared final
@@ -170,18 +173,26 @@ class CallableConstructorDefinitionInfo
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual FunctionModel declarationModel => tcNode.declarationModel;
+
+    shared actual ConstructorModel constructorModel => tcNode.constructor;
 }
 
 shared final
 class ValueConstructorDefinitionInfo(shared actual ValueConstructorDefinition node)
         extends ConstructorDefinitionInfo() {
 
-    shared alias TcNodeType => Tree.Constructor;
+    shared alias TcNodeType => Tree.Enumerated;
     value lazyTcNode {
         assert (is TcNodeType node = getTcNode(node));
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual ValueModel declarationModel => tcNode.declarationModel;
+
+    shared actual ConstructorModel constructorModel => tcNode.enumerated;
 }
 
 shared abstract
