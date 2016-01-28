@@ -134,6 +134,9 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     TreeNode = Node,
     Tree
 }
+import com.redhat.ceylon.common.tool {
+    ToolError
+}
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
 
@@ -357,6 +360,9 @@ shared
                 typeChecker.process(true);
             }
             catch (Throwable t) {
+                if (t is ReportableException | ToolError) {
+                    throw t;
+                }
                 logError(
                    "------------------------------------------------------------
                                         ** Compiler bug! **
