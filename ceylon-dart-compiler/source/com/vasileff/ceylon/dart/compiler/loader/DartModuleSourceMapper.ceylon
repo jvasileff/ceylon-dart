@@ -52,6 +52,9 @@ import com.vasileff.ceylon.dart.compiler {
     TypeHoles,
     ReportableException
 }
+import java.lang.reflect {
+    InvocationTargetException
+}
 
 object reflection {
     value jasonModuleClass = javaClass<JsonModule>();
@@ -59,8 +62,14 @@ object reflection {
     loadDeclarations.accessible = true;
 
     // TODO pull request for ceylon-js to make this public
-    shared void invokeLoadDeclarations(JsonModule jm)
-        =>  loadDeclarations.invoke(jm);
+    shared void invokeLoadDeclarations(JsonModule jm) {
+        try {
+            loadDeclarations.invoke(jm);
+        }
+        catch (InvocationTargetException e) {
+            throw Exception("error loading module declarations", e.targetException);
+        }
+    }
 }
 
 shared

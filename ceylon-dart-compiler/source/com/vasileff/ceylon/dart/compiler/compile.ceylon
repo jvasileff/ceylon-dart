@@ -353,7 +353,19 @@ shared
             });
         }
         else {
-            typeChecker.process(true);
+            try {
+                typeChecker.process(true);
+            }
+            catch (Throwable t) {
+                logError(
+                   "------------------------------------------------------------
+                                        ** Compiler bug! **
+                    ------------------------------------------------------------
+                    ``t.message``\n
+                    was encountered while typechecking
+                    ------------------------------------------------------------");
+                throw t;
+            }
         }
     }
 
