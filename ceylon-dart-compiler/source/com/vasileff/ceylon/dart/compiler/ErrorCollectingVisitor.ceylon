@@ -1,6 +1,9 @@
 import ceylon.collection {
     LinkedList
 }
+import ceylon.interop.java {
+    CeylonIterable
+}
 
 import com.redhat.ceylon.common {
     Backend
@@ -81,7 +84,7 @@ class ErrorCollectingVisitor() extends Visitor() {
             || isForBackend(annotations, Backend.\iHeader, unit);
 
     void addErrors(Node that) {
-        for (m in that.errors) {
+        for (m in CeylonIterable(that.errors)) {
             "By definition"
             assert (is AnalysisMessage | RecognitionError m);
 

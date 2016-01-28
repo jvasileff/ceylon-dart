@@ -10,6 +10,9 @@ import com.redhat.ceylon.compiler.typechecker.tree {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo
 }
+import ceylon.interop.java {
+    CeylonIterable
+}
 
 TcNode? getTcNode(Node node)
     =>  if (is NodeData data = node.data)
@@ -28,7 +31,7 @@ void augmentNode(TcNode tcNode, Node node) {
         sa.unit = tcNode.unit;
         sa.token = tcNode.token;
         sa.endToken = tcNode.endToken;
-        for (error in tcNode.errors) {
+        for (error in CeylonIterable(tcNode.errors)) {
             sa.addError(error);
         }
     }

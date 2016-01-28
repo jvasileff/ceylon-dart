@@ -3,7 +3,8 @@ import ceylon.file {
 }
 import ceylon.interop.java {
     javaString,
-    javaClass
+    javaClass,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.cmr.api {
@@ -29,6 +30,11 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
 }
+import com.vasileff.ceylon.dart.compiler {
+    javaFile,
+    TypeHoles,
+    ReportableException
+}
 
 import java.io {
     JFile=File,
@@ -36,6 +42,9 @@ import java.io {
 }
 import java.lang {
     JString=String
+}
+import java.lang.reflect {
+    InvocationTargetException
 }
 import java.util {
     JMap=Map,
@@ -45,15 +54,6 @@ import java.util {
 
 import net.minidev.json {
     JSONValue
-}
-
-import com.vasileff.ceylon.dart.compiler {
-    javaFile,
-    TypeHoles,
-    ReportableException
-}
-import java.lang.reflect {
-    InvocationTargetException
 }
 
 object reflection {
@@ -92,7 +92,7 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
         // clear the implicit langauge module import added by createModule()
         m.imports.clear();
 
-        for (dependency in dependencies) {
+        for (dependency in CeylonIterable(dependencies)) {
             // Add a ModuleImport to the module. The module will be resolved later, at
             // the request of ModuleValidator.
 
@@ -143,7 +143,7 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
 
         // TODO this should really be lazy. And different.
         // Load imports here to avoid "Package not found" in JsonPackage.getTypeFromJson.
-        for (moduleImport in m.imports) {
+        for (moduleImport in CeylonIterable(m.imports)) {
             if (!moduleImport.\imodule.nameAsString == "ceylon.language") {
                 value ac = ArtifactContext(moduleImport.\imodule.nameAsString,
                         moduleImport.\imodule.version, ArtifactContext.\iDART_MODEL);
