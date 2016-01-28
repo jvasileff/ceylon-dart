@@ -141,6 +141,28 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
 
         model.remove(javaString("$mod-deps"));
 
+        // TODO this should really be lazy. And different.
+        // Load imports here to avoid "Package not found" in JsonPackage.getTypeFromJson.
+        for (moduleImport in m.imports) {
+            if (!moduleImport.\imodule.nameAsString == "ceylon.language") {
+                value ac = ArtifactContext(moduleImport.\imodule.nameAsString,
+                        moduleImport.\imodule.version, ArtifactContext.\iDART_MODEL);
+                value artifact = this.context.repositoryManager.getArtifactResult(ac)
+                        else null;
+                if (exists artifact) {
+                    resolveModule(artifact, moduleImport.\imodule, moduleImport,
+                            dependencyTree, phasedUnitsOfDependencies,
+                            forCompiledModule && moduleImport.export);
+                }
+                else {
+                    throw ReportableException(
+                        "Unable to find module \
+                         ``ModuleUtil.makeModuleName(moduleImport.\imodule.nameAsString,
+                                moduleImport.\imodule.version)``");
+                }
+            }
+        }
+
         m.model = model;
 
         reflection.invokeLoadDeclarations(m); // the method is package private
