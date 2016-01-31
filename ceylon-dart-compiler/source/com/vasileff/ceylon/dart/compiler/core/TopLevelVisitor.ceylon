@@ -102,7 +102,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo,
     parameterInfo,
     CallableParameterInfo,
-    CallableConstructorDefinitionInfo,
     classDefinitionInfo,
     interfaceDefinitionInfo,
     constructorDefinitionInfo,
@@ -111,7 +110,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectArgumentInfo,
     objectDefinitionInfo,
     valueDefinitionInfo,
-    valueGetterDefinitionInfo
+    valueGetterDefinitionInfo,
+    callableConstructorDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -1188,15 +1188,18 @@ class TopLevelVisitor(CompilationContext ctx)
 
         function parametersFollowing(String constructorName)
             =>  classBody.children.reversed
-                    .map((n) => if (is CallableConstructorDefinition n) then n else null)
+                    .map((n) => if (is ConstructorDefinition n) then n else null)
                     .coalesced
                     .takeWhile((c)
                         // We have to use name since the typchecker gives us a
                         // ClassModel (not ConstructorModel) when extending the default
                         // constructor.
-                        =>  (CallableConstructorDefinitionInfo(c)
-                                .constructorModel.name else "") !=  constructorName)
-                    .flatMap((c) => c.parameters.parameters)
+                        =>  (constructorDefinitionInfo(c)
+                                .constructorModel.name else "") != constructorName)
+                    .flatMap((c)
+                        =>  if (is CallableConstructorDefinition c)
+                            then c.parameters.parameters
+                            else [])
                     .sequence();
 
         value followingConstructorParameters
@@ -1209,9 +1212,9 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value constructorIndex
             =   classBody.children.reversed
-                    .map((n) => if (is CallableConstructorDefinition n) then n else null)
+                    .map((n) => if (is ConstructorDefinition n) then n else null)
                     .coalesced
-                    .map(CallableConstructorDefinitionInfo)
+                    .map(constructorDefinitionInfo)
                     .map(ConstructorDefinitionInfo.constructorModel)
                     .takeWhile(not(constructorInfo.constructorModel.equals))
                     .size;
