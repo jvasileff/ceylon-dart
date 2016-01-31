@@ -1,18 +1,15 @@
-// FIXME Dart workaround
-// all value constructors are commented out
-
 class Outer1129() {
   shared class Inner {
     shared String name;
-//    shared new foo {
-//      name = "foo";
-//    }
+    shared new foo {
+      name = "foo";
+    }
     shared new() {
       name = "Inner";
     }
   }
   shared void test() {
-//    check(Inner.foo.name=="foo", "#1129.4");
+    check(Inner.foo.name=="foo", "#1129.4");
   }
 }
 
@@ -21,9 +18,9 @@ class Simple1129 {
   shared new() {
     name="default";
   }
-//  shared new foo {
-//    name="Foo!";
-//  }
+  shared new foo {
+    name="Foo!";
+  }
 }
 
 class Delegating1129 {
@@ -31,7 +28,7 @@ class Delegating1129 {
   shared new(String s) {
     name=s;
   }
-//  shared new foo extends Delegating1129("foo") {}
+  shared new foo extends Delegating1129("foo") {}
 }
 
 class ToplevelJs476 {
@@ -248,29 +245,29 @@ class TestJs585_2(){
     }   
 }
 
-//class Js594 {
-//    shared new foo{}
-//}
+class Js594 {
+    shared new foo{}
+}
 
 class Parent595() {
     constructorSB.append("a");
 }
 
-//class Test595 extends Parent595 {
-//    constructorSB.append("b");
-//    shared new bar extends Parent595() {
-//        constructorSB.append("c");
-//    }
-//    constructorSB.append("d");
-//}
+class Test595 extends Parent595 {
+    constructorSB.append("b");
+    shared new bar extends Parent595() {
+        constructorSB.append("c");
+    }
+    constructorSB.append("d");
+}
 
-//class Test597 {
-//  constructorSB.append("a");
-//  shared new foo {
-//    constructorSB.append("b");
-//  }
-//  constructorSB.append("c");
-//}
+class Test597 {
+  constructorSB.append("a");
+  shared new foo {
+    constructorSB.append("b");
+  }
+  constructorSB.append("c");
+}
 
 class Test599 {
     shared Integer i();
@@ -287,48 +284,48 @@ class Test599 {
         k=8;
     }
 }
-//class Test599Value {
-//    shared Integer i();
-//    shared Integer j();
-//    shared Integer k;
-//    shared new foo {
-//        Integer l;
-//        l=2;
-//        check(l==2, "#599.5");
-//        i() => 3;
-//        j = () {
-//          return 5;
-//        };
-//        k=8;
-//    }
-//}
+class Test599Value {
+    shared Integer i();
+    shared Integer j();
+    shared Integer k;
+    shared new foo {
+        Integer l;
+        l=2;
+        check(l==2, "#599.5");
+        i() => 3;
+        j = () {
+          return 5;
+        };
+        k=8;
+    }
+}
 
-//class Test596(shared String s){
-//    shared class Bar{
-//        shared new bar{
-//            check(s=="596", "JS #596");
-//        }
-//    }
-//}
-//
-//class MultiValueCons satisfies Identifiable {
-//  shared Integer num;
-//  shared new one {
-//    num=1;
-//  }
-//  shared new two {
-//    num=2;
-//  }
-//}
-//
-//class Js603 extends ParentConstr {
-//    shared new foo extends ParentConstr(){}
-//    shared Integer i() => 42;
-//}
-//class Js603Params extends ParentConstr2<String> {
-//    shared new foo extends ParentConstr2<String>(){}
-//    shared Integer i() => 42;
-//}
+class Test596(shared String s){
+    shared class Bar{
+        shared new bar{
+            check(s=="596", "JS #596");
+        }
+    }
+}
+
+class MultiValueCons satisfies Identifiable {
+  shared Integer num;
+  shared new one {
+    num=1;
+  }
+  shared new two {
+    num=2;
+  }
+}
+
+class Js603 extends ParentConstr {
+    shared new foo extends ParentConstr(){}
+    shared Integer i() => 42;
+}
+class Js603Params extends ParentConstr2<String> {
+    shared new foo extends ParentConstr2<String>(){}
+    shared Integer i() => 42;
+}
 
 class TestReturns {
   shared variable Integer count=0;
@@ -339,31 +336,31 @@ class TestReturns {
     }
     count=2;
   }
-//  shared class Inner {
-//    shared variable Integer count=0;
-//    shared new vc {
-//      if (outer.count==1) {
-//        count=3;
-//        return;
-//      }
-//      count=4;
-//    }
-//  }
+  shared class Inner {
+    shared variable Integer count=0;
+    shared new vc {
+      if (outer.count==1) {
+        count=3;
+        return;
+      }
+      count=4;
+    }
+  }
 }
 
 @test
 shared void testConstructors() {
   value o=Outer1129();
-//  check(o.Inner.foo.name=="foo", "spec#1129.1");
-//  check(Outer1129().Inner.foo.name=="foo", "spec#1129.2");
+  check(o.Inner.foo.name=="foo", "spec#1129.1");
+  check(Outer1129().Inner.foo.name=="foo", "spec#1129.2");
   value oi=o.Inner();
 //  check(oi.foo.name=="foo", "spec#1129.3");
   o.test();
-//  value ref=Outer1129.Inner.foo;
-//  check(ref(o).name=="foo", "spec#1129.5");
-//  check(Simple1129.foo.name=="Foo!", "spec#1129.6");
+  value ref=Outer1129.Inner.foo;
+  check(ref(o).name=="foo", "spec#1129.5");
+  check(Simple1129.foo.name=="Foo!", "spec#1129.6");
 //  check(Simple1129().foo.name=="Foo!", "spec#1129.7");
-//  check(Delegating1129.foo.name=="foo", "spec#1129.8");
+  check(Delegating1129.foo.name=="foo", "spec#1129.8");
 
   check(ToplevelJs476.bar().x==2, "#476 toplevel");
   class NestedJs476 {
@@ -440,34 +437,34 @@ shared void testConstructors() {
   check(OtherJs573.baz().string=="1a2b3c4", "#573.6 expected cdef got ``OtherJs573.baz()``");
   TestJs585_1().Bar();
   TestJs585_2().Bar.baz();
-//  Anything test594 = Js594.foo;
-//  check(test594 exists, "JS #594");
+  Anything test594 = Js594.foo;
+  check(test594 exists, "JS #594");
   constructorSB.clear();
-//  variable Object unused=Test595.bar;
-//  check(constructorSB.string=="abcd", "JS #595");
-//  constructorSB.clear();
-//  unused=Test597.foo;
-//  check(constructorSB.string=="abc", "JS #597 expected abc got ``constructorSB``");
+  variable Object unused=Test595.bar;
+  check(constructorSB.string=="abcd", "JS #595");
+  constructorSB.clear();
+  unused=Test597.foo;
+  check(constructorSB.string=="abc", "JS #597 expected abc got ``constructorSB``");
   value t599=Test599();
   check(t599.i() == 3, "JS #599.2");
   check(t599.j() == 5, "JS #599.3");
-//  check(t599.k == 8, "JS #599.4");
-//  check(Test599Value.foo.i() == 3, "JS#599.6");
-//  check(Test599Value.foo.j() == 5, "JS#599.7");
-//  check(Test599Value.foo.k == 8, "JS#599.8");
-//  check(Test596("596").Bar.bar!=t599, "JS #596.2");
-//  value t596=Test596("596");
-//  check(t596.Bar.bar!=t599, "JS#596.3");
-//  check(t596.Bar.bar===t596.Bar.bar, "JS#596.4");
-//  check(!(t596.Bar.bar===Test596("596").Bar.bar), "JS#596.5");
-//  check(MultiValueCons.one.num==1, "Multiple enumerated 1");
-//  check(MultiValueCons.two.num==2, "Multiple enumerated 2");
-//  check(!((MultiValueCons.one of Identifiable)===(MultiValueCons.two of Identifiable)), "Multiple enumerated 3");
-//  check(Js603.foo.i() == 42, "JS#603 1");
-//  check(Js603Params.foo.i() == 42, "JS#603 2");
-//  check((Js603Params.foo of Object) is ParentConstr2<String>, "JS#603 3");
+  check(t599.k == 8, "JS #599.4");
+  check(Test599Value.foo.i() == 3, "JS#599.6");
+  check(Test599Value.foo.j() == 5, "JS#599.7");
+  check(Test599Value.foo.k == 8, "JS#599.8");
+  check(Test596("596").Bar.bar!=t599, "JS #596.2");
+  value t596=Test596("596");
+  check(t596.Bar.bar!=t599, "JS#596.3");
+  check(t596.Bar.bar===t596.Bar.bar, "JS#596.4");
+  check(!(t596.Bar.bar===Test596("596").Bar.bar), "JS#596.5");
+  check(MultiValueCons.one.num==1, "Multiple enumerated 1");
+  check(MultiValueCons.two.num==2, "Multiple enumerated 2");
+  check(!((MultiValueCons.one of Identifiable)===(MultiValueCons.two of Identifiable)), "Multiple enumerated 3");
+  check(Js603.foo.i() == 42, "JS#603 1");
+  check(Js603Params.foo.i() == 42, "JS#603 2");
+  check((Js603Params.foo of Object) is ParentConstr2<String>, "JS#603 3");
   check(TestReturns(true).count==1, "Constructor return 1");
   check(TestReturns(false).count==2, "Constructor return 2");
-//  check(TestReturns(true).Inner.vc.count==3, "Constructor return 3");
-//  check(TestReturns(false).Inner.vc.count==4, "Constructor return 4");
+  check(TestReturns(true).Inner.vc.count==3, "Constructor return 3");
+  check(TestReturns(false).Inner.vc.count==4, "Constructor return 4");
 }
