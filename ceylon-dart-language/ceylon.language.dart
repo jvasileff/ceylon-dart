@@ -1203,6 +1203,21 @@ class CycledIterator implements Iterator {
     }
     $dart$core.String toString() => ((("" + _$iterable.toString()) + ".repeat(") + _$times.toString()) + ").iterator()";
 }
+Throwable $package$dart$wrapThrownObject([$dart$core.Object thrown]) => (() {
+    $dart$core.bool doElse$0 = true;
+    if (thrown is Throwable) {
+        Throwable thrown$1;
+        thrown$1 = thrown as Throwable;
+        doElse$0 = false;
+        return thrown$1;
+    }
+    if (doElse$0) {
+        return new Exception(thrown.toString());
+    }
+})();
+
+Throwable dart$wrapThrownObject([$dart$core.Object thrown]) => $package$dart$wrapThrownObject(thrown);
+
 class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
     functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_]) {
@@ -3677,7 +3692,7 @@ class Iterable$indexed$$anonymous$20_$$anonymous$21_ implements Iterator {
     $dart$core.int _$i;
     $dart$core.Object next() => (() {
         $dart$core.Object next = $capture$$iter.next();
-        if ((!(null == next)) && (next == $package$finished)) {
+        if ($dart$core.identical(next, $package$finished)) {
             return $package$finished;
         } else {
             return new Entry((() {
@@ -7549,7 +7564,7 @@ class Map$mapItems$$anonymous$3_ implements Map {
                 doElse$17 = false;
                 return (() {
                     $dart$core.Object item = Map.$_$lookup($outer$ceylon$language$Map, key);
-                    if ((!(null == item)) && (item == $package$missing)) {
+                    if ($dart$core.identical(item, $package$$new$Missing$instance)) {
                         return null;
                     } else {
                         return $capture$Map$mapItems$mapping.f(key, item);
@@ -7567,7 +7582,7 @@ class Map$mapItems$$anonymous$3_ implements Map {
                 doElse$18 = false;
                 return (() {
                     $dart$core.Object item = Map.$_$lookup($outer$ceylon$language$Map, key);
-                    if ((!(null == item)) && (item == $package$missing)) {
+                    if ($dart$core.identical(item, $package$$new$Missing$instance)) {
                         return $default;
                     } else {
                         return $capture$Map$mapItems$mapping.f(key, item);
@@ -7781,7 +7796,7 @@ class Map$patch$$anonymous$6_ implements Map {
     $dart$core.bool defines([$dart$core.Object key]) => $capture$Map$patch$other.defines(key) || $outer$ceylon$language$Map.defines(key);
     $dart$core.Object get([$dart$core.Object key]) => (() {
         $dart$core.Object result = Map.$_$lookup($capture$Map$patch$other, key);
-        if ((!(null == result)) && (result == $package$missing)) {
+        if ($dart$core.identical(result, $package$$new$Missing$instance)) {
             return $outer$ceylon$language$Map.get(key);
         } else {
             return result;
@@ -7789,7 +7804,7 @@ class Map$patch$$anonymous$6_ implements Map {
     })();
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => (() {
         $dart$core.Object result = Map.$_$lookup($capture$Map$patch$other, key);
-        if ((!(null == result)) && (result == $package$missing)) {
+        if ($dart$core.identical(result, $package$$new$Missing$instance)) {
             return $outer$ceylon$language$Map.getOrDefault(key, $default);
         } else {
             return result;
@@ -8054,7 +8069,7 @@ abstract class Map implements Collection, Correspondence {
             return $default;
         }
     }
-    static $dart$core.Object $_$lookup([final Map $this, $dart$core.Object key]) => $this.getOrDefault(key, $package$missing);
+    static $dart$core.Object $_$lookup([final Map $this, $dart$core.Object key]) => $this.getOrDefault(key, $package$$new$Missing$instance);
     $dart$core.bool contains([$dart$core.Object entry]);
     static $dart$core.bool $contains([final Map $this, $dart$core.Object entry]) {{
             $dart$core.bool doElse$2 = true;
@@ -8280,14 +8295,20 @@ final emptyMap_ $package$emptyMap = new emptyMap_();
 
 emptyMap_ get emptyMap => $package$emptyMap;
 
-abstract class Missing {
+class Missing {
+    void _$init$Missing([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1)) {}
+    }
+    Missing.instance() : this.instance$d(1);
+    Missing.instance$d([$dart$core.int $bitmap]) {
+        _$init$Missing($bitmap | 1);
+    }
 }
-class missing_ implements Missing {
-    missing_() {}
-}
-final missing_ $package$missing = new missing_();
+Missing _$s$Missing$instance;
 
-missing_ get missing => $package$missing;
+Missing get $package$$new$Missing$instance => _$s$Missing$instance != null ? _$s$Missing$instance : _$s$Missing$instance = new Missing.instance();
+
+Missing get $new$Missing$instance => $package$$new$Missing$instance;
 
 $dart$core.Object $package$max([Iterable values]) {
     Iterator it = values.iterator();
