@@ -117,7 +117,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFieldDeclaration,
     DartMethodDeclaration,
     DartClassMember,
-    createVariableDeclaration
+    createVariableDeclaration,
+    DartPrefixedIdentifier
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
@@ -3675,6 +3676,33 @@ class BaseGenerator(CompilationContext ctx)
                             null;
                             switchedVariable;
                             true;
+                        };
+                    }
+
+                    value isNonBooleanObjectOrValueConstructor
+                        =   if (is ClassModel d = expressionType.declaration)
+                            then d.\iobjectClass
+                                    && !ceylonTypes.isCeylonBoolean(expressionType)
+                            else expressionType.declaration is ConstructorModel;
+
+                    // For value constructors and non-Boolean objects (since they are
+                    // erased), use identity for the comparison
+                    if (isNonBooleanObjectOrValueConstructor) {
+                        return DartFunctionExpressionInvocation {
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("$dart$core");
+                                DartSimpleIdentifier("identical");
+                            };
+                            DartArgumentList {
+                                [
+                                    switchedVariable,
+                                    withLhs {
+                                        switchedType;
+                                        null;
+                                        () => expression.transform(expressionTransformer);
+                                    }
+                                ];
+                            };
                         };
                     }
 

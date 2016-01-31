@@ -17,11 +17,11 @@ class recursiveDefaultCallableParameterDefault$C {
         $dart$core.Object f;
         f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (() {
             $ceylon$language.Comparison switch$0 = i.compare($ceylon$language.Integer.instance(x as $dart$core.int));
-            if (switch$0 == $ceylon$language.smaller) {
+            if ($dart$core.identical(switch$0, $ceylon$language.smaller)) {
                 return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) + 1));
-            } else if (switch$0 == $ceylon$language.larger) {
+            } else if ($dart$core.identical(switch$0, $ceylon$language.larger)) {
                 return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1));
-            } else if (switch$0 == $ceylon$language.equal) {
+            } else if ($dart$core.identical(switch$0, $ceylon$language.equal)) {
                 return i;
             } else {
                 throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
