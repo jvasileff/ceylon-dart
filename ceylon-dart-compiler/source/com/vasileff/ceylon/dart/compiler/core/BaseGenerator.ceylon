@@ -41,7 +41,9 @@ import ceylon.ast.core {
     Pattern,
     TuplePattern,
     EntryPattern,
-    MemberOperator
+    MemberOperator,
+    ClassDefinition,
+    ValueConstructorDefinition
 }
 import ceylon.collection {
     LinkedList
@@ -114,7 +116,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     createExpressionEvaluationWithSetup,
     DartFieldDeclaration,
     DartMethodDeclaration,
-    DartClassMember
+    DartClassMember,
+    createVariableDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     FunctionExpressionInfo,
@@ -151,7 +154,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     parameterInfo,
     sequenceArgumentInfo,
     typeInfo,
-    parametersInfo
+    parametersInfo,
+    valueConstructorDefinitionInfo,
+    classDefinitionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -2365,6 +2370,95 @@ class BaseGenerator(CompilationContext ctx)
                 };
             }];
         };
+    }
+
+    "Returns a variable (memo) and getter for the value constructor. The returned
+     declarations should be in the scope of the constructor's class's container (they
+     should be siblings to the class)."
+    shared
+    [[DartVariableDeclarationList, DartFunctionDeclaration]*]
+    generateForValueConstructors(ClassDefinition that) {
+        value classInfo = classDefinitionInfo(that);
+        value scope = dScope(classInfo, classInfo.declarationModel.container);
+
+        value valueConstructors
+            =   that.body.children
+                .map((node) => if (is ValueConstructorDefinition node)
+                               then node else null)
+                .coalesced;
+
+        return valueConstructors.collect((c) {
+            value cInfo
+                =   valueConstructorDefinitionInfo(c);
+
+            value syntheticValue
+                =   dartTypes.syntheticValueForValueConstructor {
+                        cInfo.constructorModel;
+                    };
+
+            value syntheticVariable
+                =   dartTypes.identifierForSyntheticField(cInfo.declarationModel);
+
+            value valueIdentifier
+                =   DartSimpleIdentifier {
+                        dartTypes.getPackagePrefixedName(syntheticValue);
+                    };
+
+            value isDartFunction
+                =   useGetterSetterMethods(syntheticValue);
+
+            return [
+                createVariableDeclaration {
+                    dartTypes.dartTypeName {
+                        scope;
+                        classInfo.declarationModel.type;
+                    };
+                    syntheticVariable;
+                    null;
+                }.variableList,
+                DartFunctionDeclaration {
+                    false;
+                    dartTypes.dartTypeName {
+                        scope;
+                        classInfo.declarationModel.type;
+                    };
+                    !isDartFunction then "get";
+                    valueIdentifier;
+                    DartFunctionExpression {
+                        isDartFunction then dartFormalParameterListEmpty;
+                        DartExpressionFunctionBody {
+                            // invocation of value constructor
+                            false;
+                            DartConditionalExpression {
+                                DartBinaryExpression {
+                                    syntheticVariable;
+                                    "!=";
+                                    DartNullLiteral();
+                                };
+                                syntheticVariable;
+                                DartAssignmentExpression {
+                                    syntheticVariable;
+                                    DartAssignmentOperator.equal;
+                                    DartInstanceCreationExpression {
+                                        false;
+                                        dartTypes.dartConstructorName {
+                                            scope;
+                                            cInfo.constructorModel;
+                                        };
+                                        DartArgumentList {
+                                            generateArgumentsForOuterAndCaptures {
+                                                scope;
+                                                classInfo.declarationModel;
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                }
+            ];
+        });
     }
 
     shared

@@ -850,14 +850,24 @@ class StatementTransformer(CompilationContext ctx)
     }
 
     shared actual
-    [] transformClassDefinition(ClassDefinition that) {
+    [DartStatement*] transformClassDefinition(ClassDefinition that) {
         // skip native declarations entirely, for now
         if (!isForDartBackend(that)) {
             return [];
         }
 
         that.visit(topLevelVisitor);
-        return [];
+
+        return concatenate {
+            generateForValueConstructors(that).map { (pair) =>
+                [DartVariableDeclarationStatement {
+                    pair[0];
+                },
+                DartFunctionDeclarationStatement {
+                    pair[1];
+                }];
+            };
+        };
     }
 
     shared actual

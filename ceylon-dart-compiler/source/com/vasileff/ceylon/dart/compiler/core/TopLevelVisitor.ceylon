@@ -2,7 +2,6 @@ import ceylon.ast.core {
     FunctionDefinition,
     ValueDefinition,
     FunctionShortcutDefinition,
-    AnyFunction,
     InterfaceDefinition,
     FunctionDeclaration,
     ValueDeclaration,
@@ -54,8 +53,7 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionOrValueModel=FunctionOrValue
 }
 import com.vasileff.ceylon.dart.compiler {
-    DScope,
-    Warning
+    DScope
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
@@ -111,7 +109,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     CallableParameterInfo,
     CallableConstructorDefinitionInfo,
     classDefinitionInfo,
-    interfaceDefinitionInfo
+    interfaceDefinitionInfo,
+    constructorDefinitionInfo,
+    valueConstructorDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -221,6 +221,41 @@ class TopLevelVisitor(CompilationContext ctx)
                 that.parameters;
             };
         };
+
+        // for toplevel classes, generate synthetic toplevel variables and getter
+        // functions for value constructors
+        if (isToplevel(info.declarationModel)) {
+            addAll {
+                expand {
+                    generateForValueConstructors(that).map { (pair) =>
+                        [DartTopLevelVariableDeclaration {
+                            pair[0];
+                        },
+                        pair[1]];
+                    };
+                };
+            };
+
+            value valueConstructors
+                =   that.body.children
+                    .map((node) => if (is ValueConstructorDefinition node)
+                                   then node else null)
+                    .coalesced;
+
+            for (vc in valueConstructors) {
+                value vcInfo = valueConstructorDefinitionInfo(vc);
+
+                assert (exists constructorModel
+                    =   getConstructor(vcInfo.declarationModel));
+
+                value syntheticFunction
+                    =   dartTypes.syntheticValueForValueConstructor(constructorModel);
+
+                add {
+                    generateForwardingGetter(info, syntheticFunction);
+                };
+            }
+        }
     }
 
     shared actual
@@ -230,9 +265,11 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
+        value info = anyFunctionInfo(that);
+
         addAll {
             generateFunctionDefinition(that),
-            generateForwardingFunction(that)
+            generateForwardingFunction(info, info.declarationModel)
         };
     }
 
@@ -244,9 +281,11 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
+        value info = anyFunctionInfo(that);
+
         addAll {
             generateFunctionDefinition(that),
-            generateForwardingFunction(that)
+            generateForwardingFunction(info, info.declarationModel)
         };
     }
 
@@ -630,18 +669,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
-        if (classModel.hasEnumerated()) {
-            // add errors for value constructors
-            for (node in classBody.content) {
-                if (node is ValueConstructorDefinition) {
-                    // TODO unsupported feature warning type
-                    addWarning(node, Warning.unknownWarning,
-                        "**unsupported feature** value constructors \
-                         are not yet supported");
-                }
-            }
-        }
-
         value constructors
             =   if (!classModel.hasConstructors() && !classModel.hasEnumerated())
                 then generateDartConstructorsInitializer {
@@ -653,7 +680,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 }
                 else classBody.content
                     .map((node)
-                        =>  if (is CallableConstructorDefinition node)
+                        =>  if (is ConstructorDefinition node)
                             then node
                             else null)
                     .coalesced
@@ -1022,16 +1049,18 @@ class TopLevelVisitor(CompilationContext ctx)
 
     [DartConstructorDeclaration*] generateDartConstructors(
             DScope scope, ClassModel classModel, ClassBody classBody,
-            CallableConstructorDefinition constructor) {
+            ConstructorDefinition constructor) {
 
         value parameters
-            =   constructor.parameters.parameters;
+            =   switch(constructor)
+                case (is CallableConstructorDefinition) constructor.parameters.parameters
+                case (is ValueConstructorDefinition) [];
 
         value classIdentifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
 
         value constructorInfo
-            =   CallableConstructorDefinitionInfo(constructor);
+            =   constructorDefinitionInfo(constructor);
 
         value hasDefaultedParameter
             =   parameters.any((p) => p is DefaultedParameter);
@@ -1711,25 +1740,11 @@ class TopLevelVisitor(CompilationContext ctx)
             case (is ObjectDefinition)
                 ObjectDefinitionInfo(that).declarationModel;
 
-        value getter =
-        DartFunctionDeclaration {
-            external = false;
-            returnType = dartTypes.dartTypeNameForDeclaration(
-                info, declarationModel);
-            propertyKeyword = "get";
-            DartSimpleIdentifier {
-                dartTypes.getName(declarationModel);
-            };
-            DartFunctionExpression {
-                null;
-                DartExpressionFunctionBody {
-                    async = false;
-                    DartSimpleIdentifier {
-                        dartTypes.getPackagePrefixedName(declarationModel);
-                    };
+        value getter
+            =   generateForwardingGetter {
+                    info;
+                    declarationModel;
                 };
-            };
-        };
 
         value setter = declarationModel.variable then
             DartFunctionDeclaration {
@@ -1773,6 +1788,28 @@ class TopLevelVisitor(CompilationContext ctx)
         return [];
     }
 
+    DartFunctionDeclaration generateForwardingGetter
+            (DScope scope, ValueModel valueModel)
+        =>  DartFunctionDeclaration {
+                false;
+                dartTypes.dartTypeNameForDeclaration {
+                    scope; valueModel;
+                };
+                "get";
+                DartSimpleIdentifier {
+                    dartTypes.getName(valueModel);
+                };
+                DartFunctionExpression {
+                    null;
+                    DartExpressionFunctionBody {
+                        async = false;
+                        DartSimpleIdentifier {
+                            dartTypes.getPackagePrefixedName(valueModel);
+                        };
+                    };
+                };
+            };
+
     "Transforms the declarations of the [[CompilationUnit]]. **Note:**
      imports are ignored."
     shared actual
@@ -1789,22 +1826,22 @@ class TopLevelVisitor(CompilationContext ctx)
             "Node type not yet supported (TopLevelVisitor): ``className(that)``");
     }
 
-    DartFunctionDeclaration generateForwardingFunction(AnyFunction that)
-        =>  let (info = anyFunctionInfo(that),
-                functionName = dartTypes.getName(info.declarationModel),
-                functionPPName = dartTypes.getPackagePrefixedName(info.declarationModel),
+    DartFunctionDeclaration generateForwardingFunction
+            (DScope scope, FunctionModel declarationModel)
+        =>  let (functionName = dartTypes.getName(declarationModel),
+                functionPPName = dartTypes.getPackagePrefixedName(declarationModel),
                 parameterModels = CeylonList(
-                        info.declarationModel.firstParameterList.parameters))
+                        declarationModel.firstParameterList.parameters))
             DartFunctionDeclaration {
                 external = false;
-                generateFunctionReturnType(info, info.declarationModel);
+                generateFunctionReturnType(scope, declarationModel);
                 propertyKeyword = null;
                 DartSimpleIdentifier(functionName);
                 DartFunctionExpression {
                     generateFormalParameterList {
                         true; false;
-                        info;
-                        that.parameterLists.first;
+                        scope;
+                        parameterModels;
                     };
                     DartExpressionFunctionBody {
                         async = false;

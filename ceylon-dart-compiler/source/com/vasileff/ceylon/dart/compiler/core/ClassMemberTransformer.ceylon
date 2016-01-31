@@ -28,7 +28,8 @@ import ceylon.ast.core {
     DefaultedParameter,
     DefaultedCallableParameter,
     AnyClass,
-    Parameters
+    Parameters,
+    ClassDefinition
 }
 import ceylon.interop.java {
     CeylonList
@@ -933,7 +934,6 @@ class ClassMemberTransformer(CompilationContext ctx)
                         }.parameters;
                     };
 
-
             assert (is ClassModel | ConstructorModel resolvedConstructor
                 =   if (is ClassAliasModel constructor)
                     then constructor.constructor
@@ -977,6 +977,33 @@ class ClassMemberTransformer(CompilationContext ctx)
             };
         }
 
+        "Fields and methods for value constructors of this member class.
+
+         Note: Member classes of interfaces may not have value constructors, so we can
+         always have a field and the factory will never be static."
+        value valueConstructorFieldsAndFactories
+            =   if (is ClassDefinition that) then
+                    concatenate {
+                        generateForValueConstructors(that).map { (pair) =>
+                            let ([memoVariable, factoryDeclaration] = pair)
+                            [DartFieldDeclaration {
+                                false;
+                                memoVariable;
+                            },
+                            DartMethodDeclaration {
+                                false;
+                                null;
+                                factoryDeclaration.returnType;
+                                factoryDeclaration.propertyKeyword;
+                                false;
+                                factoryDeclaration.name;
+                                factoryDeclaration.functionExpression.parameters;
+                                factoryDeclaration.functionExpression.body;
+                            }];
+                        };
+                    }
+                else [];
+
         "For class containers, generate the factory. For interfaces, generate a static
          factory and a non-static method declaration."
         function generateFactories(
@@ -994,8 +1021,14 @@ class ClassMemberTransformer(CompilationContext ctx)
             }
         }
 
-        return replaceClassWithSharedConstructors(info.declarationModel)
-                .flatMap(generateFactories).sequence();
+        return concatenate {
+            replaceClassWithSharedConstructors(info.declarationModel)
+                .filter((c) => if (is ConstructorModel c)
+                               then !c.valueConstructor
+                               else true)
+                .flatMap(generateFactories),
+            valueConstructorFieldsAndFactories
+        };
     }
 
     shared actual

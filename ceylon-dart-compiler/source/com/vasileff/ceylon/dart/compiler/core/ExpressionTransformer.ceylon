@@ -218,13 +218,16 @@ class ExpressionTransformer(CompilationContext ctx)
 
     DartExpression generateForBaseExpression(
             BaseExpression | QualifiedExpression that,
-            NameWithTypeArguments nameAndArgs,
+            "The [[NameWithTypeArguments]], or null to indicate a synthetic declaration
+             that should be treated as if [[nameAndArgs]] is a
+             [[MemberNameWithTypeArguments]]"
+            NameWithTypeArguments? nameAndArgs,
             DeclarationModel targetDeclaration) {
 
         value info = expressionInfo(that);
 
         switch (nameAndArgs)
-        case (is MemberNameWithTypeArguments) {
+        case (is MemberNameWithTypeArguments?) {
             if (!is ValueModel | FunctionModel targetDeclaration) {
                 addError(that,
                     "Unexpected declaration type for base expression: \
@@ -232,18 +235,34 @@ class ExpressionTransformer(CompilationContext ctx)
                 return DartNullLiteral();
             }
 
-            // Is this a Function that's really a Constructor?
-            if (is FunctionModel targetDeclaration,
-                exists constructorModel = getConstructor(targetDeclaration)) {
-                // generateCallableForBE() can handle constructors and will take care of
-                // the implicit `outer` argument if the constructor's class is a member
-                // class.
+            // Handle constructors
+            if (exists constructorModel = getConstructor(targetDeclaration)) {
+                switch (targetDeclaration)
+                case (is FunctionModel) {
+                    // For callable constructors, return a Callable that takes arguments
+                    // for the constructor and returns an instance of the constructor's
+                    // class.
 
-                // Return a Callable that returns an instance of a class:
-                return generateCallableForBE {
-                    info;
-                    constructorModel;
-                };
+                    // generateCallableForBE() can handle constructors and will take care
+                    // of the implicit `outer` argument if the constructor's class is a
+                    // member class.
+                    return generateCallableForBE {
+                        info;
+                        constructorModel;
+                    };
+                }
+                case (is ValueModel) {
+                    // Value constructors act like values of the constructor's class's container.
+                    // Return the value by invoking the synthetic function that lazily generates
+                    // the value.
+                    return dartTypes.invocableForBaseExpression {
+                        info;
+                        dartTypes.syntheticValueForValueConstructor {
+                            constructorModel;
+                        };
+                        false;
+                    }.expressionForInvocation([]);
+                }
             }
 
             // Be sure to detect *all* true, false, and null literals here, even if they
@@ -335,18 +354,18 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformQualifiedExpression(QualifiedExpression that) {
+        value info
+            =   QualifiedExpressionInfo(that);
+
         if (that.receiverExpression is Package) {
             // treat Package qualified expressions as base expressions
             return
             generateForBaseExpression {
                 that;
                 that.nameAndArgs;
-                QualifiedExpressionInfo(that).declaration;
+                info.declaration;
             };
         }
-
-        value info
-            =   QualifiedExpressionInfo(that);
 
         // Simplify qualified expressions for constructors.
         value [receiver, memberDeclaration]
@@ -363,10 +382,6 @@ class ExpressionTransformer(CompilationContext ctx)
                     | ConstructorModel memberDeclaration);
 
         if (!exists receiverInfo) {
-            "If there is no receiver, the original receiver must have been an expression
-             for a constructor's class."
-            assert (is ConstructorModel memberDeclaration);
-
             // Special case:
             //
             // This is more like a base expression. It is only a qualified expression
@@ -381,11 +396,15 @@ class ExpressionTransformer(CompilationContext ctx)
             // Bottom line: this is a staticMethodReference to the *Constructor*, but
             // it is not a static reference to the constructor's container.
 
-            // Returne a Callable that takes arguments for the constructor and returns
-            // an instance of the constructor's class.
-            return generateCallableForBE {
-                info;
-                memberDeclaration;
+            "If there is no receiver, the original receiver must have been an expression
+             for a constructor's class."
+            assert (is ConstructorModel memberDeclaration);
+
+            return
+            generateForBaseExpression {
+                that;
+                that.nameAndArgs;
+                info.declaration;
             };
         }
 
@@ -401,13 +420,23 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (is TypeModel receiverType
                 =   targetForExpressionInfo(receiverInfo));
 
+            // TODO desugar in generateCallableForStaticMemberReference instead?
+
+            "The [[memberDeclaration]], or, for value constructors, the synthetic value
+             which is a member of [[memberDeclaration]]'s class's containing class."
+            value deSugaredTarget
+                =   if (is ConstructorModel memberDeclaration,
+                            memberDeclaration.valueConstructor)
+                    then dartTypes.syntheticValueForValueConstructor(memberDeclaration)
+                    else memberDeclaration;
+
             // Return a `Callable` that takes a `containerType` and returns a
             // `Callable` that can be used to invoke the `memberDeclaration`
             return generateCallableForStaticMemberReference {
                 info;
                 receiverType;
                 info.target.fullType;
-                memberDeclaration;
+                deSugaredTarget;
                 memberOperator;
             };
         }
@@ -446,6 +475,24 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
         case (is FunctionModel | ClassModel | ConstructorModel) {
+
+            if (is ConstructorModel memberDeclaration,
+                    memberDeclaration.valueConstructor) {
+
+                // value constructors are more like the "is ValueModel" case above
+                return generateInvocation {
+                    info;
+                    info.typeModel;
+                    receiverInfo.typeModel;
+                    () => receiverInfo.node.transform(this);
+                    dartTypes.syntheticValueForValueConstructor {
+                        memberDeclaration;
+                    };
+                    null;
+                    that.memberOperator;
+                };
+            }
+
             // Return a new Callable.
 
             // QualifiedExpression with a `super` receiver

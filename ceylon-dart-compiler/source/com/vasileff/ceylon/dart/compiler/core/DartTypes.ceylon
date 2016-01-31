@@ -824,6 +824,30 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                           + "$" + getName(declaration));
             };
 
+    shared
+    ValueModel syntheticValueForValueConstructor(ConstructorModel constructorModel) {
+
+        "Synthetic values are only available for value constructors."
+        assert (constructorModel.valueConstructor);
+
+        value syntheticFunctionidentifier
+            =   identifierForMemberFactory(constructorModel, false);
+
+        assert (is ClassModel container
+            =   constructorModel.container);
+
+        value f = ValueModel();
+        f.name = syntheticFunctionidentifier.identifier;
+        f.container = constructorModel.container.container;
+        f.shared = constructorModel.shared;
+        f.transient = true;
+        f.type = container.type;
+        f.refinedDeclaration = f;
+        f.unit = constructorModel.unit;
+
+        return f;
+    }
+
     // TODO improve naming and functional consistency for get...Name and identifierFor...
 
     "The name of the static method used for the implementation of
@@ -1328,6 +1352,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "The identifier for synthetic Dart field for a Ceylon Value."
     see(`function BaseGenerator.generateBridgesToSyntheticField`)
+    see(`function BaseGenerator.generateForValueConstructors`)
     shared
     DartSimpleIdentifier identifierForSyntheticField(ValueModel declaration)
         =>  DartSimpleIdentifier {

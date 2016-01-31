@@ -10,7 +10,8 @@ import ceylon.ast.core {
     Node,
     ValueSpecification,
     ClassAliasDefinition,
-    ClassDefinition
+    ClassDefinition,
+    QualifiedExpression
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
@@ -28,7 +29,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
     ValueSpecificationInfo,
     NodeInfo,
-    anyClassInfo
+    anyClassInfo,
+    qualifiedExpressionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
@@ -121,6 +123,47 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         }
 
         shared actual
+        void visitQualifiedExpression(QualifiedExpression that) {
+            value info
+                =   qualifiedExpressionInfo(that);
+
+            value targetDeclaration
+                =   info.declaration;
+
+            if (is ValueModel targetDeclaration,
+                exists constructorDeclaration = getConstructor(targetDeclaration),
+                    constructorDeclaration.valueConstructor) {
+                value declarationToCapture = ctx.dartTypes.syntheticValueForValueConstructor(constructorDeclaration);
+
+                maybeCapture {
+                    declarationToCapture;
+                    getContainingClassOrInterface(toScopeModel(declarationToCapture));
+                    getContainingClassOrInterface(info.scope);
+                };
+
+                assert (is QualifiedExpression | BaseExpression receiver
+                    =   that.receiverExpression);
+
+                switch (receiver)
+                case (is BaseExpression) {
+                    // don't visit; no need to capture for the class since we are not
+                    // instantiating it.
+                }
+                case (is QualifiedExpression) {
+                    // A.B.C.instance
+                    // (A.B).C).instance
+
+                    // don't visit this qualified expression's qualified expression's
+                    // target, for the same reason as above.
+                    that.receiverExpression.visit(this);
+                }
+            }
+            else {
+                super.visitQualifiedExpression(that);
+            }
+        }
+
+        shared actual
         void visitBaseExpression(BaseExpression that) {
             value info
                 =   BaseExpressionInfo(that);
@@ -128,20 +171,33 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             value targetDeclaration
                 =   info.declaration;
 
+            "A BaseExpression is never a ConstructorModel (constructors appear as
+             functions or values."
             assert (is FunctionOrValueModel | InterfaceModel
-                    | ClassModel | ConstructorModel targetDeclaration);
+                    | ClassModel targetDeclaration);
 
             switch (targetDeclaration)
             case (is InterfaceModel) {
                 return;
             }
-            case (is ClassModel | ConstructorModel) {
+            case (is ClassModel) {
+                // TODO don't capture classes that are only used as static qualifiers for
+                // value constructors, but make sure A.B.C.instance makes captures
+                // for A and B.
                 captureForClass(info, targetDeclaration);
             }
             case (is FunctionOrValueModel) {
+                // For value constructors, capture the synthetic ValueModel instead
+                // of the constructor's ValueModel.
+                value declarationToCapture
+                    =   if (is ValueModel targetDeclaration,
+                                exists ctor = getConstructor(targetDeclaration))
+                        then ctx.dartTypes.syntheticValueForValueConstructor(ctor)
+                        else targetDeclaration;
+
                 maybeCapture {
-                    targetDeclaration;
-                    getContainingClassOrInterface(toScopeModel(targetDeclaration));
+                    declarationToCapture;
+                    getContainingClassOrInterface(toScopeModel(declarationToCapture));
                     getContainingClassOrInterface(info.scope);
                 };
             }

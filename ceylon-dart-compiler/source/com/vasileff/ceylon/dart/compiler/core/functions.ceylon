@@ -238,7 +238,7 @@ getRealScope(ElementModel scope) {
     return result;
 }
 
-ConstructorModel? getConstructor(FunctionModel model)
+ConstructorModel? getConstructor(FunctionOrValueModel model)
     =>  if (is ConstructorModel c = model.type.declaration)
         then c
         else null;
@@ -294,12 +294,12 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
 
  For example:
 
-    - the returned `Primary` for `C().D.create` will be `C()`, and not `C().D`,
+    - the returned `Primary` for `C().D.create()` will be `C()`, and not `C().D`,
       which would be the given qualified expression's `receiverExpression`.
 
-    - the returned `Primary` for `D.create` will be `null`, since an expression of this
+    - the returned `Primary` for `D.create()` will be `null`, since an expression of this
       form doesn't have a receiver instance; it is more like a [BaseExpression] for the
-      constructor `create`."
+      constructor `create()`."
 [Primary?, DeclarationModel] effectiveReceiverAndMemberDeclaration
         (QualifiedExpression qualifiedExpression) {
 
@@ -307,7 +307,7 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
         =   QualifiedExpressionInfo(qualifiedExpression);
 
     value constructor
-        =   if (is FunctionModel d = info.declaration,
+        =   if (is FunctionOrValueModel d = info.declaration,
                 is ConstructorModel cm = d.type.declaration)
             then cm
             else null;
@@ -329,7 +329,8 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
  Otherwise, the class."
 [Declaration | ConstructorModel*] replaceClassWithSharedConstructors<Declaration>
         (Declaration declaration)
-    =>  if (is ClassModel declaration, declaration.hasConstructors())
+    =>  if (is ClassModel declaration,
+            declaration.hasConstructors() || declaration.hasEnumerated())
         then [ for (c in CeylonList(declaration.members))
                if (is ConstructorModel c, c.shared) c ]
         else [declaration];
