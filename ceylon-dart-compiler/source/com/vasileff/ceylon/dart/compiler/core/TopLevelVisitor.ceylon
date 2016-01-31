@@ -96,11 +96,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionExpressionInvocation
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    ValueDefinitionInfo,
-    ValueGetterDefinitionInfo,
-    ObjectDefinitionInfo,
-    ObjectExpressionInfo,
-    ObjectArgumentInfo,
     ConstructorDefinitionInfo,
     anyFunctionInfo,
     extensionOrConstructionInfo,
@@ -111,7 +106,12 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     classDefinitionInfo,
     interfaceDefinitionInfo,
     constructorDefinitionInfo,
-    valueConstructorDefinitionInfo
+    valueConstructorDefinitionInfo,
+    objectExpressionInfo,
+    objectArgumentInfo,
+    objectDefinitionInfo,
+    valueDefinitionInfo,
+    valueGetterDefinitionInfo
 }
 
 "For Dart TopLevel declarations."
@@ -380,7 +380,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitObjectExpression(ObjectExpression that) {
-        value info = ObjectExpressionInfo(that);
+        value info = objectExpressionInfo(that);
 
         add {
             generateClassDefinition {
@@ -394,7 +394,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitObjectArgument(ObjectArgument that) {
-        value info = ObjectArgumentInfo(that);
+        value info = objectArgumentInfo(that);
 
         add {
             generateClassDefinition {
@@ -408,7 +408,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
     shared actual
     void visitObjectDefinition(ObjectDefinition that) {
-        value info = ObjectDefinitionInfo(that);
+        value info = objectDefinitionInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info)) {
@@ -1734,11 +1734,11 @@ class TopLevelVisitor(CompilationContext ctx)
         value declarationModel =
             switch (that)
             case (is ValueDefinition)
-                ValueDefinitionInfo(that).declarationModel
+                valueDefinitionInfo(that).declarationModel
             case (is ValueGetterDefinition)
-                ValueGetterDefinitionInfo(that).declarationModel
+                valueGetterDefinitionInfo(that).declarationModel
             case (is ObjectDefinition)
-                ObjectDefinitionInfo(that).declarationModel;
+                objectDefinitionInfo(that).declarationModel;
 
         value getter
             =   generateForwardingGetter {

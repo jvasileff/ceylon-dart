@@ -52,9 +52,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    UnspecifiedVariableInfo,
-    VariadicVariableInfo,
-    superInfo
+    superInfo,
+    unspecifiedVariableInfo,
+    variadicVariableInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap
@@ -1865,13 +1865,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         switch(p)
         case (is VariablePattern) {
             ctx.disableErasureToNative.add(
-                UnspecifiedVariableInfo(p.variable).declarationModel);
+                unspecifiedVariableInfo(p.variable).declarationModel);
         }
         case (is TuplePattern) {
             p.elementPatterns.each(disableErasureToNative);
             if (exists v = p.variadicElementPattern) {
                 ctx.disableErasureToNative.add(
-                    VariadicVariableInfo(v).declarationModel);
+                    variadicVariableInfo(v).declarationModel);
             }
         }
         case (is EntryPattern) {

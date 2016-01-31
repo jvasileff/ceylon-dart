@@ -33,8 +33,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    LazySpecificationInfo,
-    ValueDefinitionInfo
+    valueDefinitionInfo,
+    lazySpecificationInfo
 }
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
@@ -81,7 +81,7 @@ class ClassStatementTransformer(CompilationContext ctx)
      overridable (not `default`)."
     shared actual
     DartStatement[] transformValueDefinition(ValueDefinition that) {
-        value info = ValueDefinitionInfo(that);
+        value info = valueDefinitionInfo(that);
 
         switch (definition = that.definition)
         case (is LazySpecifier) {
@@ -113,7 +113,7 @@ class ClassStatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformLazySpecification(LazySpecification that) {
-        value info = LazySpecificationInfo(that);
+        value info = lazySpecificationInfo(that);
 
         if (!info.declaration.shortcutRefinement) {
             // Specification for a forward declared function or value.

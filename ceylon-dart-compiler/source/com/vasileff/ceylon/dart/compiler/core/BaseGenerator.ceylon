@@ -120,22 +120,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     createVariableDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    FunctionExpressionInfo,
-    BaseExpressionInfo,
-    FunctionShortcutDefinitionInfo,
-    QualifiedExpressionInfo,
     ParameterInfo,
-    ArgumentListInfo,
     ExpressionInfo,
-    FunctionDefinitionInfo,
-    IsConditionInfo,
-    ValueDefinitionInfo,
-    ValueGetterDefinitionInfo,
-    UnspecifiedVariableInfo,
-    ValueSetterDefinitionInfo,
-    ObjectDefinitionInfo,
-    SpecifiedVariableInfo,
-    ComprehensionClauseInfo,
     namedArgumentInfo,
     AnonymousArgumentInfo,
     SpecifiedArgumentInfo,
@@ -145,8 +131,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NamedArgumentInfo,
     SpreadArgumentInfo,
     ComprehensionInfo,
-    LazySpecificationInfo,
-    VariadicVariableInfo,
     expressionInfo,
     anyFunctionInfo,
     existsOrNonemptyConditionInfo,
@@ -156,7 +140,25 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     typeInfo,
     parametersInfo,
     valueConstructorDefinitionInfo,
-    classDefinitionInfo
+    classDefinitionInfo,
+    spreadArgumentInfo,
+    valueDefinitionInfo,
+    valueGetterDefinitionInfo,
+    variadicVariableInfo,
+    specifiedVariableInfo,
+    argumentListInfo,
+    lazySpecificationInfo,
+    isConditionInfo,
+    objectDefinitionInfo,
+    valueSetterDefinitionInfo,
+    unspecifiedVariableInfo,
+    functionExpressionInfo,
+    functionDefinitionInfo,
+    functionShortcutDefinitionInfo,
+    functionArgumentInfo,
+    baseExpressionInfo,
+    qualifiedExpressionInfo,
+    comprehensionClauseInfo
 }
 import com.vasileff.jl4c.guava.collect {
     ImmutableMap,
@@ -1648,7 +1650,7 @@ class BaseGenerator(CompilationContext ctx)
             value sequenceArgumentType
                 =   switch (sequenceArgument)
                     case (is SpreadArgument)
-                        SpreadArgumentInfo(sequenceArgument).typeModel
+                        spreadArgumentInfo(sequenceArgument).typeModel
                     case (is Comprehension)
                         iterableComprehensionType(sequenceArgument)
                     case (is Null)
@@ -1755,7 +1757,7 @@ class BaseGenerator(CompilationContext ctx)
         // TODO consider null issues for negated checks
         // TODO consider erased types, like `Integer? i = 1; assert (is Integer i);`
 
-        value info = IsConditionInfo(that);
+        value info = isConditionInfo(that);
 
         "The type we are testing for"
         value isType = typeInfo(that.variable.type).typeModel;
@@ -2347,7 +2349,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartVariableDeclarationList generateForObjectDefinition(ObjectDefinition that) {
-        value info = ObjectDefinitionInfo(that);
+        value info = objectDefinitionInfo(that);
 
         return
         DartVariableDeclarationList {
@@ -2682,7 +2684,7 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         value info
-            =   ValueDefinitionInfo(that);
+            =   valueDefinitionInfo(that);
 
         value initializerValue
             =   withLhs {
@@ -2755,9 +2757,9 @@ class BaseGenerator(CompilationContext ctx)
         value declarationModel
             =   switch (that)
                 case (is ValueDefinition)
-                    ValueDefinitionInfo(that).declarationModel
+                    valueDefinitionInfo(that).declarationModel
                 case (is ValueGetterDefinition)
-                    ValueGetterDefinitionInfo(that).declarationModel;
+                    valueGetterDefinitionInfo(that).declarationModel;
 
         return
         generateDefinitionForValueModelGetter {
@@ -2848,7 +2850,7 @@ class BaseGenerator(CompilationContext ctx)
         //      within functions, regular methods
         //      within classes and interfaces, setters, but MethodDeclaration instead
 
-        value info = ValueSetterDefinitionInfo(that);
+        value info = valueSetterDefinitionInfo(that);
         value declarationModel = info.declarationModel;
 
         value [identifier, dartElementType]
@@ -3075,7 +3077,7 @@ class BaseGenerator(CompilationContext ctx)
                 =   pattern.variadicElementPattern);
 
             value variableInfo
-                =   VariadicVariableInfo(variadicVariable);
+                =   variadicVariableInfo(variadicVariable);
 
             value variableIdentifier
                 =   DartSimpleIdentifier {
@@ -3176,7 +3178,7 @@ class BaseGenerator(CompilationContext ctx)
         //      to return a Tuple, even though its return type is Sequential.
         value variadicVariable
             =   if (exists variadicVariable = pattern.variadicElementPattern) then
-                    let (variableInfo = VariadicVariableInfo(variadicVariable),
+                    let (variableInfo = variadicVariableInfo(variadicVariable),
                          variableName = dartTypes.getName(variableInfo.declarationModel),
                          variableIdentifier = DartSimpleIdentifier(variableName))
                     [VariableTriple {
@@ -3243,7 +3245,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     VariableTriple generateForVariablePattern
             (VariablePattern pattern, DartExpression() generator)
-        =>  let (variableInfo = UnspecifiedVariableInfo(pattern.variable),
+        =>  let (variableInfo = unspecifiedVariableInfo(pattern.variable),
                  variableName = dartTypes.getName(variableInfo.declarationModel),
                  variableIdentifier = DartSimpleIdentifier(variableName))
             VariableTriple {
@@ -3287,19 +3289,19 @@ class BaseGenerator(CompilationContext ctx)
 
         switch (that)
         case (is FunctionExpression) {
-            value info = FunctionExpressionInfo(that);
+            value info = functionExpressionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
         }
         case (is FunctionDefinition) {
-            value info = FunctionDefinitionInfo(that);
+            value info = functionDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
         }
         case (is FunctionShortcutDefinition) {
-            value info = FunctionShortcutDefinitionInfo(that);
+            value info = functionShortcutDefinitionInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
@@ -3312,7 +3314,7 @@ class BaseGenerator(CompilationContext ctx)
             functionModel = m;
         }
         case (is FunctionArgument) {
-            value info = FunctionArgumentInfo(that);
+            value info = functionArgumentInfo(that);
             parameterLists = that.parameterLists;
             definition = that.definition;
             functionModel = info.declarationModel;
@@ -3772,7 +3774,7 @@ class BaseGenerator(CompilationContext ctx)
         }
         case (is SpecifiedVariable) {
             switchedDeclaration
-                =   SpecifiedVariableInfo(switched).declarationModel;
+                =   specifiedVariableInfo(switched).declarationModel;
 
             assert (exists switchedDeclaration);
 
@@ -4931,12 +4933,12 @@ class BaseGenerator(CompilationContext ctx)
                                 nonempty parameterLists
                                     =   lazySpecification.parameterLists) {
 
-                            value lazySpecificationInfo
-                                =   LazySpecificationInfo(lazySpecification);
+                            value lsInfo
+                                =   lazySpecificationInfo(lazySpecification);
 
                             "It has a parameter list, so it must be a function."
                             assert (is FunctionModel declarationModel
-                                =   lazySpecificationInfo.declaration);
+                                =   lsInfo.declaration);
 
                             dartExpression
                                 =   withLhs {
@@ -4946,7 +4948,7 @@ class BaseGenerator(CompilationContext ctx)
                                             argumentInfo;
                                             declarationModel;
                                             generateFunctionExpressionRaw {
-                                                lazySpecificationInfo;
+                                                lsInfo;
                                                 declarationModel;
                                                 parameterLists;
                                                 lazySpecification.specifier;
@@ -5050,7 +5052,7 @@ class BaseGenerator(CompilationContext ctx)
                 });
 
         value iterableInfo
-            =   ArgumentListInfo(namedArguments.iterableArgument);
+            =   argumentListInfo(namedArguments.iterableArgument);
 
         [DartVariableDeclarationStatement] | [] iterableArgument;
 
@@ -5164,7 +5166,7 @@ class BaseGenerator(CompilationContext ctx)
 
         switch (target)
         case (is BaseExpression) {
-            value info = BaseExpressionInfo(target);
+            value info = baseExpressionInfo(target);
             assert (is ValueModel d = info.declaration);
             valueDeclaration = d;
             valueType = info.typeModel;
@@ -5214,7 +5216,7 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
         case (is QualifiedExpression) {
-            value info = QualifiedExpressionInfo(target);
+            value info = qualifiedExpressionInfo(target);
             assert (is ValueModel d = info.declaration);
             valueDeclaration = d;
             valueType = info.typeModel;
@@ -5570,7 +5572,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     TypeModel iterableComprehensionType(Comprehension that)
-        =>  let (firstClauseInfo = ComprehensionClauseInfo(that.clause))
+        =>  let (firstClauseInfo = comprehensionClauseInfo(that.clause))
             ceylonTypes.iterableDeclaration.appliedType(null, javaList {
                 firstClauseInfo.typeModel,
                 firstClauseInfo.firstTypeModel

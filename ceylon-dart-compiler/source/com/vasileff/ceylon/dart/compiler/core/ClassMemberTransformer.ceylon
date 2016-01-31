@@ -77,21 +77,25 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
-    ValueDefinitionInfo,
     AnyValueInfo,
-    ValueDeclarationInfo,
     typedDeclarationInfo,
     ValueSetterDefinitionInfo,
-    ObjectDefinitionInfo,
     LazySpecificationInfo,
-    FunctionDeclarationInfo,
     ValueSpecificationInfo,
     anyValueInfo,
     declarationInfo,
     nodeInfo,
     DeclarationInfo,
     DefaultedParameterInfo,
-    anyClassInfo
+    anyClassInfo,
+    defaultedParameterInfo,
+    lazySpecificationInfo,
+    valueDeclarationInfo,
+    functionDeclarationInfo,
+    valueDefinitionInfo,
+    valueSpecificationInfo,
+    valueSetterDefinitionInfo,
+    objectDefinitionInfo
 }
 
 shared
@@ -108,7 +112,7 @@ class ClassMemberTransformer(CompilationContext ctx)
     see(`function transformValueGetterDefinition`)
     see(`function transformFunctionShortcutDefinition`)
     DartClassMember[] transformLazySpecification(LazySpecification that) {
-        value info = LazySpecificationInfo(that);
+        value info = lazySpecificationInfo(that);
 
         if (!info.declaration.shortcutRefinement) {
             // Specification for a forward declared function or value that will be
@@ -188,7 +192,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-        value info = ValueDeclarationInfo(that);
+        value info = valueDeclarationInfo(that);
 
         // Avoid duplicate declarations where initializer parameters are
         // declared in the body.
@@ -274,7 +278,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             return [];
         }
 
-        value info = FunctionDeclarationInfo(that);
+        value info = functionDeclarationInfo(that);
 
         // Avoid duplicate declarations where initializer parameters are
         // declared in the body.
@@ -326,7 +330,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
     shared actual
     [DartClassMember*] transformValueDefinition(ValueDefinition that) {
-        value info = ValueDefinitionInfo(that);
+        value info = valueDefinitionInfo(that);
 
         // skip native declarations entirely, for now
         if (!isForDartBackend(info.declarationModel)) {
@@ -381,7 +385,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
     shared actual
     [DartClassMember*] transformValueSpecification(ValueSpecification that) {
-        value info = ValueSpecificationInfo(that);
+        value info = valueSpecificationInfo(that);
         value declarationModel = info.declaration;
 
         if (!declarationModel.shortcutRefinement) {
@@ -510,7 +514,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             for (i->p in parameters.indexed)
                 if (is DefaultedParameter p)
                     generateDefaultValueStaticMethod {
-                        DefaultedParameterInfo(p);
+                        defaultedParameterInfo(p);
                         dartParameters[...i - 1];
                     }
         ];
@@ -614,9 +618,9 @@ class ClassMemberTransformer(CompilationContext ctx)
         value info
             =   switch (that)
                 case (is TypedDeclaration) typedDeclarationInfo(that)
-                case (is ValueSetterDefinition) ValueSetterDefinitionInfo(that)
-                case (is ValueSpecification) ValueSpecificationInfo(that)
-                case (is LazySpecification) LazySpecificationInfo(that);
+                case (is ValueSetterDefinition) valueSetterDefinitionInfo(that)
+                case (is ValueSpecification) valueSpecificationInfo(that)
+                case (is LazySpecification) lazySpecificationInfo(that);
 
         value declarationModel
             =   switch (info)
@@ -739,7 +743,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         value info
             =   switch (that)
                 case (is TypedDeclaration) typedDeclarationInfo(that)
-                case (is ValueSetterDefinition) ValueSetterDefinitionInfo(that);
+                case (is ValueSetterDefinition) valueSetterDefinitionInfo(that);
 
         value declarationModel
             =   switch(info)
@@ -1046,7 +1050,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         that.visit(topLevelVisitor);
 
-        value info = ObjectDefinitionInfo(that);
+        value info = objectDefinitionInfo(that);
 
         // Declare the member field that will be initialized in a Dart constructor.
         return [

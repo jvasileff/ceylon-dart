@@ -26,11 +26,11 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
-    BaseExpressionInfo,
-    ValueSpecificationInfo,
     NodeInfo,
     anyClassInfo,
-    qualifiedExpressionInfo
+    qualifiedExpressionInfo,
+    valueSpecificationInfo,
+    baseExpressionInfo
 }
 import com.vasileff.jl4c.guava.collect {
     LinkedHashMultimap,
@@ -92,7 +92,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             //      this ValueSpecification is for a named argument.
 
             if (getTcNode(that) is Tree.SpecifierStatement) {
-                value info = ValueSpecificationInfo(that);
+                value info = valueSpecificationInfo(that);
                 info.target.visit(this);
             }
             that.specifier.visit(this);
@@ -166,7 +166,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         shared actual
         void visitBaseExpression(BaseExpression that) {
             value info
-                =   BaseExpressionInfo(that);
+                =   baseExpressionInfo(that);
 
             value targetDeclaration
                 =   info.declaration;

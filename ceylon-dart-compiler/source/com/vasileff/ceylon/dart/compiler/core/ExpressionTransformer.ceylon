@@ -178,18 +178,20 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
-    FunctionExpressionInfo,
     QualifiedExpressionInfo,
-    IfElseExpressionInfo,
-    ObjectExpressionInfo,
-    IsCaseInfo,
-    TypeNameWithTypeArgumentsInfo,
     expressionInfo,
     nodeInfo,
     invocationInfo,
     typeInfo,
     thisInfo,
-    outerInfo
+    outerInfo,
+    baseExpressionInfo,
+    typeNameWithTypeArgumentsInfo,
+    qualifiedExpressionInfo,
+    objectExpressionInfo,
+    functionExpressionInfo,
+    isCaseInfo,
+    ifElseExpressionInfo
 }
 
 shared
@@ -213,7 +215,7 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  generateForBaseExpression {
                 that;
                 that.nameAndArgs;
-                BaseExpressionInfo(that).declaration;
+                baseExpressionInfo(that).declaration;
             };
 
     DartExpression generateForBaseExpression(
@@ -338,7 +340,7 @@ class ExpressionTransformer(CompilationContext ctx)
             // Return a `Callable` that takes the same arguments as the class
             // initializer and returns an instance of the class.
 
-            value typeNameInfo = TypeNameWithTypeArgumentsInfo(nameAndArgs);
+            value typeNameInfo = typeNameWithTypeArgumentsInfo(nameAndArgs);
 
             "BaseExpressions to types are references to classes."
             assert (is ClassModel declaration = typeNameInfo.declarationModel);
@@ -355,7 +357,7 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformQualifiedExpression(QualifiedExpression that) {
         value info
-            =   QualifiedExpressionInfo(that);
+            =   qualifiedExpressionInfo(that);
 
         if (that.receiverExpression is Package) {
             // treat Package qualified expressions as base expressions
@@ -628,9 +630,9 @@ class ExpressionTransformer(CompilationContext ctx)
         value invokedDeclaration
             =   let (d = switch (invoked = that.invoked)
                            case (is BaseExpression)
-                                BaseExpressionInfo(invoked).declaration
+                                baseExpressionInfo(invoked).declaration
                            case (is QualifiedExpression)
-                                QualifiedExpressionInfo(invoked).declaration
+                                qualifiedExpressionInfo(invoked).declaration
                            else null) // some other expression that yields a Callable
                 // Constructor invocations present the invoked as a Function,
                 // but let's use the Constructor declaration.
@@ -877,7 +879,7 @@ class ExpressionTransformer(CompilationContext ctx)
             "We already handled the BaseExpression cases."
             assert (!is BaseExpression invoked);
 
-            value invokedQEInfo = QualifiedExpressionInfo(classInvoked);
+            value invokedQEInfo = qualifiedExpressionInfo(classInvoked);
 
             if (invokedQEInfo.staticMethodReference) {
                 // Invoking a member class, statically. Just return a callable. It's
@@ -1046,7 +1048,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformObjectExpression(ObjectExpression that) {
-        value info = ObjectExpressionInfo(that);
+        value info = objectExpressionInfo(that);
 
         that.visit(topLevelVisitor);
 
@@ -1059,7 +1061,7 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformFunctionExpression(FunctionExpression that)
-        =>  let (info = FunctionExpressionInfo(that))
+        =>  let (info = functionExpressionInfo(that))
             withBoxingNonNative {
                 info;
                 info.typeModel;
@@ -2461,7 +2463,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 }
                 case (is IsCase) {
                     value variableDeclaration
-                        =   IsCaseInfo(caseItem).variableDeclarationModel;
+                        =   isCaseInfo(caseItem).variableDeclarationModel;
 
                     "Narrowed variable for case block, if any."
                     value replacementVariable
@@ -2572,7 +2574,7 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
 
-        value info = IfElseExpressionInfo(that);
+        value info = ifElseExpressionInfo(that);
 
         value doElseVariable // always exists for expressions
             =   DartSimpleIdentifier(dartTypes.createTempNameCustom("doElse"));

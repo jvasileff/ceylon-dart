@@ -76,7 +76,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     declarationInfo,
     nodeInfo,
     QualifiedExpressionInfo,
-    ExpressionInfo
+    ExpressionInfo,
+    qualifiedExpressionInfo,
+    baseExpressionInfo
 }
 
 import java.lang {
@@ -304,7 +306,7 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
         (QualifiedExpression qualifiedExpression) {
 
     value info
-        =   QualifiedExpressionInfo(qualifiedExpression);
+        =   qualifiedExpressionInfo(qualifiedExpression);
 
     value constructor
         =   if (is FunctionOrValueModel d = info.declaration,
@@ -445,7 +447,7 @@ Boolean isSelfAParameter(DScope scope)
  to a non-transient, non-variable, non-formal & non-default value."
 Boolean isConstant(Expression e) {
     if (is BaseExpression be = e,
-        is ValueModel vm = BaseExpressionInfo(be).declaration) {
+        is ValueModel vm = baseExpressionInfo(be).declaration) {
         return !vm.transient && !vm.variable && !vm.formal && !vm.default;
     }
     return e is Outer|This;

@@ -100,23 +100,24 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
-    ValueSpecificationInfo,
-    ValueDeclarationInfo,
-    ForFailInfo,
-    ElseClauseInfo,
-    IsCaseInfo,
-    FunctionDeclarationInfo,
     UnspecifiedVariableInfo,
     expressionInfo,
     nodeInfo,
-    LazySpecificationInfo,
     parameterInfo,
     ParameterInfo,
     SpecifiedVariableInfo,
     ExpressionInfo,
     typeInfo,
     parametersInfo,
-    tryCatchFinallyInfo
+    tryCatchFinallyInfo,
+    isCaseInfo,
+    elseClauseInfo,
+    valueSpecificationInfo,
+    lazySpecificationInfo,
+    forFailInfo,
+    functionDeclarationInfo,
+    valueDeclarationInfo,
+    specifiedVariableInfo
 }
 
 import org.antlr.runtime {
@@ -191,7 +192,7 @@ class StatementTransformer(CompilationContext ctx)
                 }
                 case (is IsCase) {
                     value variableDeclaration
-                        =   IsCaseInfo(caseItem).variableDeclarationModel;
+                        =   isCaseInfo(caseItem).variableDeclarationModel;
 
                     "Narrowed variable for case block, if any."
                     value replacementVariable
@@ -254,7 +255,7 @@ class StatementTransformer(CompilationContext ctx)
 
     DartStatement generateElseClause(ElseClause that) {
         value info
-            =   ElseClauseInfo(that);
+            =   elseClauseInfo(that);
 
         value variableDeclaration
             =   info.variableDeclarationModel;
@@ -490,7 +491,7 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartStatement] transformValueSpecification(ValueSpecification that) {
-        value info = ValueSpecificationInfo(that);
+        value info = valueSpecificationInfo(that);
         if (info.declaration is FunctionModel) {
             // Specification for a forward declared function or shortcut refinement.
             // Assign to the synthetic variable that holds the Callable.
@@ -522,7 +523,7 @@ class StatementTransformer(CompilationContext ctx)
                 withLhsNoType {
                     () => generateAssignment {
                         nodeInfo(that);
-                        ValueSpecificationInfo(that).target;
+                        valueSpecificationInfo(that).target;
                         noType;
                         () => that.specifier.expression.transform(expressionTransformer);
                     };
@@ -532,7 +533,7 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformLazySpecification(LazySpecification that) {
-        value info = LazySpecificationInfo(that);
+        value info = lazySpecificationInfo(that);
 
         "StatementTransformer doesn't handle shortcut refinements."
         assert (!info.declaration.shortcutRefinement);
@@ -665,7 +666,7 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     DartStatement[] transformForFail(ForFail that) {
-        value info = ForFailInfo(that);
+        value info = forFailInfo(that);
 
         // Only track doFail if there is a fail clause and a break statement
         value doFailVariable = that.failClause exists && info.exits
@@ -903,7 +904,7 @@ class StatementTransformer(CompilationContext ctx)
     DartStatement[] transformFunctionDeclaration(FunctionDeclaration that) {
         // Must be a forward declared function
 
-        value info = FunctionDeclarationInfo(that);
+        value info = functionDeclarationInfo(that);
         if (info.declarationModel.parameter) {
             // ignore; must be a declaration for a callable parameter
             return [];
@@ -995,7 +996,7 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartStatement*] transformValueDeclaration(ValueDeclaration that) {
-        value info = ValueDeclarationInfo(that);
+        value info = valueDeclarationInfo(that);
         if (info.declarationModel.parameter) {
             // ignore; must be a declaration for
             // a parameter reference
@@ -1242,7 +1243,7 @@ class StatementTransformer(CompilationContext ctx)
             value rInfo
                 =   switch (r = resource.resource)
                     case (is Expression) expressionInfo(r)
-                    case (is SpecifiedVariable) SpecifiedVariableInfo(r);
+                    case (is SpecifiedVariable) specifiedVariableInfo(r);
 
             DartTypeName dartTypeName;
             DartSimpleIdentifier variableIdentifier;
