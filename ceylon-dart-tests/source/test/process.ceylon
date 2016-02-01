@@ -67,6 +67,8 @@ shared void testRuntime() {
         check(runtime.integerSize == 64, "jvm runtime.integerSize");
     } else if (runtime.name in {"node.js", "Browser"}) {
         check(runtime.integerSize == 53, "js runtime.integerSize");
+    } else if (runtime.name in {"DartVM"}) {
+        check(runtime.integerSize == 64, "dart runtime.integerSize");
     } else {
         fail("UNKNOWN BACKEND ``runtime.name`` - please add tests for this runtime");
     }
@@ -81,6 +83,9 @@ shared void testRuntime() {
     }
     if (runtime.name == "jvm") {
         check(runtime.maxArraySize == #7ffffff7, "runtime.maxArraySize");
+    }
+    else if (runtime.name == "DartVM") {
+        check(runtime.maxArraySize == 2^63 - 1, "runtime.maxArraySize");
     }
     else {
         check(runtime.maxArraySize == #FFFFFFFF);
