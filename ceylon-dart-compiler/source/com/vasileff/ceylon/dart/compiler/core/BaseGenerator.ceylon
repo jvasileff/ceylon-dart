@@ -2168,6 +2168,12 @@ class BaseGenerator(CompilationContext ctx)
             else if (ceylonTypes.isCeylonNothing(isType)) {
                 return isType;
             }
+            else if (ceylonTypes.isCeylonIdentifiable(isType)) {
+                return isType;
+            }
+            else if (ceylonTypes.isCeylonBasic(isType)) {
+                return isType;
+            }
             else if (!dartTypes.denotable(isType)) {
                 // a type parameter or something we can't handle... do our best
                 if (isType.isSubtypeOf(ceylonTypes.objectType)) {
@@ -2252,6 +2258,72 @@ class BaseGenerator(CompilationContext ctx)
             }
             else if (ceylonTypes.isCeylonNothing(isType)) {
                 return DartBooleanLiteral(false);
+            }
+            else if (ceylonTypes.isCeylonBasic(isType)) {
+                // If it satisfies the Basic marker interface, or if it's not a
+                // Ceylon type at all (all non-null native Dart types are considered
+                // Basic)
+                return DartBinaryExpression {
+                    DartIsExpression {
+                        expressionToCheck;
+                        dartTypes.dartTypeNameForDartModel {
+                            scope;
+                            dartTypes.dartCeylonBasicModel;
+                        };
+                    };
+                    "||";
+                    DartBinaryExpression {
+                        DartBinaryExpression {
+                            DartNullLiteral();
+                            "!=";
+                            expressionToCheck;
+                        };
+                        "&&";
+                        DartPrefixExpression {
+                            "!";
+                            DartIsExpression {
+                                expressionToCheck;
+                                dartTypes.dartTypeNameForDartModel {
+                                    scope;
+                                    dartTypes.dartCeylonObjectModel;
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            else if (ceylonTypes.isCeylonIdentifiable(isType)) {
+                // If it satisfies the Identifiable marker interface, or if it's not a
+                // Ceylon type at all (all non-null native Dart types are considered
+                // Identifiable)
+                return DartBinaryExpression {
+                    DartIsExpression {
+                        expressionToCheck;
+                        dartTypes.dartTypeNameForDartModel {
+                            scope;
+                            dartTypes.dartCeylonIdentifiableModel;
+                        };
+                    };
+                    "||";
+                    DartBinaryExpression {
+                        DartBinaryExpression {
+                            DartNullLiteral();
+                            "!=";
+                            expressionToCheck;
+                        };
+                        "&&";
+                        DartPrefixExpression {
+                            "!";
+                            DartIsExpression {
+                                expressionToCheck;
+                                dartTypes.dartTypeNameForDartModel {
+                                    scope;
+                                    dartTypes.dartCeylonObjectModel;
+                                };
+                            };
+                        };
+                    };
+                };
             }
             else if (!dartTypes.denotable(isType)) {
                 // This isn't good! But no alternative w/o reified generics
