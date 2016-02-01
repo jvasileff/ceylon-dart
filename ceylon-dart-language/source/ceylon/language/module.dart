@@ -503,7 +503,18 @@ class Integer implements dart$$Object, Integral, Exponentiable, Binary {
   }
 
   Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
-  Integer powerOfInteger([$dart$core.int integer]) => new Integer($dart$math.pow(_value, integer));
+  Integer powerOfInteger([$dart$core.int integer]) {
+    if (integer < 0) {
+      if (_value == -1) {
+        return new Integer(integer % 2 == 0 ? 1 : -1);
+      }
+      if (_value == 1) {
+        return this;
+      }
+      throw new AssertionError("exponent must not be negative");
+    }
+    return new Integer($dart$math.pow(_value, integer));
+  }
   Integer timesInteger([$dart$core.int integer]) => new Integer(_value * integer);
 
   Integer operator /(Integer other) => new Integer(this._value ~/ other._value);
@@ -515,7 +526,7 @@ class Integer implements dart$$Object, Integral, Exponentiable, Binary {
 
   Integer operator +(Integer other) => new Integer(this._value + other._value);
 
-  Integer power([Integer other]) => new Integer($dart$math.pow(this._value, other._value));
+  Integer power([Integer other]) => powerOfInteger(other._value);
 
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
