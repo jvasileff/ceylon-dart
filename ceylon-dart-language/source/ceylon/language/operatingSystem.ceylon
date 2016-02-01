@@ -75,10 +75,16 @@ shared native("js") object operatingSystem {
 }
 
 shared native("dart") object operatingSystem {
-    shared native("dart") String fileSeparator => "/";
-    shared native("dart") String pathSeparator => ":";
-    shared native("dart") String version => "Unknown";
-    shared native("dart") String name => "Unknown";
-    shared native("dart") String newline => "\n";
-    shared actual native("dart") String string => "operating system [``name`` / ``version``]";
+    shared native("dart") String fileSeparator
+        =   process.propertyValue("file.separator") else "/";
+    shared native("dart") String pathSeparator
+        =   process.propertyValue("path.separator") else ":";
+    shared native("dart") String version
+        =   "Unknown";
+    shared native("dart") String name
+        =   process.propertyValue("os.name") else "Unknown";
+    shared native("dart") String newline
+        =   process.propertyValue("line.separator") else "\n";
+    shared actual native("dart") String string
+        =   "operating system [``name`` / ``version``]";
 }
