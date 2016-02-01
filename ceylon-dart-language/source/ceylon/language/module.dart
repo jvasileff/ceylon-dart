@@ -1411,6 +1411,16 @@ system_ $package$system = system;
 
 ///////////////////////////////////////
 //
+// Marker interfaces
+//
+///////////////////////////////////////
+
+abstract class dart$$Object {}
+abstract class dart$$Identifiable extends dart$$Object {}
+abstract class dart$$Basic extends dart$$Identifiable {}
+
+///////////////////////////////////////
+//
 // Capture boxes
 //
 ///////////////////////////////////////

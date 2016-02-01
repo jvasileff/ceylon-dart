@@ -477,6 +477,18 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  DartTypeModel("$ceylon$language", "dart$Callable");
 
     shared
+    DartTypeModel dartCeylonObjectModel
+        =>  DartTypeModel("$ceylon$language", "dart$$Object");
+
+    shared
+    DartTypeModel dartCeylonBasicModel
+        =>  DartTypeModel("$ceylon$language", "dart$$Basic");
+
+    shared
+    DartTypeModel dartCeylonIdentifiableModel
+        =>  DartTypeModel("$ceylon$language", "dart$$Identifiable");
+
+    shared
     DartTypeModel dartIntModel
         =   DartTypeModel("$dart$core", "int");
 

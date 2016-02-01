@@ -307,11 +307,20 @@ class TopLevelVisitor(CompilationContext ctx)
                         info.declarationModel);
 
         value implementsTypes
-            =   sequence(CeylonList(info.declarationModel.satisfiedTypes)
-                        .filter(dartTypes.denotable)
-                        .map((satisfiedType)
-                =>  dartTypes.dartTypeName(info, satisfiedType, false)));
-
+            =   sequence {
+                    CeylonList(info.declarationModel.satisfiedTypes)
+                    .map {
+                        (satisfiedType) =>
+                            if (dartTypes.denotable(satisfiedType)) then
+                                dartTypes.dartTypeName(info, satisfiedType, false)
+                            else if (ceylonTypes.isCeylonIdentifiable(satisfiedType)) then
+                                dartTypes.dartTypeNameForDartModel {
+                                    info;
+                                    dartTypes.dartCeylonIdentifiableModel;
+                                }
+                            else null;
+                    }.coalesced;
+                };
 
         "The containing class or interface, if one exists."
         value outerDeclaration
@@ -446,11 +455,50 @@ class TopLevelVisitor(CompilationContext ctx)
         value identifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
 
-        value satisifesTypes
-            =   sequence(CeylonList(classModel.satisfiedTypes)
-                        .filter(dartTypes.denotable)
-                        .map((satisfiedType)
-                =>  dartTypes.dartTypeName(scope, satisfiedType, false)));
+        // TODO satisfiesBasic should be true when extending
+        //      Dart native types (when supported).
+
+        value satisfiesBasic
+            =   if (exists et = classModel.extendedType)
+                then ceylonTypes.isCeylonBasic(et)
+                else true;
+
+        value satisfiesObject
+            =   if (exists et = classModel.extendedType)
+                then ceylonTypes.isCeylonObject(et)
+                else true;
+
+        value satisfiesTypes
+            =   sequence {
+                    CeylonList(classModel.satisfiedTypes)
+                    .map {
+                        (satisfiedType) =>
+                            if (dartTypes.denotable(satisfiedType)) then
+                                dartTypes.dartTypeName(scope, satisfiedType, false)
+                            else if (ceylonTypes.isCeylonIdentifiable(satisfiedType),
+                                    !satisfiesBasic) then
+                                dartTypes.dartTypeNameForDartModel {
+                                    scope;
+                                    dartTypes.dartCeylonIdentifiableModel;
+                                }
+                            else null;
+                    }
+                    .follow {
+                        satisfiesBasic then
+                        dartTypes.dartTypeNameForDartModel {
+                            scope;
+                            dartTypes.dartCeylonBasicModel;
+                        };
+                    }
+                    .follow {
+                        satisfiesObject then
+                        dartTypes.dartTypeNameForDartModel {
+                            scope;
+                            dartTypes.dartCeylonObjectModel;
+                        };
+                    }
+                    .coalesced;
+                };
 
         value extendsClause
             =   if (exists et = classModel.extendedType,
@@ -746,8 +794,8 @@ class TopLevelVisitor(CompilationContext ctx)
             identifier;
             extendsClause;
             implementsClause =
-                if (exists satisifesTypes)
-                then DartImplementsClause(satisifesTypes)
+                if (exists satisfiesTypes)
+                then DartImplementsClause(satisfiesTypes)
                 else null;
             concatenate {
                 outerField,
