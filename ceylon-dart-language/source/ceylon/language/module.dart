@@ -1322,7 +1322,8 @@ $dart$core.Map _$properties = {
   "os.name" : $dart$io.Platform.operatingSystem,
   "line.separator" : $dart$io.Platform.isWindows ? "\r\n" : "\n",
   "file.separator" : $dart$io.Platform.isWindows ? "\\" : "/",
-  "path.separator" : $dart$io.Platform.pathSeparator
+  "path.separator" : $dart$io.Platform.pathSeparator,
+  "dart.version" : $dart$io.Platform.version
 };
 
 class process_ implements dart$$Basic {
@@ -1379,6 +1380,8 @@ class process_ implements dart$$Basic {
   }
 
   Sequential get arguments => _processArguments;
+
+  $dart$core.String toString() => "process";
 }
 
 const process = const process_.$value$();

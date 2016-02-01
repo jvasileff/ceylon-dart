@@ -158,7 +158,8 @@ shared native("js") object runtime  {
 
 shared native("dart") object runtime  {
     shared native("dart") String name = "DartVM";
-    shared native("dart") String version = "Unknown Version";
+    shared native("dart") String version
+        =>  process.propertyValue("platform.version") else "Unknown";
     shared native("dart") Integer integerSize = 64;
     shared native("dart") Integer integerAddressableSize = 32;
     shared native("dart") Integer maxIntegerValue = 2^63 - 1;
