@@ -13,77 +13,77 @@ abstract class Annotated {
 }
 abstract class Annotation {
 }
-class AnnotationAnnotation implements OptionalAnnotation {
+class AnnotationAnnotation implements dart$$Basic, OptionalAnnotation {
     AnnotationAnnotation() {}
 }
 AnnotationAnnotation $package$annotation() => new AnnotationAnnotation();
 
 AnnotationAnnotation annotation() => $package$annotation();
 
-class SharedAnnotation implements OptionalAnnotation {
+class SharedAnnotation implements dart$$Basic, OptionalAnnotation {
     SharedAnnotation() {}
 }
 SharedAnnotation $package$shared() => new SharedAnnotation();
 
 SharedAnnotation shared() => $package$shared();
 
-class VariableAnnotation implements OptionalAnnotation {
+class VariableAnnotation implements dart$$Basic, OptionalAnnotation {
     VariableAnnotation() {}
 }
 VariableAnnotation $package$variable() => new VariableAnnotation();
 
 VariableAnnotation variable() => $package$variable();
 
-class AbstractAnnotation implements OptionalAnnotation {
+class AbstractAnnotation implements dart$$Basic, OptionalAnnotation {
     AbstractAnnotation() {}
 }
 AbstractAnnotation $package$abstract() => new AbstractAnnotation();
 
 AbstractAnnotation abstract() => $package$abstract();
 
-class FinalAnnotation implements OptionalAnnotation {
+class FinalAnnotation implements dart$$Basic, OptionalAnnotation {
     FinalAnnotation() {}
 }
 FinalAnnotation $package$$final() => new FinalAnnotation();
 
 FinalAnnotation $final() => $package$$final();
 
-class SealedAnnotation implements OptionalAnnotation {
+class SealedAnnotation implements dart$$Basic, OptionalAnnotation {
     SealedAnnotation() {}
 }
 SealedAnnotation $package$sealed() => new SealedAnnotation();
 
 SealedAnnotation sealed() => $package$sealed();
 
-class ActualAnnotation implements OptionalAnnotation {
+class ActualAnnotation implements dart$$Basic, OptionalAnnotation {
     ActualAnnotation() {}
 }
 ActualAnnotation $package$actual() => new ActualAnnotation();
 
 ActualAnnotation actual() => $package$actual();
 
-class FormalAnnotation implements OptionalAnnotation {
+class FormalAnnotation implements dart$$Basic, OptionalAnnotation {
     FormalAnnotation() {}
 }
 FormalAnnotation $package$formal() => new FormalAnnotation();
 
 FormalAnnotation formal() => $package$formal();
 
-class DefaultAnnotation implements OptionalAnnotation {
+class DefaultAnnotation implements dart$$Basic, OptionalAnnotation {
     DefaultAnnotation() {}
 }
 DefaultAnnotation $package$$default() => new DefaultAnnotation();
 
 DefaultAnnotation $default() => $package$$default();
 
-class LateAnnotation implements OptionalAnnotation {
+class LateAnnotation implements dart$$Basic, OptionalAnnotation {
     LateAnnotation() {}
 }
 LateAnnotation $package$late() => new LateAnnotation();
 
 LateAnnotation late() => $package$late();
 
-class NativeAnnotation implements OptionalAnnotation {
+class NativeAnnotation implements dart$$Basic, OptionalAnnotation {
     NativeAnnotation([Sequential backends]) {
         this.backends = backends;
     }
@@ -93,7 +93,7 @@ NativeAnnotation $package$native([Sequential backends]) => new NativeAnnotation(
 
 NativeAnnotation native([Sequential backends]) => $package$native(backends);
 
-class DocAnnotation implements OptionalAnnotation {
+class DocAnnotation implements dart$$Basic, OptionalAnnotation {
     DocAnnotation([$dart$core.String description]) {
         this.description = description;
     }
@@ -103,7 +103,7 @@ DocAnnotation $package$doc([$dart$core.String description]) => new DocAnnotation
 
 DocAnnotation doc([$dart$core.String description]) => $package$doc(description);
 
-class SeeAnnotation implements SequencedAnnotation {
+class SeeAnnotation implements dart$$Basic, SequencedAnnotation {
     SeeAnnotation([Sequential programElements]) {
         this.programElements = programElements;
     }
@@ -113,7 +113,7 @@ SeeAnnotation $package$see([Sequential programElements]) => new SeeAnnotation(pr
 
 SeeAnnotation see([Sequential programElements]) => $package$see(programElements);
 
-class AuthorsAnnotation implements OptionalAnnotation {
+class AuthorsAnnotation implements dart$$Basic, OptionalAnnotation {
     AuthorsAnnotation([Sequential authors]) {
         this.authors = authors;
     }
@@ -123,7 +123,7 @@ AuthorsAnnotation $package$by([Sequential authors]) => new AuthorsAnnotation(aut
 
 AuthorsAnnotation by([Sequential authors]) => $package$by(authors);
 
-class ThrownExceptionAnnotation implements SequencedAnnotation {
+class ThrownExceptionAnnotation implements dart$$Basic, SequencedAnnotation {
     ThrownExceptionAnnotation([meta$declaration$Declaration type, $dart$core.String when]) {
         this.type = type;
         this.when = when;
@@ -140,7 +140,7 @@ ThrownExceptionAnnotation $package$throws([meta$declaration$Declaration type, $d
 
 ThrownExceptionAnnotation throws([meta$declaration$Declaration type, $dart$core.Object when = $package$dart$default]) => $package$throws(type, when);
 
-class DeprecationAnnotation implements OptionalAnnotation {
+class DeprecationAnnotation implements dart$$Basic, OptionalAnnotation {
     DeprecationAnnotation([$dart$core.String description]) {
         this.description = description;
     }
@@ -156,7 +156,7 @@ DeprecationAnnotation $package$deprecated([$dart$core.Object reason = $package$d
 
 DeprecationAnnotation deprecated([$dart$core.Object reason = $package$dart$default]) => $package$deprecated(reason);
 
-class TagsAnnotation implements OptionalAnnotation {
+class TagsAnnotation implements dart$$Basic, OptionalAnnotation {
     TagsAnnotation([Sequential tags]) {
         this.tags = tags;
     }
@@ -166,7 +166,7 @@ TagsAnnotation $package$tagged([Sequential tags]) => new TagsAnnotation(tags);
 
 TagsAnnotation tagged([Sequential tags]) => $package$tagged(tags);
 
-class AliasesAnnotation implements OptionalAnnotation {
+class AliasesAnnotation implements dart$$Basic, OptionalAnnotation {
     AliasesAnnotation([Sequential aliases]) {
         this.aliases = aliases;
     }
@@ -176,7 +176,7 @@ AliasesAnnotation $package$aliased([Sequential aliases]) => new AliasesAnnotatio
 
 AliasesAnnotation aliased([Sequential aliases]) => $package$aliased(aliases);
 
-class LicenseAnnotation implements OptionalAnnotation {
+class LicenseAnnotation implements dart$$Basic, OptionalAnnotation {
     LicenseAnnotation([$dart$core.String description]) {
         this.description = description;
     }
@@ -186,14 +186,14 @@ LicenseAnnotation $package$license([$dart$core.String description]) => new Licen
 
 LicenseAnnotation license([$dart$core.String description]) => $package$license(description);
 
-class OptionalImportAnnotation implements OptionalAnnotation {
+class OptionalImportAnnotation implements dart$$Basic, OptionalAnnotation {
     OptionalImportAnnotation() {}
 }
 OptionalImportAnnotation $package$optional() => new OptionalImportAnnotation();
 
 OptionalImportAnnotation optional() => $package$optional();
 
-class SuppressWarningsAnnotation implements OptionalAnnotation {
+class SuppressWarningsAnnotation implements dart$$Basic, OptionalAnnotation {
     SuppressWarningsAnnotation([Sequential warnings]) {
         this.warnings = warnings;
     }
@@ -203,7 +203,7 @@ SuppressWarningsAnnotation $package$suppressWarnings([Sequential warnings]) => n
 
 SuppressWarningsAnnotation suppressWarnings([Sequential warnings]) => $package$suppressWarnings(warnings);
 
-class SerializableAnnotation implements OptionalAnnotation {
+class SerializableAnnotation implements dart$$Basic, OptionalAnnotation {
     SerializableAnnotation() {}
 }
 SerializableAnnotation $package$serializable() => new SerializableAnnotation();
@@ -236,7 +236,7 @@ Array $package$arrayOfSize([$dart$core.int size, $dart$core.Object element]) => 
 
 Array arrayOfSize([$dart$core.int size, $dart$core.Object element]) => $package$arrayOfSize(size, element);
 
-class ArraySequence implements Sequence {
+class ArraySequence implements dart$$Object, Sequence {
     ArraySequence([Array _$array]) {
         this._$array = _$array;
         if (!(!this._$array.empty)) {
@@ -490,7 +490,7 @@ Callable $package$byKey([Callable comparing]) => new dart$Callable(([Entry x, En
 
 Callable byKey([Callable comparing]) => $package$byKey(comparing);
 
-class Byte implements Binary, Invertible, Enumerable {
+class Byte implements dart$$Object, Binary, Invertible, Enumerable {
     Byte([$dart$core.int _$congruent]) {
         this._$congruent = _$congruent;
         unsigned = Integer.nativeValue(Integer.instance(this._$congruent).and(Integer.instance(255)));
@@ -579,7 +579,7 @@ abstract class Category {
         }
     }
 }
-class ChainedIterator implements Iterator {
+class ChainedIterator implements dart$$Basic, Iterator {
     ChainedIterator([Iterable _$first, Iterable _$second]) {
         this._$first = _$first;
         this._$second = _$second;
@@ -602,7 +602,7 @@ class ChainedIterator implements Iterator {
     }
     $dart$core.String toString() => ((("" + _$first.toString()) + ".chain(") + _$second.toString()) + ").iterator()";
 }
-class Collection$permutations$$anonymous$0_$$anonymous$5_ implements Iterator {
+class Collection$permutations$$anonymous$0_$$anonymous$5_ implements dart$$Basic, Iterator {
     Collection$permutations$$anonymous$0_ $outer$ceylon$language$Collection$permutations$$anonymous$0_;
     Collection$permutations$$anonymous$0_$$anonymous$5_([Collection$permutations$$anonymous$0_ $outer$ceylon$language$Collection$permutations$$anonymous$0_]) {
         this.$outer$ceylon$language$Collection$permutations$$anonymous$0_ = $outer$ceylon$language$Collection$permutations$$anonymous$0_;
@@ -676,7 +676,7 @@ class Collection$permutations$$anonymous$0_$$anonymous$5_ implements Iterator {
         })();
     }
 }
-class Collection$permutations$$anonymous$0_ implements Iterable {
+class Collection$permutations$$anonymous$0_ implements dart$$Basic, Iterable {
     Collection $outer$ceylon$language$Collection;
     Collection$permutations$$anonymous$0_([Collection $outer$ceylon$language$Collection]) {
         this.$outer$ceylon$language$Collection = $outer$ceylon$language$Collection;
@@ -780,7 +780,7 @@ abstract class Collection implements Iterable {
     Iterable get permutations;
     static Iterable $get$permutations([final Collection $this]) => new Collection$permutations$$anonymous$0_($this);
 }
-class nullElement_ {
+class nullElement_ implements dart$$Basic {
     nullElement_() {}
 }
 final nullElement_ $package$nullElement = new nullElement_();
@@ -819,7 +819,7 @@ Callable $package$comparing([Sequential comparators]) => new dart$Callable(([$da
 
 Callable comparing([Sequential comparators]) => $package$comparing(comparators);
 
-abstract class Comparison {
+abstract class Comparison implements dart$$Basic {
     Comparison([$dart$core.String string]) {
         this.string = string;
     }
@@ -941,7 +941,7 @@ Sequential concatenate([Sequential iterables]) => $package$concatenate(iterables
 
 abstract class ConstrainedAnnotation implements Annotation {
 }
-class Contextual$Using implements Obtainable {
+class Contextual$Using implements dart$$Basic, Obtainable {
     Contextual $outer$ceylon$language$Contextual;
     Contextual$Using([Contextual $outer$ceylon$language$Contextual, $dart$core.Object _$newValue]) {
         this.$outer$ceylon$language$Contextual = $outer$ceylon$language$Contextual;
@@ -982,7 +982,7 @@ class Contextual$Using implements Obtainable {
         }
     }
 }
-class Contextual {
+class Contextual implements dart$$Basic {
     Contextual() {
         _$val = null;
     }
@@ -1000,7 +1000,7 @@ class Contextual {
     }
     Contextual$Using $new$Contextual$Using([$dart$core.Object _$newValue]) => new Contextual$Using(this, _$newValue);
 }
-class Correspondence$keys$$anonymous$0_ implements Category {
+class Correspondence$keys$$anonymous$0_ implements dart$$Basic, Category {
     Correspondence $outer$ceylon$language$Correspondence;
     Correspondence$keys$$anonymous$0_([Correspondence $outer$ceylon$language$Correspondence]) {
         this.$outer$ceylon$language$Correspondence = $outer$ceylon$language$Correspondence;
@@ -1168,7 +1168,7 @@ Callable $package$uncurry([Callable f]) => $package$flatten(new dart$Callable(([
 
 Callable uncurry([Callable f]) => $package$uncurry(f);
 
-class CycledIterator implements Iterator {
+class CycledIterator implements dart$$Basic, Iterator {
     CycledIterator([Iterable _$iterable, $dart$core.int _$times]) {
         this._$iterable = _$iterable;
         this._$times = _$times;
@@ -1218,7 +1218,7 @@ Throwable $package$dart$wrapThrownObject([$dart$core.Object thrown]) => (() {
 
 Throwable dart$wrapThrownObject([$dart$core.Object thrown]) => $package$dart$wrapThrownObject(thrown);
 
-class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
+class functionIterable$$anonymous$0_$$anonymous$1_ implements dart$$Basic, Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
     functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_]) {
         this.$outer$ceylon$language$functionIterable$$anonymous$0_ = $outer$ceylon$language$functionIterable$$anonymous$0_;
@@ -1227,7 +1227,7 @@ class functionIterable$$anonymous$0_$$anonymous$1_ implements Iterator {
     Callable _$n;
     $dart$core.Object next() => _$n.f();
 }
-class functionIterable$$anonymous$0_ implements Iterable {
+class functionIterable$$anonymous$0_ implements dart$$Basic, Iterable {
     Callable $capture$functionIterable$f;
     functionIterable$$anonymous$0_([Callable $capture$functionIterable$f]) {
         this.$capture$functionIterable$f = $capture$functionIterable$f;
@@ -1387,7 +1387,7 @@ Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.i
 
 Iterable dartStringLinesWithBreaks([$dart$core.String val]) => $package$dartStringLinesWithBreaks(val);
 
-class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
+class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements dart$$Basic, Iterator {
     dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_;
     dartStringSplit$$anonymous$2_$iterator$$anonymous$3_([dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_]) {
         this.$outer$ceylon$language$dartStringSplit$$anonymous$2_ = $outer$ceylon$language$dartStringSplit$$anonymous$2_;
@@ -1475,7 +1475,7 @@ class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements Iterator {
         }
     }
 }
-class dartStringSplit$$anonymous$2_ implements Iterable {
+class dartStringSplit$$anonymous$2_ implements dart$$Basic, Iterable {
     $dart$core.String $capture$dartStringSplit$val;
     Callable $capture$dartStringSplit$splitting;
     $dart$core.Object $capture$dartStringSplit$groupSeparators;
@@ -1698,7 +1698,7 @@ abstract class Empty implements Sequential, Ranged {
     void each([Callable step]);
     static void $each([final Empty $this, Callable step]) {}
 }
-class empty_ implements Empty {
+class empty_ implements dart$$Object, Empty {
     empty_() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hashCode(this);
@@ -1799,7 +1799,7 @@ final empty_ $package$empty = new empty_();
 
 empty_ get empty => $package$empty;
 
-class emptyIterator_ implements Iterator {
+class emptyIterator_ implements dart$$Basic, Iterator {
     emptyIterator_() {}
     Finished next() => $package$finished;
     $dart$core.String toString() => "empty.iterator()";
@@ -1821,7 +1821,7 @@ $dart$core.Object $package$emptyOrSingleton([$dart$core.Object element]) => (() 
 
 $dart$core.Object emptyOrSingleton([$dart$core.Object element]) => $package$emptyOrSingleton(element);
 
-class Entry {
+class Entry implements dart$$Object {
     Entry([$dart$core.Object key, $dart$core.Object item]) {
         this.key = key;
         this.item = item;
@@ -1994,7 +1994,7 @@ Iterable expand([Iterable iterables]) => $package$expand(iterables);
 abstract class Exponentiable implements Numeric {
     $dart$core.Object power([$dart$core.Object other]);
 }
-abstract class Finished {
+abstract class Finished implements dart$$Basic {
     Finished() {}
 }
 class finished_  extends Finished {
@@ -2103,7 +2103,7 @@ $dart$core.bool $package$identical([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.bool identical([$dart$core.Object x, $dart$core.Object y]) => $package$identical(x, y);
 
-abstract class impl$BaseIterable implements Iterable {
+abstract class impl$BaseIterable implements dart$$Object, Iterable {
     impl$BaseIterable() {}
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
@@ -2163,10 +2163,10 @@ abstract class impl$BaseIterable implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-abstract class impl$BaseIterator implements Iterator {
+abstract class impl$BaseIterator implements dart$$Object, Iterator {
     impl$BaseIterator() {}
 }
-abstract class impl$BaseMap implements Map {
+abstract class impl$BaseMap implements dart$$Object, Map {
     impl$BaseMap() {}
     $dart$core.bool operator ==($dart$core.Object that) => Map.$equals(this, that);
     $dart$core.int get hashCode => Map.$get$hashCode(this);
@@ -2241,7 +2241,7 @@ abstract class impl$BaseMap implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-abstract class impl$BaseList implements SearchableList {
+abstract class impl$BaseList implements dart$$Object, SearchableList {
     impl$BaseList() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hashCode(this);
@@ -2342,7 +2342,7 @@ abstract class impl$BaseList implements SearchableList {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-abstract class impl$BaseCharacterList implements SearchableList {
+abstract class impl$BaseCharacterList implements dart$$Object, SearchableList {
     impl$BaseCharacterList() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hashCode(this);
@@ -2443,7 +2443,7 @@ abstract class impl$BaseCharacterList implements SearchableList {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-abstract class impl$BaseSequence implements Sequence {
+abstract class impl$BaseSequence implements dart$$Object, Sequence {
     impl$BaseSequence() {}
     $dart$core.bool operator ==($dart$core.Object that) => List.$equals(this, that);
     $dart$core.int get hashCode => List.$get$hashCode(this);
@@ -2535,7 +2535,7 @@ abstract class impl$BaseSequence implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class impl$ElementImpl implements serialization$Element {
+class impl$ElementImpl implements dart$$Basic, serialization$Element {
     impl$ElementImpl([$dart$core.int index]) {
         this.index = index;
     }
@@ -2559,7 +2559,7 @@ class impl$ElementImpl implements serialization$Element {
         }
     }
 }
-class impl$MemberImpl implements serialization$Member {
+class impl$MemberImpl implements dart$$Basic, serialization$Member {
     void _$init$impl$MemberImpl([$dart$core.int $bitmap, meta$declaration$FunctionOrValueDeclaration $$attribute]) {
         if (0 != ($bitmap & 1)) {
             meta$declaration$ValueDeclaration attribute$0;
@@ -2594,7 +2594,7 @@ class impl$MemberImpl implements serialization$Member {
         }
     }
 }
-class impl$outerImpl_ implements serialization$Outer {
+class impl$outerImpl_ implements dart$$Basic, serialization$Outer {
     impl$outerImpl_() {}
     $dart$core.Object referred([$dart$core.Object instance]) {
         return $package$impl$reach.getObject(instance, this);
@@ -2639,7 +2639,7 @@ abstract class Integral implements Number, Enumerable {
     $dart$core.bool divides([$dart$core.Object other]);
     static $dart$core.bool $divides([final Integral $this, $dart$core.Object other]) => (((other as Integral) % $this) as Integral).zero;
 }
-class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
+class interleave$$anonymous$0_$$anonymous$1_ implements dart$$Basic, Iterator {
     interleave$$anonymous$0_ $outer$ceylon$language$interleave$$anonymous$0_;
     interleave$$anonymous$0_$$anonymous$1_([interleave$$anonymous$0_ $outer$ceylon$language$interleave$$anonymous$0_]) {
         this.$outer$ceylon$language$interleave$$anonymous$0_ = $outer$ceylon$language$interleave$$anonymous$0_;
@@ -2677,7 +2677,7 @@ class interleave$$anonymous$0_$$anonymous$1_ implements Iterator {
         }
     }
 }
-class interleave$$anonymous$0_ implements Iterable {
+class interleave$$anonymous$0_ implements dart$$Basic, Iterable {
     Sequence $capture$interleave$iterables;
     interleave$$anonymous$0_([Sequence $capture$interleave$iterables]) {
         this.$capture$interleave$iterables = $capture$interleave$iterables;
@@ -2852,7 +2852,7 @@ abstract class Invertible implements Summable {
     $dart$core.Object operator -($dart$core.Object other);
     static $dart$core.Object $minus([final Invertible $this, $dart$core.Object other]) => $this + (-(other as Invertible));
 }
-class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements Iterator {
+class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements dart$$Basic, Iterator {
     Iterable$exceptLast$$anonymous$2_ $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_;
     Iterator $capture$$iter;
     Iterable$exceptLast$$anonymous$2_$$anonymous$3_([Iterable$exceptLast$$anonymous$2_ $outer$ceylon$language$Iterable$exceptLast$$anonymous$2_, Iterator $capture$$iter]) {
@@ -2880,7 +2880,7 @@ class Iterable$exceptLast$$anonymous$2_$$anonymous$3_ implements Iterator {
         }
     }
 }
-class Iterable$exceptLast$$anonymous$2_ implements Iterable {
+class Iterable$exceptLast$$anonymous$2_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$exceptLast$$anonymous$2_([Iterable $outer$ceylon$language$Iterable]) {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
@@ -2950,7 +2950,7 @@ class Iterable$exceptLast$$anonymous$2_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$scan$$anonymous$4_$$anonymous$5_ implements Iterator {
+class Iterable$scan$$anonymous$4_$$anonymous$5_ implements dart$$Basic, Iterator {
     Iterable$scan$$anonymous$4_ $outer$ceylon$language$Iterable$scan$$anonymous$4_;
     Iterator $capture$$iter;
     Iterable$scan$$anonymous$4_$$anonymous$5_([Iterable$scan$$anonymous$4_ $outer$ceylon$language$Iterable$scan$$anonymous$4_, Iterator $capture$$iter]) {
@@ -2984,7 +2984,7 @@ class Iterable$scan$$anonymous$4_$$anonymous$5_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$scan$$anonymous$4_.toString() + ".iterator()";
 }
-class Iterable$scan$$anonymous$4_ implements Iterable {
+class Iterable$scan$$anonymous$4_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.Object $capture$Iterable$scan$initial;
     Callable $capture$Iterable$scan$accumulating;
@@ -3058,7 +3058,7 @@ class Iterable$scan$$anonymous$4_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
+class Iterable$locations$$anonymous$6_$$anonymous$7_ implements dart$$Basic, Iterator {
     Iterable$locations$$anonymous$6_ $outer$ceylon$language$Iterable$locations$$anonymous$6_;
     Iterator $capture$$iter;
     Iterable$locations$$anonymous$6_$$anonymous$7_([Iterable$locations$$anonymous$6_ $outer$ceylon$language$Iterable$locations$$anonymous$6_, Iterator $capture$$iter]) {
@@ -3098,7 +3098,7 @@ class Iterable$locations$$anonymous$6_$$anonymous$7_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$locations$$anonymous$6_.toString() + ".iterator()";
 }
-class Iterable$locations$$anonymous$6_ implements Iterable {
+class Iterable$locations$$anonymous$6_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$locations$selecting;
     Iterable$locations$$anonymous$6_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$locations$selecting]) {
@@ -3170,7 +3170,7 @@ class Iterable$locations$$anonymous$6_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$skip$$anonymous$9_ implements Iterable {
+class Iterable$skip$$anonymous$9_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$skip$skipping;
     Iterable$skip$$anonymous$9_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$skip$skipping]) {
@@ -3245,7 +3245,7 @@ class Iterable$skip$$anonymous$9_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements Iterator {
+class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements dart$$Basic, Iterator {
     Iterable$take$$anonymous$10_ $outer$ceylon$language$Iterable$take$$anonymous$10_;
     Iterator $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter;
     Iterable$take$$anonymous$10_$iterator$$anonymous$11_([Iterable$take$$anonymous$10_ $outer$ceylon$language$Iterable$take$$anonymous$10_, Iterator $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter]) {
@@ -3257,7 +3257,7 @@ class Iterable$take$$anonymous$10_$iterator$$anonymous$11_ implements Iterator {
     $dart$core.Object next() => (($dart$core.Object $lhs$) => null == $lhs$ ? $capture$Iterable$take$$Iterable$take$$anonymous$10_$iterator$iter.next() : $lhs$)((_$i = Integer.nativeValue(Integer.instance(_$i).successor)) > $outer$ceylon$language$Iterable$take$$anonymous$10_.$capture$Iterable$take$taking ? $package$finished : null);
     $dart$core.String toString() => $outer$ceylon$language$Iterable$take$$anonymous$10_.toString() + ".iterator()";
 }
-class Iterable$take$$anonymous$10_ implements Iterable {
+class Iterable$take$$anonymous$10_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$take$taking;
     Iterable$take$$anonymous$10_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$take$taking]) {
@@ -3326,7 +3326,7 @@ class Iterable$take$$anonymous$10_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_ implements Iterator {
+class Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_ implements dart$$Basic, Iterator {
     Iterable$skipWhile$$anonymous$12_ $outer$ceylon$language$Iterable$skipWhile$$anonymous$12_;
     $dart$core.Object $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$$$elem;
     Iterator $capture$Iterable$skipWhile$Iterable$skipWhile$$anonymous$12_$iterator$iter;
@@ -3347,7 +3347,7 @@ class Iterable$skipWhile$$anonymous$12_$iterator$$anonymous$13_ implements Itera
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$skipWhile$$anonymous$12_.toString() + ".iterator()";
 }
-class Iterable$skipWhile$$anonymous$12_ implements Iterable {
+class Iterable$skipWhile$$anonymous$12_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$skipWhile$skipping;
     Iterable$skipWhile$$anonymous$12_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$skipWhile$skipping]) {
@@ -3429,7 +3429,7 @@ class Iterable$skipWhile$$anonymous$12_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
+class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements dart$$Basic, Iterator {
     Iterable$takeWhile$$anonymous$14_ $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_;
     Iterator $capture$$iter;
     Iterable$takeWhile$$anonymous$14_$$anonymous$15_([Iterable$takeWhile$$anonymous$14_ $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_, Iterator $capture$$iter]) {
@@ -3456,7 +3456,7 @@ class Iterable$takeWhile$$anonymous$14_$$anonymous$15_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$takeWhile$$anonymous$14_.toString() + ".iterator()";
 }
-class Iterable$takeWhile$$anonymous$14_ implements Iterable {
+class Iterable$takeWhile$$anonymous$14_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$takeWhile$taking;
     Iterable$takeWhile$$anonymous$14_([Iterable $outer$ceylon$language$Iterable, Callable $capture$Iterable$takeWhile$taking]) {
@@ -3528,7 +3528,7 @@ class Iterable$takeWhile$$anonymous$14_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$repeat$$anonymous$16_ implements Iterable {
+class Iterable$repeat$$anonymous$16_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$repeat$times;
     Iterable$repeat$$anonymous$16_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$repeat$times]) {
@@ -3594,7 +3594,7 @@ class Iterable$repeat$$anonymous$16_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$by$$anonymous$17_$$anonymous$18_ implements Iterator {
+class Iterable$by$$anonymous$17_$$anonymous$18_ implements dart$$Basic, Iterator {
     Iterable$by$$anonymous$17_ $outer$ceylon$language$Iterable$by$$anonymous$17_;
     Iterator $capture$$iter;
     Iterable$by$$anonymous$17_$$anonymous$18_([Iterable$by$$anonymous$17_ $outer$ceylon$language$Iterable$by$$anonymous$17_, Iterator $capture$$iter]) {
@@ -3609,7 +3609,7 @@ class Iterable$by$$anonymous$17_$$anonymous$18_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$by$$anonymous$17_.toString() + ".iterator()";
 }
-class Iterable$by$$anonymous$17_ implements Iterable {
+class Iterable$by$$anonymous$17_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$by$step;
     Iterable$by$$anonymous$17_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$by$step]) {
@@ -3681,7 +3681,7 @@ class Iterable$by$$anonymous$17_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$indexed$$anonymous$20_$$anonymous$21_ implements Iterator {
+class Iterable$indexed$$anonymous$20_$$anonymous$21_ implements dart$$Basic, Iterator {
     Iterable$indexed$$anonymous$20_ $outer$ceylon$language$Iterable$indexed$$anonymous$20_;
     Iterator $capture$$iter;
     Iterable$indexed$$anonymous$20_$$anonymous$21_([Iterable$indexed$$anonymous$20_ $outer$ceylon$language$Iterable$indexed$$anonymous$20_, Iterator $capture$$iter]) {
@@ -3704,7 +3704,7 @@ class Iterable$indexed$$anonymous$20_$$anonymous$21_ implements Iterator {
     })();
     $dart$core.String toString() => $outer$ceylon$language$Iterable$indexed$$anonymous$20_.toString() + ".iterator()";
 }
-class Iterable$indexed$$anonymous$20_ implements Iterable {
+class Iterable$indexed$$anonymous$20_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$indexed$$anonymous$20_([Iterable $outer$ceylon$language$Iterable]) {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
@@ -3774,7 +3774,7 @@ class Iterable$indexed$$anonymous$20_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$paired$$anonymous$22_$$anonymous$23_ implements Iterator {
+class Iterable$paired$$anonymous$22_$$anonymous$23_ implements dart$$Basic, Iterator {
     Iterable$paired$$anonymous$22_ $outer$ceylon$language$Iterable$paired$$anonymous$22_;
     Iterator $capture$$iter;
     Iterable$paired$$anonymous$22_$$anonymous$23_([Iterable$paired$$anonymous$22_ $outer$ceylon$language$Iterable$paired$$anonymous$22_, Iterator $capture$$iter]) {
@@ -3808,7 +3808,7 @@ class Iterable$paired$$anonymous$22_$$anonymous$23_ implements Iterator {
         }
     }
 }
-class Iterable$paired$$anonymous$22_ implements Iterable {
+class Iterable$paired$$anonymous$22_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$paired$$anonymous$22_([Iterable $outer$ceylon$language$Iterable]) {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
@@ -3884,7 +3884,7 @@ class Iterable$paired$$anonymous$22_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$partition$$anonymous$24_$$anonymous$25_ implements Iterator {
+class Iterable$partition$$anonymous$24_$$anonymous$25_ implements dart$$Basic, Iterator {
     Iterable$partition$$anonymous$24_ $outer$ceylon$language$Iterable$partition$$anonymous$24_;
     Iterator $capture$$iter;
     Iterable$partition$$anonymous$24_$$anonymous$25_([Iterable$partition$$anonymous$24_ $outer$ceylon$language$Iterable$partition$$anonymous$24_, Iterator $capture$$iter]) {
@@ -3926,7 +3926,7 @@ class Iterable$partition$$anonymous$24_$$anonymous$25_ implements Iterator {
         }
     }
 }
-class Iterable$partition$$anonymous$24_ implements Iterable {
+class Iterable$partition$$anonymous$24_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.int $capture$Iterable$partition$length;
     Iterable$partition$$anonymous$24_([Iterable $outer$ceylon$language$Iterable, $dart$core.int $capture$Iterable$partition$length]) {
@@ -4008,7 +4008,7 @@ class Iterable$partition$$anonymous$24_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$chain$$anonymous$26_ implements Iterable {
+class Iterable$chain$$anonymous$26_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable $capture$Iterable$chain$other;
     Iterable$chain$$anonymous$26_([Iterable $outer$ceylon$language$Iterable, Iterable $capture$Iterable$chain$other]) {
@@ -4074,7 +4074,7 @@ class Iterable$chain$$anonymous$26_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$cycled$$anonymous$27_$$anonymous$28_ implements Iterator {
+class Iterable$cycled$$anonymous$27_$$anonymous$28_ implements dart$$Basic, Iterator {
     Iterable$cycled$$anonymous$27_ $outer$ceylon$language$Iterable$cycled$$anonymous$27_;
     Iterable$cycled$$anonymous$27_$$anonymous$28_([Iterable$cycled$$anonymous$27_ $outer$ceylon$language$Iterable$cycled$$anonymous$27_]) {
         this.$outer$ceylon$language$Iterable$cycled$$anonymous$27_ = $outer$ceylon$language$Iterable$cycled$$anonymous$27_;
@@ -4100,7 +4100,7 @@ class Iterable$cycled$$anonymous$27_$$anonymous$28_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$cycled$$anonymous$27_.toString() + ".iterator()";
 }
-class Iterable$cycled$$anonymous$27_ implements Iterable {
+class Iterable$cycled$$anonymous$27_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$cycled$$anonymous$27_([Iterable $outer$ceylon$language$Iterable]) {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
@@ -4169,7 +4169,7 @@ class Iterable$cycled$$anonymous$27_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$interpose$$anonymous$29_$$anonymous$30_ implements Iterator {
+class Iterable$interpose$$anonymous$29_$$anonymous$30_ implements dart$$Basic, Iterator {
     Iterable$interpose$$anonymous$29_ $outer$ceylon$language$Iterable$interpose$$anonymous$29_;
     Iterator $capture$$iter;
     Iterable$interpose$$anonymous$29_$$anonymous$30_([Iterable$interpose$$anonymous$29_ $outer$ceylon$language$Iterable$interpose$$anonymous$29_, Iterator $capture$$iter]) {
@@ -4203,7 +4203,7 @@ class Iterable$interpose$$anonymous$29_$$anonymous$30_ implements Iterator {
     }
     $dart$core.String toString() => $outer$ceylon$language$Iterable$interpose$$anonymous$29_.toString() + ".iterator()";
 }
-class Iterable$interpose$$anonymous$29_ implements Iterable {
+class Iterable$interpose$$anonymous$29_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     $dart$core.Object $capture$Iterable$interpose$step;
     $dart$core.Object $capture$Iterable$interpose$element;
@@ -4280,7 +4280,7 @@ class Iterable$interpose$$anonymous$29_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$distinct$$anonymous$31_$$anonymous$32_ implements Iterator {
+class Iterable$distinct$$anonymous$31_$$anonymous$32_ implements dart$$Basic, Iterator {
     Iterable$distinct$$anonymous$31_ $outer$ceylon$language$Iterable$distinct$$anonymous$31_;
     Iterable $capture$$elements;
     Iterable$distinct$$anonymous$31_$$anonymous$32_([Iterable$distinct$$anonymous$31_ $outer$ceylon$language$Iterable$distinct$$anonymous$31_, Iterable $capture$$elements]) {
@@ -4378,7 +4378,7 @@ class Iterable$distinct$$anonymous$31_$$anonymous$32_ implements Iterator {
         }
     }
 }
-class Iterable$distinct$$anonymous$31_ implements Iterable {
+class Iterable$distinct$$anonymous$31_ implements dart$$Basic, Iterable {
     Iterable $outer$ceylon$language$Iterable;
     Iterable$distinct$$anonymous$31_([Iterable $outer$ceylon$language$Iterable]) {
         this.$outer$ceylon$language$Iterable = $outer$ceylon$language$Iterable;
@@ -4448,7 +4448,7 @@ class Iterable$distinct$$anonymous$31_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Iterable$summarize$$anonymous$36_$$anonymous$37_ implements Iterator {
+class Iterable$summarize$$anonymous$36_$$anonymous$37_ implements dart$$Basic, Iterator {
     Iterable$summarize$$anonymous$36_ $outer$ceylon$language$Iterable$summarize$$anonymous$36_;
     Iterable$summarize$$anonymous$36_$$anonymous$37_([Iterable$summarize$$anonymous$36_ $outer$ceylon$language$Iterable$summarize$$anonymous$36_]) {
         this.$outer$ceylon$language$Iterable$summarize$$anonymous$36_ = $outer$ceylon$language$Iterable$summarize$$anonymous$36_;
@@ -4498,7 +4498,7 @@ class Iterable$summarize$$anonymous$36_$$anonymous$37_ implements Iterator {
         return new Entry(result.group, result.elements);
     }
 }
-class Iterable$summarize$$anonymous$36_ implements Map {
+class Iterable$summarize$$anonymous$36_ implements dart$$Object, Map {
     Iterable $outer$ceylon$language$Iterable;
     Callable $capture$Iterable$summarize$grouping;
     Callable $capture$Iterable$summarize$accumulating;
@@ -5598,7 +5598,7 @@ $dart$core.String $package$commaList([Iterable elements]) => (() {
 
 $dart$core.String commaList([Iterable elements]) => $package$commaList(elements);
 
-class ElementEntry$$anonymous$38_ implements Iterator {
+class ElementEntry$$anonymous$38_ implements dart$$Basic, Iterator {
     ElementEntry $outer$ceylon$language$ElementEntry;
     ElementEntry$$anonymous$38_([ElementEntry $outer$ceylon$language$ElementEntry]) {
         this.$outer$ceylon$language$ElementEntry = $outer$ceylon$language$ElementEntry;
@@ -5623,7 +5623,7 @@ class ElementEntry$$anonymous$38_ implements Iterator {
         }
     }
 }
-class ElementEntry implements Sequence {
+class ElementEntry implements dart$$Object, Sequence {
     ElementEntry([ElementEntry next, $dart$core.Object element]) {
         this.next = next;
         this.element = element;
@@ -5823,7 +5823,7 @@ class ElementEntry implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class GroupEntry {
+class GroupEntry implements dart$$Basic {
     GroupEntry([GroupEntry next, $dart$core.Object group, $dart$core.Object elements]) {
         this.next = next;
         this.group = group;
@@ -5854,7 +5854,7 @@ class GroupEntry {
 abstract class Iterator {
     $dart$core.Object next();
 }
-class language_ {
+class language_ implements dart$$Basic {
     language_() {}
     $dart$core.String get version => "1.2.1-DP2-SNAPSHOT";
     $dart$core.int get majorVersion => 1;
@@ -5873,7 +5873,7 @@ $dart$core.Object $package$largest([$dart$core.Object x, $dart$core.Object y]) =
 
 $dart$core.Object largest([$dart$core.Object x, $dart$core.Object y]) => $package$largest(x, y);
 
-class List$iterator$$anonymous$0_ implements Iterator {
+class List$iterator$$anonymous$0_ implements dart$$Basic, Iterator {
     List $outer$ceylon$language$List;
     List$iterator$$anonymous$0_([List $outer$ceylon$language$List]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -5889,7 +5889,7 @@ class List$iterator$$anonymous$0_ implements Iterator {
     })()) : $lhs$)(_$index >= _$size ? $package$finished : null);
     $dart$core.String toString() => $outer$ceylon$language$List.toString() + ".iterator()";
 }
-class List$collect$list_ implements List {
+class List$collect$list_ implements dart$$Object, List {
     List $outer$ceylon$language$List;
     Callable $capture$List$collect$collecting;
     List$collect$list_([List $outer$ceylon$language$List, Callable $capture$List$collect$collecting]) {
@@ -5988,7 +5988,7 @@ class List$collect$list_ implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Indexes$$anonymous$3_ implements Iterator {
+class List$Indexes$$anonymous$3_ implements dart$$Basic, Iterator {
     List$Indexes $outer$ceylon$language$List$Indexes;
     List$Indexes$$anonymous$3_([List$Indexes $outer$ceylon$language$List$Indexes]) {
         this.$outer$ceylon$language$List$Indexes = $outer$ceylon$language$List$Indexes;
@@ -6002,7 +6002,7 @@ class List$Indexes$$anonymous$3_ implements Iterator {
     })() : null);
     $dart$core.String toString() => ("" + $outer$ceylon$language$List$Indexes.toString()) + ".iterator()";
 }
-class List$Indexes implements List {
+class List$Indexes implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Indexes([List $outer$ceylon$language$List]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -6112,7 +6112,7 @@ class List$Indexes implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Rest$$anonymous$4_ implements Iterator {
+class List$Rest$$anonymous$4_ implements dart$$Basic, Iterator {
     List$Rest $outer$ceylon$language$List$Rest;
     List $capture$$o;
     List$Rest$$anonymous$4_([List$Rest $outer$ceylon$language$List$Rest, List $capture$$o]) {
@@ -6128,7 +6128,7 @@ class List$Rest$$anonymous$4_ implements Iterator {
     })()) : $package$finished;
     $dart$core.String toString() => ("" + $outer$ceylon$language$List$Rest.toString()) + ".iterator()";
 }
-class List$Rest implements List {
+class List$Rest implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Rest([List $outer$ceylon$language$List, $dart$core.int _$from]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -6241,7 +6241,7 @@ class List$Rest implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Sublist$$anonymous$5_ implements Iterator {
+class List$Sublist$$anonymous$5_ implements dart$$Basic, Iterator {
     List$Sublist $outer$ceylon$language$List$Sublist;
     Iterator $capture$$iter;
     List$Sublist$$anonymous$5_([List$Sublist $outer$ceylon$language$List$Sublist, Iterator $capture$$iter]) {
@@ -6257,7 +6257,7 @@ class List$Sublist$$anonymous$5_ implements Iterator {
     })() > $outer$ceylon$language$List$Sublist._$to ? $package$finished : null);
     $dart$core.String toString() => ("" + $outer$ceylon$language$List$Sublist.toString()) + ".iterator()";
 }
-class List$Sublist implements List {
+class List$Sublist implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Sublist([List $outer$ceylon$language$List, $dart$core.int _$to]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -6370,7 +6370,7 @@ class List$Sublist implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Repeat implements List {
+class List$Repeat implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Repeat([List $outer$ceylon$language$List, $dart$core.int _$times]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -6480,7 +6480,7 @@ class List$Repeat implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Patch$$anonymous$6_ implements Iterator {
+class List$Patch$$anonymous$6_ implements dart$$Basic, Iterator {
     List$Patch $outer$ceylon$language$List$Patch;
     Iterator $capture$$iter;
     Iterator $capture$$patchIter;
@@ -6508,7 +6508,7 @@ class List$Patch$$anonymous$6_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$List$Patch.toString()) + ".iterator()";
 }
-class List$Patch implements List {
+class List$Patch implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Patch([List $outer$ceylon$language$List, List _$list, $dart$core.int _$from, $dart$core.int _$length]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -6632,7 +6632,7 @@ class List$Patch implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class List$Reversed$$anonymous$7_ implements Iterator {
+class List$Reversed$$anonymous$7_ implements dart$$Basic, Iterator {
     List$Reversed $outer$ceylon$language$List$Reversed;
     List $capture$$outerList;
     List$Reversed$$anonymous$7_([List$Reversed $outer$ceylon$language$List$Reversed, List $capture$$outerList]) {
@@ -6648,7 +6648,7 @@ class List$Reversed$$anonymous$7_ implements Iterator {
     })()) : $lhs$)(_$index < 0 ? $package$finished : null);
     $dart$core.String toString() => ("" + $outer$ceylon$language$List$Reversed.toString()) + ".iterator()";
 }
-class List$Reversed implements List {
+class List$Reversed implements dart$$Object, List {
     List $outer$ceylon$language$List;
     List$Reversed([List $outer$ceylon$language$List]) {
         this.$outer$ceylon$language$List = $outer$ceylon$language$List;
@@ -7295,7 +7295,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         }
     }
 }
-class loop$$anonymous$0_$$anonymous$1_ implements Iterator {
+class loop$$anonymous$0_$$anonymous$1_ implements dart$$Basic, Iterator {
     loop$$anonymous$0_ $outer$ceylon$language$loop$$anonymous$0_;
     loop$$anonymous$0_$$anonymous$1_([loop$$anonymous$0_ $outer$ceylon$language$loop$$anonymous$0_]) {
         this.$outer$ceylon$language$loop$$anonymous$0_ = $outer$ceylon$language$loop$$anonymous$0_;
@@ -7320,7 +7320,7 @@ class loop$$anonymous$0_$$anonymous$1_ implements Iterator {
         }
     }
 }
-class loop$$anonymous$0_ implements Iterable {
+class loop$$anonymous$0_ implements dart$$Basic, Iterable {
     $dart$core.Object $capture$loop$$start;
     Callable $capture$loop$next;
     loop$$anonymous$0_([$dart$core.Object $capture$loop$$start, Callable $capture$loop$next]) {
@@ -7397,7 +7397,7 @@ Callable $package$loop([$dart$core.Object first]) => new dart$Callable(([Callabl
 
 Callable loop([$dart$core.Object first]) => $package$loop(first);
 
-class Map$keys$$anonymous$0_ implements Collection {
+class Map$keys$$anonymous$0_ implements dart$$Basic, Collection {
     Map $outer$ceylon$language$Map;
     Map$keys$$anonymous$0_([Map $outer$ceylon$language$Map]) {
         this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
@@ -7463,7 +7463,7 @@ class Map$keys$$anonymous$0_ implements Collection {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Map$items$$anonymous$1_ implements Collection {
+class Map$items$$anonymous$1_ implements dart$$Basic, Collection {
     Map $outer$ceylon$language$Map;
     Map$items$$anonymous$1_([Map $outer$ceylon$language$Map]) {
         this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
@@ -7550,7 +7550,7 @@ class Map$items$$anonymous$1_ implements Collection {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class Map$mapItems$$anonymous$3_ implements Map {
+class Map$mapItems$$anonymous$3_ implements dart$$Object, Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$mapItems$mapping;
     Map$mapItems$$anonymous$3_([Map $outer$ceylon$language$Map, Callable $capture$Map$mapItems$mapping]) {
@@ -7669,7 +7669,7 @@ class Map$mapItems$$anonymous$3_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$filterKeys$$anonymous$5_ implements Map {
+class Map$filterKeys$$anonymous$5_ implements dart$$Object, Map {
     Map $outer$ceylon$language$Map;
     Callable $capture$Map$filterKeys$filtering;
     Map$filterKeys$$anonymous$5_([Map $outer$ceylon$language$Map, Callable $capture$Map$filterKeys$filtering]) {
@@ -7786,7 +7786,7 @@ class Map$filterKeys$$anonymous$5_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$patch$$anonymous$6_ implements Map {
+class Map$patch$$anonymous$6_ implements dart$$Object, Map {
     Map $outer$ceylon$language$Map;
     Map $capture$Map$patch$other;
     Map$patch$$anonymous$6_([Map $outer$ceylon$language$Map, Map $capture$Map$patch$other]) {
@@ -7895,7 +7895,7 @@ class Map$patch$$anonymous$6_ implements Map {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Map$coalescedMap$$anonymous$7_ implements Map {
+class Map$coalescedMap$$anonymous$7_ implements dart$$Object, Map {
     Map $outer$ceylon$language$Map;
     Map$coalescedMap$$anonymous$7_([Map $outer$ceylon$language$Map]) {
         this.$outer$ceylon$language$Map = $outer$ceylon$language$Map;
@@ -8212,7 +8212,7 @@ Map $package$map([Iterable stream, $dart$core.Object choosing = $package$dart$de
 
 Map map([Iterable stream, $dart$core.Object choosing = $package$dart$default]) => $package$map(stream, choosing);
 
-class emptyMap_ implements Map {
+class emptyMap_ implements dart$$Object, Map {
     emptyMap_() {}
     $dart$core.Object get([$dart$core.Object key]) => null;
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => $default;
@@ -8295,7 +8295,7 @@ final emptyMap_ $package$emptyMap = new emptyMap_();
 
 emptyMap_ get emptyMap => $package$emptyMap;
 
-class Missing {
+class Missing implements dart$$Basic {
     void _$init$Missing([$dart$core.int $bitmap]) {
         if (0 != ($bitmap & 1)) {}
     }
@@ -8348,7 +8348,7 @@ $dart$core.Object $package$max([Iterable values]) {
 
 $dart$core.Object max([Iterable values]) => $package$max(values);
 
-class Measure$$anonymous$0_ implements Iterator {
+class Measure$$anonymous$0_ implements dart$$Basic, Iterator {
     Measure $outer$ceylon$language$Measure;
     Measure$$anonymous$0_([Measure $outer$ceylon$language$Measure]) {
         this.$outer$ceylon$language$Measure = $outer$ceylon$language$Measure;
@@ -8372,7 +8372,7 @@ class Measure$$anonymous$0_ implements Iterator {
     }
     $dart$core.String toString() => ("(" + $outer$ceylon$language$Measure.toString()) + ").iterator()";
 }
-class Measure$By$$anonymous$1_ implements Iterator {
+class Measure$By$$anonymous$1_ implements dart$$Basic, Iterator {
     Measure$By $outer$ceylon$language$Measure$By;
     Measure$By$$anonymous$1_([Measure$By $outer$ceylon$language$Measure$By]) {
         this.$outer$ceylon$language$Measure$By = $outer$ceylon$language$Measure$By;
@@ -8397,7 +8397,7 @@ class Measure$By$$anonymous$1_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$Measure$By.toString()) + ".iterator()";
 }
-class Measure$By implements Iterable {
+class Measure$By implements dart$$Basic, Iterable {
     Measure $outer$ceylon$language$Measure;
     Measure$By([Measure $outer$ceylon$language$Measure, $dart$core.int _$step]) {
         this.$outer$ceylon$language$Measure = $outer$ceylon$language$Measure;
@@ -8794,7 +8794,7 @@ abstract class meta$declaration$InterfaceDeclaration implements meta$declaration
     meta$model$Interface interfaceApply([Sequential typeArguments]);
     meta$model$MemberInterface memberInterfaceApply([meta$model$Type containerType, Sequential typeArguments]);
 }
-abstract class meta$declaration$Module implements meta$declaration$AnnotatedDeclaration {
+abstract class meta$declaration$Module implements dart$$Identifiable, meta$declaration$AnnotatedDeclaration {
     $dart$core.String get version;
     Sequential get members;
     Sequential get dependencies;
@@ -8802,14 +8802,14 @@ abstract class meta$declaration$Module implements meta$declaration$AnnotatedDecl
     meta$declaration$Package findImportedPackage([$dart$core.String name]);
     Resource resourceByPath([$dart$core.String path]);
 }
-abstract class meta$declaration$Import implements Annotated {
+abstract class meta$declaration$Import implements dart$$Identifiable, Annotated {
     $dart$core.String get name;
     $dart$core.String get version;
     $dart$core.bool get shared;
     $dart$core.bool get optional;
     meta$declaration$Module get container;
 }
-abstract class meta$declaration$Package implements meta$declaration$AnnotatedDeclaration {
+abstract class meta$declaration$Package implements dart$$Identifiable, meta$declaration$AnnotatedDeclaration {
     meta$declaration$Module get container;
     $dart$core.bool get shared;
     Sequential members();
@@ -8830,7 +8830,7 @@ abstract class meta$declaration$NestableDeclaration implements meta$declaration$
     $dart$core.Object get container;
     $dart$core.bool get toplevel;
 }
-class meta$declaration$nothingType_ implements meta$declaration$OpenType {
+class meta$declaration$nothingType_ implements dart$$Basic, meta$declaration$OpenType {
     meta$declaration$nothingType_() {}
     $dart$core.String toString() => "Nothing";
 }
@@ -8932,7 +8932,7 @@ abstract class meta$declaration$ValueDeclaration implements meta$declaration$Fun
 }
 abstract class meta$declaration$Variance {
 }
-class meta$declaration$invariant_ implements meta$declaration$Variance {
+class meta$declaration$invariant_ implements dart$$Basic, meta$declaration$Variance {
     meta$declaration$invariant_() {}
     $dart$core.String toString() => "Invariant";
 }
@@ -8940,7 +8940,7 @@ final meta$declaration$invariant_ $package$meta$declaration$invariant = new meta
 
 meta$declaration$invariant_ get meta$declaration$invariant => $package$meta$declaration$invariant;
 
-class meta$declaration$covariant_ implements meta$declaration$Variance {
+class meta$declaration$covariant_ implements dart$$Basic, meta$declaration$Variance {
     meta$declaration$covariant_() {}
     $dart$core.String toString() => "Covariant";
 }
@@ -8948,7 +8948,7 @@ final meta$declaration$covariant_ $package$meta$declaration$covariant = new meta
 
 meta$declaration$covariant_ get meta$declaration$covariant => $package$meta$declaration$covariant;
 
-class meta$declaration$contravariant_ implements meta$declaration$Variance {
+class meta$declaration$contravariant_ implements dart$$Basic, meta$declaration$Variance {
     meta$declaration$contravariant_() {}
     $dart$core.String toString() => "Contravariant";
 }
@@ -9099,7 +9099,7 @@ class meta$model$MutationException  extends Exception {
     }
     $dart$core.String _$message;
 }
-class meta$model$nothingType_ implements meta$model$Type {
+class meta$model$nothingType_ implements dart$$Basic, meta$model$Type {
     meta$model$nothingType_() {}
     $dart$core.String toString() => "Nothing";
     $dart$core.bool typeOf([$dart$core.Object instance]) => false;
@@ -9243,7 +9243,7 @@ abstract class Obtainable implements Usable {
     void obtain();
     void release([Throwable error]);
 }
-class operatingSystem_ {
+class operatingSystem_ implements dart$$Basic {
     operatingSystem_() {}
     $dart$core.String get fileSeparator => "/";
     $dart$core.String get pathSeparator => ":";
@@ -9279,7 +9279,7 @@ class OverflowException  extends Exception {
     }
     $dart$core.String _$message;
 }
-class mapPairs$iterable_$iterator$iterator_ implements Iterator {
+class mapPairs$iterable_$iterator$iterator_ implements dart$$Basic, Iterator {
     mapPairs$iterable_ $outer$ceylon$language$mapPairs$iterable_;
     mapPairs$iterable_$iterator$iterator_([mapPairs$iterable_ $outer$ceylon$language$mapPairs$iterable_]) {
         this.$outer$ceylon$language$mapPairs$iterable_ = $outer$ceylon$language$mapPairs$iterable_;
@@ -9313,7 +9313,7 @@ class mapPairs$iterable_$iterator$iterator_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$mapPairs$iterable_.toString()) + ".iterator()";
 }
-class mapPairs$iterable_ implements Iterable {
+class mapPairs$iterable_ implements dart$$Basic, Iterable {
     Iterable $capture$mapPairs$firstIterable;
     Iterable $capture$mapPairs$secondIterable;
     Callable $capture$mapPairs$collecting;
@@ -9905,7 +9905,7 @@ $dart$core.Object $package$product([Iterable values]) {
 
 $dart$core.Object product([Iterable values]) => $package$product(values);
 
-abstract class Range implements Sequence {
+abstract class Range implements dart$$Object, Sequence {
     Range() {}
     $dart$core.bool containsElement([$dart$core.Object element]);
     $dart$core.bool includesRange([Range range]);
@@ -10033,7 +10033,7 @@ abstract class Resource {
     $dart$core.String toString();
     static $dart$core.String $get$string([final Resource $this]) => ((("" + $package$className($this)) + "[") + $this.uri) + "]";
 }
-class runtime_ {
+class runtime_ implements dart$$Basic {
     runtime_() {
         name = "DartVM";
         version = "Unknown Version";
@@ -10072,7 +10072,7 @@ runtime_ get runtime => $package$runtime;
 abstract class Scalable {
     $dart$core.Object scale([$dart$core.Object scalar]);
 }
-class SearchableList$occurrences$$anonymous$0_$$anonymous$1_ implements Iterator {
+class SearchableList$occurrences$$anonymous$0_$$anonymous$1_ implements dart$$Basic, Iterator {
     SearchableList$occurrences$$anonymous$0_ $outer$ceylon$language$SearchableList$occurrences$$anonymous$0_;
     SearchableList$occurrences$$anonymous$0_$$anonymous$1_([SearchableList$occurrences$$anonymous$0_ $outer$ceylon$language$SearchableList$occurrences$$anonymous$0_]) {
         this.$outer$ceylon$language$SearchableList$occurrences$$anonymous$0_ = $outer$ceylon$language$SearchableList$occurrences$$anonymous$0_;
@@ -10094,7 +10094,7 @@ class SearchableList$occurrences$$anonymous$0_$$anonymous$1_ implements Iterator
         return $package$finished;
     }
 }
-class SearchableList$occurrences$$anonymous$0_ implements Iterable {
+class SearchableList$occurrences$$anonymous$0_ implements dart$$Basic, Iterable {
     SearchableList $outer$ceylon$language$SearchableList;
     $dart$core.Object $capture$SearchableList$occurrences$from;
     $dart$core.Object $capture$SearchableList$occurrences$length;
@@ -10184,7 +10184,7 @@ class SearchableList$occurrences$$anonymous$0_ implements Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class SearchableList$inclusions$$anonymous$2_$$anonymous$3_ implements Iterator {
+class SearchableList$inclusions$$anonymous$2_$$anonymous$3_ implements dart$$Basic, Iterator {
     SearchableList$inclusions$$anonymous$2_ $outer$ceylon$language$SearchableList$inclusions$$anonymous$2_;
     SearchableList$inclusions$$anonymous$2_$$anonymous$3_([SearchableList$inclusions$$anonymous$2_ $outer$ceylon$language$SearchableList$inclusions$$anonymous$2_]) {
         this.$outer$ceylon$language$SearchableList$inclusions$$anonymous$2_ = $outer$ceylon$language$SearchableList$inclusions$$anonymous$2_;
@@ -10208,7 +10208,7 @@ class SearchableList$inclusions$$anonymous$2_$$anonymous$3_ implements Iterator 
         return $package$finished;
     }
 }
-class SearchableList$inclusions$$anonymous$2_ implements Iterable {
+class SearchableList$inclusions$$anonymous$2_ implements dart$$Basic, Iterable {
     SearchableList $outer$ceylon$language$SearchableList;
     List $capture$SearchableList$inclusions$sublist;
     $dart$core.Object $capture$SearchableList$inclusions$from;
@@ -10494,7 +10494,7 @@ abstract class SearchableList implements List {
     }
     static $dart$core.Object $lastInclusion$from(final SearchableList $this, List sublist) => 0;
 }
-class Sequence$collect$list_ implements List {
+class Sequence$collect$list_ implements dart$$Object, List {
     Sequence $outer$ceylon$language$Sequence;
     Callable $capture$Sequence$collect$collecting;
     Sequence$collect$list_([Sequence $outer$ceylon$language$Sequence, Callable $capture$Sequence$collect$collecting]) {
@@ -10593,7 +10593,7 @@ class Sequence$collect$list_ implements List {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Sequence$Reverse$$anonymous$0_ implements Iterator {
+class Sequence$Reverse$$anonymous$0_ implements dart$$Basic, Iterator {
     Sequence$Reverse $outer$ceylon$language$Sequence$Reverse;
     Sequence $capture$$outerList;
     Sequence$Reverse$$anonymous$0_([Sequence$Reverse $outer$ceylon$language$Sequence$Reverse, Sequence $capture$$outerList]) {
@@ -10609,7 +10609,7 @@ class Sequence$Reverse$$anonymous$0_ implements Iterator {
     })()) : $lhs$)(_$index < 0 ? $package$finished : null);
     $dart$core.String toString() => ("" + $outer$ceylon$language$Sequence$Reverse.toString()) + ".iterator()";
 }
-class Sequence$Reverse implements Sequence {
+class Sequence$Reverse implements dart$$Object, Sequence {
     Sequence $outer$ceylon$language$Sequence;
     Sequence$Reverse([Sequence $outer$ceylon$language$Sequence]) {
         this.$outer$ceylon$language$Sequence = $outer$ceylon$language$Sequence;
@@ -10733,7 +10733,7 @@ class Sequence$Reverse implements Sequence {
     $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
     Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
 }
-class Sequence$Repeat implements Sequence {
+class Sequence$Repeat implements dart$$Object, Sequence {
     Sequence $outer$ceylon$language$Sequence;
     Sequence$Repeat([Sequence $outer$ceylon$language$Sequence, $dart$core.int _$times]) {
         this.$outer$ceylon$language$Sequence = $outer$ceylon$language$Sequence;
@@ -10996,7 +10996,7 @@ Sequence $package$sequence([Iterable elements]) {{
 
 Sequence sequence([Iterable elements]) => $package$sequence(elements);
 
-class JoinedSequence implements Sequence {
+class JoinedSequence implements dart$$Object, Sequence {
     JoinedSequence([Sequence _$firstSeq, Sequence _$secondSeq]) {
         this._$firstSeq = _$firstSeq;
         this._$secondSeq = _$secondSeq;
@@ -11164,7 +11164,7 @@ abstract class serialization$DeserializationContext {
     void instanceValue([$dart$core.Object instanceId, $dart$core.Object instanceValue]);
     $dart$core.Object reconstruct([$dart$core.Object instanceId]);
 }
-class serialization$DeserializationContextImpl implements serialization$DeserializationContext {
+class serialization$DeserializationContextImpl implements dart$$Basic, serialization$DeserializationContext {
     serialization$DeserializationContextImpl() {
         _$instances = new serialization$NativeMap();
         memberTypeCache = new serialization$NativeMap();
@@ -11420,7 +11420,7 @@ abstract class serialization$Member implements serialization$ReachableReference 
     meta$declaration$ValueDeclaration get attribute;
     $dart$core.Object referred([$dart$core.Object instance]);
 }
-abstract class serialization$UninitializedLateValue {
+abstract class serialization$UninitializedLateValue implements dart$$Basic {
     serialization$UninitializedLateValue() {}
 }
 class serialization$uninitializedLateValue_  extends serialization$UninitializedLateValue {
@@ -11433,7 +11433,7 @@ serialization$uninitializedLateValue_ get serialization$uninitializedLateValue =
 abstract class serialization$Outer implements serialization$ReachableReference {
     $dart$core.Object referred([$dart$core.Object instance]);
 }
-abstract class serialization$Partial {
+abstract class serialization$Partial implements dart$$Basic {
     serialization$Partial([$dart$core.Object id]) {
         this.id = id;
         clazz = null;
@@ -11492,7 +11492,7 @@ abstract class serialization$References implements Iterable {
     $dart$core.Object get instance;
     Iterable get references;
 }
-class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator {
+class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator implements dart$$Identifiable {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
     $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance;
     ReferencesImpl$iterator$$anonymous$0_([serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl, $dart$core.Object $capture$serialization$ReferencesImpl$iterator$$$instance]) {
@@ -11517,7 +11517,7 @@ class ReferencesImpl$iterator$$anonymous$0_  extends impl$BaseIterator {
         }
     }
 }
-class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable {
+class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable implements dart$$Identifiable {
     serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl;
     ReferencesImpl$references$$anonymous$1_([serialization$ReferencesImpl $outer$ceylon$language$serialization$ReferencesImpl]) {
         this.$outer$ceylon$language$serialization$ReferencesImpl = $outer$ceylon$language$serialization$ReferencesImpl;
@@ -11583,7 +11583,7 @@ class ReferencesImpl$references$$anonymous$1_  extends impl$BaseIterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References {
+class serialization$ReferencesImpl  extends impl$BaseIterable implements serialization$References, dart$$Identifiable {
     serialization$ReferencesImpl([$dart$core.Object instance]) {
         this.instance = instance;
     }
@@ -11667,7 +11667,7 @@ serialization$SerializationContext serialization$serialization() => $package$ser
 abstract class serialization$SerializationContext {
     serialization$References references([$dart$core.Object instance]);
 }
-class serialization$SerializationContextImpl implements serialization$SerializationContext {
+class serialization$SerializationContextImpl implements dart$$Basic, serialization$SerializationContext {
     serialization$SerializationContextImpl() {}
     serialization$References references([$dart$core.Object instance]) {
         if ($package$meta$classDeclaration(instance).serializable) {
@@ -11786,7 +11786,7 @@ abstract class Set implements Collection {
         return hashCode;
     }
 }
-class set$$anonymous$4_ implements Set {
+class set$$anonymous$4_ implements dart$$Object, Set {
     Iterable $capture$set$$stream;
     Callable $capture$set$choosing;
     set$$anonymous$4_([Iterable $capture$set$$stream, Callable $capture$set$choosing]) {
@@ -11893,7 +11893,7 @@ Set $package$set([Iterable stream, $dart$core.Object choosing = $package$dart$de
 
 Set set([Iterable stream, $dart$core.Object choosing = $package$dart$default]) => $package$set(stream, choosing);
 
-class emptySet_ implements Set {
+class emptySet_ implements dart$$Object, Set {
     emptySet_() {}
     Set union([Set set]) => set;
     Set intersection([Set set]) => this;
@@ -11972,7 +11972,7 @@ Callable $package$shuffle([Callable f]) => $package$flatten(new dart$Callable(([
 
 Callable shuffle([Callable f]) => $package$shuffle(f);
 
-class Singleton$iterator$$anonymous$0_ implements Iterator {
+class Singleton$iterator$$anonymous$0_ implements dart$$Basic, Iterator {
     Singleton $outer$ceylon$language$Singleton;
     Singleton$iterator$$anonymous$0_([Singleton $outer$ceylon$language$Singleton]) {
         this.$outer$ceylon$language$Singleton = $outer$ceylon$language$Singleton;
@@ -11989,7 +11989,7 @@ class Singleton$iterator$$anonymous$0_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$Singleton.toString()) + ".iterator()";
 }
-class Singleton implements Sequence {
+class Singleton implements dart$$Object, Sequence {
     Singleton([$dart$core.Object _$element]) {
         this._$element = _$element;
     }
@@ -12167,7 +12167,7 @@ Sequential $package$sort([Iterable elements]) {
 
 Sequential sort([Iterable elements]) => $package$sort(elements);
 
-class Span$iterator$$anonymous$0_ implements Iterator {
+class Span$iterator$$anonymous$0_ implements dart$$Basic, Iterator {
     Span $outer$ceylon$language$Span;
     Span$iterator$$anonymous$0_([Span $outer$ceylon$language$Span]) {
         this.$outer$ceylon$language$Span = $outer$ceylon$language$Span;
@@ -12206,7 +12206,7 @@ class Span$iterator$$anonymous$0_ implements Iterator {
     }
     $dart$core.String toString() => ("(" + $outer$ceylon$language$Span.toString()) + ").iterator()";
 }
-class Span$By$iterator$$anonymous$1_ implements Iterator {
+class Span$By$iterator$$anonymous$1_ implements dart$$Basic, Iterator {
     Span$By $outer$ceylon$language$Span$By;
     Span$By$iterator$$anonymous$1_([Span$By $outer$ceylon$language$Span$By]) {
         this.$outer$ceylon$language$Span$By = $outer$ceylon$language$Span$By;
@@ -12226,7 +12226,7 @@ class Span$By$iterator$$anonymous$1_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$Span$By.toString()) + ".iterator()";
 }
-class Span$By$iterator$$anonymous$2_ implements Iterator {
+class Span$By$iterator$$anonymous$2_ implements dart$$Basic, Iterator {
     Span$By $outer$ceylon$language$Span$By;
     Span$By$iterator$$anonymous$2_([Span$By $outer$ceylon$language$Span$By]) {
         this.$outer$ceylon$language$Span$By = $outer$ceylon$language$Span$By;
@@ -12257,7 +12257,7 @@ class Span$By$iterator$$anonymous$2_ implements Iterator {
     }
     $dart$core.String toString() => ("" + $outer$ceylon$language$Span$By.toString()) + ".iterator()";
 }
-class Span$By implements Iterable {
+class Span$By implements dart$$Basic, Iterable {
     Span $outer$ceylon$language$Span;
     Span$By([Span $outer$ceylon$language$Span, $dart$core.int _$step]) {
         this.$outer$ceylon$language$Span = $outer$ceylon$language$Span;
@@ -12578,7 +12578,7 @@ Range $package$span([$dart$core.Object first, $dart$core.Object last]) => new Sp
 
 Range span([$dart$core.Object first, $dart$core.Object last]) => $package$span(first, last);
 
-class StringBuilder implements List {
+class StringBuilder implements dart$$Basic, List {
     StringBuilder() {
         _$delegate = new DartStringBuffer();
     }
