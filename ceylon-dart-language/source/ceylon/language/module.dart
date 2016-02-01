@@ -547,7 +547,13 @@ class Integer implements dart$$Object, Integral, Exponentiable, Binary {
     return false;
   }
 
-  $dart$core.double get float => _value.toDouble();
+  $dart$core.double get float {
+    if (_value <= -twoFiftyThree || _value >= twoFiftyThree) {
+      throw new OverflowException(_value.toString()
+          + " cannot be coerced into a 64 bit floating point value");
+    }
+    return _value.toDouble();
+  }
   $dart$core.double get nearestFloat => _value.toDouble();
   Byte get byte => new Byte(_value);
 

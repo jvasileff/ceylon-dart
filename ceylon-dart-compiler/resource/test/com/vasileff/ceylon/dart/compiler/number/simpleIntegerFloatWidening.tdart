@@ -3,10 +3,10 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
     $dart$core.int two = 2;
-    $dart$core.double a = 2.0 * two.toDouble();
-    $dart$core.double b = 2.0 * 2.toDouble();
-    $dart$core.double c = 2.toDouble() * 2.0;
-    $dart$core.double d = two.toDouble() * 2.0;
+    $dart$core.double a = 2.0 * $ceylon$language.Integer.instance(two).float;
+    $dart$core.double b = 2.0 * $ceylon$language.Integer.instance(2).float;
+    $dart$core.double c = $ceylon$language.Integer.instance(2).float * 2.0;
+    $dart$core.double d = $ceylon$language.Integer.instance(two).float * 2.0;
 }
 
 void run() => $package$run();
@@ -15,8 +15,8 @@ void $package$foo([$dart$core.Object i = $ceylon$language.dart$default]) {
     if ($dart$core.identical(i, $ceylon$language.dart$default)) {
         i = 2;
     }
-    $dart$core.double e = 2.0 * (i as $dart$core.int).toDouble();
-    $dart$core.double f = (i as $dart$core.int).toDouble() * 2.0;
+    $dart$core.double e = 2.0 * $ceylon$language.Integer.instance(i as $dart$core.int).float;
+    $dart$core.double f = $ceylon$language.Integer.instance(i as $dart$core.int).float * 2.0;
 }
 
 void foo([$dart$core.Object i = $ceylon$language.dart$default]) => $package$foo(i);

@@ -366,7 +366,7 @@ class BaseGenerator(CompilationContext ctx)
                 -> [ceylonTypes.stringType, "toString",
                     ceylonTypes.floatType,
                     dartFunction],
-            ceylonTypes.integerDeclaration.getMember("float", null, false)
+            ceylonTypes.integerDeclaration.getMember("nearestFloat", null, false)
                 -> [ceylonTypes.floatType, "toDouble",
                     ceylonTypes.integerType,
                     dartFunction],
