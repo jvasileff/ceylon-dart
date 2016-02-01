@@ -9,7 +9,7 @@ abstract class I {
     $dart$core.String get i4;
     set i4($dart$core.String i4);
 }
-class C implements I {
+class C implements $ceylon$language.dart$$Basic, I {
     C() {
         i1 = "";
         i3 = "";

@@ -10,7 +10,7 @@ abstract class run$I {
     $dart$core.int get a;
     static $dart$core.int $get$a([final run$I $this]) => 1;
 }
-class run$C$Middle$D implements run$I$J {
+class run$C$Middle$D implements $ceylon$language.dart$$Basic, run$I$J {
     run$C$Middle $outer$default$run$C$Middle;
     run$I get $outer$default$run$I => $outer$default$run$C$Middle.$outer$default$run$C;
     run$C$Middle$D([run$C$Middle $outer$default$run$C$Middle]) {
@@ -19,14 +19,14 @@ class run$C$Middle$D implements run$I$J {
     $dart$core.int get ob => $outer$default$run$C$Middle.$outer$default$run$C.b;
     $dart$core.int get oa => run$I$J.$get$oa(this);
 }
-class run$C$Middle {
+class run$C$Middle implements $ceylon$language.dart$$Basic {
     run$C $outer$default$run$C;
     run$C$Middle([run$C $outer$default$run$C]) {
         this.$outer$default$run$C = $outer$default$run$C;
     }
     run$C$Middle$D $new$run$C$Middle$D() => new run$C$Middle$D(this);
 }
-class run$C implements run$I {
+class run$C implements $ceylon$language.dart$$Basic, run$I {
     run$C() {}
     $dart$core.int get b => 2;
     run$C$Middle $new$run$C$Middle() => new run$C$Middle(this);

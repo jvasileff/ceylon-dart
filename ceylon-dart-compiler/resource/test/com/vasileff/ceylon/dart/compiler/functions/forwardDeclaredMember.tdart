@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class run$C {
+class run$C implements $ceylon$language.dart$$Basic {
     run$C() {
         echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
         echo2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);

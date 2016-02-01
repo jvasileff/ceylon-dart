@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class Enum {
+class Enum implements $ceylon$language.dart$$Basic {
     void _$init$Enum([$dart$core.int $bitmap]) {
         if (0 != ($bitmap & 4)) {}
         if (0 != ($bitmap & 2)) {}

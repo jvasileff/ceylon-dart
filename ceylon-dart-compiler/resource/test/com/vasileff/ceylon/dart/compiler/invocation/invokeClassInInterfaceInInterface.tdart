@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class I$J$C {
+class I$J$C implements $ceylon$language.dart$$Basic {
     I$J $outer$default$I$J;
     I$J$C([I$J $outer$default$I$J]) {
         this.$outer$default$I$J = $outer$default$I$J;
@@ -12,7 +12,7 @@ abstract class I$J {
     static I$J$C $$new$I$J$C([final I$J $this]) => new I$J$C($this);
     I$J$C $new$I$J$C();
 }
-class I$j$$anonymous$0_ implements I$J {
+class I$j$$anonymous$0_ implements $ceylon$language.dart$$Basic, I$J {
     I $outer$default$I;
     I$j$$anonymous$0_([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
@@ -23,7 +23,7 @@ abstract class I {
     I$J get j;
     static I$J $get$j([final I $this]) => new I$j$$anonymous$0_($this);
 }
-class j$$anonymous$1_ implements I {
+class j$$anonymous$1_ implements $ceylon$language.dart$$Basic, I {
     j$$anonymous$1_() {}
     I$J get j => I.$get$j(this);
 }

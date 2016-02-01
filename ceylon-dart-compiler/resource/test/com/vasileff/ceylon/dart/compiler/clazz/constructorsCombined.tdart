@@ -5,7 +5,7 @@ $dart$core.int $package$i = 1;
 
 $dart$core.int get i => $package$i;
 
-class d_ implements $ceylon$language.Destroyable {
+class d_ implements $ceylon$language.dart$$Basic, $ceylon$language.Destroyable {
     d_() {}
     void destroy([$ceylon$language.Throwable error]) {}
 }
@@ -13,7 +13,7 @@ final d_ $package$d = new d_();
 
 d_ get d => $package$d;
 
-class A$B$C {
+class A$B$C implements $ceylon$language.dart$$Basic {
     A$B $outer$default$A$B;
     void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B, $dart$core.int $createC$i, $ceylon$language.Destroyable $createC$d]) {
         if (0 != ($bitmap & 1)) {
@@ -53,7 +53,7 @@ class A$B$C {
     $ceylon$language.Callable get cFactory42 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C$createC($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
     $ceylon$language.Callable get cFactory43 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C$createC($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
 }
-class A$B {
+class A$B implements $ceylon$language.dart$$Basic {
     A $outer$default$A;
     void _$init$A$A$B([$dart$core.int $bitmap, A $outer$default$A, $dart$core.int $createB$i, $ceylon$language.Destroyable $createB$d]) {
         if (0 != ($bitmap & 1)) {
@@ -87,7 +87,7 @@ class A$B {
     $ceylon$language.Callable get cFactory26 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C$createC($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
     A$B$C $new$A$B$C$createC([$dart$core.int i, $ceylon$language.Destroyable d]) => new A$B$C.createC(this, i, d);
 }
-class A {
+class A implements $ceylon$language.dart$$Basic {
     A([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
         this._$i = _$i;
         this._$d = _$d;

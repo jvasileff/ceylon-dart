@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class callPriorDefaultedCallableParamClass$C {
+class callPriorDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
     callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object _$b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(a, $ceylon$language.dart$default)) {
             a = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);

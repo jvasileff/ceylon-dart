@@ -7,7 +7,7 @@ $dart$core.int get counter => $package$counter;
 
 set counter($dart$core.int value) => $package$counter = value;
 
-class run$Foo$FooMember {
+class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
     run$Foo $outer$default$run$Foo;
     run$Foo$FooMember([run$Foo $outer$default$run$Foo, $dart$core.int _$fooMemberInt]) {
         this.$outer$default$run$Foo = $outer$default$run$Foo;
@@ -18,7 +18,7 @@ class run$Foo$FooMember {
     run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
     $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo._$fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(_$fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo._$fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(_$fooMemberInt))]);
 }
-class run$Foo {
+class run$Foo implements $ceylon$language.dart$$Basic {
     $dart$core.String $capture$run$runString1;
     $dart$core.String $capture$run$runString2;
     run$Foo([$dart$core.String $capture$run$runString1, $dart$core.String $capture$run$runString2, $dart$core.int _$fooInt]) {

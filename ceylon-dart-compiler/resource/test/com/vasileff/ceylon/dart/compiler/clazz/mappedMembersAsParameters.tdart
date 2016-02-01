@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class mappedInitializerParameters$C {
+class mappedInitializerParameters$C implements $ceylon$language.dart$$Basic {
     mappedInitializerParameters$C([$dart$core.Object string = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(string, $ceylon$language.dart$default)) {
             string = "";
@@ -49,7 +49,7 @@ class mappedInitializerParameters$D  extends mappedInitializerParameters$C {
         }
     }
 }
-class mappedInitializerParameters$E {
+class mappedInitializerParameters$E implements $ceylon$language.dart$$Basic {
     mappedInitializerParameters$E([$dart$core.Object hashCode = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(hashCode, $ceylon$language.dart$default)) {
             hashCode = 1;
@@ -96,7 +96,7 @@ class mappedInitializerParameters$F  extends mappedInitializerParameters$E {
         }
     }
 }
-class mappedInitializerParameters$G {
+class mappedInitializerParameters$G implements $ceylon$language.dart$$Basic {
     mappedInitializerParameters$G([$dart$core.Object equals = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(equals, $ceylon$language.dart$default)) {
             equals = new $ceylon$language.dart$Callable(([$dart$core.Object other]) => $ceylon$language.$false);

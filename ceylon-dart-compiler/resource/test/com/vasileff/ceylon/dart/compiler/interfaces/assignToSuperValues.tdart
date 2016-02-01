@@ -25,7 +25,7 @@ abstract class assignToSuperValues$Right implements assignToSuperValues$Top {
         return val;
     }
 }
-class assignToSuperValues$C implements assignToSuperValues$Left, assignToSuperValues$Right {
+class assignToSuperValues$C implements $ceylon$language.dart$$Basic, assignToSuperValues$Left, assignToSuperValues$Right {
     assignToSuperValues$C([$dart$core.Object val = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(val, $ceylon$language.dart$default)) {
             val = "cVal";

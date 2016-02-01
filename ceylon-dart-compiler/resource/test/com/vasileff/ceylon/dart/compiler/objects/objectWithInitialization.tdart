@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class o_ {
+class o_ implements $ceylon$language.dart$$Basic {
     o_() {
         _$myIterable = "abcd";
     }

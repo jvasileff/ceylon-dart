@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class assignToNonSharedInterfaceValue$I$C {
+class assignToNonSharedInterfaceValue$I$C implements $ceylon$language.dart$$Basic {
     assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I;
     assignToNonSharedInterfaceValue$I$C([assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I]) {
         this.$outer$default$assignToNonSharedInterfaceValue$I = $outer$default$assignToNonSharedInterfaceValue$I;
@@ -23,12 +23,12 @@ abstract class assignToNonSharedInterfaceValue$I {
     static assignToNonSharedInterfaceValue$I$C $$new$assignToNonSharedInterfaceValue$I$C([final assignToNonSharedInterfaceValue$I $this]) => new assignToNonSharedInterfaceValue$I$C($this);
     assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C();
 }
-class assignToNonSharedInterfaceValue$$anonymous$0_ implements assignToNonSharedInterfaceValue$I {
+class assignToNonSharedInterfaceValue$$anonymous$0_ implements $ceylon$language.dart$$Basic, assignToNonSharedInterfaceValue$I {
     assignToNonSharedInterfaceValue$$anonymous$0_() {}
     void test() => assignToNonSharedInterfaceValue$I.$test(this);
     assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
 }
-class assignToNonSharedInterfaceValue$$anonymous$1_ implements assignToNonSharedInterfaceValue$I {
+class assignToNonSharedInterfaceValue$$anonymous$1_ implements $ceylon$language.dart$$Basic, assignToNonSharedInterfaceValue$I {
     assignToNonSharedInterfaceValue$$anonymous$1_() {}
     void test() => assignToNonSharedInterfaceValue$I.$test(this);
     assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);

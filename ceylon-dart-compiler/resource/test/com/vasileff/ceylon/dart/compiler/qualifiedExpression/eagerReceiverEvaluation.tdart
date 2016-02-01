@@ -7,7 +7,7 @@ $dart$core.int get aCount => $package$aCount;
 
 set aCount($dart$core.int value) => $package$aCount = value;
 
-class run$A$B {
+class run$A$B implements $ceylon$language.dart$$Basic {
     run$A $outer$default$run$A;
     run$A$B([run$A $outer$default$run$A]) {
         this.$outer$default$run$A = $outer$default$run$A;
@@ -15,14 +15,14 @@ class run$A$B {
     }
     $dart$core.int x;
 }
-class run$A {
+class run$A implements $ceylon$language.dart$$Basic {
     run$A() {
         x = $package$aCount = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$aCount).successor);
     }
     $dart$core.int x;
     run$A$B $new$run$A$B() => new run$A$B(this);
 }
-class run$C {
+class run$C implements $ceylon$language.dart$$Basic {
     run$C() {
         _$s$run$run$C$other = 1;
     }

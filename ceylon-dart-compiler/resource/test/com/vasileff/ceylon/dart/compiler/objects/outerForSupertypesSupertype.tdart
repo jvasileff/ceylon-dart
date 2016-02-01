@@ -7,7 +7,7 @@ abstract class run$I1$I2 implements run$I1 {
 abstract class run$I1$I3 implements run$I1$I2 {
     run$I1 get $outer$default$run$I1;
 }
-class run$I1$foo$o_ implements run$I1$I3 {
+class run$I1$foo$o_ implements $ceylon$language.dart$$Basic, run$I1$I3 {
     run$I1 $outer$default$run$I1;
     run$I1$foo$o_([run$I1 $outer$default$run$I1]) {
         this.$outer$default$run$I1 = $outer$default$run$I1;

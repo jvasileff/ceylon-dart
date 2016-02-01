@@ -6,14 +6,14 @@ abstract class run$I {
     static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val$get();
     $dart$core.Function $capture$run$val$get;
 }
-class run$C implements run$I {
+class run$C implements $ceylon$language.dart$$Basic, run$I {
     $dart$core.Function $capture$run$val$get;
     run$C([$dart$core.Function $capture$run$val$get]) {
         this.$capture$run$val$get = $capture$run$val$get;
     }
     $dart$core.String get accessVal => $capture$run$val$get();
 }
-class run$D implements run$I {
+class run$D implements $ceylon$language.dart$$Basic, run$I {
     $dart$core.Function $capture$run$val$get;
     void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
         if (0 != ($bitmap & 2)) {

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class stringAssign$A {
+class stringAssign$A implements $ceylon$language.dart$$Basic {
     stringAssign$A() {
         _$x = "1";
     }
@@ -24,7 +24,7 @@ void $package$stringAssign() {
 
 void stringAssign() => $package$stringAssign();
 
-class stringReference$A {
+class stringReference$A implements $ceylon$language.dart$$Basic {
     stringReference$A() {
         string = "1";
     }
@@ -40,7 +40,7 @@ void $package$stringReference() {
 
 void stringReference() => $package$stringReference();
 
-class stringReferenceVariable$A {
+class stringReferenceVariable$A implements $ceylon$language.dart$$Basic {
     stringReferenceVariable$A() {
         string = "1";
     }
@@ -69,7 +69,7 @@ abstract class stringInterface$I {
         return string;
     }
 }
-class stringInterface$o_ implements stringInterface$I {
+class stringInterface$o_ implements $ceylon$language.dart$$Basic, stringInterface$I {
     stringInterface$o_() {}
     $dart$core.String toString() => stringInterface$I.$get$string(this);
     void set string($dart$core.String string) {

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C {
+class C implements $ceylon$language.dart$$Basic {
     C([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
             _$f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) {

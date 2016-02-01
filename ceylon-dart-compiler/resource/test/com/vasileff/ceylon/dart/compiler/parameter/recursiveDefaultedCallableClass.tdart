@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class recursiveDefaultedCallableClass$C {
+class recursiveDefaultedCallableClass$C implements $ceylon$language.dart$$Basic {
     recursiveDefaultedCallableClass$C([$dart$core.Object fact = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(fact, $ceylon$language.dart$default)) {
             fact = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.Integer.nativeValue(i) < 2 ? i : $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) * $ceylon$language.Integer.nativeValue((fact as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1)) as $ceylon$language.Integer)));

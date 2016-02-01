@@ -1,14 +1,14 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class fun$A {
+class fun$A implements $ceylon$language.dart$$Basic {
     $dart$core.Function $capture$fun$idForA$get;
     fun$A([$dart$core.Function $capture$fun$idForA$get]) {
         this.$capture$fun$idForA$get = $capture$fun$idForA$get;
     }
     $dart$core.String get id => $capture$fun$idForA$get();
 }
-class fun$moreFun$B {
+class fun$moreFun$B implements $ceylon$language.dart$$Basic {
     $dart$core.Function $capture$fun$idForA$get;
     fun$moreFun$B([$dart$core.Function $capture$fun$idForA$get]) {
         this.$capture$fun$idForA$get = $capture$fun$idForA$get;

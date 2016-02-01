@@ -10,7 +10,7 @@ abstract class I {
         return x;
     }
 }
-class o_ implements I {
+class o_ implements $ceylon$language.dart$$Basic, I {
     o_() {}
     $dart$core.String get x => I.$get$x(this);
     void set x($dart$core.String x) {

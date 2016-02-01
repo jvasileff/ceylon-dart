@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class A$B$C {
+class A$B$C implements $ceylon$language.dart$$Basic {
     A$B $outer$default$A$B;
     void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
         if (0 != ($bitmap & 1)) {
@@ -16,7 +16,7 @@ class A$B$C {
     $dart$core.String string;
     $dart$core.String toString() => string;
 }
-class A$B {
+class A$B implements $ceylon$language.dart$$Basic {
     A $outer$default$A;
     A$B([A $outer$default$A]) {
         this.$outer$default$A = $outer$default$A;
@@ -24,7 +24,7 @@ class A$B {
     A$B$C _$s$A$A$B$A$B$C$instance;
     A$B$C get $new$A$B$C$instance => _$s$A$A$B$A$B$C$instance != null ? _$s$A$A$B$A$B$C$instance : _$s$A$A$B$A$B$C$instance = new A$B$C.instance(this);
 }
-class A {
+class A implements $ceylon$language.dart$$Basic {
     A() {}
     A$B $new$A$B() => new A$B(this);
 }

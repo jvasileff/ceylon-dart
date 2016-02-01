@@ -1,19 +1,19 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class I$IC1 {
+class I$IC1 implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$IC1([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
     }
 }
-class I$IC2 {
+class I$IC2 implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$IC2([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
     }
 }
-class I$IC3 {
+class I$IC3 implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$IC3([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
@@ -26,25 +26,25 @@ abstract class I {
     I$IC2 $new$I$IC2();
     I$IC3 $new$I$IC3();
 }
-class C$CC1 {
+class C$CC1 implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     C$CC1([C $outer$default$C]) {
         this.$outer$default$C = $outer$default$C;
     }
 }
-class C$CC2 {
+class C$CC2 implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     C$CC2([C $outer$default$C]) {
         this.$outer$default$C = $outer$default$C;
     }
 }
-class C$CC3 {
+class C$CC3 implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     C$CC3([C $outer$default$C]) {
         this.$outer$default$C = $outer$default$C;
     }
 }
-abstract class C {
+abstract class C implements $ceylon$language.dart$$Basic {
     C() {}
     C$CC1 $new$C$CC1() => new C$CC1(this);
     C$CC2 $new$C$CC2() => new C$CC2(this);

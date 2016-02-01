@@ -13,7 +13,7 @@ abstract class run$OuterInterface {
     static $dart$core.String $get$outerInterfaceIdent([final run$OuterInterface $this]) => "OuterInterface.ident, OuterInterface impl";
     $dart$core.Object get t;
 }
-class run$OuterClass$MiddleClass$t$$anonymous$0_ {
+class run$OuterClass$MiddleClass$t$$anonymous$0_ implements $ceylon$language.dart$$Basic {
     run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
     run$OuterClass$MiddleClass$t$$anonymous$0_([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) {
         this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
@@ -30,7 +30,7 @@ class run$OuterClass$MiddleClass$InnerClass  extends run$OuterClass$MiddleClass 
     $dart$core.Object get outerT => run$OuterInterface$InnerInterface.$get$outerT(this);
     $dart$core.String get outerIdentFromInnerInterface => run$OuterInterface$InnerInterface.$get$outerIdentFromInnerInterface(this);
 }
-class run$OuterClass$MiddleClass implements run$OuterInterface, run$OuterInterface$InnerInterface {
+class run$OuterClass$MiddleClass implements $ceylon$language.dart$$Basic, run$OuterInterface, run$OuterInterface$InnerInterface {
     run$OuterClass $outer$default$run$OuterClass;
     run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass;
     run$OuterClass$MiddleClass([run$OuterClass $outer$default$run$OuterClass]) {
@@ -43,7 +43,7 @@ class run$OuterClass$MiddleClass implements run$OuterInterface, run$OuterInterfa
     $dart$core.Object get outerT => run$OuterInterface$InnerInterface.$get$outerT(this);
     $dart$core.String get outerIdentFromInnerInterface => run$OuterInterface$InnerInterface.$get$outerIdentFromInnerInterface(this);
 }
-class run$OuterClass implements run$OuterInterface {
+class run$OuterClass implements $ceylon$language.dart$$Basic, run$OuterInterface {
     run$OuterClass() {}
     $dart$core.Object get t => null;
     $dart$core.String get outerInterfaceIdent => "OuterInterface.ident; OuterClass impl";

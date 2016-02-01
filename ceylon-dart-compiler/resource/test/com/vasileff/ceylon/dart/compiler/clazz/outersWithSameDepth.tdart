@@ -10,7 +10,7 @@ abstract class run$I {
     $dart$core.int get a;
     static $dart$core.int $get$a([final run$I $this]) => 1;
 }
-class run$C$D implements run$I$J {
+class run$C$D implements $ceylon$language.dart$$Basic, run$I$J {
     run$C $outer$default$run$C;
     run$I get $outer$default$run$I => $outer$default$run$C;
     run$C$D([run$C $outer$default$run$C]) {
@@ -19,7 +19,7 @@ class run$C$D implements run$I$J {
     $dart$core.int get b => $outer$default$run$C.b;
     $dart$core.int get a => run$I$J.$get$a(this);
 }
-class run$C implements run$I {
+class run$C implements $ceylon$language.dart$$Basic, run$I {
     run$C() {}
     $dart$core.int get b => 2;
     run$C$D $new$run$C$D() => new run$C$D(this);

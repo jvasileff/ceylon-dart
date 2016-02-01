@@ -27,7 +27,7 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
         }
     }
 }
-class callOuterSuperNonSharedCallableParam$Outer {
+class callOuterSuperNonSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
     callOuterSuperNonSharedCallableParam$Outer([$dart$core.Object _$foo = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$foo, $ceylon$language.dart$default)) {
             _$foo = new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance(1));

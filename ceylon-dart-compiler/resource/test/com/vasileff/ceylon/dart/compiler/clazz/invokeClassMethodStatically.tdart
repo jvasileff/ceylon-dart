@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class A$B {
+class A$B implements $ceylon$language.dart$$Basic {
     A $outer$default$A;
     A$B([A $outer$default$A]) {
         this.$outer$default$A = $outer$default$A;
@@ -9,7 +9,7 @@ class A$B {
     $dart$core.String foo() => "foo";
     $dart$core.String get bar => "bar";
 }
-class A {
+class A implements $ceylon$language.dart$$Basic {
     A() {}
     A$B $new$A$B() => new A$B(this);
 }

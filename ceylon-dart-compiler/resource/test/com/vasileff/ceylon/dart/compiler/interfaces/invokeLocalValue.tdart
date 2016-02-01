@@ -14,7 +14,7 @@ abstract class I {
         }
     }
 }
-class run$$anonymous$1_ implements I {
+class run$$anonymous$1_ implements $ceylon$language.dart$$Basic, I {
     run$$anonymous$1_() {}
     void printHello() => I.$printHello(this);
 }

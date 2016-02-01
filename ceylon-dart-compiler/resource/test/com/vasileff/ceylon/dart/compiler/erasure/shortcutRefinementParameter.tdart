@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 abstract class I {
     void foo([$dart$core.Object o]);
 }
-class J implements I {
+class J implements $ceylon$language.dart$$Basic, I {
     J() {}
     void foo([$ceylon$language.Integer i]) {
         $ceylon$language.noop($ceylon$language.empty);

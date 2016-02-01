@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class hashAssign$A {
+class hashAssign$A implements $ceylon$language.dart$$Basic {
     hashAssign$A() {
         _$x = 1;
     }
@@ -24,7 +24,7 @@ void $package$hashAssign() {
 
 void hashAssign() => $package$hashAssign();
 
-class hashReference$A {
+class hashReference$A implements $ceylon$language.dart$$Basic {
     hashReference$A() {
         hashCode = 1;
     }
@@ -39,7 +39,7 @@ void $package$hashReference() {
 
 void hashReference() => $package$hashReference();
 
-class hashReferenceVariable$A {
+class hashReferenceVariable$A implements $ceylon$language.dart$$Basic {
     hashReferenceVariable$A() {
         hashCode = 1;
     }
@@ -67,7 +67,7 @@ abstract class hashInterface$I {
         return hash;
     }
 }
-class hashInterface$o_ implements hashInterface$I {
+class hashInterface$o_ implements $ceylon$language.dart$$Object, hashInterface$I {
     hashInterface$o_() {}
     $dart$core.bool operator ==($dart$core.Object that) => that is hashInterface$o_;
     $dart$core.int get hashCode => hashInterface$I.$get$hashCode(this);

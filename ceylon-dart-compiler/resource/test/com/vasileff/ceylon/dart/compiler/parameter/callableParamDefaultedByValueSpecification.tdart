@@ -10,7 +10,7 @@ $dart$core.int $package$two([$dart$core.Object f = $ceylon$language.dart$default
 
 $dart$core.int two([$dart$core.Object f = $ceylon$language.dart$default]) => $package$two(f);
 
-class Two {
+class Two implements $ceylon$language.dart$$Basic {
     Two([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
             _$f = new $ceylon$language.dart$Callable($ceylon$language.plus);

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C {
+class C implements $ceylon$language.dart$$Basic {
     void _$init$C([$dart$core.int $bitmap]) {
         if (0 != ($bitmap & 1)) {
             $dart$core.String s() => "s2";

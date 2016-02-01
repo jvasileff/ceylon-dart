@@ -5,12 +5,12 @@ abstract class I {
     $dart$core.String get id;
     static $dart$core.String $get$id([final I $this]) => "I";
 }
-class C1 implements I {
+class C1 implements $ceylon$language.dart$$Basic, I {
     C1() {}
     $dart$core.String get id => "C";
     $dart$core.String get id_i => I.$get$id(this);
 }
-class C2 implements I {
+class C2 implements $ceylon$language.dart$$Basic, I {
     C2() {}
     $dart$core.String get id => "C";
     $dart$core.String get id_i => I.$get$id(this);

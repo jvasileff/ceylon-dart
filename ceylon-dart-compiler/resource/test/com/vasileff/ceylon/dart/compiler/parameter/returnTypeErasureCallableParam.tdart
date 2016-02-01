@@ -5,7 +5,7 @@ abstract class returnTypeErasureCallableParam$I {
     $dart$core.Object echoObj([$dart$core.Object t]);
     $dart$core.String echoStr([$dart$core.String t]);
 }
-class returnTypeErasureCallableParam$C implements returnTypeErasureCallableParam$I {
+class returnTypeErasureCallableParam$C implements $ceylon$language.dart$$Basic, returnTypeErasureCallableParam$I {
     returnTypeErasureCallableParam$C([$dart$core.Object echoObj = $ceylon$language.dart$default, $dart$core.Object echoStr = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(echoObj, $ceylon$language.dart$default)) {
             echoObj = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);

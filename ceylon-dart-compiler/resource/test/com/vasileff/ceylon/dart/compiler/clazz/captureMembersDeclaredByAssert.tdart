@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class Foo {
+class Foo implements $ceylon$language.dart$$Basic {
     Foo([$dart$core.Object _$si1, $dart$core.Object _$si2, $dart$core.Object _$isf]) {
         this._$si1 = _$si1;
         this._$si2 = _$si2;

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class memberClassAliases$C {
+class memberClassAliases$C implements $ceylon$language.dart$$Basic {
     memberClassAliases$C() {
         $ceylon$language.print(new $ceylon$language.Singleton("1"));
         $ceylon$language.print($new$memberClassAliases$C$BoxShared("2"));

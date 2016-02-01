@@ -15,7 +15,7 @@ abstract class Right implements Top {
     $ceylon$language.Usable foo([$ceylon$language.Usable u]);
     static $ceylon$language.Usable $foo([final Right $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
 }
-class C implements Left, Right {
+class C implements $ceylon$language.dart$$Basic, Left, Right {
     C() {}
     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
     void run() {

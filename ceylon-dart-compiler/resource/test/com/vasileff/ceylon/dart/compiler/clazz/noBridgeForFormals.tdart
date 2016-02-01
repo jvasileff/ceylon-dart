@@ -9,7 +9,7 @@ abstract class I {
     void foo2();
     void foo3();
 }
-abstract class C implements I {
+abstract class C implements $ceylon$language.dart$$Basic, I {
     C() {}
     void foo1();
     void foo3();

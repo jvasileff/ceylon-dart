@@ -9,7 +9,7 @@ class superAndOuterCallableParam$Outer$Inner  extends superAndOuterCallableParam
     $dart$core.String foo() => $ceylon$language.String.nativeValue(super._$f.f($ceylon$language.String.instance("works")) as $ceylon$language.String);
     $dart$core.String bar() => $ceylon$language.String.nativeValue($outer$default$superAndOuterCallableParam$Outer._$f.f($ceylon$language.String.instance("works")) as $ceylon$language.String);
 }
-class superAndOuterCallableParam$Outer {
+class superAndOuterCallableParam$Outer implements $ceylon$language.dart$$Basic {
     superAndOuterCallableParam$Outer([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
             _$f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_outer"));

@@ -25,7 +25,7 @@ abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlock
     }
     $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
 }
-class capturesWithControlBlocks$b_ implements capturesWithControlBlocks$Ban {
+class capturesWithControlBlocks$b_ implements $ceylon$language.dart$$Basic, capturesWithControlBlocks$Ban {
     $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
     $dart$core.Object $capture$capturesWithControlBlocks$$$x;
     $dart$core.Object $capture$capturesWithControlBlocks$x;

@@ -1,19 +1,19 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class I$SharedClass {
+class I$SharedClass implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$SharedClass([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
     }
 }
-class I$NonSharedClass {
+class I$NonSharedClass implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$NonSharedClass([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;
     }
 }
-class I$C {
+class I$C implements $ceylon$language.dart$$Basic {
     I $outer$default$I;
     I$C([I $outer$default$I]) {
         this.$outer$default$I = $outer$default$I;

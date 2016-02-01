@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class recursiveDefaultCallableParameterDefault$C {
+class recursiveDefaultCallableParameterDefault$C implements $ceylon$language.dart$$Basic {
     recursiveDefaultCallableParameterDefault$C() {}
     $dart$core.int returnX([$dart$core.Object x = $ceylon$language.dart$default, $dart$core.Object f = $ceylon$language.dart$default]) {
         if ($dart$core.identical(x, $ceylon$language.dart$default)) {

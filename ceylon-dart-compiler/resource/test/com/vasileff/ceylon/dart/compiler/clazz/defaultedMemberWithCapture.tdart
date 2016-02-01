@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class Sup {
+class Sup implements $ceylon$language.dart$$Basic {
     Sup([$dart$core.int _$a]) {
         this._$a = _$a;
         $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
@@ -29,7 +29,7 @@ class run$Outer$Sub  extends Sup {
     $dart$core.int _$b;
     $dart$core.int _$c;
 }
-class run$Outer {
+class run$Outer implements $ceylon$language.dart$$Basic {
     $dart$core.int $capture$run$x;
     run$Outer([$dart$core.int $capture$run$x, $dart$core.Object _$b = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {

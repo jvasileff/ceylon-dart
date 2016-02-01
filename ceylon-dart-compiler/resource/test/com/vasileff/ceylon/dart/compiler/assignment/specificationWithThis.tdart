@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C {
+class C implements $ceylon$language.dart$$Basic {
     C() {
         this.s = "s1";
         s = "s2";

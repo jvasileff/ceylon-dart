@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class staticInvocationOfSharedCallableParam$CP {
+class staticInvocationOfSharedCallableParam$CP implements $ceylon$language.dart$$Basic {
     staticInvocationOfSharedCallableParam$CP([$dart$core.Object echo = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(echo, $ceylon$language.dart$default)) {
             echo = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);

@@ -9,7 +9,7 @@ abstract class bridgeAssignmentExpression$I {
         return s;
     }
 }
-class bridgeAssignmentExpression$C implements bridgeAssignmentExpression$I {
+class bridgeAssignmentExpression$C implements $ceylon$language.dart$$Basic, bridgeAssignmentExpression$I {
     bridgeAssignmentExpression$C() {}
     $dart$core.String test([$dart$core.String v]) => s = v;
     $dart$core.String get s => bridgeAssignmentExpression$I.$get$s(this);

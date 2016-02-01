@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class superRefsMember$Super {
+class superRefsMember$Super implements $ceylon$language.dart$$Basic {
     superRefsMember$Super() {
         _$s$superRefsMember$superRefsMember$Super$v = 1;
     }

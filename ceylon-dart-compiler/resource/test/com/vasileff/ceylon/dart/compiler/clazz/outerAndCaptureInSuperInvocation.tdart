@@ -8,7 +8,7 @@ class run$A$B$C  extends run$A$B {
         this.$outer$default$run$A$B = $outer$default$run$A$B;
     }
 }
-class run$A$B {
+class run$A$B implements $ceylon$language.dart$$Basic {
     run$A $outer$default$run$A;
     run$A$B([run$A $outer$default$run$A, $dart$core.String _$s]) {
         this.$outer$default$run$A = $outer$default$run$A;
@@ -31,7 +31,7 @@ class run$A$E  extends run$A {
         this.$capture$run$foo = $capture$run$foo;
     }
 }
-class run$A {
+class run$A implements $ceylon$language.dart$$Basic {
     $dart$core.Function $capture$run$foo;
     run$A([$dart$core.Function $capture$run$foo, $dart$core.String _$s]) {
         this.$capture$run$foo = $capture$run$foo;

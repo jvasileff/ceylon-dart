@@ -8,7 +8,7 @@ abstract class run$I {
     }
     $dart$core.Function $capture$run$fun;
 }
-class run$C implements run$I {
+class run$C implements $ceylon$language.dart$$Basic, run$I {
     $dart$core.Function $capture$run$fun;
     run$C([$dart$core.Function $capture$run$fun]) {
         this.$capture$run$fun = $capture$run$fun;
@@ -17,7 +17,7 @@ class run$C implements run$I {
         $capture$run$fun();
     }
 }
-class run$D implements run$I {
+class run$D implements $ceylon$language.dart$$Basic, run$I {
     $dart$core.Function $capture$run$fun;
     void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$fun]) {
         if (0 != ($bitmap & 2)) {

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C {
+class C implements $ceylon$language.dart$$Basic {
     C([$dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
             _$a = 5;

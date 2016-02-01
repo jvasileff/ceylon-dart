@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class A$I$B {
+class A$I$B implements $ceylon$language.dart$$Basic {
     A$I $outer$default$A$I;
     A$I$B([A$I $outer$default$A$I]) {
         this.$outer$default$A$I = $outer$default$A$I;
@@ -16,7 +16,7 @@ abstract class A$I {
     static A$I$B $$new$A$I$B([final A$I $this]) => new A$I$B($this);
     A$I$B $new$A$I$B();
 }
-class A$i_ implements A$I {
+class A$i_ implements $ceylon$language.dart$$Basic, A$I {
     A $outer$default$A;
     A$i_([A $outer$default$A]) {
         this.$outer$default$A = $outer$default$A;
@@ -24,7 +24,7 @@ class A$i_ implements A$I {
     $dart$core.String get si => A$I.$get$si(this);
     A$I$B $new$A$I$B() => A$I.$$new$A$I$B(this);
 }
-class A {
+class A implements $ceylon$language.dart$$Basic {
     A() {
         i = new A$i_(this);
     }

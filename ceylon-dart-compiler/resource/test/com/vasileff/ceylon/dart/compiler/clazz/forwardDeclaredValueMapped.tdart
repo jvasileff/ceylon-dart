@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class forwardDeclaredValueMapped$A implements $ceylon$language.Invertible {
+class forwardDeclaredValueMapped$A implements $ceylon$language.dart$$Basic, $ceylon$language.Invertible {
     forwardDeclaredValueMapped$A() {
         _negated$f = () => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
         _string$f = () => "hello";

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class fun$C {
+class fun$C implements $ceylon$language.dart$$Basic {
     $ceylon$language.Callable $capture$fun$captureMe1;
     $ceylon$language.Callable $capture$fun$captureMe2;
     fun$C([$ceylon$language.Callable $capture$fun$captureMe1, $ceylon$language.Callable $capture$fun$captureMe2]) {

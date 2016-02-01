@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class run$C {
+class run$C implements $ceylon$language.dart$$Basic {
     run$C() {
         if (1 == 1) {
             string = "1";

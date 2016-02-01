@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class A$B$C$asdf$D {
+class A$B$C$asdf$D implements $ceylon$language.dart$$Basic {
     A$B$C $outer$default$A$B$C;
     $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1;
     A$B$C$asdf$D([A$B$C $outer$default$A$B$C, $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String _$x]) {
@@ -12,7 +12,7 @@ class A$B$C$asdf$D {
     $dart$core.String _$x;
     $dart$core.String get useit => $capture$A$A$B$A$B$C$asdf$cap1;
 }
-class A$B$C {
+class A$B$C implements $ceylon$language.dart$$Basic {
     A$B $outer$default$A$B;
     A$B$C([A$B $outer$default$A$B]) {
         this.$outer$default$A$B = $outer$default$A$B;
@@ -28,7 +28,7 @@ class A$B$C {
         $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.String.nativeValue($0)));
     }
 }
-class A$B {
+class A$B implements $ceylon$language.dart$$Basic {
     A $outer$default$A;
     A$B([A $outer$default$A]) {
         this.$outer$default$A = $outer$default$A;
@@ -38,6 +38,6 @@ class A$B {
     $ceylon$language.Callable _$newB1;
     $ceylon$language.Callable _$newB2;
 }
-class A {
+class A implements $ceylon$language.dart$$Basic {
     A() {}
 }

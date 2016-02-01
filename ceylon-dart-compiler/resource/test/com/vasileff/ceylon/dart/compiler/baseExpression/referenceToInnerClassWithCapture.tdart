@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C$_$foo$D {
+class C$_$foo$D implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     $dart$core.String $capture$C$_$foo$captureMe;
     C$_$foo$D([C $outer$default$C, $dart$core.String $capture$C$_$foo$captureMe, $dart$core.String _$s]) {
@@ -12,7 +12,7 @@ class C$_$foo$D {
     $dart$core.String _$s;
     $dart$core.String get _$useCM => $capture$C$_$foo$captureMe;
 }
-class C {
+class C implements $ceylon$language.dart$$Basic {
     C() {}
     void _$foo() {
         $dart$core.String captureMe = "";

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class memberClassRefinement$Super$Inner {
+class memberClassRefinement$Super$Inner implements $ceylon$language.dart$$Basic {
     memberClassRefinement$Super $outer$default$memberClassRefinement$Super;
     memberClassRefinement$Super$Inner([memberClassRefinement$Super $outer$default$memberClassRefinement$Super]) {
         this.$outer$default$memberClassRefinement$Super = $outer$default$memberClassRefinement$Super;
@@ -9,7 +9,7 @@ class memberClassRefinement$Super$Inner {
     $dart$core.String toString() => "Super.inner";
     memberClassRefinement$Super$Inner get newInner => $outer$default$memberClassRefinement$Super.$new$memberClassRefinement$Super$Inner();
 }
-class memberClassRefinement$Super {
+class memberClassRefinement$Super implements $ceylon$language.dart$$Basic {
     memberClassRefinement$Super() {}
     memberClassRefinement$Super$Inner $new$memberClassRefinement$Super$Inner() => new memberClassRefinement$Super$Inner(this);
 }

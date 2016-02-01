@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class negatedAssign$A implements $ceylon$language.Invertible {
+class negatedAssign$A implements $ceylon$language.dart$$Basic, $ceylon$language.Invertible {
     negatedAssign$A([$dart$core.int id]) {
         this.id = id;
         _$x = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
@@ -38,7 +38,7 @@ void $package$negatedAssign() {
 
 void negatedAssign() => $package$negatedAssign();
 
-class negatedReference$A implements $ceylon$language.Invertible {
+class negatedReference$A implements $ceylon$language.dart$$Basic, $ceylon$language.Invertible {
     negatedReference$A([$dart$core.int id]) {
         this.id = id;
     }
@@ -66,7 +66,7 @@ void $package$negatedReference() {
 
 void negatedReference() => $package$negatedReference();
 
-class negatedReferenceVariable$A implements $ceylon$language.Invertible {
+class negatedReferenceVariable$A implements $ceylon$language.dart$$Basic, $ceylon$language.Invertible {
     negatedReferenceVariable$A([$dart$core.int id]) {
         this.id = id;
     }
@@ -114,7 +114,7 @@ abstract class negatedInterface$I implements $ceylon$language.Invertible {
     negatedInterface$I operator +(negatedInterface$I other);
     static negatedInterface$I $plus([final negatedInterface$I $this, negatedInterface$I other]) => $this;
 }
-class negatedInterface$o_ implements negatedInterface$I {
+class negatedInterface$o_ implements $ceylon$language.dart$$Basic, negatedInterface$I {
     negatedInterface$o_() {}
     $dart$core.bool operator ==($dart$core.Object that) => that is negatedInterface$o_;
     $dart$core.int get id => negatedInterface$I.$get$id(this);

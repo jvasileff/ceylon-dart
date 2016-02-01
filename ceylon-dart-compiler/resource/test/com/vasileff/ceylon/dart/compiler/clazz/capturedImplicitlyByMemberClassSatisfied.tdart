@@ -6,7 +6,7 @@ abstract class fun$A {
     static $dart$core.String $get$id([final fun$A $this]) => $this.$capture$fun$idForA$get();
     $dart$core.Function $capture$fun$idForA$get;
 }
-class fun$moreFun$B$X implements fun$A {
+class fun$moreFun$B$X implements $ceylon$language.dart$$Basic, fun$A {
     fun$moreFun$B $outer$default$fun$moreFun$B;
     $dart$core.Function $capture$fun$idForA$get;
     fun$moreFun$B$X([fun$moreFun$B $outer$default$fun$moreFun$B, $dart$core.Function $capture$fun$idForA$get]) {
@@ -15,7 +15,7 @@ class fun$moreFun$B$X implements fun$A {
     }
     $dart$core.String get id => fun$A.$get$id(this);
 }
-class fun$moreFun$B {
+class fun$moreFun$B implements $ceylon$language.dart$$Basic {
     $dart$core.Function $capture$fun$idForA$get;
     fun$moreFun$B([$dart$core.Function $capture$fun$idForA$get]) {
         this.$capture$fun$idForA$get = $capture$fun$idForA$get;

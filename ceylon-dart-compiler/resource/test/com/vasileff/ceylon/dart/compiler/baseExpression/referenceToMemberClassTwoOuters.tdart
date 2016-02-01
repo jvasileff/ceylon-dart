@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class I1$I2$C implements I1$I2 {
+class I1$I2$C implements $ceylon$language.dart$$Basic, I1$I2 {
     I1$I2 $outer$default$I1$I2;
     I1 get $outer$default$I1 => $outer$default$I1$I2.$outer$default$I1;
     I1$I2$C([I1$I2 $outer$default$I1$I2]) {

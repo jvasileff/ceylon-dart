@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class spreadMethodsMemberClass$C$D {
+class spreadMethodsMemberClass$C$D implements $ceylon$language.dart$$Basic {
     spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C;
     spreadMethodsMemberClass$C$D([spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C, $dart$core.int i]) {
         this.$outer$default$spreadMethodsMemberClass$C = $outer$default$spreadMethodsMemberClass$C;
@@ -9,7 +9,7 @@ class spreadMethodsMemberClass$C$D {
     }
     $dart$core.int i;
 }
-class spreadMethodsMemberClass$C {
+class spreadMethodsMemberClass$C implements $ceylon$language.dart$$Basic {
     spreadMethodsMemberClass$C() {}
     spreadMethodsMemberClass$C$D $new$spreadMethodsMemberClass$C$D([$dart$core.int i]) => new spreadMethodsMemberClass$C$D(this, i);
 }

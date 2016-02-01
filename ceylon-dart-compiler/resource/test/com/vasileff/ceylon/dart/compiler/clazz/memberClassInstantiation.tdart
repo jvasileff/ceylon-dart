@@ -1,13 +1,13 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class Foo$FooMember {
+class Foo$FooMember implements $ceylon$language.dart$$Basic {
     Foo $outer$default$Foo;
     Foo$FooMember([Foo $outer$default$Foo]) {
         this.$outer$default$Foo = $outer$default$Foo;
     }
 }
-class Foo {
+class Foo implements $ceylon$language.dart$$Basic {
     Foo() {
         _$x = new Foo$FooMember(this);
     }

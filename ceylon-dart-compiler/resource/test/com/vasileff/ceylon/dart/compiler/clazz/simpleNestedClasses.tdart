@@ -1,22 +1,22 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-abstract class AbstractFoo {
+abstract class AbstractFoo implements $ceylon$language.dart$$Basic {
     AbstractFoo() {}
 }
-class Foo$FooMemberClass {
+class Foo$FooMemberClass implements $ceylon$language.dart$$Basic {
     Foo $outer$default$Foo;
     Foo$FooMemberClass([Foo $outer$default$Foo]) {
         this.$outer$default$Foo = $outer$default$Foo;
     }
 }
-class Foo$_$fooMethod$ClassInAMethod {
+class Foo$_$fooMethod$ClassInAMethod implements $ceylon$language.dart$$Basic {
     Foo $outer$default$Foo;
     Foo$_$fooMethod$ClassInAMethod([Foo $outer$default$Foo]) {
         this.$outer$default$Foo = $outer$default$Foo;
     }
 }
-class Foo {
+class Foo implements $ceylon$language.dart$$Basic {
     Foo() {}
     void _$fooMethod() {}
 }

@@ -5,7 +5,7 @@ abstract class I {
     $dart$core.String get i1;
     set i1($dart$core.String i1);
 }
-class C implements I {
+class C implements $ceylon$language.dart$$Basic, I {
     C() {
         i1 = "i1-1";
         i1 = "i1-2";

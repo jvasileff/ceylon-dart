@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class run$o1_ {
+class run$o1_ implements $ceylon$language.dart$$Basic {
     run$o1_() {}
     $dart$core.String get s1 => "";
 }

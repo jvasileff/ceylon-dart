@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-abstract class callableParameterCallsPriorWithQE$B {
+abstract class callableParameterCallsPriorWithQE$B implements $ceylon$language.dart$$Basic {
     callableParameterCallsPriorWithQE$B([$dart$core.Object _$x, $dart$core.Object _$y]) {
         this._$x = _$x;
         this._$y = _$y;

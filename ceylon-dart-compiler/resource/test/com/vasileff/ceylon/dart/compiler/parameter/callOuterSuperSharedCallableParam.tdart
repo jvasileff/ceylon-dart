@@ -30,7 +30,7 @@ class callOuterSuperSharedCallableParam$Outer$Inner  extends callOuterSuperShare
         return $ceylon$language.Integer.nativeValue(_foo$c.f());
     }
 }
-class callOuterSuperSharedCallableParam$Outer {
+class callOuterSuperSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
     callOuterSuperSharedCallableParam$Outer([$dart$core.Object foo = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(foo, $ceylon$language.dart$default)) {
             foo = new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance(1));

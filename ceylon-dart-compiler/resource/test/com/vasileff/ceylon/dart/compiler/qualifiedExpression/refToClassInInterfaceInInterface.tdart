@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class I$J$C {
+class I$J$C implements $ceylon$language.dart$$Basic {
     I$J $outer$default$I$J;
     I$J$C([I$J $outer$default$I$J, $dart$core.String _$s]) {
         this.$outer$default$I$J = $outer$default$I$J;

@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class referenceToCallableParam$C {
+class referenceToCallableParam$C implements $ceylon$language.dart$$Basic {
     referenceToCallableParam$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable _$echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object _$echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(echoSharedDefaulted, $ceylon$language.dart$default)) {
             echoSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);

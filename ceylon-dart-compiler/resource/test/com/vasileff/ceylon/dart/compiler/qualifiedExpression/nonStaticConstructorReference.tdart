@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C$D {
+class C$D implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     void _$init$C$C$D([$dart$core.int $bitmap, C $outer$default$C]) {
         if (0 != ($bitmap & 1)) {
@@ -13,13 +13,13 @@ class C$D {
         _$init$C$C$D($bitmap | 1, $outer$default$C);
     }
 }
-class C$E {
+class C$E implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     C$E([C $outer$default$C]) {
         this.$outer$default$C = $outer$default$C;
     }
 }
-class C {
+class C implements $ceylon$language.dart$$Basic {
     C() {}
     C$D $new$C$D$create() => new C$D.create(this);
     C$E $new$C$E() => new C$E(this);

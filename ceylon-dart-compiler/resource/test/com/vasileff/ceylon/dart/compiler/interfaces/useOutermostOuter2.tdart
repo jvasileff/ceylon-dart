@@ -19,7 +19,7 @@ class run$OuterClass$MiddleClass$InnerClass  extends run$OuterClass$MiddleClass 
     }
     $dart$core.String get outerIdent => run$OuterInterface$InnerInterface.$get$outerIdent(this);
 }
-class run$OuterClass$MiddleClass implements run$OuterInterface, run$OuterInterface$InnerInterface {
+class run$OuterClass$MiddleClass implements $ceylon$language.dart$$Basic, run$OuterInterface, run$OuterInterface$InnerInterface {
     run$OuterClass $outer$default$run$OuterClass;
     run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass;
     run$OuterClass$MiddleClass([run$OuterClass $outer$default$run$OuterClass]) {
@@ -30,7 +30,7 @@ class run$OuterClass$MiddleClass implements run$OuterInterface, run$OuterInterfa
     run$OuterClass$MiddleClass$InnerClass $new$run$OuterClass$MiddleClass$InnerClass() => new run$OuterClass$MiddleClass$InnerClass(this);
     $dart$core.String get outerIdent => run$OuterInterface$InnerInterface.$get$outerIdent(this);
 }
-class run$OuterClass implements run$OuterInterface {
+class run$OuterClass implements $ceylon$language.dart$$Basic, run$OuterInterface {
     run$OuterClass() {}
     $dart$core.String get outerInterfaceIdent => "OuterInterface; OuterClass impl";
     run$OuterClass$MiddleClass $new$run$OuterClass$MiddleClass() => new run$OuterClass$MiddleClass(this);

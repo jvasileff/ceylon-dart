@@ -1,7 +1,7 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class superRefsParam$Super {
+class superRefsParam$Super implements $ceylon$language.dart$$Basic {
     superRefsParam$Super([$dart$core.Object v = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(v, $ceylon$language.dart$default)) {
             v = 1;

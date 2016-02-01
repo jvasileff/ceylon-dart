@@ -9,7 +9,7 @@ class superAndOuterSharedCallableParam$Outer$Inner  extends superAndOuterSharedC
     $dart$core.String foo() => super.f("works");
     $dart$core.String bar() => $outer$default$superAndOuterSharedCallableParam$Outer.f("works");
 }
-class superAndOuterSharedCallableParam$Outer {
+class superAndOuterSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
     superAndOuterSharedCallableParam$Outer([$dart$core.Object f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(f, $ceylon$language.dart$default)) {
             f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_outer"));
