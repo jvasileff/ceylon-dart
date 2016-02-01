@@ -2028,7 +2028,7 @@ $dart$core.String $package$formatFloat([$dart$core.double float, $dart$core.Obje
     $dart$core.double m = float.abs();
     while (true) {
         $dart$core.double f = m * Float.nativeValue(Float.instance(10.0).powerOfInteger(i = Integer.nativeValue(Integer.instance(i).predecessor)));
-        $dart$core.double d = Float.nativeValue(Float.instance(Float.nativeValue(Float.instance(f).fractionalPart) * 10.toDouble()).wholePart);
+        $dart$core.double d = Float.nativeValue(Float.instance(Float.nativeValue(Float.instance(f).fractionalPart) * Integer.instance(10).float).wholePart);
         Character c = Integer.instance(d.toInt() + $package$zeroInt).character;
         digits = digits.follow(c);
         if (Float.nativeValue(Float.instance(f).wholePart) == 0.0) {
@@ -9244,13 +9244,21 @@ abstract class Obtainable implements Usable {
     void release([Throwable error]);
 }
 class operatingSystem_ implements dart$$Basic {
-    operatingSystem_() {}
-    $dart$core.String get fileSeparator => "/";
-    $dart$core.String get pathSeparator => ":";
-    $dart$core.String get version => "Unknown";
-    $dart$core.String get name => "Unknown";
-    $dart$core.String get newline => "\n";
-    $dart$core.String toString() => ((("operating system [" + name) + " / ") + version) + "]";
+    operatingSystem_() {
+        fileSeparator = (($dart$core.String $lhs$) => null == $lhs$ ? "/" : $lhs$)($package$process.propertyValue("file.separator"));
+        pathSeparator = (($dart$core.String $lhs$) => null == $lhs$ ? ":" : $lhs$)($package$process.propertyValue("path.separator"));
+        version = "Unknown";
+        name = (($dart$core.String $lhs$) => null == $lhs$ ? "Unknown" : $lhs$)($package$process.propertyValue("os.name"));
+        newline = (($dart$core.String $lhs$) => null == $lhs$ ? "\n" : $lhs$)($package$process.propertyValue("line.separator"));
+        string = ((("operating system [" + name) + " / ") + version) + "]";
+    }
+    $dart$core.String fileSeparator;
+    $dart$core.String pathSeparator;
+    $dart$core.String version;
+    $dart$core.String name;
+    $dart$core.String newline;
+    $dart$core.String string;
+    $dart$core.String toString() => string;
 }
 final operatingSystem_ $package$operatingSystem = new operatingSystem_();
 
@@ -9624,15 +9632,15 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
         if (!(null == tmp$10)) {
             $dart$core.int unsigned;
             unsigned = tmp$10;
-            $dart$core.double signed = (($dart$core.double $lhs$) => null == $lhs$ ? Integer.instance(sign * unsigned).nearestFloat : $lhs$)(unsigned == 0 ? 0.toDouble() * sign.toDouble() : null);
+            $dart$core.double signed = (($dart$core.double $lhs$) => null == $lhs$ ? (sign * unsigned).toDouble() : $lhs$)(unsigned == 0 ? Integer.instance(0).float * Integer.instance(sign).float : null);
             $dart$core.int exponentMagnitude = exponent.abs();
             if (exponentMagnitude == 0) {
                 return signed;
             } else if (exponentMagnitude <= $package$maximumIntegerExponent) {
                 $dart$core.int scale = Integer.nativeValue(Integer.instance(10).power(Integer.instance(exponentMagnitude)));
-                return (($dart$core.double $lhs$) => null == $lhs$ ? signed * scale.toDouble() : $lhs$)(exponent < 0 ? signed / scale.toDouble() : null);
+                return (($dart$core.double $lhs$) => null == $lhs$ ? signed * Integer.instance(scale).float : $lhs$)(exponent < 0 ? signed / Integer.instance(scale).float : null);
             } else {
-                return signed * Float.nativeValue(Float.instance(10.0).power(Float.instance(exponent.toDouble())));
+                return signed * Float.nativeValue(Float.instance(10.0).power(Float.instance(Integer.instance(exponent).float)));
             }
         }
     }
@@ -10036,7 +10044,6 @@ abstract class Resource {
 class runtime_ implements dart$$Basic {
     runtime_() {
         name = "DartVM";
-        version = "Unknown Version";
         integerSize = 64;
         integerAddressableSize = 32;
         maxIntegerValue = Integer.nativeValue(Integer.instance(2).power(Integer.instance(63))) - 1;
@@ -10050,11 +10057,11 @@ class runtime_ implements dart$$Basic {
             }
             return Float.instance(x);
         })).f() as Float);
-        epsilon = Float.nativeValue(Float.instance(2.0).power(Float.instance((-52).toDouble())));
+        epsilon = Float.nativeValue(Float.instance(2.0).power(Float.instance(Integer.instance(-52).float)));
         maxExactIntegralFloat = Integer.nativeValue(Integer.instance(2).power(Integer.instance(53))) - 1;
     }
     $dart$core.String name;
-    $dart$core.String version;
+    $dart$core.String get version => (($dart$core.String $lhs$) => null == $lhs$ ? "Unknown" : $lhs$)($package$process.propertyValue("platform.version"));
     $dart$core.int integerSize;
     $dart$core.int integerAddressableSize;
     $dart$core.int maxIntegerValue;
