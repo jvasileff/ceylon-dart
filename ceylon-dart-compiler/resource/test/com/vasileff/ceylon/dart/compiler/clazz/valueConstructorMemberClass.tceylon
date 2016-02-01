@@ -1,0 +1,17 @@
+class A() {
+    shared class B {
+        shared actual String string;
+        shared new create(String string) {
+            this.string = string;
+        }
+        shared new instance1 extends create("instance1") {}
+        shared new instance2 {
+            this.string = "instance2";
+        }
+    }
+}
+shared void run() {
+    assert (A().B.instance1.string == "instance1");
+    assert (A().B.instance2.string == "instance2");
+    assert (!A().B.instance1 === A().B.instance1);
+}

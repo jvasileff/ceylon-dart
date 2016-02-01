@@ -110,8 +110,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectArgumentInfo,
     objectDefinitionInfo,
     valueDefinitionInfo,
-    valueGetterDefinitionInfo,
-    callableConstructorDefinitionInfo
+    valueGetterDefinitionInfo
 }
 
 "For Dart TopLevel declarations."

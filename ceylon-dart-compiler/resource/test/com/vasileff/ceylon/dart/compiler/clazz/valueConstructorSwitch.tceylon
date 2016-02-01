@@ -1,0 +1,14 @@
+class Enum of value1 | value2 | value3 {
+    shared new value1 {}
+    shared new value2 {}
+    shared new value3 {}
+    shared actual Boolean equals(Object other) => true;
+}
+shared void run() {
+    Enum? val = Enum.value2;
+    value item = switch(val)
+            case (Enum.value1) 1
+            case (Enum.value2) 2
+            case (Enum.value3 | null) 3;
+    assert (item == 2);
+}

@@ -1,0 +1,14 @@
+class A() {
+    shared class B() {
+        shared class C {
+            shared actual String string;
+            shared new instance {
+                this.string = "instance";
+            }
+        }
+    }
+}
+shared void run() {
+    value iFactory = A.B.C.instance;
+    assert (iFactory(A().B()).string == "instance");
+}

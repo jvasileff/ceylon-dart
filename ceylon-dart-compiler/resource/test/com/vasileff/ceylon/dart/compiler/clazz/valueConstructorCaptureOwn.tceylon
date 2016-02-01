@@ -1,0 +1,10 @@
+shared void run() {
+    class A {
+        shared actual String string;
+        shared new instance {
+            this.string = "instance";
+        }
+        shared A getInstance() => instance;
+    }
+    assert(A.instance.getInstance().string == "instance");
+}

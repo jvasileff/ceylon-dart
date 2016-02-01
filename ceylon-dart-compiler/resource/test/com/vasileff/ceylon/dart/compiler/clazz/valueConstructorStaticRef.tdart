@@ -1,0 +1,38 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class A$B$C {
+    A$B $outer$default$A$B;
+    void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
+        if (0 != ($bitmap & 1)) {
+            this.$outer$default$A$B = $outer$default$A$B;
+            this.string = "instance";
+        }
+    }
+    A$B$C.instance([A$B $outer$default$A$B]) : this.instance$d(1, $outer$default$A$B);
+    A$B$C.instance$d([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
+        _$init$A$A$B$A$B$C($bitmap | 1, $outer$default$A$B);
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+class A$B {
+    A $outer$default$A;
+    A$B([A $outer$default$A]) {
+        this.$outer$default$A = $outer$default$A;
+    }
+    A$B$C _$s$A$A$B$A$B$C$instance;
+    A$B$C get $new$A$B$C$instance => _$s$A$A$B$A$B$C$instance != null ? _$s$A$A$B$A$B$C$instance : _$s$A$A$B$A$B$C$instance = new A$B$C.instance(this);
+}
+class A {
+    A() {}
+    A$B $new$A$B() => new A$B(this);
+}
+void $package$run() {
+    $ceylon$language.Callable iFactory = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as A$B).$new$A$B$C$instance);
+    if (!((iFactory.f((new A()).$new$A$B()) as A$B$C).toString() == "instance")) {
+        throw new $ceylon$language.AssertionError("Violated: iFactory(A().B()).string == \"instance\"");
+    }
+}
+
+void run() => $package$run();

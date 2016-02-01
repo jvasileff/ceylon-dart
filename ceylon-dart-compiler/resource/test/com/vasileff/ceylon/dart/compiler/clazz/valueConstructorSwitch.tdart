@@ -1,0 +1,61 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class Enum {
+    void _$init$Enum([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 4)) {}
+        if (0 != ($bitmap & 2)) {}
+        if (0 != ($bitmap & 1)) {}
+    }
+    Enum.value1() : this.value1$d(4);
+    Enum.value1$d([$dart$core.int $bitmap]) {
+        _$init$Enum($bitmap | 4);
+    }
+    Enum.value2() : this.value2$d(2);
+    Enum.value2$d([$dart$core.int $bitmap]) {
+        _$init$Enum($bitmap | 2);
+    }
+    Enum.value3() : this.value3$d(1);
+    Enum.value3$d([$dart$core.int $bitmap]) {
+        _$init$Enum($bitmap | 1);
+    }
+    $dart$core.bool operator ==($dart$core.Object other) => true;
+}
+Enum _$s$Enum$value1;
+
+Enum get $package$$new$Enum$value1 => _$s$Enum$value1 != null ? _$s$Enum$value1 : _$s$Enum$value1 = new Enum.value1();
+
+Enum _$s$Enum$value2;
+
+Enum get $package$$new$Enum$value2 => _$s$Enum$value2 != null ? _$s$Enum$value2 : _$s$Enum$value2 = new Enum.value2();
+
+Enum _$s$Enum$value3;
+
+Enum get $package$$new$Enum$value3 => _$s$Enum$value3 != null ? _$s$Enum$value3 : _$s$Enum$value3 = new Enum.value3();
+
+Enum get $new$Enum$value1 => $package$$new$Enum$value1;
+
+Enum get $new$Enum$value2 => $package$$new$Enum$value2;
+
+Enum get $new$Enum$value3 => $package$$new$Enum$value3;
+
+void $package$run() {
+    Enum val = $package$$new$Enum$value2;
+    $dart$core.int item = (() {
+        Enum switch$0 = val;
+        if ($dart$core.identical(switch$0, $package$$new$Enum$value1)) {
+            return 1;
+        } else if ($dart$core.identical(switch$0, $package$$new$Enum$value2)) {
+            return 2;
+        } else if ($dart$core.identical(switch$0, $package$$new$Enum$value3) || (null == switch$0)) {
+            return 3;
+        } else {
+            throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+        }
+    })();
+    if (!(item == 2)) {
+        throw new $ceylon$language.AssertionError("Violated: item == 2");
+    }
+}
+
+void run() => $package$run();

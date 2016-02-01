@@ -241,4 +241,28 @@ object clazz {
     shared test
     void extendNoArgConstructor()
         =>  compileAndCompare2("clazz/extendNoArgConstructor");
+
+    shared test
+    void valueConstructorCaptureOwn()
+        =>  compileAndCompare2("clazz/valueConstructorCaptureOwn");
+
+    shared test
+    void valueConstructorInnerClass()
+        =>  compileAndCompare2("clazz/valueConstructorInnerClass");
+
+    shared test
+    void valueConstructorMemberClass()
+        =>  compileAndCompare2("clazz/valueConstructorMemberClass");
+
+    shared test
+    void valueConstructorStaticRef()
+        =>  compileAndCompare2("clazz/valueConstructorStaticRef");
+
+    shared test
+    void valueConstructorSwitch()
+        =>  compileAndCompare2("clazz/valueConstructorSwitch");
+
+    shared test
+    void valueConstructorToplevel()
+        =>  compileAndCompare2("clazz/valueConstructorToplevel");
 }

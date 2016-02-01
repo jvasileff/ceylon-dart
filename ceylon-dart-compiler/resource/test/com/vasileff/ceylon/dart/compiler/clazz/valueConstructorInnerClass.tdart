@@ -1,0 +1,42 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$A {
+    void _$init$run$run$A([$dart$core.int $bitmap, $dart$core.String $create$string]) {
+        if (0 != ($bitmap & 4)) {
+            this.string = $create$string;
+        }
+        if (0 != ($bitmap & 2)) {}
+        if (0 != ($bitmap & 1)) {
+            this.string = "instance2";
+        }
+    }
+    run$A.create([$dart$core.String string]) : this.create$d(4, string);
+    run$A.create$d([$dart$core.int $bitmap, $dart$core.String $create$string]) {
+        _$init$run$run$A($bitmap | 4, $create$string);
+    }
+    run$A.instance1() : this.instance1$d(2);
+    run$A.instance1$d([$dart$core.int $bitmap]) : this.create$d($bitmap | 2, "instance1");
+    run$A.instance2() : this.instance2$d(1);
+    run$A.instance2$d([$dart$core.int $bitmap]) {
+        _$init$run$run$A($bitmap | 1);
+    }
+    $dart$core.String string;
+    $dart$core.String toString() => string;
+}
+void $package$run() {
+    run$A _$s$run$run$A$instance1;
+    run$A $new$run$A$instance1$get() => _$s$run$run$A$instance1 != null ? _$s$run$run$A$instance1 : _$s$run$run$A$instance1 = new run$A.instance1();
+
+    run$A _$s$run$run$A$instance2;
+    run$A $new$run$A$instance2$get() => _$s$run$run$A$instance2 != null ? _$s$run$run$A$instance2 : _$s$run$run$A$instance2 = new run$A.instance2();
+
+    if (!($new$run$A$instance1$get().toString() == "instance1")) {
+        throw new $ceylon$language.AssertionError("Violated: A.instance1.string == \"instance1\"");
+    }
+    if (!($new$run$A$instance2$get().toString() == "instance2")) {
+        throw new $ceylon$language.AssertionError("Violated: A.instance2.string == \"instance2\"");
+    }
+}
+
+void run() => $package$run();
