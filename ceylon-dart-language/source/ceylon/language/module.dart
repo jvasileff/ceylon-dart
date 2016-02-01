@@ -206,7 +206,7 @@ class AssertionError extends Throwable {
 // Boolean.dart
 //
 
-class Boolean {
+class Boolean implements dart$$Basic {
   final $dart$core.bool _value;
 
   const Boolean.$true() : _value = true;
@@ -259,7 +259,7 @@ $dart$core.Set<$dart$core.int> digitZeroChars = new $dart$core.Set.from([
     0xa620, 0xa8d0, 0xa900, 0xa9d0, 0xaa50, 0xabf0, 0xff10,
     0x104a0, 0x11066, 0x110f0, 0x11136, 0x111d0, 0x116c0]);
 
-class Character implements Comparable, Enumerable {
+class Character implements dart$$Object, Comparable, Enumerable {
   $dart$core.int _value;
 
   Character(Character character) {
@@ -386,7 +386,7 @@ class Exception  extends Throwable {
 // Float.dart
 //
 
-class Float implements Number, Exponentiable {
+class Float implements dart$$Object, Number, Exponentiable {
   final $dart$core.double _value;
 
   Float($dart$core.double this._value);
@@ -478,7 +478,7 @@ class Float implements Number, Exponentiable {
 // Integer.dart
 //
 
-class Integer implements Integral, Exponentiable, Binary {
+class Integer implements dart$$Object, Integral, Exponentiable, Binary {
   final $dart$core.int _value;
 
   static $dart$core.int twoFiftyThree = 1<<53;
@@ -1298,7 +1298,7 @@ Sequential _processArguments = $package$empty;
 // ($dart$core.print outputs newlines)
 $dart$core.StringBuffer _$outputBuffer = new $dart$core.StringBuffer();
 
-class process_ {
+class process_ implements dart$$Basic {
   const process_.$value$();
 
   $dart$core.String readLine() {
@@ -1376,7 +1376,7 @@ final $dart$core.Stopwatch $helper$stopwatch = (() {
     return sw;
 })();
 
-class system_ {
+class system_ implements dart$$Basic {
 
   $dart$core.int get milliseconds
       =>  new $dart$core.DateTime.now().millisecondsSinceEpoch;
@@ -1461,7 +1461,7 @@ class dart$VariableBoxString {
 //
 ///////////////////////////////////////
 
-class serialization$NativeDeque {
+class serialization$NativeDeque implements dart$$Basic {
   void pushFront(element) {}
   void pushBack(element) {}
   popFront() {}
@@ -1476,7 +1476,7 @@ class serialization$PartialImpl extends serialization$Partial {
   void initialize([serialization$DeserializationContextImpl context]) {}
 }
 
-class serialization$NativeMap {
+class serialization$NativeMap implements dart$$Basic {
   get(id) {}
   void put(id, instanceOrPartial) {}
   contains(id) {}
@@ -1501,7 +1501,7 @@ final $package$impl$reach = null;
 //
 ///////////////////////////////////////
 
-class dart$Callable implements $dart$core.Function, Callable {
+class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
   final $dart$core.Function _function;
   final $dart$core.int _variadicIndex;
 
@@ -1639,7 +1639,7 @@ Callable unflatten(Callable flatFunction) {
   return new dart$UnflatFunction(flatFunction);
 }
 
-class dart$FlatFunction implements $dart$core.Function, Callable {
+class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
   final Callable tupleFunction;
 
   dart$FlatFunction(Callable this.tupleFunction);
@@ -1675,7 +1675,7 @@ class dart$FlatFunction implements $dart$core.Function, Callable {
   }
 }
 
-class dart$UnflatFunction implements $dart$core.Function, dart$Callable {
+class dart$UnflatFunction implements dart$$Object, $dart$core.Function, dart$Callable {
   final Callable flatFunction;
 
   dart$UnflatFunction(Callable this.flatFunction);
@@ -1712,7 +1712,7 @@ Callable $package$unflatten(Callable flatFunction) => unflatten(flatFunction);
 //
 ///////////////////////////////////////
 
-class DartStringBuffer {
+class DartStringBuffer implements dart$$Basic {
   $dart$core.StringBuffer delegate = new $dart$core.StringBuffer();
 
   DartStringBuffer() {}
