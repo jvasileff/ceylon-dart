@@ -466,7 +466,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value satisfiesObject
             =   if (exists et = classModel.extendedType)
                 then ceylonTypes.isCeylonObject(et)
-                else true;
+                else false;
 
         value satisfiesTypes
             =   sequence {
