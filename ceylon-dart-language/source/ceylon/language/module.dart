@@ -1318,6 +1318,13 @@ Sequential _processArguments = $package$empty;
 // ($dart$core.print outputs newlines)
 $dart$core.StringBuffer _$outputBuffer = new $dart$core.StringBuffer();
 
+$dart$core.Map _$properties = {
+  "os.name" : $dart$io.Platform.operatingSystem,
+  "line.separator" : $dart$io.Platform.isWindows ? "\r\n" : "\n",
+  "file.separator" : $dart$io.Platform.isWindows ? "\\" : "/",
+  "path.separator" : $dart$io.Platform.pathSeparator
+};
+
 class process_ implements dart$$Basic {
   const process_.$value$();
 
@@ -1336,7 +1343,7 @@ class process_ implements dart$$Basic {
 
   $dart$core.String namedArgumentValue([$dart$core.String name]) => null;
 
-  $dart$core.String propertyValue([$dart$core.String name]) => null;
+  $dart$core.String propertyValue([$dart$core.String name]) => _$properties[name];
 
   $dart$core.Object exit([$dart$core.int code]) {
     $dart$io.exit(code);
