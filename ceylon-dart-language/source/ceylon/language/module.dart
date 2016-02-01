@@ -1321,8 +1321,8 @@ $dart$core.StringBuffer _$outputBuffer = new $dart$core.StringBuffer();
 $dart$core.Map _$properties = {
   "os.name" : $dart$io.Platform.operatingSystem,
   "line.separator" : $dart$io.Platform.isWindows ? "\r\n" : "\n",
-  "file.separator" : $dart$io.Platform.isWindows ? "\\" : "/",
-  "path.separator" : $dart$io.Platform.pathSeparator,
+  "file.separator" : $dart$io.Platform.pathSeparator,
+  "path.separator" : $dart$io.Platform.isWindows ? ";" : ":",
   "dart.version" : $dart$io.Platform.version
 };
 
