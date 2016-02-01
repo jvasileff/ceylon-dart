@@ -885,14 +885,18 @@ void checkParseFloat() {
     check(!5.divides(6), "Integer.divides 2");
 
     try {
-        runtime.maxIntegerValue.neighbour(1);
-        fail("Integer.neighbour should throw");
+        // Dart has no max integer value
+        if (runtime.maxIntegerValue.neighbour(1) < runtime.maxIntegerValue) {
+            fail("Integer.neighbour should throw");
+        }
     } catch (OverflowException ex) {
         check(true);
     }
     try {
-        runtime.maxIntegerValue.offset(-1);
-        fail("Integer.offset should throw");
+        // Dart has no max integer value
+        if (runtime.maxIntegerValue.offset(-1) < runtime.maxIntegerValue) {
+            fail("Integer.offset should throw");
+        }
     } catch (OverflowException ex) {
         check(true);
     }
