@@ -1166,7 +1166,7 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
-            [Expression*] arguments)
+            [Expression*] | [DartExpression()*] arguments)
         =>  generateInvocationDetailsFromName(
                 scope, receiver, memberName, arguments)[2]();
 

@@ -174,7 +174,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartContinueStatement,
     createExpressionEvaluationWithSetup,
     createInlineDartStatements,
-    createNullSafeExpression
+    createNullSafeExpression,
+    createVariableDeclaration
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
@@ -1340,14 +1341,48 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  transformSetOperation(that);
 
     shared actual
-    DartExpression transformScaleOperation(ScaleOperation that)
-        // the left and right operands are swapped compared to other binary operations
-        =>  generateInvocationFromName {
-                nodeInfo(that);
+    DartExpression transformScaleOperation(ScaleOperation that) {
+        // The left and right operands are swapped compared to other binary operations,
+        // but we must evaluate the left operand first.
+
+        value info
+            =   nodeInfo(that);
+
+        value leftOperandInfo
+            =   expressionInfo(that.leftOperand);
+
+        value tempIdentifier
+            =   DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom();
+                };
+
+        return
+        createExpressionEvaluationWithSetup {
+            [createVariableDeclaration {
+                dartTypes.dartTypeName {
+                    leftOperandInfo;
+                    leftOperandInfo.typeModel;
+                    eraseToNative = false;
+                    eraseToObject = false;
+                };
+                tempIdentifier;
+                withLhsNonNative {
+                    leftOperandInfo.typeModel;
+                    () => that.leftOperand.transform(expressionTransformer);
+                };
+            }];
+            generateInvocationFromName {
+                info;
                 that.rightOperand;
                 "scale";
-                [that.leftOperand];
+                [() => withBoxingNonNative {
+                    leftOperandInfo;
+                    leftOperandInfo.typeModel;
+                    tempIdentifier;
+                }];
             };
+        };
+    }
 
     shared actual
     DartExpression transformSpanOperation(SpanOperation that) {
