@@ -70,6 +70,9 @@ class Array extends impl$BaseList {
   }
 
   Array.ofSize($dart$core.int size, $dart$core.Object element) {
+    if (size > runtime.maxArraySize) {
+      throw new AssertionError("array size must be no larger than " + runtime.maxArraySize.toString());
+    }
     _list = new $dart$core.List.filled(size > 0 ? size : 0, element);
   }
 
