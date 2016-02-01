@@ -48,8 +48,7 @@ shared void strings() {
     check("a".sequence() nonempty);
     check(!"".lastIndex exists, "empty string last index");
     check(!""[0] exists, "empty string first element exists");
-// FIXME Dart disabling; known limitation for now
-    //check(!(hello of Object) is Identifiable, "string is Identifiable");
+    check(!(hello of Object) is Identifiable, "string is Identifiable");
     
     check("abcd".size==4, "string size 3");
     

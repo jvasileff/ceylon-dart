@@ -119,8 +119,7 @@ shared void types() {
     //check(nothing is Anything, "null type 5");
         
     check(entry is Object, "entry type 1");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!entry is Basic, "not entry type");
+    check(!entry is Basic, "not entry type");
     //check(entry is Equality, "entry type 2");
     check(!entry is Null, "not null entry type");
     check(entry is Entry<Object,Object>, "entry type 3");
@@ -128,77 +127,67 @@ shared void types() {
     //check(entry is Anything, "entry type 4");
         
     check(one is Object, "not natural type 1");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!one is Basic, "not natural type 2");
+    check(!one is Basic, "not natural type 2");
     //check(one is Equality, "natural type 1");
     check(!one is Null, "not null natural type");
     check(one is Integer, "natural type 2");
     //check(nothing is Anything, "natural type 3");
         
     check(c is Object, "not char type 1");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!c is Basic, "not char type 1");
+    check(!c is Basic, "not char type 1");
     //check(c is Equality, "char type 1");
     check(!c is Null, "not null char type");
     check(c is Character, "char type 2");
     //check(c is Anything, "char type 3");
         
     check(str is Object, "not string type 1");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!str is Basic, "not string type 1");
+    check(!str is Basic, "not string type 1");
     //check(str is Equality, "string type 1");
     check(!str is Null, "not null string type");
     check(str is String, "string type 2");
     //check(str is Anything, "string type 3");
             
     //check(!t is Equality, "not eq custom type");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!t is Basic, "not id custom type");
+    check(!t is Basic, "not id custom type");
     check(!t is Null, "custom type 1");
     check(t is Object, "custom type 2");
     check(t is T, "custom type 3");
     //check(is Anything t, "custom type 4");
                 
     //if (bool is Equality) {check(true);} else { fail("boolean type 4"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (bool is Basic) {check(true);} else { fail("boolean type 5"); }
+    if (bool is Basic) {check(true);} else { fail("boolean type 5"); }
     if (bool is Object) {check(true);} else { fail("boolean type 6"); }
     if (bool is Null) { fail("null type 6"); }
     if (bool is Boolean?) {check(true);} else { fail("optional boolean type 7"); }
 
     //if (one is Equality) {check(true);} else { fail("natural type 4"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (one is Basic) { fail("natural type 5"); }
+    if (one is Basic) { fail("natural type 5"); }
     if (one is Object) {check(true);} else { fail("natural type 6"); }
     if (one is Null) { fail("null type 7"); }
     if (one is Integer) {check(true);} else { fail("natural type 7"); }
     if (one is Integer?) {check(true);} else { fail("optional natural type 8"); }
 
     //if (c is Equality) {check(true);} else { fail("character type 1"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (c is Basic) { fail("character type 2"); }
+    if (c is Basic) { fail("character type 2"); }
     if (c is Object) {check(true);} else { fail("character type 3"); }
     if (c is Null) { fail("null type 8"); }
     if (c is Character) {check(true);} else { fail("character type 4"); }
     if (c is Character?) {check(true);} else { fail("optional character type 5"); }
 
     //if (str is Equality) {check(true);} else { fail("string type 4"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (str is Basic) { fail("string type 5"); }
+    if (str is Basic) { fail("string type 5"); }
     if (str is Object) {check(true);} else { fail("string type 6"); }
     if (str is Null) { fail("null type 9"); }
     if (str is String?) {check(true);} else { fail("optional string type 7"); }
 
     //if (t is Equality) { fail("custom type 5"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (t is Basic) { fail("custom type 6"); }
+    if (t is Basic) { fail("custom type 6"); }
     if (t is Object) {check(true);} else { fail("custom type 7"); }
     if (t is Null) { fail("null type 10"); }
     if (t is T?) {check(true);} else { fail("optional custom type 8"); }
 
     //if (entry is Equality) {check(true);} else { fail("entry type 5"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (entry is Basic) { fail("entry type 6"); }
+    if (entry is Basic) { fail("entry type 6"); }
     if (entry is Object) {check(true);} else { fail("entry type 7"); }
     if (entry is Null) { fail("null type 11"); }
     if (entry is Entry<Object,Object>) {check(true);} else { fail("entry type 8"); }
@@ -206,8 +195,7 @@ shared void types() {
     //if (is Entry<Integer,String> entry) { fail("entry type 9 (required reified gens)"); }
     
     //if (is Equality nothing) { fail("null type 12"); }
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //if (nothing is Basic) { fail("null type 13"); }
+    if (nothing is Basic) { fail("null type 13"); }
     if (nothing is Object) { fail("null type 14"); }
     if (nothing is Null) {check(true);} else { fail("null type 15"); }
     if (!nothing is Null) { fail("null type 15"); }
@@ -264,14 +252,11 @@ shared void types() {
     Object yourIdo = myIdo;
     Object ido = MyIdentifiableObject();
     check(yourId is Identifiable, "is identifiable");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(!yourId is Basic, "is not identifiable object");
+    check(!yourId is Basic, "is not identifiable object");
     check(yourIdo is Identifiable, "is identifiable 1");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(yourIdo is Basic, "is identifiable object 1");
+    check(yourIdo is Basic, "is identifiable object 1");
     check(ido is Identifiable, "is identifiable 2");
-// FIXME Dart type tests for Identifable and Basic not yet supported
-    //check(ido is Basic, "is identifiable object 2");
+    check(ido is Basic, "is identifiable object 2");
     
     reifiedIs<String>("abc");
     reifiedIs<Anything>("abc");
