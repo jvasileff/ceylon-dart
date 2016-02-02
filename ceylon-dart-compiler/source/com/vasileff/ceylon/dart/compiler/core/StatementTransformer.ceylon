@@ -44,7 +44,6 @@ import ceylon.ast.core {
     DynamicValue,
     Destructure,
     TryCatchFinally,
-    Type,
     LazySpecification,
     ClassAliasDefinition,
     InterfaceAliasDefinition,
@@ -100,7 +99,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
-    UnspecifiedVariableInfo,
     expressionInfo,
     nodeInfo,
     parameterInfo,
@@ -117,7 +115,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     forFailInfo,
     functionDeclarationInfo,
     valueDeclarationInfo,
-    specifiedVariableInfo
+    specifiedVariableInfo,
+    unspecifiedVariableInfo
 }
 
 import org.antlr.runtime {
@@ -374,7 +373,7 @@ class StatementTransformer(CompilationContext ctx)
                             };
                         };
                         // TODO if outermost, and there is only one condition, optimize
-                        //      awaythe doElseVariable and put "else" block here.
+                        //      away the doElseVariable and put "else" block here.
                     }].coalesced.sequence();
 
             assert(nonempty result);
@@ -1468,11 +1467,6 @@ class StatementTransformer(CompilationContext ctx)
             return f(resources.reversed, block);
         }
 
-        function assertType(Anything a) {
-            assert (is Type a);
-            return a;
-        }
-
         value dartCatchClause
             =   switch (catchClauses = that.catchClauses)
                 case (is Empty) null
@@ -1502,33 +1496,30 @@ class StatementTransformer(CompilationContext ctx)
                             },
                             createIfStatement {
                                 catchClauses.collect { (clause) =>
-                                    let (variableInfo = UnspecifiedVariableInfo
-                                            (clause.variable),
-                                        tInfo = typeInfo(assertType
-                                            (clause.variable.type)))
+                                    let (vInfo = unspecifiedVariableInfo(clause.variable))
                                     [generateIsExpression {
-                                        tInfo;
+                                        vInfo;
                                         ceylonTypes.throwableType;
                                         null;
                                         exceptionVariable;
-                                        tInfo.typeModel;
+                                        vInfo.declarationModel.type;
                                     },
                                     DartBlock {
                                         [createVariableDeclaration {
                                             dartTypes.dartTypeNameForDeclaration {
-                                                    variableInfo;
-                                                    variableInfo.declarationModel;
+                                                    vInfo;
+                                                    vInfo.declarationModel;
                                             };
                                             DartSimpleIdentifier {
                                                 dartTypes.getName {
-                                                    variableInfo.declarationModel;
+                                                    vInfo.declarationModel;
                                                 };
                                             };
                                             withLhs {
                                                 null;
-                                                variableInfo.declarationModel;
+                                                vInfo.declarationModel;
                                                 () => withBoxing {
-                                                    variableInfo;
+                                                    vInfo;
                                                     ceylonTypes.throwableType;
                                                     null;
                                                     exceptionVariable;
