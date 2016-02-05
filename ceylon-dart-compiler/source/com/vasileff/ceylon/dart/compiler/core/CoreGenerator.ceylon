@@ -259,7 +259,7 @@ class CoreGenerator(CompilationContext ctx) {
                     erasedToObject;
                     expression;
                 };
-                memberName = "float";
+                memberName = "nearestFloat";
                 arguments = [];
             };
 
