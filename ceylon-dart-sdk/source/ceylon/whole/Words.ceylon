@@ -10,7 +10,7 @@ native Words wordsOfSize(Integer size);
 native("jvm") Words wordsOfSize(Integer size)
     =>  WordsJVM.ofSize(size);
 
-native("js") Words wordsOfSize(Integer size)
+native("js", "dart") Words wordsOfSize(Integer size)
     =>  WordsJS.ofSize(size);
 
 native Words wordsOfOne(Integer word);
@@ -18,7 +18,7 @@ native Words wordsOfOne(Integer word);
 native("jvm") Words wordsOfOne(Integer word)
     =>  WordsJVM.ofOne(word);
 
-native("js") Words wordsOfOne(Integer word)
+native("js", "dart") Words wordsOfOne(Integer word)
     =>  WordsJS.ofOne(word);
 
 native Words copyAppend(Integer wordsSize, Words words, Integer other);
@@ -26,7 +26,7 @@ native Words copyAppend(Integer wordsSize, Words words, Integer other);
 native("jvm") Words copyAppend(Integer wordsSize, Words words, Integer other)
     =>  WordsJVM.copyAppend(wordsSize, words, other);
 
-native("js") Words copyAppend(Integer wordsSize, Words words, Integer other)
+native("js", "dart") Words copyAppend(Integer wordsSize, Words words, Integer other)
     =>  WordsJS.copyAppend(wordsSize, words, other);
 
 Boolean wordsEqual(Integer firstSize, Words first,
@@ -129,7 +129,7 @@ native("jvm") class WordsJVM satisfies Words {
         =>  using(storage.clone());
 }
 
-native("js") class WordsJS satisfies Words {
+native("js", "dart") class WordsJS satisfies Words {
     Array<Integer> storage;
 
     new using(Array<Integer> storage) {
