@@ -1,6 +1,6 @@
 import "dart:core" as $dart$core;
 import "dart:math" as $dart$math;
-import "../../../../../../ceylon-dart/ceylon-dart-language/ceylon.language.dart" as $ceylon$language;
+import "../../../../../ceylon-dart/ceylon-dart-language/ceylon.language.dart" as $ceylon$language;
 
 $dart$core.double float$exp($dart$core.double num) => $dart$math.exp(num);
 $dart$core.double $package$float$exp($dart$core.double num) => float$exp(num);
