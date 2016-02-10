@@ -62,6 +62,7 @@ public class MetamodelGenerator {
 
     public static final String KEY_DEFAULT      = "def";
     public static final String KEY_DYNAMIC      = "dyn";
+    public static final String KEY_STATIC       = "sta";
 
     public static final String METATYPE_CLASS           = "c";
     public static final String METATYPE_INTERFACE       = "i";

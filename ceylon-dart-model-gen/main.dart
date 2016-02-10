@@ -27,6 +27,7 @@ const keyFlags         = "\$ff";
 
 const keyDefault       = "def";
 const keyDynamic       = "dyn";
+const keyStatic       = "sta";
 
 const metatypeClass           = "c";
 const metatypeInterface       = "i";
@@ -115,7 +116,8 @@ Map<String, Map<String, Object>> methodsToMap(
   for (var d in declarations) {
     if (d.simpleName != #then
         && d.simpleName != #whenComplete
-        && d.simpleName != #listen) {
+        && d.simpleName != #listen
+        && d.simpleName != #doWhile) {
       continue;
     }
     if (d is MethodMirror) {
@@ -132,6 +134,9 @@ Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from) {
   map[keyName] = MirrorSystem.getName(mm.simpleName);
   map[keyPackedAnns] = 5; // TODO 'shared formal' for now
   map[keyParams] = [parametersToList(mm.parameters, from)];
+  if (mm.isStatic) {
+    map[keyStatic] = true;
+  }
   return map;
 }
 
