@@ -1,9 +1,13 @@
+.atom/
 .exploded/
 .gradle/
+.packages
 build/
 classes/
 config.old
 modules/
+packages/
+pubspec.lock
 reports/
 
 ceylon-dart-ant/.classpath
