@@ -1,0 +1,2 @@
+shared abstract
+class \Ibool() {}
