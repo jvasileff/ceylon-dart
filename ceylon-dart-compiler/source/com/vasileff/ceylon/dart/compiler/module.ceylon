@@ -8,7 +8,7 @@ module com.vasileff.ceylon.dart.compiler "1.2.1-DP2-SNAPSHOT" {
     import ceylon.ast.redhat "1.2.1";
     import ceylon.collection "1.2.1";
     import ceylon.interop.java "1.2.1";
-    import com.vasileff.jl4c.guava "0.0.2-121-SNAPSHOT";
+    import com.vasileff.jl4c.guava "0.0.2";
     import com.redhat.ceylon.model "1.2.1";
     import com.redhat.ceylon.compiler.js "1.2.1";
 
