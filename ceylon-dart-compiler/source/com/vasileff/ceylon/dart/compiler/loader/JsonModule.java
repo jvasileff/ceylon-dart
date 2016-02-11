@@ -17,7 +17,16 @@ public class JsonModule extends Module {
     private Map<String,Object> model;
     private boolean loaded = false;
 
-    @SuppressWarnings("unchecked")
+    private boolean dartNative = false;
+
+    /**
+     * Is this module a native Dart library?
+     */
+    public boolean isDartNative() {
+		return dartNative;
+	}
+
+	@SuppressWarnings("unchecked")
     public void setModel(Map<String, Object> value) {
         if (model != null) {
             final String modName = (String)model.get("$mod-name");
@@ -49,6 +58,9 @@ public class JsonModule extends Module {
                 }
                 getAnnotations().add(ann);
             }
+        }
+        if (model.get(MetamodelGenerator.KEY_NATIVE_DART) != null) {
+            dartNative = (boolean)model.get(MetamodelGenerator.KEY_NATIVE_DART);
         }
     }
     public Map<String, Object> getModel() {

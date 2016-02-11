@@ -192,7 +192,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
         case (is ClassModel) {
-            return sanitizeIdentifier(usableShortName(originalDeclaration));
+            value usn = usableShortName(originalDeclaration);
+            if (nativeDart(originalDeclaration)) {
+                // strip leading synthetic "C_" prefix
+                return sanitizeIdentifier(usn[2...]);
+            }
+            return sanitizeIdentifier(usn);
         }
         case (is ConstructorModel | InterfaceModel) {
             return sanitizeIdentifier(originalDeclaration.name else "");

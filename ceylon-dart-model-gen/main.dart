@@ -29,6 +29,8 @@ const keyDefault       = "def";
 const keyDynamic       = "dyn";
 const keyStatic       = "sta";
 
+const keyNativeDart   = "\$mod-native-dart";
+
 const metatypeClass           = "c";
 const metatypeInterface       = "i";
 const metatypeAlias           = "als";
@@ -50,6 +52,7 @@ main() {
   jsonMap["\$mod-deps"] = ["ceylon.language/1.2.1-DP2-SNAPSHOT"];
   jsonMap["\$mod-name"] = moduleName(dcMirror);
   jsonMap["\$mod-version"] = "1.2.1";
+  jsonMap[keyNativeDart] = true;
 
   var declarationMap = new Map<String, Object>();
   declarationMap["\$pkg-pa"] = 1; // TODO shared, for now

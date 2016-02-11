@@ -86,6 +86,9 @@ import java.lang {
         jparseDouble=parseDouble
     }
 }
+import com.vasileff.ceylon.dart.compiler.loader {
+    JsonModule
+}
 
 void printNodeAsCode(Node node) {
     TCNode tcNode(Node node)
@@ -130,6 +133,11 @@ ModuleModel getModule
             getModule(declaration.scope)
         else
             getPackage(declaration).\imodule;
+
+Boolean nativeDart(ElementModel declaration)
+    =>  if (is JsonModule mod = getModule(declaration))
+        then mod.dartNative
+        else false;
 
 Boolean sameModule(
         DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel first,

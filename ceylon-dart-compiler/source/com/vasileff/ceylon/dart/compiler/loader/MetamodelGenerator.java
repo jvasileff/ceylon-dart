@@ -64,6 +64,8 @@ public class MetamodelGenerator {
     public static final String KEY_DYNAMIC      = "dyn";
     public static final String KEY_STATIC       = "sta";
 
+    public static final String KEY_NATIVE_DART	= "$mod-native-dart";
+
     public static final String METATYPE_CLASS           = "c";
     public static final String METATYPE_INTERFACE       = "i";
     public static final String METATYPE_ALIAS           = "als";
