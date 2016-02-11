@@ -57,16 +57,19 @@ main() {
     if (m.isPrivate) {
       return;
     }
-    if (k != #Future && k != #Stream && k != #StreamSubscription) {
+    if (k != #Future
+        && k != #Stream
+        // && k != #StreamView
+        && k != #StreamSubscription) {
       return;
     }
     if (m is MethodMirror && m.isRegularMethod) {
-      /*
-      print("Method: " + MirrorSystem.getName(m.simpleName).toString());
-      */
+      // TODO toplevel functions
+      //print("Method: " + MirrorSystem.getName(m.simpleName).toString());
     }
     else if (m is ClassMirror) {
-      declarationMap[MirrorSystem.getName(k)] = classToMap(m, m);
+      declarationMap[MirrorSystem.getName(k)] = classToInterfaceMap(m, m);
+      declarationMap["C_" + MirrorSystem.getName(k)] = classToClassMap(m, m);
     }
   });
 
@@ -75,7 +78,7 @@ main() {
   print(JSON.encode(jsonMap));
 }
 
-Map<String, Object> classToMap(ClassMirror cm, TypeMirror from) {
+Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
   // interface
   var map = new Map<String, Object>();
   var methods = methodsToMap(cm.declarations.values, from);
@@ -84,16 +87,90 @@ Map<String, Object> classToMap(ClassMirror cm, TypeMirror from) {
   }
   map[keyMetatype] = metatypeInterface;
   map[keyName] = MirrorSystem.getName(cm.simpleName);
+
+  // TODO better annotations?
   map[keyPackedAnns] = 1;
+
   var typeParameters = typeParameterList(cm.declarations.values, from);
   if (!typeParameters.isEmpty) {
     map[keyTypeParams] = typeParameters;
   }
 
-  // EXTENDED TYPE
-  // SATISFIES TYPES
-  // CONSTRUCTORS
-  // ANNOTATIONS (shared, etc?)
+  List<ClassMirror> interfaces = [cm.superclass];
+  interfaces.addAll(cm.superinterfaces);
+  map[keySatisfies] = interfaces
+    .where((t) {
+      return t != reflectClass(Object);
+    })
+    .map((m) => typeToMap(m, from)).toList();
+
+  // print("satisfies (i): " + map[keySatisfies].toString());
+
+  return map;
+}
+
+Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
+  // class
+  var map = new Map<String, Object>();
+  var methods = methodsToMap(cm.declarations.values, from);
+  if (!methods.isEmpty) {
+    map[keyMethods] = methods;
+  }
+  map[keyMetatype] = metatypeClass;
+  map[keyName] = "C_" + MirrorSystem.getName(cm.simpleName);
+
+  // TODO better annotations. 'abstract', other?
+  map[keyPackedAnns] = 1;
+
+  var typeParameters = typeParameterList(cm.declarations.values, from);
+  if (!typeParameters.isEmpty) {
+    map[keyTypeParams] = typeParameters;
+  }
+
+  if (cm.superclass != reflectClass(Object)) {
+    map["super"] = typeToMap(cm.superclass, from, true);
+  }
+
+  // satisfy the corresponding Ceylon interface
+  List<ClassMirror> interfaces = [cm];
+  map[keySatisfies] = [typeToMap(cm, from)];
+
+  // print("satisfies (c): " + map[keySatisfies].toString());
+  // print("extends   (c): " + map["super"].toString());
+
+  // FIXME Present static constructors as static methods? But... they need
+  //       `new`, and, some don't have names. Somehow, we need to disallow
+  //       extension for d.isFactoryConstructor
+
+  var constructors = new Map();
+  for (var d in cm.declarations.values) {
+    // if (d is MethodMirror
+    //  && (d.isGenerativeConstructor || d.isRedirectingConstructor)) {
+    if (d is MethodMirror && d.isConstructor
+        && d.constructorName != #delayed
+        && d.constructorName != #error
+        && d.simpleName != #Stream.eventTransformed
+        && d.simpleName != #Stream.fromIterable
+        && d.simpleName != #Stream.periodic
+        && d.simpleName != #Stream.fromFutures) {
+      var name = MirrorSystem.getName(d.constructorName);
+      var key = name.isNotEmpty ? name : "\$def";
+      constructors[key] = constructorToMap(d, from);
+    }
+  }
+  map[keyConstructors] =  constructors;
+  return map;
+}
+
+Map<String, Object> constructorToMap(MethodMirror mm, TypeMirror from) {
+  var map = new Map();
+  var name = MirrorSystem.getName(mm.constructorName);
+  // var key = name.isNotEmpty ? name : "\$def";
+  if (name.isNotEmpty) {
+    map[keyName] = name;
+  }
+  map[keyPackedAnns] = 1; // TODO shared for now
+  map[keyParams] = parametersToList(mm.parameters, from);
   return map;
 }
 
@@ -181,7 +258,8 @@ List<Map<String, Object>> typeArgumentMap(List<TypeMirror> typeArguments,
   }).toList();
 }
 
-Map<String, Object> typeToMap(TypeMirror tm, TypeMirror from) {
+Map<String, Object> typeToMap(
+    TypeMirror tm, TypeMirror from, [bool isClass = false]) {
   var fromModuleName = moduleName(from);
   var fromPackageName = packageName(from);
   var tmModuleName = moduleName(tm);
@@ -198,7 +276,12 @@ Map<String, Object> typeToMap(TypeMirror tm, TypeMirror from) {
     //      for params and returns?
   }
   else if (tm is ClassMirror) {
-    map[keyName] = MirrorSystem.getName(tm.simpleName);
+    if (isClass) {
+      map[keyName] = "C_" + MirrorSystem.getName(tm.simpleName);
+    }
+    else {
+      map[keyName] = MirrorSystem.getName(tm.simpleName);
+    }
 
     // TODO use "$" for ceylon.language
     if (tmPackageName != fromPackageName) {
