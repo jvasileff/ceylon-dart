@@ -45,7 +45,8 @@ const metatypeParameter       = "prm";
 main() {
   //var dcMirror = currentMirrorSystem().findLibrary(#dart.io);
   //var dcMirror = currentMirrorSystem().findLibrary(new Symbol("dart.io"));
-  var dcMirror = currentMirrorSystem().findLibrary(#dart.async);
+  //var dcMirror = currentMirrorSystem().findLibrary(#dart.async);
+  var dcMirror = currentMirrorSystem().findLibrary(#dart.core);
 
   var jsonMap = new Map<String, Object>();
   jsonMap["\$mod-bin"] = "9.0";
@@ -63,7 +64,8 @@ main() {
     if (k != #Future
         && k != #Stream
         // && k != #StreamView
-        && k != #StreamSubscription) {
+        && k != #StreamSubscription
+        && k != #String) {
       return;
     }
     if (m is MethodMirror && m.isRegularMethod) {
@@ -71,6 +73,7 @@ main() {
       //print("Method: " + MirrorSystem.getName(m.simpleName).toString());
     }
     else if (m is ClassMirror) {
+      print("-- Class: " + MirrorSystem.getName(k).toString() + " --");
       declarationMap[MirrorSystem.getName(k)] = classToInterfaceMap(m, m);
       declarationMap["C_" + MirrorSystem.getName(k)] = classToClassMap(m, m);
     }
@@ -197,10 +200,14 @@ Map<String, Map<String, Object>> methodsToMap(
     if (d.simpleName != #then
         && d.simpleName != #whenComplete
         && d.simpleName != #listen
-        && d.simpleName != #doWhile) {
+        && d.simpleName != #doWhile
+        && d.simpleName != #endsWith
+        && d.simpleName != #matchAsPrefix
+        && d.simpleName != #padLeft) {
       continue;
     }
     if (d is MethodMirror) {
+      print("-- Method: " + MirrorSystem.getName(d.simpleName).toString() + " --");
       map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
     }
   }
@@ -255,14 +262,53 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
 List<Map<String, Object>> typeArgumentMap(List<TypeMirror> typeArguments,
     TypeMirror from) {
   return typeArguments.map((tm) {
-    var map = typeToMap(tm, from); // keyModule, keyName
+    var map = typeToMap(tm, from, false, false); // keyModule, keyName
     map[keyMetatype] = metatypeTypeParameter;
     return map;
   }).toList();
 }
 
 Map<String, Object> typeToMap(
-    TypeMirror tm, TypeMirror from, [bool isClass = false]) {
+    TypeMirror tm, TypeMirror from, [bool isClass = false, bool erase = true]) {
+
+  if (tm == reflectClass(Object)) {
+    return {
+        keyModule : "\$",
+        keyPackage : "\$",
+        keyName : "Anything"
+    };
+  }
+  if (erase) {
+    if (tm == reflectClass(String)) {
+      return {
+          keyModule : "\$",
+          keyPackage : "\$",
+          keyName : "String"
+      };
+    }
+    if (tm == reflectClass(int)) {
+      return {
+          keyModule : "\$",
+          keyPackage : "\$",
+          keyName : "Integer"
+      };
+    }
+    if (tm == reflectClass(double)) {
+      return {
+          keyModule : "\$",
+          keyPackage : "\$",
+          keyName : "Float"
+      };
+    }
+    if (tm == reflectClass(bool)) {
+      return {
+          keyModule : "\$",
+          keyPackage : "\$",
+          keyName : "Boolean"
+      };
+    }
+  }
+
   var fromModuleName = moduleName(from);
   var fromPackageName = packageName(from);
   var tmModuleName = moduleName(tm);
