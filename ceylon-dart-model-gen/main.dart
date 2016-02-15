@@ -55,74 +55,70 @@ Set<LibraryMirror> allowedLibraries;
  *      corresponding Ceylon interface
  */
 main() {
-  var jsonMap = new Map<String, Object>();
-  jsonMap["\$mod-bin"] = "9.0";
+  // dart.core
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.core), []);
 
-  // // for CORE
-  // var dcMirror = currentMirrorSystem().findLibrary(#dart.core);
-  // jsonMap["\$mod-deps"] = ["ceylon.language/1.2.1-DP2-SNAPSHOT"];
-  // allowedLibraries = new Set<LibraryMirror>.from([dcMirror]);
-  // // jsonMap["\$mod-deps"] = [
-  // //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
-  // //   {"exp" : 1, "path" : "interop.dart.math/1.2.1"},
-  // // ];
+  // dart.math
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.math),
+    [currentMirrorSystem().findLibrary(#dart.core)]);
 
-  // // for MATH
-  // var dcMirror = currentMirrorSystem().findLibrary(#dart.math);
-  // jsonMap["\$mod-deps"] = [
-  //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
-  //   {"exp" : 1, "path" : "interop.dart.core/1.2.1"},
-  // ];
-  // allowedLibraries = new Set<LibraryMirror>.from([
-  //   dcMirror, currentMirrorSystem().findLibrary(#dart.core)
-  // ]);
+  // dart.io
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.io),
+    [currentMirrorSystem().findLibrary(#dart.core),
+     currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // // for IO
-  // var dcMirror = currentMirrorSystem().findLibrary(#dart.io);
-  // jsonMap["\$mod-deps"] = [
-  //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
-  //   {"exp" : 1, "path" : "interop.dart.core/1.2.1"},
-  //   {"exp" : 1, "path" : "interop.dart.async/1.2.1"}
-  // ];
-  // allowedLibraries = new Set<LibraryMirror>.from([dcMirror,
-  //   currentMirrorSystem().findLibrary(#dart.core),
-  //   currentMirrorSystem().findLibrary(#dart.async)
-  // ]);
+  // dart.async
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.async),
+    [currentMirrorSystem().findLibrary(#dart.core)]);
+}
 
-  // for ASYNC
-  var dcMirror = currentMirrorSystem().findLibrary(#dart.async);
-  jsonMap["\$mod-deps"] = [
-    "ceylon.language/1.2.1-DP2-SNAPSHOT",
-   {"exp" : 1, "path" : "interop.dart.core/1.2.1"}
-  ];
-  allowedLibraries = new Set<LibraryMirror>.from([dcMirror,
-    currentMirrorSystem().findLibrary(#dart.core),
-  ]);
+Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
+    Iterable<LibraryMirror> dependencies) {
 
-  jsonMap["\$mod-name"] = moduleName(dcMirror);
-  jsonMap["\$mod-version"] = "1.2.1";
-  jsonMap[keyNativeDart] = true;
+  allowedLibraries = new Set<LibraryMirror>.from([libraryMirror])
+      ..addAll(dependencies);
+
+  var map = new Map<String, Object>();
+  map["\$mod-bin"] = "9.0";
+
+  map["\$mod-deps"] =
+      ["ceylon.language/1.2.1-DP2-SNAPSHOT"]..addAll(
+      dependencies.map((d) => {"exp" : 1, "path" : moduleName(d) + "/1.2.1"}));
+
+  map["\$mod-name"] = moduleName(libraryMirror);
+  map["\$mod-version"] = "1.2.1";
+  map[keyNativeDart] = true;
 
   var declarationMap = new Map<String, Object>();
   declarationMap["\$pkg-pa"] = 1; // TODO shared, for now
-  dcMirror.declarations.forEach((Symbol k, DeclarationMirror m) {
+  libraryMirror.declarations.forEach((Symbol k, DeclarationMirror m) {
     if (m.isPrivate) {
       return;
     }
     if (m is MethodMirror && m.isRegularMethod) {
       // TODO toplevel functions
-      //print("Method: " + MirrorSystem.getName(m.simpleName).toString());
+      // print("Method: " + MirrorSystem.getName(m.simpleName).toString());
     }
     else if (m is ClassMirror) {
-      print("-- Class: " + MirrorSystem.getName(k).toString() + " --");
+      // print("-- Class: " + MirrorSystem.getName(k).toString() + " --");
       declarationMap[MirrorSystem.getName(k)] = classToInterfaceMap(m, m);
       declarationMap["C_" + MirrorSystem.getName(k)] = classToClassMap(m, m);
     }
   });
 
-  jsonMap[packageName(dcMirror)] = declarationMap;
-  print("-- Module: " + moduleName(dcMirror).toString() + " --");
-  print(JSON.encode(jsonMap));
+  map[packageName(libraryMirror)] = declarationMap;
+
+  // print("-- Module: " + moduleName(libraryMirror).toString() + " --");
+  // print(JSON.encode(map));
+
+  var file = new File("modules/" +  moduleName(libraryMirror) + "-1.2.1-dartmodel.json");
+  file.writeAsString(JSON.encode(map));
+
+  return map;
 }
 
 Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
@@ -263,11 +259,11 @@ Map<String, Map<String, Object>> attributesToMap(
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
     if (d is VariableMirror && !d.isPrivate) {
-      print("-- Variable: " + MirrorSystem.getName(d.simpleName).toString() + " --");
+      // print("-- Variable: " + MirrorSystem.getName(d.simpleName).toString() + " --");
       map[MirrorSystem.getName(d.simpleName)] = variableToMap(d, from);
     }
     else if (d is MethodMirror && d.isGetter) {
-      print("-- Method:   " + MirrorSystem.getName(d.simpleName).toString() + " --");
+      // print("-- Method:   " + MirrorSystem.getName(d.simpleName).toString() + " --");
       map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
     }
   }
@@ -279,7 +275,7 @@ Map<String, Map<String, Object>> methodsToMap(
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
     if (d is MethodMirror && d.isRegularMethod) {
-      print("-- Method: " + MirrorSystem.getName(d.simpleName).toString() + " --");
+      // print("-- Method: " + MirrorSystem.getName(d.simpleName).toString() + " --");
       map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
     }
   }
