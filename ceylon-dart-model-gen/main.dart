@@ -1,6 +1,16 @@
 import "dart:mirrors";
 import "dart:convert";
 import "dart:io";
+//import "dart:typed_data";
+
+// WEB ONLY
+// import "dart:html";
+// import "dart:indexed_db";
+// import "dart:js";
+// import "dart:svg";
+// import "dart:web_audio";
+//import "dart:web_gl";
+//import "dart:web_sql";
 
 const keyClasses       = "\$c";
 const keyInterfaces    = "\$i";
@@ -43,7 +53,6 @@ const metatypeSetter          = "s";
 const metatypeTypeParameter   = "tp";
 const metatypeParameter       = "prm";
 
-
 Set<LibraryMirror> allowedLibraries;
 
 /*
@@ -55,14 +64,40 @@ Set<LibraryMirror> allowedLibraries;
  *      corresponding Ceylon interface
  */
 main() {
+  // dart.async
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.async),
+    [currentMirrorSystem().findLibrary(#dart.core)]);
+
+  // dart.collection
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.collection),
+    [currentMirrorSystem().findLibrary(#dart.core)]);
+
+  // dart.convert
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.convert),
+    [currentMirrorSystem().findLibrary(#dart.core)]);
+
   // dart.core
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.core), []);
 
-  // dart.math
+  // dart.developer
   moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.math),
+    currentMirrorSystem().findLibrary(#dart.developer),
     [currentMirrorSystem().findLibrary(#dart.core)]);
+
+  // // dart.html
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.html),
+  //   [currentMirrorSystem().findLibrary(#dart.core)]);
+  //
+  // // dart.indexed_db
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.indexed_db),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
 
   // dart.io
   moduleToMap(
@@ -70,10 +105,58 @@ main() {
     [currentMirrorSystem().findLibrary(#dart.core),
      currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // dart.async
+  // dart.isolate
   moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.async),
+    currentMirrorSystem().findLibrary(#dart.isolate),
+    [currentMirrorSystem().findLibrary(#dart.core),
+     currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.js
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.js),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // dart.math
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.math),
     [currentMirrorSystem().findLibrary(#dart.core)]);
+
+  // dart.mirrors
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.mirrors),
+    [currentMirrorSystem().findLibrary(#dart.core),
+     currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.svg
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.svg),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // dart.typed_data
+  moduleToMap(
+    currentMirrorSystem().findLibrary(#dart.typed_data),
+    [currentMirrorSystem().findLibrary(#dart.core),
+     currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.web_audio
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.web_audio),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.web_gl
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.web_gl),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.web_sql
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.web_sql),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
 }
 
 Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
