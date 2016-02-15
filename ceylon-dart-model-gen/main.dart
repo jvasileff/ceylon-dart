@@ -26,8 +26,9 @@ const keyConstructors  = "\$cn";
 const keyFlags         = "\$ff";
 
 const keyDefault       = "def";
+const keyNamed         = "nam";
 const keyDynamic       = "dyn";
-const keyStatic       = "sta";
+const keyStatic        = "sta";
 
 const keyNativeDart   = "\$mod-native-dart";
 
@@ -42,15 +43,62 @@ const metatypeSetter          = "s";
 const metatypeTypeParameter   = "tp";
 const metatypeParameter       = "prm";
 
-main() {
-  //var dcMirror = currentMirrorSystem().findLibrary(#dart.io);
-  //var dcMirror = currentMirrorSystem().findLibrary(new Symbol("dart.io"));
-  //var dcMirror = currentMirrorSystem().findLibrary(#dart.async);
-  var dcMirror = currentMirrorSystem().findLibrary(#dart.core);
 
+Set<LibraryMirror> allowedLibraries;
+
+/*
+ *  FIXME
+ *    - include private declarations, since they are necessary for
+ *      extends and satisfies
+ *
+ *    - for Ceylon classes, include type arguments when satisfying the
+ *      corresponding Ceylon interface
+ */
+main() {
   var jsonMap = new Map<String, Object>();
   jsonMap["\$mod-bin"] = "9.0";
-  jsonMap["\$mod-deps"] = ["ceylon.language/1.2.1-DP2-SNAPSHOT"];
+
+  // // for CORE
+  // var dcMirror = currentMirrorSystem().findLibrary(#dart.core);
+  // jsonMap["\$mod-deps"] = ["ceylon.language/1.2.1-DP2-SNAPSHOT"];
+  // allowedLibraries = new Set<LibraryMirror>.from([dcMirror]);
+  // // jsonMap["\$mod-deps"] = [
+  // //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
+  // //   {"exp" : 1, "path" : "interop.dart.math/1.2.1"},
+  // // ];
+
+  // // for MATH
+  // var dcMirror = currentMirrorSystem().findLibrary(#dart.math);
+  // jsonMap["\$mod-deps"] = [
+  //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
+  //   {"exp" : 1, "path" : "interop.dart.core/1.2.1"},
+  // ];
+  // allowedLibraries = new Set<LibraryMirror>.from([
+  //   dcMirror, currentMirrorSystem().findLibrary(#dart.core)
+  // ]);
+
+  // // for IO
+  // var dcMirror = currentMirrorSystem().findLibrary(#dart.io);
+  // jsonMap["\$mod-deps"] = [
+  //   "ceylon.language/1.2.1-DP2-SNAPSHOT",
+  //   {"exp" : 1, "path" : "interop.dart.core/1.2.1"},
+  //   {"exp" : 1, "path" : "interop.dart.async/1.2.1"}
+  // ];
+  // allowedLibraries = new Set<LibraryMirror>.from([dcMirror,
+  //   currentMirrorSystem().findLibrary(#dart.core),
+  //   currentMirrorSystem().findLibrary(#dart.async)
+  // ]);
+
+  // for ASYNC
+  var dcMirror = currentMirrorSystem().findLibrary(#dart.async);
+  jsonMap["\$mod-deps"] = [
+    "ceylon.language/1.2.1-DP2-SNAPSHOT",
+   {"exp" : 1, "path" : "interop.dart.core/1.2.1"}
+  ];
+  allowedLibraries = new Set<LibraryMirror>.from([dcMirror,
+    currentMirrorSystem().findLibrary(#dart.core),
+  ]);
+
   jsonMap["\$mod-name"] = moduleName(dcMirror);
   jsonMap["\$mod-version"] = "1.2.1";
   jsonMap[keyNativeDart] = true;
@@ -59,13 +107,6 @@ main() {
   declarationMap["\$pkg-pa"] = 1; // TODO shared, for now
   dcMirror.declarations.forEach((Symbol k, DeclarationMirror m) {
     if (m.isPrivate) {
-      return;
-    }
-    if (k != #Future
-        && k != #Stream
-        // && k != #StreamView
-        && k != #StreamSubscription
-        && k != #String) {
       return;
     }
     if (m is MethodMirror && m.isRegularMethod) {
@@ -87,10 +128,17 @@ main() {
 Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
   // interface
   var map = new Map<String, Object>();
+
   var methods = methodsToMap(cm.declarations.values, from);
   if (!methods.isEmpty) {
     map[keyMethods] = methods;
   }
+
+  var attributes = attributesToMap(cm.declarations.values, from);
+  if (!attributes.isEmpty) {
+    map[keyAttributes] = attributes;
+  }
+
   map[keyMetatype] = metatypeInterface;
   map[keyName] = MirrorSystem.getName(cm.simpleName);
 
@@ -102,11 +150,19 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
     map[keyTypeParams] = typeParameters;
   }
 
+  // FIXME always satisfy Identifiable
+
   List<ClassMirror> interfaces = [cm.superclass];
   interfaces.addAll(cm.superinterfaces);
   map[keySatisfies] = interfaces
     .where((t) {
-      return t != reflectClass(Object);
+      return t != null
+        && !t.isPrivate
+        && t.owner != null
+        && t != reflectClass(Object)
+        // TODO make this configurable
+        // exclude dart._internal.EfficientLength and others?
+        && MirrorSystem.getName(t.owner.qualifiedName) != "dart._internal";
     })
     .map((m) => typeToMap(m, from)).toList();
 
@@ -118,10 +174,17 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
 Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   // class
   var map = new Map<String, Object>();
+
   var methods = methodsToMap(cm.declarations.values, from);
   if (!methods.isEmpty) {
     map[keyMethods] = methods;
   }
+
+  var attributes = attributesToMap(cm.declarations.values, from);
+  if (!attributes.isEmpty) {
+    map[keyAttributes] = attributes;
+  }
+
   map[keyMetatype] = metatypeClass;
   map[keyName] = "C_" + MirrorSystem.getName(cm.simpleName);
 
@@ -133,12 +196,20 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
     map[keyTypeParams] = typeParameters;
   }
 
-  if (cm.superclass != reflectClass(Object)) {
+  if (cm.superclass != null
+      && cm.superclass != reflectClass(Object)
+      && !cm.superclass.isPrivate) {
     map["super"] = typeToMap(cm.superclass, from, true);
+  }
+  else {
+    map["super"] = {
+        keyModule : "\$",
+        keyPackage : "\$",
+        keyName : "Basic"
+    };
   }
 
   // satisfy the corresponding Ceylon interface
-  List<ClassMirror> interfaces = [cm];
   map[keySatisfies] = [typeToMap(cm, from)];
 
   // print("satisfies (c): " + map[keySatisfies].toString());
@@ -152,13 +223,7 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   for (var d in cm.declarations.values) {
     // if (d is MethodMirror
     //  && (d.isGenerativeConstructor || d.isRedirectingConstructor)) {
-    if (d is MethodMirror && d.isConstructor
-        && d.constructorName != #delayed
-        && d.constructorName != #error
-        && d.simpleName != #Stream.eventTransformed
-        && d.simpleName != #Stream.fromIterable
-        && d.simpleName != #Stream.periodic
-        && d.simpleName != #Stream.fromFutures) {
+    if (d is MethodMirror && d.isConstructor) {
       var name = MirrorSystem.getName(d.constructorName);
       var key = name.isNotEmpty ? name : "\$def";
       constructors[key] = constructorToMap(d, from);
@@ -193,20 +258,27 @@ List<Map<String, Object>> typeParameterList(
     .toList();
 }
 
+Map<String, Map<String, Object>> attributesToMap(
+    Iterable<DeclarationMirror> declarations, TypeMirror from) {
+  var map = new Map<String, Map<String, Object>>();
+  for (var d in declarations) {
+    if (d is VariableMirror && !d.isPrivate) {
+      print("-- Variable: " + MirrorSystem.getName(d.simpleName).toString() + " --");
+      map[MirrorSystem.getName(d.simpleName)] = variableToMap(d, from);
+    }
+    else if (d is MethodMirror && d.isGetter) {
+      print("-- Method:   " + MirrorSystem.getName(d.simpleName).toString() + " --");
+      map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
+    }
+  }
+  return map;
+}
+
 Map<String, Map<String, Object>> methodsToMap(
     Iterable<DeclarationMirror> declarations, TypeMirror from) {
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
-    if (d.simpleName != #then
-        && d.simpleName != #whenComplete
-        && d.simpleName != #listen
-        && d.simpleName != #doWhile
-        && d.simpleName != #endsWith
-        && d.simpleName != #matchAsPrefix
-        && d.simpleName != #padLeft) {
-      continue;
-    }
-    if (d is MethodMirror) {
+    if (d is MethodMirror && d.isRegularMethod) {
       print("-- Method: " + MirrorSystem.getName(d.simpleName).toString() + " --");
       map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
     }
@@ -214,13 +286,47 @@ Map<String, Map<String, Object>> methodsToMap(
   return map;
 }
 
+Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from) {
+  var map = new Map();
+  map[keyType] = typeToMap(mm.type, from); // TODO what about void?
+
+  if (!mm.isFinal && !mm.isConst) {
+    map["\$set"] = { keyMetatype : metatypeSetter };
+  }
+  map[keyMetatype] = metatypeGetter;
+  map[keyName] = MirrorSystem.getName(mm.simpleName);
+  map[keyPackedAnns] = 5; // TODO 'shared formal' for now
+
+  if (mm.isStatic) {
+    map[keyStatic] = true;
+  }
+  return map;
+}
+
 Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from) {
   var map = new Map();
   map[keyType] = typeToMap(mm.returnType, from); // TODO what about void?
-  map[keyMetatype] = metatypeMethod;
+
+  if (mm.isGetter) {
+    // FIXME Find a way to determine if a setter exists. We could search
+    //       the owner for a declaration named 'theAttribute=', but then,
+    //       it may actually be the owner's supertype that declares the
+    //       setter.
+    //
+    //       For now, just add a setter for all getters.
+    //       See also https://github.com/dart-lang/sdk/issues/10975
+    map["\$set"] = { keyMetatype : metatypeSetter };
+    map[keyMetatype] = metatypeGetter;
+  }
+  else {
+    map[keyMetatype] = metatypeMethod;
+  }
   map[keyName] = MirrorSystem.getName(mm.simpleName);
   map[keyPackedAnns] = 5; // TODO 'shared formal' for now
-  map[keyParams] = [parametersToList(mm.parameters, from)];
+  if (!mm.isGetter) {
+    map[keyParams] = [parametersToList(mm.parameters, from)];
+  }
+
   if (mm.isStatic) {
     map[keyStatic] = true;
   }
@@ -229,12 +335,7 @@ Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from) {
 
 List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
     TypeMirror from) {
-  return parameters
-  .where((p) =>
-        p.simpleName != #onError
-        && p.simpleName != #onDone
-        && p.simpleName != #cancelOnError)
-  .map((pm) {
+  return parameters.map((pm) {
     var map = new Map();
     var pt = pm.type;
     if (pt is FunctionTypeMirror) {
@@ -251,6 +352,12 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
       map[keyType] = typeToMap(pm.type, from);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
+      if (pm.isNamed) {
+        map[keyNamed] = true;
+      }
+    }
+    if (pm.isOptional) {
+      map[keyDefault] = true;
     }
 
     // TODO defaulted, named
@@ -271,7 +378,13 @@ List<Map<String, Object>> typeArgumentMap(List<TypeMirror> typeArguments,
 Map<String, Object> typeToMap(
     TypeMirror tm, TypeMirror from, [bool isClass = false, bool erase = true]) {
 
-  if (tm == reflectClass(Object)) {
+  // FIXME tm is null sometimes
+
+  if (tm == reflectClass(Object)
+      // For now, use Anything for modules we can't import until cyclic
+      // dependencies work
+      || (tm is ClassMirror && !allowedLibraries.contains(tm.owner))
+      || (null != tm && tm.isPrivate)) {
     return {
         keyModule : "\$",
         keyPackage : "\$",
