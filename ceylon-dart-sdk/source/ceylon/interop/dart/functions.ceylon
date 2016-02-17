@@ -43,3 +43,9 @@ Element await<Element>(DFuture<Element> future);
 
 shared native("jvm", "js")
 Element await<Element>(DFuture<Element> future) => nothing;
+
+shared
+DFuture<Element> deFuture<Element>(DFuture<DFuture<Element>> future) {
+    assert (is DFuture<Element> future);
+    return future;
+}
