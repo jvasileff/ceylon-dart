@@ -194,8 +194,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is ClassModel) {
             value usn = usableShortName(originalDeclaration);
             if (nativeDart(originalDeclaration)) {
-                // strip leading synthetic "C_" prefix
-                return sanitizeIdentifier(usn[2...]);
+                // strip synthetic "_C" suffix
+                return sanitizeIdentifier(usn.initial(usn.size - 2));
             }
             return sanitizeIdentifier(usn);
         }
