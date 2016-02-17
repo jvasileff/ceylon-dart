@@ -56,12 +56,8 @@ const metatypeParameter       = "prm";
 Set<LibraryMirror> allowedLibraries;
 
 /*
- *  FIXME
- *    - include private declarations, since they are necessary for
- *      extends and satisfies
- *
- *    - for Ceylon classes, include type arguments when satisfying the
- *      corresponding Ceylon interface
+ *  FIXME include private declarations, since they are necessary for
+ *        extends and satisfies
  */
 main() {
   // dart.async
@@ -288,8 +284,14 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
     };
   }
 
-  // satisfy the corresponding Ceylon interface
+  // satisfy the corresponding Ceylon interface, using all type paramters as
+  // type arguments
   map[keySatisfies] = [typeToMap(cm, from)];
+  var typeArgs = typeArgumentMap(
+      cm.declarations.values.where((d) => d is TypeVariableMirror), from);
+  if (!typeArgs.isEmpty) {
+    map[keySatisfies][0][keyTypeParams] = typeArgs;
+  }
 
   // print("satisfies (c): " + map[keySatisfies].toString());
   // print("extends   (c): " + map["super"].toString());
@@ -445,9 +447,9 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
   }).toList();
 }
 
-List<Map<String, Object>> typeArgumentMap(List<TypeMirror> typeArguments,
-    TypeMirror from) {
-  return typeArguments.map((tm) {
+List<Map<String, Object>> typeArgumentMap(
+    Iterable<DeclarationMirror> typeArguments, TypeMirror from) {
+  return typeArguments.where((tm) => tm is TypeMirror).map((tm) {
     var map = typeToMap(tm, from, false, false); // keyModule, keyName
     map[keyMetatype] = metatypeTypeParameter;
     return map;
