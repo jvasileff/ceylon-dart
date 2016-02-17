@@ -582,6 +582,10 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
             setAnnotations(s, (Integer)smap.remove(MetamodelGenerator.KEY_PACKED_ANNS), sanns);
             s.setType(d.getType());
         }
+        if (m.containsKey(MetamodelGenerator.KEY_STATIC)) {
+            boolean st = (boolean)m.remove((MetamodelGenerator.KEY_STATIC));
+            d.setStaticallyImportable(st);
+        }
         return d;
     }
 

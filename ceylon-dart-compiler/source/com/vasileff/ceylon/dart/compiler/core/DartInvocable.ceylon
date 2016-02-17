@@ -24,7 +24,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 
 shared
 class DartInvocable(
-        // DartPropetyAccess|DartPrefixedIdentifier may indicate a Dart static method
+        // DartPropetyAccess|DartPrefixedIdentifier may indicate a Dart static member
         // or a qualified toplevel
         shared DartSimpleIdentifier | DartPropertyAccess | DartPrefixedIdentifier
                     | DartConstructorName reference,
@@ -191,17 +191,17 @@ class DartInvocable(
             }
         }
         case (dartValue) {
-            "Dart values are not constructors or static methods."
-            assert (!is DartConstructorName | DartPropertyAccess reference);
+            "Dart values are not constructors."
+            assert (!is DartConstructorName reference);
 
             DartExpression target;
             if (!exists receiver) {
+                // Possibly a DartPropertyAccess in the case of a Dart static attribute
                 target = reference;
             }
             else {
                 "Member identifiers must be DartSimpleIdentifiers."
-                assert (!is DartPrefixedIdentifier reference);
-
+                assert (!is DartPrefixedIdentifier | DartPropertyAccess reference);
                 target = createDartPropertyAccess(receiver, reference);
             }
 

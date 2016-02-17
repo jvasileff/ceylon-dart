@@ -420,6 +420,16 @@ class ExpressionTransformer(CompilationContext ctx)
              expression to a type."
             assert (is QualifiedExpressionInfo | BaseExpressionInfo receiverInfo);
 
+            // Static members for interop are more like base expressions to toplevels
+            if (memberDeclaration.staticallyImportable) {
+                return
+                generateForBaseExpression {
+                    that;
+                    that.nameAndArgs;
+                    info.declaration;
+                };
+            }
+
             "The receiver's target must be the qualifying type for the member."
             assert (is TypeModel receiverType
                 =   targetForExpressionInfo(receiverInfo));
