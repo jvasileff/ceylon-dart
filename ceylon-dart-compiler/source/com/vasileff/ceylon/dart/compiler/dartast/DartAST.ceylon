@@ -26,6 +26,19 @@ class DartDirective() extends DartAnnotatedNode() {
     // List<DartAnnotation> metadata
 }
 
+shared
+class DartAwaitExpression(expression)
+        extends DartExpression() {
+
+    shared DartExpression expression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.write("await ");
+        expression.write(writer);
+    }
+}
+
 "A break statement."
 shared
 class DartBreakStatement(label = null)
@@ -1033,6 +1046,9 @@ class DartExpressionFunctionBody(async, expression)
 
     shared actual
     void write(CodeWriter writer) {
+        if (async) {
+            writer.write("async ");
+        }
         writer.write("=> ");
         expression.write(writer);
     }

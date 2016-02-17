@@ -3472,6 +3472,19 @@ class BaseGenerator(CompilationContext ctx)
                         dartTypes.erasedToObject(functionModel);
                     };
 
+            value async
+                =   CeylonIterable(functionModel.annotations).any(
+                        (annotation) {
+                            value annotationFunction
+                                =   ctx.unit.getImportedDeclaration(
+                                        annotation.name, null, false) else null;
+                            if (is FunctionModel annotationFunction) {
+                                return ceylonTypes.isAsyncDeclaration(
+                                    annotationFunction.type.declaration);
+                            }
+                            return false;
+                        });
+
             // If defaulted parameters exist, if we need to instantiate capture boxes
             // or if we need to avoid a return for void, use a block (not lazy specifier)
             if (!hasDefaultedParameters && !isVoid
@@ -3484,14 +3497,14 @@ class BaseGenerator(CompilationContext ctx)
                         body = withReturn {
                             returnTypeDetails;
                             () => DartBlockFunctionBody {
-                                null; false;
+                                async then "async"; false;
                                 statementTransformer.transformBlock(definition)[0];
                             };
                         };
                     }
                     case (is LazySpecifier) {
                         body = DartExpressionFunctionBody {
-                            false;
+                            async;
                             withLhs {
                                 returnTypeDetails;
                                 null;
@@ -3503,7 +3516,7 @@ class BaseGenerator(CompilationContext ctx)
                 }
                 else {
                     assert(exists previous = result);
-                    body = DartExpressionFunctionBody(false, previous);
+                    body = DartExpressionFunctionBody(async, previous);
                 }
             }
             else {
@@ -3613,7 +3626,11 @@ class BaseGenerator(CompilationContext ctx)
                     statements.add(DartReturnStatement(previous));
                 }
 
-                body = DartBlockFunctionBody(null, false, DartBlock([*statements]));
+                body = DartBlockFunctionBody {
+                    async then "async";
+                    false;
+                    DartBlock([*statements]);
+                };
             }
             result = DartFunctionExpression {
                 generateFormalParameterList(true, false, scope, list);

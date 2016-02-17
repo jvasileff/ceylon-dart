@@ -175,7 +175,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     createExpressionEvaluationWithSetup,
     createInlineDartStatements,
     createNullSafeExpression,
-    createVariableDeclaration
+    createVariableDeclaration,
+    DartAwaitExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     BaseExpressionInfo,
@@ -782,6 +783,25 @@ class ExpressionTransformer(CompilationContext ctx)
                             signature;
                             invokedDeclaration;
                         };
+
+                if (ceylonTypes.isAwaitDeclaration(invokedDeclaration)) {
+                    // fake await() function used to create an await expression
+
+                    assert (exists expression = argumentList.arguments[0]);
+
+                    return
+                    createExpressionEvaluationWithSetup {
+                        argsSetup;
+                        withBoxing {
+                            info;
+                            info.typeModel;
+                            invokedDeclaration;
+                            DartAwaitExpression {
+                                expression;
+                            };
+                        };
+                    };
+                }
 
                 return
                 createExpressionEvaluationWithSetup {

@@ -19,9 +19,12 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.jl4c.guava.collect {
     javaList
 }
+import com.redhat.ceylon.compiler.typechecker.context {
+    Context
+}
 
 shared
-class CeylonTypes(Unit unit) {
+class CeylonTypes(Unit unit, Context typeCheckerContext) {
 
     /////////////////////////////////////////////
     // common types
@@ -115,6 +118,48 @@ class CeylonTypes(Unit unit) {
 
     shared
     Type nothingType => unit.nothingType;
+
+    /////////////////////////////////////////////
+    // Dart Specific Types and Declarations
+    /////////////////////////////////////////////
+
+    shared
+    Class? asyncDeclaration {
+        for (m in typeCheckerContext.modules.listOfModules) {
+            if (m.nameAsString == "ceylon.interop.dart") {
+                assert (is Class async
+                    =   m.getPackage("ceylon.interop.dart")
+                        .getDirectMember("AsyncAnnotation", null, false));
+                return async;
+            }
+        }
+        return null;
+    }
+
+    shared
+    Boolean isAsyncDeclaration(TypeDeclaration declaration)
+        =>  declaration.qualifiedNameString == "ceylon.interop.dart::AsyncAnnotation";
+
+    shared
+    Function? awaitDeclaration {
+        for (m in typeCheckerContext.modules.listOfModules) {
+            if (m.nameAsString == "ceylon.interop.dart") {
+                assert (is Function await
+                    =   m.getPackage("ceylon.interop.dart")
+                        .getDirectMember("await", null, false));
+                return await;
+            }
+        }
+        return null;
+    }
+
+    shared
+    Boolean isAwaitDeclaration(Function declaration) {
+        if (exists await = awaitDeclaration) {
+            return declaration == await;
+        }
+        return false;
+    }
 
     /////////////////////////////////////////////
     // Boolean isCeylonX(type)

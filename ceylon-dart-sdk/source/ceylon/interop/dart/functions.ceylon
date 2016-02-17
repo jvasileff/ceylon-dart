@@ -4,6 +4,9 @@ import interop.dart.core {
     DBoolean = \Ibool,
     DDouble = \Idouble
 }
+import interop.dart.async {
+    DFuture = Future
+}
 
 shared native
 DString dartString(String string);
@@ -34,3 +37,9 @@ Boolean ceylonBoolean(DBoolean boolean);
 
 shared native("jvm", "js")
 Boolean ceylonBoolean(DBoolean boolean) => nothing;
+
+shared native
+Element await<Element>(DFuture<Element> future);
+
+shared native("jvm", "js")
+Element await<Element>(DFuture<Element> future) => nothing;
