@@ -420,8 +420,17 @@ class ExpressionTransformer(CompilationContext ctx)
              expression to a type."
             assert (is QualifiedExpressionInfo | BaseExpressionInfo receiverInfo);
 
-            // Static members for interop are more like base expressions to toplevels
-            if (memberDeclaration.staticallyImportable) {
+            value isConstructorOfStaticClass {
+                if (is ConstructorModel memberDeclaration) {
+                    assert (is ClassModel container = memberDeclaration.container);
+                    return container.staticallyImportable;
+                }
+                return false;
+            }
+
+            // Static members (and constructors of static classes) for interop are more
+            // like base expressions to toplevels
+            if (memberDeclaration.staticallyImportable || isConstructorOfStaticClass) {
                 return
                 generateForBaseExpression {
                     that;
@@ -861,17 +870,11 @@ class ExpressionTransformer(CompilationContext ctx)
                         then invoked.receiverExpression
                         else null);
 
-            if (is BaseExpression? classInvoked) {
-                // Handle the following cases:
-                //
-                // - Constructor called from within the class (Null case), or
-                // - Constructor of a toplevel class, or
-                // - Constructor of member class called from within
-                //   scope of `outer`, so no explicit receiver, or
-                // - Class initializer of a toplevel class, or
-                // - Class initializer of member class called from within
-                //   scope of `outer`, so no explicit receiver.
-
+            "Expression for when classInvoked is a BaseExpression (which, depending on
+             scope, *could* be for a member class), or a QualifiedExpression classInvoked
+             where the classInvoked is a static member class (for Dart, this is always
+             the fictional `.Class` static member class for interop)"
+            function expressionForNonQualifiedClass() {
                 value [argsSetup, argumentList, _]
                     =   generateArgumentListFromArguments {
                             info;
@@ -907,12 +910,33 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
             }
 
+            if (is BaseExpression? classInvoked) {
+                // Handle the following cases:
+                //
+                // - Constructor called from within the class (Null case), or
+                // - Constructor of a toplevel class, or
+                // - Constructor of member class called from within
+                //   scope of `outer`, so no explicit receiver, or
+                // - Class initializer of a toplevel class, or
+                // - Class initializer of member class called from within
+                //   scope of `outer`, so no explicit receiver.
+
+                return expressionForNonQualifiedClass();
+            }
+
             "We already handled the BaseExpression cases."
             assert (!is BaseExpression invoked);
 
             value invokedQEInfo = qualifiedExpressionInfo(classInvoked);
 
             if (invokedQEInfo.staticMethodReference) {
+                if (invokedQEInfo.declaration.staticallyImportable) {
+                    // if the class is statically importable (static member class), we
+                    // are invoking the constructor, not creating a callable for the
+                    // constructor. 'classInvoked' acts more like a bse expression.
+                    return expressionForNonQualifiedClass();
+                }
+
                 // Invoking a member class, statically. Just return a callable. It's
                 // possible that the callable we return will immediately be called
                 // with args to construct the class. Not optimizing this now.

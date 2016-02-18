@@ -243,6 +243,12 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
 
   // print("satisfies (i): " + map[keySatisfies].toString());
 
+  // Also add the class as a static member class named ".Class"
+  var classMap = classToClassMap(cm, from);
+  classMap[keyName] = "Class";
+  classMap[keyStatic] = true;
+  map[keyClasses] = { "Class" : classMap };
+
   return map;
 }
 

@@ -320,6 +320,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration);
         }
         case (is ClassModel | InterfaceModel) {
+            if (declaration.staticallyImportable) {
+                // This is a fake static member class ".Class" for Dart interop. Erase
+                // to its container.
+                assert (is InterfaceModel realDeclaration = container(declaration));
+                return getName(realDeclaration);
+            }
+
             return identifierPackagePrefix(declaration)
                     + classOrInterfacePrefix(declaration)
                     + getUnprefixedName(declaration);
@@ -1506,9 +1513,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
         case (is ClassOrInterfaceModel) {
             // Static function or value for interop
-            if (validDeclaration.staticallyImportable) {
-                "Dart doesn't have member classes"
-                assert (!is ClassModel | ConstructorModel validDeclaration);
+            if (validDeclaration.staticallyImportable, !is ClassModel validDeclaration) {
+                "Constructors are never flagged as staticallyImportable"
+                assert (!is ConstructorModel validDeclaration);
 
                 return DartInvocable {
                     DartPropertyAccess {
@@ -1523,10 +1530,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
 
             // Non-shared classes, constructors, and constructors of non-shared classes,
-            // which are invoked statically
+            // and possibly-shared static member classes and their constructors are
+            // invoked statically
             if (is ClassModel | ConstructorModel validDeclaration,
                     !validDeclaration.shared
-                    || !getClassOfConstructor(validDeclaration).shared) {
+                    || !getClassOfConstructor(validDeclaration).shared
+                    || getClassOfConstructor(validDeclaration).staticallyImportable) {
 
                 return DartInvocable {
                     dartConstructorName {

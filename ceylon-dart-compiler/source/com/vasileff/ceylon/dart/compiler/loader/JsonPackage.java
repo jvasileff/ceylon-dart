@@ -186,6 +186,10 @@ public class JsonPackage extends com.redhat.ceylon.model.typechecker.model.Packa
             setAnnotations(cls, (Integer)m.remove(MetamodelGenerator.KEY_PACKED_ANNS),
                     (Map<String,Object>)m.remove(MetamodelGenerator.KEY_ANNOTATIONS));
         }
+        if (m.containsKey(MetamodelGenerator.KEY_STATIC)) {
+            boolean st = (boolean)m.remove((MetamodelGenerator.KEY_STATIC));
+            cls.setStaticallyImportable(st);
+        }
         //Type parameters are about the first thing we need to load
         final List<TypeParameter> tparms = parseTypeParameters(
                 (List<Map<String,Object>>)m.remove(MetamodelGenerator.KEY_TYPE_PARAMS), cls, existing);

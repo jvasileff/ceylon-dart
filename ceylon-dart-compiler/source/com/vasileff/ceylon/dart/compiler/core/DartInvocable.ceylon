@@ -368,15 +368,15 @@ class DartInvocable(
 
         switch (elementType)
         case (dartFunction) {
-            // TODO support this constructors?
-            assert (!is DartConstructorName | DartPropertyAccess reference);
+            assert (!is DartConstructorName reference);
 
             if (!receiver exists) {
+                // Possibly a DartPropertyAccess in the case of a Dart static function
                 return reference;
             }
 
-            "Member identifiers must be DartSimpleIdentifiers."
-            assert (!is DartPrefixedIdentifier reference);
+            "Non-static member identifiers must be DartSimpleIdentifiers."
+            assert (!is DartPrefixedIdentifier | DartPropertyAccess reference);
 
             return createDartPropertyAccess(receiver, reference);
         }

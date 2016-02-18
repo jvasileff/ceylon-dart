@@ -280,6 +280,13 @@ TypeModel | TypedReferenceModel targetForExpressionInfo(
         case (is QualifiedExpressionInfo) info.target;
 
 "If the expression is a base or qualified expression, is it a static reference?"
+Boolean isStaticallyImportable(ExpressionInfo? expressionInfo)
+    =>  switch (expressionInfo)
+        case (is BaseExpressionInfo) expressionInfo.declaration.staticallyImportable
+        case (is QualifiedExpressionInfo) expressionInfo.declaration.staticallyImportable
+        else false;
+
+"If the expression is a base or qualified expression, is it a static reference?"
 Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
     =>  switch (expressionInfo)
         case (is BaseExpressionInfo) expressionInfo.staticMethodReferencePrimary
