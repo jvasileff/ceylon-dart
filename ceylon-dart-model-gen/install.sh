@@ -30,3 +30,5 @@ touch ~/.ceylon/repo/interop/dart/isolate/1.2.1/interop.dart.isolate-1.2.1.dart
 touch ~/.ceylon/repo/interop/dart/math/1.2.1/interop.dart.math-1.2.1.dart
 touch ~/.ceylon/repo/interop/dart/mirrors/1.2.1/interop.dart.mirrors-1.2.1.dart
 touch ~/.ceylon/repo/interop/dart/typed_data/1.2.1/interop.dart.typed_data-1.2.1.dart
+
+rm -f ~/.ceylon/repo/interop/dart/*/1.2.1/*sha1
