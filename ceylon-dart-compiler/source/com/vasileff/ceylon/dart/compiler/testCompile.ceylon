@@ -2,7 +2,8 @@ import ceylon.interop.java {
     createJavaByteArray,
     CeylonIterable,
     CeylonList,
-    javaClass
+    javaClass,
+    javaString
 }
 import ceylon.io.charset {
     utf8
@@ -180,7 +181,8 @@ shared
 }
 
 "A simple CLI compiler that takes up to three arguments: a source directory, an output
- directory, and optionally, a system repository url. Warnings are suppressed."
+ directory, and optionally, a system repository url followed by user repo urls. Warnings
+ are suppressed. If user repos are provided, `noDefaultRepos` will be set to true."
 shared
 suppressWarnings("expressionTypeNothing")
 void bootstrapCompile() {
@@ -189,10 +191,16 @@ void bootstrapCompile() {
 
     value systemRepoDirectory = process.arguments[2];
 
+    value userRepoDirectories
+        =   let (userRepos = process.arguments[3...].collect(javaString))
+            (userRepos nonempty then javaList(userRepos));
+
     value repositoryManager
         =   if (exists systemRepoDirectory)
             then CeylonUtils.repoManager()
                     .systemRepo(systemRepoDirectory)
+                    .userRepos(userRepoDirectories)
+                    .noDefaultRepos(userRepoDirectories exists)
                     .buildManager()
             else null;
 

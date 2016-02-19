@@ -209,7 +209,8 @@ project('ceylon-dart-sdk') {
                 'com.vasileff.ceylon.dart.compiler/1.2.1-DP2-SNAPSHOT',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}",
-                project(":ceylon-dart-language").compileCeylonDart.destinationDir
+                project(":ceylon-dart-language").compileCeylonDart.destinationDir,
+                file("../ceylon-dart-language/modules-dart")
     }
 
     task repositoryZip(type: Zip) {
