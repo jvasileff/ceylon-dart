@@ -166,15 +166,6 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
         m.model = model;
 
         reflection.invokeLoadDeclarations(m); // the method is package private
-
-        if (m.nameAsString == "interop.dart.io") {
-            // Incredibly unsophisticated hack to mark a method as static since
-            // we can't do this through the model loader yet.
-            value p = m.getPackage("interop.dart.io");
-            value httpServer = p.getMember("HttpServer", null, false);
-            value bind = httpServer.getMember("bind", null, false);
-            bind.staticallyImportable = true;
-        }
     }
 
     shared actual

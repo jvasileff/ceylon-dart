@@ -1,4 +1,4 @@
-import interop.dart.async {
+import dart.async {
     Future,
     Stream
 }

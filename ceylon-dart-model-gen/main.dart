@@ -566,7 +566,7 @@ Map<String, Object> typeToMap(
 
 String moduleName(Object tm) {
   if (tm is LibraryMirror) {
-    return "interop." + MirrorSystem.getName(tm.simpleName);
+    return MirrorSystem.getName(tm.simpleName);
   }
   else if (tm is ClassMirror) {
     return moduleName(tm.owner);
@@ -576,7 +576,7 @@ String moduleName(Object tm) {
 
 String packageName(Object tm) {
   if (tm is LibraryMirror) {
-    return "interop." + MirrorSystem.getName(tm.simpleName);
+    return MirrorSystem.getName(tm.simpleName);
   }
   else if (tm is ClassMirror) {
     return packageName(tm.owner);

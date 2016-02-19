@@ -1,10 +1,10 @@
-import interop.dart.core {
+import dart.core {
     DString = String,
     DInteger = \Iint,
     DBoolean = \Ibool,
     DDouble = \Idouble
 }
-import interop.dart.async {
+import dart.async {
     DFuture = Future
 }
 

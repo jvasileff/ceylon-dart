@@ -1,3 +1,6 @@
+import com.vasileff.ceylon.dart.compiler.core {
+    eq
+}
 shared abstract
 class DartNode() {
     shared formal
@@ -206,6 +209,14 @@ class DartImportDirective(uri, prefix)
         }
         writer.endStatement();
     }
+
+    equals(Object that)
+        =>  if (is DartImportDirective that)
+            then uri==that.uri && eq(prefix, that.prefix)
+            else false;
+
+    hash
+        =>  [uri, prefix].hash;
 }
 
 "A return statement."
@@ -290,7 +301,11 @@ class DartLiteral() extends DartExpression() {}
 shared abstract
 class DartStringLiteral()
         of DartSingleStringLiteral
-        extends DartLiteral() {}
+        extends DartLiteral() {
+
+    shared actual formal Boolean equals(Object other);
+    shared actual formal Integer hash;
+}
 
 "A single string literal expression."
 shared abstract
@@ -326,6 +341,14 @@ class DartSimpleStringLiteral(text)
         }
         writer.write("\"");
     }
+
+    equals(Object other)
+        =>  if (is DartSimpleStringLiteral other)
+            then this.text == other.text
+            else false;
+
+    hash
+        =>  text.hash;
 }
 
 "A boolean literal expression."
@@ -558,6 +581,14 @@ class DartSimpleIdentifier(identifier)
     void write(CodeWriter writer) {
         writer.write(identifier);
     }
+
+    equals(Object other)
+        =>  if (is DartSimpleIdentifier other)
+            then identifier == other.identifier
+            else false;
+
+    hash
+        =>  identifier.hash;
 }
 
 "The name of a type, which can optionally include type arguments."

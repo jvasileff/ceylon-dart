@@ -1,7 +1,7 @@
-import interop.dart.async {
+import dart.async {
     Future
 }
-import interop.dart.core {
+import dart.core {
     DString=String
 }
 

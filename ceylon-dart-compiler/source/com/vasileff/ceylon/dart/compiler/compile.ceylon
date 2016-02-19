@@ -600,13 +600,11 @@ shared
                                 "$" + name.replace(":", "$");
                             };
                         }
-                    // Hack to have "interop.dart.x" modules mean "dart:x" for interop
-                    else if (m.name.size() == 3
-                            && m.name.get(0).string == "interop"
-                            && m.name.get(1).string == "dart") then
-                        let (name = m.name.get(0).string)
+                    // Hack to have "dart.x" modules mean "dart:x" for interop
+                    else if (m.name.size() == 2
+                            && m.name.get(0).string == "dart") then
                         DartImportDirective {
-                            DartSimpleStringLiteral("dart:" + m.name.get(2).string);
+                            DartSimpleStringLiteral("dart:" + m.name.get(1).string);
                             DartSimpleIdentifier {
                                 moduleImportPrefix(m);
                             };
@@ -627,7 +625,7 @@ shared
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
                     },
-                    *importedModules}.coalesced.sequence();
+                    *importedModules}.coalesced.distinct.sequence();
                     ds.sequence();
                 };
 
