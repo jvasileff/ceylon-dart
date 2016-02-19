@@ -15,3 +15,6 @@ ceylon-dart-ant/.project
 ceylon-dart-ant/.settings/
 ceylon-dart-ant/bin/
 ceylon-dart-ant/target/
+
+ceylon-dart-compiler/runner.dart
+ceylon-dart-compiler/source/com/vasileff/ceylon/dart/compiler/run.ceylon

@@ -3,7 +3,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 
 shared suppressWarnings("unusedDeclaration", "suppressesNothing")
-void run() {
+void runSample() {
 
     value program =
          """
@@ -21,7 +21,7 @@ void run() {
 }
 
 shared
-void runModule() {
+void runModuleSample() {
     value mod =
          """
             module simple "1.0.0" {
