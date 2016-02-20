@@ -3,7 +3,6 @@ import ceylon.file {
 }
 import ceylon.interop.java {
     javaString,
-    javaClass,
     CeylonIterable
 }
 
@@ -43,9 +42,6 @@ import java.io {
 import java.lang {
     JString=String
 }
-import java.lang.reflect {
-    InvocationTargetException
-}
 import java.util {
     JMap=Map,
     JList=List,
@@ -54,22 +50,6 @@ import java.util {
 
 import net.minidev.json {
     JSONValue
-}
-
-object reflection {
-    value jasonModuleClass = javaClass<JsonModule>();
-    value loadDeclarations = jasonModuleClass.getDeclaredMethod("loadDeclarations");
-    loadDeclarations.accessible = true;
-
-    // TODO pull request for ceylon-js to make this public
-    shared void invokeLoadDeclarations(JsonModule jm) {
-        try {
-            loadDeclarations.invoke(jm);
-        }
-        catch (InvocationTargetException e) {
-            throw Exception("error loading module declarations", e.targetException);
-        }
-    }
 }
 
 shared
@@ -140,32 +120,8 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
         }
 
         model.remove(javaString("$mod-deps"));
-
-        // TODO this should really be lazy. And different.
-        // Load imports here to avoid "Package not found" in JsonPackage.getTypeFromJson.
-        for (moduleImport in CeylonIterable(m.imports)) {
-            if (!moduleImport.\imodule.nameAsString == "ceylon.language") {
-                value ac = ArtifactContext(moduleImport.\imodule.nameAsString,
-                        moduleImport.\imodule.version, ArtifactContext.\iDART_MODEL);
-                value artifact = this.context.repositoryManager.getArtifactResult(ac)
-                        else null;
-                if (exists artifact) {
-                    resolveModule(artifact, moduleImport.\imodule, moduleImport,
-                            dependencyTree, phasedUnitsOfDependencies,
-                            forCompiledModule && moduleImport.export);
-                }
-                else {
-                    throw ReportableException(
-                        "Unable to find module \
-                         ``ModuleUtil.makeModuleName(moduleImport.\imodule.nameAsString,
-                                moduleImport.\imodule.version)``");
-                }
-            }
-        }
-
         m.model = model;
-
-        reflection.invokeLoadDeclarations(m); // the method is package private
+        m.loadDeclarations();
     }
 
     shared actual
