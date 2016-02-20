@@ -186,13 +186,17 @@ shared
 shared
 suppressWarnings("expressionTypeNothing")
 void bootstrapCompile() {
-    assert (exists sourceDirectory = process.arguments[0]);
-    assert (exists outputDirectory = process.arguments[1]);
+    process.exit(doBootstrapCompile(process.arguments));
+}
 
-    value systemRepoDirectory = process.arguments[2];
+Integer doBootstrapCompile([String*] arguments) {
+    assert (exists sourceDirectory = arguments[0]);
+    assert (exists outputDirectory = arguments[1]);
+
+    value systemRepoDirectory = arguments[2];
 
     value userRepoDirectories
-        =   let (userRepos = process.arguments[3...].collect(javaString))
+        =   let (userRepos = arguments[3...].collect(javaString))
             (userRepos nonempty then javaList(userRepos));
 
     value repositoryManager
@@ -230,9 +234,9 @@ void bootstrapCompile() {
         quiet = false;
     }[1];
 
-    process.exit(
-        switch (result)
-        case (CompilationStatus.success) 0
-        case (CompilationStatus.errorTypeChecker
-                | CompilationStatus.errorDartBackend) 1);
+    return
+    switch (result)
+    case (CompilationStatus.success) 0
+    case (CompilationStatus.errorTypeChecker
+            | CompilationStatus.errorDartBackend) 1;
 }
