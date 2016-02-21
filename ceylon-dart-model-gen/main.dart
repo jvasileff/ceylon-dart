@@ -233,7 +233,8 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
   // cm.superclass represents some sort of combined class), and 2) a
   // comprehensive list of mixins (cm.superclass.mixin seems to provide only
   // the last mixin, but we'll need all of them.)
-  List<ClassMirror> interfaces = [cm.superclass.mixin];
+  List<ClassMirror> interfaces =
+    null != cm.superclass ? [cm.superclass.mixin] : [];
 
   interfaces.addAll(cm.superinterfaces);
   map[keySatisfies] = interfaces
