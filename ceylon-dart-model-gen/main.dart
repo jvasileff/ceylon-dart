@@ -427,7 +427,9 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
     var pt = pm.type;
     if (pt is FunctionTypeMirror) {
       map["\$pt"] = "f";
-      map[keyType] = typeToMap(pt.returnType, from);
+      // Don't erase! Callable's are generic, so there is no automatic
+      // type erasure.
+      map[keyType] = typeToMap(pt.returnType, from, false, false);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
       List plist = parametersToList(pt.parameters, from);
