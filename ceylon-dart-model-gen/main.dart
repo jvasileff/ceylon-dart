@@ -227,7 +227,14 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
 
   // FIXME always satisfy Identifiable
 
-  List<ClassMirror> interfaces = [cm.superclass];
+  // FIXME using 'cm.superclass.mixin' instead of 'cm.superclass' is wrong.
+  // It's used as a hack/workaround due to difficulties using the mirror api to
+  // determine 1) the actual extended type (when mixins are present,
+  // cm.superclass represents some sort of combined class), and 2) a
+  // comprehensive list of mixins (cm.superclass.mixin seems to provide only
+  // the last mixin, but we'll need all of them.)
+  List<ClassMirror> interfaces = [cm.superclass.mixin];
+
   interfaces.addAll(cm.superinterfaces);
   map[keySatisfies] = interfaces
     .where((t) {
