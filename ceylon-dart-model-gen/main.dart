@@ -371,13 +371,22 @@ Map<String, Map<String, Object>> attributesToMap(
   return map;
 }
 
+Map<String, String> methodNameMap = {
+    "[]" : "get_",
+    "[]=" : "set_"
+};
+
 Map<String, Map<String, Object>> methodsToMap(
     Iterable<DeclarationMirror> declarations, TypeMirror from) {
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
     if (d is MethodMirror && d.isRegularMethod) {
       // print("-- Method: " + MirrorSystem.getName(d.simpleName).toString() + " --");
-      map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
+
+      var dartName = MirrorSystem.getName(d.simpleName);
+      var ceylonName = methodNameMap[dartName];
+      map[null != ceylonName ? ceylonName : dartName] =
+          methodToMap(d, from, forceAbstract);
     }
   }
   return map;

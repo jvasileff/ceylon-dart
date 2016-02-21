@@ -101,6 +101,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }.get;
     })();
 
+
+    [String, DartElementType]?(String) dartMappedFunctionOrValue = (() {
+        return map {
+            "get_" -> ["[]", dartListAccess],
+            "set_" -> ["[]=", dartListAssignment]
+        }.get;
+    })();
+
     value reservedWords = set {
         "assert", "break", "case", "catch", "class", "const", "continue",
         "default", "do", "else", "enum", "extends", "false", "final", "finally",
@@ -1583,6 +1591,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     then mappedFunctionOrValue(refinedDeclaration(validDeclaration))
                     else null;
 
+            value validIdentifier
+                =   identifierForMember(validDeclaration);
+
+            value dartMapped
+                =   if (!mapped exists && nativeDart(validDeclaration))
+                    then dartMappedFunctionOrValue(validIdentifier.identifier)
+                    else null;
+
             value [memberIdentifier, dartElementType]
                 =   if (exists mapped, !setter || mapped[1] == dartValue) then [
                         // For mapped non-setters, or setters that are mapped to
@@ -1590,9 +1606,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         // string -> toString(), for which we want to use 'string' for
                         // the setter. Same for dartPrefixOperators like negated -> '-'
                         DartSimpleIdentifier(mapped[0]),
-                        mapped[1]
-                    ] else [
-                        identifierForMember(validDeclaration),
+                        mapped[1]]
+                    else if (exists dartMapped) then [
+                        DartSimpleIdentifier(dartMapped[0]),
+                        dartMapped[1]]
+                    else [
+                        validIdentifier,
                         if (!is ValueModel | SetterModel validDeclaration,
                             !callableValue)
                         then package.dartFunction
