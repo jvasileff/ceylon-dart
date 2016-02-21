@@ -84,17 +84,6 @@ main() {
     currentMirrorSystem().findLibrary(#dart.developer),
     [currentMirrorSystem().findLibrary(#dart.core)]);
 
-  // // dart.html
-  // moduleToMap(
-  //   currentMirrorSystem().findLibrary(#dart.html),
-  //   [currentMirrorSystem().findLibrary(#dart.core)]);
-  //
-  // // dart.indexed_db
-  // moduleToMap(
-  //   currentMirrorSystem().findLibrary(#dart.indexed_db),
-  //   [currentMirrorSystem().findLibrary(#dart.core),
-  //    currentMirrorSystem().findLibrary(#dart.async)]);
-
   // dart.io
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.io),
@@ -107,12 +96,6 @@ main() {
     [currentMirrorSystem().findLibrary(#dart.core),
      currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // // dart.js
-  // moduleToMap(
-  //   currentMirrorSystem().findLibrary(#dart.js),
-  //   [currentMirrorSystem().findLibrary(#dart.core),
-  //    currentMirrorSystem().findLibrary(#dart.async)]);
-
   // dart.math
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.math),
@@ -124,17 +107,34 @@ main() {
     [currentMirrorSystem().findLibrary(#dart.core),
      currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // // dart.svg
-  // moduleToMap(
-  //   currentMirrorSystem().findLibrary(#dart.svg),
-  //   [currentMirrorSystem().findLibrary(#dart.core),
-  //    currentMirrorSystem().findLibrary(#dart.async)]);
-
   // dart.typed_data
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.typed_data),
     [currentMirrorSystem().findLibrary(#dart.core),
      currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.html
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.html),
+  //   [currentMirrorSystem().findLibrary(#dart.core)]);
+  //
+  // // dart.indexed_db
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.indexed_db),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.js
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.js),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
+
+  // // dart.svg
+  // moduleToMap(
+  //   currentMirrorSystem().findLibrary(#dart.svg),
+  //   [currentMirrorSystem().findLibrary(#dart.core),
+  //    currentMirrorSystem().findLibrary(#dart.async)]);
 
   // // dart.web_audio
   // moduleToMap(
