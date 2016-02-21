@@ -277,18 +277,21 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
     map[keyTypeParams] = typeParameters;
   }
 
-  if (cm.superclass != null
-      && cm.superclass != reflectClass(Object)
-      && !cm.superclass.isPrivate) {
-    map["super"] = typeToMap(cm.superclass, from, true);
-  }
-  else {
-    map["super"] = {
-        keyModule : "\$",
-        keyPackage : "\$",
-        keyName : "Basic"
-    };
-  }
+  // Ignoring the superclass. It shouldn't be necessary since the class's
+  // corresponding interface should satisfy the superclass's corresponding
+  // interface, and, if the superclass is a mixin, things get screwed up
+  // with the Dart mirrors api.
+  // if (cm.superclass != null
+  //     && cm.superclass != reflectClass(Object)
+  //     && !cm.superclass.isPrivate) {
+  //   map["super"] = typeToMap(cm.superclass, from, true);
+  // }
+
+  map["super"] = {
+      keyModule : "\$",
+      keyPackage : "\$",
+      keyName : "Basic"
+  };
 
   // satisfy the corresponding Ceylon interface, using all type paramters as
   // type arguments
