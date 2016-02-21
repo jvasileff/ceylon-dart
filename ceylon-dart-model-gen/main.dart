@@ -53,6 +53,21 @@ const metatypeSetter          = "s";
 const metatypeTypeParameter   = "tp";
 const metatypeParameter       = "prm";
 
+Map<String, int> annotationBits = {
+  "shared" : 1,
+  "actual" : 1 << 1,
+  "formal" : 1 << 2,
+  "default" : 1 << 3,
+  "sealed" : 1 << 4,
+  "final" : 1 << 5,
+  "native" : 1 << 6,
+  "late" : 1 << 7,
+  "abstract" : 1 << 8,
+  "annotation" : 1 << 9,
+  "variable" : 1 << 10,
+  "serializable" : 1 << 11
+};
+
 Set<LibraryMirror> allowedLibraries;
 
 /*
@@ -204,12 +219,12 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
   // interface
   var map = new Map<String, Object>();
 
-  var methods = methodsToMap(cm.declarations.values, from);
+  var methods = methodsToMap(cm.declarations.values, from, true);
   if (!methods.isEmpty) {
     map[keyMethods] = methods;
   }
 
-  var attributes = attributesToMap(cm.declarations.values, from);
+  var attributes = attributesToMap(cm.declarations.values, from, true);
   if (!attributes.isEmpty) {
     map[keyAttributes] = attributes;
   }
@@ -264,12 +279,12 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   // class
   var map = new Map<String, Object>();
 
-  var methods = methodsToMap(cm.declarations.values, from);
+  var methods = methodsToMap(cm.declarations.values, from, false);
   if (!methods.isEmpty) {
     map[keyMethods] = methods;
   }
 
-  var attributes = attributesToMap(cm.declarations.values, from);
+  var attributes = attributesToMap(cm.declarations.values, from, false);
   if (!attributes.isEmpty) {
     map[keyAttributes] = attributes;
   }
@@ -357,16 +372,20 @@ List<Map<String, Object>> typeParameterList(
 }
 
 Map<String, Map<String, Object>> attributesToMap(
-    Iterable<DeclarationMirror> declarations, TypeMirror from) {
+    Iterable<DeclarationMirror> declarations, TypeMirror from,
+    bool forceAbstract) {
+
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
     if (d is VariableMirror && !d.isPrivate) {
       // print("-- Variable: " + MirrorSystem.getName(d.simpleName).toString() + " --");
-      map[MirrorSystem.getName(d.simpleName)] = variableToMap(d, from);
+      map[MirrorSystem.getName(d.simpleName)] =
+          variableToMap(d, from, forceAbstract);
     }
     else if (d is MethodMirror && d.isGetter) {
       // print("-- Method:   " + MirrorSystem.getName(d.simpleName).toString() + " --");
-      map[MirrorSystem.getName(d.simpleName)] = methodToMap(d, from);
+      map[MirrorSystem.getName(d.simpleName)] =
+          methodToMap(d, from, forceAbstract);
     }
   }
   return map;
@@ -378,7 +397,9 @@ Map<String, String> methodNameMap = {
 };
 
 Map<String, Map<String, Object>> methodsToMap(
-    Iterable<DeclarationMirror> declarations, TypeMirror from) {
+    Iterable<DeclarationMirror> declarations, TypeMirror from,
+    bool forceAbstract) {
+
   var map = new Map<String, Map<String, Object>>();
   for (var d in declarations) {
     if (d is MethodMirror && d.isRegularMethod) {
@@ -393,7 +414,8 @@ Map<String, Map<String, Object>> methodsToMap(
   return map;
 }
 
-Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from) {
+Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from,
+    bool forceAbstract) {
   var map = new Map();
   map[keyType] = typeToMap(mm.type, from); // TODO what about void?
 
@@ -402,7 +424,17 @@ Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from) {
   }
   map[keyMetatype] = metatypeGetter;
   map[keyName] = MirrorSystem.getName(mm.simpleName);
-  map[keyPackedAnns] = 5; // TODO 'shared formal' for now
+
+  map[keyPackedAnns] = annotationBits["shared"];
+  if (forceAbstract) {
+    // FIXME for now, making all members "default" since we're not getting
+    // reliable info for implemented members for classes like IterableBase
+    //map[keyPackedAnns] |= annotationBits["formal"];
+    map[keyPackedAnns] |= annotationBits["default"];
+  }
+  else {
+    map[keyPackedAnns] |= annotationBits["default"];
+  }
 
   if (mm.isStatic) {
     map[keyStatic] = true;
@@ -410,7 +442,9 @@ Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from) {
   return map;
 }
 
-Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from) {
+Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from,
+    bool forceAbstract) {
+
   var map = new Map();
   map[keyType] = typeToMap(mm.returnType, from); // TODO what about void?
 
@@ -429,7 +463,18 @@ Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from) {
     map[keyMetatype] = metatypeMethod;
   }
   map[keyName] = MirrorSystem.getName(mm.simpleName);
-  map[keyPackedAnns] = 5; // TODO 'shared formal' for now
+
+  map[keyPackedAnns] = annotationBits["shared"];
+  if (forceAbstract || mm.isAbstract) {
+    // FIXME for now, making all members "default" since we're not getting
+    // reliable info for implemented members for classes like IterableBase
+    //map[keyPackedAnns] |= annotationBits["formal"];
+    map[keyPackedAnns] |= annotationBits["default"];
+  }
+  else {
+    map[keyPackedAnns] |= annotationBits["default"];
+  }
+
   if (!mm.isGetter) {
     map[keyParams] = [parametersToList(mm.parameters, from)];
   }
