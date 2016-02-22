@@ -85,6 +85,8 @@ public class MetamodelGenerator {
     private static final Map<String,Object> unknownTypeMap = new HashMap<>();
     private final Module module;
 
+    private Backend dartBackend = Backend.registerBackend("Dart", "dart");
+
     public MetamodelGenerator(Module module) {
         this.module = module;
         model.put("$mod-name", module.getNameAsString());
@@ -101,7 +103,7 @@ public class MetamodelGenerator {
         if (!module.getImports().isEmpty()) {
             ArrayList<Object> imps = new ArrayList<>(module.getImports().size());
             for (ModuleImport mi : module.getImports()) {
-                if (!ModelUtil.isForBackend(mi.getNativeBackends(), Backend.JavaScript)) {
+                if (!ModelUtil.isForBackend(mi.getNativeBackends(), dartBackend)) {
                     continue;
                 }
                 if (mi.getModule().getVersion() == null) { //#416

@@ -49,8 +49,8 @@ import com.redhat.ceylon.common {
     FileUtil,
     ModuleUtil
 }
-import com.redhat.ceylon.compiler.js.loader {
-    MetamodelVisitor
+import com.redhat.ceylon.common.tool {
+    ToolError
 }
 import com.redhat.ceylon.compiler.typechecker {
     TypeCheckerBuilder
@@ -63,6 +63,11 @@ import com.redhat.ceylon.compiler.typechecker.context {
 }
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
+}
+import com.redhat.ceylon.compiler.typechecker.tree {
+    TCVisitor=Visitor,
+    TreeNode=Node,
+    Tree
 }
 import com.redhat.ceylon.compiler.typechecker.util {
     WarningSuppressionVisitor
@@ -103,7 +108,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartFunctionExpressionInvocation
 }
 import com.vasileff.ceylon.dart.compiler.loader {
-    DartModuleManagerFactory
+    DartModuleManagerFactory,
+    MetamodelVisitor
 }
 import com.vasileff.jl4c.guava.collect {
     javaList,
@@ -128,14 +134,6 @@ import java.util {
     EnumSet,
     JMap=Map,
     JList=List
-}
-import com.redhat.ceylon.compiler.typechecker.tree {
-    TCVisitor = Visitor,
-    TreeNode = Node,
-    Tree
-}
-import com.redhat.ceylon.common.tool {
-    ToolError
 }
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
