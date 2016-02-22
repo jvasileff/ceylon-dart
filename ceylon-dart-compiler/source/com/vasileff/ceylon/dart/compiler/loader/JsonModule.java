@@ -23,10 +23,10 @@ public class JsonModule extends Module {
      * Is this module a native Dart library?
      */
     public boolean isDartNative() {
-		return dartNative;
-	}
+        return dartNative;
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public void setModel(Map<String, Object> value) {
         if (model != null) {
             final String modName = (String)model.get("$mod-name");
