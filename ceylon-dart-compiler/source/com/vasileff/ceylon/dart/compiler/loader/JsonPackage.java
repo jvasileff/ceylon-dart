@@ -82,6 +82,11 @@ public class JsonPackage extends LazyPackage {
         }
     }
 
+    boolean isDartNative() {
+        return getModule() instanceof JsonModule
+                && ((JsonModule) getModule()).isDartNative();
+    }
+
     @SuppressWarnings("unchecked")
     public void setModule(com.redhat.ceylon.model.typechecker.model.Module module) {
         if (module instanceof JsonModule && model == null) {
@@ -524,6 +529,7 @@ public class JsonPackage extends LazyPackage {
     @SuppressWarnings("unchecked")
     Function loadMethod(String name, Map<String, Object> m, Scope parent, final List<TypeParameter> existing) {
         Function md = new Function();
+        md.setUncheckedNullType(isDartNative());
         md.setName(name);
         m.remove(MetamodelGenerator.KEY_NAME);
         md.setContainer(parent);
@@ -568,6 +574,7 @@ public class JsonPackage extends LazyPackage {
             List<TypeParameter> typeParameters) {
         String metatype = (String)m.get(MetamodelGenerator.KEY_METATYPE);
         Value d = new Value();
+        d.setUncheckedNullType(isDartNative());
         d.setTransient(MetamodelGenerator.METATYPE_GETTER.equals(metatype));
         d.setName(name);
         d.setContainer(parent);
