@@ -1,3 +1,20 @@
+import dart.core {
+    DInt = \Iint,
+    DList = List,
+    DList_C = List_C,
+    DIterator = Iterator {
+        DIteratorClass2 = Class
+    },
+    DIteratorClass = Iterator_C
+}
+import dart.collection {
+    DIterableBaseClass = IterableBase_C
+}
+import ceylon.interop.dart {
+    DartIterable,
+    dartComparator
+}
+
 "A fixed-sized array of mutable elements. An _empty_ array 
  is an array of [[size]] `0`. An array may be created with
  a list of initial elements, or, via the constructor 
@@ -231,10 +248,182 @@ shared final serializable native class Array<Element>
          elements of this array."
         Comparison comparing(Element x, Element y));
     
-    shared actual Boolean equals(Object that) 
+    shared actual native Boolean equals(Object that)
             => (super of List<Element>).equals(that);
-    shared actual Integer hash 
+    shared actual native Integer hash
             => (super of List<Element>).hash;
-    shared actual String string
+    shared actual native String string
+            => (super of Collection<Element>).string;
+}
+
+shared native("dart")
+final serializable class Array<Element>
+        satisfies SearchableList<Element> &
+                  Ranged<Integer,Element,Array<Element>> {
+
+    variable DList<Element> list;
+
+    shared native("dart")
+    new ({Element*} elements) {
+        list = DList_C.from(DartIterable(elements));
+    }
+
+    shared native("dart")
+    new ofSize(Integer size, Element element) {
+        if (size > runtime.maxArraySize) {
+            throw AssertionError("array size must be no larger than ``runtime.maxArraySize``");
+        }
+        list = DList_C<Element>.filled(largest(size, 0), element);
+    }
+
+    new withList(DList<Element> list) {
+        this.list = list;
+    }
+
+    shared actual native("dart")
+    Element? getFromFirst(Integer index)
+        =>  if (0 <= index < size)
+            then list.get_(index)
+            else null;
+
+    shared actual native("dart")
+    Integer? lastIndex
+        =>  !list.isEmpty then list.length - 1;
+
+    shared actual native("dart")
+    Integer size
+        =>  list.length;
+
+    shared actual native("dart")
+    Boolean empty
+        =>  list.isEmpty;
+
+    shared actual native("dart")
+    Array<Element> clone()
+        =>  Array.withList(list.toList());
+
+    shared native("dart")
+    void set(Integer index, Element element) {
+        if (index < 0 || index > size - 1) {
+            throw AssertionError("Index out of bounds");
+        }
+        list.set_(index, element);
+    }
+
+    shared native("dart")
+    void swap(Integer i, Integer j) {
+        if (i < 0 || j < 0) {
+          throw AssertionError("array index may not be negative");
+        }
+        if (i >= size || j >= size) {
+          throw AssertionError(
+              "array index must be less than size of array ``size.string``");
+        }
+        value oldI = list.get_(i);
+        list.set_(i, list.get_(j));
+        list.set_(j, oldI);
+    }
+
+    shared native("dart")
+    void reverseInPlace() {
+        for (index in 0:size/2) {
+            value otherIndex = size - index - 1;
+            value x = list.get_(index);
+            list.set_(index, list.get_(otherIndex));
+            list.set_(otherIndex, x);
+        }
+    }
+
+    shared native("dart")
+    void move(Integer from, Integer to) {
+        if (from < 0 || to < 0) {
+            throw AssertionError("array index may not be negative");
+        }
+        if (from >= size || to >= size) {
+            throw AssertionError("array index must be less than size of array ``size``");
+        }
+        if (from == to) {
+            return;
+        }
+        Integer len;
+        Integer srcPos;
+        Integer destPos;
+        if (from > to) {
+          len = from - to;
+          srcPos = to;
+          destPos = to + 1;
+        }
+        else {
+          len = to - from;
+          srcPos = from + 1;
+          destPos = from;
+        }
+        value x = list.get_(from);
+        list.setRange(destPos,  destPos + len, list, srcPos);
+        list.set_(to, x);
+    }
+
+    shared native("dart")
+    void copyTo(Array<Element> destination,
+            Integer sourcePosition = 0,
+            Integer destinationPosition = 0,
+            Integer length = smallest(
+                size - sourcePosition,
+                destination.size - destinationPosition)) {
+
+        value source
+            =   if (identical(this, destination))
+                then this.clone()
+                else this;
+
+        // TODO validate indexes?
+        variable value i = destinationPosition;
+        for (c in source.sublistFrom(sourcePosition).take(length)) {
+            destination.set(i++, c);
+        }
+    }
+
+    // TODO optimize
+    shared actual native("dart")
+    Array<Element> span(Integer from, Integer to)
+        =>  Array((super of List<Element>).span(from, to));
+
+    // TODO optimize
+    shared actual native("dart")
+    Array<Element> spanFrom(Integer from)
+        =>  Array((super of List<Element>).spanFrom(from));
+
+    // TODO optimize
+    shared actual native("dart")
+    Array<Element> spanTo(Integer to)
+        =>  Array((super of List<Element>).spanTo(to));
+
+    // TODO optimize
+    shared actual native("dart")
+    Array<Element> measure(Integer from, Integer length)
+        =>  Array((super of List<Element>).measure(from, length));
+
+    shared actual native("dart")
+    Sequential<Element> sort(Comparison comparing(Element x, Element y)) {
+        value result = list.toList();
+        result.sort(dartComparator(comparing));
+        return ArraySequence<Element>(Array.withList(result));
+    }
+
+    shared native("dart")
+    void sortInPlace(Comparison comparing(Element x, Element y)) {
+        list.sort(dartComparator(comparing));
+    }
+
+    shared actual native("dart")
+    Boolean equals(Object that)
+        =>  (super of List<Element>).equals(that);
+
+    shared actual native("dart")
+    Integer hash
+        =>  (super of List<Element>).hash;
+
+    shared actual native("dart")
+    String string
             => (super of Collection<Element>).string;
 }

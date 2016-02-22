@@ -31,6 +31,10 @@ by ("Gavin King", "Tom Bentley", "Tako Schotanus",
 license ("http://www.apache.org/licenses/LICENSE-2.0.html")
 module ceylon.language "1.2.1-DP2-SNAPSHOT" {
     native("jvm") import java.base "7";
-    native("dart") import "dart:io" "1.13";
-    native("dart") import "dart:math" "1.13";
+    native("dart") import dart.io "1.2.1";
+    native("dart") import dart.core "1.2.1";
+    native("dart") import dart.math "1.2.1";
+    native("dart") import dart.async "1.2.1"; // FIXME why is this necessary???
+    native("dart") import dart.collection "1.2.1";
+    native("dart") import ceylon.interop.dart "1.2.1";
 }
