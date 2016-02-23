@@ -201,28 +201,6 @@ class Character implements dart$$Object, Comparable, Enumerable {
   $dart$core.int get hashCode => _value;
 }
 
-//
-// Exception.dart
-//
-
-class Exception  extends Throwable {
-    Exception([$dart$core.Object description = dart$default, $dart$core.Object _$cause = dart$default]) : this.$s((() {
-        if ($dart$core.identical(description, dart$default)) {
-            description = null;
-        }
-        if ($dart$core.identical(_$cause, dart$default)) {
-            _$cause = null;
-        }
-        return [description, _$cause];
-    })());
-    Exception.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    Exception.$w([$dart$core.String description, Throwable _$cause]) : super(description, _$cause) {
-        this.description = description;
-        this._$cause = _$cause;
-    }
-    $dart$core.String description;
-    Throwable _$cause;
-}
 
 //
 // Float.dart

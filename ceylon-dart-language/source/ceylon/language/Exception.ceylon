@@ -24,3 +24,6 @@ shared native class Exception(description=null, cause=null)
     Throwable? cause;
     
 }
+shared native("dart")
+class Exception(String? description=null, Throwable? cause=null)
+        extends Throwable(description, cause) {}
