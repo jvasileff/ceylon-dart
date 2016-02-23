@@ -34,7 +34,9 @@ module ceylon.language "1.2.1-DP2-SNAPSHOT" {
     native("dart") import dart.io "1.2.1";
     native("dart") import dart.core "1.2.1";
     native("dart") import dart.math "1.2.1";
-    native("dart") import dart.async "1.2.1"; // FIXME why is this necessary???
+    // Import async to Workaround tc bug in
+    // https://github.com/ceylon/ceylon/pull/6024
+    native("dart") import dart.async "1.2.1";
     native("dart") import dart.collection "1.2.1";
     native("dart") import ceylon.interop.dart "1.2.1";
 }
