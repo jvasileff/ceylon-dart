@@ -23,3 +23,5 @@ shared native class AssertionError(message)
      markdown-formatted text."
     String message;
 }
+shared native("dart")
+class AssertionError(String message) extends Throwable(message) {}
