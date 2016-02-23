@@ -15,3 +15,7 @@ $dart$core.bool $package$dartBool($dart$core.bool boolean) => dartBool(boolean);
 
 $dart$core.bool ceylonBoolean($dart$core.bool boolean) => boolean;
 $dart$core.bool $package$ceylonBoolean($dart$core.bool boolean) => ceylonBoolean(boolean);
+
+$dart$core.Type runtimeType($dart$core.Object obj) {
+  return obj.runtimeType;
+}

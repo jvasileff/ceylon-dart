@@ -1093,16 +1093,6 @@ class Tuple extends impl$BaseSequence {
 }
 
 //
-// className.dart
-//
-
-$dart$core.String className($dart$core.Object obj) {
-  // TODO use our own reified metadata when available
-  //      Type.toString() includes only the name, not package
-  return obj.runtimeType.toString();
-}
-
-//
 // identityHash
 //
 
@@ -1215,41 +1205,6 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
   }
 }
 
-// system
-
-final $dart$core.Stopwatch $helper$stopwatch = (() {
-    var sw = new $dart$core.Stopwatch();
-    sw.start();
-    return sw;
-})();
-
-class system_ implements dart$$Basic {
-
-  $dart$core.int get milliseconds
-      =>  new $dart$core.DateTime.now().millisecondsSinceEpoch;
-
-  $dart$core.int get nanoseconds
-      =>  $helper$stopwatch.elapsedMicroseconds * 1000;
-
-  $dart$core.String toString()
-      =>  "Dart";
-
-  // TODO can we do better?
-  $dart$core.String get locale
-      =>  "en";
-
-  // TODO can we do better?
-  $dart$core.String get characterEncoding
-      =>  "UTF-8";
-
-  $dart$core.int timezoneOffset
-      =   (new $dart$core.DateTime.now()).timeZoneOffset.inMilliseconds;
-}
-
-system_ system = new system_();
-
-system_ $package$system = system;
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Runtime Package (ceylon.language.dart)
@@ -1333,14 +1288,12 @@ class serialization$NativeMap implements dart$$Basic {
   String string;
 }
 
-$package$className(var x) {}
 $package$meta$type(var x) {}
 $package$meta$annotations([var x, var y]) {}
 $package$meta$classDeclaration(var x) {}
 $package$meta$typeLiteral() {}
 
 final $package$impl$reach = null;
-
 
 ///////////////////////////////////////
 //

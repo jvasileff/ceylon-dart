@@ -8,6 +8,12 @@ import java.util {
 import java.nio.charset {
     Charset { defaultCharset }
 }
+import dart.core {
+    DStopwatch = Stopwatch,
+    DStopwatchClass = Stopwatch_C,
+    DDateTime = DateTime,
+    DDateTimeClass = DateTime_C
+}
 
 "Represents the system on which the current process is 
  executing.
@@ -99,4 +105,29 @@ shared native("js") object system {
     shared native("js") String characterEncoding =>
             "UTF-16"; //JavaScript always uses UTF-16
     
+}
+
+shared native("dart") object system {
+    value stopwatch = DStopwatchClass();
+    stopwatch.start();
+
+    shared native("dart") Integer milliseconds
+        =>  DDateTimeClass.now().millisecondsSinceEpoch;
+
+    shared native("dart") Integer nanoseconds
+        =>  stopwatch.elapsedMicroseconds * 1000;
+
+    shared actual native("dart") String string
+        =>  "system";
+
+    // TODO can we do better?
+    shared native("dart") String locale
+        =>  "en";
+
+    // TODO can we do better?
+    shared native("dart") String characterEncoding
+        =>  "UTF-8";
+
+    shared native("dart") Integer timezoneOffset
+        =   DDateTimeClass.now().timeZoneOffset.inMilliseconds;
 }

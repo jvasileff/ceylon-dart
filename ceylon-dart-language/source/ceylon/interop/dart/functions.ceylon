@@ -2,7 +2,8 @@ import dart.core {
     DString = String,
     DInteger = \Iint,
     DBoolean = \Ibool,
-    DDouble = \Idouble
+    DDouble = \Idouble,
+    DType = Type
 }
 import dart.async {
     DFuture = Future
@@ -49,3 +50,6 @@ DFuture<Element> deFuture<Element>(DFuture<DFuture<Element>> future) {
     assert (is DFuture<Element> future);
     return future;
 }
+
+shared native
+DType runtimeType(Object obj);
