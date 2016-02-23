@@ -189,14 +189,14 @@ void bootstrapCompile() {
     process.exit(doBootstrapCompile(process.arguments));
 }
 
-Integer doBootstrapCompile([String*] arguments) {
+Integer doBootstrapCompile([String?*] arguments) {
     assert (exists sourceDirectory = arguments[0]);
     assert (exists outputDirectory = arguments[1]);
 
     value systemRepoDirectory = arguments[2];
 
     value userRepoDirectories
-        =   let (userRepos = arguments[3...].collect(javaString))
+        =   let (userRepos = arguments[3...].coalesced.collect(javaString))
             (userRepos nonempty then javaList(userRepos));
 
     value repositoryManager
