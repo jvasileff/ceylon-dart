@@ -262,7 +262,8 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
         // exclude dart._internal.EfficientLength and others?
         && MirrorSystem.getName(t.owner.qualifiedName) != "dart._internal";
     })
-    .map((m) => typeToMap(m, from)).toList();
+    // don't erase in typeToMap...
+    .map((m) => typeToMap(m, from, false, false)).toList();
 
   // print("satisfies (i): " + map[keySatisfies].toString());
 
@@ -317,8 +318,8 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   };
 
   // satisfy the corresponding Ceylon interface, using all type paramters as
-  // type arguments
-  map[keySatisfies] = [typeToMap(cm, from)];
+  // type arguments. Do not erase.
+  map[keySatisfies] = [typeToMap(cm, from, false, false)];
   var typeArgs = typeArgumentMap(
       cm.declarations.values.where((d) => d is TypeVariableMirror), from);
   if (!typeArgs.isEmpty) {
