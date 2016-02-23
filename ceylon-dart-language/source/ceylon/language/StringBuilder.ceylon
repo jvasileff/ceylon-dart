@@ -5,6 +5,10 @@ import java.lang {
         charCount
     }
 }
+import dart.core {
+    DStringBuffer = StringBuffer,
+    DStringBufferClass = StringBuffer_C
+}
 
 """Builder utility for constructing [[strings|String]] by 
    incrementally appending strings or characters.
@@ -459,7 +463,7 @@ shared native("js") final class StringBuilder()
 native("dart") shared final class StringBuilder()
         satisfies List<Character> {
 
-    DartStringBuffer delegate = DartStringBuffer();
+    value delegate = DStringBufferClass();
 
     native("dart") shared actual Integer size => delegate.string.size;
 

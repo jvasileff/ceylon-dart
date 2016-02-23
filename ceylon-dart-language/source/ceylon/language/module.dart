@@ -1508,25 +1508,6 @@ Callable $package$unflatten(Callable flatFunction) => unflatten(flatFunction);
 
 ///////////////////////////////////////
 //
-// Wrappers
-//
-///////////////////////////////////////
-
-class DartStringBuffer implements dart$$Basic {
-  $dart$core.StringBuffer delegate = new $dart$core.StringBuffer();
-
-  DartStringBuffer() {}
-
-  $dart$core.bool get empty => delegate.isEmpty;
-  $dart$core.int get length => delegate.length;
-  void clear() => delegate.clear();
-  void write([$dart$core.Object obj]) => delegate.write(obj);
-  void writeCharCode([$dart$core.int charCode]) => delegate.writeCharCode(charCode);
-  $dart$core.String toString() => delegate.toString();
-}
-
-///////////////////////////////////////
-//
 // Default Argument
 //
 ///////////////////////////////////////

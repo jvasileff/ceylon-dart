@@ -148,25 +148,3 @@ String dartStringJoin(String val, {Object*} objects) {
         }
     };
 };
-
-native
-class DartStringBuffer() {
-
-    shared native
-    Boolean empty;
-
-    shared native
-    Integer length;
-
-    shared native
-    void clear();
-
-    shared native
-    void write(Object obj);
-
-    shared native
-    void writeCharCode(Integer charCode);
-
-    shared actual native
-    String string;
-}
