@@ -56,6 +56,8 @@ public class JsonPackage extends LazyPackage {
     private NothingType nothing = new NothingType(u2);
     private UnknownType unknown = new UnknownType(u2);
 
+    private Backend dartBackend = Backend.registerBackend("Dart", "dart");
+
     static {
         idobj.put(MetamodelGenerator.KEY_NAME, "Basic");
         idobj.put(MetamodelGenerator.KEY_PACKAGE, Module.LANGUAGE_MODULE_NAME);
@@ -1085,7 +1087,7 @@ public class JsonPackage extends LazyPackage {
             d.setActual(hasAnnotationBit(bits, "actual"));
             d.setFormal(hasAnnotationBit(bits, "formal"));
             d.setDefault(hasAnnotationBit(bits, "default"));
-            d.setNativeBackends(hasAnnotationBit(bits, "native") ? Backend.JavaScript.asSet() : Backends.ANY);
+            d.setNativeBackends(hasAnnotationBit(bits, "native") ? dartBackend.asSet() : Backends.ANY);
             d.setAnnotation(hasAnnotationBit(bits, "annotation"));
             if (hasAnnotationBit(bits, "sealed")) {
                 ((TypeDeclaration)d).setSealed(true);

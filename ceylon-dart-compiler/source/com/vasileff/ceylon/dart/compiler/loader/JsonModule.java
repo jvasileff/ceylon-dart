@@ -19,6 +19,8 @@ public class JsonModule extends Module {
     private Map<String,Object> model;
     private boolean loaded = false;
 
+    private Backend dartBackend = Backend.registerBackend("Dart", "dart");
+
     private boolean dartNative = false;
 
     /**
@@ -47,7 +49,7 @@ public class JsonModule extends Module {
         setJsMinor(Integer.parseInt((String)binVersion.substring(dotidx+1), 10));
         if (model.get("$mod-pa") != null) {
             int bits = (int)model.get("$mod-pa");
-            setNativeBackends(JsonPackage.hasAnnotationBit(bits, "native") ? Backend.JavaScript.asSet() : Backends.ANY);
+            setNativeBackends(JsonPackage.hasAnnotationBit(bits, "native") ? dartBackend.asSet() : Backends.ANY);
         }
         Map<String,Object> moduleAnns = (Map<String,Object>)model.get("$mod-anns");
         if (moduleAnns != null) {
@@ -118,7 +120,7 @@ public class JsonModule extends Module {
         return null;
     }
 
-    Package getPackageFromImport(String name, Module module, Set<Module> visited) {
+    private Package getPackageFromImport(String name, Module module, Set<Module> visited) {
         // break circularities
         if (!visited.add(module)) {
             return null;
