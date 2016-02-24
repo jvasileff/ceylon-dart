@@ -1,3 +1,11 @@
+import dart.core {
+    DList = List,
+    DListClass = List_C
+}
+import ceylon.interop.dart {
+    DartIterable
+}
+
 """A _tuple_ is a typed linked list. Each instance of 
    `Tuple` represents the value and type of a single link.
    The attributes `first` and `rest` allow us to retrieve a 
@@ -169,4 +177,147 @@ native class Tuple<out Element, out First, out Rest = []>
             "The list of elements to be appended."
             Other[] elements)
             => Tuple(first, rest.append(elements));
+}
+
+native
+[Element*] tupleWithList<Element>(Object /*DList<Element>*/ list, [Element*] rest = []);
+
+native
+[Element*] tupleOfElements<Element>({Element*} rest);
+
+native
+[Element*] tupleTrailing<Element>({Element*} initial, Element element);
+
+abstract native("dart")
+class BaseTuple<out Element, out First, out Rest = []>
+        extends Object
+        satisfies [Element+]
+        given First satisfies Element
+        given Rest satisfies Element[] {
+
+    DList<Element> list;
+    [Element*] restSequence;
+
+    shared
+    new (Element first, [Element*] rest = []) extends Object() {
+        list = DListClass(1);
+        list.set_(0, first);
+        this.restSequence = rest;
+    }
+
+    shared
+    new trailing({Element*} initial, Element element) extends Object() {
+        list = DListClass.from(DartIterable(initial.chain({element})));
+        this.restSequence = [];
+    }
+
+    shared
+    new ofElements({Element*} rest) extends Object() {
+        list = DListClass.from(DartIterable(rest));
+        if (list.isEmpty) {
+            throw AssertionError("list must not be empty");
+        }
+        this.restSequence = [];
+    }
+
+    shared
+    new withList(DList<Element> list, [Element*] rest = []) extends Object() {
+        if (list.isEmpty) {
+            throw AssertionError("list must not be empty");
+        }
+        this.list = list;
+        this.restSequence = rest;
+    }
+
+    shared actual
+    First first {
+        assert (is First first = getFromFirst(0));
+        return first;
+    }
+
+    shared actual
+    Rest rest {
+        assert(is Rest result
+            =   if (list.length == 1)
+                then restSequence
+                else tupleWithList(list.sublist(1), restSequence));
+        return result;
+    }
+
+    shared actual
+    Integer lastIndex => size - 1;
+
+    shared actual
+    Integer size => list.length + restSequence.size;
+
+    shared actual
+    Element? getFromFirst(Integer index)
+        =>  if (index < 0) then
+                null
+            else if (index < list.length) then
+                list.get_(index)
+            else
+                restSequence.getFromFirst(index - list.length);
+
+    // TODO optimize
+
+    shared actual
+    Element last {
+        assert (exists result = getFromLast(0));
+        return result;
+    }
+
+    //shared actual
+    //Element[] measure(Integer from, Integer length) => super.measure(from, length);
+
+    //shared actual
+    //Element[] span(Integer from, Integer end) => super.span(from, end);
+
+    //shared actual
+    //Element[] spanTo(Integer to) => super.spanTo(to);
+
+    shared actual
+    Element[] spanFrom(Integer from) {
+        // Important: Always return a Tuple.
+        //
+        // Destructuring and subrange expressions may have Tuple results when enough
+        // static type information is available.
+        //
+        // This could be optimized at some point; the Java backend uses a utility method
+        // for spanFrom for when a Tuple is the expected result, leaving the
+        // Tuple.spanFrom method free to return *just* a Sequential.
+        if (from > lastIndex) {
+            return package.empty;
+        }
+        return tupleOfElements(super.spanFrom(from));
+    }
+
+    shared actual
+    BaseTuple<Element,First,Rest> clone() => this;
+
+    shared actual
+    Iterator<Element> iterator() => (super of List<Element>).iterator();
+
+    shared actual
+    Boolean contains(Object element) => super.contains(element);
+
+    shared actual
+    Tuple<Element|Other,Other,Tuple<Element,First,Rest>>
+    withLeading<Other>(Other element) {
+        assert (is Tuple<Element, First, Rest> self = (this of Anything));
+        return Tuple(element, self);
+    }
+
+    shared actual
+    [First,Element|Other+] withTrailing<Other>(Other element) {
+        assert (is [First,Element|Other+] result = tupleTrailing(this, element));
+        return result;
+    }
+
+    shared actual
+    [First,Element|Other*] append<Other>(Other[] elements) {
+        assert (is [First, Element | Other*] result
+            =   tupleWithList(list, restSequence.append(elements)));
+        return result;
+    }
 }

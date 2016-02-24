@@ -930,117 +930,33 @@ class Throwable extends $dart$core.Error {
 // Tuple.dart
 //
 
-class Tuple extends impl$BaseSequence {
-  final $dart$core.List _list;
-  Sequential restSequence;
+Tuple tupleTrailing(Iterable initial, $dart$core.Object element)
+  =>  new Tuple.$trailing(initial, element);
 
-  Tuple([$dart$core.Object first, $dart$core.Object rest = dart$default]) : _list = [] {
-    restSequence = rest == dart$default ? $package$empty : rest;
-    _list.add(first);
-  }
+Tuple $package$tupleTrailing(Iterable initial, $dart$core.Object element)
+  =>  tupleTrailing(initial, element);
 
-  Tuple._trailing(Iterable initial, $dart$core.Object element) : _list = [] {
-    restSequence = $package$empty;
-    initial.each(new dart$Callable((e) => _list.add(e)));
-    _list.add(element);
-  }
+Tuple tupleOfElements(Iterable rest)
+  =>  new Tuple.$ofElements(rest);
 
-  Tuple.$ofElements(Iterable rest) : _list = [] {
-    restSequence = $package$empty;
-    rest.each(new dart$Callable((e) => _list.add(e)));
-    if (_list.length == 0) {
-      throw new AssertionError("list must not be empty");
-    }
-  }
+Tuple $package$tupleOfElements(Iterable rest)
+  =>  tupleOfElements(rest);
 
-  Tuple.$withList([$dart$core.List this._list, $dart$core.Object rest = dart$default]) {
-    if (_list.length == 0) {
-      throw new AssertionError("list must not be empty");
-    }
-    restSequence = rest == dart$default || rest == null ? $package$empty : rest;
-  }
+Tuple tupleWithList([$dart$core.List list, $dart$core.Object rest = dart$default])
+  =>  new Tuple.$withList(list, rest);
 
-  @$dart$core.override
-  $dart$core.Object get first
-    => getFromFirst(0);
+Tuple $package$tupleWithList([$dart$core.List list, $dart$core.Object rest = dart$default])
+  =>  tupleWithList(list, rest);
 
-  @$dart$core.override
-  Sequential get rest {
-    if (_list.length == 1) {
-      return restSequence;
-    }
-    else {
-      return new Tuple.$withList(_list.sublist(1), restSequence);
-    }
-  }
+class Tuple extends BaseTuple {
 
-  @$dart$core.override
-  $dart$core.int get lastIndex
-    => size - 1;
+  Tuple([$dart$core.Object first, $dart$core.Object rest = dart$default]) : super(first, rest) {}
 
-  @$dart$core.override
-  $dart$core.int get size
-    => _list.length + restSequence.size;
+  Tuple.$trailing(Iterable initial, $dart$core.Object element) : super.trailing(initial, element);
 
-  @$dart$core.override
-  $dart$core.Object getFromFirst([$dart$core.int index]) {
-    if (index < 0) {
-      return null;
-    }
-    else if (index < _list.length) {
-      return _list[index];
-    }
-    else {
-      return restSequence.getFromFirst(index - _list.length);
-    }
-  }
+  Tuple.$ofElements(Iterable rest) : super.ofElements(rest) {}
 
-  @$dart$core.override
-  $dart$core.Object get last
-    => getFromLast(0);
-
-  // measure
-  @$dart$core.override
-  Sequential measure([Integer from, $dart$core.int length])
-    => List.$measure(this, from, length).sequence();
-
-  // span
-  @$dart$core.override
-  Sequential span([Integer from, Integer to])
-    => List.$span(this, from, to).sequence();
-
-  // spanTo
-  @$dart$core.override
-  Sequential spanTo([Integer to])
-    => List.$spanTo(this, to).sequence();
-
-  // spanFrom
-  @$dart$core.override
-  Sequential spanFrom([Integer from]) {
-    // Return a Tuple, since destructuring and subrange expressions
-    // may have Tuple results when enough static type information is
-    // available. It may be necessary to optimize this at some point;
-    // the Java backend uses a utility method for spanFrom for when
-    // a Tuple is the expected result, leaving the Tuple.spanFrom
-    // method free to return *just* a Sequential.
-    if (Integer.nativeValue(from) > lastIndex) {
-      return empty;
-    }
-    return new Tuple.$ofElements(List.$spanFrom(this, from));
-  }
-
-  // FIXME why doesn't impl$BaseSequence define this?
-  @$dart$core.override
-  Iterator iterator()
-    => List.$iterator(this);
-
-  @$dart$core.override
-  Sequence withLeading([$dart$core.Object other])
-    => new Tuple(other, this);
-
-  @$dart$core.override
-  Sequence withTrailing([$dart$core.Object other])
-    => new Tuple._trailing(this, other);
+  Tuple.$withList([$dart$core.List list, $dart$core.Object rest = dart$default]) : super.withList(list, rest) {}
 }
 
 //
