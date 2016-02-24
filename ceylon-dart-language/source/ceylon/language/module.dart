@@ -5,6 +5,12 @@ import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import '../../../ceylon.language.dart';
 
+/////////////////////////////////////////////////
+//
+// ceylon.language::LazyIterable
+//
+/////////////////////////////////////////////////
+
 class LazyIterable extends impl$BaseIterable {
   $dart$core.int count_;
   $dart$core.Function generate; // Object(Integer)
@@ -44,9 +50,11 @@ class LazyIterator implements Iterator {
   }
 }
 
+/////////////////////////////////////////////////
 //
-// Boolean.dart
+// ceylon.language::Boolean
 //
+/////////////////////////////////////////////////
 
 class Boolean implements dart$$Basic {
   final $dart$core.bool _value;
@@ -72,20 +80,11 @@ const $false = const Boolean.$false();
 const $package$$true = $true;
 const $package$$false = $false;
 
+/////////////////////////////////////////////////
 //
-// Callable.dart
+// ceylon.language::Character
 //
-
-abstract
-class Callable {
-    $dart$core.Function get f;
-    $dart$core.Function get s;
-}
-
-//
-// Character.dart
-//
-
+/////////////////////////////////////////////////
 
 Character $package$characterFromInteger($dart$core.int integer)
   =>  characterFromInteger(integer);
@@ -160,9 +159,11 @@ class Character implements dart$$Object, Comparable, Enumerable {
   $dart$core.int get hashCode => char.hashCode;
 }
 
+/////////////////////////////////////////////////
 //
-// Float.dart
+// ceylon.language::Float
 //
+/////////////////////////////////////////////////
 
 class Float implements dart$$Object, Number, Exponentiable {
   final $dart$core.double _value;
@@ -367,9 +368,11 @@ $dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
   return integer.toSigned(32) ^ mask;
 }
 
+/////////////////////////////////////////////////
 //
-// String.dart
+// ceylon.language::String
 //
+/////////////////////////////////////////////////
 
 class String extends impl$BaseCharacterList implements Summable, Comparable {
   final $dart$core.String _value;
@@ -805,9 +808,11 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   }
 }
 
+/////////////////////////////////////////////////
 //
-// Throwable.dart
+// ceylon.language::Throwable
 //
+/////////////////////////////////////////////////
 
 class Throwable extends $dart$core.Error {
   $dart$core.String _description;
@@ -854,9 +859,11 @@ class Throwable extends $dart$core.Error {
   }
 }
 
+/////////////////////////////////////////////////
 //
-// Tuple.dart
+// ceylon.language::Tuple
 //
+/////////////////////////////////////////////////
 
 Tuple tupleTrailing(Iterable initial, $dart$core.Object element)
   =>  new Tuple.$trailing(initial, element);
@@ -887,9 +894,11 @@ class Tuple extends BaseTuple {
   Tuple.$withList([$dart$core.List list, $dart$core.Object rest = dart$default]) : super.withList(list, rest) {}
 }
 
+/////////////////////////////////////////////////
 //
-// identityHash
+// ceylon.language::indentityHash
 //
+/////////////////////////////////////////////////
 
 $dart$core.int identityHash($dart$core.Object identifiable)
   => $dart$core.identityHashCode(identifiable);
@@ -897,7 +906,11 @@ $dart$core.int identityHash($dart$core.Object identifiable)
 $package$identityHash($dart$core.Object identifiable)
   => identityHash(identifiable);
 
-// printStackTrace
+/////////////////////////////////////////////////
+//
+// ceylon.language::printStackTrace
+//
+/////////////////////////////////////////////////
 
 void printStackTrace([Throwable exception, $dart$core.Object write = dart$default]) {
   // TODO if the stackTrace is not available, should we just print <null> or something instead?
@@ -912,7 +925,11 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
   }
 }
 
-// process
+/////////////////////////////////////////////////
+//
+// ceylon.language::process
+//
+/////////////////////////////////////////////////
 
 Sequential _processArguments = $package$empty;
 
@@ -1000,27 +1017,26 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// Runtime Package (ceylon.language.dart)
-//
-////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////
+/////////////////////////////////////////////////
 //
-// Marker interfaces
+// Marker Interfaces:
 //
-///////////////////////////////////////
+//    ceylon.language.dart::Object
+//    ceylon.language.dart::Basic
+//    ceylon.language.dart::Identifiable
+//
+/////////////////////////////////////////////////
 
 abstract class dart$$Object {}
 abstract class dart$$Identifiable extends dart$$Object {}
 abstract class dart$$Basic extends dart$$Identifiable {}
 
-///////////////////////////////////////
+/////////////////////////////////////////////////
 //
-// Capture boxes
+// Capture Boxes
 //
-///////////////////////////////////////
+/////////////////////////////////////////////////
 
 // Separate classes for bool, int, etc, aren't
 // necessary on Dart, but using them anyway. And,
@@ -1052,11 +1068,11 @@ class dart$VariableBoxString {
   dart$VariableBoxString($dart$core.String this.v);
 }
 
-///////////////////////////////////////
+/////////////////////////////////////////////////
 //
 // Unimplemented
 //
-///////////////////////////////////////
+/////////////////////////////////////////////////
 
 class serialization$NativeDeque implements dart$$Basic {
   void pushFront(element) {}
@@ -1090,11 +1106,19 @@ $package$meta$typeLiteral() {}
 
 final $package$impl$reach = null;
 
-///////////////////////////////////////
+/////////////////////////////////////////////////
 //
-// Callable & Flatten
+// ceylon.language::Callable
+// ceylon.language::flatten
+// ceylon.language::unflatten
 //
-///////////////////////////////////////
+/////////////////////////////////////////////////
+
+abstract
+class Callable {
+$dart$core.Function get f;
+$dart$core.Function get s;
+}
 
 class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
   final $dart$core.Function _function;
@@ -1301,11 +1325,11 @@ Callable $package$flatten(Callable tupleFunction) => flatten(tupleFunction);
 
 Callable $package$unflatten(Callable flatFunction) => unflatten(flatFunction);
 
-///////////////////////////////////////
+/////////////////////////////////////////////////
 //
-// Default Argument
+// ceylon.language.dart::default
 //
-///////////////////////////////////////
+/////////////////////////////////////////////////
 
 class dart$Default {
   const dart$Default();
@@ -1314,5 +1338,3 @@ class dart$Default {
 const dart$default = const dart$Default();
 
 const $package$dart$default = dart$default;
-
-/////////////////////////////////////////////////////////////////////////////////
