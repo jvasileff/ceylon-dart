@@ -92,71 +92,11 @@ Character $package$characterFromInteger($dart$core.int integer)
 Character characterFromInteger($dart$core.int integer)
   =>  new Character.$fromInt(integer);
 
-class Character implements dart$$Object, Comparable, Enumerable {
-  Char char;
+class Character extends BaseCharacter implements dart$$Object, Comparable, Enumerable {
 
-  Character(Character character) {
-    this.char = character.char;
-  }
+  Character(Character character) : super(character.integer) {}
 
-  Character.$fromInt($dart$core.int integer) {
-    this.char = new Char(integer);
-  }
-
-  Character.$fromChar(Char char) {
-    this.char = char;
-  }
-
-  $dart$core.int get integer => char.integer;
-
-  $dart$core.String toString() => char.toString();
-
-  $dart$core.bool get whitespace => char.whitespace;
-
-  $dart$core.bool get digit => char.digit;
-
-  $dart$core.bool get uppercase => char.uppercase;
-
-  $dart$core.bool get lowercase => char.lowercase;
-
-  $dart$core.bool get letter => char.letter;
-
-  $dart$core.bool get titlecase => char.titlecase;
-
-  Character get uppercased => new Character.$fromChar(char.uppercased);
-
-  Character get lowercased => new Character.$fromChar(char.lowercased);
-
-  Character get titlecased => new Character.$fromChar(char.titlecased);
-
-  Character neighbour([$dart$core.int offset]) => new Character.$fromChar(char.neighbour(offset));
-
-  $dart$core.int offset([Character other]) => char.offset(other.char);
-
-  $dart$core.int offsetSign([Character other]) => char.offsetSign(other.char);
-
-  Character get predecessor => new Character.$fromChar(char.predecessor);
-
-  Character get successor => new Character.$fromChar(char.successor);
-
-  Comparison compare([Character other]) => char.compare(other.char);
-
-  $dart$core.bool operator >(Character other) => char > other.char;
-
-  $dart$core.bool operator <(Character other) => char < other.char;
-
-  $dart$core.bool operator <=(Character other) => char <= other.char;
-
-  $dart$core.bool operator >=(Character other) => char >= other.char;
-
-  $dart$core.bool operator ==($dart$core.Object other) {
-    if (other is Character) {
-      return char == other.char;
-    }
-    return false;
-  }
-
-  $dart$core.int get hashCode => char.hashCode;
+  Character.$fromInt($dart$core.int integer) : super(integer) {}
 }
 
 /////////////////////////////////////////////////

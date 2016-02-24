@@ -201,9 +201,9 @@ Set<Integer> digitZeroChars
             #104a0, #11066, #110f0, #11136, #111d0, #116c0
         };
 
-native("dart")
-class Char(shared Integer integer) extends Object()
-        satisfies Comparable<Char> & Enumerable<Char> {
+abstract native("dart")
+class BaseCharacter(shared Integer integer) extends Object()
+        satisfies Comparable<BaseCharacter> /*& Enumerable<Char>*/ {
 
     if (integer > #10FFFF || integer < 0) {
         throw OverflowException("``integer`` is not a possible Unicode code point");
@@ -211,13 +211,15 @@ class Char(shared Integer integer) extends Object()
 
     shared actual String string => DStringClass.fromCharCode(integer).string;
 
-    shared Char lowercased
-        =>  Char(dartString(string.lowercased).runes.elementAt(0).toInt());
+    shared Character lowercased
+        =>  characterFromInteger(
+                dartString(string.lowercased).runes.elementAt(0).toInt());
 
-    shared Char uppercased
-        =>  Char(dartString(string.uppercased).runes.elementAt(0).toInt());
+    shared Character uppercased
+        =>  characterFromInteger(
+                dartString(string.uppercased).runes.elementAt(0).toInt());
 
-    shared Char titlecased => uppercased;
+    shared Character titlecased => uppercased;
 
     shared Boolean lowercase => uppercased != this;
 
@@ -245,30 +247,31 @@ class Char(shared Integer integer) extends Object()
 
     shared Boolean control => nothing;
 
-    shared actual Comparison compare(Char other) => integer <=> other.integer;
+    shared actual Comparison compare(BaseCharacter other) => integer <=> other.integer;
 
     shared actual Boolean equals(Object that)
-        =>  if (is Char that)
+        =>  if (is Character that)
             then integer == that.integer
             else false;
 
     shared actual Integer hash => integer;
 
-    shared actual Char predecessor => Char(integer - 1);
+    shared /*actual*/ Character predecessor => characterFromInteger(integer - 1);
 
-    shared actual Char successor => Char(integer + 1);
+    shared /*actual*/ Character successor => characterFromInteger(integer + 1);
 
-    shared actual Char neighbour(Integer offset) => Char(integer + offset);
+    shared /*actual*/ Character neighbour(Integer offset)
+        =>  characterFromInteger(integer + offset);
 
-    shared actual Integer offset(Char other) => integer - other.integer;
+    shared /*actual*/ Integer offset(Character other) => integer - other.integer;
 
-    shared actual Integer offsetSign(Char other) => offset(other).sign;
+    shared /*actual*/ Integer offsetSign(Character other) => offset(other).sign;
 
-    shared actual Boolean largerThan(Char other) => integer > other.integer;
+    shared actual Boolean largerThan(BaseCharacter other) => integer > other.integer;
 
-    shared actual Boolean smallerThan(Char other) => integer < other.integer;
+    shared actual Boolean smallerThan(BaseCharacter other) => integer < other.integer;
 
-    shared actual Boolean notSmallerThan(Char other) => integer >= other.integer;
+    shared actual Boolean notSmallerThan(BaseCharacter other) => integer >= other.integer;
 
-    shared actual Boolean notLargerThan(Char other) => integer <= other.integer;
+    shared actual Boolean notLargerThan(BaseCharacter other) => integer <= other.integer;
 }
