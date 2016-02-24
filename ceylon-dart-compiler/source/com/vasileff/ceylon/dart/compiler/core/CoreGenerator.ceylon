@@ -19,7 +19,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess,
     DartFunctionExpressionInvocation,
     DartSimpleIdentifier,
-    DartAsExpression
+    DartAsExpression,
+    DartInstanceCreationExpression
 }
 
 """Provides:
@@ -125,8 +126,8 @@ class CoreGenerator(CompilationContext ctx) {
              [[conversion]]."
             DartExpression expression,
             "The conversion to apply to the result of [[expression]]."
-            BoxingConversion conversion)
-        =>  let ([boxTypeDeclaration, toNative] =
+            BoxingConversion conversion) {
+        value [boxTypeDeclaration, toNative] =
                 switch (conversion)
                 case (ceylonBooleanToNative) [ceylonTypes.booleanDeclaration, true]
                 case (ceylonFloatToNative)   [ceylonTypes.floatDeclaration, true]
@@ -135,20 +136,10 @@ class CoreGenerator(CompilationContext ctx) {
                 case (nativeToCeylonBoolean) [ceylonTypes.booleanDeclaration, false]
                 case (nativeToCeylonFloat)   [ceylonTypes.floatDeclaration, false]
                 case (nativeToCeylonInteger) [ceylonTypes.integerDeclaration, false]
-                case (nativeToCeylonString)  [ceylonTypes.stringDeclaration, false])
-            DartFunctionExpressionInvocation {
-                DartPropertyAccess {
-                    dartTypes.dartIdentifierForClassOrInterface {
-                        scope;
-                        boxTypeDeclaration;
-                    };
-                    DartSimpleIdentifier {
-                        if (toNative)
-                        then "nativeValue"
-                        else "instance";
-                    };
-                };
-                DartArgumentList {
+                case (nativeToCeylonString)  [ceylonTypes.stringDeclaration, false];
+
+        value argumentList
+            =>  DartArgumentList {
                     // For ceylon to native, we may need to narrow the non-native
                     // argument.
                     //
@@ -165,7 +156,47 @@ class CoreGenerator(CompilationContext ctx) {
                         expression;
                     }];
                 };
+
+        // custom handling for Integers (they're the first to be converted to not
+        // use static methods)
+        if (conversion == ceylonIntegerToNative) {
+            return
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    scope;
+                    dartTypes.dartNativeInt;
+                };
+                argumentList;
             };
+        }
+        else if (conversion == nativeToCeylonInteger) {
+            return
+            DartInstanceCreationExpression {
+                false;
+                dartTypes.dartConstructorName {
+                    scope;
+                    ceylonTypes.integerDeclaration;
+                };
+                argumentList;
+            };
+        }
+
+        return
+        DartFunctionExpressionInvocation {
+            DartPropertyAccess {
+                dartTypes.dartIdentifierForClassOrInterface {
+                    scope;
+                    boxTypeDeclaration;
+                };
+                DartSimpleIdentifier {
+                    if (toNative)
+                    then "nativeValue"
+                    else "instance";
+                };
+            };
+            argumentList;
+        };
+    }
 
     shared
     DartExpression withBoxingCustom(

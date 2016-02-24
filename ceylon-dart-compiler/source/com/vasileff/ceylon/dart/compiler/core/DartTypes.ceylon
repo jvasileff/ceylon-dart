@@ -521,6 +521,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =   DartTypeModel("$dart$core", "Function");
 
     shared
+    DartTypeModel dartNativeInt
+        =>  DartTypeModel("$ceylon$language", "nativeInt");
+
+    shared
     DartTypeModel dartStringModel
         =   DartTypeModel("$dart$core", "String");
 

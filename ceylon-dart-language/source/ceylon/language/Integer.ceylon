@@ -1,3 +1,7 @@
+import ceylon.interop.dart {
+    dartInt
+}
+
 "An exact representation of a positive whole number, 
  negative whole number, or zero. The largest and smallest 
  representable values are platform-dependent:
@@ -226,4 +230,125 @@ shared native final class Integer(Integer integer)
      congruent modulo 256 to this integer."
     shared native Byte byte;
     
+}
+
+Integer twoFiftyThree = 2 ^ 53;
+
+native Boolean intGet(Integer integer, Integer index);
+native Integer intSet(Integer integer, Integer index, Boolean bit);
+native Integer intFlip(Integer integer, Integer index);
+
+native Integer intRightArithmeticShift(Integer integer, Integer shift);
+native Integer intRightLogicalShift(Integer integer, Integer shift);
+native Integer intLeftLogicalShift(Integer integer, Integer shift);
+
+native Integer intNot(Integer integer);
+native Integer intOr(Integer integer, Integer other);
+native Integer intAnd(Integer integer, Integer other);
+native Integer intXor(Integer integer, Integer other);
+
+native Integer intPow(Integer integer, Integer other);
+
+shared final native("dart")
+class Integer(Integer integer)
+        extends Object()
+        satisfies Integral<Integer> &
+                  Binary<Integer> &
+                  Exponentiable<Integer,Integer> {
+
+    shared native("dart") Character character => characterFromInteger(this);
+    shared actual native("dart") Boolean divides(Integer other) => other % this == 0;
+    shared actual native("dart") Integer plus(Integer other) => this + other;
+    shared actual native("dart") Integer minus(Integer other) => this - other;
+    shared actual native("dart") Integer times(Integer other) => this * other;
+    shared actual native("dart") Integer divided(Integer other) => this / other;
+    shared actual native("dart") Integer remainder(Integer other) => this % other;
+
+    shared actual native("dart") Integer modulo(Integer modulus) {
+        if (modulus < 0) {
+            throw AssertionError("modulus must be positive");
+        }
+        value result = this % modulus;
+        if (result < 0) {
+            return result + modulus;
+        }
+        return result;
+    }
+
+    shared actual native("dart") Integer power(Integer other) => powerOfInteger(other);
+
+    shared actual native("dart") Boolean equals(Object that)
+        =>  if (is Integer that) then
+                this == that
+            else if (is Float that) then
+                this < twoFiftyThree
+                    && this > -twoFiftyThree
+                    && this == that.integer
+            else false;
+
+    shared actual native("dart") Integer hash => this;
+
+    shared actual native("dart") Comparison compare(Integer other)
+        =>  if (this < other) then smaller
+            else if (this > other) then larger
+            else equal;
+
+    shared actual native("dart")
+    Boolean get(Integer index) => intGet(this, index);
+
+    shared actual native("dart")
+    Integer clear(Integer index) => intSet(this, index, false);
+
+    shared actual native("dart")
+    Integer flip(Integer index) => intFlip(this, index);
+
+    shared actual native("dart")
+    Integer set(Integer index, Boolean bit) => intSet(this, index, bit);
+
+    shared actual native("dart") Integer not => intNot(this);
+    shared actual native("dart") Integer or(Integer other) => intOr(this, other);
+    shared actual native("dart") Integer xor(Integer other) => intXor(this, other);
+    shared actual native("dart") Integer and(Integer other) => intAnd(this, other);
+
+    shared actual native("dart") Integer rightArithmeticShift(Integer shift) => intRightArithmeticShift(this, shift);
+    shared actual native("dart") Integer rightLogicalShift(Integer shift) => intRightLogicalShift(this, shift);
+    shared actual native("dart") Integer leftLogicalShift(Integer shift) => intLeftLogicalShift(this, shift);
+
+    shared native("dart") Float float {
+        if (this <= -twoFiftyThree || this >= twoFiftyThree) {
+            throw OverflowException(string
+                + " cannot be coerced into a 64 bit floating point value");
+        }
+        return nearestFloat;
+    }
+
+    shared native("dart") Float nearestFloat => integer.nearestFloat;
+    shared actual native("dart") Integer predecessor => this - 1;
+    shared actual native("dart") Integer successor => this + 1;
+    shared actual native("dart") Integer neighbour(Integer offset) => this + offset;
+    shared actual native("dart") Integer offset(Integer other) => this - other;
+    shared actual native("dart") Integer offsetSign(Integer other) => offset(other).sign;
+    shared actual native("dart") Boolean unit => this == 1;
+    shared actual native("dart") Boolean zero => this == 0;
+    shared native("dart") Boolean even => this % 2 == 0;
+    shared actual native("dart") Integer magnitude => integer.magnitude;
+    shared actual native("dart") Integer sign => if (positive) then 1 else if (negative) then -1 else 0;
+    shared actual native("dart") Boolean negative => this < 0;
+    shared actual native("dart") Boolean positive => this > 0;
+    shared actual native("dart") Integer wholePart => this;
+    shared actual native("dart") Integer fractionalPart => 0;
+    shared actual native("dart") Integer negated => -this;
+    shared actual native("dart") Integer timesInteger(Integer integer) => this * integer;
+    shared actual native("dart") Integer plusInteger(Integer integer) => this + integer;
+
+    shared actual native("dart")
+    Integer powerOfInteger(Integer integer) => intPow(this, integer);
+
+    shared actual native("dart") String string => integer.string;
+
+    shared actual native("dart") Boolean largerThan(Integer other) => this > other;
+    shared actual native("dart") Boolean smallerThan(Integer other) => this < other;
+    shared actual native("dart") Boolean notSmallerThan(Integer other) => this >= other;
+    shared actual native("dart") Boolean notLargerThan(Integer other) => this <= other;
+    shared native("dart") Byte byte => Byte(this);
 }

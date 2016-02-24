@@ -178,6 +178,8 @@ shared final native class Character(Character character)
     shared actual native Boolean notLargerThan(Character other); 
 }
 
+native Character characterFromInteger(Integer integer);
+
 native("dart")
 Set<Integer> wsChars
     =   set {

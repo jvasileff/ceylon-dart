@@ -86,6 +86,13 @@ class Callable {
 // Character.dart
 //
 
+
+Character $package$characterFromInteger($dart$core.int integer)
+  =>  characterFromInteger(integer);
+
+Character characterFromInteger($dart$core.int integer)
+  =>  new Character.$fromInt(integer);
+
 class Character implements dart$$Object, Comparable, Enumerable {
   Char char;
 
@@ -184,14 +191,16 @@ class Float implements dart$$Object, Number, Exponentiable {
   @$dart$core.override
   $dart$core.String toString() => _value.toString();
 
+  static $dart$core.int twoFiftyThree = 1<<53;
+
   $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Float) {
       return _value == other._value;
     }
     else if (other is Integer) {
-      return other._value < Integer.twoFiftyThree &&
-          other._value > -Integer.twoFiftyThree &&
-          _value == other._value;
+      return nativeInt(other) < twoFiftyThree &&
+          nativeInt(other) > -twoFiftyThree &&
+          _value == nativeInt(other);
     }
     return false;
   }
@@ -245,198 +254,117 @@ class Float implements dart$$Object, Number, Exponentiable {
     => value == null ? null : value._value;
 }
 
+/////////////////////////////////////////////////
 //
-// Integer.dart
+// ceylon.language::Integer
 //
+/////////////////////////////////////////////////
 
-class Integer implements dart$$Object, Integral, Exponentiable, Binary {
-  final $dart$core.int _value;
+$dart$core.int $package$nativeInt(Integer value)
+  =>  nativeInt(value);
 
-  static $dart$core.int twoFiftyThree = 1<<53;
+$dart$core.int nativeInt(Integer value)
+  =>  value == null ? null : value._$integer;
 
-  Integer($dart$core.int this._value);
+$dart$core.int $package$intRightArithmeticShift($dart$core.int integer, $dart$core.int shift)
+  =>  intRightArithmeticShift(integer, shift);
 
-  $dart$core.bool get unit => _value == 1;
-  $dart$core.bool get zero => _value == 0;
+$dart$core.int intRightArithmeticShift($dart$core.int integer, $dart$core.int shift)
+  =>  (integer.toSigned(32) >> (shift & 0x1F)).toSigned(32);
 
-  $dart$core.bool divides([Integer other]) => other._value % _value == 0;
-  Integer operator %(Integer other) => new Integer(_value.remainder(other._value));
+$dart$core.int $package$intRightLogicalShift($dart$core.int integer, $dart$core.int shift)
+  =>  intRightLogicalShift(integer, shift);
 
-  Integer modulo([Integer modulus]) {
-    if (modulus._value < 0) {
-      throw new AssertionError("modulus must be positive");
-    }
-    $dart$core.int result = _value.remainder(modulus._value);
-    if (result < 0) {
-      return new Integer(result + modulus._value);
-    }
-    return new Integer(result);
-  }
+$dart$core.int intRightLogicalShift($dart$core.int integer, $dart$core.int shift)
+  =>  ((integer & 0xFFFFFFFF) >> (shift & 0x1F)).toUnsigned(32);
 
-  Integer plusInteger([$dart$core.int integer]) => new Integer(_value + integer);
-  Integer powerOfInteger([$dart$core.int integer]) {
-    if (integer < 0) {
-      if (_value == -1) {
-        return new Integer(integer % 2 == 0 ? 1 : -1);
-      }
-      if (_value == 1) {
-        return this;
-      }
-      throw new AssertionError("exponent must not be negative");
-    }
-    return new Integer($dart$math.pow(_value, integer));
-  }
-  Integer timesInteger([$dart$core.int integer]) => new Integer(_value * integer);
+$dart$core.int $package$intLeftLogicalShift($dart$core.int integer, $dart$core.int shift)
+  =>  intLeftLogicalShift(integer, shift);
 
-  Integer operator /(Integer other) => new Integer(this._value ~/ other._value);
-  Integer operator *(Integer other) => new Integer(this._value * other._value);
+$dart$core.int intLeftLogicalShift($dart$core.int integer, $dart$core.int shift)
+  =>  (integer << (shift & 0x1F)).toSigned(32);
 
-  Integer operator -() => new Integer(-this._value);
-  Integer get magnitude => new Integer(this._value.abs());
-  Integer operator -(Integer other) => new Integer(this._value - other._value);
+$dart$core.int $package$intNot($dart$core.int integer)
+  =>  intNot(integer);
 
-  Integer operator +(Integer other) => new Integer(this._value + other._value);
+$dart$core.int intNot($dart$core.int integer)
+  =>  (~integer).toSigned(32);
 
-  Integer power([Integer other]) => powerOfInteger(other._value);
+$dart$core.int $package$intOr($dart$core.int integer, $dart$core.int other)
+  =>  intOr(integer, other);
 
-  @$dart$core.override
-  $dart$core.String toString() => _value.toString();
+$dart$core.int intOr($dart$core.int integer, $dart$core.int other)
+  => integer.toSigned(32) | other.toSigned(32);
 
-  Character get character => new Character.$fromInt(_value);
+$dart$core.int $package$intAnd($dart$core.int integer, $dart$core.int other)
+  =>  intAnd(integer, other);
 
-  $dart$core.int get hashCode => _value.hashCode;
+$dart$core.int intAnd($dart$core.int integer, $dart$core.int other)
+  =>  integer.toSigned(32) & other.toSigned(32);
 
-  $dart$core.bool operator ==($dart$core.Object other) {
-    if (other is Integer) {
-      return _value == other._value;
-    }
-    else if (other is Float) {
-      return _value < twoFiftyThree
-          && _value > -twoFiftyThree
-          && _value == other._value;
-    }
-    return false;
-  }
+$dart$core.int intXor($dart$core.int integer, $dart$core.int other)
+  =>  integer.toSigned(32) ^ other.toSigned(32);
 
-  $dart$core.double get float {
-    if (_value <= -twoFiftyThree || _value >= twoFiftyThree) {
-      throw new OverflowException(_value.toString()
-          + " cannot be coerced into a 64 bit floating point value");
-    }
-    return _value.toDouble();
-  }
-  $dart$core.double get nearestFloat => _value.toDouble();
-  Byte get byte => new Byte(_value);
+$dart$core.int $package$intXor($dart$core.int integer, $dart$core.int other)
+  =>  intXor(integer, other);
 
-  // Binary
+$dart$core.bool $package$intGet($dart$core.int integer, $dart$core.int index)
+  =>  intGet(integer, index);
 
-  // Treat as unsigned to match javascript's Unsigned Right Shift Operator >>>
-  Integer rightLogicalShift([$dart$core.int shift])
-    => new Integer(((_value & 0xFFFFFFFF) >> (shift & 0x1F)).toUnsigned(32));
-
-  Integer leftLogicalShift([$dart$core.int shift])
-    => new Integer((_value << (shift & 0x1F)).toSigned(32));
-
-  Integer rightArithmeticShift([$dart$core.int shift])
-    => new Integer((_value.toSigned(32) >> (shift & 0x1F)).toSigned(32));
-
-  $dart$core.bool get([$dart$core.int index]) {
+$dart$core.bool intGet($dart$core.int integer, $dart$core.int index) {
     if (index < 0 || index > 31) {
       return false;
     }
-    return _value.toSigned(32) & (1<<index) != 0;
-  }
+  return integer.toSigned(32) & (1<<index) != 0;
+}
 
-  Integer set([$dart$core.int index, $dart$core.bool bit = true]) {
+$dart$core.int $package$intPow($dart$core.int integer, $dart$core.int other)
+  =>  intPow(integer, other);
+
+$dart$core.int intPow($dart$core.int integer, $dart$core.int other) {
+  if (other < 0) {
+    if (integer == -1) {
+      return other % 2 == 0 ? 1 : -1;
+    }
+    if (integer == 1) {
+      return integer;
+  }
+    throw new AssertionError("exponent must not be negative");
+  }
+  return $dart$math.pow(integer, other);
+}
+
+$dart$core.int $package$intSet($dart$core.int integer, $dart$core.int index, $dart$core.bool bit)
+  =>  intSet(integer, index, bit);
+
+$dart$core.int intSet($dart$core.int integer, $dart$core.int index, $dart$core.bool bit) {
     if (index < 0 || index > 31) {
       // Match JS behavior, for now
       // https://github.com/ceylon/ceylon/issues/5799
       //return new Integer(_value.toSigned(32));
-      return this;
+    return integer;
     }
     $dart$core.int mask = (1 << index).toSigned(32);
     if (bit) {
-      return new Integer(_value.toSigned(32) | mask);
+    return integer.toSigned(32) | mask;
     }
     else {
-      return new Integer(_value.toSigned(32) & ~mask);
+    return integer.toSigned(32) & ~mask;
     }
   }
 
-  Integer flip([$dart$core.int index]) {
+$dart$core.int $package$intFlip($dart$core.int integer, $dart$core.int index)
+  =>  intFlip(integer, index);
+
+$dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
     if (index < 0 || index > 31) {
       // Match JS behavior, for now
       // https://github.com/ceylon/ceylon/issues/5799
       //return new Integer(_value.toSigned(32));
-      return this;
+    return integer;
     }
     $dart$core.int mask = (1 << index).toSigned(32);
-    return new Integer(_value.toSigned(32) ^ mask);
-  }
-
-  Integer clear([$dart$core.int index]) => set(index, false);
-
-  Integer or([Integer other])
-    =>  new Integer(_value.toSigned(32) | other._value.toSigned(32));
-
-  Integer and([Integer other])
-    =>  new Integer(_value.toSigned(32) & other._value.toSigned(32));
-
-  Integer xor([Integer other])
-    =>  new Integer(_value.toSigned(32) ^ other._value.toSigned(32));
-
-  Integer get not => new Integer((~_value).toSigned(32));
-
-  // Enumerable
-  Integer neighbour([$dart$core.int offset]) => new Integer(this._value + offset);
-  $dart$core.int offset([Integer other]) => this._value - other._value;
-  $dart$core.int offsetSign([Integer other]) => offset(other).sign;
-
-  // Ordinal
-
-  Integer get predecessor => new Integer(this._value - 1);
-  Integer get successor => new Integer(this._value + 1);
-
-  // Comparable
-  Comparison compare([Integer other])
-      =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
-
-  //Comparison compare(Integer other);
-
-  @$dart$core.override
-  $dart$core.bool operator >(Integer other) => _value > other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator <(Integer other) => _value < other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator <=(Integer other) => _value <= other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator >=(Integer other) => _value >= other._value;
-
-  // Number
-
-  $dart$core.int get sign
-    => _value < 0 ? -1 : (_value > 0 ? 1 : 0);
-
-  $dart$core.bool get positive => _value > 0;
-  $dart$core.bool get negative => _value < 0;
-  Integer get fractionalPart => new Integer(0);
-  Integer get wholePart => this;
-
-  $dart$core.bool get even => _value % 2 == 0;
-
-  // Dart runtime
-
-  static Integer instance($dart$core.int value)
-    => value == null ? null : new Integer(value);
-
-  static $dart$core.int nativeValue(Integer value)
-    => value == null ? null : value._value;
-
-  // TODO remove this hack (compiler needs to translate)
-  $dart$core.String get string => toString();
+  return integer.toSigned(32) ^ mask;
 }
 
 //
@@ -499,7 +427,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   // shared actual native Integer[] keys => 0:size;
   @$dart$core.override
   Sequential get keys
-    => new Measure(Integer.instance(0), size);
+    => new Measure(new Integer(0), size);
 
   //  shared native String join({Object*} objects);
   $dart$core.String join(Iterable objects)
@@ -577,7 +505,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
 
   //  shared actual String spanTo(Integer to) => to>=0 then span(0, to) else "";
   String spanTo([Integer to])
-    => to._value >= 0 ? span(Integer.instance(0), to) : String.instance("");
+    => nativeInt(to) >= 0 ? span(new Integer(0), to) : String.instance("");
 
   //  shared actual native String measure(Integer from, Integer length);
   String measure([Integer from, $dart$core.int length])
@@ -1269,7 +1197,7 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
           if (seqIndex < seq.size) {
             // Include the rest in the variadic
             outArgs[_variadicIndex]
-                = seq.spanFrom(Integer.instance(_variadicIndex - initialLength));
+                = seq.spanFrom(new Integer(_variadicIndex - initialLength));
           }
           else {
             // Fill with default values
