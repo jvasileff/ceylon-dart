@@ -989,8 +989,8 @@ Set $package$digitZeroChars = (() {
 
 Set get digitZeroChars => $package$digitZeroChars;
 
-class Char implements dart$$Object, Comparable, Enumerable {
-    Char([$dart$core.int integer]) {
+abstract class BaseCharacter implements dart$$Object, Comparable {
+    BaseCharacter([$dart$core.int integer]) {
         this.integer = integer;
         if ((this.integer > 1114111) || (this.integer < 0)) {
             throw new OverflowException(("" + this.integer.toString()) + " is not a possible Unicode code point");
@@ -998,9 +998,9 @@ class Char implements dart$$Object, Comparable, Enumerable {
     }
     $dart$core.int integer;
     $dart$core.String toString() => (new $dart$core.String.fromCharCode(integer)).toString();
-    Char get lowercased => new Char(($ceylon$interop$dart.dartString(String.instance(toString()).lowercased).runes.elementAt(0) as $dart$core.num).toInt());
-    Char get uppercased => new Char(($ceylon$interop$dart.dartString(String.instance(toString()).uppercased).runes.elementAt(0) as $dart$core.num).toInt());
-    Char get titlecased => uppercased;
+    Character get lowercased => $package$characterFromInteger(($ceylon$interop$dart.dartString(String.instance(toString()).lowercased).runes.elementAt(0) as $dart$core.num).toInt());
+    Character get uppercased => $package$characterFromInteger(($ceylon$interop$dart.dartString(String.instance(toString()).uppercased).runes.elementAt(0) as $dart$core.num).toInt());
+    Character get titlecased => uppercased;
     $dart$core.bool get lowercase => !(uppercased == this);
     $dart$core.bool get uppercase => !(lowercased == this);
     $dart$core.bool get titlecase => uppercase;
@@ -1017,12 +1017,12 @@ class Char implements dart$$Object, Comparable, Enumerable {
     $dart$core.bool get letter => lowercase || uppercase;
     $dart$core.bool get whitespace => $package$wsChars.contains(new Integer(integer));
     $dart$core.bool get control => Boolean.nativeValue($package$nothing as Boolean);
-    Comparison compare([Char other]) => (new Integer(integer)).compare(new Integer(other.integer));
+    Comparison compare([BaseCharacter other]) => (new Integer(integer)).compare(new Integer(other.integer));
     $dart$core.bool operator ==($dart$core.Object that) => (() {
         $dart$core.bool doElse$2 = true;
-        if (that is Char) {
-            Char that$3;
-            that$3 = that as Char;
+        if (that is Character) {
+            Character that$3;
+            that$3 = that as Character;
             doElse$2 = false;
             return integer == that$3.integer;
         }
@@ -1031,15 +1031,15 @@ class Char implements dart$$Object, Comparable, Enumerable {
         }
     })();
     $dart$core.int get hashCode => integer;
-    Char get predecessor => new Char(integer - 1);
-    Char get successor => new Char(integer + 1);
-    Char neighbour([$dart$core.int offset]) => new Char(integer + offset);
-    $dart$core.int offset([Char other]) => integer - other.integer;
-    $dart$core.int offsetSign([Char other]) => (new Integer(offset(other))).sign;
-    $dart$core.bool operator >(Char other) => integer > other.integer;
-    $dart$core.bool operator <(Char other) => integer < other.integer;
-    $dart$core.bool operator >=(Char other) => integer >= other.integer;
-    $dart$core.bool operator <=(Char other) => integer <= other.integer;
+    Character get predecessor => $package$characterFromInteger(integer - 1);
+    Character get successor => $package$characterFromInteger(integer + 1);
+    Character neighbour([$dart$core.int offset]) => $package$characterFromInteger(integer + offset);
+    $dart$core.int offset([Character other]) => integer - other.integer;
+    $dart$core.int offsetSign([Character other]) => (new Integer(offset(other))).sign;
+    $dart$core.bool operator >(BaseCharacter other) => integer > other.integer;
+    $dart$core.bool operator <(BaseCharacter other) => integer < other.integer;
+    $dart$core.bool operator >=(BaseCharacter other) => integer >= other.integer;
+    $dart$core.bool operator <=(BaseCharacter other) => integer <= other.integer;
 }
 $dart$core.String $package$className([$dart$core.Object obj]) => $ceylon$interop$dart.runtimeType(obj).toString();
 
