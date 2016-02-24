@@ -86,121 +86,72 @@ class Callable {
 // Character.dart
 //
 
-$dart$core.Set<$dart$core.int> wsChars = new $dart$core.Set.from([
-    0x9, 0xa, 0xb, 0xc, 0xd, 0x20, 0x85,
-    0x1680, 0x180e, 0x2028, 0x2029, 0x205f, 0x3000,
-    0x1c, 0x1d, 0x1e, 0x1f,
-    0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-    0x2008, 0x2009, 0x200a]);
-
-$dart$core.Set<$dart$core.int> digitZeroChars = new $dart$core.Set.from([
-    0x30, 0x660, 0x6f0, 0x7c0, 0x966, 0x9e6, 0xa66,
-    0xae6, 0xb66, 0xbe6, 0xc66, 0xce6, 0xd66, 0xe50,
-    0xed0, 0xf20, 0x1040, 0x1090, 0x17e0, 0x1810, 0x1946,
-    0x19d0, 0x1a80, 0x1a90, 0x1b50, 0x1bb0, 0x1c40, 0x1c50,
-    0xa620, 0xa8d0, 0xa900, 0xa9d0, 0xaa50, 0xabf0, 0xff10,
-    0x104a0, 0x11066, 0x110f0, 0x11136, 0x111d0, 0x116c0]);
-
 class Character implements dart$$Object, Comparable, Enumerable {
-  $dart$core.int _value;
+  Char char;
 
   Character(Character character) {
-    _value = character._value;
+    this.char = character.char;
   }
 
-  Character.$fromInt($dart$core.int this._value) {
-      if (_value > 0x10FFFF || _value < 0) {
-          throw new OverflowException(_value.toString() + " is not a possible Unicode code point");
-      }
+  Character.$fromInt($dart$core.int integer) {
+    this.char = new Char(integer);
   }
 
-  $dart$core.int get integer => _value;
-
-  $dart$core.int get codePoint => _value;
-
-  @$dart$core.override
-  $dart$core.String toString()
-    => new $dart$core.String.fromCharCode(_value);
-
-  $dart$core.bool get whitespace => wsChars.contains(_value);
-
-  $dart$core.bool get digit {
-    // logic from javascript backend
-    var check = _value & 0xfffffff0;
-    if (digitZeroChars.contains(check)) {
-      return (_value & 0xf <= 9);
-    }
-    else if (digitZeroChars.contains(check | 6)) {
-      return (_value & 0xf >= 6);
-    }
-    else {
-      return (_value >= 0x1d7ce && _value <= 0x1d7ff);
-    }
+  Character.$fromChar(Char char) {
+    this.char = char;
   }
 
-  $dart$core.bool get uppercase => toString().toLowerCase() != toString();
+  $dart$core.int get integer => char.integer;
 
-  $dart$core.bool get lowercase => toString().toUpperCase() != toString();
+  $dart$core.String toString() => char.toString();
 
-  $dart$core.bool get letter => uppercased != lowercased;
+  $dart$core.bool get whitespace => char.whitespace;
 
-  $dart$core.bool get titlecase => uppercase;
+  $dart$core.bool get digit => char.digit;
 
-  Character get uppercased => new Character.$fromInt(toString().toUpperCase().runes.elementAt(0));
+  $dart$core.bool get uppercase => char.uppercase;
 
-  Character get lowercased => new Character.$fromInt(toString().toLowerCase().runes.elementAt(0));
+  $dart$core.bool get lowercase => char.lowercase;
 
-  Character get titlecased => uppercased;
+  $dart$core.bool get letter => char.letter;
 
-  // Enumerable
-  Character neighbour([$dart$core.int offset]) => new Character.$fromInt(this._value + offset);
-  $dart$core.int offset([Character other]) => this._value - other._value;
-  $dart$core.int offsetSign([Character other]) => offset(other).sign;
+  $dart$core.bool get titlecase => char.titlecase;
 
-  // Ordinal
-  Character get predecessor => new Character.$fromInt(this._value - 1);
-  Character get successor => new Character.$fromInt(this._value + 1);
+  Character get uppercased => new Character.$fromChar(char.uppercased);
 
-  // Comparable
-  @$dart$core.override
-  Comparison compare([Character other]) {
-    if (_value < other._value) {
-      return $package$smaller;
-    }
-    else if (_value > other._value) {
-      return $package$larger;
-    }
-    else {
-      return $package$equal;
-    }
-  }
+  Character get lowercased => new Character.$fromChar(char.lowercased);
 
-  @$dart$core.override
-  $dart$core.bool operator >(Character other)
-    =>  _value > other._value;
+  Character get titlecased => new Character.$fromChar(char.titlecased);
 
-  @$dart$core.override
-  $dart$core.bool operator <(Character other)
-    =>  _value < other._value;
+  Character neighbour([$dart$core.int offset]) => new Character.$fromChar(char.neighbour(offset));
 
-  @$dart$core.override
-  $dart$core.bool operator <=(Character other)
-    =>  _value <= other._value;
+  $dart$core.int offset([Character other]) => char.offset(other.char);
 
-  @$dart$core.override
-  $dart$core.bool operator >=(Character other)
-    =>  _value >= other._value;
+  $dart$core.int offsetSign([Character other]) => char.offsetSign(other.char);
+
+  Character get predecessor => new Character.$fromChar(char.predecessor);
+
+  Character get successor => new Character.$fromChar(char.successor);
+
+  Comparison compare([Character other]) => char.compare(other.char);
+
+  $dart$core.bool operator >(Character other) => char > other.char;
+
+  $dart$core.bool operator <(Character other) => char < other.char;
+
+  $dart$core.bool operator <=(Character other) => char <= other.char;
+
+  $dart$core.bool operator >=(Character other) => char >= other.char;
 
   $dart$core.bool operator ==($dart$core.Object other) {
     if (other is Character) {
-      return _value == other._value;
+      return char == other.char;
     }
     return false;
   }
 
-  $dart$core.int get hashCode => _value;
+  $dart$core.int get hashCode => char.hashCode;
 }
-
 
 //
 // Float.dart

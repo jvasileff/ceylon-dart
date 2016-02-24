@@ -1,3 +1,11 @@
+import dart.core {
+    DString = String,
+    DStringClass = String_C
+}
+import ceylon.interop.dart {
+    dartString
+}
+
 """A 32-bit [Unicode][] character.
    
    Literal characters may be written between single quotes:
@@ -168,4 +176,97 @@ shared final native class Character(Character character)
     shared actual native Boolean smallerThan(Character other); 
     shared actual native Boolean notSmallerThan(Character other); 
     shared actual native Boolean notLargerThan(Character other); 
+}
+
+native("dart")
+Set<Integer> wsChars
+    =   set {
+            #9, #a, #b, #c, #d, #20, #85,
+            #1680, #180e, #2028, #2029, #205f, #3000,
+            #1c, #1d, #1e, #1f,
+            #2000, #2001, #2002, #2003, #2004, #2005, #2006,
+            #2008, #2009, #200a
+        };
+
+native("dart")
+Set<Integer> digitZeroChars
+    =   set {
+            #30, #660, #6f0, #7c0, #966, #9e6, #a66,
+            #ae6, #b66, #be6, #c66, #ce6, #d66, #e50,
+            #ed0, #f20, #1040, #1090, #17e0, #1810, #1946,
+            #19d0, #1a80, #1a90, #1b50, #1bb0, #1c40, #1c50,
+            #a620, #a8d0, #a900, #a9d0, #aa50, #abf0, #ff10,
+            #104a0, #11066, #110f0, #11136, #111d0, #116c0
+        };
+
+native("dart")
+class Char(shared Integer integer) extends Object()
+        satisfies Comparable<Char> & Enumerable<Char> {
+
+    if (integer > #10FFFF || integer < 0) {
+        throw OverflowException("``integer`` is not a possible Unicode code point");
+    }
+
+    shared actual String string => DStringClass.fromCharCode(integer).string;
+
+    shared Char lowercased
+        =>  Char(dartString(string.lowercased).runes.elementAt(0).toInt());
+
+    shared Char uppercased
+        =>  Char(dartString(string.uppercased).runes.elementAt(0).toInt());
+
+    shared Char titlecased => uppercased;
+
+    shared Boolean lowercase => uppercased != this;
+
+    shared Boolean uppercase => lowercased != this;
+
+    shared Boolean titlecase => uppercase;
+
+    shared Boolean digit {
+        // logic from javascript backend
+        value check = integer.and(#fffffff0);
+        if (digitZeroChars.contains(check)) {
+            return integer.and(#f) <= 9;
+        }
+        else if (digitZeroChars.contains(check.or(6))) {
+            return integer.and(#f) >= 6;
+        }
+        else {
+            return integer >= #1d7ce && integer <= #1d7ff;
+        }
+    }
+
+    shared Boolean letter => lowercase || uppercase;
+
+    shared Boolean whitespace => wsChars.contains(integer);
+
+    shared Boolean control => nothing;
+
+    shared actual Comparison compare(Char other) => integer <=> other.integer;
+
+    shared actual Boolean equals(Object that)
+        =>  if (is Char that)
+            then integer == that.integer
+            else false;
+
+    shared actual Integer hash => integer;
+
+    shared actual Char predecessor => Char(integer - 1);
+
+    shared actual Char successor => Char(integer + 1);
+
+    shared actual Char neighbour(Integer offset) => Char(integer + offset);
+
+    shared actual Integer offset(Char other) => integer - other.integer;
+
+    shared actual Integer offsetSign(Char other) => offset(other).sign;
+
+    shared actual Boolean largerThan(Char other) => integer > other.integer;
+
+    shared actual Boolean smallerThan(Char other) => integer < other.integer;
+
+    shared actual Boolean notSmallerThan(Char other) => integer >= other.integer;
+
+    shared actual Boolean notLargerThan(Char other) => integer <= other.integer;
 }
