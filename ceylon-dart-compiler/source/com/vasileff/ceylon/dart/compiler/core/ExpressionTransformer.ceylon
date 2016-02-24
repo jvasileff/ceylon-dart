@@ -2777,10 +2777,9 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformThis(This that)
         =>  let (info = thisInfo(that))
-            withBoxing {
+            withBoxingNonNative {
                 info;
                 info.typeModel;
-                rhsDeclaration = null;
                 dartTypes.expressionForThis(info);
             };
 
