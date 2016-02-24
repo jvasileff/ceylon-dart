@@ -1067,7 +1067,7 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
     _processArguments = $package$empty;
   }
   else {
-    _processArguments = new ArraySequence(new Array._withList(
+    _processArguments = new ArraySequence(new Array.withList(
         arguments.map((s) => new String._fromNative(s)).toList(growable: false)));
   }
 }
