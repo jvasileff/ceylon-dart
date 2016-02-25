@@ -54,7 +54,7 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
 }
 
 void checkCeylonVersion() {
-    if (language.version != "1.2.1") {
+    if (!language.version in ["1.2.1", "1.2.2"]) {
         throw ReportableException(
             "Sorry, the Dart backend is not compatible
              with Ceylon ``language.version``. Please try again with Ceylon \
