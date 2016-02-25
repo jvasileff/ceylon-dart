@@ -193,9 +193,13 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
     if (m.isPrivate) {
       return;
     }
-    if (m is MethodMirror && m.isRegularMethod) {
-      // TODO toplevel functions
+    if (m is VariableMirror) {
+      // print("Variable: " + MirrorSystem.getName(m.simpleName).toString());
+      declarationMap[MirrorSystem.getName(k)] = variableToMap(m, m, false);
+    }
+    if (m is MethodMirror && (m.isRegularMethod || m.isGetter)) {
       // print("Method: " + MirrorSystem.getName(m.simpleName).toString());
+      declarationMap[MirrorSystem.getName(k)] = methodToMap(m, m, false);
     }
     else if (m is ClassMirror) {
       // print("-- Class: " + MirrorSystem.getName(k).toString() + " --");
@@ -415,7 +419,7 @@ Map<String, Map<String, Object>> methodsToMap(
   return map;
 }
 
-Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from,
+Map<String, Object> variableToMap(VariableMirror mm, DeclarationMirror from,
     bool forceAbstract) {
   var map = new Map();
   map[keyType] = typeToMap(mm.type, from); // TODO what about void?
@@ -443,7 +447,7 @@ Map<String, Object> variableToMap(VariableMirror mm, TypeMirror from,
   return map;
 }
 
-Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from,
+Map<String, Object> methodToMap(MethodMirror mm, DeclarationMirror from,
     bool forceAbstract) {
 
   var map = new Map();
@@ -487,7 +491,7 @@ Map<String, Object> methodToMap(MethodMirror mm, TypeMirror from,
 }
 
 List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
-    TypeMirror from) {
+    DeclarationMirror from) {
   return parameters.map((pm) {
     var map = new Map();
     var pt = pm.type;
@@ -522,7 +526,7 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
 }
 
 List<Map<String, Object>> typeArgumentMap(
-    Iterable<DeclarationMirror> typeArguments, TypeMirror from) {
+    Iterable<DeclarationMirror> typeArguments, DeclarationMirror from) {
   return typeArguments.where((tm) => tm is TypeMirror).map((tm) {
     var map = typeToMap(tm, from, false, false); // keyModule, keyName
     map[keyMetatype] = metatypeTypeParameter;
@@ -531,7 +535,7 @@ List<Map<String, Object>> typeArgumentMap(
 }
 
 Map<String, Object> typeToMap(
-    TypeMirror tm, TypeMirror from, [bool isClass = false, bool erase = true]) {
+    TypeMirror tm, DeclarationMirror from, [bool isClass = false, bool erase = true]) {
 
   // FIXME tm is null sometimes
 
@@ -632,21 +636,21 @@ Map<String, Object> typeToMap(
   return map;
 }
 
-String moduleName(Object tm) {
+String moduleName(DeclarationMirror tm) {
   if (tm is LibraryMirror) {
     return MirrorSystem.getName(tm.simpleName);
   }
-  else if (tm is ClassMirror) {
+  if (null != tm) {
     return moduleName(tm.owner);
   }
   return "**UNKNOWN_MODULE_NAME**";
 }
 
-String packageName(Object tm) {
+String packageName(DeclarationMirror tm) {
   if (tm is LibraryMirror) {
     return MirrorSystem.getName(tm.simpleName);
   }
-  else if (tm is ClassMirror) {
+  if (null != tm) {
     return packageName(tm.owner);
   }
   return "**UNKNOWN_PACKAGE_NAME**";
