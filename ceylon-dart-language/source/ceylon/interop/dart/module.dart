@@ -10,6 +10,12 @@ $dart$core.int $package$dartInt($dart$core.int integer) => dartInt(integer);
 $dart$core.double dartDouble($dart$core.double float) => float;
 $dart$core.double $package$dartDouble($dart$core.double float) => dartDouble(float);
 
+$dart$core.num dartNumFromInteger($dart$core.int number) => number;
+$dart$core.num $package$dartNumFromInteger($dart$core.int number) => dartNumFromInteger(number);
+
+$dart$core.num dartNumFromFloat($dart$core.double number) => number;
+$dart$core.num $package$dartNumFromFloat($dart$core.double number) => dartNumFromFloat(number);
+
 $dart$core.bool dartBool($dart$core.bool boolean) => boolean;
 $dart$core.bool $package$dartBool($dart$core.bool boolean) => dartBool(boolean);
 

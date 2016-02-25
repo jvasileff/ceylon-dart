@@ -158,6 +158,29 @@ class CoreGenerator(CompilationContext ctx) {
 
         // custom handling for Integers (they're the first to be converted to not
         // use static methods)
+
+        if (conversion == ceylonFloatToNative) {
+            return
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    scope;
+                    dartTypes.dartDartDouble;
+                };
+                argumentList;
+            };
+        }
+
+        if (conversion == nativeToCeylonFloat) {
+            return
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    scope;
+                    dartTypes.dartCeylonFloat;
+                };
+                argumentList;
+            };
+        }
+
         if (conversion == ceylonIntegerToNative) {
             return
             DartFunctionExpressionInvocation {

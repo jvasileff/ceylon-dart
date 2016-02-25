@@ -1,3 +1,12 @@
+import ceylon.interop.dart {
+    dartDouble,
+    dartNumFromFloat,
+    dartNumFromInteger
+}
+import dart.math {
+    pow
+}
+
 "An IEEE 754 64-bit [floating point number][]. A `Float` is 
  capable of approximately representing numeric values 
  between:
@@ -63,21 +72,21 @@ shared native final class Float(Float float)
      
      [NaN]: http://en.wikipedia.org/wiki/NaN"
     aliased("notANumber")
-    shared Boolean undefined => this!=this;
+    shared native Boolean undefined => this!=this;
     
     "Determines whether this value is infinite in magnitude. 
      Produces `true` for `infinity` and `-infinity`. 
      Produces `false` for a finite number, `+0.0`, `-0.0`, 
      or undefined."
     see (`value infinity`, `value finite`)
-    shared Boolean infinite 
+    shared native Boolean infinite
             => this==infinity || this==-infinity;
     
     "Determines whether this value is finite. Produces
      `false` for `infinity`, `-infinity`, and undefined."
     see (`value infinite`, `value infinity`)
-    shared Boolean finite 
-            => this!=infinity && this!=-infinity 
+    shared native Boolean finite
+            => this!=infinity && this!=-infinity
                     && !this.undefined;
     
     "The sign of this value. Produces `1` for a positive 
@@ -210,4 +219,78 @@ shared native final class Float(Float float)
     shared actual native Boolean smallerThan(Float other); 
     shared actual native Boolean notSmallerThan(Float other); 
     shared actual native Boolean notLargerThan(Float other); 
+}
+
+shared final native("dart")
+class Float(Float float) extends Object()
+        satisfies Number<Float> & Exponentiable<Float,Float> {
+
+    shared native("dart") Boolean undefined => dartDouble(this).isNaN;
+    shared native("dart") Boolean infinite => dartDouble(this).isInfinite;
+    shared native("dart") Boolean finite  => dartDouble(this).isFinite;
+
+    shared actual native("dart") Integer sign
+        =>  if (this > 0.0) then 1
+            else if (this < 0.0) then -1
+            else 0;
+
+    shared actual native("dart") Boolean positive => this > 0.0;
+    shared actual native("dart") Boolean negative => this < 0.0;
+
+    shared native("dart") Boolean strictlyPositive
+        =>  !undefined && !dartDouble(this).isNegative;
+
+    shared native("dart") Boolean strictlyNegative
+        =>  !undefined && dartDouble(this).isNegative;
+
+    shared actual native("dart") Boolean equals(Object that)
+        =>  if (is Float that) then
+                this == that
+            else if (is Integer that) then
+                that < twoFiftyThree
+                    && that > -twoFiftyThree
+                    && that == this.integer
+            else false;
+
+    shared actual native("dart") Integer hash => dartDouble(float).hashCode;
+
+    shared actual native("dart") Comparison compare(Float other)
+        =>  if (this < other) then smaller
+            else if (this > other) then larger
+            else equal;
+
+    shared actual native("dart") Float plus(Float other) => this + other;
+    shared actual native("dart") Float minus(Float other) => this - other;
+    shared actual native("dart") Float times(Float other) => this * other;
+    shared actual native("dart") Float divided(Float other) => this / other;
+
+    shared actual native("dart") Float power(Float other)
+        =>  pow(dartNumFromFloat(this), dartNumFromFloat(other)).toDouble();
+
+    shared actual native("dart") Float wholePart {
+        value result = dartDouble(this).truncateToDouble();
+        if (result == this && result.sign == sign) {
+            // Return this to avoid creating a new box
+            return this;
+        }
+        return result;
+    }
+
+    shared actual native("dart") Float fractionalPart
+        =>  dartDouble(this).remainder(dartNumFromInteger(1));
+
+    shared actual native("dart") Float magnitude => dartDouble(this).abs();
+    shared actual native("dart") Float negated => -this;
+    shared native("dart") Integer integer => dartDouble(this).toInt();
+    shared actual native("dart") Float timesInteger(Integer integer) => this * integer;
+    shared actual native("dart") Float plusInteger(Integer integer) => this + integer;
+
+    shared actual native("dart") Float powerOfInteger(Integer integer)
+        =>  pow(dartNumFromFloat(this), dartNumFromInteger(integer)).toDouble();
+
+    shared actual native("dart") String string => float.string;
+    shared actual native("dart") Boolean largerThan(Float other) => this > other;
+    shared actual native("dart") Boolean smallerThan(Float other) => this < other;
+    shared actual native("dart") Boolean notSmallerThan(Float other) => this >= other;
+    shared actual native("dart") Boolean notLargerThan(Float other) => this <= other;
 }

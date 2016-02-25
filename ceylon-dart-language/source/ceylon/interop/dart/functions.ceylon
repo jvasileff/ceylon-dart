@@ -1,6 +1,7 @@
 import dart.core {
     DString = String,
     DInteger = \Iint,
+    DNum = \Inum,
     DBoolean = \Ibool,
     DDouble = \Idouble,
     DType = Type
@@ -26,6 +27,12 @@ DDouble dartDouble(Float float);
 
 shared native("jvm", "js")
 DDouble dartDouble(Float float) => nothing;
+
+shared native
+DNum dartNumFromInteger(Integer number);
+
+shared native
+DNum dartNumFromFloat(Float number);
 
 shared native
 DBoolean dartBool(Boolean boolean);

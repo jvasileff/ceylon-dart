@@ -87,95 +87,11 @@ class Character extends BaseCharacter implements dart$$Object, Comparable, Enume
 //
 /////////////////////////////////////////////////
 
-class Float implements dart$$Object, Number, Exponentiable {
-  final $dart$core.double _value;
+$dart$core.double $dartDouble(Float value)
+  =>  value == null ? null : value._$float;
 
-  Float($dart$core.double this._value);
-
-  Float plusInteger([$dart$core.int integer]) => new Float(_value * integer);
-  Float powerOfInteger([$dart$core.int integer]) => new Float($dart$math.pow(_value, integer));
-  Float timesInteger([$dart$core.int integer]) => new Float(_value * integer);
-
-  Float operator /(Float other) => new Float(this._value / other._value);
-  Float operator *(Float other) => new Float(this._value * other._value);
-
-  Float operator -() => new Float(-this._value);
-
-  $dart$core.int get integer => this._value.toInt();
-
-  Float operator -(Float other) => new Float(this._value - other._value);
-
-  Float operator +(Float other) => new Float(this._value + other._value);
-
-  Float get magnitude => new Float(this._value.abs());
-
-  Float power([Float other]) => new Float($dart$math.pow(this._value, other._value));
-
-  @$dart$core.override
-  $dart$core.String toString() => _value.toString();
-
-  static $dart$core.int twoFiftyThree = 1<<53;
-
-  $dart$core.bool operator ==($dart$core.Object other) {
-    if (other is Float) {
-      return _value == other._value;
-    }
-    else if (other is Integer) {
-      return $dartInt(other) < twoFiftyThree &&
-          $dartInt(other) > -twoFiftyThree &&
-          _value == $dartInt(other);
-    }
-    return false;
-  }
-
-  $dart$core.int get hashCode => _value.hashCode;
-
-  $dart$core.int get sign
-    => _value < 0.0 ? -1 : (_value > 0.0 ? 1 : 0);
-
-  $dart$core.bool get undefined => _value.isNaN;
-  $dart$core.bool get infinite => _value.isInfinite;
-  $dart$core.bool get finite => _value.isFinite;
-  $dart$core.bool get strictlyPositive => !_value.isNaN && !_value.isNegative;
-  $dart$core.bool get strictlyNegative => !_value.isNaN && _value.isNegative;
-
-  $dart$core.bool get positive => _value > 0.0;
-  $dart$core.bool get negative => _value < 0.0;
-  Float get fractionalPart => new Float(_value.remainder(1));
-  Float get wholePart {
-    $dart$core.double result = _value.truncateToDouble();
-    if (result == _value && result.sign == _value.sign) {
-      return this;
-    }
-    return new Float(result);
-  }
-
-  // Comparable
-  Comparison compare([Float other])
-      =>  _value < other._value ? smaller : (_value > other._value ? larger : equal);
-
-  //Comparison compare(Integer other);
-
-  @$dart$core.override
-  $dart$core.bool operator >(Float other) => _value > other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator <(Float other) => _value < other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator <=(Float other) => _value <= other._value;
-
-  @$dart$core.override
-  $dart$core.bool operator >=(Float other) => _value >= other._value;
-
-  // Dart runtime
-
-  static Float instance($dart$core.double value)
-    => value == null ? null : new Float(value);
-
-  static $dart$core.double nativeValue(Float value)
-    => value == null ? null : value._value;
-}
+Float $ceylonFloat($dart$core.double value)
+  =>  new Float(value);
 
 /////////////////////////////////////////////////
 //
