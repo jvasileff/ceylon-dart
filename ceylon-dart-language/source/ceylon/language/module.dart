@@ -50,35 +50,17 @@ class LazyIterator implements Iterator {
   }
 }
 
-/////////////////////////////////////////////////
-//
-// ceylon.language::Boolean
-//
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////
+////
+//// ceylon.language::Boolean
+////
+///////////////////////////////////////////////////
 
-class Boolean implements dart$$Basic {
-  final $dart$core.bool _value;
+$dart$core.bool $dartBool(Boolean value)
+  =>  value == null ? null : (value == $true ? true : false);
 
-  const Boolean.$true() : _value = true;
-  const Boolean.$false() : _value = false;
-
-  @$dart$core.override
-  $dart$core.String toString() => _value.toString();
-
-  // Dart runtime
-
-  static Boolean instance($dart$core.bool value)
-    => value == null ? null : (value ? $true : $false);
-
-  static $dart$core.bool nativeValue(Boolean value)
-    => value == null ? null : value._value;
-}
-
-const $true = const Boolean.$true();
-const $false = const Boolean.$false();
-
-const $package$$true = $true;
-const $package$$false = $false;
+Boolean $ceylonBoolean($dart$core.bool value)
+  =>  value == null ? null : (value ? $true : $false);
 
 /////////////////////////////////////////////////
 //
@@ -401,7 +383,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
   //  shared String trimmed => trim(Character.whitespace);
   $dart$core.String get trimmed
     => String.nativeValue(trim(new dart$Callable(([Character c])
-        => Boolean.instance(c.whitespace))));
+        => $ceylonBoolean(c.whitespace))));
 
   //  shared actual native String trim(Boolean trimming(Character element));
   String trim([Callable trimming])

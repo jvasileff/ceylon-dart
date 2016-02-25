@@ -19,3 +19,16 @@ shared native object false
         extends Boolean() {
     string => "false";
 }
+
+shared abstract native("dart")
+class Boolean() of true | false {}
+
+shared native("dart")
+object true extends Boolean() {
+    shared actual native("dart") String string => "true";
+}
+
+shared native("dart")
+object false extends Boolean() {
+    shared actual native("dart") String string => "false";
+}

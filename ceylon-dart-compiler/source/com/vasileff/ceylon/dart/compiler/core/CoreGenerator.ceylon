@@ -169,13 +169,36 @@ class CoreGenerator(CompilationContext ctx) {
                 argumentList;
             };
         }
-        else if (conversion == nativeToCeylonInteger) {
+
+        if (conversion == nativeToCeylonInteger) {
             return
             DartInstanceCreationExpression {
                 false;
                 dartTypes.dartConstructorName {
                     scope;
                     ceylonTypes.integerDeclaration;
+                };
+                argumentList;
+            };
+        }
+
+        if (conversion == ceylonBooleanToNative) {
+            return
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    scope;
+                    dartTypes.dartDartBool;
+                };
+                argumentList;
+            };
+        }
+
+        if (conversion == nativeToCeylonBoolean) {
+            return
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
+                    scope;
+                    dartTypes.dartCeylonBoolean;
                 };
                 argumentList;
             };
