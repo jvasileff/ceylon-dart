@@ -1,3 +1,15 @@
+import dart.core {
+    dprint = print
+}
+import dart.io {
+    DPlatform = Platform,
+    dstdin = stdin,
+    dexit = exit
+}
+import ceylon.interop.dart {
+    dartString
+}
+
 "Represents the current process (instance of the virtual
  machine)."
 by ("Gavin", "Tako")
@@ -35,7 +47,7 @@ shared native object process {
     "Print a line to the standard output of the virtual 
      machine process."
     see (`function print`)
-    shared void writeLine(String line="") { 
+    shared native void writeLine(String line="") {
         write(line);
         write(operatingSystem.newline); 
     }
@@ -50,7 +62,7 @@ shared native object process {
     
     "Print a line to the standard error of the virtual 
      machine process."
-    shared void writeErrorLine(String line="") { 
+    shared native void writeErrorLine(String line="") {
         writeError(line);
         writeError(operatingSystem.newline);
     }
@@ -68,7 +80,75 @@ shared native object process {
     "Force the virtual machine to terminate with the given
      exit code."
     shared native Nothing exit(Integer code);
-    
-    string => "process";
-    
+
+    shared actual native String string => "process";
+
+}
+
+variable native("dart")
+[String*] processArguments = [];
+
+native("dart")
+Map<String, String> properties = map {
+  "os.name" -> DPlatform.operatingSystem,
+  "line.separator" -> (if (DPlatform.isWindows) then "\r\n" else "\n"),
+  "file.separator" -> DPlatform.pathSeparator,
+  "path.separator" -> (if (DPlatform.isWindows) then ";" else ":"),
+  "dart.version" -> DPlatform.version
+};
+
+native("dart")
+StringBuilder outputBuffer = StringBuilder();
+
+shared native("dart") object process {
+
+    shared native("dart") String[] arguments => processArguments;
+
+    shared native("dart") Boolean namedArgumentPresent(String name) => false;
+
+    shared native("dart") String? namedArgumentValue(String name) => null;
+
+    shared native("dart") String? propertyValue(String name) => properties.get(name);
+
+    shared native("dart") String? environmentVariableValue(String name)
+        =>  DPlatform.environment.get_(name).string;
+
+    shared native("dart") void write(String string) {
+        value newlineIndex = string.lastOccurrence('\n');
+        if (exists newlineIndex) {
+            dprint(outputBuffer.string + string[0:newlineIndex]);
+            outputBuffer.clear();
+            outputBuffer.append(string.spanFrom(newlineIndex + 1));
+        }
+        else {
+            outputBuffer.append(string);
+        }
+    }
+
+    shared native("dart") void writeLine(String line="") {
+        write(line);
+        write(operatingSystem.newline);
+    }
+
+    shared native("dart") void flush() {}
+
+    shared native("dart") void writeError(String string)
+        =>  write(string);
+
+    shared native("dart") void writeErrorLine(String line="") {
+        writeError(line);
+        writeError(operatingSystem.newline);
+    }
+
+    shared native("dart") void flushError() {}
+
+    shared native("dart") String? readLine()
+        =>  dstdin.readLineSync();
+
+    shared native("dart") Nothing exit(Integer code) {
+        dexit(code);
+        return nothing;
+    }
+
+    shared actual native("dart") String string => "process";
 }

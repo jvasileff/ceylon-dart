@@ -853,92 +853,15 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
 //
 /////////////////////////////////////////////////
 
-Sequential _processArguments = $package$empty;
-
-// Buffer output for write and writeError, to avoid having to use dart:io.
-// ($dart$core.print outputs newlines)
-$dart$core.StringBuffer _$outputBuffer = new $dart$core.StringBuffer();
-
-$dart$core.Map _$properties = {
-  "os.name" : $dart$io.Platform.operatingSystem,
-  "line.separator" : $dart$io.Platform.isWindows ? "\r\n" : "\n",
-  "file.separator" : $dart$io.Platform.pathSeparator,
-  "path.separator" : $dart$io.Platform.isWindows ? ";" : ":",
-  "dart.version" : $dart$io.Platform.version
-};
-
-class process_ implements dart$$Basic {
-  const process_.$value$();
-
-  $dart$core.String readLine() {
-    return $dart$io.stdin.readLineSync();
-  }
-
-  void flush() {}
-
-  void flushError() {}
-
-  $dart$core.String environmentVariableValue([$dart$core.String name])
-    =>  $dart$io.Platform.environment[name];
-
-  $dart$core.bool namedArgumentPresent([$dart$core.String name]) => false;
-
-  $dart$core.String namedArgumentValue([$dart$core.String name]) => null;
-
-  $dart$core.String propertyValue([$dart$core.String name]) => _$properties[name];
-
-  $dart$core.Object exit([$dart$core.int code]) {
-    $dart$io.exit(code);
-    return nothing;
-  }
-
-  void write([$dart$core.String string]) {
-    var newlineIndex = string.lastIndexOf('\n');
-    if (newlineIndex > -1) {
-      $dart$core.print(_$outputBuffer.toString() + string.substring(0, newlineIndex));
-      _$outputBuffer.clear();
-      _$outputBuffer.write(string.substring(newlineIndex + 1));
-    }
-    else {
-      _$outputBuffer.write(string);
-    }
-  }
-
-  void writeLine([$dart$core.Object line = dart$default]) {
-    if ($dart$core.identical(line, dart$default)) {
-      line = "";
-    }
-    $dart$core.print(_$outputBuffer.toString() + line);
-    _$outputBuffer.clear();
-  }
-
-  void writeError([$dart$core.String string]) {
-    write(string);
-  }
-
-  void writeErrorLine([$dart$core.Object line = dart$default]) {
-    writeLine(line);
-  }
-
-  Sequential get arguments => _processArguments;
-
-  $dart$core.String toString() => "process";
-}
-
-const process = const process_.$value$();
-
-const $package$process = process;
-
 initializeProcess($dart$core.List<$dart$core.String> arguments) {
   if (arguments.isEmpty) {
-    _processArguments = $package$empty;
+    processArguments = $package$empty;
   }
   else {
-    _processArguments = new ArraySequence(new Array.withList(
+    processArguments = new ArraySequence(new Array.withList(
         arguments.map((s) => new String._fromNative(s)).toList(growable: false)));
   }
 }
-
 
 /////////////////////////////////////////////////
 //
