@@ -956,42 +956,6 @@ abstract class dart$$Basic extends dart$$Identifiable {}
 
 /////////////////////////////////////////////////
 //
-// Capture Boxes
-//
-/////////////////////////////////////////////////
-
-// Separate classes for bool, int, etc, aren't
-// necessary on Dart, but using them anyway. And,
-// to keep everything consistent, we'll have a
-// box for core.String too.
-
-class dart$VariableBox {
-  var v;
-  dart$VariableBox(var this.v);
-}
-
-class dart$VariableBoxBool {
-  $dart$core.bool v;
-  dart$VariableBoxBool($dart$core.bool this.v);
-}
-
-class dart$VariableBoxInt {
-  $dart$core.int v;
-  dart$VariableBoxInt($dart$core.int this.v);
-}
-
-class dart$VariableBoxDouble {
-  $dart$core.double v;
-  dart$VariableBoxDouble($dart$core.double this.v);
-}
-
-class dart$VariableBoxString {
-  $dart$core.String v;
-  dart$VariableBoxString($dart$core.String this.v);
-}
-
-/////////////////////////////////////////////////
-//
 // Unimplemented
 //
 /////////////////////////////////////////////////
