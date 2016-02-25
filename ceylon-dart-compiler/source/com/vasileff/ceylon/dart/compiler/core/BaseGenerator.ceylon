@@ -2435,9 +2435,8 @@ class BaseGenerator(CompilationContext ctx)
                 DartSimpleIdentifier {
                     dartTypes.getPackagePrefixedName(info.declarationModel);
                 };
-                withLhs {
-                    null;
-                    info.declarationModel;
+                withLhsNonNative {
+                    info.declarationModel.type;
                     () => generateObjectInstantiation {
                         dScope(info, info.declarationModel);
                         info.anonymousClass;
