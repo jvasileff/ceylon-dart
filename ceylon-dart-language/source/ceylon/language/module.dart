@@ -50,11 +50,11 @@ class LazyIterator implements Iterator {
   }
 }
 
-///////////////////////////////////////////////////
-////
-//// ceylon.language::Boolean
-////
-///////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//
+// ceylon.language::Boolean
+//
+/////////////////////////////////////////////////
 
 $dart$core.bool $dartBool(Boolean value)
   =>  value == null ? null : (value == $true ? true : false);
@@ -235,9 +235,9 @@ $dart$core.bool $package$intGet($dart$core.int integer, $dart$core.int index)
   =>  intGet(integer, index);
 
 $dart$core.bool intGet($dart$core.int integer, $dart$core.int index) {
-    if (index < 0 || index > 31) {
-      return false;
-    }
+  if (index < 0 || index > 31) {
+    return false;
+  }
   return integer.toSigned(32) & (1<<index) != 0;
 }
 
