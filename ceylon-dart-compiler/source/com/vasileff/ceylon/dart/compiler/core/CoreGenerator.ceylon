@@ -19,8 +19,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess,
     DartFunctionExpressionInvocation,
     DartSimpleIdentifier,
-    DartAsExpression,
-    DartInstanceCreationExpression
+    DartAsExpression
 }
 
 """Provides:
@@ -164,7 +163,7 @@ class CoreGenerator(CompilationContext ctx) {
             DartFunctionExpressionInvocation {
                 dartTypes.dartIdentifierForDartModel {
                     scope;
-                    dartTypes.dartNativeInt;
+                    dartTypes.dartDartInt;
                 };
                 argumentList;
             };
@@ -172,11 +171,10 @@ class CoreGenerator(CompilationContext ctx) {
 
         if (conversion == nativeToCeylonInteger) {
             return
-            DartInstanceCreationExpression {
-                false;
-                dartTypes.dartConstructorName {
+            DartFunctionExpressionInvocation {
+                dartTypes.dartIdentifierForDartModel {
                     scope;
-                    ceylonTypes.integerDeclaration;
+                    dartTypes.dartCeylonInteger;
                 };
                 argumentList;
             };

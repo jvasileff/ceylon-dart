@@ -121,9 +121,9 @@ class Float implements dart$$Object, Number, Exponentiable {
       return _value == other._value;
     }
     else if (other is Integer) {
-      return nativeInt(other) < twoFiftyThree &&
-          nativeInt(other) > -twoFiftyThree &&
-          _value == nativeInt(other);
+      return $dartInt(other) < twoFiftyThree &&
+          $dartInt(other) > -twoFiftyThree &&
+          _value == $dartInt(other);
     }
     return false;
   }
@@ -183,11 +183,11 @@ class Float implements dart$$Object, Number, Exponentiable {
 //
 /////////////////////////////////////////////////
 
-$dart$core.int $package$nativeInt(Integer value)
-  =>  nativeInt(value);
-
-$dart$core.int nativeInt(Integer value)
+$dart$core.int $dartInt(Integer value)
   =>  value == null ? null : value._$integer;
+
+Integer $ceylonInteger($dart$core.int value)
+  =>  new Integer(value);
 
 $dart$core.int $package$intRightArithmeticShift($dart$core.int integer, $dart$core.int shift)
   =>  intRightArithmeticShift(integer, shift);
@@ -430,7 +430,7 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
 
   //  shared actual String spanTo(Integer to) => to>=0 then span(0, to) else "";
   String spanTo([Integer to])
-    => nativeInt(to) >= 0 ? span(new Integer(0), to) : String.instance("");
+    => $dartInt(to) >= 0 ? span(new Integer(0), to) : String.instance("");
 
   //  shared actual native String measure(Integer from, Integer length);
   String measure([Integer from, $dart$core.int length])
