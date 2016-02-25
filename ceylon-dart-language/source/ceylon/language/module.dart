@@ -818,18 +818,6 @@ class Tuple extends BaseTuple {
 
 /////////////////////////////////////////////////
 //
-// ceylon.language::indentityHash
-//
-/////////////////////////////////////////////////
-
-$dart$core.int identityHash($dart$core.Object identifiable)
-  => $dart$core.identityHashCode(identifiable);
-
-$package$identityHash($dart$core.Object identifiable)
-  => identityHash(identifiable);
-
-/////////////////////////////////////////////////
-//
 // ceylon.language::printStackTrace
 //
 /////////////////////////////////////////////////

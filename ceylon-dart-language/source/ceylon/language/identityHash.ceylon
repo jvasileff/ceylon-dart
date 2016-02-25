@@ -1,4 +1,5 @@
 import java.lang { System }
+import dart.core { identityHashCode }
 
 "Return the system-defined identity hash value of the given 
  [[value|identifiable]]. This hash value is consistent with 
@@ -24,3 +25,7 @@ Integer identityHash(Identifiable identifiable) {
         }
     }
 }
+
+shared native("dart")
+Integer identityHash(Identifiable identifiable)
+    =>  identityHashCode(identifiable);
