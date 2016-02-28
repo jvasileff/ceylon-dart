@@ -1,3 +1,10 @@
+import ceylon.interop.dart {
+    dartString
+}
+import dart.core {
+    DString = String
+}
+
 void dartListCopyTo<Element>(List<Element> val,
         "The array into which to copy the elements."
         Array<Element> destination,
@@ -148,3 +155,14 @@ String dartStringJoin(String val, {Object*} objects) {
         }
     };
 };
+
+native("dart")
+class DartStringIterator(String s) satisfies Iterator<Character> {
+    value dString = dartString(s);
+    value runeIterator = dString.runes.iterator;
+
+    shared actual Character|Finished next()
+        =>  if (runeIterator.moveNext())
+            then characterFromInteger(runeIterator.current)
+            else finished;
+}

@@ -222,6 +222,9 @@ class String extends impl$BaseCharacterList implements Summable, Comparable {
 
   String._fromNative($dart$core.String this._value);
 
+
+  Iterator iterator() => new DartStringIterator(this._value);
+
   //  shared native String lowercased;
   $dart$core.String get lowercased => _value.toLowerCase();
 
