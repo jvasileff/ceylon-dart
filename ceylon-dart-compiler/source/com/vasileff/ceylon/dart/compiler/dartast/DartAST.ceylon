@@ -337,6 +337,8 @@ class DartSimpleStringLiteral(text)
                 case('"') "\\\""
                 case('$') "\\$"
                 case('\{#7f}') "\\x7f"
+                else if (c < ' ') then
+                    "\\x``formatInteger(c.integer, 16).padLeading(2, '0')``"
                 else c.string);
         }
         writer.write("\"");
