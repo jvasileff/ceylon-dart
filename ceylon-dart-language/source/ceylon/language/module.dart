@@ -91,7 +91,7 @@ $dart$core.double $dartDouble(Float value)
   =>  value == null ? null : value._$float;
 
 Float $ceylonFloat($dart$core.double value)
-  =>  new Float(value);
+  =>  value == null ? null : new Float(value);
 
 /////////////////////////////////////////////////
 //
@@ -103,7 +103,7 @@ $dart$core.int $dartInt(Integer value)
   =>  value == null ? null : value._$integer;
 
 Integer $ceylonInteger($dart$core.int value)
-  =>  new Integer(value);
+  =>  value == null ? null : new Integer(value);
 
 $dart$core.int $package$intRightArithmeticShift($dart$core.int integer, $dart$core.int shift)
   =>  intRightArithmeticShift(integer, shift);
