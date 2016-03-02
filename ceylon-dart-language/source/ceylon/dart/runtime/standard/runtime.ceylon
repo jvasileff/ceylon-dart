@@ -11,9 +11,6 @@ import dart.io {
 
 shared object runtime {
 
-    StringBuilder outputBuffer
-        =   StringBuilder();
-
     shared Map<String, String> platformProperties
         =   map {
                 "os.name" -> DPlatform.operatingSystem,
@@ -26,23 +23,14 @@ shared object runtime {
     shared String? environmentVariableValue(String name)
         =>  DPlatform.environment.get_(name).string;
 
-    shared void write(String string) {
-        value newlineIndex = string.lastOccurrence('\n');
-        if (exists newlineIndex) {
-            dprint(outputBuffer.string + string[0:newlineIndex]);
-            outputBuffer.clear();
-            outputBuffer.append(string.spanFrom(newlineIndex + 1));
-        }
-        else {
-            outputBuffer.append(string);
-        }
-    }
+    shared void write(String string)
+        =>  dstdout.write(string);
 
     shared void writeLine(String line)
         =>  dstdout.writeln(line);
 
-    shared void flush()
-        =>  dstdout.flush();
+    shared void flush() {}
+        //=>  dstdout.flush();
 
     shared void writeError(String string)
         =>  dstderr.write(string);
@@ -50,8 +38,10 @@ shared object runtime {
     shared void writeErrorLine(String line)
         =>  dstderr.writeln(line);
 
-    shared void flushError()
-        =>  dstderr.flush();
+    shared void flushError() {}
+        // flush() just returns a Future, and it also fails
+        // with "Bad state: StreamSink is bound to a stream"
+        //=>  dstderr.flush();
 
     shared String? readLine()
         =>  dstdin.readLineSync();
