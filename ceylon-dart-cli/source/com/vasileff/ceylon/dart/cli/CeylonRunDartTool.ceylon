@@ -1,3 +1,6 @@
+import ceylon.interop.java {
+    CeylonList
+}
 import ceylon.process {
     createProcess,
     currentOutput,
@@ -17,7 +20,9 @@ import com.redhat.ceylon.common {
 import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
     ToolError,
-    rest=rest__SETTER
+    rest=rest__SETTER,
+    optionArgument=optionArgument__SETTER,
+    description=description__SETTER
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool
@@ -35,9 +40,6 @@ import java.lang {
 import java.util {
     JList=List
 }
-import ceylon.interop.java {
-    CeylonList
-}
 
 shared
 class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
@@ -52,6 +54,13 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
 
     shared variable rest
     JList<JString> args = javaList<JString> {};
+
+    shared variable
+    optionArgument
+    description {
+        "Link against the web compatible runtime. Defaults to 'false'.";
+    }
+    Boolean web = false;
 
     shared actual
     void initialize(CeylonTool? ceylonTool) {
@@ -99,7 +108,8 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                     null, null, null, null) else "";
 
         value dependencies
-            =   gatherDependencies(repositoryManager, moduleName, moduleVersion);
+            =   gatherDependencies(repositoryManager, moduleName, moduleVersion,
+                    if (web) then "web" else "standard");
 
         value dependencyFiles
             =   mapToDependencyFiles(dependencies, repositoryManager);
