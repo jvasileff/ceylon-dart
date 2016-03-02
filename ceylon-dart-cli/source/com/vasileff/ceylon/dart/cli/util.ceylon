@@ -131,10 +131,18 @@ JsonObject moduleModel(
 
 MutableMap<String,String> gatherDependencies(
         RepositoryManager repositoryManager,
-        String moduleName,
+        variable String moduleName,
         String moduleVersion,
+        "The variation of ceylon.dart.runtime to use ('standard' or 'web')"
+        String runtime = "standard",
         MutableMap<String,String> dependencies
             =   HashMap<String, String>()) {
+
+    // Never actually use ceylon.dart.runtime.core. The actual implementations
+    // are ceylon.dart.runtime.standard and ceylon.dart.runtime.web.
+    if (moduleName == "ceylon.dart.runtime.core") {
+        moduleName = "ceylon.dart.runtime.``runtime``";
+    }
 
     value previousVersion = dependencies[moduleName];
     if (exists previousVersion) {
@@ -156,11 +164,27 @@ MutableMap<String,String> gatherDependencies(
                 repositoryManager;
                 ModuleUtil.moduleName(dep);
                 ModuleUtil.moduleVersion(dep) else "";
+                runtime;
                 dependencies;
             });
 
     return dependencies;
 }
+
+{<String->File>*} mapToDependencyFiles(
+        Map<String,String> dependencies, RepositoryManager repositoryManager)
+    =>  dependencies.map((pair)
+        =>  let (name -> version = pair)
+            (if (name.startsWith("ceylon.dart.runtime."))
+                // Let ceylon.dart.runtime.web and
+                // ceylon.dart.runtime.standard masquerade as
+                // ceylon.dart.runtime.core. The name assigned here will be used
+                // to generate the directory and file name for the dependency
+                // when it is copied to the directory used for the runtime
+                // environment.
+                then "ceylon.dart.runtime.core"
+                else name)
+            -> moduleFile(repositoryManager, name, version));
 
 [JPath, Map<String, JPath>] createTemporaryPackageRoot({<String->File>*} modules) {
     value moduleToLinkMap = HashMap<String, JPath>();

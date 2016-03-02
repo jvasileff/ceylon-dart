@@ -674,6 +674,22 @@ shared
                     // persist the json model
                     try (appender = modelFile.Appender("utf-8")) {
                         assert (exists metamodelVisitor = metamodelVisitors.get(m));
+                        if (m.nameAsString.startsWith("ceylon.dart.runtime.")) {
+                            // ceylon.dart.runtime.standard and
+                            // ceylon.dart.runtime.web masquerade as
+                            // ceylon.dart.runtime.core. Only "core" is used at compile
+                            // time, and only "standard" and "web" are used at runtime.
+                            // Have the metadata for "standard" and "web" make them look
+                            // like "core", since that is what will be expected at
+                            // runtime.
+                            metamodelVisitor.model.put(
+                                javaString("$mod-name"),
+                                javaString("ceylon.dart.runtime.core"));
+                            metamodelVisitor.model.put(
+                                javaString("ceylon.dart.runtime.core"),
+                                metamodelVisitor.model.remove(
+                                    javaString(m.nameAsString)));
+                        }
                         encodeModel(metamodelVisitor.model, appender);
                     }
 

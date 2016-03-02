@@ -1,10 +1,8 @@
 import dart.core {
     dprint = print
 }
-import dart.io {
-    DPlatform = Platform,
-    dstdin = stdin,
-    dexit = exit
+import ceylon.dart.runtime.core {
+    druntime = runtime
 }
 import ceylon.interop.dart {
     dartString
@@ -89,66 +87,49 @@ variable native("dart")
 [String*] processArguments = [];
 
 native("dart")
-Map<String, String> properties = map {
-  "os.name" -> DPlatform.operatingSystem,
-  "line.separator" -> (if (DPlatform.isWindows) then "\r\n" else "\n"),
-  "file.separator" -> DPlatform.pathSeparator,
-  "path.separator" -> (if (DPlatform.isWindows) then ";" else ":"),
-  "dart.version" -> DPlatform.version
-};
-
-native("dart")
 StringBuilder outputBuffer = StringBuilder();
 
 shared native("dart") object process {
 
-    shared native("dart") String[] arguments => processArguments;
+    shared native("dart") String[] arguments
+        =>  processArguments;
 
-    shared native("dart") Boolean namedArgumentPresent(String name) => false;
+    shared native("dart") Boolean namedArgumentPresent(String name)
+        =>  false;
 
-    shared native("dart") String? namedArgumentValue(String name) => null;
+    shared native("dart") String? namedArgumentValue(String name)
+        =>  null;
 
-    shared native("dart") String? propertyValue(String name) => properties.get(name);
+    shared native("dart") String? propertyValue(String name)
+        =>  druntime.platformProperties[name];
 
     shared native("dart") String? environmentVariableValue(String name)
-        =>  DPlatform.environment.get_(name).string;
+        =>  druntime.environmentVariableValue(name);
 
-    shared native("dart") void write(String string) {
-        value newlineIndex = string.lastOccurrence('\n');
-        if (exists newlineIndex) {
-            dprint(outputBuffer.string + string[0:newlineIndex]);
-            outputBuffer.clear();
-            outputBuffer.append(string.spanFrom(newlineIndex + 1));
-        }
-        else {
-            outputBuffer.append(string);
-        }
-    }
+    shared native("dart") void write(String string)
+        =>  druntime.write(string);
 
-    shared native("dart") void writeLine(String line="") {
-        write(line);
-        write(operatingSystem.newline);
-    }
+    shared native("dart") void writeLine(String line="")
+        =>  druntime.writeLine(line);
 
-    shared native("dart") void flush() {}
+    shared native("dart") void flush()
+        =>  druntime.flush();
 
     shared native("dart") void writeError(String string)
-        =>  write(string);
+        =>  druntime.writeError(string);
 
-    shared native("dart") void writeErrorLine(String line="") {
-        writeError(line);
-        writeError(operatingSystem.newline);
-    }
+    shared native("dart") void writeErrorLine(String line="")
+        =>  druntime.writeErrorLine(line);
 
-    shared native("dart") void flushError() {}
+    shared native("dart") void flushError()
+        =>  druntime.flushError();
 
     shared native("dart") String? readLine()
-        =>  dstdin.readLineSync();
+        =>  druntime.readLine();
 
-    shared native("dart") Nothing exit(Integer code) {
-        dexit(code);
-        return nothing;
-    }
+    shared native("dart") Nothing exit(Integer code)
+        =>  druntime.exit(code);
 
-    shared actual native("dart") String string => "process";
+    shared actual native("dart") String string
+        =>  "process";
 }

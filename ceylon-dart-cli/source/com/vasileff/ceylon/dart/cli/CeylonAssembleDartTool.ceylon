@@ -42,7 +42,8 @@ import com.vasileff.ceylon.dart.compiler {
 }
 
 import java.lang {
-    JString=String
+    JString=String,
+    JBoolean=Boolean
 }
 
 shared
@@ -50,8 +51,8 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
 
     shared variable
     argument {
-        argumentName="module";
-        multiplicity="1";
+        argumentName = "module";
+        multiplicity = "1";
         order=1;
     }
     String moduleString = "";
@@ -64,12 +65,21 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     }
     JString? \iout = null;
 
-    shared variable option
+    shared variable
+    optionArgument
     description {
-        "Generate an expanded assembly directory with a packages directory and \
-         a run script. The default is to generate a minified executable script.";
+        "The output mode. May be 'dart' or 'js' to generate a single file, or 'expanded'
+         to create a Dart project directory.";
     }
-    Boolean expanded = false;
+    AssembleMode mode = AssembleMode.dart;
+
+    shared variable
+    optionArgument
+    description {
+        "Link against the web compatible runtime. Defaults to 'true' if mode is 'js', or
+         false otherwise.";
+    }
+    JBoolean? web = null;
 
     shared variable option
     description {
@@ -133,15 +143,17 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     ModuleQuery.Type.\iDART,
                     null, null, null, null) else "";
 
+        value runtime
+            =   if (web?.booleanValue() else mode == AssembleMode.js)
+                then "web" else "standard";
+
         value dependencies
-            =   gatherDependencies(repositoryManager, moduleName, moduleVersion);
+            =   gatherDependencies(repositoryManager, moduleName, moduleVersion, runtime);
 
         value dependencyFiles
-            =   dependencies.map((pair)
-                =>  let (name -> version = pair)
-                    name -> moduleFile(repositoryManager, name, version));
+            =   mapToDependencyFiles(dependencies, repositoryManager);
 
-        if (expanded) {
+        if (mode == AssembleMode.expanded) {
             value assemblyRootPath
                 =   cwdPath.childPath(\iout?.string else "``moduleShortName``-assembly");
 
@@ -220,8 +232,8 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                             command = dart2jsPath.string;
                             arguments = [
                                 "--enable-experimental-mirrors",
-                                "--categories=Server",
-                                "--output-type=dart",
+                                !runtime == "web" then "--categories=Server",
+                                mode == AssembleMode.dart then "--output-type=dart",
                                 "--package-root=" + packageRootPath.string,
                                 minify then "-m", // minify
                                 "-o", tempScriptFile.file.path.string,
@@ -238,9 +250,14 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     throw ReportableException("dart2js reported an error.");
                 }
 
+                value extension
+                    =   if (mode == AssembleMode.js)
+                        then "js"
+                        else "dart";
+
                 value scriptFilePath
                     =   parsePath(validCwd().absolutePath).childPath(
-                            \iout?.string else "``moduleShortName``.dart");
+                            \iout?.string else "``moduleShortName``.``extension``");
 
                 value resource
                     =   scriptFilePath.resource;
@@ -252,11 +269,14 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                 }
                 value scriptFile = createFileIfNil(resource);
                 try (writer = scriptFile.Overwriter("utf-8")) {
-                    writer.writeLine("#!/usr/bin/env dart");
+                    if (mode == AssembleMode.dart) {
+                        writer.writeLine("#!/usr/bin/env dart");
+                    }
                 }
                 readAndAppendLines(tempScriptFile.file, scriptFile);
-                setExecutable(scriptFile);
-
+                if (mode == AssembleMode.dart) {
+                    setExecutable(scriptFile);
+                }
                 value minified = if (minify) then "minified " else "";
                 logInfo("Created ``minified``executable Dart script \
                          ``\iout else scriptFilePath.relativePath(cwdPath)``");

@@ -140,7 +140,7 @@ public class MetamodelGenerator {
     /** Returns the in-memory model as a collection of maps.
      * The top-level map represents the module. */
     public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
+        return model;
     }
 
     @SuppressWarnings("unchecked")

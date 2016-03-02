@@ -102,9 +102,7 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
             =   gatherDependencies(repositoryManager, moduleName, moduleVersion);
 
         value dependencyFiles
-            =   dependencies.map((pair)
-                =>  let (name -> version = pair)
-                    name -> moduleFile(repositoryManager, name, version));
+            =   mapToDependencyFiles(dependencies, repositoryManager);
 
         value [packageRootPath, moduleMap]
             =   createTemporaryPackageRoot(dependencyFiles);
