@@ -247,6 +247,9 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                                 "--package-root=" + packageRootPath.string,
                                 minify then "-m", // minify
                                 "-o", tempScriptFile.file.path.string,
+                                // TODO add verbose option to enable dart2js messages
+                                "--suppress-warnings",
+                                "--suppress-hints",
                                 programModuleFile.string
                             ].coalesced;
                             path = parsePath(validCwd().absolutePath);
