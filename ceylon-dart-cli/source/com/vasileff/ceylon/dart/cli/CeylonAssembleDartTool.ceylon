@@ -82,6 +82,15 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     JBoolean? web = null;
 
     shared variable option
+    optionArgument {
+        argumentName = "flags";
+    }
+    description {
+        "Determines if and how compilation should be handled. \
+         Allowed flags include: `never`, `once`, `force`, `check`."; }
+    String compile = "never";
+
+    shared variable option
     description {
         "Suppress output of successfull actions. \
          Errors and warnings will still be logged.";
@@ -141,7 +150,8 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     moduleName,
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,
-                    null, null, null, null) else "";
+                    null, null, null, null,
+                    if (compile.empty) then "once" else compile) else "";
 
         value runtime
             =   if (web?.booleanValue() else mode == AssembleMode.js)

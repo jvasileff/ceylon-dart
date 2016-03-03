@@ -21,6 +21,7 @@ import com.redhat.ceylon.common.tool {
     argument=argument__SETTER,
     ToolError,
     rest=rest__SETTER,
+    option=option__SETTER,
     optionArgument=optionArgument__SETTER,
     description=description__SETTER
 }
@@ -61,6 +62,15 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
         "Link against the web compatible runtime. Defaults to 'false'.";
     }
     Boolean web = false;
+
+    shared variable option
+    optionArgument {
+        argumentName = "flags";
+    }
+    description {
+        "Determines if and how compilation should be handled. \
+         Allowed flags include: `never`, `once`, `force`, `check`."; }
+    String compile = "never";
 
     shared actual
     void initialize(CeylonTool? ceylonTool) {
@@ -105,7 +115,8 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                     moduleName,
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,
-                    null, null, null, null) else "";
+                    null, null, null, null,
+                    if (compile.empty) then "once" else compile) else "";
 
         value dependencies
             =   gatherDependencies(repositoryManager, moduleName, moduleVersion,

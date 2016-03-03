@@ -136,11 +136,12 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     void run() {
         try {
             value result = doRun();
-            process.exit(
-                switch (result)
-                case (CompilationStatus.success) 0
-                case (CompilationStatus.errorTypeChecker
-                        | CompilationStatus.errorDartBackend) 1);
+            switch (result)
+            case (CompilationStatus.success) { }
+            case (CompilationStatus.errorTypeChecker
+                    | CompilationStatus.errorDartBackend) {
+                process.exit(1);
+            }
         }
         catch (ReportableException e) {
             throw object extends ToolError(e.message, e.cause) {};
