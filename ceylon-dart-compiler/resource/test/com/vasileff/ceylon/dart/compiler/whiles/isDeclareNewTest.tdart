@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $dart$core.Object isv = $ceylon$language.Integer.instance(0);
+    $dart$core.Object isv = $ceylon$language.$ceylonInteger(0);
     while (true) {
         $dart$core.int i;
         {
@@ -10,7 +10,7 @@ void $package$run() {
             if (!(i$0 is $ceylon$language.Integer)) {
                 break;
             }
-            i = $ceylon$language.Integer.nativeValue(i$0 as $ceylon$language.Integer);
+            i = $ceylon$language.$dartInt(i$0 as $ceylon$language.Integer);
         }
         isv = $ceylon$language.String.instance("");
     }

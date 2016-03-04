@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.int i = 1;
     $dart$core.int j = (i + 1) + 1;
-    $dart$core.Object k = $ceylon$language.Integer.instance((i + 1) + 1);
+    $dart$core.Object k = $ceylon$language.$ceylonInteger((i + 1) + 1);
 }
 
 void run() => $package$run();

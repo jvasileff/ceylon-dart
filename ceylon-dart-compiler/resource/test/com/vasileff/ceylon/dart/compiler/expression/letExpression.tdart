@@ -9,7 +9,7 @@ void $package$run() {
         }
         return x;
     })();
-    $ceylon$language.print($ceylon$language.Integer.instance(i));
+    $ceylon$language.print($ceylon$language.$ceylonInteger(i));
 }
 
 void run() => $package$run();

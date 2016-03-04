@@ -2,8 +2,8 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Sequential maybeSeq = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
-    $ceylon$language.Tuple x = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(-3), $ceylon$language.Integer.instance(-2), $ceylon$language.Integer.instance(-1), $ceylon$language.Integer.instance(0)], $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    $ceylon$language.Sequential maybeSeq = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+    $ceylon$language.Tuple x = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(-3), $ceylon$language.$ceylonInteger(-2), $ceylon$language.$ceylonInteger(-1), $ceylon$language.$ceylonInteger(0)], $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$0 = false;
         $dart$core.bool step$0$1() {
             if (step$0$expired$0) {
@@ -97,7 +97,7 @@ void $package$run() {
                 $ceylon$language.Sequential seq = seq$4;
                 $ceylon$language.Integer i = i$7;
                 $ceylon$language.Integer j = j$12;
-                if (($ceylon$language.Integer.nativeValue(i) > 1) && ($ceylon$language.Integer.nativeValue(j) > 2)) {
+                if (($ceylon$language.$dartInt(i) > 1) && ($ceylon$language.$dartInt(j) > 2)) {
                     return true;
                 }
             }
@@ -111,7 +111,7 @@ void $package$run() {
             $ceylon$language.Sequential seq = seq$4;
             $ceylon$language.Integer i = i$7;
             $ceylon$language.Integer j = j$12;
-            return $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) + $ceylon$language.Integer.nativeValue(j));
+            return $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) + $ceylon$language.$dartInt(j));
         }
 
         return new $ceylon$language.dart$Callable(step$5$16);

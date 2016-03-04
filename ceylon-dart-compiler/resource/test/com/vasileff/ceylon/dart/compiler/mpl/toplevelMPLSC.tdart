@@ -1,14 +1,14 @@
 import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-$ceylon$language.Callable $package$adder([$dart$core.int x]) => new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance((([$ceylon$language.Integer y]) => x + $ceylon$language.Integer.nativeValue(y))($0)));
+$ceylon$language.Callable $package$adder([$dart$core.int x]) => new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger((([$ceylon$language.Integer y]) => x + $ceylon$language.$dartInt(y))($0)));
 
 $ceylon$language.Callable adder([$dart$core.int x]) => $package$adder(x);
 
 void $package$run() {
-    $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $package$adder($ceylon$language.Integer.nativeValue($0)));
+    $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $package$adder($ceylon$language.$dartInt($0)));
     $ceylon$language.Callable g = $package$adder(1);
-    $dart$core.int h = $ceylon$language.Integer.nativeValue($package$adder(1).f($ceylon$language.Integer.instance(2)) as $ceylon$language.Integer);
+    $dart$core.int h = $ceylon$language.$dartInt($package$adder(1).f($ceylon$language.$ceylonInteger(2)) as $ceylon$language.Integer);
 }
 
 void run() => $package$run();

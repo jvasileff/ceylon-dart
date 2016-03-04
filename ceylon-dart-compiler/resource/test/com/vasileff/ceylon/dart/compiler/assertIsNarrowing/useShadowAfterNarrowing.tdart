@@ -7,7 +7,7 @@ void $package$assertions() {
     if (!(obj is $ceylon$language.Boolean)) {
         throw new $ceylon$language.AssertionError("Violated: is Boolean obj");
     }
-    obj$0 = $ceylon$language.Boolean.nativeValue(obj as $ceylon$language.Boolean);
+    obj$0 = $ceylon$language.$dartBool(obj as $ceylon$language.Boolean);
     $dart$core.bool bool = obj$0;
 }
 

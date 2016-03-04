@@ -17,20 +17,20 @@ class referenceToCallableParamQE$C implements $ceylon$language.dart$$Basic {
         this._$echoNonSharedDefaulted = _$echoNonSharedDefaulted;
         this._echoShared$c = echoShared;
         this._echoSharedDefaulted$c = echoSharedDefaulted;
-        _$echoSharedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance(this.echoShared($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))));
+        _$echoSharedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
         _$echoNonSharedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => this._$echoNonShared.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
-        _$echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance(this.echoSharedDefaulted($ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))));
+        _$echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
         _$echoNonSharedDefaultedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => this._$echoNonSharedDefaulted.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
-        if (!($ceylon$language.Integer.nativeValue(_$echoSharedRef.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_$echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoSharedRef(1) == 1");
         }
-        if (!($ceylon$language.Integer.nativeValue(_$echoNonSharedRef.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_$echoNonSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoNonSharedRef(1) == 1");
         }
-        if (!($ceylon$language.Integer.nativeValue(_$echoSharedDefaultedRef.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_$echoSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoSharedDefaultedRef(1) == 1");
         }
-        if (!($ceylon$language.Integer.nativeValue(_$echoNonSharedDefaultedRef.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_$echoNonSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoNonSharedDefaultedRef(1) == 1");
         }
     }
@@ -43,16 +43,16 @@ class referenceToCallableParamQE$C implements $ceylon$language.dart$$Basic {
     $ceylon$language.Callable _$echoSharedDefaultedRef;
     $ceylon$language.Callable _$echoNonSharedDefaultedRef;
     $dart$core.int echoShared([$dart$core.int i]) {
-        return $ceylon$language.Integer.nativeValue(_echoShared$c.f($ceylon$language.Integer.instance(i)));
+        return $ceylon$language.$dartInt(_echoShared$c.f($ceylon$language.$ceylonInteger(i)));
     }
     $dart$core.int echoSharedDefaulted([$dart$core.int i]) {
-        return $ceylon$language.Integer.nativeValue(_echoSharedDefaulted$c.f($ceylon$language.Integer.instance(i)));
+        return $ceylon$language.$dartInt(_echoSharedDefaulted$c.f($ceylon$language.$ceylonInteger(i)));
     }
 }
 void $package$referenceToCallableParamQE() {
     $dart$core.int echo([$dart$core.int i]) => i;
 
-    new referenceToCallableParamQE$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(echo($ceylon$language.Integer.nativeValue($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(echo($ceylon$language.Integer.nativeValue($0)))));
+    new referenceToCallableParamQE$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))));
 }
 
 void referenceToCallableParamQE() => $package$referenceToCallableParamQE();

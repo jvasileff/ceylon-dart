@@ -32,11 +32,11 @@ void $package$run() {
     $dart$core.bool t1b = false;
     $dart$core.bool t2a = false;
     $dart$core.bool t2b = false;
-    f1a$c = new $ceylon$language.dart$Callable(() => $ceylon$language.Boolean.instance(t1a = true));
+    f1a$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonBoolean(t1a = true));
     f1b$c = new $ceylon$language.dart$Callable(() {
         t1b = true;
     });
-    f2a$c = new $ceylon$language.dart$Callable(() => new $ceylon$language.dart$Callable(() => $ceylon$language.Boolean.instance(t2a = true)));
+    f2a$c = new $ceylon$language.dart$Callable(() => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonBoolean(t2a = true)));
     f2b$c = new $ceylon$language.dart$Callable(() {
         return new $ceylon$language.dart$Callable(() {
             t2b = true;

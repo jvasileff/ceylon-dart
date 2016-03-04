@@ -9,10 +9,10 @@ void $package$run() {
             $dart$core.String newVar$0;
             newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
             $ceylon$language.print($ceylon$language.String.instance("string"));
-            $ceylon$language.print($ceylon$language.Integer.instance($ceylon$language.String.instance(newVar$0).size));
+            $ceylon$language.print($ceylon$language.$ceylonInteger($ceylon$language.String.instance(newVar$0).size));
         } else if (newVar is $ceylon$language.Integer) {
             $dart$core.int newVar$1;
-            newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
+            newVar$1 = $ceylon$language.$dartInt(newVar as $ceylon$language.Integer);
             $ceylon$language.print($ceylon$language.String.instance("integer"));
         } else {
             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");

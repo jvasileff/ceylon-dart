@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $dart$core.int i = 0;
     while (i < 10) {
-        $ceylon$language.print($ceylon$language.Integer.instance(i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance(i).successor)));
+        $ceylon$language.print($ceylon$language.$ceylonInteger(i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger(i).successor)));
     }
 }
 

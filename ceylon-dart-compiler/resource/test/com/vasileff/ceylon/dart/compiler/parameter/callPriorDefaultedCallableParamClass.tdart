@@ -24,13 +24,13 @@ class callPriorDefaultedCallableParamClass$C implements $ceylon$language.dart$$B
     $ceylon$language.Callable _a$c;
     $ceylon$language.Callable _c$c;
     $dart$core.int callA([$dart$core.int i]) => a(i);
-    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.Integer.nativeValue(_$b.f($ceylon$language.Integer.instance(i)) as $ceylon$language.Integer);
+    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.$dartInt(_$b.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
     $dart$core.int callC([$dart$core.int i]) => c(i);
     $dart$core.int a([$dart$core.int i]) {
-        return $ceylon$language.Integer.nativeValue(_a$c.f($ceylon$language.Integer.instance(i)));
+        return $ceylon$language.$dartInt(_a$c.f($ceylon$language.$ceylonInteger(i)));
     }
     $dart$core.int c([$dart$core.int i]) {
-        return $ceylon$language.Integer.nativeValue(_c$c.f($ceylon$language.Integer.instance(i)));
+        return $ceylon$language.$dartInt(_c$c.f($ceylon$language.$ceylonInteger(i)));
     }
 }
 void $package$callPriorDefaultedCallableParamClass() {

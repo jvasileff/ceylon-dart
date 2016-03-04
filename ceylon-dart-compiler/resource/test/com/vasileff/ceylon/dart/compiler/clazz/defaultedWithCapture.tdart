@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class Sup implements $ceylon$language.dart$$Basic {
     Sup([$dart$core.int _$a]) {
         this._$a = _$a;
-        $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
+        $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
     }
     $dart$core.int _$a;
 }

@@ -63,7 +63,7 @@ abstract class hashInterface$I {
     static $dart$core.int $get$hashCode([final hashInterface$I $this]) => 1;
     void set hashCode($dart$core.int hash);
     static $dart$core.int $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
-        $ceylon$language.print($ceylon$language.Integer.instance(hash));
+        $ceylon$language.print($ceylon$language.$ceylonInteger(hash));
         return hash;
     }
 }

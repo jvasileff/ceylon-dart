@@ -2,8 +2,8 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Callable newInteger = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => new $ceylon$language.Integer($ceylon$language.Integer.nativeValue($0)));
-    $dart$core.int five = $ceylon$language.Integer.nativeValue(newInteger.f($ceylon$language.Integer.instance(5)) as $ceylon$language.Integer);
+    $ceylon$language.Callable newInteger = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => new $ceylon$language.Integer($ceylon$language.$dartInt($0)));
+    $dart$core.int five = $ceylon$language.$dartInt(newInteger.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Integer);
 }
 
 void run() => $package$run();

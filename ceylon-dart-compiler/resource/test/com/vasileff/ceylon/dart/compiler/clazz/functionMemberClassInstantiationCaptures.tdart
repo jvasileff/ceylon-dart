@@ -16,7 +16,7 @@ class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
     $dart$core.int _$fooMemberInt;
     $dart$core.String get _$fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
     run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
-    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo._$fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(_$fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.Integer.instance($outer$default$run$Foo._$fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.Integer.instance(_$fooMemberInt))]);
+    $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.String.instance("fooString1"), $ceylon$language.String.instance($outer$default$run$Foo._$fooString1)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberString2"), $ceylon$language.String.instance(_$fooMemberString2)), new $ceylon$language.Entry($ceylon$language.String.instance("fooInt"), $ceylon$language.$ceylonInteger($outer$default$run$Foo._$fooInt)), new $ceylon$language.Entry($ceylon$language.String.instance("fooMemberInt"), $ceylon$language.$ceylonInteger(_$fooMemberInt))]);
 }
 class run$Foo implements $ceylon$language.dart$$Basic {
     $dart$core.String $capture$run$runString1;
@@ -27,7 +27,7 @@ class run$Foo implements $ceylon$language.dart$$Basic {
         this._$fooInt = _$fooInt;
         x = $new$run$Foo$FooMember((() {
             $dart$core.int tmp$0 = $package$counter;
-            $package$counter = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$counter).successor);
+            $package$counter = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger($package$counter).successor);
             return tmp$0;
         })());
     }

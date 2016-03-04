@@ -57,9 +57,9 @@ void $package$callFunctions() {
     $package$f1($package$booleanBoolean);
     $package$f2($package$booleanBoolean);
     $package$f2(null);
-    $package$f3($ceylon$language.Boolean.instance($package$booleanBoolean));
+    $package$f3($ceylon$language.$ceylonBoolean($package$booleanBoolean));
     $package$f3($package$booleanObject);
-    $package$f4($ceylon$language.Boolean.instance($package$booleanBoolean));
+    $package$f4($ceylon$language.$ceylonBoolean($package$booleanBoolean));
     $package$f4($package$booleanObject);
     $package$f4(null);
     $package$f5(true);

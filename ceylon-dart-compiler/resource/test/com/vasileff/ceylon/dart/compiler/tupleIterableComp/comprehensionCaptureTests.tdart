@@ -3,8 +3,8 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
     $ceylon$language.print($ceylon$language.String.instance("* comprehensionCaptureTest begin"));
-    $ceylon$language.Tuple values = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120)]);
-    $ceylon$language.Tuple valuesNull = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(100), $ceylon$language.Integer.instance(110), $ceylon$language.Integer.instance(120), null]);
+    $ceylon$language.Tuple values = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(100), $ceylon$language.$ceylonInteger(110), $ceylon$language.$ceylonInteger(120)]);
+    $ceylon$language.Tuple valuesNull = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(100), $ceylon$language.$ceylonInteger(110), $ceylon$language.$ceylonInteger(120), null]);
     $ceylon$language.Iterable funcs0 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$0 = false;
         $dart$core.bool step$0$1() {
@@ -149,7 +149,7 @@ void $package$run() {
             while (step$1$22()) {
                 $ceylon$language.Integer v = v$20;
                 $dart$core.int w;
-                $dart$core.int tmp$24 = $ceylon$language.Integer.nativeValue(v);
+                $dart$core.int tmp$24 = $ceylon$language.$dartInt(v);
                 if (!(!(null == tmp$24))) {
                     continue;
                 }
@@ -166,7 +166,7 @@ void $package$run() {
             }
             $ceylon$language.Integer v = v$20;
             $dart$core.int w = w$25;
-            return new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance(w));
+            return new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger(w));
         }
 
         return new $ceylon$language.dart$Callable(step$3$26);

@@ -11,12 +11,12 @@ abstract class capturesWithControlBlocks$Bar {
     $dart$core.int $capture$capturesWithControlBlocks$y;
 }
 void $package$capturesWithControlBlocks() {
-    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+    $dart$core.Object x = $ceylon$language.$ceylonInteger(5);
     $dart$core.int x$0;
     if (!(x is $ceylon$language.Integer)) {
         throw new $ceylon$language.AssertionError("Violated: is Integer x");
     }
-    x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
+    x$0 = $ceylon$language.$dartInt(x as $ceylon$language.Integer);
     $dart$core.int y = 5;
 }
 

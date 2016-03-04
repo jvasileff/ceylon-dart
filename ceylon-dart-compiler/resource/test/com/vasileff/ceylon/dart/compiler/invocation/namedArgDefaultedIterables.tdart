@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Tuple it = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+    $ceylon$language.Tuple it = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
     $ceylon$language.Iterable fa([$ceylon$language.Iterable xs]) => xs;
 
     $ceylon$language.print(fa($ceylon$language.empty));
@@ -12,7 +12,7 @@ void $package$run() {
     })());
     $ceylon$language.Iterable fb([$dart$core.Object xs = $ceylon$language.dart$default]) {
         if ($dart$core.identical(xs, $ceylon$language.dart$default)) {
-            xs = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)]);
+            xs = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)]);
         }
         return xs as $ceylon$language.Iterable;
     }

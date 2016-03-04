@@ -20,7 +20,7 @@ void $package$run() {
             if (!step$0$1()) {
                 return false;
             }
-            iterator_1$2 = ($ceylon$language.measure($ceylon$language.Integer.instance(0), 10) as $ceylon$language.List).iterator();
+            iterator_1$2 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
             return true;
         }
 
@@ -69,7 +69,7 @@ void $package$run() {
             if (!step$0$9()) {
                 return false;
             }
-            iterator_1$10 = ($ceylon$language.measure($ceylon$language.Integer.instance(0), 10) as $ceylon$language.List).iterator();
+            iterator_1$10 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
             return true;
         }
 
@@ -95,7 +95,7 @@ void $package$run() {
                 return $ceylon$language.finished;
             }
             $ceylon$language.Integer i = i$12;
-            return $ceylon$language.Integer.instance(2).divides(i) ? i : $ceylon$language.String.instance("nope");
+            return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.String.instance("nope");
         }
 
         return new $ceylon$language.dart$Callable(step$2$15);

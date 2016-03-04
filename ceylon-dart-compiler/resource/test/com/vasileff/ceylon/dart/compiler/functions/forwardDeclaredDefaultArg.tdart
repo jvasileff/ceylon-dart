@@ -7,12 +7,12 @@ void $package$run() {
         if ($dart$core.identical(s, $ceylon$language.dart$default)) {
             s = 1;
         }
-        return $ceylon$language.Integer.nativeValue(f1$c.f($ceylon$language.Integer.instance(s as $dart$core.int)));
+        return $ceylon$language.$dartInt(f1$c.f($ceylon$language.$ceylonInteger(s as $dart$core.int)));
     }
 
     f1$c = new $ceylon$language.dart$Callable(([$dart$core.Object s = $ceylon$language.dart$default]) {
         if ($dart$core.identical(s, $ceylon$language.dart$default)) {
-            s = $ceylon$language.Integer.instance(2);
+            s = $ceylon$language.$ceylonInteger(2);
         }
         return s as $ceylon$language.Integer;
     });
@@ -21,17 +21,17 @@ void $package$run() {
         if ($dart$core.identical(s, $ceylon$language.dart$default)) {
             s = 1;
         }
-        $ceylon$language.Callable f2$c1 = f2$c.f($ceylon$language.Integer.instance(s as $dart$core.int));
-        return new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance((($ceylon$language.Integer t) {
-            return $ceylon$language.Integer.nativeValue(f2$c1.f(t));
+        $ceylon$language.Callable f2$c1 = f2$c.f($ceylon$language.$ceylonInteger(s as $dart$core.int));
+        return new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger((($ceylon$language.Integer t) {
+            return $ceylon$language.$dartInt(f2$c1.f(t));
         })($0)));
     }
 
     f2$c = new $ceylon$language.dart$Callable(([$dart$core.Object s = $ceylon$language.dart$default]) {
         if ($dart$core.identical(s, $ceylon$language.dart$default)) {
-            s = $ceylon$language.Integer.instance(2);
+            s = $ceylon$language.$ceylonInteger(2);
         }
-        return new $ceylon$language.dart$Callable(([$ceylon$language.Integer t]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(s as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue(t)));
+        return new $ceylon$language.dart$Callable(([$ceylon$language.Integer t]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(s as $ceylon$language.Integer) + $ceylon$language.$dartInt(t)));
     });
     if (!(f1() == 1)) {
         throw new $ceylon$language.AssertionError("Violated: f1() == 1");
@@ -39,10 +39,10 @@ void $package$run() {
     if (!(f1(2) == 2)) {
         throw new $ceylon$language.AssertionError("Violated: f1(2) == 2");
     }
-    if (!($ceylon$language.Integer.nativeValue(f2().f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 2)) {
+    if (!($ceylon$language.$dartInt(f2().f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 2)) {
         throw new $ceylon$language.AssertionError("Violated: f2()(1) == 2");
     }
-    if (!($ceylon$language.Integer.nativeValue(f2(2).f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 3)) {
+    if (!($ceylon$language.$dartInt(f2(2).f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 3)) {
         throw new $ceylon$language.AssertionError("Violated: f2(2)(1) == 3");
     }
 }

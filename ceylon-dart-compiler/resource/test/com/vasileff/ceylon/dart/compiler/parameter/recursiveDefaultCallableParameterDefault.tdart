@@ -10,17 +10,17 @@ class recursiveDefaultCallableParameterDefault$C implements $ceylon$language.dar
         if ($dart$core.identical(f, $ceylon$language.dart$default)) {
             f = recursiveDefaultCallableParameterDefault$C.$returnX$f(this, x);
         }
-        return $ceylon$language.Integer.nativeValue((f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(0)) as $ceylon$language.Integer);
+        return $ceylon$language.$dartInt((f as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(0)) as $ceylon$language.Integer);
     }
     static $dart$core.Object $returnX$x(final recursiveDefaultCallableParameterDefault$C $this) => 5;
     static $ceylon$language.Callable $returnX$f(final recursiveDefaultCallableParameterDefault$C $this, $dart$core.Object x) {
         $dart$core.Object f;
         f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (() {
-            $ceylon$language.Comparison switch$0 = i.compare($ceylon$language.Integer.instance(x as $dart$core.int));
+            $ceylon$language.Comparison switch$0 = i.compare($ceylon$language.$ceylonInteger(x as $dart$core.int));
             if ($dart$core.identical(switch$0, $ceylon$language.smaller)) {
-                return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) + 1));
+                return (f as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) + 1));
             } else if ($dart$core.identical(switch$0, $ceylon$language.larger)) {
-                return (f as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1));
+                return (f as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1));
             } else if ($dart$core.identical(switch$0, $ceylon$language.equal)) {
                 return i;
             } else {

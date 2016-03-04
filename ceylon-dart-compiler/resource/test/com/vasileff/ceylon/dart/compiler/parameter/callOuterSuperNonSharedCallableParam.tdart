@@ -16,13 +16,13 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
     }
     $ceylon$language.Callable _$foo2;
     void test() {
-        if (!(($ceylon$language.Integer.nativeValue(_$foo2.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt(_$foo2.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: foo2() + 1 == 2");
         }
-        if (!(($ceylon$language.Integer.nativeValue($outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt($outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: outer.foo() + 1 == 2");
         }
-        if (!(($ceylon$language.Integer.nativeValue(super._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt(super._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: super.foo() + 1 == 2");
         }
     }
@@ -30,7 +30,7 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
 class callOuterSuperNonSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
     callOuterSuperNonSharedCallableParam$Outer([$dart$core.Object _$foo = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$foo, $ceylon$language.dart$default)) {
-            _$foo = new $ceylon$language.dart$Callable(() => $ceylon$language.Integer.instance(1));
+            _$foo = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger(1));
         }
         return [_$foo];
     })());

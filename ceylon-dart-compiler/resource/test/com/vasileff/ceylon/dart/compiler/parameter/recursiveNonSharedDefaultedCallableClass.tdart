@@ -4,7 +4,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class recursiveNonSharedDefaultedCallableClass$C implements $ceylon$language.dart$$Basic {
     recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object _$factNonShared = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$factNonShared, $ceylon$language.dart$default)) {
-            _$factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.Integer.nativeValue(i) < 2 ? i : $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) * $ceylon$language.Integer.nativeValue((_$factNonShared as $ceylon$language.Callable).f($ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue(i) - 1)) as $ceylon$language.Integer)));
+            _$factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((_$factNonShared as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
         }
         return [_$factNonShared];
     })());
@@ -13,7 +13,7 @@ class recursiveNonSharedDefaultedCallableClass$C implements $ceylon$language.dar
         this._$factNonShared = _$factNonShared;
     }
     $ceylon$language.Callable _$factNonShared;
-    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.Integer.nativeValue(_$factNonShared.f($ceylon$language.Integer.instance(i)) as $ceylon$language.Integer);
+    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_$factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
 }
 void $package$recursiveNonSharedDefaultedCallableClass() {
     if (!((new recursiveNonSharedDefaultedCallableClass$C()).fact(4) == 24)) {

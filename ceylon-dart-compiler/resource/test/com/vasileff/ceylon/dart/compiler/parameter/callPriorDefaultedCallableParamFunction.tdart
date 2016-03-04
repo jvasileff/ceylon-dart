@@ -9,10 +9,10 @@ void $package$callPriorDefaultedCallableParamFunction() {
         if ($dart$core.identical(b, $ceylon$language.dart$default)) {
             b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
         }
-        if (!($ceylon$language.Integer.nativeValue((a as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt((a as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: a(1) == 1");
         }
-        if (!($ceylon$language.Integer.nativeValue((b as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt((b as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: b(1) == 1");
         }
     }
@@ -20,8 +20,8 @@ void $package$callPriorDefaultedCallableParamFunction() {
     $dart$core.int id([$dart$core.int i]) => i;
 
     fun();
-    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))));
-    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))));
+    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
+    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
 }
 
 void callPriorDefaultedCallableParamFunction() => $package$callPriorDefaultedCallableParamFunction();

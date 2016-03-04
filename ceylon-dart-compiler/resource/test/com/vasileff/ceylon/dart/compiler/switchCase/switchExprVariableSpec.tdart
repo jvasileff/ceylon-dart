@@ -11,7 +11,7 @@ void $package$run() {
             return "string" + $ceylon$language.String.instance(newVar$0).size.toString();
         } else if (newVar is $ceylon$language.Integer) {
             $dart$core.int newVar$1;
-            newVar$1 = $ceylon$language.Integer.nativeValue(newVar as $ceylon$language.Integer);
+            newVar$1 = $ceylon$language.$dartInt(newVar as $ceylon$language.Integer);
             return "integer";
         } else {
             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");

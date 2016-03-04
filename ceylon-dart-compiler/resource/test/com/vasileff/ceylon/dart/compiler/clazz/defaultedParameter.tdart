@@ -11,7 +11,7 @@ class C implements $ceylon$language.dart$$Basic {
     C.$s([$dart$core.List a]) : this.$w(a[0]);
     C.$w([$dart$core.int _$a]) {
         this._$a = _$a;
-        $ceylon$language.print($ceylon$language.Integer.instance(this._$a));
+        $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
     }
     $dart$core.int _$a;
 }

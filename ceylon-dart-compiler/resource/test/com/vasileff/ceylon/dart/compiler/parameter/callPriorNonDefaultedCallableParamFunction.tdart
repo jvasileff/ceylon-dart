@@ -3,17 +3,17 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$callPriorNonDefaultedCallableParamFunction() {
     void fun([$ceylon$language.Callable a, $ceylon$language.Callable b]) {
-        if (!($ceylon$language.Integer.nativeValue(a.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(a.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: a(1) == 1");
         }
-        if (!($ceylon$language.Integer.nativeValue(b.f($ceylon$language.Integer.instance(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(b.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: b(1) == 1");
         }
     }
 
     $dart$core.int id([$dart$core.int i]) => i;
 
-    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.Integer.instance(id($ceylon$language.Integer.nativeValue($0)))));
+    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
 }
 
 void callPriorNonDefaultedCallableParamFunction() => $package$callPriorNonDefaultedCallableParamFunction();

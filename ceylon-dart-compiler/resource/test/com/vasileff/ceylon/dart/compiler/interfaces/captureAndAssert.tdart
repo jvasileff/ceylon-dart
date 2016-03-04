@@ -21,7 +21,7 @@ abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlock
     void capturesI();
     static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
         $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$x$0 + 1;
-        $ceylon$language.print($ceylon$language.Integer.instance(capture));
+        $ceylon$language.print($ceylon$language.$ceylonInteger(capture));
     }
     $dart$core.int $capture$capturesWithControlBlocks$$$x$0;
 }
@@ -39,7 +39,7 @@ class capturesWithControlBlocks$b_ implements $ceylon$language.dart$$Basic, capt
     void capturesIFS() => capturesWithControlBlocks$Bar.$capturesIFS(this);
 }
 void $package$capturesWithControlBlocks() {
-    $dart$core.Object x = $ceylon$language.Integer.instance(5);
+    $dart$core.Object x = $ceylon$language.$ceylonInteger(5);
     $ceylon$language.print(x);
     if (!((x is $ceylon$language.Integer) || (x is $ceylon$language.Float))) {
         throw new $ceylon$language.AssertionError("Violated: is Integer|Float x");
@@ -50,8 +50,8 @@ void $package$capturesWithControlBlocks() {
     if (!(x is $ceylon$language.Integer)) {
         throw new $ceylon$language.AssertionError("Violated: is Integer x");
     }
-    x$0 = $ceylon$language.Integer.nativeValue(x as $ceylon$language.Integer);
-    $ceylon$language.print($ceylon$language.Integer.instance(x$0));
+    x$0 = $ceylon$language.$dartInt(x as $ceylon$language.Integer);
+    $ceylon$language.print($ceylon$language.$ceylonInteger(x$0));
     final capturesWithControlBlocks$b_ b = new capturesWithControlBlocks$b_(x$0, x, x);
     b.capturesI();
     b.capturesIF();

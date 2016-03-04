@@ -5,31 +5,31 @@ void $package$spreadAttributes() {
     $ceylon$language.Iterable ints1 = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.Integer.instance(1);
+        return $ceylon$language.$ceylonInteger(1);
         case 1 :
-        return $ceylon$language.Integer.instance(2);
+        return $ceylon$language.$ceylonInteger(2);
         case 2 :
-        return $ceylon$language.Integer.instance(3);
+        return $ceylon$language.$ceylonInteger(3);
         }
     }, null);
     $ceylon$language.Iterable ints2 = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.Integer.instance(1);
+        return $ceylon$language.$ceylonInteger(1);
         case 1 :
-        return $ceylon$language.Integer.instance(2);
+        return $ceylon$language.$ceylonInteger(2);
         case 2 :
-        return $ceylon$language.Integer.instance(3);
+        return $ceylon$language.$ceylonInteger(3);
         }
     }, null);
     $ceylon$language.Iterable ints3 = $ceylon$language.empty;
     $ceylon$language.Sequence a1 = ints1.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence() as $ceylon$language.Sequence;
     $ceylon$language.Sequential a2 = ints2.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence();
     $ceylon$language.Sequential a3 = ints3.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence();
-    if (!(a1 == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)])))) {
+    if (!(a1 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)])))) {
         throw new $ceylon$language.AssertionError("Violated: a1 == [2,3,4]");
     }
-    if (!(a2 == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)])))) {
+    if (!(a2 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)])))) {
         throw new $ceylon$language.AssertionError("Violated: a2 == [2,3,4]");
     }
     if (!(a3 == $ceylon$language.empty)) {

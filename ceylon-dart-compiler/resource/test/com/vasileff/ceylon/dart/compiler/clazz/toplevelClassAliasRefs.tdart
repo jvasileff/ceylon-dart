@@ -21,20 +21,20 @@ class C implements $ceylon$language.dart$$Basic {
     $dart$core.int i;
 }
 void $package$run() {
-    $ceylon$language.Callable newCAlias = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => new C($ceylon$language.Integer.nativeValue($0)));
-    $ceylon$language.Callable newCCreateAlias = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.Integer.nativeValue($0), $ceylon$language.Integer.nativeValue($1)));
-    $ceylon$language.Callable newCAliasCreate = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.Integer.nativeValue($0), $ceylon$language.Integer.nativeValue($1)));
-    $ceylon$language.Callable newCCreateAliasCreate = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.Integer.nativeValue($0), $ceylon$language.Integer.nativeValue($1)));
-    if (!((newCAlias.f($ceylon$language.Integer.instance(10)) as C).i == 10)) {
+    $ceylon$language.Callable newCAlias = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => new C($ceylon$language.$dartInt($0)));
+    $ceylon$language.Callable newCCreateAlias = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.$dartInt($0), $ceylon$language.$dartInt($1)));
+    $ceylon$language.Callable newCAliasCreate = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.$dartInt($0), $ceylon$language.$dartInt($1)));
+    $ceylon$language.Callable newCCreateAliasCreate = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1]) => new C.create($ceylon$language.$dartInt($0), $ceylon$language.$dartInt($1)));
+    if (!((newCAlias.f($ceylon$language.$ceylonInteger(10)) as C).i == 10)) {
         throw new $ceylon$language.AssertionError("Violated: newCAlias(10).i == 10");
     }
-    if (!((newCCreateAlias.f($ceylon$language.Integer.instance(10), $ceylon$language.Integer.instance(20)) as C).i == 30)) {
+    if (!((newCCreateAlias.f($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonInteger(20)) as C).i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: newCCreateAlias(10, 20).i == 30");
     }
-    if (!((newCAliasCreate.f($ceylon$language.Integer.instance(10), $ceylon$language.Integer.instance(20)) as C).i == 30)) {
+    if (!((newCAliasCreate.f($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonInteger(20)) as C).i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: newCAliasCreate(10, 20).i == 30");
     }
-    if (!((newCCreateAliasCreate.f($ceylon$language.Integer.instance(10), $ceylon$language.Integer.instance(20)) as C).i == 30)) {
+    if (!((newCCreateAliasCreate.f($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonInteger(20)) as C).i == 30)) {
         throw new $ceylon$language.AssertionError("Violated: newCCreateAliasCreate(10, 20).i == 30");
     }
 }

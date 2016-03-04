@@ -2,12 +2,12 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Sequential f2([$dart$core.int a, $dart$core.int b, $ceylon$language.Sequential xs]) => new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(a), $ceylon$language.Integer.instance(b)], xs);
+    $ceylon$language.Sequential f2([$dart$core.int a, $dart$core.int b, $ceylon$language.Sequential xs]) => new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a), $ceylon$language.$ceylonInteger(b)], xs);
 
     $ceylon$language.print((() {
         $dart$core.int arg$0$0 = 1;
         $dart$core.int arg$0$1 = 2;
-        $ceylon$language.Sequential arg$0$2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)]);
+        $ceylon$language.Sequential arg$0$2 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(3)]);
         return f2(arg$0$0, arg$0$1, arg$0$2);
     })());
     $ceylon$language.print((() {

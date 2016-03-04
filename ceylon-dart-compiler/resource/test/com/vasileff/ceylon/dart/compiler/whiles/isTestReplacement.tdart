@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $dart$core.Object sif = $ceylon$language.Float.instance(1.0);
+    $dart$core.Object sif = $ceylon$language.$ceylonFloat(1.0);
     while (true) {
         $dart$core.String sif$0;
         if (!(sif is $ceylon$language.String)) {

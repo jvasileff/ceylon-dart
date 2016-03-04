@@ -5,7 +5,7 @@ $dart$core.int $package$two([$dart$core.Object f = $ceylon$language.dart$default
     if ($dart$core.identical(f, $ceylon$language.dart$default)) {
         f = new $ceylon$language.dart$Callable($ceylon$language.plus);
     }
-    return $ceylon$language.Integer.nativeValue((f as $ceylon$language.Callable).f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(1)) as $ceylon$language.Integer);
+    return $ceylon$language.$dartInt((f as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
 }
 
 $dart$core.int two([$dart$core.Object f = $ceylon$language.dart$default]) => $package$two(f);
@@ -22,7 +22,7 @@ class Two implements $ceylon$language.dart$$Basic {
         this._$f = _$f;
     }
     $ceylon$language.Callable _$f;
-    $dart$core.int get val => $ceylon$language.Integer.nativeValue(_$f.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(1)) as $ceylon$language.Integer);
+    $dart$core.int get val => $ceylon$language.$dartInt(_$f.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
 }
 void $package$run() {
     if (!($package$two() == 2)) {

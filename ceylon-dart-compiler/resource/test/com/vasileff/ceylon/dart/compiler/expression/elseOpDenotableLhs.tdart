@@ -5,7 +5,7 @@ void $package$run() {
     $ceylon$language.Comparison a = $ceylon$language.larger;
     $ceylon$language.Comparison b = $ceylon$language.larger;
     $dart$core.bool bool = $dart$core.identical((($dart$core.Object $lhs$) => null == $lhs$ ? b : $lhs$)(a), b);
-    $ceylon$language.print($ceylon$language.Boolean.instance(bool));
+    $ceylon$language.print($ceylon$language.$ceylonBoolean(bool));
 }
 
 void run() => $package$run();

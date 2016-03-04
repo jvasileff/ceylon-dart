@@ -8,56 +8,56 @@ void $package$run() {
     $ceylon$language.print(f0.s((new $ceylon$language.LazyIterable(4, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.Integer.instance(1);
+        return $ceylon$language.$ceylonInteger(1);
         case 1 :
-        return $ceylon$language.Integer.instance(2);
+        return $ceylon$language.$ceylonInteger(2);
         case 2 :
-        return $ceylon$language.Integer.instance(3);
+        return $ceylon$language.$ceylonInteger(3);
         case 3 :
-        return $ceylon$language.Integer.instance(4);
+        return $ceylon$language.$ceylonInteger(4);
         }
     }, null)).sequence()));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f2.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)));
-    $ceylon$language.print(f2.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)));
-    $ceylon$language.print(f2.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)));
+    $ceylon$language.print(f2.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)));
+    $ceylon$language.print(f2.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)));
+    $ceylon$language.print(f2.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(4)])));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.empty));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(4)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.empty));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)])));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.empty));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(3)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.empty));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3), $ceylon$language.Integer.instance(4)])));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)])));
-    $ceylon$language.print(f2.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)])));
-    $ceylon$language.print(f2.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)])));
+    $ceylon$language.print(f2.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2)])));
+    $ceylon$language.print(f2.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)])));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f1.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)));
-    $ceylon$language.print(f1.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)));
-    $ceylon$language.print(f1.f($ceylon$language.Integer.instance(1)));
+    $ceylon$language.print(f1.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)));
+    $ceylon$language.print(f1.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)));
+    $ceylon$language.print(f1.f($ceylon$language.$ceylonInteger(1)));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f1.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(3)])));
-    $ceylon$language.print(f1.s($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.empty));
+    $ceylon$language.print(f1.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(3)])));
+    $ceylon$language.print(f1.s($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.empty));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f1.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)])));
-    $ceylon$language.print(f1.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)])));
-    $ceylon$language.print(f1.s($ceylon$language.Integer.instance(1), $ceylon$language.empty));
+    $ceylon$language.print(f1.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)])));
+    $ceylon$language.print(f1.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2)])));
+    $ceylon$language.print(f1.s($ceylon$language.$ceylonInteger(1), $ceylon$language.empty));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)])));
-    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
-    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
+    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)])));
+    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)])));
+    $ceylon$language.print(f1.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)])));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f0.f($ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)));
-    $ceylon$language.print(f0.f($ceylon$language.Integer.instance(1)));
+    $ceylon$language.print(f0.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)));
+    $ceylon$language.print(f0.f($ceylon$language.$ceylonInteger(1)));
     $ceylon$language.print(f0.f());
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f0.s($ceylon$language.Integer.instance(1), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(2)])));
-    $ceylon$language.print(f0.s($ceylon$language.Integer.instance(1), $ceylon$language.empty));
+    $ceylon$language.print(f0.s($ceylon$language.$ceylonInteger(1), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2)])));
+    $ceylon$language.print(f0.s($ceylon$language.$ceylonInteger(1), $ceylon$language.empty));
     $ceylon$language.print($ceylon$language.String.instance(""));
-    $ceylon$language.print(f0.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2)])));
-    $ceylon$language.print(f0.s(new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1)])));
+    $ceylon$language.print(f0.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)])));
+    $ceylon$language.print(f0.s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)])));
     $ceylon$language.print(f0.s($ceylon$language.empty));
 }
 

@@ -3,7 +3,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$assignmentExpressionCoercion() {
     $dart$core.Object x = null;
-    $dart$core.double two = 1.0 + $ceylon$language.Integer.nativeValue((x = $ceylon$language.Integer.instance(1)) as $ceylon$language.Integer).toDouble();
+    $dart$core.double two = 1.0 + $ceylon$language.$dartInt((x = $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer).toDouble();
     if (!(two == 2.0)) {
         throw new $ceylon$language.AssertionError("Violated: two == 2.0");
     }

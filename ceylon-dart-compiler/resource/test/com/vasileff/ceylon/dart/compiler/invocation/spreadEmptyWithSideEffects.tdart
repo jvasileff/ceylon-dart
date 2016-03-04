@@ -35,7 +35,7 @@ void $package$run() {
     }
     $package$i = 0;
     $dart$core.int result = $package$fb((() {
-        $dart$core.int tmp$0 = $package$i = $ceylon$language.Integer.nativeValue($ceylon$language.Integer.instance($package$i).successor);
+        $dart$core.int tmp$0 = $package$i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger($package$i).successor);
         $package$emptyIncrementI;
         return tmp$0;
     })());

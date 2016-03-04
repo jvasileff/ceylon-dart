@@ -3,8 +3,8 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
     $ceylon$language.Iterable iter0 = $ceylon$language.empty;
-    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
-    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), $ceylon$language.Integer.instance(2), $ceylon$language.Integer.instance(3)]);
+    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
     $ceylon$language.Iterable x = iter0;
     $ceylon$language.Iterable y = iter1;
     $ceylon$language.Iterable z = iter2;

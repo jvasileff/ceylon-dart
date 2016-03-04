@@ -5,55 +5,55 @@ void $package$spreadMethods() {
     $ceylon$language.Iterable ints1 = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.Integer.instance(1);
+        return $ceylon$language.$ceylonInteger(1);
         case 1 :
-        return $ceylon$language.Integer.instance(2);
+        return $ceylon$language.$ceylonInteger(2);
         case 2 :
-        return $ceylon$language.Integer.instance(3);
+        return $ceylon$language.$ceylonInteger(3);
         }
     }, null);
     $ceylon$language.Iterable ints2 = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.Integer.instance(1);
+        return $ceylon$language.$ceylonInteger(1);
         case 1 :
-        return $ceylon$language.Integer.instance(2);
+        return $ceylon$language.$ceylonInteger(2);
         case 2 :
-        return $ceylon$language.Integer.instance(3);
+        return $ceylon$language.$ceylonInteger(3);
         }
     }, null);
     $ceylon$language.Iterable ints3 = $ceylon$language.empty;
-    $ceylon$language.Sequence a1 = (ints1.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($ceylon$language.Integer.instance(10)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
-    $ceylon$language.Sequential a2 = (ints2.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($ceylon$language.Integer.instance(10)) as $ceylon$language.Iterable).sequence();
-    $ceylon$language.Sequential a3 = (ints3.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($ceylon$language.Integer.instance(10)) as $ceylon$language.Iterable).sequence();
-    $ceylon$language.Callable b1 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints1.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
-    $ceylon$language.Callable b2 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints2.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence());
-    $ceylon$language.Callable b3 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints3.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.Integer.instance($ceylon$language.Integer.nativeValue($r as $ceylon$language.Integer) + $ceylon$language.Integer.nativeValue($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence());
-    if (!(a1 == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(11), $ceylon$language.Integer.instance(12), $ceylon$language.Integer.instance(13)])))) {
+    $ceylon$language.Sequence a1 = (ints1.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
+    $ceylon$language.Sequential a2 = (ints2.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.Iterable).sequence();
+    $ceylon$language.Sequential a3 = (ints3.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.Iterable).sequence();
+    $ceylon$language.Callable b1 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints1.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
+    $ceylon$language.Callable b2 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints2.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence());
+    $ceylon$language.Callable b3 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (ints3.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger($ceylon$language.$dartInt($r as $ceylon$language.Integer) + $ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence());
+    if (!(a1 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(11), $ceylon$language.$ceylonInteger(12), $ceylon$language.$ceylonInteger(13)])))) {
         throw new $ceylon$language.AssertionError("Violated: a1 == [11,12,13]");
     }
-    if (!(a2 == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(11), $ceylon$language.Integer.instance(12), $ceylon$language.Integer.instance(13)])))) {
+    if (!(a2 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(11), $ceylon$language.$ceylonInteger(12), $ceylon$language.$ceylonInteger(13)])))) {
         throw new $ceylon$language.AssertionError("Violated: a2 == [11,12,13]");
     }
     if (!(a3 == $ceylon$language.empty)) {
         throw new $ceylon$language.AssertionError("Violated: a3 == []");
     }
-    if (!((b1.f($ceylon$language.Integer.instance(10)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(11), $ceylon$language.Integer.instance(12), $ceylon$language.Integer.instance(13)])))) {
+    if (!((b1.f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(11), $ceylon$language.$ceylonInteger(12), $ceylon$language.$ceylonInteger(13)])))) {
         throw new $ceylon$language.AssertionError("Violated: b1(10) == [11,12,13]");
     }
-    if (!((b2.f($ceylon$language.Integer.instance(10)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(11), $ceylon$language.Integer.instance(12), $ceylon$language.Integer.instance(13)])))) {
+    if (!((b2.f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(11), $ceylon$language.$ceylonInteger(12), $ceylon$language.$ceylonInteger(13)])))) {
         throw new $ceylon$language.AssertionError("Violated: b2(10) == [11,12,13]");
     }
-    if (!((b3.f($ceylon$language.Integer.instance(10)) as $ceylon$language.List) == $ceylon$language.empty)) {
+    if (!((b3.f($ceylon$language.$ceylonInteger(10)) as $ceylon$language.List) == $ceylon$language.empty)) {
         throw new $ceylon$language.AssertionError("Violated: b3(10) == []");
     }
     $ceylon$language.Tuple lists = new $ceylon$language.Tuple.$withList([new $ceylon$language.Tuple.$withList([new $ceylon$language.Character.$fromInt(97)]), new $ceylon$language.Tuple.$withList([new $ceylon$language.Character.$fromInt(98)])]);
-    $ceylon$language.Sequence c1 = (lists.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as $ceylon$language.Tuple).withLeading($0)))).f($ceylon$language.Integer.instance(1)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
+    $ceylon$language.Sequence c1 = (lists.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as $ceylon$language.Tuple).withLeading($0)))).f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
     $ceylon$language.Callable c2 = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (lists.spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as $ceylon$language.Tuple).withLeading($0)))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
-    if (!(c1 == (new $ceylon$language.Tuple.$withList([new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), new $ceylon$language.Character.$fromInt(97)]), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), new $ceylon$language.Character.$fromInt(98)])])))) {
+    if (!(c1 == (new $ceylon$language.Tuple.$withList([new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), new $ceylon$language.Character.$fromInt(97)]), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), new $ceylon$language.Character.$fromInt(98)])])))) {
         throw new $ceylon$language.AssertionError("Violated: c1 == [[1, 'a'], [1, 'b']]");
     }
-    if (!((c2.f($ceylon$language.Integer.instance(1)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), new $ceylon$language.Character.$fromInt(97)]), new $ceylon$language.Tuple.$withList([$ceylon$language.Integer.instance(1), new $ceylon$language.Character.$fromInt(98)])])))) {
+    if (!((c2.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.List) == (new $ceylon$language.Tuple.$withList([new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), new $ceylon$language.Character.$fromInt(97)]), new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), new $ceylon$language.Character.$fromInt(98)])])))) {
         throw new $ceylon$language.AssertionError("Violated: c2(1) == [[1, 'a'], [1, 'b']]");
     }
 }
