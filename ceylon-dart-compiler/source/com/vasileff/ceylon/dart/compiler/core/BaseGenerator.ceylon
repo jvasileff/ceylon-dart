@@ -2638,7 +2638,10 @@ class BaseGenerator(CompilationContext ctx)
                                     then generateCallableForBE {
                                         scope;
                                         parameterModelModel;
-                                        generateFunctionExpression(param);
+                                        generateFunctionExpression {
+                                            param;
+                                            suppressDefaultArgumentAssigment = true;
+                                        };
                                     }
                                     else param.specifier.expression.transform {
                                         expressionTransformer;
@@ -3353,7 +3356,9 @@ class BaseGenerator(CompilationContext ctx)
                 | FunctionDefinition
                 | FunctionShortcutDefinition
                 | DefaultedCallableParameter
-                | FunctionArgument that) {
+                | FunctionArgument that,
+            "See [[generateFunctionExpressionRaw.suppressDefaultArgumentAssigment]]"
+            Boolean suppressDefaultArgumentAssigment = false) {
 
         FunctionModel functionModel;
         [Parameters+] parameterLists;
@@ -3397,6 +3402,7 @@ class BaseGenerator(CompilationContext ctx)
             functionModel;
             parameterLists;
             definition;
+            suppressDefaultArgumentAssigment = suppressDefaultArgumentAssigment;
         };
     }
 
@@ -3406,7 +3412,14 @@ class BaseGenerator(CompilationContext ctx)
             FunctionModel functionModel,
             [Parameters+] parameterLists,
             LazySpecifier|Block definition,
-            Boolean forceNonNativeReturn = false) {
+            Boolean forceNonNativeReturn = false,
+            "Don't evaluate/assign default argument expressions. This is necessary
+             when creating Callable's for defaulted callable parameters of class
+             initializers that refine methods that themselves have defaulted parameters.
+             These Callables are created during class instantiation prior to `this` being
+             available. Default arguments are instead handled by the bridge methods
+             that invoke these Callables."
+            Boolean suppressDefaultArgumentAssigment = false) {
 
         variable DartExpression? result = null;
         value isVoid = functionModel.declaredVoid;
@@ -3561,7 +3574,8 @@ class BaseGenerator(CompilationContext ctx)
                 }
 
                 // assign default values to defaulted arguments
-                if (useStaticDefaultArgumentMethods) {
+                if (!suppressDefaultArgumentAssigment
+                        && useStaticDefaultArgumentMethods) {
                     statements.addAll {
                         generateDefaultValueAssignmentsStatic {
                             scope;
@@ -3569,7 +3583,8 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
                 }
-                else if (!defaultedParameters.empty) {
+                else if (!suppressDefaultArgumentAssigment
+                        && !defaultedParameters.empty) {
                     statements.addAll {
                         generateDefaultValueAssignments {
                             scope;
