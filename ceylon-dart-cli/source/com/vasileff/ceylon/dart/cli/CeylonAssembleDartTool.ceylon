@@ -127,12 +127,6 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
         // Although, the program may actually import some other version...
         verifyLanguageModuleAvailability(repositoryManager);
 
-        // TODO support default modules
-        if (ModuleUtil.isDefaultModule(moduleString)) {
-            throw ReportableException(
-                    "Default modules not yet supported: ``moduleString``");
-        }
-
         value cwdPath
             =   parsePath(validCwd().absolutePath);
 

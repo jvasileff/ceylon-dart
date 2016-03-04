@@ -100,12 +100,6 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
             throw ReportableException("Cannot find dart executable in path.");
         }
 
-        // TODO support default modules
-        if (ModuleUtil.isDefaultModule(moduleString)) {
-            throw ReportableException(
-                    "Default modules not yet supported: ``moduleString``");
-        }
-
         value moduleName
             =   ModuleUtil.moduleName(moduleString);
 
