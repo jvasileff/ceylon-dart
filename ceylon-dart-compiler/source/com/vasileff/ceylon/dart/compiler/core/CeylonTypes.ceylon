@@ -22,6 +22,9 @@ import com.vasileff.jl4c.guava.collect {
 import com.redhat.ceylon.compiler.typechecker.context {
     Context
 }
+import java.lang {
+    IndexOutOfBoundsException
+}
 
 shared
 class CeylonTypes(Unit unit, Context typeCheckerContext) {
@@ -616,5 +619,6 @@ class CeylonTypes(Unit unit, Context typeCheckerContext) {
     "Return the first type argument, or null if the type does not have type arguments."
     shared
     Type? typeArgument(Type t)
-        =>  t.typeArgumentList.get(0);
+        =>  t.typeArgumentList.size() > 0
+            then t.typeArgumentList.get(0);
 }
