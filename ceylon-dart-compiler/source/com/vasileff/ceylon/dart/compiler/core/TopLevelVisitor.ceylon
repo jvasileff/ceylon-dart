@@ -101,7 +101,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     extensionOrConstructionInfo,
     nodeInfo,
     parameterInfo,
-    CallableParameterInfo,
     classDefinitionInfo,
     interfaceDefinitionInfo,
     constructorDefinitionInfo,
@@ -110,7 +109,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectArgumentInfo,
     objectDefinitionInfo,
     valueDefinitionInfo,
-    valueGetterDefinitionInfo
+    valueGetterDefinitionInfo,
+    callableParameterInfo
 }
 
 "For Dart TopLevel declarations."
@@ -559,7 +559,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     case (is CallableParameter) p
                     else null;
                 }.coalesced.map {
-                    CallableParameterInfo;
+                    callableParameterInfo;
                 }
                 .filter {
                     (pInfo) => pInfo.functionModel.shared;
