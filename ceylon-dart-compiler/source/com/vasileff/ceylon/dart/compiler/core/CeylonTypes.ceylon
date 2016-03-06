@@ -3,6 +3,9 @@ import ceylon.interop.java {
     JavaList
 }
 
+import com.redhat.ceylon.compiler.typechecker.context {
+    Context
+}
 import com.redhat.ceylon.model.typechecker.model {
     Type,
     Unit,
@@ -18,12 +21,6 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.jl4c.guava.collect {
     javaList
-}
-import com.redhat.ceylon.compiler.typechecker.context {
-    Context
-}
-import java.lang {
-    IndexOutOfBoundsException
 }
 
 shared
