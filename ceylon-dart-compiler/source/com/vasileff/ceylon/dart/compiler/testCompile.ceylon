@@ -43,7 +43,9 @@ shared
 [DartCompilationUnit*] testCompile(
         Boolean verbose = false,
         Boolean suppressAllWarnings = true,
-        {String*} listings = {}) {
+        {String*} listings = {},
+        Boolean baselinePerfTest = false,
+        Boolean verboseProfile = baselinePerfTest) {
 
     value virtualFiles
         =   listings.indexed.map((listing) => object satisfies VirtualFile {
@@ -70,6 +72,8 @@ shared
         verboseAst = verbose;
         verboseRhAst = verbose;
         verboseCode = false;
+        verboseProfile = verboseProfile;
+        baselinePerfTest = baselinePerfTest;
         suppressMainFunction = true;
         suppressWarning
             =   if (suppressAllWarnings)
