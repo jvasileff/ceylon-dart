@@ -5,7 +5,7 @@ import ceylon.interop.java {
     javaClass,
     javaString
 }
-import ceylon.io.charset {
+import ceylon.buffer.charset {
     utf8
 }
 
