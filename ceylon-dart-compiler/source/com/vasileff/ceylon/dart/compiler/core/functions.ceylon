@@ -776,3 +776,35 @@ String parseCeylonFloat(String text) {
     }
     return result.string;
 }
+
+[Character*] base62Alphabet
+    =   concatenate { '0'..'9', 'a'..'z', 'A'..'Z' };
+
+{Character+} base62Digits(Integer number) {
+    {Character+} loop(Integer number, {Character+}? rest = null) {
+        if (number == 0) {
+            return if (exists rest) then rest else {'0'};
+        }
+        assert (exists digit = base62Alphabet[-(number % 62)]);
+        return loop(number / 62, (rest else {}).follow(digit));
+    }
+    return if (number.negative)
+        then loop(number).follow('-')
+        else loop(-number);
+}
+
+Boolean dartIdentifierCharacter(Character c)
+    =>  '0' <= c <= '9'
+            || 'a' <= c <= 'z'
+            || 'A' <= c <= 'Z'
+            || c == '$'
+            || c == '_';
+
+String escapeDartIdentifier(String s)
+    =>  if (s.every(dartIdentifierCharacter))
+        then s
+        else String(s.flatMap((c)
+            =>  if (!dartIdentifierCharacter(c))
+                then base62Digits(c.integer).follow('u').follow('$')
+                else [c]));
+

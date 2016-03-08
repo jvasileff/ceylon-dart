@@ -120,7 +120,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     function sanitizeIdentifier(String id)
         =>  if (reservedWords.contains(id))
             then "$" + id
-            else id;
+            else escapeDartIdentifier(id);
 
     String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
         String usableShortName(ClassModel | FunctionModel | ValueModel declaration)
