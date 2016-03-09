@@ -143,7 +143,8 @@ project('ceylon-dart-language') {
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
                 'com.vasileff.ceylon.dart.compiler/1.2.1-DP2-SNAPSHOT',
                 "${sourceDir.toString()}",
-                "${destinationDir.toString()}"
+                "${destinationDir.toString()}",
+                file("modules-dart")
     }
 
     task repositoryZip(type: Zip) {
