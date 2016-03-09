@@ -180,11 +180,11 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
   map["\$mod-bin"] = "9.0";
 
   map["\$mod-deps"] =
-      ["ceylon.language/1.2.1-DP2-SNAPSHOT"]..addAll(
-      dependencies.map((d) => {"exp" : 1, "path" : moduleName(d) + "/1.2.1"}));
+      ["ceylon.language/1.2.2-DP2-SNAPSHOT"]..addAll(
+      dependencies.map((d) => {"exp" : 1, "path" : moduleName(d) + "/1.2.2"}));
 
   map["\$mod-name"] = moduleName(libraryMirror);
-  map["\$mod-version"] = "1.2.1";
+  map["\$mod-version"] = "1.2.2";
   map[keyNativeDart] = true;
 
   var declarationMap = new Map<String, Object>();
@@ -213,7 +213,7 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
   // print("-- Module: " + moduleName(libraryMirror).toString() + " --");
   // print(JSON.encode(map));
 
-  var file = new File("modules/" +  moduleName(libraryMirror) + "-1.2.1-dartmodel.json");
+  var file = new File("modules/" +  moduleName(libraryMirror) + "-1.2.2-dartmodel.json");
   file.writeAsString(JSON.encode(map));
 
   return map;

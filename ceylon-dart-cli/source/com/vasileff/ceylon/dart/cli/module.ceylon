@@ -1,5 +1,5 @@
 native("jvm")
-module com.vasileff.ceylon.dart.cli "1.2.1-DP2-SNAPSHOT" {
+module com.vasileff.ceylon.dart.cli "1.2.2-DP2-SNAPSHOT" {
     import ceylon.file "1.2.2";
     import ceylon.json "1.2.2";
     import ceylon.process "1.2.2";
@@ -10,5 +10,5 @@ module com.vasileff.ceylon.dart.cli "1.2.1-DP2-SNAPSHOT" {
     shared import com.redhat.ceylon.typechecker "1.2.2";
     shared import "com.redhat.ceylon.module-resolver" "1.2.2";
 
-    shared import com.vasileff.ceylon.dart.compiler "1.2.1-DP2-SNAPSHOT";
+    shared import com.vasileff.ceylon.dart.compiler "1.2.2-DP2-SNAPSHOT";
 }

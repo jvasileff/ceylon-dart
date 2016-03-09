@@ -1,4 +1,4 @@
 native("dart")
-module ceylon.dart.runtime.web "1.2.1" {
-    import dart.core "1.2.1";
+module ceylon.dart.runtime.web "1.2.2" {
+    import dart.core "1.2.2";
 }
