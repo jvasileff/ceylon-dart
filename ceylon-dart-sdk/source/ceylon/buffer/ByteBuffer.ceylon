@@ -38,30 +38,30 @@ shared native class ByteBuffer extends Buffer<Byte> {
     shared actual native Array<Byte> array;
 }
 
-shared native ("js") class ByteBuffer extends Buffer<Byte> {
+shared native ("js", "dart") class ByteBuffer extends Buffer<Byte> {
     variable Array<Byte> buf;
     
-    shared native ("js") new ({Byte*} initialData) extends Buffer<Byte>() {
+    shared native ("js", "dart") new ({Byte*} initialData) extends Buffer<Byte>() {
         buf = Array(initialData);
     }
     
-    shared native ("js") new ofArray(Array<Byte> initialArray) extends Buffer<Byte>() {
+    shared native ("js", "dart") new ofArray(Array<Byte> initialArray) extends Buffer<Byte>() {
         buf = initialArray;
     }
     
-    shared native ("js") new ofSize(Integer initialCapacity) extends Buffer<Byte>() {
+    shared native ("js", "dart") new ofSize(Integer initialCapacity) extends Buffer<Byte>() {
         buf = Array.ofSize(initialCapacity, 0.byte);
     }
     
-    shared actual native ("js") Integer capacity => buf.size;
+    shared actual native ("js", "dart") Integer capacity => buf.size;
     
     variable Integer _position = 0;
-    shared actual native ("js") Integer position => _position;
+    shared actual native ("js", "dart") Integer position => _position;
     // Have to define assign for position after limit due to circular dependency
     
     variable Integer _limit = buf.size;
-    shared actual native ("js") Integer limit => _limit;
-    native ("js") assign limit {
+    shared actual native ("js", "dart") Integer limit => _limit;
+    native ("js", "dart") assign limit {
         "Limit must be non-negative"
         assert (limit >= 0);
         "Limit must be no larger than capacity"
@@ -73,7 +73,7 @@ shared native ("js") class ByteBuffer extends Buffer<Byte> {
         _limit = limit;
     }
     
-    native ("js") assign position {
+    native ("js", "dart") assign position {
         "Position must be non-negative"
         assert (position >= 0);
         "Position must be no larger than limit"
@@ -81,7 +81,7 @@ shared native ("js") class ByteBuffer extends Buffer<Byte> {
         _position = position;
     }
     
-    shared actual native ("js") Byte get() {
+    shared actual native ("js", "dart") Byte get() {
         value byte = buf.get(position);
         if (exists byte) {
             position++;
@@ -90,7 +90,7 @@ shared native ("js") class ByteBuffer extends Buffer<Byte> {
             throw BufferUnderflowException("No byte at position ``position``");
         }
     }
-    shared actual native ("js") void put(Byte element) {
+    shared actual native ("js", "dart") void put(Byte element) {
         if (position > limit) {
             throw BufferOverflowException("No space at position ``position``");
         }
@@ -98,17 +98,17 @@ shared native ("js") class ByteBuffer extends Buffer<Byte> {
         position++;
     }
     
-    shared actual native ("js") void clear() {
+    shared actual native ("js", "dart") void clear() {
         position = 0;
         limit = capacity;
     }
     
-    shared actual native ("js") void flip() {
+    shared actual native ("js", "dart") void flip() {
         limit = position;
         position = 0;
     }
     
-    shared actual native ("js") void resize(Integer newSize, Boolean growLimit) {
+    shared actual native ("js", "dart") void resize(Integer newSize, Boolean growLimit) {
         resizeBuffer {
             newSize = newSize;
             growLimit = growLimit;
@@ -123,8 +123,8 @@ shared native ("js") class ByteBuffer extends Buffer<Byte> {
         };
     }
     
-    shared actual native ("js") Array<Byte> array => buf;
-    shared actual native ("js") Object? implementation => buf;
+    shared actual native ("js", "dart") Array<Byte> array => buf;
+    shared actual native ("js", "dart") Object? implementation => buf;
 }
 
 shared native ("jvm") class ByteBuffer extends Buffer<Byte> {
