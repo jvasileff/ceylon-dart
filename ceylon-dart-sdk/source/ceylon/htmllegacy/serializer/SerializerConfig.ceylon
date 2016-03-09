@@ -1,4 +1,4 @@
-import ceylon.html { Doctype, html5 }
+import ceylon.htmllegacy { Doctype, html5 }
 
 "Defines configuration options that changes serialization behavior."
 see(`class NodeSerializer`)

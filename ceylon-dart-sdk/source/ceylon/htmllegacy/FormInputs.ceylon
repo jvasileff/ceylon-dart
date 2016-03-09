@@ -1,4 +1,4 @@
-import ceylon.html { hiddenType=hidden }
+import ceylon.htmllegacy { hiddenType=hidden }
 
 shared class TextInput(String name, String? valueOf = null, InputType type = text,
             String? accept = null, Boolean? autoComplete = null,

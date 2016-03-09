@@ -1,4 +1,4 @@
-import ceylon.html.serializer {
+import ceylon.htmllegacy.serializer {
     consoleSerializer
 }
 

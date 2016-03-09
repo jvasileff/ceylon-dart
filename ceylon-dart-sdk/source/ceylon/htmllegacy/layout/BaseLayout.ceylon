@@ -1,4 +1,4 @@
-import ceylon.html {
+import ceylon.htmllegacy {
     Html,
     html5,
     Head,

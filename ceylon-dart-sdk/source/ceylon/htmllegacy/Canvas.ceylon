@@ -1,4 +1,4 @@
-import ceylon.html {
+import ceylon.htmllegacy {
 	DataContainer,
 	CssClass,
 	TextDirection,

@@ -1,4 +1,4 @@
-import ceylon.html { Html }
+import ceylon.htmllegacy { Html }
 
 "Represents a HTML layout composed by blocks."
 see(`class BaseLayout`)
