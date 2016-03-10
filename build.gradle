@@ -175,6 +175,7 @@ project('ceylon-dart-language') {
         dependsOn "compileCeylonDart"
 
         from compileCeylonDart.destinationDir
+        from file("modules-dart")
         into ceylonRepoDir
     }
 }
