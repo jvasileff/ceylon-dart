@@ -283,7 +283,7 @@ class Integer(Integer integer)
             else if (is Float that) then
                 this < twoFiftyThree
                     && this > -twoFiftyThree
-                    && this == that.integer
+                    && this.nearestFloat == that
             else false;
 
     shared actual native("dart") Integer hash => this;

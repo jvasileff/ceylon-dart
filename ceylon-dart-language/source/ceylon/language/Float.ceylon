@@ -249,7 +249,7 @@ class Float(Float float) extends Object()
             else if (is Integer that) then
                 that < twoFiftyThree
                     && that > -twoFiftyThree
-                    && that == this.integer
+                    && that.nearestFloat == this
             else false;
 
     shared actual native("dart") Integer hash => dartDouble(float).hashCode;
