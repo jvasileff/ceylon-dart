@@ -16,6 +16,8 @@
    may change when the set is modified. The order itself is 
    not meaningful to a client.
  
+ The stability is `linked` by default.
+ 
  The management of the backing array is controlled by the
  given [[hashtable]]."
 by ("Stéphane Épardaud", "Gavin King")
@@ -35,7 +37,7 @@ shared class HashSet<Element>
      Each element is stored in a linked list from this array
      at the index of the hash code of the element, modulo 
      the array size."
-    variable Array<Cell<Element>?> store;
+    variable Array<CachingCell<Element>?> store;
     
     "The initial elements of the set."
     {Element*} elements;
@@ -48,7 +50,7 @@ shared class HashSet<Element>
      using an alternative linked list maintained to have a 
      stable iteration order. Note that the cells used are 
      the same as in the [[store]], except for storage we use 
-     [[Cell.rest]] for traversal, while for the stable 
+     [[CachingCell.rest]] for traversal, while for the stable 
      iteration we use the 
      [[LinkedCell.next]]/[[LinkedCell.previous]] attributes 
      of the same cell."
@@ -87,7 +89,7 @@ shared class HashSet<Element>
                 then hashtable.initialCapacityForSize(elements.size)
                 else hashtable.initialCapacityForUnknownSize();
         
-        store = elementStore<Element>(initialCapacity);
+        store = cachingElementStore<Element>(initialCapacity);
     }
     
     "Create a new `HashSet` with the same initial elements
@@ -106,7 +108,7 @@ shared class HashSet<Element>
         this.hashtable = hashtable;
         
         accurateInitialCapacity = true;
-        store = elementStore<Element>(hashSet.store.size);
+        store = cachingElementStore<Element>(hashSet.store.size);
         
         if (stability == unlinked) {
             elements = {};
@@ -134,15 +136,17 @@ shared class HashSet<Element>
             => let (h = key.hash)
                 h.xor(h.rightLogicalShift(16));
     
-    Integer storeIndex(Object elem,
-        Array<Cell<Element>?> store)
-            => hashCode(elem).and(store.size - 1);
+    Integer storeIndex(Integer elemHash,
+        Array<CachingCell<Element>?> store)
+            => elemHash.and(store.size - 1);
     //=> (elem.hash % store.size).magnitude;
     
-    Cell<Element> createCell(Element elem,
-        Cell<Element>? rest) {
+    CachingCell<Element> createCell(Element elem,
+        Integer elemHash,
+        CachingCell<Element>? rest) {
         if (stability == linked) {
-            value cell = LinkedCell(elem, rest, tip);
+            value cell 
+                    = LinkedCell(elem, elemHash, rest, tip);
             if (exists last = tip) {
                 last.next = cell;
             }
@@ -151,34 +155,39 @@ shared class HashSet<Element>
                 head = cell;
             }
             return cell;
-        } else {
-            return Cell(elem, rest);
+        }
+        else {
+            return CachingCell(elem, elemHash, rest);
         }
     }
     
-    void deleteCell(Cell<Element> cell) {
+    void deleteCell(CachingCell<Element> cell) {
         if (stability == linked) {
             assert (is LinkedCell<Element> cell);
             if (exists last = cell.previous) {
                 last.next = cell.next;
-            } else {
+            }
+            else {
                 head = cell.next;
             }
             if (exists next = cell.next) {
                 next.previous = cell.previous;
-            } else {
+            }
+            else {
                 tip = cell.previous;
             }
         }
     }
     
-    Boolean addToStore(Array<Cell<Element>?> store,
+    Boolean addToStore(Array<CachingCell<Element>?> store,
         Element element) {
-        Integer index = storeIndex(element, store);
+        value elementHash = hashCode(element);
+        Integer index = storeIndex(elementHash, store);
         value headBucket = store.getFromFirst(index);
         variable value bucket = headBucket;
-        while (exists cell = bucket) {
-            if (cell.element == element) {
+        while (exists cell = bucket) {            
+            if (cell.keyHash == elementHash
+                    && cell.element == element) {
                 // modify an existing entry
                 cell.element = element;
                 return false;
@@ -186,14 +195,17 @@ shared class HashSet<Element>
             bucket = cell.rest;
         }
         // add a new entry
-        store.set(index, createCell(element, headBucket));
+        store.set(index, 
+            createCell(element, elementHash, headBucket));
         return true;
     }
     
     void checkRehash() {
         if (hashtable.rehash(length, store.size)) {
             // must rehash
-            value newStore = elementStore<Element>(hashtable.capacity(length));
+            value newStore 
+                    = cachingElementStore<Element>
+                        (hashtable.capacity(length));
             variable Integer index = 0;
             // walk every bucket
             while (index < store.size) {
@@ -202,14 +214,10 @@ shared class HashSet<Element>
                 while (exists cell = bucket) {
                     bucket = cell.rest;
                     Integer newIndex
-                            = storeIndex(cell.element,
-                        newStore);
-                    variable value newBucket
-                            = newStore[newIndex];
-                    while (exists newCell
-                                = newBucket?.rest) {
-                        newBucket = newCell;
-                    }
+                            = storeIndex(cell.keyHash,
+                                         newStore);
+                    value newBucket 
+                            = newStore.getFromFirst(newIndex);
                     cell.rest = newBucket;
                     newStore.set(newIndex, cell);
                 }
@@ -258,7 +266,8 @@ shared class HashSet<Element>
     }
     
     shared actual Boolean remove(Element element) {
-        Integer index = storeIndex(element, store);
+        value elementHash = hashCode(element);
+        Integer index = storeIndex(elementHash, store);
         if (exists head = store.getFromFirst(index),
             head.element == element) {
             store.set(index, head.rest);
@@ -266,17 +275,18 @@ shared class HashSet<Element>
             length--;
             return true;
         }
-        variable value bucket
-                = store.getFromFirst(index);
+        variable value bucket = store.getFromFirst(index);
         while (exists cell = bucket) {
             value rest = cell.rest;
             if (exists rest,
+                rest.keyHash == elementHash,
                 rest.element == element) {
                 cell.rest = rest.rest;
                 deleteCell(rest);
                 length--;
                 return true;
-            } else {
+            }
+            else {
                 bucket = rest;
             }
         }
@@ -300,7 +310,7 @@ shared class HashSet<Element>
     
     iterator() => stability == linked
             then LinkedCellIterator(head)
-            else StoreIterator(store);
+            else CachingStoreIterator(store);
     
     shared actual Integer count
             (Boolean selecting(Element element)) {
@@ -373,12 +383,15 @@ shared class HashSet<Element>
     shared actual Boolean contains(Object element) {
         if (empty) {
             return false;
-        } else {
-            Integer index = storeIndex(element, store);
+        }
+        else {
+            value elementHash = hashCode(element);
+            Integer index = storeIndex(elementHash, store);
             variable value bucket
                     = store.getFromFirst(index);
-            while (exists cell = bucket) {
-                if (cell.element == element) {
+            while (exists cell = bucket) {                
+                if (cell.keyHash == elementHash
+                        && cell.element == element) {
                     return true;
                 }
                 bucket = cell.rest;
@@ -437,17 +450,17 @@ shared class HashSet<Element>
         return ret;
     }
     
-    shared actual Element? first
+    shared actual Element? first 
             => if (stability == linked)
-    then head?.element
-    else store.coalesced.first?.element;
+                then head?.element
+                else store.coalesced.first?.element;
     
     shared actual Element? last {
         if (stability == linked) {
             return tip?.element;
-        } else {
-            variable value bucket
-                    = store.coalesced.last;
+        }
+        else {
+            variable value bucket = store.coalesced.last;
             while (exists cell = bucket?.rest) {
                 bucket = cell;
             }
