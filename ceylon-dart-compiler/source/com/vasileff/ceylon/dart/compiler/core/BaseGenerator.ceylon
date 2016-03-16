@@ -2426,10 +2426,11 @@ class BaseGenerator(CompilationContext ctx)
 
         return
         DartVariableDeclarationList {
-            "final"; // TODO const for toplevels
-            dartTypes.dartTypeNameForDeclaration {
+            "final";
+            dartTypes.dartTypeName {
                 info;
-                info.declarationModel;
+                info.declarationModel.type;
+                false; false;
             };
             [DartVariableDeclaration {
                 DartSimpleIdentifier {
@@ -2544,7 +2545,7 @@ class BaseGenerator(CompilationContext ctx)
                 valueScope;
                 classModel.type;
                 DartInstanceCreationExpression {
-                    const = false; // TODO const for toplevels
+                    const = false;
                     dartTypes.dartConstructorName {
                         valueScope;
                         classModel;

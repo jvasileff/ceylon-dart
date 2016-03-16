@@ -1795,6 +1795,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   generateForwardingGetter {
                     info;
                     declarationModel;
+                    that is ObjectDefinition;
                 };
 
         value setter = declarationModel.variable then
@@ -1839,13 +1840,24 @@ class TopLevelVisitor(CompilationContext ctx)
         return [];
     }
 
-    DartFunctionDeclaration generateForwardingGetter
-            (DScope scope, ValueModel valueModel)
+    DartFunctionDeclaration generateForwardingGetter(
+            DScope scope, ValueModel valueModel,
+            "If `true`, use the non-erased type. Useful for the toplevel objects
+             `true_` and `false_`. Should be `true` for ObjectDefinitions, which are
+             never erased."
+            Boolean disableErasure = false)
         =>  DartFunctionDeclaration {
                 false;
-                dartTypes.dartTypeNameForDeclaration {
-                    scope; valueModel;
-                };
+                if (disableErasure) then
+                    dartTypes.dartTypeName {
+                        scope;
+                        valueModel.type;
+                        false; false;
+                    }
+                else
+                    dartTypes.dartTypeNameForDeclaration {
+                        scope; valueModel;
+                    };
                 "get";
                 DartSimpleIdentifier {
                     dartTypes.getName(valueModel);
