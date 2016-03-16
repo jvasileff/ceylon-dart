@@ -54,20 +54,46 @@ shared String formatFloat(
     if (float.undefined || float.infinite) {
         return float.string;
     }
-    variable {Character*} digits = {};
+    Float magnitude = float.magnitude;
     variable Integer i = maxDecimalPlaces;
-    Float m = float.magnitude;
+    Float maxExactIntegralFloat 
+            = runtime.maxExactIntegralFloat.float;
+    while (i>0 && 
+        magnitude > maxExactIntegralFloat/10^i) {
+        //reduce the number of computed decimal places, 
+        //so that magnitude * 10^i will fit into a Float
+        i--;
+    }
+    Integer decimalPlaces = i;
+    variable Boolean previousZero = false;
+    variable {Character*} digits = {};
     while (true) {
-        Float f = m * 10.0.powerOfInteger(--i); //really slow for large i
-        Float d = (f.fractionalPart * 10).wholePart;
-        Character c = (d.integer+zeroInt).character;
+        Float scaled = scaleByPowerOfTen(magnitude, i);
+        Float fractional = scaled.fractionalPart;
+        Float whole = scaled.wholePart;
+        Integer d = (fractional * 10).integer;
+        Integer digit;
+        if (previousZero) {
+            digit = 
+                    //detect rounding error in floating point
+                    //multiplication magnitude * 10^i above
+                    (fractional * 100).integer > d * 10
+                        then (d==9 then 0 else d + 1)
+                        else d;
+        }
+        else {
+            digit = d;
+        }
+        Character c = (digit + zeroInt).character;
         digits = digits.follow(c);
-        if (f.wholePart==0.0) {
+        if (whole == 0.0) {
             break;
         }
+        previousZero = digit==0;
+        i--;
     }
-    String string = String(digits);
-    Integer point = string.size - maxDecimalPlaces;
+    String string = String(digits.exceptLast);
+    Integer point = string.size - decimalPlaces;
     String wholePart;
     String fractionalPart;
     if (point>0) {
@@ -91,4 +117,17 @@ shared String formatFloat(
     return normalized.empty 
             then signed 
             else signed + "." + normalized;
+}
+
+Float scaleByPowerOfTen(Float float, Integer power) {
+    Float scale =
+            let (magnitude = power.magnitude)
+            //there are only 15 decimal places of precision
+            //in IEEE double-precision floating point number 
+            if (magnitude <= 15)
+                then (10^magnitude).nearestFloat     //fast
+                else 10.0.powerOfInteger(magnitude); //slow
+    return if (power < 0) 
+            then float / scale 
+            else float * scale;
 }

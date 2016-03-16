@@ -48,7 +48,15 @@ shared abstract class Object()
      `==` is considered much more meaningful for such 
      classes than for a class which simply inherits the
      default implementation of _identity equality_ from
-     [[Identifiable]]."
+     [[Identifiable]].
+     
+     Note that an implementation of `equals()` that always
+     returns [[false]] does satisfy the constraints given
+     above. Therefore, in very rare cases where there is no 
+     reasonable definition of value equality for a class, 
+     for example, [[function references|Callable]], it is 
+     acceptable for `equals()` to be defined to return 
+     `false` for every argument."
     shared formal Boolean equals(Object that);
     
     "The hash value of the value, which allows the value to 
@@ -61,10 +69,15 @@ shared abstract class Object()
      Therefore, a class which refines [[equals]] must also
      refine `hash`.
      
-     Because the [[Integer]] type is platform-dependent 
-     a compiler for a given platform is permitted to
-     further manipulate the calculated hash for an object,
-     and the resulting hash may differ between platforms."
+     In general, `hash` values vary between platforms and
+     between executions of the same program.
+     
+     Note that when executing on a Java Virtual Machine, the 
+     64-bit [[Integer]] value returned by an implementation 
+     of `hash` is truncated to a 32-bit integer value by 
+     removal of the 32 highest order bits, before returning
+     the value to the caller."
+    see (`function identityHash`)
     shared formal Integer hash;
     
     "A developer-friendly string representing the instance. 

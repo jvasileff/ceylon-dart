@@ -324,11 +324,17 @@ shared interface List<out Element=Anything>
      
      For example:
      
-     - `(-2..2).patch([],1,3)` produces the list `{-2,2}`, 
-       and
-     - `[-2, 2].patch(-1..1,1)` produces the list 
-       `{-2,-1,0,1,2}`.'
-     - `0:3`.patch(2..0) produces the list `{0,1,2,2,1,0}`.
+     - `(-2..2).patch([], 1, 3)` produces the list `{-2, 2}`,
+     - `[-2, 2].patch(-1..1, 1)` produces the list 
+       `{-2, -1, 0, 1, 2}`, and
+     - `0:3.patch(2..0)` produces the list 
+       `{0, 1, 2, 2, 1, 0}`.
+     
+     Finally, to patch a single element, leaving the `size`
+     of the list unchanged, explicitly specify `length==1`:
+     
+     - `[0, 1, 0, 1].patch([-1], 2, 1)` produces the list
+       `{0, 1, -1, 1}`.
      
      If `length<0`, or if `from` is outside the range 
      `0..size`, return this list."
@@ -383,9 +389,9 @@ shared interface List<out Element=Anything>
     see (`function locations`)
     shared default 
     {Integer*} indexesWhere(
-            "The predicate function the indexed elements 
-             must satisfy"
-            Boolean selecting(Element&Object element)) 
+        "The predicate function the indexed elements must 
+         satisfy."
+        Boolean selecting(Element&Object element)) 
             => { for (index in 0:size) 
                     if (exists element=getFromFirst(index), 
                             selecting(element)) 
@@ -397,9 +403,9 @@ shared interface List<out Element=Anything>
     see (`function locate`)
     shared default 
     Integer? firstIndexWhere(
-            "The predicate function the indexed elements 
-             must satisfy"
-            Boolean selecting(Element&Object element)) {
+        "The predicate function the indexed elements must 
+         satisfy."
+        Boolean selecting(Element&Object element)) {
         variable value index = 0;
         while (index<size) {
             if (exists element=getFromFirst(index), 
@@ -417,9 +423,9 @@ shared interface List<out Element=Anything>
     see (`function locateLast`)
     shared default 
     Integer? lastIndexWhere(
-            "The predicate function the indexed elements 
-             must satisfy."
-            Boolean selecting(Element&Object element)) {
+        "The predicate function the indexed elements must 
+         satisfy."
+        Boolean selecting(Element&Object element)) {
         variable value index = size;
         while (index>0) {
             index--;
@@ -439,9 +445,9 @@ shared interface List<out Element=Anything>
      This is an eager operation."
     shared default 
     List<Element> trim(
-            "The predicate function that the trimmed 
-             elements satisfy."
-            Boolean trimming(Element&Object elem)) {
+        "The predicate function that the trimmed elements 
+         satisfy."
+        Boolean trimming(Element&Object elem)) {
         if (size>0) {
             value end = size-1;
             variable Integer from=-1;
@@ -481,9 +487,9 @@ shared interface List<out Element=Anything>
      This is an eager operation."
     shared default 
     List<Element> trimLeading(
-            "The predicate function that the trimmed 
-             elements satisfy."
-            Boolean trimming(Element&Object elem)) {
+        "The predicate function that the trimmed elements 
+         satisfy."
+        Boolean trimming(Element&Object elem)) {
         if (size>0) {
             value end = size-1;
             for (index in 0..end) {
@@ -504,9 +510,9 @@ shared interface List<out Element=Anything>
      This is an eager operation."
     shared default 
     List<Element> trimTrailing(
-            "The predicate function that the trimmed 
-             elements satisfy."
-            Boolean trimming(Element&Object elem)) {
+        "The predicate function that the trimmed elements 
+         satisfy."
+        Boolean trimming(Element&Object elem)) {
         if (size>0) {
             value end = size-1;
             for (index in end..0) {
@@ -537,7 +543,8 @@ shared interface List<out Element=Anything>
     "Select the first elements of this list, returning a 
      list no longer than the given length. If this list is 
      shorter than the given length, return this list. 
-     Otherwise return a list of the given length.
+     Otherwise return a list of the given length. If 
+     `length<=0` return an empty list.
      
      For any `list`, and for any integer `length`:
      

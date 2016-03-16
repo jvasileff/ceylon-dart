@@ -14,6 +14,8 @@
    
        value settings = map { "lang"->"en_AU", "loc"->"ES" };
    
+   The [[emptyMap]] is a `Map` with no entries.
+   
    The presence of an entry in a map may be tested using the 
    `in` operator:
    
@@ -32,7 +34,8 @@
    using [[Object.equals]] or [[Comparable.compare]]."""
 see (`class Entry`, `function package.map`,
      `function forKey`, `function forItem`, 
-     `function byItem`, `function byKey`)
+     `function byItem`, `function byKey`,
+      `value emptyMap`)
 tagged("Collections")
 shared interface Map<out Key=Object, out Item=Anything>
         satisfies Collection<Key->Item> &
@@ -116,34 +119,42 @@ shared interface Map<out Key=Object, out Item=Anything>
     shared actual formal Map<Key,Item> clone();
     
     "A [[Collection]] containing the keys of this map."
+    //TODO: should be a Set
     shared actual default Collection<Key> keys
-            => object satisfies Collection<Key> {
+            => object extends Object() 
+                      satisfies Set<Key> {
         contains(Object key) => outer.defines(key);
         iterator() => outer.map(Entry.key).iterator();
-        clone() => [*this];
         size => outer.size;
+        empty => outer.empty;
+        clone() => set(this);
     };
     
     "A [[Collection]] containing the items stored in this 
      map. An element can be stored under more than one key 
      in the map, and so it can occur more than once in the 
      resulting collection."
-    shared default Collection<Item> items
-            => object satisfies Collection<Item> {
-        shared actual Boolean contains(Object item) {
-            for (k->v in outer) {
-                if (exists v, v==item) {
-                    return true;
-                }
-            }
-            else {
-                return false;
-            }
-        }
+    shared default Collection<Item> items => Items();
+    
+    "A bag of items."
+    class Items() extends Object() 
+                  satisfies Collection<Item> {
+        contains(Object item) 
+                => outer.any((entry) 
+                    => if (exists it = entry.item) 
+                            then it==item 
+                            else false);
         iterator() => outer.map(Entry.item).iterator();
-        clone() => [*this];
         size => outer.size;
-    };
+        empty => outer.empty;
+        clone() => [*this];
+        //implement hash and equals for bag semantics
+        hash => frequencies().hash;
+        equals(Object that) 
+                => if (is Items that) 
+                then frequencies()==that.frequencies() 
+                else false;
+    }
     
     "Invert this map, producing a new immutable map where 
      the keys of the new map are the non-null items of this
@@ -422,16 +433,15 @@ shared interface Map<out Key=Object, out Item=Anything>
  
  produces the map `{ 1->\"hello\", 2->\"goodbye\" }`.
  
- This is an eager operation and the resulting map does
- not reflect changes to the given [[stream]]."
+ This is an eager operation and the resulting map does not 
+ reflect changes to the given [[stream]]."
 shared Map<Key,Item> map<Key,Item>(
-            "The stream of entries."
-            {<Key->Item>*} stream,
-            "A function that chooses between items with 
-             duplicate keys. By default, the item that
-             occurs _earlier_ in the stream is chosen."
-            Item choosing(Item earlier, Item later) 
-                    => earlier)
+    "The stream of entries."
+    {<Key->Item>*} stream,
+    "A function that chooses between items with duplicate 
+     keys. By default, the item that occurs _earlier_ in the 
+     stream is chosen."
+    Item choosing(Item earlier, Item later) => earlier)
         given Key satisfies Object
         => stream.summarize(Entry.key, 
                 (Item? item, entry) 

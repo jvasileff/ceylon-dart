@@ -149,23 +149,28 @@ shared final native class Character(Character character)
     aliased("codePoint")
     shared native Integer integer;
     
-    "Compare this character with the given string character, 
+    "Compare this character with the given character, 
      according to the Unicode code points of the characters."
-    shared actual native Comparison compare(Character other);
+    shared actual native Comparison compare(Character other)
+            => this.integer <=> other.integer;
     
     "Determines if the given object is a character with the
      same code point as this character."
-    shared actual native Boolean equals(Object that);
+    shared actual native Boolean equals(Object that)
+            => if (is Character that)
+                then that.integer == this.integer
+                else false;
     
-    "The code point of the character."
-    shared actual native Integer hash;
+    "The hash code for this `Character`, which is always its 
+     32-bit [[Unicode code point|integer]]."
+    shared actual native Integer hash => integer;
     
-    "The character with the unicode code point that is one
-     greater than this character."
+    "The character with the unicode code point that is the
+     predecessor of the unicode code point this character."
     shared actual native Character predecessor;
 
-    "The character with the unicode code point that is one
-     less than this character."
+    "The character with the unicode code point that is the
+     successor of the unicode code point this character."
     shared actual native Character successor;
     
     shared actual native Character neighbour(Integer offset);

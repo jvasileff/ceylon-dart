@@ -10,7 +10,9 @@
      
      value words = set { \"hello\", \"world\" };
      value greetings = set { \"hello\", \"goodbye\", \"hola\", \"adios\" };
-     
+ 
+ The [[emptySet]] is a `Set` with no elements.
+ 
  Sets may be the subject of the binary union, intersection, 
  and complement operators `|`, `&`, and `~`.
  
@@ -20,7 +22,7 @@
  An implementation of `Set` may compare elements for 
  equality using [[Object.equals]] or [[Comparable.compare]]."
 tagged("Collections")
-see (`function package.set`)
+see (`function package.set`, `value emptySet`)
 shared interface Set<out Element=Object>
         satisfies Collection<Element>
         given Element satisfies Object {
@@ -72,6 +74,13 @@ shared interface Set<out Element=Object>
     "Returns a new `Set` containing all the elements of this 
      set and all the elements of the given `Set`.
      
+     For example:
+     
+         set { \"hello\", \"world\" } | set { 1, 2, \"hello\" }
+     
+     Produces the set `{ \"hello\", \"world\", 1, 2 }` of 
+     type `Set<String|Integer>`.
+     
      Note that it is possible for two sets of disjoint 
      element type to be considered to have elements in 
      common. For example, since \`1==1.0\` 
@@ -81,8 +90,8 @@ shared interface Set<out Element=Object>
          set { 1 } | set { 1.0 }
      
      produces the set `{ 1 }`."
-    shared default Set<Element|Other> 
-            union<Other>(Set<Other> set)
+    shared default 
+    Set<Element|Other> union<Other>(Set<Other> set)
             given Other satisfies Object 
             => package.set(chain(set));
     
@@ -91,6 +100,12 @@ shared interface Set<out Element=Object>
      that are instances of the intersection `Element&Other` 
      of the element types of the two sets.
      
+     For example:
+     
+         set { \"hello\", \"world\" } & set { 1, 2, \"hello\" }
+     
+     Produces the set `{ \"hello\" }` of type `Set<String>`.
+     
      Note that, according to this definition, and even 
      though `1==1.0` [[evaluates to true|Integer.equals]], 
      the expression
@@ -98,24 +113,30 @@ shared interface Set<out Element=Object>
          set { 1 } & set { 1.0 }
      
      produces the empty set `{}`."
-    shared default Set<Element&Other> 
-            intersection<Other>(Set<Other> set)
+    shared default 
+    Set<Element&Other> intersection<Other>(Set<Other> set)
             given Other satisfies Object
             => package.set(filter((e) => e in set)
-        .narrow<Other>());
+                    .narrow<Other>());
     
     "Returns a new `Set` containing all the elements in this 
-     set that are not contained in the given `Set`."
-    shared default Set<Element> 
-            complement<Other>(Set<Other> set)
+     set that are not contained in the given `Set`.
+     
+     For example:
+     
+         set { \"hello\", \"world\" } ~ set { 1, 2, \"hello\" }
+     
+     Produces the set `{ \"world\" }` of type `Set<String>`."
+    shared default 
+    Set<Element> complement<Other>(Set<Other> set)
             given Other satisfies Object 
             => package.set(filter((e) => !e in set));
     
     "Returns a new `Set` containing only the elements 
      contained in either this set or the given `Set`, but no 
      element contained in both sets."
-    shared default Set<Element|Other> 
-            exclusiveUnion<Other>(Set<Other> set)
+    shared default 
+    Set<Element|Other> exclusiveUnion<Other>(Set<Other> set)
             given Other satisfies Object 
             => package.set(filter((e) => !e in set)
                     .chain(set.filter((e) => !e in this)));
@@ -161,22 +182,20 @@ shared interface Set<out Element=Object>
  
  produces the set `{ 0, 1, 2, 3 }`.
  
- This is an eager operation and the resulting set does
- not reflect changes to the given [[stream]]."
+ This is an eager operation and the resulting set does not 
+ reflect changes to the given [[stream]]."
 see(`value Iterable.distinct`)
 shared Set<Element> set<Element>(
-        "The stream of elements."
-        {Element*} stream,
-        "A function that chooses between duplicate elements. 
-         By default, the element that occurs _earlier_ in 
-         the stream is chosen."
-        Element choosing(Element earlier, Element later) 
-                => earlier)
+    "The stream of elements."
+    {Element*} stream,
+    "A function that chooses between duplicate elements. By 
+     default, the element that occurs _earlier_ in the 
+     stream is chosen."
+    Element choosing(Element earlier, Element later) 
+            => earlier)
         given Element satisfies Object
-        => if (is Set<Element> stream) 
-        then stream
-        else object extends Object() 
-                    satisfies Set<Element&Object> {
+        => object extends Object() 
+        satisfies Set<Element&Object> {
     
     value elements =
             stream.summarize(identity,

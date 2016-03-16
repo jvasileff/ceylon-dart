@@ -1,13 +1,34 @@
 import ceylon.interop.dart {
     runtimeType
 }
+import ceylon.language.meta {
+    type
+}
 
-"Return the name of the concrete class of the given object, 
- in a format native to the virtual machine."
+"""Return the name of the concrete class of the given object, 
+   in a format native to the virtual machine. For example,
+   `className(0)` evaluates to:
+   
+   - `"ceylon.language.Integer"` on the Java Virtual Machine, 
+     and to
+   - `"ceylon.language::Integer"` on a JavaScript VM.
+   
+   To obtain a platform-independent class name, use the 
+   [[ceylon.language.meta::type]] function to obtain a
+   metamodel object, for example:
+   
+       type(1).declaration.qualifiedName
+   
+   evaluates to `"ceylon.language::Integer"` on every 
+   platform."""
 tagged("Metamodel")
-shared native String className(Object obj);
+see (`function type`)
+shared native String className(Anything obj);
+
 shared native("dart")
-String className(Object obj)
+String className(Anything obj)
     // TODO use our own reified metadata when available
     //      Type.toString() includes only the name, not package
-    =>  runtimeType(obj).string;
+    =>  if (exists obj)
+        then runtimeType(obj).string
+        else "null_";

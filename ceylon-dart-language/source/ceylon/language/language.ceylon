@@ -18,7 +18,7 @@ shared native object language {
     shared native Integer releaseVersion => 2;
     
     "The Ceylon language release name."
-    shared native String versionName => "A Series Of Unlikely Explanations";
+    shared native String versionName => "Charming But Irrational";
     
     "The major version of the code generated for the 
      underlying runtime."
@@ -53,7 +53,7 @@ shared native("dart") object language {
     shared native("dart") Integer majorVersion => 1;
     shared native("dart") Integer minorVersion => 2;
     shared native("dart") Integer releaseVersion => 2;
-    shared native("dart") String versionName => "A Series Of Unlikely Explanations";
+    shared native("dart") String versionName => "Charming But Irrational";
     shared native("dart") Integer majorVersionBinary => 8;
     shared native("dart") Integer minorVersionBinary => 0;
     shared actual native("dart") String string => "language";
