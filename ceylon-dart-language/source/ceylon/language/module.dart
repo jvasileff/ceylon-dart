@@ -132,7 +132,7 @@ $dart$core.int $package$intOr($dart$core.int integer, $dart$core.int other)
   =>  intOr(integer, other);
 
 $dart$core.int intOr($dart$core.int integer, $dart$core.int other)
-  => integer.toSigned(32) | other.toSigned(32);
+  =>  integer.toSigned(32) | other.toSigned(32);
 
 $dart$core.int $package$intAnd($dart$core.int integer, $dart$core.int other)
   =>  intAnd(integer, other);
@@ -166,7 +166,7 @@ $dart$core.int intPow($dart$core.int integer, $dart$core.int other) {
     }
     if (integer == 1) {
       return integer;
-  }
+    }
     throw new AssertionError("exponent must not be negative");
   }
   return $dart$math.pow(integer, other);
@@ -176,32 +176,32 @@ $dart$core.int $package$intSet($dart$core.int integer, $dart$core.int index, $da
   =>  intSet(integer, index, bit);
 
 $dart$core.int intSet($dart$core.int integer, $dart$core.int index, $dart$core.bool bit) {
-    if (index < 0 || index > 31) {
-      // Match JS behavior, for now
-      // https://github.com/ceylon/ceylon/issues/5799
-      //return new Integer(_value.toSigned(32));
+  if (index < 0 || index > 31) {
+    // Match JS behavior, for now
+    // https://github.com/ceylon/ceylon/issues/5799
+    //return new Integer(_value.toSigned(32));
     return integer;
-    }
-    $dart$core.int mask = (1 << index).toSigned(32);
-    if (bit) {
-    return integer.toSigned(32) | mask;
-    }
-    else {
-    return integer.toSigned(32) & ~mask;
-    }
   }
+  $dart$core.int mask = (1 << index).toSigned(32);
+  if (bit) {
+    return integer.toSigned(32) | mask;
+  }
+  else {
+    return integer.toSigned(32) & ~mask;
+  }
+}
 
 $dart$core.int $package$intFlip($dart$core.int integer, $dart$core.int index)
   =>  intFlip(integer, index);
 
 $dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
-    if (index < 0 || index > 31) {
-      // Match JS behavior, for now
-      // https://github.com/ceylon/ceylon/issues/5799
-      //return new Integer(_value.toSigned(32));
+  if (index < 0 || index > 31) {
+    // Match JS behavior, for now
+    // https://github.com/ceylon/ceylon/issues/5799
+    //return new Integer(_value.toSigned(32));
     return integer;
-    }
-    $dart$core.int mask = (1 << index).toSigned(32);
+  }
+  $dart$core.int mask = (1 << index).toSigned(32);
   return integer.toSigned(32) ^ mask;
 }
 
@@ -224,27 +224,28 @@ class String extends BaseString implements Summable, Comparable, Ranged {
   String.withString($dart$core.String s) : super.withString(s) {}
 
   @$dart$core.override
-  String get self => this;
+  String get self
+    =>  this;
 
   @$dart$core.override
   String operator +(String other)
-    => new String.withString(_$val + other._$val);
+    =>  new String.withString(_$val + other._$val);
 
   @$dart$core.override
   $dart$core.bool operator >(String other)
-    => _$val.compareTo(other._$val) > 0;
+    =>  _$val.compareTo(other._$val) > 0;
 
   @$dart$core.override
   $dart$core.bool operator <(String other)
-    => _$val.compareTo(other._$val) < 0;
+    =>  _$val.compareTo(other._$val) < 0;
 
   @$dart$core.override
   $dart$core.bool operator >=(String other)
-    => _$val.compareTo(other._$val) >= 0;
+    =>  _$val.compareTo(other._$val) >= 0;
 
   @$dart$core.override
   $dart$core.bool operator <=(String other)
-    => _$val.compareTo(other._$val) <= 0;
+    =>  _$val.compareTo(other._$val) <= 0;
 }
 
 /////////////////////////////////////////////////
@@ -259,9 +260,7 @@ class Throwable extends $dart$core.Error {
 
   Sequential _suppressed = empty;
 
-  Throwable.$(
-        $dart$core.String message,
-        Throwable this.cause) {
+  Throwable.$($dart$core.String message, Throwable this.cause) {
     this._description = message;
   }
 
@@ -348,7 +347,7 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
     process.writeLine(exception.stackTrace.toString());
   }
   else {
-    (write as Callable).f(String.instance(exception.stackTrace.toString()));
+    (write as Callable).f($ceylonString(exception.stackTrace.toString()));
   }
 }
 
@@ -364,7 +363,7 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
   }
   else {
     processArguments = new ArraySequence(new Array.withList(
-        arguments.map((s) => new String._fromNative(s)).toList(growable: false)));
+        arguments.map((s) => $ceylonString(s)).toList(growable: false)));
   }
 }
 
@@ -428,10 +427,9 @@ final $package$impl$reach = null;
 //
 /////////////////////////////////////////////////
 
-abstract
-class Callable {
-$dart$core.Function get f;
-$dart$core.Function get s;
+abstract class Callable {
+  $dart$core.Function get f;
+  $dart$core.Function get s;
 }
 
 class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
@@ -454,7 +452,7 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
       // For interop, dart$Calable's may be used directly as Functions, so handle the
       // non-variadic case that is normally avoided in `get f` above.
       if (_variadicIndex == -1) {
-          return $dart$core.Function.apply(_function, invocation.positionalArguments, null);
+        return $dart$core.Function.apply(_function, invocation.positionalArguments, null);
       }
 
       var inArgs = invocation.positionalArguments;
