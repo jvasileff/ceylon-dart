@@ -1328,7 +1328,7 @@ Callable $package$compose([Callable x, Callable y]) => $package$flatten(new dart
 
 Callable compose([Callable x, Callable y]) => $package$compose(x, y);
 
-Sequential $package$concatenate([Sequential iterables]) => functionIterable(new dart$Callable(() {
+Sequential $package$concatenate([Sequential iterables]) => dart$functionIterable(new dart$Callable(() {
     $dart$core.bool step$0$expired$0 = false;
     $dart$core.bool step$0$1() {
         if (step$0$expired$0) {
@@ -1524,7 +1524,7 @@ abstract class Correspondence {
         }
     }
     Iterable getAll([Iterable keys]);
-    static Iterable $getAll([final Correspondence $this, Iterable keys]) => functionIterable(new dart$Callable(() {
+    static Iterable $getAll([final Correspondence $this, Iterable keys]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$4 = false;
         $dart$core.bool step$0$5() {
             if (step$0$expired$4) {
@@ -1706,34 +1706,19 @@ class dart$VariableBoxString implements dart$$Basic {
     }
     $dart$core.String v;
 }
-Throwable $package$dart$wrapThrownObject([$dart$core.Object thrown]) => (() {
-    $dart$core.bool doElse$0 = true;
-    if (thrown is Throwable) {
-        Throwable thrown$1;
-        thrown$1 = thrown as Throwable;
-        doElse$0 = false;
-        return thrown$1;
-    }
-    if (doElse$0) {
-        return new Exception(thrown.toString());
-    }
-})();
-
-Throwable dart$wrapThrownObject([$dart$core.Object thrown]) => $package$dart$wrapThrownObject(thrown);
-
 class functionIterable$$anonymous$0_$$anonymous$1_ implements dart$$Basic, Iterator {
     functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_;
     functionIterable$$anonymous$0_$$anonymous$1_([functionIterable$$anonymous$0_ $outer$ceylon$language$functionIterable$$anonymous$0_]) {
         this.$outer$ceylon$language$functionIterable$$anonymous$0_ = $outer$ceylon$language$functionIterable$$anonymous$0_;
-        _$n = $outer$ceylon$language$functionIterable$$anonymous$0_.$capture$functionIterable$f.f() as Callable;
+        _$n = $outer$ceylon$language$functionIterable$$anonymous$0_.$capture$dart$functionIterable$f.f() as Callable;
     }
     Callable _$n;
     $dart$core.Object next() => _$n.f();
 }
 class functionIterable$$anonymous$0_ implements dart$$Basic, Iterable {
-    Callable $capture$functionIterable$f;
-    functionIterable$$anonymous$0_([Callable $capture$functionIterable$f]) {
-        this.$capture$functionIterable$f = $capture$functionIterable$f;
+    Callable $capture$dart$functionIterable$f;
+    functionIterable$$anonymous$0_([Callable $capture$dart$functionIterable$f]) {
+        this.$capture$dart$functionIterable$f = $capture$dart$functionIterable$f;
     }
     Iterator iterator() => new functionIterable$$anonymous$0_$$anonymous$1_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
@@ -1794,39 +1779,24 @@ class functionIterable$$anonymous$0_ implements dart$$Basic, Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-Iterable $package$functionIterable([Callable f]) => new functionIterable$$anonymous$0_(f);
+Iterable $package$dart$functionIterable([Callable f]) => new functionIterable$$anonymous$0_(f);
 
-Iterable functionIterable([Callable f]) => $package$functionIterable(f);
+Iterable dart$functionIterable([Callable f]) => $package$dart$functionIterable(f);
 
-void $package$dartListCopyTo([List val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
-    if ($dart$core.identical(sourcePosition, $package$dart$default)) {
-        sourcePosition = 0;
+Throwable $package$dart$wrapThrownObject([$dart$core.Object thrown]) => (() {
+    $dart$core.bool doElse$0 = true;
+    if (thrown is Throwable) {
+        Throwable thrown$1;
+        thrown$1 = thrown as Throwable;
+        doElse$0 = false;
+        return thrown$1;
     }
-    if ($dart$core.identical(destinationPosition, $package$dart$default)) {
-        destinationPosition = 0;
+    if (doElse$0) {
+        return new Exception(thrown.toString());
     }
-    if ($dart$core.identical(length, $package$dart$default)) {
-        length = $dartInt($package$smallest($ceylonInteger(val.size - (sourcePosition as $dart$core.int)), $ceylonInteger(destination.size - (destinationPosition as $dart$core.int))) as Integer);
-    }
-    $dart$core.int i = destinationPosition as $dart$core.int;
-    {
-        $dart$core.Object element$1;
-        Iterator iterator$0 = val.sublistFrom(sourcePosition as $dart$core.int).take(length as $dart$core.int).iterator();
-        while ((element$1 = iterator$0.next()) is !Finished) {
-            $dart$core.Object c;
-            {
-                c = element$1;
-            }
-            destination.set((() {
-                $dart$core.int tmp$2 = i;
-                i = $dartInt($ceylonInteger(i).successor);
-                return tmp$2;
-            })(), c);
-        }
-    }
-}
+})();
 
-void dartListCopyTo([List val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) => $package$dartListCopyTo(val, destination, sourcePosition, destinationPosition, length);
+Throwable dart$wrapThrownObject([$dart$core.Object thrown]) => $package$dart$wrapThrownObject(thrown);
 
 abstract class Destroyable implements Usable {
     void destroy([Throwable error]);
@@ -2193,7 +2163,7 @@ class Exception  extends Throwable {
     $dart$core.String _$description;
     Throwable _$cause;
 }
-Iterable $package$expand([Iterable iterables]) => functionIterable(new dart$Callable(() {
+Iterable $package$expand([Iterable iterables]) => dart$functionIterable(new dart$Callable(() {
     $dart$core.bool step$0$expired$0 = false;
     $dart$core.bool step$0$1() {
         if (step$0$expired$0) {
@@ -3165,7 +3135,7 @@ class interleave$$anonymous$0_ implements dart$$Basic, Iterable {
         this.$capture$interleave$iterables = $capture$interleave$iterables;
     }
     $dart$core.int get size => (() {
-        Iterable arg$0$0 = functionIterable(new dart$Callable(() {
+        Iterable arg$0$0 = dart$functionIterable(new dart$Callable(() {
             $dart$core.bool step$0$expired$1 = false;
             $dart$core.bool step$0$2() {
                 if (step$0$expired$1) {
@@ -3217,7 +3187,7 @@ class interleave$$anonymous$0_ implements dart$$Basic, Iterable {
         return $dartInt($package$min(arg$0$0) as Integer);
     })() * $capture$interleave$iterables.size;
     $dart$core.bool get empty => (() {
-        Iterable arg$9$0 = functionIterable(new dart$Callable(() {
+        Iterable arg$9$0 = dart$functionIterable(new dart$Callable(() {
             $dart$core.bool step$0$expired$10 = false;
             $dart$core.bool step$0$11() {
                 if (step$0$expired$10) {
@@ -5316,7 +5286,7 @@ abstract class Iterable implements Category {
         }
     }
     Iterable map([Callable collecting]);
-    static Iterable $map([final Iterable $this, Callable collecting]) => functionIterable(new dart$Callable(() {
+    static Iterable $map([final Iterable $this, Callable collecting]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$17 = false;
         $dart$core.bool step$0$18() {
             if (step$0$expired$17) {
@@ -5368,7 +5338,7 @@ abstract class Iterable implements Category {
     Iterable flatMap([Callable collecting]);
     static Iterable $flatMap([final Iterable $this, Callable collecting]) => $package$expand($this.map(collecting));
     Iterable filter([Callable selecting]);
-    static Iterable $filter([final Iterable $this, Callable selecting]) => functionIterable(new dart$Callable(() {
+    static Iterable $filter([final Iterable $this, Callable selecting]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$25 = false;
         $dart$core.bool step$0$26() {
             if (step$0$expired$25) {
@@ -5428,7 +5398,7 @@ abstract class Iterable implements Category {
         return new dart$Callable(step$3$33);
     }));
     Iterable narrow();
-    static Iterable $narrow([final Iterable $this]) => functionIterable(new dart$Callable(() {
+    static Iterable $narrow([final Iterable $this]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$34 = false;
         $dart$core.bool step$0$35() {
             if (step$0$expired$34) {
@@ -5660,7 +5630,7 @@ abstract class Iterable implements Category {
         }
     }
     Callable spread([Callable method]);
-    static Callable $spread([final Iterable $this, Callable method]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => functionIterable(new dart$Callable(() {
+    static Callable $spread([final Iterable $this, Callable method]) => $package$flatten(new dart$Callable(([$dart$core.Object args]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$64 = false;
         $dart$core.bool step$0$65() {
             if (step$0$expired$64) {
@@ -5809,7 +5779,7 @@ abstract class Iterable implements Category {
     Iterable defaultNullElements([$dart$core.Object defaultValue]);
     static Iterable $defaultNullElements([final Iterable $this, $dart$core.Object defaultValue]) => $this.map(new dart$Callable(([$dart$core.Object elem]) => (($dart$core.Object $lhs$) => null == $lhs$ ? defaultValue : $lhs$)(elem)));
     Iterable get coalesced;
-    static Iterable $get$coalesced([final Iterable $this]) => functionIterable(new dart$Callable(() {
+    static Iterable $get$coalesced([final Iterable $this]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$81 = false;
         $dart$core.bool step$0$82() {
             if (step$0$expired$81) {
@@ -5890,7 +5860,7 @@ abstract class Iterable implements Category {
     Iterable chain([Iterable other]);
     static Iterable $chain([final Iterable $this, Iterable other]) => new Iterable$chain$$anonymous$26_($this, other);
     Iterable product([Iterable other]);
-    static Iterable $product([final Iterable $this, Iterable other]) => functionIterable(new dart$Callable(() {
+    static Iterable $product([final Iterable $this, Iterable other]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$98 = false;
         $dart$core.bool step$0$99() {
             if (step$0$expired$98) {
@@ -6026,7 +5996,7 @@ abstract class Iterable implements Category {
     })();
 }
 $dart$core.String $package$commaList([Iterable elements]) => (() {
-    Iterable arg$146$0 = functionIterable(new dart$Callable(() {
+    Iterable arg$146$0 = dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$147 = false;
         $dart$core.bool step$0$148() {
             if (step$0$expired$147) {
@@ -7505,7 +7475,7 @@ abstract class List implements Collection, Correspondence, Ranged {
         })()), $this.skip($this.size - sublist.size), sublist);
     }
     Iterable indexesWhere([Callable selecting]);
-    static Iterable $indexesWhere([final List $this, Callable selecting]) => functionIterable(new dart$Callable(() {
+    static Iterable $indexesWhere([final List $this, Callable selecting]) => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$21 = false;
         $dart$core.bool step$0$22() {
             if (step$0$expired$21) {
@@ -8399,7 +8369,7 @@ class Map$coalescedMap$$anonymous$7_ implements dart$$Object, Map {
     $dart$core.bool defines([$dart$core.Object key]) => !(null == $outer$ceylon$language$Map.get(key));
     $dart$core.Object get([$dart$core.Object key]) => $outer$ceylon$language$Map.get(key);
     $dart$core.Object getOrDefault([$dart$core.Object key, $dart$core.Object $default]) => (($dart$core.Object $lhs$) => null == $lhs$ ? $default : $lhs$)($outer$ceylon$language$Map.getOrDefault(key, $default));
-    Iterator iterator() => functionIterable(new dart$Callable(() {
+    Iterator iterator() => dart$functionIterable(new dart$Callable(() {
         $dart$core.bool step$0$expired$25 = false;
         $dart$core.bool step$0$26() {
             if (step$0$expired$25) {
@@ -9242,12 +9212,6 @@ abstract class meta$declaration$ClassWithInitializerDeclaration implements meta$
 }
 abstract class meta$declaration$ConstructorDeclaration implements meta$declaration$NestableDeclaration {
 }
-abstract class meta$declaration$Contained {
-    meta$declaration$Package get containingPackage;
-    meta$declaration$Module get containingModule;
-    $dart$core.Object get container;
-    $dart$core.bool get toplevel;
-}
 abstract class meta$declaration$Declaration {
     $dart$core.String get name;
     $dart$core.String get qualifiedName;
@@ -9360,8 +9324,6 @@ abstract class meta$declaration$OpenTypeVariable implements meta$declaration$Ope
 abstract class meta$declaration$OpenUnion implements meta$declaration$OpenType {
     List get caseTypes;
 }
-abstract class meta$declaration$ReferenceDeclaration implements meta$declaration$ValueDeclaration {
-}
 abstract class meta$declaration$SetterDeclaration implements meta$declaration$NestableDeclaration {
     meta$declaration$ValueDeclaration get variable;
     $dart$core.bool get actual;
@@ -9391,13 +9353,6 @@ abstract class meta$declaration$TypeParameter implements meta$declaration$Declar
     meta$declaration$Variance get variance;
     Sequential get satisfiedTypes;
     Sequential get caseTypes;
-}
-abstract class meta$declaration$ValueableDeclaration {
-    $dart$core.Object apply();
-    $dart$core.Object memberApply([meta$model$Type containerType]);
-    $dart$core.Object get();
-    static $dart$core.Object $get([final meta$declaration$ValueableDeclaration $this]) => ($this.apply() as meta$model$Gettable).get();
-    $dart$core.Object memberGet([$dart$core.Object container]);
 }
 abstract class meta$declaration$ValueConstructorDeclaration implements meta$declaration$GettableDeclaration, meta$declaration$ConstructorDeclaration {
     meta$declaration$ClassDeclaration get container;
@@ -9503,13 +9458,6 @@ abstract class meta$model$ClassOrInterface implements meta$model$Model, meta$mod
     Sequential getDeclaredInterfaces([Sequential annotationTypes]);
     Sequential getInterfaces([Sequential annotationTypes]);
 }
-abstract class meta$model$Constructor implements meta$model$ConstructorModel, meta$model$Applicable {
-    meta$declaration$ConstructorDeclaration get declaration;
-    meta$model$Class get container;
-}
-abstract class meta$model$ConstructorModel implements meta$model$Functional, meta$model$Declared {
-    meta$model$ClassModel get container;
-}
 abstract class meta$model$Declared {
     meta$declaration$Declaration get declaration;
     $dart$core.Object get container;
@@ -9568,9 +9516,6 @@ abstract class meta$model$MemberClassCallableConstructor implements meta$model$F
     meta$model$MemberClass get type;
     meta$model$ClassModel get container;
     meta$model$CallableConstructor bind([$dart$core.Object container]);
-}
-abstract class meta$model$MemberClassConstructor implements meta$model$ConstructorModel, meta$model$Qualified {
-    meta$model$MemberClass get container;
 }
 abstract class meta$model$MemberClassValueConstructor implements meta$model$ValueModel, meta$model$Qualified {
     meta$declaration$ValueConstructorDeclaration get declaration;
