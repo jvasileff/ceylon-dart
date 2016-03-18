@@ -148,7 +148,7 @@ class DeprecationAnnotation implements dart$$Basic, OptionalAnnotation {
         this.description = description;
     }
     $dart$core.String description;
-    $dart$core.String get reason => !String.instance(description).empty ? description : null;
+    $dart$core.String get reason => !$ceylonString(description).empty ? description : null;
 }
 DeprecationAnnotation $package$deprecated([$dart$core.Object reason = $package$dart$default]) {
     if ($dart$core.identical(reason, $package$dart$default)) {
@@ -1019,8 +1019,8 @@ abstract class BaseCharacter implements dart$$Object, Comparable {
     }
     $dart$core.int integer;
     $dart$core.String toString() => (new $dart$core.String.fromCharCode(integer)).toString();
-    Character get lowercased => $package$characterFromInteger(($ceylon$interop$dart.dartString(String.instance(toString()).lowercased).runes.elementAt(0) as $dart$core.num).toInt());
-    Character get uppercased => $package$characterFromInteger(($ceylon$interop$dart.dartString(String.instance(toString()).uppercased).runes.elementAt(0) as $dart$core.num).toInt());
+    Character get lowercased => $package$characterFromInteger(($ceylon$interop$dart.dartString($ceylonString(toString()).lowercased).runes.elementAt(0) as $dart$core.num).toInt());
+    Character get uppercased => $package$characterFromInteger(($ceylon$interop$dart.dartString($ceylonString(toString()).uppercased).runes.elementAt(0) as $dart$core.num).toInt());
     Character get titlecased => uppercased;
     $dart$core.bool get lowercase => !(uppercased == this);
     $dart$core.bool get uppercase => !(lowercased == this);
@@ -1828,252 +1828,6 @@ void $package$dartListCopyTo([List val, Array destination, $dart$core.Object sou
 
 void dartListCopyTo([List val, Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) => $package$dartListCopyTo(val, destination, sourcePosition, destinationPosition, length);
 
-$dart$core.String $package$dartStringJoin([$dart$core.String val, Iterable objects]) {
-    $dart$core.String result = "";
-    $dart$core.bool first = true;
-    {
-        $dart$core.Object element$4;
-        Iterator iterator$3 = objects.iterator();
-        while ((element$4 = iterator$3.next()) is !Finished) {
-            $dart$core.Object el;
-            {
-                el = element$4;
-            }
-            if (first) {
-                first = false;
-            } else {
-                result = result + val;
-            }
-            result = result + el.toString();
-        }
-    }
-    return result;
-}
-
-$dart$core.String dartStringJoin([$dart$core.String val, Iterable objects]) => $package$dartStringJoin(val, objects);
-
-Iterable $package$dartStringLines([$dart$core.String val]) => String.instance(val).split((() {
-    Character $r = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
-})(), true, false).map(new dart$Callable(([String s]) => s.trimTrailing((() {
-    Character $r = new Character.$fromInt(13);
-    return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
-})())));
-
-Iterable dartStringLines([$dart$core.String val]) => $package$dartStringLines(val);
-
-Iterable $package$dartStringLinesWithBreaks([$dart$core.String val]) => String.instance(val).split((() {
-    Character $r = new Character.$fromInt(10);
-    return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
-})(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
-    $dart$core.String line;
-    {
-        line = String.nativeValue(lineWithBreak.getFromFirst(0) as String);
-    }
-    $dart$core.String br;
-    {
-        br = String.nativeValue(lineWithBreak.getFromFirst(1) as String);
-    }
-    return (() {
-        $dart$core.bool doElse$5 = true;
-        if (!(null == br)) {
-            doElse$5 = false;
-            return String.instance(line + br);
-        }
-        if (doElse$5) {
-            $dart$core.Object br$6;
-            br$6 = String.instance(br);
-            return String.instance(line);
-        }
-    })();
-})()));
-
-Iterable dartStringLinesWithBreaks([$dart$core.String val]) => $package$dartStringLinesWithBreaks(val);
-
-class dartStringSplit$$anonymous$2_$iterator$$anonymous$3_ implements dart$$Basic, Iterator {
-    dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_;
-    dartStringSplit$$anonymous$2_$iterator$$anonymous$3_([dartStringSplit$$anonymous$2_ $outer$ceylon$language$dartStringSplit$$anonymous$2_]) {
-        this.$outer$ceylon$language$dartStringSplit$$anonymous$2_ = $outer$ceylon$language$dartStringSplit$$anonymous$2_;
-        _$seq = String.instance($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$val).sequence();
-        _$it = _$seq.iterator();
-        _$index = 0;
-        _$first = true;
-        _$lastWasSeparator = false;
-        _$peeked = false;
-        _$peekedWasSeparator = false;
-        _$eof = false;
-        _$peekSeparator();
-    }
-    Sequential _$seq;
-    Iterator _$it;
-    $dart$core.int _$index;
-    $dart$core.bool _$first;
-    $dart$core.bool _$lastWasSeparator;
-    $dart$core.bool _$peeked;
-    $dart$core.bool _$peekedWasSeparator;
-    $dart$core.bool _$eof;
-    $dart$core.bool _$peekSeparator() {
-        if (!_$peeked) {
-            _$peeked = true;
-            {
-                $dart$core.bool doElse$7 = true;
-                {
-                    $dart$core.Object next$8 = _$it.next();
-                    if (!(next$8 is Finished)) {
-                        Character next;
-                        next = next$8 as Character;
-                        doElse$7 = false;
-                        _$peekedWasSeparator = $dartBool(($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$splitting as Callable).f(next) as Boolean);
-                    }
-                }
-                if (doElse$7) {
-                    _$eof = true;
-                    _$peekedWasSeparator = false;
-                }
-            }
-        }
-        return _$peekedWasSeparator;
-    }
-    void _$eatChar() {
-        _$peeked = false;
-        _$peekSeparator();
-        _$index = $dartInt($ceylonInteger(_$index).successor);
-    }
-    $dart$core.bool _$eatSeparator() {
-        $dart$core.bool result = _$peekSeparator();
-        if (result) {
-            _$eatChar();
-        }
-        return result;
-    }
-    $dart$core.String _$substring([$dart$core.int start, $dart$core.int end]) => String.nativeValue(new String(_$seq.measure($ceylonInteger(start), end - start) as Iterable));
-    $dart$core.Object next() {
-        if (!_$eof) {
-            $dart$core.int start = _$index;
-            if (((_$first && (start == 0)) || _$lastWasSeparator) && _$peekSeparator()) {
-                _$first = false;
-                _$lastWasSeparator = false;
-                return String.instance("");
-            }
-            if (_$eatSeparator()) {
-                if ($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$groupSeparators as $dart$core.bool) {
-                    while (_$eatSeparator()) {}
-                }
-                if (!($outer$ceylon$language$dartStringSplit$$anonymous$2_.$capture$dartStringSplit$discardSeparators as $dart$core.bool)) {
-                    _$lastWasSeparator = true;
-                    return String.instance(_$substring(start, _$index));
-                }
-                start = _$index;
-            }
-            while ((!_$eof) && (!_$peekSeparator())) {
-                _$eatChar();
-            }
-            _$lastWasSeparator = false;
-            return String.instance(_$substring(start, _$index));
-        } else if (_$lastWasSeparator) {
-            _$lastWasSeparator = false;
-            return String.instance("");
-        } else {
-            return $package$finished;
-        }
-    }
-}
-class dartStringSplit$$anonymous$2_ implements dart$$Basic, Iterable {
-    $dart$core.String $capture$dartStringSplit$val;
-    Callable $capture$dartStringSplit$splitting;
-    $dart$core.Object $capture$dartStringSplit$groupSeparators;
-    $dart$core.Object $capture$dartStringSplit$discardSeparators;
-    dartStringSplit$$anonymous$2_([$dart$core.String $capture$dartStringSplit$val, Callable $capture$dartStringSplit$splitting, $dart$core.Object $capture$dartStringSplit$groupSeparators, $dart$core.Object $capture$dartStringSplit$discardSeparators]) {
-        this.$capture$dartStringSplit$val = $capture$dartStringSplit$val;
-        this.$capture$dartStringSplit$splitting = $capture$dartStringSplit$splitting;
-        this.$capture$dartStringSplit$groupSeparators = $capture$dartStringSplit$groupSeparators;
-        this.$capture$dartStringSplit$discardSeparators = $capture$dartStringSplit$discardSeparators;
-    }
-    Iterator iterator() => new dartStringSplit$$anonymous$2_$iterator$$anonymous$3_(this);
-    $dart$core.String toString() => Iterable.$get$string(this);
-    $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
-    $dart$core.bool get empty => Iterable.$get$empty(this);
-    $dart$core.int get size => Iterable.$get$size(this);
-    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
-    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
-    $dart$core.Object get first => Iterable.$get$first(this);
-    $dart$core.Object get last => Iterable.$get$last(this);
-    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
-    Sequential sequence() => Iterable.$sequence(this);
-    $dart$core.Object indexes() => Iterable.$indexes(this);
-    Iterable get rest => Iterable.$get$rest(this);
-    Iterable get exceptLast => Iterable.$get$exceptLast(this);
-    void each([Callable step]) => Iterable.$each(this, step);
-    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
-    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
-    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
-    Iterable narrow() => Iterable.$narrow(this);
-    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
-    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
-    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
-    $dart$core.Object find([Callable selecting]) => Iterable.$find(this, selecting);
-    $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
-    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
-    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
-    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
-    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
-    Callable spread([Callable method]) => Iterable.$spread(this, method);
-    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
-    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
-    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
-    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
-    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
-    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
-    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
-    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
-    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
-    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
-    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
-    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
-    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
-    Iterable get coalesced => Iterable.$get$coalesced(this);
-    Iterable get indexed => Iterable.$get$indexed(this);
-    Iterable get paired => Iterable.$get$paired(this);
-    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
-    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
-    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
-    Iterable product([Iterable other]) => Iterable.$product(this, other);
-    Iterable get cycled => Iterable.$get$cycled(this);
-    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
-    Iterable get distinct => Iterable.$get$distinct(this);
-    Map frequencies() => Iterable.$frequencies(this);
-    Map tabulate([Callable collecting]) => Iterable.$tabulate(this, collecting);
-    Map group([Callable grouping]) => Iterable.$group(this, grouping);
-    Map summarize([Callable grouping, Callable accumulating]) => Iterable.$summarize(this, grouping, accumulating);
-    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
-    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
-}
-Iterable $package$dartStringSplit([$dart$core.String val, $dart$core.Object splitting = $package$dart$default, $dart$core.Object discardSeparators = $package$dart$default, $dart$core.Object groupSeparators = $package$dart$default]) {
-    if ($dart$core.identical(splitting, $package$dart$default)) {
-        splitting = new dart$Callable(([Character ch]) => $ceylonBoolean(ch.whitespace));
-    }
-    if ($dart$core.identical(discardSeparators, $package$dart$default)) {
-        discardSeparators = true;
-    }
-    if ($dart$core.identical(groupSeparators, $package$dart$default)) {
-        groupSeparators = true;
-    }
-    return String.instance(val).empty ? new Singleton(String.instance(val)) : new dartStringSplit$$anonymous$2_(val, splitting, groupSeparators, discardSeparators);
-}
-
-Iterable dartStringSplit([$dart$core.String val, $dart$core.Object splitting = $package$dart$default, $dart$core.Object discardSeparators = $package$dart$default, $dart$core.Object groupSeparators = $package$dart$default]) => $package$dartStringSplit(val, splitting, discardSeparators, groupSeparators);
-
-class DartStringIterator implements dart$$Basic, Iterator {
-    DartStringIterator([$dart$core.String _$s]) {
-        this._$s = _$s;
-        _$dString = $ceylon$interop$dart.dartString(this._$s);
-        _$runeIterator = _$dString.runes.iterator;
-    }
-    $dart$core.String _$s;
-    $dart$core.String _$dString;
-    $dart$core.RuneIterator _$runeIterator;
-    $dart$core.Object next() => _$runeIterator.moveNext() ? $package$characterFromInteger(_$runeIterator.current) : $package$finished;
-}
 abstract class Destroyable implements Usable {
     void destroy([Throwable error]);
 }
@@ -2646,23 +2400,23 @@ $dart$core.String $package$formatFloat([$dart$core.double float, $dart$core.Obje
         previousZero = digit == 0;
         i = $dartInt($ceylonInteger(i).predecessor);
     }
-    $dart$core.String string = String.nativeValue(new String(digits.exceptLast));
-    $dart$core.int point = String.instance(string).size - decimalPlaces;
+    $dart$core.String string = $dartString(new String(digits.exceptLast));
+    $dart$core.int point = $ceylonString(string).size - decimalPlaces;
     $dart$core.String wholePart;
     $dart$core.String fractionalPart;
     if (point > 0) {
-        wholePart = String.nativeValue(String.instance(string).measure($ceylonInteger(0), point));
-        fractionalPart = String.nativeValue(String.instance(string).spanFrom($ceylonInteger(point)));
+        wholePart = $dartString($ceylonString(string).measure($ceylonInteger(0), point));
+        fractionalPart = $dartString($ceylonString(string).spanFrom($ceylonInteger(point)));
     } else {
         wholePart = "0";
-        fractionalPart = String.instance(string).padLeading(maxDecimalPlaces as $dart$core.int, new Character.$fromInt(48));
+        fractionalPart = $ceylonString(string).padLeading(maxDecimalPlaces as $dart$core.int, new Character.$fromInt(48));
     }
-    $dart$core.String normalized = String.instance(fractionalPart).trimTrailing((() {
+    $dart$core.String normalized = $ceylonString(fractionalPart).trimTrailing((() {
         Character $r = new Character.$fromInt(48);
         return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
     })()).padTrailing(minDecimalPlaces as $dart$core.int, new Character.$fromInt(48));
     $dart$core.String signed = (($dart$core.String $lhs$) => null == $lhs$ ? wholePart : $lhs$)($ceylonFloat(float).negative ? "-" + wholePart : null);
-    return (($dart$core.String $lhs$) => null == $lhs$ ? (signed + ".") + normalized : $lhs$)(String.instance(normalized).empty ? signed : null);
+    return (($dart$core.String $lhs$) => null == $lhs$ ? (signed + ".") + normalized : $lhs$)($ceylonString(normalized).empty ? signed : null);
 }
 
 $dart$core.String formatFloat([$dart$core.double float, $dart$core.Object minDecimalPlaces = $package$dart$default, $dart$core.Object maxDecimalPlaces = $package$dart$default]) => $package$formatFloat(float, minDecimalPlaces, maxDecimalPlaces);
@@ -2710,7 +2464,7 @@ $dart$core.String $package$formatInteger([$dart$core.int integer, $dart$core.Obj
     if (integer < 0) {
         digits = digits.follow(new Character.$fromInt(45));
     }
-    return String.nativeValue(new String(digits));
+    return $dartString(new String(digits));
 }
 
 $dart$core.String formatInteger([$dart$core.int integer, $dart$core.Object radix = $package$dart$default]) => $package$formatInteger(integer, radix);
@@ -6316,12 +6070,12 @@ $dart$core.String $package$commaList([Iterable elements]) => (() {
                 return $package$finished;
             }
             $dart$core.Object e = e$151;
-            return String.instance($package$stringify(e));
+            return $ceylonString($package$stringify(e));
         }
 
         return new dart$Callable(step$2$154);
     }));
-    return String.instance(", ").join(arg$146$0);
+    return $ceylonString(", ").join(arg$146$0);
 })();
 
 $dart$core.String commaList([Iterable elements]) => $package$commaList(elements);
@@ -7575,7 +7329,7 @@ abstract class List implements Collection, Correspondence, Ranged {
     static $dart$core.bool $equals([final List $this, $dart$core.Object that]) {
         if (that is String) {
             $dart$core.String that$6;
-            that$6 = String.nativeValue(that as String);
+            that$6 = $dartString(that as String);
             return false;
         }
         {
@@ -9483,7 +9237,7 @@ abstract class meta$declaration$ClassWithInitializerDeclaration implements meta$
     Sequence constructorDeclarations();
     static Sequence $constructorDeclarations([final meta$declaration$ClassWithInitializerDeclaration $this]) => new Singleton($this.defaultConstructor);
     meta$declaration$CallableConstructorDeclaration getConstructorDeclaration([$dart$core.String name]);
-    static meta$declaration$CallableConstructorDeclaration $getConstructorDeclaration([final meta$declaration$ClassWithInitializerDeclaration $this, $dart$core.String name]) => String.instance(name).empty ? $this.defaultConstructor : null;
+    static meta$declaration$CallableConstructorDeclaration $getConstructorDeclaration([final meta$declaration$ClassWithInitializerDeclaration $this, $dart$core.String name]) => $ceylonString(name).empty ? $this.defaultConstructor : null;
     Sequential annotatedConstructorDeclarations();
 }
 abstract class meta$declaration$ConstructorDeclaration implements meta$declaration$NestableDeclaration {
@@ -10273,12 +10027,12 @@ $dart$core.bool parseBoolean([$dart$core.String string]) => $package$parseBoolea
 $dart$core.double $package$parseFloat([$dart$core.String string]) {
     $dart$core.int sign;
     $dart$core.String unsignedPart;
-    if (String.instance(string).startsWith(String.instance("-"))) {
+    if ($ceylonString(string).startsWith($ceylonString("-"))) {
         sign = -1;
-        unsignedPart = String.nativeValue(String.instance(string).spanFrom($ceylonInteger(1)));
-    } else if (String.instance(string).startsWith(String.instance("+"))) {
+        unsignedPart = $dartString($ceylonString(string).spanFrom($ceylonInteger(1)));
+    } else if ($ceylonString(string).startsWith($ceylonString("+"))) {
         sign = 1;
-        unsignedPart = String.nativeValue(String.instance(string).spanFrom($ceylonInteger(1)));
+        unsignedPart = $dartString($ceylonString(string).spanFrom($ceylonInteger(1)));
     } else {
         sign = 1;
         unsignedPart = string;
@@ -10289,23 +10043,23 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
     {
         $dart$core.bool doElse$0 = true;
         {
-            $dart$core.int tmp$1 = String.instance(unsignedPart).firstOccurrence(new Character.$fromInt(46));
+            $dart$core.int tmp$1 = $ceylonString(unsignedPart).firstOccurrence(new Character.$fromInt(46));
             if (!(null == tmp$1)) {
                 $dart$core.int dot;
                 dot = tmp$1;
                 doElse$0 = false;
-                wholePart = String.nativeValue(String.instance(unsignedPart).spanTo($ceylonInteger(dot - 1)));
-                $dart$core.String afterWholePart = String.nativeValue(String.instance(unsignedPart).spanFrom($ceylonInteger(dot + 1)));
+                wholePart = $dartString($ceylonString(unsignedPart).spanTo($ceylonInteger(dot - 1)));
+                $dart$core.String afterWholePart = $dartString($ceylonString(unsignedPart).spanFrom($ceylonInteger(dot + 1)));
                 {
                     $dart$core.bool doElse$2 = true;
                     {
-                        $dart$core.int tmp$3 = String.instance(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
+                        $dart$core.int tmp$3 = $ceylonString(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
                         if (!(null == tmp$3)) {
                             $dart$core.int mag;
                             mag = tmp$3;
                             doElse$2 = false;
-                            fractionalPart = String.nativeValue(String.instance(afterWholePart).spanTo($ceylonInteger(mag - 1)));
-                            rest = String.nativeValue(String.instance(afterWholePart).spanFrom($ceylonInteger(mag)));
+                            fractionalPart = $dartString($ceylonString(afterWholePart).spanTo($ceylonInteger(mag - 1)));
+                            rest = $dartString($ceylonString(afterWholePart).spanFrom($ceylonInteger(mag)));
                         }
                     }
                     if (doElse$2) {
@@ -10318,13 +10072,13 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
         if (doElse$0) {{
                 $dart$core.bool doElse$4 = true;
                 {
-                    $dart$core.int tmp$5 = String.instance(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
+                    $dart$core.int tmp$5 = $ceylonString(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
                     if (!(null == tmp$5)) {
                         $dart$core.int mag;
                         mag = tmp$5;
                         doElse$4 = false;
-                        wholePart = String.nativeValue(String.instance(unsignedPart).spanTo($ceylonInteger(mag - 1)));
-                        rest = String.nativeValue(String.instance(unsignedPart).spanFrom($ceylonInteger(mag)));
+                        wholePart = $dartString($ceylonString(unsignedPart).spanTo($ceylonInteger(mag - 1)));
+                        rest = $dartString($ceylonString(unsignedPart).spanFrom($ceylonInteger(mag)));
                     }
                 }
                 if (doElse$4) {
@@ -10335,13 +10089,13 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
             fractionalPart = "0";
         }
     }
-    if ((!String.instance(wholePart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit)))) || (!String.instance(fractionalPart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit))))) {
+    if ((!$ceylonString(wholePart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit)))) || (!$ceylonString(fractionalPart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit))))) {
         return null;
     }
-    $dart$core.String usableWholePart = String.nativeValue(String.instance(wholePart).measure($ceylonInteger(0), $package$maximumIntegerExponent));
-    $dart$core.String usableFractionalPart = String.nativeValue(String.instance(fractionalPart).measure($ceylonInteger(0), $package$maximumIntegerExponent - String.instance(usableWholePart).size));
+    $dart$core.String usableWholePart = $dartString($ceylonString(wholePart).measure($ceylonInteger(0), $package$maximumIntegerExponent));
+    $dart$core.String usableFractionalPart = $dartString($ceylonString(fractionalPart).measure($ceylonInteger(0), $package$maximumIntegerExponent - $ceylonString(usableWholePart).size));
     $dart$core.String digits = usableWholePart + usableFractionalPart;
-    $dart$core.int shift = (($dart$core.int $lhs$) => null == $lhs$ ? String.instance(usableFractionalPart).size : $lhs$)(String.instance(usableFractionalPart).empty ? String.instance(usableWholePart).size - String.instance(wholePart).size : null);
+    $dart$core.int shift = (($dart$core.int $lhs$) => null == $lhs$ ? $ceylonString(usableFractionalPart).size : $lhs$)($ceylonString(usableFractionalPart).empty ? $ceylonString(usableWholePart).size - $ceylonString(wholePart).size : null);
     $dart$core.int exponent;
     {
         $dart$core.bool doElse$6 = true;
@@ -10365,7 +10119,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
         }
         if (doElse$6) {
             $dart$core.Object rest$9;
-            rest$9 = String.instance(rest);
+            rest$9 = $ceylonString(rest);
             exponent = -shift;
         }
     }
@@ -10391,7 +10145,7 @@ $dart$core.double $package$parseFloat([$dart$core.String string]) {
 
 $dart$core.double parseFloat([$dart$core.String string]) => $package$parseFloat(string);
 
-$dart$core.int $package$maximumIntegerExponent = $dartInt($package$smallest($ceylonInteger(String.instance($package$runtime.maxIntegerValue.toString()).size), $ceylonInteger(String.instance($package$runtime.minIntegerValue.toString()).size - 1)) as Integer) - 1;
+$dart$core.int $package$maximumIntegerExponent = $dartInt($package$smallest($ceylonInteger($ceylonString($package$runtime.maxIntegerValue.toString()).size), $ceylonInteger($ceylonString($package$runtime.minIntegerValue.toString()).size - 1)) as Integer) - 1;
 
 $dart$core.int get maximumIntegerExponent => $package$maximumIntegerExponent;
 
@@ -10418,8 +10172,8 @@ $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
         } else if (switch$11 == "f") {
             return -15;
         } else {
-            if (String.instance(String.instance(string).lowercased).startsWith(String.instance("e")) && String.instance(string).rest.every($package$digitOrSign)) {
-                return $package$parseInteger(String.nativeValue(String.instance(string).rest));
+            if ($ceylonString($ceylonString(string).lowercased).startsWith($ceylonString("e")) && $ceylonString(string).rest.every($package$digitOrSign)) {
+                return $package$parseInteger($dartString($ceylonString(string).rest));
             } else {
                 return null;
             }
@@ -10430,7 +10184,7 @@ $dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
 $dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseFloatExponent(string);
 
 Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit)), (() {
-    String $r = String.instance("+-");
+    String $r = $ceylonString("+-");
     return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r.contains($0)));
 })());
 
@@ -10457,7 +10211,7 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
     {
         $dart$core.bool doElse$0 = true;
         {
-            Character tmp$1 = String.instance(string).first;
+            Character tmp$1 = $ceylonString(string).first;
             if (!(null == tmp$1)) {
                 Character char;
                 char = tmp$1;
@@ -10479,20 +10233,20 @@ $dart$core.int $package$parseInteger([$dart$core.String string, $dart$core.Objec
         }
     }
     $dart$core.int limit = (($dart$core.int $lhs$) => null == $lhs$ ? -$package$runtime.maxIntegerValue : $lhs$)(negative ? $package$runtime.minIntegerValue : null);
-    $dart$core.int length = String.instance(string).size;
+    $dart$core.int length = $ceylonString(string).size;
     $dart$core.int result = 0;
     $dart$core.int digitIndex = 0;
     $dart$core.int index = start;
     while (index < length) {
         Character ch;
         {
-            Character tmp$2 = String.instance(string).getFromFirst(index);
+            Character tmp$2 = $ceylonString(string).getFromFirst(index);
             if (null == tmp$2) {
                 throw new AssertionError("Violated: exists ch = string.getFromFirst(index)");
             }
             ch = tmp$2;
         }
-        if ((((index + 1) == length) && ((radix as $dart$core.int) == 10)) && String.instance("kMGTP").contains(ch)) {{
+        if ((((index + 1) == length) && ((radix as $dart$core.int) == 10)) && $ceylonString("kMGTP").contains(ch)) {{
                 $dart$core.bool doElse$3 = true;
                 {
                     $dart$core.int tmp$4 = $package$parseIntegerExponent(ch);
@@ -10643,7 +10397,7 @@ class process_ implements dart$$Basic {
     Sequential get arguments => $package$processArguments;
     $dart$core.bool namedArgumentPresent([$dart$core.String name]) => false;
     $dart$core.String namedArgumentValue([$dart$core.String name]) => null;
-    $dart$core.String propertyValue([$dart$core.String name]) => String.nativeValue($ceylon$dart$runtime$core.runtime.platformProperties.get(String.instance(name)) as String);
+    $dart$core.String propertyValue([$dart$core.String name]) => $dartString($ceylon$dart$runtime$core.runtime.platformProperties.get($ceylonString(name)) as String);
     $dart$core.String environmentVariableValue([$dart$core.String name]) => $ceylon$dart$runtime$core.runtime.environmentVariableValue(name);
     void write([$dart$core.String string]) {
         $ceylon$dart$runtime$core.runtime.write(string);
@@ -10819,9 +10573,9 @@ abstract class Ranged implements Iterable {
 abstract class Resource {
     $dart$core.String get name;
     static $dart$core.String $get$name([final Resource $this]) {
-        $dart$core.int pos = String.instance($this.uri).lastOccurrence(new Character.$fromInt(47));
+        $dart$core.int pos = $ceylonString($this.uri).lastOccurrence(new Character.$fromInt(47));
         if (!(null == pos)) {
-            return String.nativeValue(String.instance($this.uri).spanFrom($ceylonInteger(pos + 1)));
+            return $dartString($ceylonString($this.uri).spanFrom($ceylonInteger(pos + 1)));
         }
         return $this.uri;
     }
@@ -13461,19 +13215,640 @@ Range $package$span([$dart$core.Object first, $dart$core.Object last]) => new Sp
 
 Range span([$dart$core.Object first, $dart$core.Object last]) => $package$span(first, last);
 
+abstract class BaseStringBoxer {
+    $dart$core.Object get self;
+    Comparison compare([$dart$core.Object other]);
+}
+class BaseString$split$$anonymous$1_$iterator$$anonymous$2_ implements dart$$Basic, Iterator {
+    BaseString$split$$anonymous$1_ $outer$ceylon$language$BaseString$split$$anonymous$1_;
+    BaseString$split$$anonymous$1_$iterator$$anonymous$2_([BaseString$split$$anonymous$1_ $outer$ceylon$language$BaseString$split$$anonymous$1_]) {
+        this.$outer$ceylon$language$BaseString$split$$anonymous$1_ = $outer$ceylon$language$BaseString$split$$anonymous$1_;
+        _$seq = $outer$ceylon$language$BaseString$split$$anonymous$1_.$outer$ceylon$language$BaseString.self.sequence();
+        _$it = _$seq.iterator();
+        _$index = 0;
+        _$first = true;
+        _$lastWasSeparator = false;
+        _$peeked = false;
+        _$peekedWasSeparator = false;
+        _$eof = false;
+        _$peekSeparator();
+    }
+    Sequential _$seq;
+    Iterator _$it;
+    $dart$core.int _$index;
+    $dart$core.bool _$first;
+    $dart$core.bool _$lastWasSeparator;
+    $dart$core.bool _$peeked;
+    $dart$core.bool _$peekedWasSeparator;
+    $dart$core.bool _$eof;
+    $dart$core.bool _$peekSeparator() {
+        if (!_$peeked) {
+            _$peeked = true;
+            {
+                $dart$core.bool doElse$2 = true;
+                {
+                    $dart$core.Object next$3 = _$it.next();
+                    if (!(next$3 is Finished)) {
+                        Character next;
+                        next = next$3 as Character;
+                        doElse$2 = false;
+                        _$peekedWasSeparator = $dartBool(($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$splitting as Callable).f(next) as Boolean);
+                    }
+                }
+                if (doElse$2) {
+                    _$eof = true;
+                    _$peekedWasSeparator = false;
+                }
+            }
+        }
+        return _$peekedWasSeparator;
+    }
+    void _$eatChar() {
+        _$peeked = false;
+        _$peekSeparator();
+        _$index = $dartInt($ceylonInteger(_$index).successor);
+    }
+    $dart$core.bool _$eatSeparator() {
+        $dart$core.bool result = _$peekSeparator();
+        if (result) {
+            _$eatChar();
+        }
+        return result;
+    }
+    $dart$core.String _$substring([$dart$core.int start, $dart$core.int end]) => $dartString(new String(_$seq.measure($ceylonInteger(start), end - start) as Iterable));
+    $dart$core.Object next() {
+        if (!_$eof) {
+            $dart$core.int start = _$index;
+            if (((_$first && (start == 0)) || _$lastWasSeparator) && _$peekSeparator()) {
+                _$first = false;
+                _$lastWasSeparator = false;
+                return $ceylonString("");
+            }
+            if (_$eatSeparator()) {
+                if ($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$groupSeparators as $dart$core.bool) {
+                    while (_$eatSeparator()) {}
+                }
+                if (!($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$discardSeparators as $dart$core.bool)) {
+                    _$lastWasSeparator = true;
+                    return $ceylonString(_$substring(start, _$index));
+                }
+                start = _$index;
+            }
+            while ((!_$eof) && (!_$peekSeparator())) {
+                _$eatChar();
+            }
+            _$lastWasSeparator = false;
+            return $ceylonString(_$substring(start, _$index));
+        } else if (_$lastWasSeparator) {
+            _$lastWasSeparator = false;
+            return $ceylonString("");
+        } else {
+            return $package$finished;
+        }
+    }
+}
+class BaseString$split$$anonymous$1_ implements dart$$Basic, Iterable {
+    BaseString $outer$ceylon$language$BaseString;
+    Callable $capture$BaseString$split$splitting;
+    $dart$core.Object $capture$BaseString$split$groupSeparators;
+    $dart$core.Object $capture$BaseString$split$discardSeparators;
+    BaseString$split$$anonymous$1_([BaseString $outer$ceylon$language$BaseString, Callable $capture$BaseString$split$splitting, $dart$core.Object $capture$BaseString$split$groupSeparators, $dart$core.Object $capture$BaseString$split$discardSeparators]) {
+        this.$outer$ceylon$language$BaseString = $outer$ceylon$language$BaseString;
+        this.$capture$BaseString$split$splitting = $capture$BaseString$split$splitting;
+        this.$capture$BaseString$split$groupSeparators = $capture$BaseString$split$groupSeparators;
+        this.$capture$BaseString$split$discardSeparators = $capture$BaseString$split$discardSeparators;
+    }
+    Iterator iterator() => new BaseString$split$$anonymous$1_$iterator$$anonymous$2_(this);
+    $dart$core.String toString() => Iterable.$get$string(this);
+    $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
+    $dart$core.bool get empty => Iterable.$get$empty(this);
+    $dart$core.int get size => Iterable.$get$size(this);
+    $dart$core.bool longerThan([$dart$core.int length]) => Iterable.$longerThan(this, length);
+    $dart$core.bool shorterThan([$dart$core.int length]) => Iterable.$shorterThan(this, length);
+    $dart$core.Object get first => Iterable.$get$first(this);
+    $dart$core.Object get last => Iterable.$get$last(this);
+    $dart$core.Object getFromFirst([$dart$core.int index]) => Iterable.$getFromFirst(this, index);
+    Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
+    Iterable get rest => Iterable.$get$rest(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    void each([Callable step]) => Iterable.$each(this, step);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    $dart$core.Object find([Callable selecting]) => Iterable.$find(this, selecting);
+    $dart$core.Object findLast([Callable selecting]) => Iterable.$findLast(this, selecting);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential collect([Callable collecting]) => Iterable.$collect(this, collecting);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
+    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
+    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable repeat([$dart$core.int times]) => Iterable.$repeat(this, times);
+    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get coalesced => Iterable.$get$coalesced(this);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map frequencies() => Iterable.$frequencies(this);
+    Map tabulate([Callable collecting]) => Iterable.$tabulate(this, collecting);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
+    Map summarize([Callable grouping, Callable accumulating]) => Iterable.$summarize(this, grouping, accumulating);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+}
+class BaseString$iterator$$anonymous$4_ implements dart$$Basic, Iterator {
+    BaseString $outer$ceylon$language$BaseString;
+    BaseString$iterator$$anonymous$4_([BaseString $outer$ceylon$language$BaseString]) {
+        this.$outer$ceylon$language$BaseString = $outer$ceylon$language$BaseString;
+        _$runeIterator = $ceylon$interop$dart.dartString($outer$ceylon$language$BaseString._$val).runes.iterator;
+    }
+    $dart$core.RuneIterator _$runeIterator;
+    $dart$core.Object next() => _$runeIterator.moveNext() ? $package$characterFromInteger(_$runeIterator.current) : $package$finished;
+}
+abstract class BaseString implements dart$$Object, SearchableList, BaseStringBoxer {
+    void _$init$BaseString([$dart$core.int $bitmap, $dart$core.String $withString$s, Iterable $$characters]) {
+        if (0 != ($bitmap & 2)) {{
+                $dart$core.bool doElse$0 = true;
+                if ($$characters is String) {
+                    $dart$core.String characters$1;
+                    characters$1 = $dartString($$characters as String);
+                    doElse$0 = false;
+                    _$val = characters$1;
+                }
+                if (doElse$0) {
+                    StringBuilder sb = new StringBuilder();
+                    $$characters.each(new dart$Callable(([$dart$core.Object $0]) => sb.appendCharacter($0 as Character)));
+                    _$val = sb.toString();
+                }
+            }
+        }
+        if (0 != ($bitmap & 1)) {
+            this._$val = $withString$s;
+        }
+    }
+    BaseString([Iterable characters]) : this.$d(2, null, characters);
+    BaseString.$d([$dart$core.int $bitmap, $dart$core.String $withString$s, Iterable $$characters]) {
+        _$init$BaseString($bitmap | 2, $withString$s, $$characters);
+    }
+    BaseString.withString([$dart$core.String s]) : this.withString$d(1, s);
+    BaseString.withString$d([$dart$core.int $bitmap, $dart$core.String $withString$s]) {
+        _$init$BaseString($bitmap | 1, $withString$s);
+    }
+    $dart$core.String _$val;
+    String get self;
+    $dart$core.String get lowercased => $ceylon$interop$dart.dartString($dartString(self)).toLowerCase();
+    $dart$core.String get uppercased => $ceylon$interop$dart.dartString($dartString(self)).toUpperCase();
+    Iterable split([$dart$core.Object splitting = $package$dart$default, $dart$core.Object discardSeparators = $package$dart$default, $dart$core.Object groupSeparators = $package$dart$default]) {
+        if ($dart$core.identical(splitting, $package$dart$default)) {
+            splitting = new dart$Callable(([Character ch]) => $ceylonBoolean(ch.whitespace));
+        }
+        if ($dart$core.identical(discardSeparators, $package$dart$default)) {
+            discardSeparators = true;
+        }
+        if ($dart$core.identical(groupSeparators, $package$dart$default)) {
+            groupSeparators = true;
+        }
+        return empty ? new Singleton(self) : new BaseString$split$$anonymous$1_(this, splitting, groupSeparators, discardSeparators);
+    }
+    Character get first => !empty ? $package$characterFromInteger(($ceylon$interop$dart.dartString(_$val).runes.first as $dart$core.num).toInt()) : null;
+    Character get last => !empty ? $package$characterFromInteger($ceylon$interop$dart.dartString(_$val).runes.last) : null;
+    String get rest => $ceylonString((new $dart$core.String.fromCharCodes($ceylon$interop$dart.dartString(_$val).runes.skip(1))).toString());
+    Character getFromLast([$dart$core.int index]) => empty || (index < 0) ? null : (() {
+        $dart$core.Runes runes;
+        {
+            runes = $ceylon$interop$dart.dartString(_$val).runes;
+        }
+        return index < runes.length ? $package$characterFromInteger((runes.elementAt((runes.length - 1) - index) as $dart$core.num).toInt()) : null;
+    })();
+    Sequential get keys => $package$measure($ceylonInteger(0), size) as Sequential;
+    $dart$core.String join([Iterable objects]) {
+        $dart$core.String result = "";
+        $dart$core.bool first = true;
+        {
+            $dart$core.Object element$5;
+            Iterator iterator$4 = objects.iterator();
+            while ((element$5 = iterator$4.next()) is !Finished) {
+                $dart$core.Object el;
+                {
+                    el = element$5;
+                }
+                if (first) {
+                    first = false;
+                } else {
+                    result = result + _$val;
+                }
+                result = result + el.toString();
+            }
+        }
+        return result;
+    }
+    Iterable get lines => split((() {
+        Character $r = new Character.$fromInt(10);
+        return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
+    })(), true, false).spread(new dart$Callable(([$dart$core.Object $r]) => new dart$Callable(([$dart$core.Object $0]) => ($r as String).trimTrailing($0 as Callable)))).f((() {
+        Character $r = new Character.$fromInt(13);
+        return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
+    })()) as Iterable;
+    Iterable get linesWithBreaks => split((() {
+        Character $r = new Character.$fromInt(10);
+        return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
+    })(), false, false).partition(2).map(new dart$Callable(([Sequence lineWithBreak]) => (() {
+        $dart$core.String line;
+        {
+            line = $dartString(lineWithBreak.getFromFirst(0) as String);
+        }
+        $dart$core.String br;
+        {
+            br = $dartString(lineWithBreak.getFromFirst(1) as String);
+        }
+        return (() {
+            $dart$core.bool doElse$6 = true;
+            if (!(null == br)) {
+                doElse$6 = false;
+                return $ceylonString(line + br);
+            }
+            if (doElse$6) {
+                $dart$core.Object br$7;
+                br$7 = $ceylonString(br);
+                return $ceylonString(line);
+            }
+        })();
+    })()));
+    $dart$core.String get trimmed => $dartString(trim(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).whitespace))));
+    String trim([Callable trimming]) => new String(List.$trim(this, trimming));
+    String trimLeading([Callable trimming]) => new String(List.$trimLeading(this, trimming));
+    String trimTrailing([Callable trimming]) => new String(List.$trimTrailing(this, trimming));
+    $dart$core.String get normalized {
+        $dart$core.bool previousWasWhitespace = false;
+        StringBuilder sb = new StringBuilder();
+        {
+            $dart$core.Object element$9;
+            Iterator iterator$8 = this.iterator();
+            while ((element$9 = iterator$8.next()) is !Finished) {
+                Character character;
+                {
+                    character = element$9 as Character;
+                }
+                if (character.whitespace) {
+                    if (!previousWasWhitespace) {
+                        sb.append(" ");
+                    }
+                    previousWasWhitespace = true;
+                } else {
+                    previousWasWhitespace = false;
+                    sb.appendCharacter(character);
+                }
+            }
+        }
+        return $ceylonString(sb.toString()).trimmed;
+    }
+    String get reversed => $ceylonString((new $dart$core.String.fromCharCodes($ceylon$interop$dart.dartString(_$val).runes.toList().reversed)).toString());
+    $dart$core.bool defines([Integer index]) => ($dartInt(index) >= 0) && ($dartInt(index) < size);
+    String span([Integer from, Integer to]) => new String(sequence().span(from, to) as Iterable);
+    String spanFrom([Integer from]) => span(from, $ceylonInteger($package$runtime.maxIntegerValue));
+    String spanTo([Integer to]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)($dartInt(to) >= 0 ? span($ceylonInteger(0), to) : null);
+    String measure([Integer from, $dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? span(from, $ceylonInteger(($dartInt(from) + length) - 1)) : null);
+    String initial([$dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? span($ceylonInteger(0), $ceylonInteger(length - 1)) : null);
+    String terminal([$dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? new String(sequence().terminal(length)) : null);
+    Tuple slice([$dart$core.int index]) {
+        if (index < 1) {
+            return new Tuple.$withList([$ceylonString(""), self]);
+        }
+        $dart$core.Runes runes = $ceylon$interop$dart.dartString(_$val).runes;
+        return new Tuple.$withList([$ceylonString((new $dart$core.String.fromCharCodes(runes.take(index))).toString()), $ceylonString((new $dart$core.String.fromCharCodes(runes.skip(index))).toString())]);
+    }
+    $dart$core.int get size => $ceylon$interop$dart.dartString(_$val).runes.length;
+    $dart$core.int get lastIndex => !empty ? size - 1 : null;
+    Iterator iterator() => new BaseString$iterator$$anonymous$4_(this);
+    Character getFromFirst([$dart$core.int index]) {
+        if (index < 0) {
+            return null;
+        }
+        $dart$core.Runes runes = $ceylon$interop$dart.dartString(_$val).runes;
+        if (index < runes.length) {
+            return $package$characterFromInteger((runes.elementAt(index) as $dart$core.num).toInt());
+        }
+        return null;
+    }
+    $dart$core.bool contains([$dart$core.Object element]) {{
+            $dart$core.bool doElse$10 = true;
+            if (element is String) {
+                $dart$core.String element$11;
+                element$11 = $dartString(element as String);
+                doElse$10 = false;
+                return $ceylon$interop$dart.dartString(_$val).contains($ceylon$interop$dart.dartString(element$11));
+            }
+            if (doElse$10) {
+                if (element is Character) {
+                    Character element$12;
+                    element$12 = element as Character;
+                    {
+                        $dart$core.Object element$14;
+                        Iterator iterator$13 = this.iterator();
+                        while ((element$14 = iterator$13.next()) is !Finished) {
+                            Character c;
+                            {
+                                c = element$14 as Character;
+                            }
+                            if (c == element$12) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    $dart$core.bool startsWith([List substring]) => (() {
+        $dart$core.bool doElse$15 = true;
+        if (substring is String) {
+            $dart$core.String substring$16;
+            substring$16 = $dartString(substring as String);
+            doElse$15 = false;
+            return $ceylon$interop$dart.dartString(_$val).startsWith($ceylon$interop$dart.dartString(substring$16));
+        }
+        if (doElse$15) {
+            return $package$everyPair(new dart$Callable(([Character first, $dart$core.Object second]) => (() {
+                $dart$core.bool doElse$17 = true;
+                if (second is Character) {
+                    Character second$18;
+                    second$18 = second as Character;
+                    doElse$17 = false;
+                    return $ceylonBoolean(first == second$18);
+                }
+                if (doElse$17) {
+                    return $package$$false;
+                }
+            })()), this, substring);
+        }
+    })();
+    $dart$core.bool endsWith([List substring]) => (() {
+        $dart$core.bool doElse$19 = true;
+        if (substring is String) {
+            $dart$core.String substring$20;
+            substring$20 = $dartString(substring as String);
+            doElse$19 = false;
+            return $ceylon$interop$dart.dartString(_$val).endsWith(substring$20);
+        }
+        if (doElse$19) {
+            return List.$endsWith(this, substring);
+        }
+    })();
+    String repeat([$dart$core.int times]) => new String(sequence().repeat(times));
+    $dart$core.String replace([$dart$core.String substring, $dart$core.String replacement]) => $ceylon$interop$dart.dartString(_$val).replaceAll($ceylon$interop$dart.dartString(substring), replacement);
+    $dart$core.String replaceFirst([$dart$core.String substring, $dart$core.String replacement]) => $ceylon$interop$dart.dartString(_$val).replaceFirst($ceylon$interop$dart.dartString(substring), replacement);
+    $dart$core.String replaceLast([$dart$core.String substring, $dart$core.String replacement]) => (() {
+        $dart$core.int startIndex;
+        {
+            startIndex = $ceylon$interop$dart.dartString(_$val).lastIndexOf($ceylon$interop$dart.dartString(substring));
+        }
+        return startIndex == (-1) ? $dartString(self) : $ceylon$interop$dart.dartString(_$val).replaceFirst($ceylon$interop$dart.dartString(substring), replacement, startIndex);
+    })();
+    Comparison compare([String other]) => (() {
+        $dart$core.int result;
+        {
+            result = $ceylon$interop$dart.dartString(_$val).compareTo($ceylon$interop$dart.dartString($dartString(other)));
+        }
+        return result < 0 ? $package$smaller : result > 0 ? $package$larger : $package$equal;
+    })();
+    Comparison compareIgnoringCase([$dart$core.String other]) => $ceylonString(uppercased).compare($ceylonString($ceylonString(other).uppercased));
+    $dart$core.bool longerThan([$dart$core.int length]) => !(null == getFromFirst(length));
+    $dart$core.bool shorterThan([$dart$core.int length]) => !(!(null == getFromFirst(length - 1)));
+    $dart$core.bool operator ==($dart$core.Object that) => (() {
+        $dart$core.bool doElse$21 = true;
+        if (that is String) {
+            $dart$core.String that$22;
+            that$22 = $dartString(that as String);
+            doElse$21 = false;
+            return $ceylon$interop$dart.dartString(_$val) == $ceylon$interop$dart.dartString(that$22);
+        }
+        if (doElse$21) {
+            return false;
+        }
+    })();
+    $dart$core.bool equalsIgnoringCase([$dart$core.String that]) => uppercased == $ceylonString(that).uppercased;
+    $dart$core.int get hashCode => $ceylon$interop$dart.dartString(_$val).hashCode;
+    $dart$core.String toString() => _$val;
+    $dart$core.bool get empty => $ceylon$interop$dart.dartString(_$val).isEmpty;
+    String get coalesced => self;
+    String clone() => self;
+    $dart$core.String pad([$dart$core.int size, $dart$core.Object character = $package$dart$default]) {
+        if ($dart$core.identical(character, $package$dart$default)) {
+            character = new Character.$fromInt(32);
+        }
+        $dart$core.int length = this.size;
+        if (size <= length) {
+            return $dartString(self);
+        }
+        $dart$core.int leftPad = (size - length) ~/ 2;
+        $dart$core.int rightPad = (size - leftPad) - length;
+        StringBuilder sb = new StringBuilder();
+        {
+            $dart$core.Object element$24;
+            Iterator iterator$23 = ($package$measure($ceylonInteger(0), leftPad) as List).iterator();
+            while ((element$24 = iterator$23.next()) is !Finished) {
+                Integer _;
+                {
+                    _ = element$24 as Integer;
+                }
+                sb.appendCharacter(character as Character);
+            }
+        }
+        sb.append($dartString(self));
+        {
+            $dart$core.Object element$26;
+            Iterator iterator$25 = ($package$measure($ceylonInteger(0), rightPad) as List).iterator();
+            while ((element$26 = iterator$25.next()) is !Finished) {
+                Integer _;
+                {
+                    _ = element$26 as Integer;
+                }
+                sb.appendCharacter(character as Character);
+            }
+        }
+        return sb.toString();
+    }
+    $dart$core.String padLeading([$dart$core.int size, $dart$core.Object character = $package$dart$default]) {
+        if ($dart$core.identical(character, $package$dart$default)) {
+            character = new Character.$fromInt(32);
+        }
+        $dart$core.int length = this.size;
+        if (size <= length) {
+            return $dartString(self);
+        }
+        $dart$core.int padAmount = size - length;
+        StringBuilder sb = new StringBuilder();
+        {
+            $dart$core.Object element$28;
+            Iterator iterator$27 = ($package$measure($ceylonInteger(0), padAmount) as List).iterator();
+            while ((element$28 = iterator$27.next()) is !Finished) {
+                Integer _;
+                {
+                    _ = element$28 as Integer;
+                }
+                sb.appendCharacter(character as Character);
+            }
+        }
+        sb.append($dartString(self));
+        return sb.toString();
+    }
+    $dart$core.String padTrailing([$dart$core.int size, $dart$core.Object character = $package$dart$default]) {
+        if ($dart$core.identical(character, $package$dart$default)) {
+            character = new Character.$fromInt(32);
+        }
+        $dart$core.int length = this.size;
+        if (size <= length) {
+            return $dartString(self);
+        }
+        $dart$core.int padAmount = size - length;
+        StringBuilder sb = new StringBuilder();
+        sb.append($dartString(self));
+        {
+            $dart$core.Object element$30;
+            Iterator iterator$29 = ($package$measure($ceylonInteger(0), padAmount) as List).iterator();
+            while ((element$30 = iterator$29.next()) is !Finished) {
+                Integer _;
+                {
+                    _ = element$30 as Integer;
+                }
+                sb.appendCharacter(character as Character);
+            }
+        }
+        return sb.toString();
+    }
+    void copyTo([Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
+        if ($dart$core.identical(sourcePosition, $package$dart$default)) {
+            sourcePosition = 0;
+        }
+        if ($dart$core.identical(destinationPosition, $package$dart$default)) {
+            destinationPosition = 0;
+        }
+        if ($dart$core.identical(length, $package$dart$default)) {
+            length = $dartInt($package$smallest($ceylonInteger(size - (sourcePosition as $dart$core.int)), $ceylonInteger(destination.size - (destinationPosition as $dart$core.int))) as Integer);
+        }
+        $dart$core.int i = destinationPosition as $dart$core.int;
+        {
+            $dart$core.Object element$32;
+            Iterator iterator$31 = skip((sourcePosition as $dart$core.int) - 1).take(length as $dart$core.int).iterator();
+            while ((element$32 = iterator$31.next()) is !Finished) {
+                Character c;
+                {
+                    c = element$32 as Character;
+                }
+                destination.set((() {
+                    $dart$core.int tmp$33 = i;
+                    i = $dartInt($ceylonInteger(i).successor);
+                    return tmp$33;
+                })(), c);
+            }
+        }
+        if (i < ((destinationPosition as $dart$core.int) + (length as $dart$core.int))) {
+            throw new Exception(((("Expected to copy " + (length as $dart$core.int).toString()) + " items but only copied ") + (i - (destinationPosition as $dart$core.int)).toString()) + " items");
+        }
+    }
+    $dart$core.bool occursAt([$dart$core.int index, $dart$core.Object element]) => SearchableList.$occursAt(this, index, element);
+    Iterable occurrences([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurrences(this, element, from, length);
+    $dart$core.bool occurs([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurs(this, element, from, length);
+    $dart$core.int firstOccurrence([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$firstOccurrence(this, element, from, length);
+    $dart$core.int lastOccurrence([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$lastOccurrence(this, element, from, length);
+    $dart$core.bool includesAt([$dart$core.int index, List sublist]) => SearchableList.$includesAt(this, index, sublist);
+    Iterable inclusions([List sublist, $dart$core.Object from = $package$dart$default]) => SearchableList.$inclusions(this, sublist, from);
+    $dart$core.bool includes([List sublist, $dart$core.Object from = $package$dart$default]) => SearchableList.$includes(this, sublist, from);
+    $dart$core.int firstInclusion([List sublist, $dart$core.Object from = $package$dart$default]) => SearchableList.$firstInclusion(this, sublist, from);
+    $dart$core.int lastInclusion([List sublist, $dart$core.Object from = $package$dart$default]) => SearchableList.$lastInclusion(this, sublist, from);
+    $dart$core.Object get([Integer index]) => List.$get(this, index);
+    $dart$core.Object find([Callable selecting]) => List.$find(this, selecting);
+    $dart$core.Object findLast([Callable selecting]) => List.$findLast(this, selecting);
+    List sublistFrom([$dart$core.int from]) => List.$sublistFrom(this, from);
+    List sublistTo([$dart$core.int to]) => List.$sublistTo(this, to);
+    List sublist([$dart$core.int from, $dart$core.int to]) => List.$sublist(this, from, to);
+    List patch([List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => List.$patch(this, list, from, length);
+    Iterable indexesWhere([Callable selecting]) => List.$indexesWhere(this, selecting);
+    $dart$core.int firstIndexWhere([Callable selecting]) => List.$firstIndexWhere(this, selecting);
+    $dart$core.int lastIndexWhere([Callable selecting]) => List.$lastIndexWhere(this, selecting);
+    Sequential collect([Callable collecting]) => List.$collect(this, collecting);
+    Iterable get permutations => Collection.$get$permutations(this);
+    Sequential sequence() => Iterable.$sequence(this);
+    $dart$core.Object indexes() => Iterable.$indexes(this);
+    Iterable get exceptLast => Iterable.$get$exceptLast(this);
+    void each([Callable step]) => Iterable.$each(this, step);
+    Iterable map([Callable collecting]) => Iterable.$map(this, collecting);
+    Iterable flatMap([Callable collecting]) => Iterable.$flatMap(this, collecting);
+    Iterable filter([Callable selecting]) => Iterable.$filter(this, selecting);
+    Iterable narrow() => Iterable.$narrow(this);
+    Callable fold([$dart$core.Object initial]) => Iterable.$fold(this, initial);
+    $dart$core.Object reduce([Callable accumulating]) => Iterable.$reduce(this, accumulating);
+    Callable scan([$dart$core.Object initial]) => Iterable.$scan(this, initial);
+    Entry locate([Callable selecting]) => Iterable.$locate(this, selecting);
+    Entry locateLast([Callable selecting]) => Iterable.$locateLast(this, selecting);
+    Iterable locations([Callable selecting]) => Iterable.$locations(this, selecting);
+    $dart$core.Object max([Callable comparing]) => Iterable.$max(this, comparing);
+    Callable spread([Callable method]) => Iterable.$spread(this, method);
+    Sequential sort([Callable comparing]) => Iterable.$sort(this, comparing);
+    Sequential select([Callable selecting]) => Iterable.$select(this, selecting);
+    $dart$core.int count([Callable selecting]) => Iterable.$count(this, selecting);
+    $dart$core.bool any([Callable selecting]) => Iterable.$any(this, selecting);
+    $dart$core.bool every([Callable selecting]) => Iterable.$every(this, selecting);
+    Iterable skip([$dart$core.int skipping]) => Iterable.$skip(this, skipping);
+    Iterable take([$dart$core.int taking]) => Iterable.$take(this, taking);
+    Iterable skipWhile([Callable skipping]) => Iterable.$skipWhile(this, skipping);
+    Iterable takeWhile([Callable taking]) => Iterable.$takeWhile(this, taking);
+    Iterable by([$dart$core.int step]) => Iterable.$by(this, step);
+    Iterable defaultNullElements([$dart$core.Object defaultValue]) => Iterable.$defaultNullElements(this, defaultValue);
+    Iterable get indexed => Iterable.$get$indexed(this);
+    Iterable get paired => Iterable.$get$paired(this);
+    Iterable partition([$dart$core.int length]) => Iterable.$partition(this, length);
+    Iterable follow([$dart$core.Object head]) => Iterable.$follow(this, head);
+    Iterable chain([Iterable other]) => Iterable.$chain(this, other);
+    Iterable product([Iterable other]) => Iterable.$product(this, other);
+    Iterable get cycled => Iterable.$get$cycled(this);
+    Iterable interpose([$dart$core.Object element, $dart$core.Object step = $package$dart$default]) => Iterable.$interpose(this, element, step);
+    Iterable get distinct => Iterable.$get$distinct(this);
+    Map frequencies() => Iterable.$frequencies(this);
+    Map tabulate([Callable collecting]) => Iterable.$tabulate(this, collecting);
+    Map group([Callable grouping]) => Iterable.$group(this, grouping);
+    Map summarize([Callable grouping, Callable accumulating]) => Iterable.$summarize(this, grouping, accumulating);
+    $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
+    $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
+    $dart$core.bool definesEvery([Iterable keys]) => Correspondence.$definesEvery(this, keys);
+    $dart$core.bool definesAny([Iterable keys]) => Correspondence.$definesAny(this, keys);
+    Iterable getAll([Iterable keys]) => Correspondence.$getAll(this, keys);
+}
 class StringBuilder implements dart$$Basic, List {
     StringBuilder() {
         _$delegate = new $dart$core.StringBuffer();
     }
     $dart$core.StringBuffer _$delegate;
-    $dart$core.int get size => String.instance(_$delegate.toString()).size;
+    $dart$core.int get size => $ceylonString(_$delegate.toString()).size;
     $dart$core.int get lastIndex => !empty ? size - 1 : null;
     $dart$core.String toString() => _$delegate.toString();
-    Iterator iterator() => String.instance(toString()).iterator();
-    $dart$core.String substring([$dart$core.int index, $dart$core.int length]) => String.nativeValue(String.instance(toString()).measure($ceylonInteger(index), length));
-    Character getFromFirst([$dart$core.int index]) => String.instance(toString()).getFromFirst(index);
+    Iterator iterator() => $ceylonString(toString()).iterator();
+    $dart$core.String substring([$dart$core.int index, $dart$core.int length]) => $dartString($ceylonString(toString()).measure($ceylonInteger(index), length));
+    Character getFromFirst([$dart$core.int index]) => $ceylonString(toString()).getFromFirst(index);
     StringBuilder append([$dart$core.String string]) {
-        _$delegate.write(String.instance(string));
+        _$delegate.write($ceylonString(string));
         return this;
     }
     StringBuilder appendAll([Iterable strings]) {{
@@ -13484,7 +13859,7 @@ class StringBuilder implements dart$$Basic, List {
                 {
                     s = element$1 as String;
                 }
-                append(String.nativeValue(s));
+                append($dartString(s));
             }
         }
         return this;
@@ -13492,7 +13867,7 @@ class StringBuilder implements dart$$Basic, List {
     StringBuilder prepend([$dart$core.String string]) {
         $dart$core.String newString = string + this.toString();
         clear();
-        _$delegate.write(String.instance(newString));
+        _$delegate.write($ceylonString(newString));
         return this;
     }
     StringBuilder prependAll([Iterable strings]) {{
@@ -13503,7 +13878,7 @@ class StringBuilder implements dart$$Basic, List {
                 {
                     s = element$3 as String;
                 }
-                prepend(String.nativeValue(s));
+                prepend($dartString(s));
             }
         }
         return this;
@@ -13531,7 +13906,7 @@ class StringBuilder implements dart$$Basic, List {
         }
         $dart$core.String oldString = this.toString();
         clear();
-        _$delegate.write(String.instance((String.nativeValue(String.instance(oldString).spanTo($ceylonInteger(index - 1))) + string) + String.nativeValue(String.instance(oldString).spanFrom($ceylonInteger(index)))));
+        _$delegate.write($ceylonString(($dartString($ceylonString(oldString).spanTo($ceylonInteger(index - 1))) + string) + $dartString($ceylonString(oldString).spanFrom($ceylonInteger(index)))));
         return this;
     }
     StringBuilder insertCharacter([$dart$core.int index, Character character]) => insert(index, character.toString());
@@ -13545,10 +13920,10 @@ class StringBuilder implements dart$$Basic, List {
         if (!((index + length) <= size)) {
             throw new AssertionError("Violated: index + length <= size");
         }
-        if (!String.instance(string).empty) {
+        if (!$ceylonString(string).empty) {
             $dart$core.String oldString = this.toString();
             clear();
-            _$delegate.write(String.instance((String.nativeValue(String.instance(oldString).spanTo($ceylonInteger(index - 1))) + string) + String.nativeValue(String.instance(oldString).spanFrom($ceylonInteger(index + length)))));
+            _$delegate.write($ceylonString(($dartString($ceylonString(oldString).spanTo($ceylonInteger(index - 1))) + string) + $dartString($ceylonString(oldString).spanFrom($ceylonInteger(index + length)))));
         }
         return this;
     }
@@ -13564,7 +13939,7 @@ class StringBuilder implements dart$$Basic, List {
         }
         $dart$core.String oldString = this.toString();
         clear();
-        _$delegate.write(String.instance(String.nativeValue(String.instance(oldString).spanTo($ceylonInteger(index - 1))) + String.nativeValue(String.instance(oldString).spanFrom($ceylonInteger(index + length)))));
+        _$delegate.write($ceylonString($dartString($ceylonString(oldString).spanTo($ceylonInteger(index - 1))) + $dartString($ceylonString(oldString).spanFrom($ceylonInteger(index + length)))));
         return this;
     }
     StringBuilder deleteInitial([$dart$core.int length]) {
@@ -13590,7 +13965,7 @@ class StringBuilder implements dart$$Basic, List {
     StringBuilder reverseInPlace() {
         $dart$core.String oldString = this.toString();
         clear();
-        _$delegate.write(String.instance(oldString).reversed);
+        _$delegate.write($ceylonString(oldString).reversed);
         return this;
     }
     $dart$core.bool operator ==($dart$core.Object that) => (() {
