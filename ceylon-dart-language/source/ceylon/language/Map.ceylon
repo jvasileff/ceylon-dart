@@ -261,7 +261,7 @@ shared interface Map<out Key=Object, out Item=Anything>
             if (is Key key) {
                 return
                     switch (item = outer.lookup(key))
-                    case (Missing.instance) default
+                    case (Missing.instance) default 
                     else mapping(key, item);
             }
             else {
