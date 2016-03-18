@@ -16,7 +16,6 @@ import com.vasileff.ceylon.dart.compiler {
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartArgumentList,
     DartExpression,
-    DartPropertyAccess,
     DartFunctionExpressionInvocation,
     DartSimpleIdentifier,
     DartAsExpression
@@ -126,119 +125,40 @@ class CoreGenerator(CompilationContext ctx) {
             DartExpression expression,
             "The conversion to apply to the result of [[expression]]."
             BoxingConversion conversion) {
-        value [boxTypeDeclaration, toNative] =
-                switch (conversion)
-                case (ceylonBooleanToNative) [ceylonTypes.booleanDeclaration, true]
-                case (ceylonFloatToNative)   [ceylonTypes.floatDeclaration, true]
-                case (ceylonIntegerToNative) [ceylonTypes.integerDeclaration, true]
-                case (ceylonStringToNative)  [ceylonTypes.stringDeclaration, true]
-                case (nativeToCeylonBoolean) [ceylonTypes.booleanDeclaration, false]
-                case (nativeToCeylonFloat)   [ceylonTypes.floatDeclaration, false]
-                case (nativeToCeylonInteger) [ceylonTypes.integerDeclaration, false]
-                case (nativeToCeylonString)  [ceylonTypes.stringDeclaration, false];
 
-        value argumentList
-            =>  DartArgumentList {
-                    // For ceylon to native, we may need to narrow the non-native
-                    // argument.
-                    //
-                    // For native to ceylon, we may need to narrow the native argument
-                    // in the unusual case that `rhsActual` is `Anything` despite being
-                    // native, which happens for defaulted parameters.
-                    [withCastingLhsRhs {
-                        scope;
-                        lhsType = boxTypeDeclaration.type;
-                        lhsErasedToObject = false;
-                        rhsType = rhsType;
-                        rhsErasedToObject = erasedToObject;
-                        erasedToNative = !toNative;
-                        expression;
-                    }];
-                };
-
-        // custom handling for Integers (they're the first to be converted to not
-        // use static methods)
-
-        if (conversion == ceylonFloatToNative) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartDartDouble;
-                };
-                argumentList;
-            };
-        }
-
-        if (conversion == nativeToCeylonFloat) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartCeylonFloat;
-                };
-                argumentList;
-            };
-        }
-
-        if (conversion == ceylonIntegerToNative) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartDartInt;
-                };
-                argumentList;
-            };
-        }
-
-        if (conversion == nativeToCeylonInteger) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartCeylonInteger;
-                };
-                argumentList;
-            };
-        }
-
-        if (conversion == ceylonBooleanToNative) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartDartBool;
-                };
-                argumentList;
-            };
-        }
-
-        if (conversion == nativeToCeylonBoolean) {
-            return
-            DartFunctionExpressionInvocation {
-                dartTypes.dartIdentifierForDartModel {
-                    scope;
-                    dartTypes.dartCeylonBoolean;
-                };
-                argumentList;
-            };
-        }
+        value [boxTypeDeclaration, toNative, dartFunction] =
+            switch (conversion)
+            case (ceylonBooleanToNative) [ceylonTypes.booleanDeclaration, true, dartTypes.dartDartBool]
+            case (ceylonFloatToNative)   [ceylonTypes.floatDeclaration, true, dartTypes.dartDartDouble]
+            case (ceylonIntegerToNative) [ceylonTypes.integerDeclaration, true, dartTypes.dartDartInt]
+            case (ceylonStringToNative)  [ceylonTypes.stringDeclaration, true, dartTypes.dartDartString]
+            case (nativeToCeylonBoolean) [ceylonTypes.booleanDeclaration, false, dartTypes.dartCeylonBoolean]
+            case (nativeToCeylonFloat)   [ceylonTypes.floatDeclaration, false, dartTypes.dartCeylonFloat]
+            case (nativeToCeylonInteger) [ceylonTypes.integerDeclaration, false, dartTypes.dartCeylonInteger]
+            case (nativeToCeylonString)  [ceylonTypes.stringDeclaration, false, dartTypes.dartCeylonString];
 
         return
         DartFunctionExpressionInvocation {
-            DartPropertyAccess {
-                dartTypes.dartIdentifierForClassOrInterface {
-                    scope;
-                    boxTypeDeclaration;
-                };
-                DartSimpleIdentifier {
-                    if (toNative)
-                    then "nativeValue"
-                    else "instance";
-                };
+            dartTypes.dartIdentifierForDartModel {
+                scope;
+                dartFunction;
             };
-            argumentList;
+            DartArgumentList {
+                // For ceylon to native, we may need to narrow the non-native argument.
+                //
+                // For native to ceylon, we may need to narrow the native argument
+                // in the unusual case that `rhsActual` is `Anything` despite being
+                // native, which happens for defaulted parameters.
+                [withCastingLhsRhs {
+                    scope;
+                    lhsType = boxTypeDeclaration.type;
+                    lhsErasedToObject = false;
+                    rhsType = rhsType;
+                    rhsErasedToObject = erasedToObject;
+                    erasedToNative = !toNative;
+                    expression;
+                }];
+            };
         };
     }
 

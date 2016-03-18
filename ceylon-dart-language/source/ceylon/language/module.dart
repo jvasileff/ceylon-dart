@@ -1,7 +1,6 @@
 library ceylon.language;
 
 import 'dart:core' as $dart$core;
-import 'dart:io' as $dart$io;
 import 'dart:math' as $dart$math;
 import '../../../ceylon.language.dart';
 
@@ -212,441 +211,40 @@ $dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
 //
 /////////////////////////////////////////////////
 
-class String extends impl$BaseCharacterList implements Summable, Comparable {
-  final $dart$core.String _value;
+$dart$core.String $dartString(String value)
+  =>  value == null ? null : value._$val;
 
-  String(Iterable characters) :
-      _value = characters is String
-        ? characters._value
-        : fromCharacters(characters);
+String $ceylonString($dart$core.String value)
+  =>  value == null ? null : new String.withString(value);
 
-  String._fromNative($dart$core.String this._value);
+class String extends BaseString implements Summable, Comparable, Ranged {
 
+  String(Iterable characters) : super(characters) {}
 
-  Iterator iterator() => new DartStringIterator(this._value);
+  String.withString($dart$core.String s) : super.withString(s) {}
 
-  //  shared native String lowercased;
-  $dart$core.String get lowercased => _value.toLowerCase();
-
-  //  shared native String uppercased;
-  $dart$core.String get uppercased => _value.toUpperCase();
-
-  //  shared native {String+} split(
-  //          Boolean splitting(Character ch) => ch.whitespace,
-  //          Boolean discardSeparators=true,
-  //          Boolean groupSeparators=true);
-  Iterable split([$dart$core.Object splitting = $package$dart$default,
-          $dart$core.Object discardSeparators = $package$dart$default,
-          $dart$core.Object groupSeparators = $package$dart$default])
-    => $package$dartStringSplit(_value, splitting, discardSeparators, groupSeparators);
-
-  //  shared actual formal Character? first;
-  //  shared actual formal Character? last;
-
-  //  shared actual native Character? getFromFirst(Integer index);
   @$dart$core.override
-  $dart$core.Object getFromFirst([$dart$core.int index]) {
-    try {
-      return new Character.$fromInt(_value.runes.elementAt(index));
-    }
-    catch (rangeError) {
-      return null;
-    }
-  }
+  String get self => this;
 
-  //  shared actual formal Character? getFromLast(Integer index);
-
-  //  shared actual formal String rest;
   @$dart$core.override
-  String get rest {
-    var sb = new $dart$core.StringBuffer();
-    var it = _value.runes.iterator;
-    it.moveNext();
-    while (it.moveNext()) {
-      sb.writeCharCode(it.current);
-    }
-    return new String._fromNative(sb.toString());
-  }
+  String operator +(String other)
+    => new String.withString(_$val + other._$val);
 
-  // shared actual native Integer[] keys => 0:size;
   @$dart$core.override
-  Sequential get keys
-    => new Measure(new Integer(0), size);
-
-  //  shared native String join({Object*} objects);
-  $dart$core.String join(Iterable objects)
-    => $package$dartStringJoin(this._value, objects);
-
-  //  shared {String*} lines
-  Iterable get lines
-    => $package$dartStringLines(this._value);
-
-  //  shared {String*} linesWithBreaks
-  Iterable get linesWithBreaks
-    => $package$dartStringLinesWithBreaks(this._value);
-
-  $dart$core.String replace($dart$core.String substring, $dart$core.String replacement)
-    => this._value.replaceAll(substring, replacement);
-
-  $dart$core.String replaceFirst($dart$core.String substring, $dart$core.String replacement)
-    => this._value.replaceFirst(substring, replacement);
-
-  $dart$core.String replaceLast($dart$core.String substring, $dart$core.String replacement) {
-    var index = _value.lastIndexOf(substring);
-    if (index < 0) {
-      return this._value;
-    }
-    return this._value.replaceFirst(substring, replacement, index);
-  }
-
-  //  shared String trimmed => trim(Character.whitespace);
-  $dart$core.String get trimmed
-    => String.nativeValue(trim(new dart$Callable(([Character c])
-        => $ceylonBoolean(c.whitespace))));
-
-  //  shared actual native String trim(Boolean trimming(Character element));
-  String trim([Callable trimming])
-    => new String(super.trim(trimming));
-
-  //  shared actual native String trimLeading(Boolean trimming(Character element));
-  String trimLeading([Callable trimming])
-    => new String(super.trimLeading(trimming));
-
-  //  shared actual native String trimTrailing(Boolean trimming(Character element));
-  String trimTrailing([Callable trimming])
-    => new String(super.trimTrailing(trimming));
-
-  //  shared native String normalized;
-  $dart$core.String get normalized {
-    var previousWasWhitespace = false;
-    var sb = new $dart$core.StringBuffer();
-    for (var r in _value.runes) {
-      if (new Character.$fromInt(r).whitespace) {
-        if (!previousWasWhitespace) {
-          sb.write(" ");
-        }
-        previousWasWhitespace = true;
-      }
-      else {
-        previousWasWhitespace = false;
-        sb.writeCharCode(r);
-      }
-    }
-    return String.instance(sb.toString()).trimmed;
-  }
-
-  //  shared actual native String reversed;
-  String get reversed
-    => new String(this.sequence().reversed);
-
-  //  shared actual native String span(Integer from, Integer to);
-  String span([Integer from, Integer to])
-    => new String(this.sequence().span(from, to));
-
-  //  shared actual String spanFrom(Integer from) => from<size then span(from, size) else "";
-  String spanFrom([Integer from])
-    => new String(this.sequence().spanFrom(from));
-
-  //  shared actual String spanTo(Integer to) => to>=0 then span(0, to) else "";
-  String spanTo([Integer to])
-    => $dartInt(to) >= 0 ? span(new Integer(0), to) : String.instance("");
-
-  //  shared actual native String measure(Integer from, Integer length);
-  String measure([Integer from, $dart$core.int length])
-    => length > 0 ? new String(this.sequence().measure(from, length)) : String.instance("");
-
-  //  shared actual native String initial(Integer length);
-  String initial([$dart$core.int length])
-    => length > 0 ? new String(this.sequence().initial(length)) : String.instance("");
-
-  //  shared actual native String terminal(Integer length);
-  String terminal([$dart$core.int length])
-    => length > 0 ? new String(this.sequence().terminal(length)) : String.instance("");
-
-  //  shared actual native [String,String] slice(Integer index);
-  Tuple slice([$dart$core.int length]) {
-    var its = this.sequence().slice(length);
-    return new Tuple.$withList([
-        new String(its.getFromFirst(0)),
-        new String(its.getFromFirst(1))]);
-  }
-
-  //  shared actual native Integer size;
-  @$dart$core.override
-  $dart$core.int get size => _value.runes.length;
-
-  //  shared actual Integer? lastIndex;
-  @$dart$core.override
-  $dart$core.int get lastIndex => empty ? null : size - 1;
-
-  //  shared actual native Character? getFromFirst(Integer index);
-
-  //  shared actual native Boolean contains(Object element);
-  @$dart$core.override
-  $dart$core.bool contains([$dart$core.Object element]) {
-    if (element is String) {
-      return _value.contains(element._value);
-    }
-    else if (element is Character) {
-      return super.contains(element);
-    }
-    else {
-      return false;
-    }
-  }
-
-  //  shared actual native Boolean startsWith(List<Anything> substring);
-
-  //  shared actual native Boolean endsWith(List<Anything> substring);
-
-  //  shared actual native String plus(String other);
-  @$dart$core.override
-  String operator +(String other) => String.instance(_value + other._value);
-
-  //  shared actual native String repeat(Integer times);
-  @$dart$core.override
-  String repeat([$dart$core.int times])
-    => new String(this.sequence().repeat(times));
-
-  // TODO
-  //  shared native String replace(String substring,
-  //                               String replacement);
-
-  // TODO
-  //  shared native String replaceFirst(String substring,
-  //                                    String replacement);
-
-  // TODO
-  //  shared native String replaceLast(String substring,
-  //                                   String replacement);
-
-  //  shared actual Comparison compare(String other) {
-  //      // TODO should use iterators instead of getFromFirst
-  //      value min = smallest(size, other.size);
-  //      for (i in 0:min) {
-  //          assert (exists thisChar = this.getFromFirst(i),
-  //                  exists thatChar = other.getFromFirst(i));
-  //          if (thisChar!=thatChar) {
-  //              return thisChar <=> thatChar;
-  //          }
-  //      }
-  //      return size <=> other.size;
-  //  }
-  Comparison compare([String other]) {
-    var i = _value.compareTo(other._value);
-    if (i < 0) {
-      return smaller;
-    }
-    else if (i > 0) {
-      return larger;
-    }
-    return equal;
-  }
-
-  //  shared Comparison compareIgnoringCase(String other) {
-  //      // TODO should use iterators instead of getFromFirst
-  //      value min = smallest(size, other.size);
-  //      for (i in 0:min) {
-  //          assert (exists thisChar = this.getFromFirst(i),
-  //                  exists thatChar = other.getFromFirst(i));
-  //          if (thisChar!=thatChar &&
-  //              thisChar.uppercased!=thatChar.uppercased &&
-  //              thisChar.lowercased!=thatChar.lowercased) {
-  //              return thisChar.lowercased <=> thatChar.lowercased;
-  //          }
-  //      }
-  //      return size <=> other.size;
-  //  }
-  Comparison compareIgnoringCase([$dart$core.String other]) {
-    var i = _value.toUpperCase().compareTo(other.toUpperCase());
-    if (i < 0) {
-      return smaller;
-    }
-    else if (i > 0) {
-      return larger;
-    }
-    return equal;
-  }
-
-  //  shared actual Boolean equals(Object that) {
-  //      // TODO should use iterators instead of getFromFirst
-  //      if (is String that) {
-  //          if (size!=that.size) {
-  //              return false;
-  //          }
-  //          value min = smallest(size, that.size);
-  //          for (i in 0:min) {
-  //              assert (exists thisChar = this.getFromFirst(i),
-  //                      exists thatChar = that.getFromFirst(i));
-  //              if (thisChar!=thatChar) {
-  //                  return false;
-  //              }
-  //          }
-  //          return true;
-  //      }
-  //      else {
-  //          return false;
-  //      }
-  //  }
-  $dart$core.bool operator ==($dart$core.Object other)
-    => (other is String) ? _value == other._value : false;
-
-  //  shared Boolean equalsIgnoringCase(String that) {
-  //      // TODO should use iterators instead of getFromFirst
-  //      if (size!=that.size) {
-  //          return false;
-  //      }
-  //      value min = smallest(size, that.size);
-  //      for (i in 0:min) {
-  //          assert (exists thisChar = this.getFromFirst(i),
-  //                  exists thatChar = that.getFromFirst(i));
-  //          if (thisChar!=thatChar &&
-  //              thisChar.uppercased!=thatChar.uppercased &&
-  //              thisChar.lowercased!=thatChar.lowercased) {
-  //              return false;
-  //          }
-  //      }
-  //      return true;
-  //  }
-  $dart$core.bool equalsIgnoringCase([$dart$core.String other])
-    => _value.toUpperCase() == other.toUpperCase();
-
-  //  shared actual native Integer hash
-  @$dart$core.override
-  $dart$core.int get hashCode => _value.hashCode;
-
-  //  shared actual native String string;
-  @$dart$core.override
-  $dart$core.String toString() => this._value;
-
-  //  shared actual native Boolean empty;
-  @$dart$core.override
-  $dart$core.bool get empty => _value.isEmpty;
-
-  //  shared actual native String coalesced;
-  @$dart$core.override
-  String get coalesced => this;
-
-  //  shared actual String clone() => this;
-  @$dart$core.override
-  String clone() => this;
-
-  //  shared native String pad(Integer size, Character character=' ');
-  $dart$core.String pad([$dart$core.int size, $dart$core.Object character = dart$default]) {
-    $dart$core.int ch = character == dart$default ? 32 : (character as Character).integer;
-    var length = this.size;
-    if (size <= length) return _value;
-    var leftPad = (size - length) ~/ 2;
-    var rightPad = size - leftPad - length;
-    var sb = new $dart$core.StringBuffer();
-    for (var i = 0; i < leftPad; i++) {
-      sb.writeCharCode(ch);
-    }
-    sb.write(_value);
-    for (var i = 0; i < rightPad; i++) {
-      sb.writeCharCode(ch);
-    }
-    return sb.toString();
-  }
-
-  //  shared native String padLeading(Integer size, Character character=' ');
-  $dart$core.String padLeading([$dart$core.int size, $dart$core.Object character = dart$default]) {
-    $dart$core.int ch = character == dart$default ? 32 : (character as Character).integer;
-    var length = this.size;
-    if (size <= length) return _value;
-    var padAmount = size - length;
-    var sb = new $dart$core.StringBuffer();
-    for (var i = 0; i < padAmount; i++) {
-      sb.writeCharCode(ch);
-    }
-    sb.write(_value);
-    return sb.toString();
-  }
-
-  //  shared native String padTrailing(Integer size, Character character=' ');
-  $dart$core.String padTrailing([$dart$core.int size, $dart$core.Object character = dart$default]) {
-    $dart$core.int ch = character == dart$default ? 32 : (character as Character).integer;
-    var length = this.size;
-    if (size <= length) return _value;
-    var padAmount = size - length;
-    var sb = new $dart$core.StringBuffer(_value);
-    for (var i = 0; i < padAmount; i++) {
-      sb.writeCharCode(ch);
-    }
-    return sb.toString();
-  }
-
-  //  shared native
-  //  void copyTo(
-  //      Array<Character> destination,
-  //      Integer sourcePosition = 0,
-  //      Integer destinationPosition = 0,
-  //      Integer length
-  //              = smallest(size - sourcePosition,
-  //                  destination.size - destinationPosition));
-  void copyTo([Array destination,
-          $dart$core.Object sourcePosition = $package$dart$default,
-          $dart$core.Object destinationPosition = $package$dart$default,
-          $dart$core.Object length = $package$dart$default]) {
-    $package$dartListCopyTo(this, destination, sourcePosition, destinationPosition, length);
-  }
-
-  // TODO
-  //  shared actual native Boolean occurs(Anything element);
-  //  shared actual native Boolean occursAt(Integer index, Anything element);
-  //  shared actual native Boolean includes(List<Anything> sublist);
-  //  shared actual native Boolean includesAt(Integer index, List<Anything> sublist);
-
-  // TODO
-  //  shared actual native Integer? firstOccurrence(Anything element);
-  //  shared actual native Integer? lastOccurrence(Anything element);
-  //  shared actual native Integer? firstInclusion(List<Anything> sublist);
-  //  shared actual native Integer? lastInclusion(List<Anything> sublist);
-
-  // TODO
-  //  shared actual native {Integer*} inclusions(List<Anything> sublist);
-
-  //  shared actual native Boolean largerThan(String other);
   $dart$core.bool operator >(String other)
-    => _value.compareTo(other._value) > 0;
+    => _$val.compareTo(other._$val) > 0;
 
-  //  shared actual native Boolean smallerThan(String other);
+  @$dart$core.override
   $dart$core.bool operator <(String other)
-    => _value.compareTo(other._value) < 0;
+    => _$val.compareTo(other._$val) < 0;
 
-  //  shared actual native Boolean notSmallerThan(String other);
+  @$dart$core.override
   $dart$core.bool operator >=(String other)
-    => _value.compareTo(other._value) >= 0;
+    => _$val.compareTo(other._$val) >= 0;
 
-  //  shared actual native Boolean notLargerThan(String other);
+  @$dart$core.override
   $dart$core.bool operator <=(String other)
-    => _value.compareTo(other._value) <= 0;
-
-  //  shared actual native void each(void step(Character element));
-  //  shared actual native Integer count(Boolean selecting(Character element));
-  //  shared actual native Boolean every(Boolean selecting(Character element));
-  //  shared actual native Boolean any(Boolean selecting(Character element));
-  //  shared actual native Result|Character|Null reduce<Result>
-  //          (Result accumulating(Result|Character partial, Character element));
-  //  shared actual native Character? find(Boolean selecting(Character element));
-  //  shared actual native Character? findLast(Boolean selecting(Character element));
-  //  shared actual native <Integer->Character>? locate(Boolean selecting(Character element));
-  //  shared actual native <Integer->Character>? locateLast(Boolean selecting(Character element));
-
-  // Dart runtime
-
-  static String instance($dart$core.String value)
-    => value == null ? null : new String._fromNative(value);
-
-  static $dart$core.String nativeValue(String value)
-    => value == null ? null : value._value;
-
-  static $dart$core.String fromCharacters(Iterable characters) {
-    var sb = new $dart$core.StringBuffer();
-    characters.each(new dart$Callable((Character c)
-      => sb.writeCharCode(c.integer)));
-    return sb.toString();
-  }
+    => _$val.compareTo(other._$val) <= 0;
 }
 
 /////////////////////////////////////////////////

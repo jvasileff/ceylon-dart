@@ -1,3 +1,10 @@
+import ceylon.interop.dart {
+    dartString
+}
+import dart.core {
+    DStringClass = String_C
+}
+
 """A string of characters. Each character in the string is a 
    [[32-bit Unicode character|Character]]. The internal 
    UTF-16 encoding is hidden from clients.
@@ -571,4 +578,520 @@ shared native final class String(characters)
     shared actual native <Integer->Character>? locate(Boolean selecting(Character element));
     shared actual native <Integer->Character>? locateLast(Boolean selecting(Character element));
     shared actual native {<Integer->Character>*} locations(Boolean selecting(Character element));
+}
+
+interface BaseStringBoxer<T> {
+    shared formal T self;
+    shared formal Comparison compare(T other);
+}
+
+abstract native("dart")
+class BaseString
+        extends Object
+        satisfies SearchableList<Character>
+            & BaseStringBoxer<String>
+            // & Comparable<String>
+            // & Summable<String>
+            // & Ranged<Integer,Character,String>
+        {
+
+    String val;
+
+    "This string, boxed. The implementing class will return `this`. The difference between
+     this and `string` is that `string` returns an unboxed string (the dart.core.String)."
+    shared actual formal
+    String self;
+
+    shared
+    new ({Character*} characters) extends Object() {
+        if (is String characters) {
+            val = characters;
+        }
+        else {
+            // FIXME use String.fromCharCodes(
+            //      Iterable<int> charCodes, [int start = 0, int end])
+            value sb = StringBuilder();
+            characters.each(sb.appendCharacter);
+            val = sb.string;
+        }
+    }
+
+    shared
+    new withString(String s) extends Object() {
+        this.val = s;
+    }
+
+    shared String lowercased => dartString(self).toLowerCase();
+    shared String uppercased => dartString(self).toUpperCase();
+
+    shared
+    {String+} split(
+            Boolean splitting(Character ch) => ch.whitespace,
+            Boolean discardSeparators=true,
+            Boolean groupSeparators=true)
+            => if (empty) then Singleton(self) else object
+            satisfies {String+} {
+
+        // adapted/hacked from Java impl.
+        shared actual
+        Iterator<String> iterator() => object
+                satisfies Iterator<String> {
+
+            // avoid O(n) on substring()
+            value seq = self.sequence();
+            value it = seq.iterator();
+            variable value index = 0;
+            variable value first = true;
+            variable value lastWasSeparator = false;
+            variable value peeked = false;
+            variable value peekedWasSeparator = false;
+            variable value eof = false;
+
+            Boolean peekSeparator() {
+                // idempotent
+                if (!peeked) {
+                    peeked = true;
+                    if (!is Finished next = it.next()) {
+                        peekedWasSeparator = splitting(next);
+                    }
+                    else {
+                        eof = true;
+                        peekedWasSeparator = false;
+                    }
+                }
+                return peekedWasSeparator;
+            }
+
+            void eatChar() {
+                peeked = false;
+                peekSeparator();
+                index++;
+            }
+
+            Boolean eatSeparator() {
+                value result = peekSeparator();
+                if (result) {
+                    eatChar();
+                }
+                return result;
+            }
+
+            // calculate eof
+            peekSeparator();
+
+            String substring(Integer start, Integer end)
+                =>  String(seq[start:end - start]);
+
+            shared actual
+            String|Finished next() {
+                if (!eof) {
+                    variable value start = index;
+
+                    // if we start with a separator, or if we returned a separator
+                    // the last time and we are still looking at a separator: return
+                    // an empty token once
+                    if (((first && start == 0) || lastWasSeparator)
+                            && peekSeparator()) {
+                        first = false;
+                        lastWasSeparator = false;
+                        return "";
+                    }
+                    // are we looking at a separator
+                    if (eatSeparator()) {
+                        if (groupSeparators) {
+                            // eat them all in one go if we group them
+                            while (eatSeparator()) {}
+                        }
+                        // do we return them?
+                        if (!discardSeparators) {
+                            lastWasSeparator = true;
+                            return substring(start, index);
+                        }
+                        // keep going and eat the next word
+                        start = index;
+                    }
+                    // eat until the next separator
+                    while (!eof && !peekSeparator()) {
+                        eatChar();
+                    }
+                    lastWasSeparator = false;
+                    return substring(start, index);
+                }
+                else if (lastWasSeparator) {
+                    // we're missing a last empty token before
+                    // the EOF because the string ended with a
+                    // returned separator
+                    lastWasSeparator = false;
+                    return "";
+                }
+                else {
+                    return finished;
+                }
+            }
+        };
+    };
+
+    shared actual
+    Character? first
+        =>  !empty then characterFromInteger(dartString(val).runes.first.toInt());
+
+    shared actual
+    Character? last
+        =>  !empty then characterFromInteger(dartString(val).runes.last);
+
+    shared actual
+    String rest
+        =>  DStringClass.fromCharCodes(dartString(val).runes.skip(1)).string;
+
+    shared actual
+    Character? getFromLast(Integer index)
+        =>  if (empty || index < 0)
+            then null
+            else let (runes = dartString(val).runes) (
+                index < runes.length then
+                characterFromInteger(runes.elementAt(runes.length - 1 - index).toInt()));
+
+    shared actual
+    Integer[] keys => 0:size;
+
+    shared
+    String join({Object*} objects) {
+        // FIXME optimize (use StringBuilder)
+        variable value result = "";
+        variable value first = true;
+        for (el in objects) {
+            if (first) {
+                first = false;
+            }
+            else {
+                result = result + val;
+            }
+            result = result + el.string;
+        }
+        return result;
+    }
+
+    shared
+    {String*} lines
+        =>  split('\n'.equals, true, false).spread(String.trimTrailing)('\r'.equals);
+
+    shared
+    {String*} linesWithBreaks
+        =>  split('\n'.equals, false, false)
+            .partition(2)
+            .map((lineWithBreak)
+                =>  let (line = lineWithBreak[0], br = lineWithBreak[1])
+                    if (exists br) then line+br else line);
+
+    shared
+    String trimmed
+        =>  trim(Character.whitespace);
+
+    shared actual
+    String trim(Boolean trimming(Character element))
+        =>  String(super.trim(trimming));
+
+    shared actual
+    String trimLeading(Boolean trimming(Character element))
+        =>  String(super.trimLeading(trimming));
+
+    shared actual
+    String trimTrailing(Boolean trimming(Character element))
+        =>  String(super.trimTrailing(trimming));
+
+    shared
+    String normalized {
+        variable value previousWasWhitespace = false;
+        value sb = StringBuilder();
+        for (character in this) {
+            if (character.whitespace) {
+                if (!previousWasWhitespace) {
+                    sb.append(" ");
+                }
+                previousWasWhitespace = true;
+            }
+            else {
+                previousWasWhitespace = false;
+                sb.appendCharacter(character);
+            }
+        }
+        // TODO trim in previous loop
+        return sb.string.trimmed;
+    }
+
+    shared actual
+    String reversed
+        =>  DStringClass.fromCharCodes(dartString(val).runes.toList().reversed).string;
+
+    shared actual
+    Boolean defines(Integer index)
+        =>  0 <= index < size;
+
+    shared actual
+    String span(Integer from, Integer to)
+        // FIXME optimize
+        =>  String(sequence().span(from, to));
+
+    shared actual
+    String spanFrom(Integer from)
+        =>  span(from, runtime.maxIntegerValue);
+
+    shared actual
+    String spanTo(Integer to)
+        =>  to >= 0 then span(0, to) else "";
+
+    shared actual
+    String measure(Integer from, Integer length)
+        =>  length > 0 then span(from, from + length - 1) else "";
+
+    shared actual
+    String initial(Integer length)
+        =>  length > 0 then span(0, length - 1) else "";
+
+    shared actual
+    String terminal(Integer length)
+        // FIXME optimize
+        => length > 0 then String(sequence().terminal(length)) else "";
+
+    shared actual
+    [String,String] slice(Integer index) {
+        if (index < 1) {
+            return ["", self];
+        }
+        value runes = dartString(val).runes;
+        return [
+            DStringClass.fromCharCodes(runes.take(index)).string,
+            DStringClass.fromCharCodes(runes.skip(index)).string
+        ];
+    }
+
+    shared actual
+    Integer size
+        =>  dartString(val).runes.length;
+
+    shared actual
+    Integer? lastIndex
+        =>  !empty then size - 1;
+
+    shared actual
+    Iterator<Character> iterator() => object
+            satisfies Iterator<Character> {
+
+        value runeIterator = dartString(val).runes.iterator;
+
+        shared actual
+        Character|Finished next()
+            =>  if (runeIterator.moveNext())
+                then characterFromInteger(runeIterator.current)
+                else finished;
+    };
+
+    shared actual
+    Character? getFromFirst(Integer index) {
+        if (index < 0) {
+            return null;
+        }
+        value runes = dartString(val).runes;
+        if (index < runes.length) {
+            return characterFromInteger(runes.elementAt(index).toInt());
+        }
+        return null;
+    }
+
+    shared actual
+    Boolean contains(Object element) {
+        if (is String element) {
+            return dartString(val).contains(dartString(element));
+        }
+        else if (is Character element) {
+            for (c in this) {
+                if (c == element) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    shared actual
+    Boolean startsWith(List<Anything> substring)
+        =>  if (is String substring)
+            then dartString(val).startsWith(dartString(substring))
+            else everyPair((Character first, Anything second)
+                =>  if (is Character second)
+                    then first == second
+                    else false,
+                this, substring);
+
+    shared actual
+    Boolean endsWith(List<Anything> substring)
+        =>  if (is String substring)
+            then dartString(val).endsWith(substring)
+            else super.endsWith(substring);
+
+    // needs to be the dart operator '+', so must implement in the real String subclass
+    //shared /* actual */ String plus(String other) => val + other;
+
+    shared actual
+    String repeat(Integer times)
+        =>  String(sequence().repeat(times));
+
+    shared
+    String replace(String substring, String replacement)
+        =>  dartString(val).replaceAll(dartString(substring), replacement);
+
+    shared
+    String replaceFirst(String substring, String replacement)
+        =>  dartString(val).replaceFirst(dartString(substring), replacement);
+
+    shared
+    String replaceLast(String substring, String replacement)
+        =>  let (startIndex = dartString(val).lastIndexOf(dartString(substring)))
+            if (startIndex == -1)
+            then self
+            else dartString(val).replaceFirst(
+                dartString(substring), replacement, startIndex);
+
+    shared actual
+    Comparison compare(String other)
+        =>  let (result = dartString(val).compareTo(dartString(other)))
+            if (result < 0) then smaller
+            else if (result > 0) then larger
+            else equal;
+
+    shared
+    Comparison compareIgnoringCase(String other)
+        =>  uppercased.compare(other.uppercased);
+
+    shared actual
+    Boolean longerThan(Integer length)
+        =>  getFromFirst(length) exists;
+
+    shared actual
+    Boolean shorterThan(Integer length)
+        =>  !getFromFirst(length - 1) exists;
+
+    shared actual
+    Boolean equals(Object that)
+        =>  if (is String that)
+            then dartString(val) == dartString(that)
+            else false;
+
+    shared
+    Boolean equalsIgnoringCase(String that)
+        =>  uppercased == that.uppercased;
+
+    shared actual Integer hash => dartString(val).hash;
+    shared actual String string => val;
+    shared actual Boolean empty => dartString(val).isEmpty;
+    shared actual String coalesced => self;
+    shared actual String clone() => self;
+
+    shared
+    String pad(Integer size, Character character=' ') {
+        value length = this.size;
+        if (size <= length) {
+            return self;
+        }
+        value leftPad = (size - length) / 2;
+        value rightPad = size - leftPad - length;
+        value sb = StringBuilder();
+        for (_ in 0:leftPad) {
+            sb.appendCharacter(character);
+        }
+        sb.append(self);
+        for (_ in 0:rightPad) {
+            sb.appendCharacter(character);
+        }
+        return sb.string;
+    }
+
+    shared
+    String padLeading(Integer size, Character character=' ') {
+        value length = this.size;
+        if (size <= length) {
+            return self;
+        }
+        value padAmount = size - length;
+        value sb = StringBuilder();
+        for (_ in 0:padAmount) {
+            sb.appendCharacter(character);
+        }
+        sb.append(self);
+        return sb.string;
+    }
+
+    shared
+    String padTrailing(Integer size, Character character=' ') {
+        value length = this.size;
+        if (size <= length) {
+            return self;
+        }
+        value padAmount = size - length;
+        value sb = StringBuilder();
+        sb.append(self);
+        for (_ in 0:padAmount) {
+            sb.appendCharacter(character);
+        }
+        return sb.string;
+    }
+
+    shared
+    void copyTo(
+            Array<Character> destination,
+            Integer sourcePosition = 0,
+            Integer destinationPosition = 0,
+            Integer length
+                =   smallest(size - sourcePosition,
+                        destination.size - destinationPosition)) {
+
+        // FIXME test all of this. Is it correct to throw?
+
+        variable value i = destinationPosition;
+        for (c in skip(sourcePosition - 1).take(length)) {
+            destination.set(i++, c);
+        }
+        if (i < destinationPosition + length) {
+            throw Exception("Expected to copy ``length`` items but only copied \
+                             ``i - destinationPosition`` items");
+        }
+    }
+
+    //shared actual native List<Character> sublistFrom(Integer from);
+    //shared actual native List<Character> sublistTo(Integer to);
+
+    //shared actual native {Integer*} indexesWhere(Boolean selecting(Character element));
+    //shared actual native Integer? firstIndexWhere(Boolean selecting(Character element));
+    //shared actual native Integer? lastIndexWhere(Boolean selecting(Character element));
+
+    //shared actual native {Integer*} occurrences(Character element, Integer from, Integer length);
+    //shared actual native {Integer*} inclusions(List<Character> sublist, Integer from);
+
+    //shared actual native Boolean occurs(Character element, Integer from, Integer length);
+    //shared actual native Boolean occursAt(Integer index, Character element);
+    //shared actual native Boolean includes(List<Character> sublist, Integer from);
+    //shared actual native Boolean includesAt(Integer index, List<Character> sublist);
+
+    //shared actual native Integer? firstOccurrence(Character element, Integer from, Integer length);
+    //shared actual native Integer? lastOccurrence(Character element, Integer from, Integer length);
+    //shared actual native Integer? firstInclusion(List<Character> sublist, Integer from);
+    //shared actual native Integer? lastInclusion(List<Character> sublist, Integer from);
+
+    // needs to be dart operators, so must implement in the real String subclass
+    //shared /* actual */ native Boolean largerThan(String other);
+    //shared /* actual */ native Boolean smallerThan(String other);
+    //shared /* actual */ native Boolean notSmallerThan(String other);
+    //shared /* actual */ native Boolean notLargerThan(String other);
+
+    //shared actual native void each(void step(Character element));
+    //shared actual native Integer count(Boolean selecting(Character element));
+    //shared actual native Boolean every(Boolean selecting(Character element));
+    //shared actual native Boolean any(Boolean selecting(Character element));
+    //shared actual native Result|Character|Null reduce<Result>
+    //        (Result accumulating(Result|Character partial, Character element));
+    //shared actual native Character? find(Boolean selecting(Character element));
+    //shared actual native Character? findLast(Boolean selecting(Character element));
+    //shared actual native <Integer->Character>? locate(Boolean selecting(Character element));
+    //shared actual native <Integer->Character>? locateLast(Boolean selecting(Character element));
+    //shared actual native {<Integer->Character>*} locations(Boolean selecting(Character element));
 }
