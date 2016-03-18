@@ -482,7 +482,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeModel dartFunctionIterableFactory
-        =>  DartTypeModel("$ceylon$language", "functionIterable");
+        =>  DartTypeModel("$ceylon$language", "dart$functionIterable");
 
     shared
     DartTypeModel dartObjectModel
