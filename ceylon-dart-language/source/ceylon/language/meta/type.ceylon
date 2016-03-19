@@ -5,3 +5,7 @@ import ceylon.language.meta.model { ClassModel }
 see(`function classDeclaration`)
 shared native ClassModel<Type,Nothing> type<out Type>(Type instance)
     given Type satisfies Anything;
+
+shared native("dart")
+ClassModel<Type,Nothing> type<out Type>(Type instance) given Type satisfies Anything
+   =>   nothing;

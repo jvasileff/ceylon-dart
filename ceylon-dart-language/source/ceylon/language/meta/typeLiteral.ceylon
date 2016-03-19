@@ -9,3 +9,7 @@ import ceylon.language.meta.model { ClosedType = Type }
  "
 shared native ClosedType<Type> typeLiteral<out Type>()
     given Type satisfies Anything;
+
+shared native("dart") ClosedType<Type> typeLiteral<out Type>()
+        given Type satisfies Anything
+    =>  nothing;

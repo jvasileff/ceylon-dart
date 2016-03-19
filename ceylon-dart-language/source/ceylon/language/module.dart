@@ -383,17 +383,6 @@ abstract class dart$$Basic extends dart$$Identifiable {}
 
 /////////////////////////////////////////////////
 //
-// Unimplemented
-//
-/////////////////////////////////////////////////
-
-$package$meta$type(var x) {}
-$package$meta$annotations([var x, var y]) {}
-$package$meta$classDeclaration(var x) {}
-$package$meta$typeLiteral() {}
-
-/////////////////////////////////////////////////
-//
 // ceylon.language::Callable
 // ceylon.language::flatten
 // ceylon.language::unflatten

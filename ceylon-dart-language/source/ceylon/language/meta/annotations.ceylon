@@ -24,3 +24,11 @@ shared native Values annotations<Value, Values, in ProgramElement>(
         given Value satisfies ConstrainedAnnotation<Value,Values,ProgramElement>
         //given Values of <Value?> | <Value[]>
         given ProgramElement satisfies Annotated;
+
+shared native("dart") Values annotations<Value, Values, in ProgramElement>(
+        Class<ConstrainedAnnotation<Value,Values,ProgramElement>> annotationType,
+        ProgramElement programElement)
+        given Value satisfies ConstrainedAnnotation<Value,Values,ProgramElement>
+        //given Values of <Value?> | <Value[]>
+        given ProgramElement satisfies Annotated
+    =>  nothing;
