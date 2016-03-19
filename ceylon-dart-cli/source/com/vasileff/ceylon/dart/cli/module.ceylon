@@ -4,7 +4,7 @@ module com.vasileff.ceylon.dart.cli "1.2.2-DP2-SNAPSHOT" {
     import ceylon.json "1.2.2";
     import ceylon.process "1.2.2";
     import ceylon.interop.java "1.2.2";
-    import com.vasileff.jl4c.guava "0.0.3-SNAPSHOT";
+    import com.vasileff.jl4c.guava "0.0.3";
     shared import java.base "7";
     shared import com.redhat.ceylon.common "1.2.2";
     shared import com.redhat.ceylon.typechecker "1.2.2";
