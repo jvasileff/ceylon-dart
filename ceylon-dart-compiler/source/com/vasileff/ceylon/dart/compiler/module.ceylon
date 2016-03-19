@@ -1,6 +1,5 @@
 native("jvm")
 module com.vasileff.ceylon.dart.compiler "1.2.2-DP2-SNAPSHOT" {
-    import ceylon.io "1.2.2";
     import ceylon.buffer "1.2.2";
     import ceylon.math "1.2.2";
     import ceylon.formatter "1.2.2";
@@ -17,5 +16,4 @@ module com.vasileff.ceylon.dart.compiler "1.2.2-DP2-SNAPSHOT" {
     shared import ceylon.ast.core "1.2.2";
     shared import com.redhat.ceylon.typechecker "1.2.2";
     shared import "net.minidev.json-smart" "1.1.1";
-    shared import "com.redhat.ceylon.module-resolver" "1.2.2";
 }
