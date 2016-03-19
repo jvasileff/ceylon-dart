@@ -11,11 +11,11 @@ void $package$run() {
     $ceylon$language.Iterable a = new $ceylon$language.LazyIterable(3, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.String.instance("1");
+        return $ceylon$language.$ceylonString("1");
         case 1 :
-        return $ceylon$language.String.instance("2");
+        return $ceylon$language.$ceylonString("2");
         case 2 :
-        return $ceylon$language.String.instance("3");
+        return $ceylon$language.$ceylonString("3");
         }
     }, null);
     $ceylon$language.Iterable b = $ceylon$language.empty;
@@ -23,7 +23,7 @@ void $package$run() {
     $ceylon$language.Iterable d = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
         switch ($i$) {
         case 0 :
-        return $ceylon$language.String.instance("4");
+        return $ceylon$language.$ceylonString("4");
         }
     }, a);
     $ceylon$language.Iterable e = b;

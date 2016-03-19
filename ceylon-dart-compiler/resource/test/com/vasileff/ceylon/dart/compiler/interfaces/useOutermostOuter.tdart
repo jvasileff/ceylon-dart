@@ -35,7 +35,7 @@ void $package$run() {
     if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().fooIJ == "fooI")) {
         throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
     }
-    $ceylon$language.print($ceylon$language.String.instance("done."));
+    $ceylon$language.print($ceylon$language.$ceylonString("done."));
 }
 
 void run() => $package$run();

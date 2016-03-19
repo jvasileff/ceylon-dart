@@ -6,7 +6,7 @@ abstract class SomeInt {
     set someObject($dart$core.Object someObject);
 }
 void $package$run([SomeInt si]) {
-    $dart$core.String y = $ceylon$language.String.nativeValue((si.someObject = $ceylon$language.String.instance("")) as $ceylon$language.String);
+    $dart$core.String y = $ceylon$language.$dartString((si.someObject = $ceylon$language.$ceylonString("")) as $ceylon$language.String);
 }
 
 void run([SomeInt si]) => $package$run(si);

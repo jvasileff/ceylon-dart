@@ -7,7 +7,7 @@ $dart$core.String get myIterable => $package$myIterable;
 
 void $package$run() {{
         $dart$core.Object element$1;
-        $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance($package$myIterable).iterator();
+        $ceylon$language.Iterator iterator$0 = $ceylon$language.$ceylonString($package$myIterable).iterator();
         while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
             $ceylon$language.Character x;
             {

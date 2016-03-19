@@ -18,10 +18,10 @@ class D  extends C {
     D() {}
     $dart$core.String get c1 => "";
     void set c1($dart$core.String c1) {
-        $ceylon$language.print($ceylon$language.String.instance("assigning c1 to: " + c1));
+        $ceylon$language.print($ceylon$language.$ceylonString("assigning c1 to: " + c1));
     }
     $dart$core.String get c2 => "";
     void set c2($dart$core.String c2) {
-        $ceylon$language.print($ceylon$language.String.instance("assigning c2 to: " + c2));
+        $ceylon$language.print($ceylon$language.$ceylonString("assigning c2 to: " + c2));
     }
 }

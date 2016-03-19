@@ -16,6 +16,6 @@ abstract class I$J {
 }
 abstract class I {
 }
-$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as I$J).$new$I$J$C($ceylon$language.String.nativeValue($0 as $ceylon$language.String))));
+$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as I$J).$new$I$J$C($ceylon$language.$dartString($0 as $ceylon$language.String))));
 
 $ceylon$language.Callable get newC => $package$newC;

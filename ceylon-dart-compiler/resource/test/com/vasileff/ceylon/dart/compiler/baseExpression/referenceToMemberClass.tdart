@@ -12,7 +12,7 @@ class C$D implements $ceylon$language.dart$$Basic {
 class C implements $ceylon$language.dart$$Basic {
     C() {}
     void foo() {
-        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new C$D(this, $ceylon$language.String.nativeValue($0)));
-        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$D(this, $ceylon$language.String.nativeValue(s)));
+        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new C$D(this, $ceylon$language.$dartString($0)));
+        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$D(this, $ceylon$language.$dartString(s)));
     }
 }

@@ -3,7 +3,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class superAndOuterSharedCallableParam$Outer$Inner  extends superAndOuterSharedCallableParam$Outer {
     superAndOuterSharedCallableParam$Outer $outer$default$superAndOuterSharedCallableParam$Outer;
-    superAndOuterSharedCallableParam$Outer$Inner([superAndOuterSharedCallableParam$Outer $outer$default$superAndOuterSharedCallableParam$Outer]) : super(new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_inner"))) {
+    superAndOuterSharedCallableParam$Outer$Inner([superAndOuterSharedCallableParam$Outer $outer$default$superAndOuterSharedCallableParam$Outer]) : super(new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_inner"))) {
         this.$outer$default$superAndOuterSharedCallableParam$Outer = $outer$default$superAndOuterSharedCallableParam$Outer;
     }
     $dart$core.String foo() => super.f("works");
@@ -12,7 +12,7 @@ class superAndOuterSharedCallableParam$Outer$Inner  extends superAndOuterSharedC
 class superAndOuterSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
     superAndOuterSharedCallableParam$Outer([$dart$core.Object f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(f, $ceylon$language.dart$default)) {
-            f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_outer"));
+            f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_outer"));
         }
         return [f];
     })());
@@ -23,7 +23,7 @@ class superAndOuterSharedCallableParam$Outer implements $ceylon$language.dart$$B
     $ceylon$language.Callable _f$c;
     superAndOuterSharedCallableParam$Outer$Inner $new$superAndOuterSharedCallableParam$Outer$Inner() => new superAndOuterSharedCallableParam$Outer$Inner(this);
     $dart$core.String f([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(_f$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(_f$c.f($ceylon$language.$ceylonString(s)));
     }
 }
 void $package$superAndOuterSharedCallableParam() {

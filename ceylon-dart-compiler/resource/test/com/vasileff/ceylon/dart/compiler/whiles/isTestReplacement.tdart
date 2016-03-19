@@ -8,7 +8,7 @@ void $package$run() {
         if (!(sif is $ceylon$language.String)) {
             break;
         }
-        sif$0 = $ceylon$language.String.nativeValue(sif as $ceylon$language.String);
+        sif$0 = $ceylon$language.$dartString(sif as $ceylon$language.String);
         if (!false) {
             throw new $ceylon$language.AssertionError("Violated: false");
         }

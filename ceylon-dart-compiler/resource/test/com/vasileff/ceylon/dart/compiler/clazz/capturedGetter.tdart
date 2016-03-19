@@ -36,9 +36,9 @@ class run$D implements $ceylon$language.dart$$Basic, run$I {
 void $package$run() {
     $dart$core.String val$get() => "hello";
 
-    $ceylon$language.print($ceylon$language.String.instance((new run$C(val$get)).accessVal));
-    $ceylon$language.print($ceylon$language.String.instance((new run$D(val$get)).accessVal));
-    $ceylon$language.print($ceylon$language.String.instance((new run$D.create(val$get)).accessVal));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$C(val$get)).accessVal));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$D(val$get)).accessVal));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$D.create(val$get)).accessVal));
 }
 
 void run() => $package$run();

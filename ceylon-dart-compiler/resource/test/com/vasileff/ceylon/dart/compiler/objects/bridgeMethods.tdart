@@ -16,12 +16,12 @@ abstract class I {
     }
     void set s1($dart$core.String s1);
     static $dart$core.String $set$s1([final I $this, $dart$core.String s1]) {
-        $ceylon$language.print($ceylon$language.String.instance("Setting s1"));
+        $ceylon$language.print($ceylon$language.$ceylonString("Setting s1"));
         return s1;
     }
     void set s2($dart$core.String s2);
     static $dart$core.String $set$s2([final I $this, $dart$core.String s2]) {
-        $ceylon$language.print($ceylon$language.String.instance("Setting s2"));
+        $ceylon$language.print($ceylon$language.$ceylonString("Setting s2"));
         return s2;
     }
 }

@@ -25,7 +25,7 @@ class A$B$C implements $ceylon$language.dart$$Basic {
     $ceylon$language.Callable _$newB3;
     void asdf() {
         $dart$core.String cap1 = "";
-        $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.String.nativeValue($0)));
+        $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.$dartString($0)));
     }
 }
 class A$B implements $ceylon$language.dart$$Basic {

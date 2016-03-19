@@ -45,7 +45,7 @@ void $package$run() {
     if (!($package$i == 2)) {
         throw new $ceylon$language.AssertionError("Violated: i == 2");
     }
-    $ceylon$language.print($ceylon$language.String.instance("done"));
+    $ceylon$language.print($ceylon$language.$ceylonString("done"));
 }
 
 void run() => $package$run();

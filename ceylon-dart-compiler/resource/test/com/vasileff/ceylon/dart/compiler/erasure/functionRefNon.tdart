@@ -6,8 +6,8 @@ $dart$core.String $package$echoString() => "x";
 $dart$core.String echoString() => $package$echoString();
 
 void $package$run() {
-    $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance($package$echoString()));
-    $dart$core.String result = $ceylon$language.String.nativeValue(ref.f() as $ceylon$language.String);
+    $ceylon$language.Callable ref = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString($package$echoString()));
+    $dart$core.String result = $ceylon$language.$dartString(ref.f() as $ceylon$language.String);
 }
 
 void run() => $package$run();

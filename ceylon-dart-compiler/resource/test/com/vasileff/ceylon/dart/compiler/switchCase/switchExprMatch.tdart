@@ -12,7 +12,7 @@ void $package$run() {
             return "else";
         }
     })();
-    $ceylon$language.print($ceylon$language.String.instance(a));
+    $ceylon$language.print($ceylon$language.$ceylonString(a));
 }
 
 void run() => $package$run();

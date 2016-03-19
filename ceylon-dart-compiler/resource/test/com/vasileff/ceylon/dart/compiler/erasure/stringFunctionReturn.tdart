@@ -9,10 +9,10 @@ $dart$core.String $package$f2() => "x";
 
 $dart$core.String f2() => $package$f2();
 
-$dart$core.Object $package$f3() => $ceylon$language.String.instance("x");
+$dart$core.Object $package$f3() => $ceylon$language.$ceylonString("x");
 
 $dart$core.Object f3() => $package$f3();
 
-$dart$core.Object $package$f4() => $ceylon$language.String.instance("x");
+$dart$core.Object $package$f4() => $ceylon$language.$ceylonString("x");
 
 $dart$core.Object f4() => $package$f4();

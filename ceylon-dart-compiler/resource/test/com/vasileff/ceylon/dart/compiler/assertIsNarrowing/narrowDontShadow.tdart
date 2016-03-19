@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$assertions() {
-    $dart$core.Object obj = $ceylon$language.String.instance("x");
+    $dart$core.Object obj = $ceylon$language.$ceylonString("x");
     if (obj is $ceylon$language.String) {
         throw new $ceylon$language.AssertionError("Violated: !is String obj");
     }

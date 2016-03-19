@@ -10,8 +10,8 @@ class Foo implements $ceylon$language.dart$$Basic {
     $ceylon$language.Destroyable _$d;
 }
 void $package$run() {
-    $ceylon$language.Callable newFoo1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0, $ceylon$language.Destroyable $1]) => new Foo($ceylon$language.String.nativeValue($0), $1));
-    $ceylon$language.Callable newFoo2 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0, $ceylon$language.Destroyable $1]) => new Foo($ceylon$language.String.nativeValue($0), $1));
+    $ceylon$language.Callable newFoo1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0, $ceylon$language.Destroyable $1]) => new Foo($ceylon$language.$dartString($0), $1));
+    $ceylon$language.Callable newFoo2 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0, $ceylon$language.Destroyable $1]) => new Foo($ceylon$language.$dartString($0), $1));
 }
 
 void run() => $package$run();

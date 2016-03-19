@@ -6,7 +6,7 @@ void $package$run() {
     if (null == s) {
         throw new $ceylon$language.AssertionError("Violated: exists s");
     }
-    $ceylon$language.print($ceylon$language.String.instance(s));
+    $ceylon$language.print($ceylon$language.$ceylonString(s));
     $dart$core.String s2;
     {
         $dart$core.String tmp$0 = true ? s : null;
@@ -15,7 +15,7 @@ void $package$run() {
         }
         s2 = tmp$0;
     }
-    $ceylon$language.print($ceylon$language.String.instance(s2));
+    $ceylon$language.print($ceylon$language.$ceylonString(s2));
 }
 
 void run() => $package$run();

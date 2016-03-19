@@ -41,7 +41,7 @@ class run$D implements $ceylon$language.dart$$Basic, run$I {
 }
 void $package$run() {
     void fun() {
-        $ceylon$language.print($ceylon$language.String.instance("hello"));
+        $ceylon$language.print($ceylon$language.$ceylonString("hello"));
     }
 
     (new run$C(fun)).callFun();

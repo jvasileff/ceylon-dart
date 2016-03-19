@@ -6,9 +6,9 @@ class C implements $ceylon$language.dart$$Basic {
         t = "t";
         if (0 != ($bitmap & 1)) {
             $dart$core.String s = "s";
-            $ceylon$language.print($ceylon$language.String.instance(s));
+            $ceylon$language.print($ceylon$language.$ceylonString(s));
             this.s = s;
-            $ceylon$language.print($ceylon$language.String.instance(t));
+            $ceylon$language.print($ceylon$language.$ceylonString(t));
         }
     }
     C() : this.$d(1);

@@ -14,7 +14,7 @@ $dart$core.String $package$nonGeneric([$dart$core.String x]) {
 $dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
 
 void $package$run() {
-    $dart$core.String myString1 = $ceylon$language.String.nativeValue($package$generic($ceylon$language.String.instance("true")) as $ceylon$language.String);
+    $dart$core.String myString1 = $ceylon$language.$dartString($package$generic($ceylon$language.$ceylonString("true")) as $ceylon$language.String);
     $dart$core.String myString2 = $package$nonGeneric("true");
 }
 

@@ -65,7 +65,7 @@ abstract class stringInterface$I {
     static $dart$core.String $get$string([final stringInterface$I $this]) => "1";
     void set string($dart$core.String string);
     static $dart$core.String $set$string([final stringInterface$I $this, $dart$core.String string]) {
-        $ceylon$language.print($ceylon$language.String.instance(string));
+        $ceylon$language.print($ceylon$language.$ceylonString(string));
         return string;
     }
 }

@@ -36,10 +36,10 @@ class run$OuterClass implements $ceylon$language.dart$$Basic, run$OuterInterface
     run$OuterClass$MiddleClass $new$run$OuterClass$MiddleClass() => new run$OuterClass$MiddleClass(this);
 }
 void $package$run() {
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdent));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdentFromMiddle));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdent));
-    $ceylon$language.print($ceylon$language.String.instance((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdentFromMiddle));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdent));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdentFromMiddle));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdent));
+    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdentFromMiddle));
 }
 
 void run() => $package$run();

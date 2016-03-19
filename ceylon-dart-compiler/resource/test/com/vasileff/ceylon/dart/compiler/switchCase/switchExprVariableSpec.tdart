@@ -2,13 +2,13 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $dart$core.Object si = $ceylon$language.String.instance("");
+    $dart$core.Object si = $ceylon$language.$ceylonString("");
     $dart$core.String a = (() {
         $dart$core.Object newVar = si;
         if (newVar is $ceylon$language.String) {
             $dart$core.String newVar$0;
-            newVar$0 = $ceylon$language.String.nativeValue(newVar as $ceylon$language.String);
-            return "string" + $ceylon$language.String.instance(newVar$0).size.toString();
+            newVar$0 = $ceylon$language.$dartString(newVar as $ceylon$language.String);
+            return "string" + $ceylon$language.$ceylonString(newVar$0).size.toString();
         } else if (newVar is $ceylon$language.Integer) {
             $dart$core.int newVar$1;
             newVar$1 = $ceylon$language.$dartInt(newVar as $ceylon$language.Integer);
@@ -17,7 +17,7 @@ void $package$run() {
             throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
         }
     })();
-    $ceylon$language.print($ceylon$language.String.instance(a));
+    $ceylon$language.print($ceylon$language.$ceylonString(a));
 }
 
 void run() => $package$run();

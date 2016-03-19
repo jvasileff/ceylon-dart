@@ -23,7 +23,7 @@ $dart$core.String $package$bar() => "";
 
 $dart$core.String bar() => $package$bar();
 
-$ceylon$language.Callable $package$barCurry() => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance((() => "")()));
+$ceylon$language.Callable $package$barCurry() => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString((() => "")()));
 
 $ceylon$language.Callable barCurry() => $package$barCurry();
 
@@ -35,12 +35,12 @@ abstract class I {
 class A implements $ceylon$language.dart$$Basic, I {
     A() {
         id = "hello";
-        foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance($package$bar()));
+        foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString($package$bar()));
     }
     $dart$core.String id;
     $ceylon$language.Callable foo$c;
     $dart$core.String foo() {
-        return $ceylon$language.String.nativeValue(foo$c.f());
+        return $ceylon$language.$dartString(foo$c.f());
     }
 }
 class B implements $ceylon$language.dart$$Basic, I {
@@ -52,18 +52,18 @@ class B implements $ceylon$language.dart$$Basic, I {
     $ceylon$language.Callable _$barCurryRef;
     $ceylon$language.Callable foo$c;
     $dart$core.String foo() {
-        return $ceylon$language.String.nativeValue(foo$c.f());
+        return $ceylon$language.$dartString(foo$c.f());
     }
 }
 class C implements $ceylon$language.dart$$Basic, I {
     C() {
         id = "hello";
-        fdf$c = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("fdfImpl"));
+        fdf$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("fdfImpl"));
     }
     $dart$core.String id;
     $ceylon$language.Callable fdf$c;
     $dart$core.String fdf() {
-        return $ceylon$language.String.nativeValue(fdf$c.f());
+        return $ceylon$language.$dartString(fdf$c.f());
     }
     $dart$core.String foo() => I.$foo(this);
 }

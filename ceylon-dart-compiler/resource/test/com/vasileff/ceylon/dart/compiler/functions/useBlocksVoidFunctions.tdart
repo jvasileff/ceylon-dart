@@ -4,11 +4,11 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class A implements $ceylon$language.dart$$Basic {
     A() {}
     void run() {
-        $ceylon$language.print($ceylon$language.String.instance("hello"));
+        $ceylon$language.print($ceylon$language.$ceylonString("hello"));
     }
 }
 void $package$run() {
-    $ceylon$language.print($ceylon$language.String.instance("hello"));
+    $ceylon$language.print($ceylon$language.$ceylonString("hello"));
 }
 
 void run() => $package$run();

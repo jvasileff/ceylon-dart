@@ -26,11 +26,11 @@ class returnTypeErasureCallableParam$C implements $ceylon$language.dart$$Basic, 
         return _echoObj$c.f(s);
     }
     $dart$core.String echoStr([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(_echoStr$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(_echoStr$c.f($ceylon$language.$ceylonString(s)));
     }
 }
 void $package$returnTypeErasureCallableParam() {
-    if (!(($ceylon$language.String.nativeValue((new returnTypeErasureCallableParam$C()).echoObj($ceylon$language.String.instance("a"))) + "b") == "ab")) {
+    if (!(($ceylon$language.$dartString((new returnTypeErasureCallableParam$C()).echoObj($ceylon$language.$ceylonString("a"))) + "b") == "ab")) {
         throw new $ceylon$language.AssertionError("Violated: C().echoObj(\"a\") + \"b\" == \"ab\"");
     }
     if (!(((new returnTypeErasureCallableParam$C()).echoStr("a") + "b") == "ab")) {

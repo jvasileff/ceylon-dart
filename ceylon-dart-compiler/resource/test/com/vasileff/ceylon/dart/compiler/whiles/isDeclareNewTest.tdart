@@ -12,7 +12,7 @@ void $package$run() {
             }
             i = $ceylon$language.$dartInt(i$0 as $ceylon$language.Integer);
         }
-        isv = $ceylon$language.String.instance("");
+        isv = $ceylon$language.$ceylonString("");
     }
 }
 

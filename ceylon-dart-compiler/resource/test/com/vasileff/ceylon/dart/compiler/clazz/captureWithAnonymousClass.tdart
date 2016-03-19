@@ -7,7 +7,7 @@ class o$$anonymous$0_$foo$o2$$anonymous$1_ implements $ceylon$language.dart$$Bas
     o$$anonymous$0_$foo$o2$$anonymous$1_([o$$anonymous$0_ $outer$default$o$$anonymous$0_, $dart$core.String $capture$o$o$$anonymous$0_$foo$s]) {
         this.$outer$default$o$$anonymous$0_ = $outer$default$o$$anonymous$0_;
         this.$capture$o$o$$anonymous$0_$foo$s = $capture$o$o$$anonymous$0_$foo$s;
-        $ceylon$language.print($ceylon$language.String.instance($capture$o$o$$anonymous$0_$foo$s));
+        $ceylon$language.print($ceylon$language.$ceylonString($capture$o$o$$anonymous$0_$foo$s));
     }
 }
 class o$$anonymous$0_ implements $ceylon$language.dart$$Basic {

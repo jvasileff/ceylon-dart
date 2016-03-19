@@ -83,7 +83,7 @@ void $package$run() {
     if (!(cSelfOuter.outerIdent == "i1o")) {
         throw new $ceylon$language.AssertionError("Violated: cSelfOuter.outerIdent == \"i1o\"");
     }
-    $ceylon$language.print($ceylon$language.String.instance("done"));
+    $ceylon$language.print($ceylon$language.$ceylonString("done"));
 }
 
 void run() => $package$run();

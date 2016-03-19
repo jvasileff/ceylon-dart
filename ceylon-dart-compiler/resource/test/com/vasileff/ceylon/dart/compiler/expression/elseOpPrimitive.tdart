@@ -5,7 +5,7 @@ void $package$run() {
     $dart$core.String x$get() => null;
 
     $dart$core.String y = (($dart$core.String $lhs$) => null == $lhs$ ? "default" : $lhs$)(x$get());
-    $ceylon$language.print($ceylon$language.String.instance(y));
+    $ceylon$language.print($ceylon$language.$ceylonString(y));
 }
 
 void run() => $package$run();

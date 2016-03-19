@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Iterable iter0 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$0 = false;
         $dart$core.bool step$0$1() {
             if (step$0$expired$0) {
@@ -51,7 +51,7 @@ void $package$run() {
 
         return new $ceylon$language.dart$Callable(step$2$7);
     }));
-    $ceylon$language.Iterable iter1 = $ceylon$language.functionIterable(new $ceylon$language.dart$Callable(() {
+    $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
         $dart$core.bool step$0$expired$8 = false;
         $dart$core.bool step$0$9() {
             if (step$0$expired$8) {
@@ -95,7 +95,7 @@ void $package$run() {
                 return $ceylon$language.finished;
             }
             $ceylon$language.Integer i = i$12;
-            return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.String.instance("nope");
+            return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.$ceylonString("nope");
         }
 
         return new $ceylon$language.dart$Callable(step$2$15);

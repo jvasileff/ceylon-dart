@@ -15,7 +15,7 @@ class B implements $ceylon$language.dart$$Basic, I {
 }
 void $package$run() {
     $dart$core.Object ab = new A();
-    $ceylon$language.print($ceylon$language.String.instance((ab as I).id));
+    $ceylon$language.print($ceylon$language.$ceylonString((ab as I).id));
     $dart$core.int x = 5;
     $ceylon$language.print($ceylon$language.$ceylonInteger(x * 2));
 }

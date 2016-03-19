@@ -4,26 +4,26 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $ceylon$language.Callable echo1$c;
     $ceylon$language.Callable echo1([$dart$core.String s]) {
-        $ceylon$language.Callable echo1$c1 = echo1$c.f($ceylon$language.String.instance(s));
-        return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.String.instance((($ceylon$language.String t) {
-            return $ceylon$language.String.nativeValue(echo1$c1.f(t));
+        $ceylon$language.Callable echo1$c1 = echo1$c.f($ceylon$language.$ceylonString(s));
+        return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
+            return $ceylon$language.$dartString(echo1$c1.f(t));
         })($0)));
     }
 
     $ceylon$language.Callable echo2$c;
     $ceylon$language.Callable echo2([$dart$core.String s]) {
-        $ceylon$language.Callable echo2$c1 = echo2$c.f($ceylon$language.String.instance(s));
-        return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.String.instance((($ceylon$language.String t) {
-            return $ceylon$language.String.nativeValue(echo2$c1.f(t));
+        $ceylon$language.Callable echo2$c1 = echo2$c.f($ceylon$language.$ceylonString(s));
+        return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
+            return $ceylon$language.$dartString(echo2$c1.f(t));
         })($0)));
     }
 
-    echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + $ceylon$language.String.nativeValue(t))));
-    echo2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + $ceylon$language.String.nativeValue(t))));
-    if (!($ceylon$language.String.nativeValue(echo1("wor").f($ceylon$language.String.instance("ks")) as $ceylon$language.String) == "works")) {
+    echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
+    echo2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
+    if (!($ceylon$language.$dartString(echo1("wor").f($ceylon$language.$ceylonString("ks")) as $ceylon$language.String) == "works")) {
         throw new $ceylon$language.AssertionError("Violated: echo1(\"wor\")(\"ks\") == \"works\"");
     }
-    if (!($ceylon$language.String.nativeValue(echo2("wor").f($ceylon$language.String.instance("ks")) as $ceylon$language.String) == "works")) {
+    if (!($ceylon$language.$dartString(echo2("wor").f($ceylon$language.$ceylonString("ks")) as $ceylon$language.String) == "works")) {
         throw new $ceylon$language.AssertionError("Violated: echo2(\"wor\")(\"ks\") == \"works\"");
     }
 }

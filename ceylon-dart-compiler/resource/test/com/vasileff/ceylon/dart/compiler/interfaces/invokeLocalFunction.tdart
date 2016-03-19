@@ -5,11 +5,11 @@ abstract class I {
     void printHello();
     static void $printHello([final I $this]) {
         void f() {
-            $ceylon$language.print($ceylon$language.String.instance("hello"));
+            $ceylon$language.print($ceylon$language.$ceylonString("hello"));
         }
 
         void g() {
-            $ceylon$language.print($ceylon$language.String.instance("hello"));
+            $ceylon$language.print($ceylon$language.$ceylonString("hello"));
         }
 
         f();

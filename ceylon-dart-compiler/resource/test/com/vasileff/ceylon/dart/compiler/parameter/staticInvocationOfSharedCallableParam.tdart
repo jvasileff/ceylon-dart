@@ -14,23 +14,23 @@ class staticInvocationOfSharedCallableParam$CP implements $ceylon$language.dart$
     }
     $ceylon$language.Callable _echo$c;
     void test() {
-        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.String.instance(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.String.nativeValue($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.String.instance("hello")) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonString(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.$dartString($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(\"hello\") == \"hello\"");
         }
-        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.String.instance(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.String.nativeValue($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("hello")])) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonString(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.$dartString($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("hello")])) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(*[\"hello\"]) == \"hello\"");
         }
     }
     $dart$core.String echo([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(_echo$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(_echo$c.f($ceylon$language.$ceylonString(s)));
     }
 }
 void $package$staticInvocationOfSharedCallableParam() {
     (new staticInvocationOfSharedCallableParam$CP()).test();
-    if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.String.instance(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.String.nativeValue($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.String.instance("hello")) as $ceylon$language.String) == "hello")) {
+    if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonString(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.$dartString($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String) == "hello")) {
         throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(\"hello\") == \"hello\"");
     }
-    if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.String.instance(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.String.nativeValue($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("hello")])) as $ceylon$language.String) == "hello")) {
+    if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonString(($r as staticInvocationOfSharedCallableParam$CP).echo($ceylon$language.$dartString($0 as $ceylon$language.String)))))).f(new staticInvocationOfSharedCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("hello")])) as $ceylon$language.String) == "hello")) {
         throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(*[\"hello\"]) == \"hello\"");
     }
 }

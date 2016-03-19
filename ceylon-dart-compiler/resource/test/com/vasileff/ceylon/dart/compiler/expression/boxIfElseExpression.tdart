@@ -6,7 +6,7 @@ void $package$run() {
     $dart$core.int y = 1;
     $dart$core.int z = x > y ? x : y;
     $dart$core.Object o = x > y ? $ceylon$language.$ceylonInteger(x) : $ceylon$language.$ceylonInteger(y);
-    $dart$core.Object p = x > y ? $ceylon$language.$ceylonInteger(x) : $ceylon$language.String.instance("");
+    $dart$core.Object p = x > y ? $ceylon$language.$ceylonInteger(x) : $ceylon$language.$ceylonString("");
     $dart$core.Object q = x > y ? $ceylon$language.$ceylonInteger(x) : o;
 }
 

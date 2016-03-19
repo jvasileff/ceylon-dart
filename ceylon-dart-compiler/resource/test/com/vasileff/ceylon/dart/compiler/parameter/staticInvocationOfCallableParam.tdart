@@ -14,10 +14,10 @@ class staticInvocationOfCallableParam$CP implements $ceylon$language.dart$$Basic
     }
     $ceylon$language.Callable _$echo;
     void test() {
-        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.String.instance("hello")) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(\"hello\") == \"hello\"");
         }
-        if (!($ceylon$language.String.nativeValue(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.String.instance("hello")])) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("hello")])) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(*[\"hello\"]) == \"hello\"");
         }
     }

@@ -130,13 +130,13 @@ class mappedInitializerParameters$H  extends mappedInitializerParameters$G {
     $ceylon$language.Callable _$a;
     $ceylon$language.Callable _equals$c;
     void test() {
-        if (!($ceylon$language.$dartBool(_$a.f($ceylon$language.String.instance("")) as $ceylon$language.Boolean) == true)) {
+        if (!($ceylon$language.$dartBool(_$a.f($ceylon$language.$ceylonString("")) as $ceylon$language.Boolean) == true)) {
             throw new $ceylon$language.AssertionError("Violated: a(\"\") == true");
         }
-        if (!((this == $ceylon$language.String.instance("")) == true)) {
+        if (!((this == $ceylon$language.$ceylonString("")) == true)) {
             throw new $ceylon$language.AssertionError("Violated: equals(\"\") == true");
         }
-        if (!((super == $ceylon$language.String.instance("")) == true)) {
+        if (!((super == $ceylon$language.$ceylonString("")) == true)) {
             throw new $ceylon$language.AssertionError("Violated: super.equals(\"\") == true");
         }
     }

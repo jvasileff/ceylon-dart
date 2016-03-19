@@ -3,7 +3,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
     $ceylon$language.Callable newEntry = new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => new $ceylon$language.Entry($0, $1));
-    $ceylon$language.Entry entry = newEntry.f($ceylon$language.String.instance("d"), null) as $ceylon$language.Entry;
+    $ceylon$language.Entry entry = newEntry.f($ceylon$language.$ceylonString("d"), null) as $ceylon$language.Entry;
     $ceylon$language.print(entry);
 }
 

@@ -4,11 +4,11 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {{
         $dart$core.int switch$0 = 1 + 1;
         if ((switch$0 == 1) || (switch$0 == 2)) {
-            $ceylon$language.print($ceylon$language.String.instance("one or two"));
+            $ceylon$language.print($ceylon$language.$ceylonString("one or two"));
         } else if (switch$0 == 3) {
-            $ceylon$language.print($ceylon$language.String.instance("three"));
+            $ceylon$language.print($ceylon$language.$ceylonString("three"));
         } else {
-            $ceylon$language.print($ceylon$language.String.instance("else"));
+            $ceylon$language.print($ceylon$language.$ceylonString("else"));
         }
     }
 }

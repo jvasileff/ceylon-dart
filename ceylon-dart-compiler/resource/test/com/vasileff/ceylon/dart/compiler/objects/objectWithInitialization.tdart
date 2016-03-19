@@ -8,7 +8,7 @@ class o_ implements $ceylon$language.dart$$Basic {
     $dart$core.String _$myIterable;
     void run() {{
             $dart$core.Object element$1;
-            $ceylon$language.Iterator iterator$0 = $ceylon$language.String.instance(_$myIterable).iterator();
+            $ceylon$language.Iterator iterator$0 = $ceylon$language.$ceylonString(_$myIterable).iterator();
             while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
                 $ceylon$language.Character x;
                 {

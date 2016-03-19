@@ -2,7 +2,7 @@ import "dart:core" as $dart$core;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$simpleFunction() {
-    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance("result"));
+    $ceylon$language.Callable anon = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("result"));
     $ceylon$language.print(anon.f());
 }
 

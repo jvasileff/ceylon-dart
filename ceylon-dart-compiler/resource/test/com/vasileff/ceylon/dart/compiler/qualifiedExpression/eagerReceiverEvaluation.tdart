@@ -76,7 +76,7 @@ void $package$run() {
         throw new $ceylon$language.AssertionError("Violated: q(0) == 1");
     }
     (new run$D()).foo();
-    $ceylon$language.print($ceylon$language.String.instance("done"));
+    $ceylon$language.print($ceylon$language.$ceylonString("done"));
 }
 
 void run() => $package$run();

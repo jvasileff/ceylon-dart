@@ -3,11 +3,11 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C implements $ceylon$language.dart$$Basic {
     C() {
-        x = $ceylon$language.String.instance("");
+        x = $ceylon$language.$ceylonString("");
         if (!(x is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String x");
         }
-        x$0 = $ceylon$language.String.nativeValue(x as $ceylon$language.String);
+        x$0 = $ceylon$language.$dartString(x as $ceylon$language.String);
     }
     $dart$core.Object x;
     $dart$core.String x$0;

@@ -16,7 +16,7 @@ void $package$tryObtainable() {
             $ceylon$language.Throwable e$3;
             u$2.obtain();
             try {
-                $ceylon$language.print($ceylon$language.String.instance("trying"));
+                $ceylon$language.print($ceylon$language.$ceylonString("trying"));
             } catch (e$4) {
                 e$3 = $ceylon$language.dart$wrapThrownObject(e$4);
                 rethrow;
@@ -49,13 +49,13 @@ void $package$tryObtainable() {
         $ceylon$language.Throwable e$1 = $ceylon$language.dart$wrapThrownObject(e$0);
         if (e$1 is $ceylon$language.Exception) {
             $ceylon$language.Exception e = e$1 as $ceylon$language.Exception;
-            $ceylon$language.print($ceylon$language.String.instance("caught something"));
+            $ceylon$language.print($ceylon$language.$ceylonString("caught something"));
             throw e;
         } else {
             rethrow;
         }
     } finally {
-        $ceylon$language.print($ceylon$language.String.instance("finally do some cleanup."));
+        $ceylon$language.print($ceylon$language.$ceylonString("finally do some cleanup."));
     }
 }
 

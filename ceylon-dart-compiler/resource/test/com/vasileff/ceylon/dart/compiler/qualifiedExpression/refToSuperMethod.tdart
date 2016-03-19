@@ -8,7 +8,7 @@ class C implements $ceylon$language.dart$$Basic {
 class D  extends C {
     D() {}
     $dart$core.String id() => "D";
-    $ceylon$language.Callable get superId => new $ceylon$language.dart$Callable(() => $ceylon$language.String.instance(super.id()));
+    $ceylon$language.Callable get superId => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(super.id()));
 }
 void $package$run() {
     $ceylon$language.print((new D()).superId.f());

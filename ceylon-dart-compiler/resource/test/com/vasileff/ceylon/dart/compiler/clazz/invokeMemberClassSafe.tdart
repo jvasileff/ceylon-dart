@@ -6,7 +6,7 @@ class C$D implements $ceylon$language.dart$$Basic {
     C$D([C $outer$default$C, $dart$core.String _$s]) {
         this.$outer$default$C = $outer$default$C;
         this._$s = _$s;
-        $ceylon$language.print($ceylon$language.String.instance(this._$s));
+        $ceylon$language.print($ceylon$language.$ceylonString(this._$s));
     }
     $dart$core.String _$s;
 }

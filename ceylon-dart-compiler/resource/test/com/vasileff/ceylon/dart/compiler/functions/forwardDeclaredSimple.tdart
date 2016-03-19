@@ -4,17 +4,17 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$run() {
     $ceylon$language.Callable echo1$c;
     $dart$core.String echo1([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(echo1$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(echo1$c.f($ceylon$language.$ceylonString(s)));
     }
 
     $ceylon$language.Callable echo2$c;
     $dart$core.String echo2([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(echo2$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(echo2$c.f($ceylon$language.$ceylonString(s)));
     }
 
     $ceylon$language.Callable echo3$c;
     $dart$core.String echo3([$dart$core.String s]) {
-        return $ceylon$language.String.nativeValue(echo3$c.f($ceylon$language.String.instance(s)));
+        return $ceylon$language.$dartString(echo3$c.f($ceylon$language.$ceylonString(s)));
     }
 
     echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);

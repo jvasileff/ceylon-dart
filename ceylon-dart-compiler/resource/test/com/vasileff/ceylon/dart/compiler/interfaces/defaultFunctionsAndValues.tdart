@@ -6,7 +6,7 @@ abstract class I {
     static void $f1([final I $this]) {}
     void f2();
     static void $f2([final I $this]) {
-        $ceylon$language.print($ceylon$language.String.instance(""));
+        $ceylon$language.print($ceylon$language.$ceylonString(""));
     }
     $dart$core.String f3();
     static $dart$core.String $f3([final I $this]) {

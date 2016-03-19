@@ -7,8 +7,8 @@ abstract class I$J implements I {
     static $dart$core.String $f([final I$J $this]) => "D.f()";
     void testResolution();
     static void $testResolution([final I$J $this]) {
-        $ceylon$language.print($ceylon$language.String.instance($this.f()));
-        $ceylon$language.print($ceylon$language.String.instance($this.$outer$default$I.f()));
+        $ceylon$language.print($ceylon$language.$ceylonString($this.f()));
+        $ceylon$language.print($ceylon$language.$ceylonString($this.$outer$default$I.f()));
     }
 }
 abstract class I {

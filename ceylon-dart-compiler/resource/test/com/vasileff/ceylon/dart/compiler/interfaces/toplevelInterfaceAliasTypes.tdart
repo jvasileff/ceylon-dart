@@ -35,13 +35,13 @@ void $package$run() {
     if (!(c is I)) {
         throw new $ceylon$language.AssertionError("Violated: (c of Anything) is IAliasAlias");
     }
-    if (!(!($ceylon$language.String.instance("") is I))) {
+    if (!(!($ceylon$language.$ceylonString("") is I))) {
         throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is I");
     }
-    if (!(!($ceylon$language.String.instance("") is I))) {
+    if (!(!($ceylon$language.$ceylonString("") is I))) {
         throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is IAlias");
     }
-    if (!(!($ceylon$language.String.instance("") is I))) {
+    if (!(!($ceylon$language.$ceylonString("") is I))) {
         throw new $ceylon$language.AssertionError("Violated: !(\"\" of Anything) is IAliasAlias");
     }
 }

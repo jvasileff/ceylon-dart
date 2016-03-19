@@ -6,7 +6,7 @@ abstract class I {
     static $dart$core.String $get$x([final I $this]) => "";
     void set x($dart$core.String x);
     static $dart$core.String $set$x([final I $this, $dart$core.String x]) {
-        $ceylon$language.print($ceylon$language.String.instance(x));
+        $ceylon$language.print($ceylon$language.$ceylonString(x));
         return x;
     }
 }

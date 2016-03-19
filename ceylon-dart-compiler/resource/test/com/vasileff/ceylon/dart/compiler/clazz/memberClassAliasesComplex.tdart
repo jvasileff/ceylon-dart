@@ -63,7 +63,7 @@ class MakeTrouble implements $ceylon$language.dart$$Basic {
         }
 
         $ceylon$language.print(new $ceylon$language.Singleton("box"));
-        $ceylon$language.print($ceylon$language.String.instance(moreFun().$new$HasTrouble$Trouble().causeTrouble));
+        $ceylon$language.print($ceylon$language.$ceylonString(moreFun().$new$HasTrouble$Trouble().causeTrouble));
         return moreFun().$new$HasTrouble$Trouble();
     }
 }

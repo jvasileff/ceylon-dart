@@ -7,9 +7,9 @@ void $package$run() {
         $dart$core.String switch$0 = i;
         if (switch$0 is $dart$core.String) {} else {
             $dart$core.Object i$1;
-            i$1 = $ceylon$language.String.instance(i);
+            i$1 = $ceylon$language.$ceylonString(i);
             if (1 == 1) {
-                $ceylon$language.print($ceylon$language.String.instance("can't happen"));
+                $ceylon$language.print($ceylon$language.$ceylonString("can't happen"));
             }
         }
     }

@@ -47,7 +47,7 @@ void $package$run() {
     if (!(b.sbi == "s")) {
         throw new $ceylon$language.AssertionError("Violated: b.sbi == \"s\"");
     }
-    $ceylon$language.print($ceylon$language.String.instance("done."));
+    $ceylon$language.print($ceylon$language.$ceylonString("done."));
 }
 
 void run() => $package$run();

@@ -17,8 +17,8 @@ void $package$run() {
     $ceylon$language.Callable g = $package$fun(1);
     $ceylon$language.Callable h = $package$fun(2, 3);
     $ceylon$language.Callable i = $package$fun(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Callable;
-    $ceylon$language.Callable j = ($package$fun(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Callable).f($ceylon$language.String.instance("s"), $ceylon$language.$ceylonFloat(1.0)) as $ceylon$language.Callable;
-    $dart$core.int k = $ceylon$language.$dartInt((($package$fun(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Callable).f($ceylon$language.String.instance("s"), $ceylon$language.$ceylonFloat(1.0)) as $ceylon$language.Callable).f($ceylon$language.$true) as $ceylon$language.Integer);
+    $ceylon$language.Callable j = ($package$fun(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("s"), $ceylon$language.$ceylonFloat(1.0)) as $ceylon$language.Callable;
+    $dart$core.int k = $ceylon$language.$dartInt((($package$fun(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("s"), $ceylon$language.$ceylonFloat(1.0)) as $ceylon$language.Callable).f($ceylon$language.$true) as $ceylon$language.Integer);
 }
 
 void run() => $package$run();

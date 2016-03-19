@@ -17,10 +17,10 @@ final o1_ $package$o1 = new o1_();
 o1_ get o1 => $package$o1;
 
 void $package$run() {
-    $ceylon$language.print($ceylon$language.String.instance($package$o1.s1));
-    $ceylon$language.print($ceylon$language.String.instance($package$o1.s2));
-    $ceylon$language.print($ceylon$language.String.instance($package$o1.s3()));
-    $ceylon$language.print($ceylon$language.String.instance($package$o1.s4()));
+    $ceylon$language.print($ceylon$language.$ceylonString($package$o1.s1));
+    $ceylon$language.print($ceylon$language.$ceylonString($package$o1.s2));
+    $ceylon$language.print($ceylon$language.$ceylonString($package$o1.s3()));
+    $ceylon$language.print($ceylon$language.$ceylonString($package$o1.s4()));
 }
 
 void run() => $package$run();

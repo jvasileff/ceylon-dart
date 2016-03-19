@@ -3,16 +3,16 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class superAndOuterCallableParam$Outer$Inner  extends superAndOuterCallableParam$Outer {
     superAndOuterCallableParam$Outer $outer$default$superAndOuterCallableParam$Outer;
-    superAndOuterCallableParam$Outer$Inner([superAndOuterCallableParam$Outer $outer$default$superAndOuterCallableParam$Outer]) : super(new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_inner"))) {
+    superAndOuterCallableParam$Outer$Inner([superAndOuterCallableParam$Outer $outer$default$superAndOuterCallableParam$Outer]) : super(new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_inner"))) {
         this.$outer$default$superAndOuterCallableParam$Outer = $outer$default$superAndOuterCallableParam$Outer;
     }
-    $dart$core.String foo() => $ceylon$language.String.nativeValue(super._$f.f($ceylon$language.String.instance("works")) as $ceylon$language.String);
-    $dart$core.String bar() => $ceylon$language.String.nativeValue($outer$default$superAndOuterCallableParam$Outer._$f.f($ceylon$language.String.instance("works")) as $ceylon$language.String);
+    $dart$core.String foo() => $ceylon$language.$dartString(super._$f.f($ceylon$language.$ceylonString("works")) as $ceylon$language.String);
+    $dart$core.String bar() => $ceylon$language.$dartString($outer$default$superAndOuterCallableParam$Outer._$f.f($ceylon$language.$ceylonString("works")) as $ceylon$language.String);
 }
 class superAndOuterCallableParam$Outer implements $ceylon$language.dart$$Basic {
     superAndOuterCallableParam$Outer([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
-            _$f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.String.instance($ceylon$language.String.nativeValue(s) + "_outer"));
+            _$f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_outer"));
         }
         return [_$f];
     })());
