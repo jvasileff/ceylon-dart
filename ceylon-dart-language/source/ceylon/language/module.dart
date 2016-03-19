@@ -387,37 +387,10 @@ abstract class dart$$Basic extends dart$$Identifiable {}
 //
 /////////////////////////////////////////////////
 
-class serialization$NativeDeque implements dart$$Basic {
-  void pushFront(element) {}
-  void pushBack(element) {}
-  popFront() {}
-  $dart$core.bool empty;
-  $dart$core.String string;
-}
-
-class serialization$PartialImpl extends serialization$Partial {
-  serialization$PartialImpl(id) {}
-
-  void instantiate() {}
-  void initialize([serialization$DeserializationContextImpl context]) {}
-}
-
-class serialization$NativeMap implements dart$$Basic {
-  get(id) {}
-  void put(id, instanceOrPartial) {}
-  contains(id) {}
-  Iterable keys;
-  Iterable items;
-  Integer size;
-  String string;
-}
-
 $package$meta$type(var x) {}
 $package$meta$annotations([var x, var y]) {}
 $package$meta$classDeclaration(var x) {}
 $package$meta$typeLiteral() {}
-
-final $package$impl$reach = null;
 
 /////////////////////////////////////////////////
 //

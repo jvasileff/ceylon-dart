@@ -1,4 +1,7 @@
 import java.util{ArrayDeque, Deque}
+import dart.collection {
+    DoubleLinkedQueueClass = DoubleLinkedQueue_C
+}
 
 "A queue with a native implementation"
 native class NativeDeque() {
@@ -71,4 +74,23 @@ native("js") class NativeDeque() {
         sb.append("]");
         return sb.string;
     }
+}
+
+native("dart") class NativeDeque() {
+    value deque = DoubleLinkedQueueClass<Anything>();
+
+    shared native("dart") void pushFront(Anything element)
+        =>  deque.addFirst(element);
+
+    shared native("dart") void pushBack(Anything element)
+        =>  deque.addLast(element);
+
+    shared native("dart") Anything popFront()
+        =>  deque.removeFirst();
+
+    shared native("dart") Boolean empty
+        =>  deque.isEmpty;
+
+    shared actual native("dart") String string
+        =>  deque.string;
 }

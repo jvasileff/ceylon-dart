@@ -3,6 +3,12 @@ import java.util{
     JavaIterator=Iterator
 }
 import ceylon.language.impl{BaseIterable, BaseIterator}
+import dart.core {
+    DMapClass = Map_C
+}
+import ceylon.interop.dart {
+    CeylonIterable
+}
 
 "Need a map-like thing, but can't use java.util.HashMap directly, not ceylon.collection::HashMap"
 native class NativeMap<Key,Element>() {
@@ -208,4 +214,30 @@ native("js") class NativeMap<Key,Element>() {
         sb.append("}");
         return sb.string;
     }
+}
+
+native("dart") class NativeMap<Key,Element>() {
+
+    native("dart") value m = DMapClass<Key, Element>();
+
+    shared native("dart") void put(Key id, Element instanceOrPartial)
+        =>  m.set_(id, instanceOrPartial);
+
+    shared native("dart") Element? get(Key id)
+        =>  m.get_(id);
+
+    shared native("dart") Boolean contains(Key id)
+        =>  m.containsKey(id);
+
+    shared native("dart") Integer size
+        =>  m.length;
+
+    shared native("dart") Iterable<Element, Null> items
+        =>  CeylonIterable(m.values);
+
+    shared native("dart") Iterable<Key, Null> keys
+        =>  CeylonIterable(m.keys);
+
+    shared native("dart") actual String string
+        =>  m.string;
 }
