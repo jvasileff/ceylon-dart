@@ -2957,6 +2957,17 @@ final impl$outerImpl_ $package$impl$outerImpl = new impl$outerImpl_();
 
 impl$outerImpl_ get impl$outerImpl => $package$impl$outerImpl;
 
+class impl$reach_ implements dart$$Basic {
+    impl$reach_() {}
+    Iterator references([$dart$core.Object instance]) => $package$nothing as Iterator;
+    $dart$core.Object getAnything([$dart$core.Object instance, serialization$ReachableReference ref]) => $package$nothing;
+    $dart$core.Object getObject([$dart$core.Object instance, serialization$ReachableReference ref]) => $package$nothing;
+    $dart$core.String toString() => "reach";
+}
+final impl$reach_ $package$impl$reach = new impl$reach_();
+
+impl$reach_ get impl$reach => $package$impl$reach;
+
 void $package$impl$$rethrow([Throwable x]) {
     throw x;
 }
@@ -9138,6 +9149,14 @@ $dart$core.Object $package$measure([$dart$core.Object first, $dart$core.int size
 
 $dart$core.Object measure([$dart$core.Object first, $dart$core.int size]) => $package$measure(first, size);
 
+$dart$core.Object $package$meta$annotations([meta$model$Class annotationType, $dart$core.Object programElement]) => $package$nothing;
+
+$dart$core.Object meta$annotations([meta$model$Class annotationType, $dart$core.Object programElement]) => $package$meta$annotations(annotationType, programElement);
+
+meta$declaration$ClassDeclaration $package$meta$classDeclaration([$dart$core.Object instance]) => $package$nothing as meta$declaration$ClassDeclaration;
+
+meta$declaration$ClassDeclaration meta$classDeclaration([$dart$core.Object instance]) => $package$meta$classDeclaration(instance);
+
 abstract class meta$declaration$AliasDeclaration implements meta$declaration$NestableDeclaration, meta$declaration$GenericDeclaration {
     meta$declaration$OpenType get extendedType;
 }
@@ -9604,6 +9623,14 @@ Sequential $package$meta$sequencedAnnotations([meta$model$Class annotationType, 
 }
 
 Sequential meta$sequencedAnnotations([meta$model$Class annotationType, $dart$core.Object programElement]) => $package$meta$sequencedAnnotations(annotationType, programElement);
+
+meta$model$ClassModel $package$meta$type([$dart$core.Object instance]) => $package$nothing as meta$model$ClassModel;
+
+meta$model$ClassModel meta$type([$dart$core.Object instance]) => $package$meta$type(instance);
+
+meta$model$Type $package$meta$typeLiteral() => $package$nothing as meta$model$Type;
+
+meta$model$Type meta$typeLiteral() => $package$meta$typeLiteral();
 
 $dart$core.Object $package$min([Iterable values]) {
     Iterator it = values.iterator();
@@ -11927,6 +11954,36 @@ final serialization$uninitializedLateValue_ $package$serialization$uninitialized
 
 serialization$uninitializedLateValue_ get serialization$uninitializedLateValue => $package$serialization$uninitializedLateValue;
 
+class serialization$NativeDeque implements dart$$Basic {
+    serialization$NativeDeque() {
+        _$deque = new $dart$collection.DoubleLinkedQueue();
+    }
+    $dart$collection.DoubleLinkedQueue _$deque;
+    void pushFront([$dart$core.Object element]) {
+        _$deque.addFirst(element);
+    }
+    void pushBack([$dart$core.Object element]) {
+        _$deque.addLast(element);
+    }
+    $dart$core.Object popFront() => _$deque.removeFirst();
+    $dart$core.bool get empty => _$deque.isEmpty;
+    $dart$core.String toString() => _$deque.toString();
+}
+class serialization$NativeMap implements dart$$Basic {
+    serialization$NativeMap() {
+        _$m = new $dart$core.Map();
+    }
+    $dart$core.Map _$m;
+    void put([$dart$core.Object id, $dart$core.Object instanceOrPartial]) {
+        _$m[id] = instanceOrPartial;
+    }
+    $dart$core.Object get([$dart$core.Object id]) => _$m[id];
+    $dart$core.bool contains([$dart$core.Object id]) => _$m.containsKey(id);
+    $dart$core.int get size => _$m.length;
+    Iterable get items => new $ceylon$interop$dart.CeylonIterable(_$m.values);
+    Iterable get keys => new $ceylon$interop$dart.CeylonIterable(_$m.keys);
+    $dart$core.String toString() => _$m.toString();
+}
 abstract class serialization$Outer implements serialization$ReachableReference {
     $dart$core.Object referred([$dart$core.Object instance]);
 }
@@ -11980,6 +12037,18 @@ abstract class serialization$Partial implements dart$$Basic {
                 return $package$empty;
             }
         }
+    }
+}
+class serialization$PartialImpl  extends serialization$Partial {
+    serialization$PartialImpl([$dart$core.Object _$id]) : super(_$id) {
+        this._$id = _$id;
+    }
+    $dart$core.Object _$id;
+    void instantiate() {
+        throw new Exception();
+    }
+    void initialize([serialization$DeserializationContextImpl context]) {
+        throw new Exception();
     }
 }
 abstract class serialization$ReachableReference {
