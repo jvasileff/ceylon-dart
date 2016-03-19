@@ -25,7 +25,7 @@ import ceylon.interop.java {
     CeylonList,
     CeylonIterable
 }
-import ceylon.math.whole {
+import ceylon.whole {
     parseWhole,
     wholeNumber
 }
