@@ -10,7 +10,6 @@ import java.util.Map;
 
 import com.redhat.ceylon.common.Backend;
 import com.redhat.ceylon.common.Versions;
-import com.redhat.ceylon.compiler.js.util.TypeUtils;
 import com.redhat.ceylon.model.typechecker.model.Annotation;
 import com.redhat.ceylon.model.typechecker.model.Constructor;
 import com.redhat.ceylon.model.typechecker.model.Declaration;

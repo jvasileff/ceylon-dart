@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.redhat.ceylon.common.Backend;
 import com.redhat.ceylon.common.Backends;
-import com.redhat.ceylon.compiler.js.CompilerErrorException;
 import com.redhat.ceylon.model.typechecker.model.Annotation;
 import com.redhat.ceylon.model.typechecker.model.ClassOrInterface;
 import com.redhat.ceylon.model.typechecker.model.Constructor;
