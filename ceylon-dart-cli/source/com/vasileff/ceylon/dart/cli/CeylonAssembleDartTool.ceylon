@@ -8,7 +8,8 @@ import ceylon.file {
     Link,
     Path,
     createFileIfNil,
-    readAndAppendLines
+    readAndAppendLines,
+    temporaryDirectory
 }
 import ceylon.process {
     currentOutput,
@@ -37,8 +38,7 @@ import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.vasileff.ceylon.dart.compiler {
-    ReportableException,
-    TemporaryFile
+    ReportableException
 }
 
 import java.lang {
@@ -230,7 +230,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                 throw ReportableException("Cannot find dart2js executable in path.");
             }
 
-            try (tempScriptFile = TemporaryFile()) {
+            try (tempScriptFile = temporaryDirectory.TemporaryFile(null, null)) {
                 value p
                     =   createProcess {
                             command = dart2jsPath.string;
@@ -240,7 +240,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                                 mode == AssembleMode.dart then "--output-type=dart",
                                 "--package-root=" + packageRootPath.string,
                                 minify then "-m", // minify
-                                "-o", tempScriptFile.file.path.string,
+                                "-o", tempScriptFile.path.string,
                                 // TODO add verbose option to enable dart2js messages
                                 "--suppress-warnings",
                                 "--suppress-hints",
@@ -280,7 +280,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                         writer.writeLine("#!/usr/bin/env dart");
                     }
                 }
-                readAndAppendLines(tempScriptFile.file, scriptFile);
+                readAndAppendLines(tempScriptFile, scriptFile);
                 if (mode == AssembleMode.dart) {
                     setExecutable(scriptFile);
                 }

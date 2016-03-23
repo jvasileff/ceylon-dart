@@ -1,9 +1,6 @@
-import com.redhat.ceylon.cmr.api {
-    ArtifactContext,
-    RepositoryManager
-}
-import java.io {
-    JFile=File
+import ceylon.collection {
+    MutableMap,
+    HashMap
 }
 import ceylon.file {
     File,
@@ -12,7 +9,16 @@ import ceylon.file {
     parsePath,
     Link,
     Nil,
-    createFileIfNil
+    createFileIfNil,
+    temporaryDirectory
+}
+
+import com.redhat.ceylon.cmr.api {
+    ArtifactContext,
+    RepositoryManager
+}
+import com.redhat.ceylon.common {
+    ModuleUtil
 }
 import com.vasileff.ceylon.dart.compiler {
     ceylonFile,
@@ -20,20 +26,12 @@ import com.vasileff.ceylon.dart.compiler {
     ReportableException,
     JsonObject,
     JsonArray,
-    javaPath,
-    javaFile
+    javaFile,
+    createSymbolicLink
 }
-import com.redhat.ceylon.common {
-    ModuleUtil
-}
-import ceylon.collection {
-    MutableMap,
-    HashMap
-}
-import java.nio.file {
-    FileAlreadyExistsException,
-    JPath=Path,
-    JFiles=Files
+
+import java.io {
+    JFile=File
 }
 
 void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
@@ -186,33 +184,30 @@ MutableMap<String,String> gatherDependencies(
                 else name)
             -> moduleFile(repositoryManager, name, version));
 
-[JPath, Map<String, JPath>] createTemporaryPackageRoot({<String->File>*} modules) {
-    value moduleToLinkMap = HashMap<String, JPath>();
+[Path, Map<String, Path>] createTemporaryPackageRoot({<String->File>*} modules) {
+    value moduleToLinkMap = HashMap<String, Path>();
 
     // create temporary Dart package root directory
-    value packageRootPath = JFiles.createTempDirectory("ceylon-run-dart");
-    packageRootPath.toFile().deleteOnExit();
+    value packageRootPath = temporaryDirectory.TemporaryDirectory("ceylon-run-dart");
+    packageRootPath.deleteOnExit();
 
     // populate with modules
     for (name->file in modules) {
-        variable JPath symLinkPath = packageRootPath;
+        variable Path symLinkPath = packageRootPath.path;
 
         value nameParts = name.split('.'.equals);
         for (part in nameParts) {
-            symLinkPath = symLinkPath.resolve(part);
-            try {
-                // this throws if "recreating" common dirs, like /com, since packages
-                // may share leading path segments.
-                JFiles.createDirectory(symLinkPath);
-                symLinkPath.toFile().deleteOnExit();
-            } catch (FileAlreadyExistsException e) {}
+            symLinkPath = symLinkPath.childPath(part);
+            value symLinkDir = createDirectoryIfAbsent(symLinkPath);
+            symLinkDir.deleteOnExit();
         }
-        symLinkPath = symLinkPath.resolve(nameParts.last + ".dart");
-        JFiles.createSymbolicLink(symLinkPath, javaPath(file));
-        symLinkPath.toFile().deleteOnExit();
-        moduleToLinkMap.put(name, symLinkPath);
+        symLinkPath = symLinkPath.childPath(nameParts.last + ".dart");
+        assert (is Nil nilLink = symLinkPath.resource);
+        value link = createSymbolicLink(nilLink, file.path);
+        link.deleteOnExit();
+        moduleToLinkMap.put(name, parsePath(symLinkPath.string));
     }
-    return [packageRootPath, moduleToLinkMap];
+    return [packageRootPath.path, moduleToLinkMap];
 }
 
 File? findExecutableInPath(String fileName) {

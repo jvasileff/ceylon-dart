@@ -1,48 +1,38 @@
-import java.lang {
-    JString=String,
-    CharArray
-}
-import java.io {
-    JWriter=Writer,
-    JFile=File
-}
 import ceylon.file {
     File,
-    parsePath
+    parsePath,
+    Resource,
+    Nil,
+    Path,
+    ExistingResource
 }
-import java.nio.file {
-    JFiles=Files,
-    JPath=Path
-}
+
 import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ModuleModel=Module
 }
 
-shared
-JFile javaFile(File | JFile file)
-    =>  if (is JFile file)
-        then file
-        else JFile(file.path.string);
-
-shared
-class TemporaryFile(
-        String? prefix = null, String? suffix = null,
-        Boolean deleteOnExit = false)
-        satisfies Destroyable {
-
-    value path = JFiles.createTempFile(prefix, suffix);
-    if (deleteOnExit) {
-        path.toFile().deleteOnExit();
-    }
-    assert (is File f = parsePath(path.string).resource);
-
-    shared File file = f;
-
-    shared actual void destroy(Throwable? error) {
-        f.delete();
-    }
+import java.io {
+    JWriter=Writer,
+    JFile=File
 }
+import java.lang {
+    JString=String,
+    CharArray
+}
+import java.nio.file {
+    JPath=Path,
+    JFiles=Files
+}
+
+shared
+JFile javaFile(Resource | Path | JFile | String resource)
+    =>  switch (resource)
+        case (is JFile) resource
+        case (is String) JFile(resource)
+        else if (is Resource resource)
+            then JFile(resource.path.string)
+            else JFile(resource.string);
 
 shared
 JWriter javaWriter(File.Appender appender) => object
@@ -58,8 +48,8 @@ JWriter javaWriter(File.Appender appender) => object
 };
 
 shared
-JPath javaPath(File file)
-    =>  javaFile(file).toPath();
+JPath javaPath(Path | Resource resource)
+    =>  javaFile(resource).toPath();
 
 shared
 File? ceylonFile(File | JFile? file) {
@@ -73,6 +63,16 @@ File? ceylonFile(File | JFile? file) {
         }
     }
     return null;
+}
+
+shared
+ExistingResource createSymbolicLink(Nil nil, Path linkedPath) {
+    // Workaround https://github.com/ceylon/ceylon-sdk/issues/540
+    // Should return Link.
+
+    JFiles.createSymbolicLink(javaPath(nil), javaPath(linkedPath));
+    assert (is ExistingResource link = nil.path.resource); // fails
+    return link;
 }
 
 Boolean hasRunFunction(ModuleModel m)

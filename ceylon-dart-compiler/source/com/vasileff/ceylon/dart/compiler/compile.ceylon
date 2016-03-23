@@ -18,7 +18,8 @@ import ceylon.file {
     parsePath,
     lines,
     File,
-    forEachLine
+    forEachLine,
+    temporaryDirectory
 }
 import ceylon.interop.java {
     CeylonIterable,
@@ -640,11 +641,13 @@ shared
         if (!errorCount.positive && (outputRepositoryManager exists || verboseCode)) {
 
             // use a tempfile rather than a StringBuffer, since ShaSigner needs a file
-            try (dFile = TemporaryFile("ceylon-dart-dart-", ".dart", true),
-                 mFile = TemporaryFile("ceylon-dart-model-", ".json", true)) {
+            try (dFile = temporaryDirectory.TemporaryFile(
+                            "ceylon-dart-dart-", ".dart"),
+                 mFile = temporaryDirectory.TemporaryFile(
+                            "ceylon-dart-model-", ".json")) {
 
-                value dartFile = dFile.file;
-                value modelFile = mFile.file;
+                value dartFile = dFile;
+                value modelFile = mFile;
 
                 // write to the temp file
                 try (appender = dartFile.Appender("utf-8")) {
