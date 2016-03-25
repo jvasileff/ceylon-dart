@@ -934,6 +934,7 @@ class BaseString
 
     shared actual
     String repeat(Integer times)
+        // TODO use dart String '*' operator
         =>  String(sequence().repeat(times));
 
     shared
@@ -1013,12 +1014,7 @@ class BaseString
             return self;
         }
         value padAmount = size - length;
-        value sb = StringBuilder();
-        for (_ in 0:padAmount) {
-            sb.appendCharacter(character);
-        }
-        sb.append(self);
-        return sb.string;
+        return character.string.repeat(padAmount) + self;
     }
 
     shared
@@ -1028,12 +1024,7 @@ class BaseString
             return self;
         }
         value padAmount = size - length;
-        value sb = StringBuilder();
-        sb.append(self);
-        for (_ in 0:padAmount) {
-            sb.appendCharacter(character);
-        }
-        return sb.string;
+        return self + character.string.repeat(padAmount);
     }
 
     shared
