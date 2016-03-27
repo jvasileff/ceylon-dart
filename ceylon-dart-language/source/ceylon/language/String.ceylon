@@ -1,5 +1,6 @@
 import ceylon.interop.dart {
     dartString,
+    dartInt,
     DartIterable
 }
 import dart.core {
@@ -609,11 +610,8 @@ class BaseString
             val = characters;
         }
         else {
-            // FIXME use String.fromCharCodes(
-            //      Iterable<int> charCodes, [int start = 0, int end])
-            value sb = StringBuilder();
-            characters.each(sb.appendCharacter);
-            val = sb.string;
+            val = DStringClass.fromCharCodes(DartIterable(
+                    characters.map((c) => dartInt(c.integer)))).string;
         }
     }
 
