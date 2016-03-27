@@ -249,7 +249,7 @@ class DartInvocable(
                 };
             }
         }
-        case (dartBinaryOperator) {
+        case (is DartBinaryOperator) {
             "Binary operators are not setters"
             assert(!setter);
 
@@ -332,7 +332,7 @@ class DartInvocable(
                 val;
             };
         }
-        case (dartPrefixOperator) {
+        case (is DartPrefixOperator) {
             "Prefix operators are not setters."
             assert(!setter);
 
@@ -409,7 +409,7 @@ class DartInvocable(
                 };
             };
         }
-        case (dartBinaryOperator) {
+        case (is DartBinaryOperator) {
             "Binary operators must have a receiver"
             assert (exists receiver);
 
@@ -509,7 +509,7 @@ class DartInvocable(
                 };
             };
         }
-        case (dartPrefixOperator) {
+        case (is DartPrefixOperator) {
             "Prefix operators are not constructors or static methods."
             assert (!is DartConstructorName | DartPropertyAccess reference);
 

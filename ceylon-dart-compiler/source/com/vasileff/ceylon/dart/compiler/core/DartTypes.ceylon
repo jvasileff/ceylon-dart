@@ -77,50 +77,50 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ceylonTypes.objectDeclaration.getMember("hash", null, false)
                 -> ["hashCode", dartValue],
             ceylonTypes.objectDeclaration.getMember("equals", null, false)
-                -> ["==", dartBinaryOperator],
+                -> dartEqualityOperator.pair,
             ceylonTypes.comparableDeclaration.getMember("smallerThan", null, false)
-                -> ["<", dartBinaryOperator],
+                -> dartLessThanOperator.pair,
             ceylonTypes.comparableDeclaration.getMember("largerThan", null, false)
-                -> [">", dartBinaryOperator],
+                -> dartGreaterThanOperator.pair,
             ceylonTypes.comparableDeclaration.getMember("notSmallerThan", null, false)
-                -> [">=", dartBinaryOperator],
+                -> dartNotLessThanOperator.pair,
             ceylonTypes.comparableDeclaration.getMember("notLargerThan", null, false)
-                -> ["<=", dartBinaryOperator],
+                -> dartNotGreaterThanOperator.pair,
             ceylonTypes.invertibleDeclaration.getMember("negated", null, false)
-                -> ["-", dartPrefixOperator],
+                -> dartNegationOperator.pair,
             ceylonTypes.summableDeclaration.getMember("plus", null, false)
-                -> ["+", dartBinaryOperator],
+                -> dartPlusOperator.pair,
             ceylonTypes.invertibleDeclaration.getMember("minus", null, false)
-                -> ["-", dartBinaryOperator],
+                -> dartMinusOperator.pair,
             ceylonTypes.numericDeclaration.getMember("times", null, false)
-                -> ["*", dartBinaryOperator],
+                -> dartTimesOperator.pair,
             ceylonTypes.numericDeclaration.getMember("divided", null, false)
-                -> ["/", dartBinaryOperator],
+                -> dartDivideOperator.pair,
             ceylonTypes.integralDeclaration.getMember("remainder", null, false)
-                -> ["%", dartBinaryOperator]
+                -> dartModuloOperator.pair
         }.get;
     })();
 
-    [String, DartElementType]?(String) dartMappedFunctionOrValue = (() {
+    DartOperator?(String) dartMappedFunctionOrValue = (() {
         // TODO typesafe operators
         return map {
-            "get_" -> ["[]", dartListAccess],
-            "set_" -> ["[]=", dartListAssignment],
-            "plus_" -> ["+", dartBinaryOperator],
-            "minus_" -> ["-", dartBinaryOperator],
-            "times_" -> ["*", dartBinaryOperator],
-            "divided_" -> ["/", dartBinaryOperator],
-            "dividedInt_" -> ["~/", dartBinaryOperator],
-            "remainder_" -> ["%", dartBinaryOperator],
-            "largerThan_" -> [">", dartBinaryOperator],
-            "smallerThan_" -> ["<", dartBinaryOperator],
-            "notSmallerThan_" -> [">=", dartBinaryOperator],
-            "notLargerThan_" -> ["<=", dartBinaryOperator],
-            "or_" -> ["|", dartBinaryOperator],
-            "xor_" -> ["^", dartBinaryOperator],
-            "and_" -> ["&", dartBinaryOperator],
-            "shiftLeft_" -> ["<<", dartBinaryOperator],
-            "shiftRight_" -> [">>", dartBinaryOperator]
+            "get_" -> dartListAccess,
+            "set_" -> dartListAssignment,
+            "plus_" -> dartPlusOperator,
+            "minus_" -> dartMinusOperator,
+            "times_" -> dartTimesOperator,
+            "divided_" -> dartDivideOperator,
+            "dividedInt_" -> dartDivideIntegerOperator,
+            "remainder_" -> dartModuloOperator,
+            "largerThan_" -> dartGreaterThanOperator,
+            "smallerThan_" -> dartLessThanOperator,
+            "notSmallerThan_" -> dartNotLessThanOperator,
+            "notLargerThan_" -> dartNotGreaterThanOperator,
+            "or_" -> dartOrOperator,
+            "xor_" -> dartXorOperator,
+            "and_" -> dartAndOperator,
+            "shiftLeft_" -> dartLeftShiftOperator,
+            "shiftRight_" -> dartRightShiftOperator
         }.get;
     })();
 
@@ -1655,8 +1655,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         DartSimpleIdentifier(mapped[0]),
                         mapped[1]]
                     else if (exists dartMapped) then [
-                        DartSimpleIdentifier(dartMapped[0]),
-                        dartMapped[1]]
+                        DartSimpleIdentifier(dartMapped.string),
+                        dartMapped]
                     else [
                         validIdentifier,
                         if (!is ValueModel | SetterModel validDeclaration,
