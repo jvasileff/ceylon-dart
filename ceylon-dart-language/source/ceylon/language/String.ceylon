@@ -869,8 +869,7 @@ class BaseString
 
     shared actual
     String terminal(Integer length)
-        // FIXME optimize
-        => length > 0 then String(sequence().terminal(length)) else "";
+        =>  spanFrom(size-length);
 
     shared actual
     [String,String] slice(Integer index) {
