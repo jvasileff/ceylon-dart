@@ -52,6 +52,10 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     }
     Boolean quiet = false;
 
+    shared variable option
+    description("Disable Ceylon version compatibility check (default is false)")
+    Boolean disableCompatibilityCheck = false;
+
     needsSystemRepo() => false;
 
     doNotReadFromOutputRepo() => true;
@@ -69,7 +73,9 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
     }
 
     void doRun() {
-        checkCeylonVersion();
+        if (!disableCompatibilityCheck) {
+            checkCeylonVersion();
+        }
 
         value unzipRootPath = JFiles.createTempDirectory("install-dart");
         unzipRootPath.toFile().deleteOnExit();

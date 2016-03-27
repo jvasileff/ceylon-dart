@@ -82,6 +82,10 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     JBoolean? web = null;
 
     shared variable option
+    description("Disable Ceylon version compatibility check (default is false)")
+    Boolean disableCompatibilityCheck = false;
+
+    shared variable option
     optionArgument {
         argumentName = "flags";
     }
@@ -122,7 +126,10 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     }
 
     Integer doRun() {
-        checkCeylonVersion();
+        if (!disableCompatibilityCheck) {
+            checkCeylonVersion();
+        }
+
         // Make sure the language module has been installed
         // Although, the program may actually import some other version...
         verifyLanguageModuleAvailability(repositoryManager);
