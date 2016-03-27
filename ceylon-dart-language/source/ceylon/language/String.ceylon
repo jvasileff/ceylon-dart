@@ -816,9 +816,40 @@ class BaseString
         =>  0 <= index < size;
 
     shared actual
-    String span(Integer from, Integer to)
-        // FIXME optimize
-        =>  String(sequence().span(from, to));
+    String span(variable Integer from, variable Integer to) {
+        value reverse = to < from;
+        if (reverse) {
+            value tmp = to;
+            to = from;
+            from = tmp;
+        }
+        if (to < 0 ) {
+            return "";
+        }
+
+        value len = size;
+        if (len == 0) {
+            return self;
+        }
+        if (from >= len) {
+            return "";
+        }
+        if (to >= len) {
+            to = len - 1;
+        }
+        if (from < 0) {
+            from = 0;
+        }
+
+        value runes = dartString(val).runes.skip(from).take(to - from + 1);
+
+        if (reverse) {
+            return DStringClass.fromCharCodes(runes.toList().reversed).string;
+        }
+        else {
+            return DStringClass.fromCharCodes(runes).string;
+        }
+    }
 
     shared actual
     String spanFrom(Integer from)
