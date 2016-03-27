@@ -782,6 +782,9 @@ class TopLevelVisitor(CompilationContext ctx)
                     .filter((m) => container(m) is InterfaceModel)
                     .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
                     .filter(not(DeclarationModel.formal))
+                    // Don't bridge to a declaration made in a dart native library. Surely
+                    // the member is available from the extended type, in some way.
+                    .filter(not(isDartNative))
                     .flatMap(replaceClassWithSharedConstructors)
                     .sequence();
 

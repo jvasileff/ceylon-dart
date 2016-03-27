@@ -83,7 +83,7 @@ public class JsonPackage extends LazyPackage {
         }
     }
 
-    boolean isDartNative() {
+    public boolean isDartNative() {
         return getModule() instanceof JsonModule
                 && ((JsonModule) getModule()).isDartNative();
     }

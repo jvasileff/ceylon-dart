@@ -87,7 +87,8 @@ import java.lang {
     }
 }
 import com.vasileff.ceylon.dart.compiler.loader {
-    JsonModule
+    JsonModule,
+    JsonPackage
 }
 
 void printNodeAsCode(Node node) {
@@ -119,6 +120,12 @@ UnitModel getUnit
 PackageModel getPackage
         (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     =>  getUnit(declaration).\ipackage;
+
+Boolean isDartNative
+        (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
+    =>  switch (p = getPackage(declaration))
+        case (is JsonPackage) p.dartNative
+        else false;
 
 ModuleModel getModule
         (DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
