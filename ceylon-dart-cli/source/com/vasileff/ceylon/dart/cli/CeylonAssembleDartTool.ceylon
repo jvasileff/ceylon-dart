@@ -152,7 +152,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,
                     null, null, null, null,
-                    if (compile.empty) then "once" else compile) else "";
+                    if (compile.empty) then "check" else compile) else "";
 
         value runtime
             =   if (web?.booleanValue() else mode == AssembleMode.js)
