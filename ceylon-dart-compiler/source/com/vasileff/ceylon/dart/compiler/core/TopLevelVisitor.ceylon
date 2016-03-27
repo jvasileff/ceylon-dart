@@ -784,7 +784,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     .filter(not(DeclarationModel.formal))
                     // Don't bridge to a declaration made in a dart native library. Surely
                     // the member is available from the extended type, in some way.
-                    .filter(not(isDartNative))
+                    .filter(not(nativeDart))
                     .flatMap(replaceClassWithSharedConstructors)
                     .sequence();
 
