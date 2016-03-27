@@ -60,23 +60,36 @@ shared class VariableTriple(
 shared alias ConditionCodeTuple
     =>  [DartVariableDeclarationStatement?, DartExpression, VariableTriple*];
 
+
+shared
+interface DartNamedElement of DartNamedValue | DartNamedFunction | DartOperator {
+    shared formal String name;
+    shared formal DartElementType type;
+}
+
+shared
+class DartNamedValue(shared actual String name) satisfies DartNamedElement {
+    shared actual DartElementType type => dartValue;
+}
+
+shared
+class DartNamedFunction(shared actual String name) satisfies DartNamedElement {
+    shared actual DartElementType type => dartFunction;
+}
+
 "A function, value, or operator."
 shared abstract
-class DartElementType() of
-    dartValue | dartFunction | DartOperator {}
+class DartElementType()
+        of dartValue | dartFunction | DartOperator {}
 
 "A Dart Operator than can be used as a name for an instance method."
 shared abstract
 class DartOperator()
         of DartPrefixOperator | DartBinaryOperator | dartListAccess | dartListAssignment
-        extends DartElementType() {
+        extends DartElementType()
+        satisfies DartNamedElement {
 
-    "The operator."
-    shared actual formal String string;
-
-    "Descriptive pair, including the string representation of the operator and it's
-     object instance."
-    shared [String, DartOperator] pair => [string, this];
+    shared actual DartOperator type => this;
 }
 
 shared
@@ -93,12 +106,12 @@ class DartPrefixOperator()
 
 shared
 object dartNegationOperator extends DartPrefixOperator() {
-    shared actual String string => "-";
+    shared actual String name => "-";
 }
 
 shared
 object dartNotOperator extends DartPrefixOperator() {
-    shared actual String string => "~";
+    shared actual String name => "~";
 }
 
 "
@@ -117,7 +130,7 @@ class DartBinaryOperator()
 
 shared
 object dartEqualityOperator extends DartBinaryOperator() {
-    shared actual String string => "==";
+    shared actual String name => "==";
 }
 
 shared abstract
@@ -128,22 +141,22 @@ class DartRelationalOperator()
 
 shared
 object dartLessThanOperator extends DartRelationalOperator() {
-    shared actual String string => "<";
+    shared actual String name => "<";
 }
 
 shared
 object dartGreaterThanOperator extends DartRelationalOperator() {
-    shared actual String string => ">";
+    shared actual String name => ">";
 }
 
 shared
 object dartNotGreaterThanOperator extends DartRelationalOperator() {
-    shared actual String string => "<=";
+    shared actual String name => "<=";
 }
 
 shared
 object dartNotLessThanOperator extends DartRelationalOperator() {
-    shared actual String string => ">=";
+    shared actual String name => ">=";
 }
 
 shared abstract
@@ -153,12 +166,12 @@ class DartAdditiveOperator()
 
 shared
 object dartPlusOperator extends DartAdditiveOperator() {
-    shared actual String string => "+";
+    shared actual String name => "+";
 }
 
 shared
 object dartMinusOperator extends DartAdditiveOperator() {
-    shared actual String string => "-";
+    shared actual String name => "-";
 }
 
 shared abstract
@@ -169,22 +182,22 @@ class DartMultiplicativeOperator()
 
 shared
 object dartTimesOperator extends DartMultiplicativeOperator() {
-    shared actual String string => "*";
+    shared actual String name => "*";
 }
 
 shared
 object dartDivideOperator extends DartMultiplicativeOperator() {
-    shared actual String string => "/";
+    shared actual String name => "/";
 }
 
 shared
 object dartDivideIntegerOperator extends DartMultiplicativeOperator() {
-    shared actual String string => "~/";
+    shared actual String name => "~/";
 }
 
 shared
 object dartModuloOperator extends DartMultiplicativeOperator() {
-    shared actual String string => "%";
+    shared actual String name => "%";
 }
 
 shared abstract
@@ -194,17 +207,17 @@ class DartBitwiseOperator()
 
 shared
 object dartAndOperator extends DartBitwiseOperator() {
-    shared actual String string => "&";
+    shared actual String name => "&";
 }
 
 shared
 object dartOrOperator extends DartBitwiseOperator() {
-    shared actual String string => "|";
+    shared actual String name => "|";
 }
 
 shared
 object dartXorOperator extends DartBitwiseOperator() {
-    shared actual String string => "^";
+    shared actual String name => "^";
 }
 
 shared abstract
@@ -214,22 +227,22 @@ class DartShiftOperator()
 
 shared
 object dartLeftShiftOperator extends DartShiftOperator() {
-    shared actual String string => "<<";
+    shared actual String name => "<<";
 }
 
 shared
 object dartRightShiftOperator extends DartShiftOperator() {
-    shared actual String string => ">>";
+    shared actual String name => ">>";
 }
 
 "The `[]` operator."
 shared
 object dartListAccess extends DartOperator() {
-    shared actual String string => "[]";
+    shared actual String name => "[]";
 }
 
 "The `[]=` operator."
 shared
 object dartListAssignment extends DartOperator() {
-    shared actual String string => "[]=";
+    shared actual String name => "[]=";
 }

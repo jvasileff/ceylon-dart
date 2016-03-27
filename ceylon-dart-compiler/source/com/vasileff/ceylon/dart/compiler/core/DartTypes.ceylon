@@ -70,39 +70,38 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     // TODO remove this ugliness.
     BaseGenerator baseGenerator => ctx.expressionTransformer;
 
-    [String, DartElementType]?(DeclarationModel) mappedFunctionOrValue = (() {
+    DartNamedElement?(DeclarationModel) mappedFunctionOrValue = (() {
         return ImmutableMap {
             ceylonTypes.objectDeclaration.getMember("string", null, false)
-                -> ["toString", package.dartFunction],
+                -> DartNamedFunction("toString"),
             ceylonTypes.objectDeclaration.getMember("hash", null, false)
-                -> ["hashCode", dartValue],
+                -> DartNamedValue("hashCode"),
             ceylonTypes.objectDeclaration.getMember("equals", null, false)
-                -> dartEqualityOperator.pair,
+                -> dartEqualityOperator,
             ceylonTypes.comparableDeclaration.getMember("smallerThan", null, false)
-                -> dartLessThanOperator.pair,
+                -> dartLessThanOperator,
             ceylonTypes.comparableDeclaration.getMember("largerThan", null, false)
-                -> dartGreaterThanOperator.pair,
+                -> dartGreaterThanOperator,
             ceylonTypes.comparableDeclaration.getMember("notSmallerThan", null, false)
-                -> dartNotLessThanOperator.pair,
+                -> dartNotLessThanOperator,
             ceylonTypes.comparableDeclaration.getMember("notLargerThan", null, false)
-                -> dartNotGreaterThanOperator.pair,
+                -> dartNotGreaterThanOperator,
             ceylonTypes.invertibleDeclaration.getMember("negated", null, false)
-                -> dartNegationOperator.pair,
+                -> dartNegationOperator,
             ceylonTypes.summableDeclaration.getMember("plus", null, false)
-                -> dartPlusOperator.pair,
+                -> dartPlusOperator,
             ceylonTypes.invertibleDeclaration.getMember("minus", null, false)
-                -> dartMinusOperator.pair,
+                -> dartMinusOperator,
             ceylonTypes.numericDeclaration.getMember("times", null, false)
-                -> dartTimesOperator.pair,
+                -> dartTimesOperator,
             ceylonTypes.numericDeclaration.getMember("divided", null, false)
-                -> dartDivideOperator.pair,
+                -> dartDivideOperator,
             ceylonTypes.integralDeclaration.getMember("remainder", null, false)
-                -> dartModuloOperator.pair
+                -> dartModuloOperator
         }.get;
     })();
 
     DartOperator?(String) dartMappedFunctionOrValue = (() {
-        // TODO typesafe operators
         return map {
             "get_" -> dartListAccess,
             "set_" -> dartListAssignment,
@@ -263,7 +262,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     Boolean valueMappedToNonField(ValueModel valueModel)
         =>  if (exists mapped = mappedFunctionOrValue(valueModel.refinedDeclaration))
-            then mapped[1] != dartValue
+            then mapped.type != dartValue
             else false;
 
     shared
@@ -287,8 +286,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // synthetic field or setter.
         if (is ValueModel declaration,
             exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
-                mapped[1] == dartValue) {
-            return mapped[0];
+                mapped.type == dartValue) {
+            return mapped.name;
         }
 
         String classOrInterfacePrefix(DeclarationModel member)
@@ -1647,15 +1646,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     else null;
 
             value [memberIdentifier, dartElementType]
-                =   if (exists mapped, !setter || mapped[1] == dartValue) then [
+                =   if (exists mapped, !setter || mapped.type == dartValue) then [
                         // For mapped non-setters, or setters that are mapped to
                         // dartValues. This includes hash -> hashCode, but excludes
                         // string -> toString(), for which we want to use 'string' for
                         // the setter. Same for dartPrefixOperators like negated -> '-'
-                        DartSimpleIdentifier(mapped[0]),
-                        mapped[1]]
+                        DartSimpleIdentifier(mapped.name),
+                        mapped.type]
                     else if (exists dartMapped) then [
-                        DartSimpleIdentifier(dartMapped.string),
+                        DartSimpleIdentifier(dartMapped.name),
                         dartMapped]
                     else [
                         validIdentifier,

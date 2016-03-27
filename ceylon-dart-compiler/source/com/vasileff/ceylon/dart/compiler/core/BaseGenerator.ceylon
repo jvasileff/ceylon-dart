@@ -177,109 +177,89 @@ class BaseGenerator(CompilationContext ctx)
     // hack to avoid error using the inherited member ceylonTypes in the initializer
     value ceylonTypes = ctx.ceylonTypes;
 
-    [TypeModel, TypeModel, String, TypeModel, DartElementType]?(DeclarationModel)
+    [TypeModel, TypeModel, DartNamedElement, TypeModel]?(DeclarationModel)
     simpleNativeBinaryFunctions = (() {
         return ImmutableMap {
             ceylonTypes.stringDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.stringType,
-                    ceylonTypes.stringType, "+",
-                    ceylonTypes.stringType,
-                    dartPlusOperator],
+                    ceylonTypes.stringType, dartPlusOperator,
+                    ceylonTypes.stringType],
             ceylonTypes.integerDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "+",
-                    ceylonTypes.integerType,
-                    dartPlusOperator],
+                    ceylonTypes.integerType, dartPlusOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("plusInteger", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "+",
-                    ceylonTypes.integerType,
-                    dartPlusOperator],
+                    ceylonTypes.integerType, dartPlusOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("minus", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "-",
-                    ceylonTypes.integerType,
-                    dartMinusOperator],
+                    ceylonTypes.integerType, dartMinusOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("times", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "*",
-                    ceylonTypes.integerType,
-                    dartTimesOperator],
+                    ceylonTypes.integerType, dartTimesOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("divided", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "~/",
-                    ceylonTypes.integerType,
-                    dartDivideIntegerOperator],
+                    ceylonTypes.integerType, dartDivideIntegerOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("largerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.integerType, ">",
-                    ceylonTypes.integerType,
-                    dartGreaterThanOperator],
+                    ceylonTypes.integerType, dartGreaterThanOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("smallerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.integerType, "<",
-                    ceylonTypes.integerType,
-                    dartLessThanOperator],
+                    ceylonTypes.integerType, dartLessThanOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("notLargerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.integerType, "<=",
-                    ceylonTypes.integerType,
-                    dartNotGreaterThanOperator],
+                    ceylonTypes.integerType, dartNotGreaterThanOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("notSmallerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.integerType, ">=",
-                    ceylonTypes.integerType,
-                    dartNotLessThanOperator],
+                    ceylonTypes.integerType, dartNotLessThanOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("remainder", null, false)
                 -> [ceylonTypes.integerType,
-                    ceylonTypes.integerType, "remainder",
-                    ceylonTypes.integerType,
-                    dartFunction],
+                    ceylonTypes.integerType, DartNamedFunction("remainder"),
+                    ceylonTypes.integerType],
             ceylonTypes.floatDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.floatType,
-                    ceylonTypes.floatType, "+",
-                    ceylonTypes.floatType,
-                    dartPlusOperator],
+                    ceylonTypes.floatType, dartPlusOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("plusInteger", null, false)
                 -> [ceylonTypes.floatType,
-                    ceylonTypes.floatType, "+",
-                    ceylonTypes.floatType,
-                    dartPlusOperator],
+                    ceylonTypes.floatType, dartPlusOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("minus", null, false)
                 -> [ceylonTypes.floatType,
-                    ceylonTypes.floatType, "-",
-                    ceylonTypes.floatType,
-                    dartMinusOperator],
+                    ceylonTypes.floatType, dartMinusOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("times", null, false)
                 -> [ceylonTypes.floatType,
-                    ceylonTypes.floatType, "*",
-                    ceylonTypes.floatType,
-                    dartTimesOperator],
+                    ceylonTypes.floatType, dartTimesOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("divided", null, false)
                 -> [ceylonTypes.floatType,
-                    ceylonTypes.floatType, "/",
-                    ceylonTypes.floatType,
-                    dartDivideOperator],
+                    ceylonTypes.floatType, dartDivideOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("largerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.floatType, ">",
-                    ceylonTypes.floatType,
-                    dartGreaterThanOperator],
+                    ceylonTypes.floatType, dartGreaterThanOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("smallerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.floatType, "<",
-                    ceylonTypes.floatType,
-                    dartLessThanOperator],
+                    ceylonTypes.floatType, dartLessThanOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("notLargerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.floatType, "<=",
-                    ceylonTypes.floatType,
-                    dartNotGreaterThanOperator],
+                    ceylonTypes.floatType, dartNotGreaterThanOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.floatDeclaration.getMember("notSmallerThan", null, false)
                 -> [ceylonTypes.booleanType,
-                    ceylonTypes.floatType, ">=",
-                    ceylonTypes.floatType,
-                    dartNotLessThanOperator]
+                    ceylonTypes.floatType, dartNotLessThanOperator,
+                    ceylonTypes.floatType]
         }.get;
     })();
 
@@ -302,78 +282,65 @@ class BaseGenerator(CompilationContext ctx)
             if (declaration == stringEquals
                     && ceylonTypes.isCeylonString(definiteArgument)) {
                 return [ceylonTypes.booleanType,
-                        ceylonTypes.stringType, "==",
-                        ceylonTypes.stringType,
-                        dartEqualityOperator];
+                        ceylonTypes.stringType, dartEqualityOperator,
+                        ceylonTypes.stringType];
             }
 
             if (declaration == integerEquals
                     && ceylonTypes.isCeylonInteger(definiteArgument)) {
                 return [ceylonTypes.booleanType,
-                        ceylonTypes.integerType, "==",
-                        ceylonTypes.integerType,
-                        dartEqualityOperator];
+                        ceylonTypes.integerType, dartEqualityOperator,
+                        ceylonTypes.integerType];
             }
 
             if (declaration == floatEquals
                     && ceylonTypes.isCeylonFloat(definiteArgument)) {
                 return [ceylonTypes.booleanType,
-                        ceylonTypes.floatType, "==",
-                        ceylonTypes.floatType,
-                        dartEqualityOperator];
+                        ceylonTypes.floatType, dartEqualityOperator,
+                        ceylonTypes.floatType];
             }
 
             if (declaration == booleanEquals
                     && ceylonTypes.isCeylonBoolean(definiteArgument)) {
                 return [ceylonTypes.booleanType,
-                        ceylonTypes.booleanType, "==",
-                        ceylonTypes.booleanType,
-                        dartEqualityOperator];
+                        ceylonTypes.booleanType, dartEqualityOperator,
+                        ceylonTypes.booleanType];
             }
         }
 
         return null;
     }
 
-    [TypeModel, String, TypeModel, DartElementType]?(DeclarationModel)
+    [TypeModel, DartNamedElement, TypeModel]?(DeclarationModel)
     nativeNoArgOptimizations = (() {
         return ImmutableMap {
             ceylonTypes.integerDeclaration.getMember("negated", null, false)
-                -> [ceylonTypes.integerType, "-",
-                    ceylonTypes.integerType,
-                    dartNegationOperator],
+                -> [ceylonTypes.integerType, dartNegationOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.floatDeclaration.getMember("negated", null, false)
-                -> [ceylonTypes.floatType, "-",
-                    ceylonTypes.floatType,
-                    dartNegationOperator],
+                -> [ceylonTypes.floatType, dartNegationOperator,
+                    ceylonTypes.floatType],
             ceylonTypes.integerDeclaration.getMember("magnitude", null, false)
-                -> [ceylonTypes.integerType, "abs",
-                    ceylonTypes.integerType,
-                    dartFunction],
+                -> [ceylonTypes.integerType, DartNamedFunction("abs"),
+                    ceylonTypes.integerType],
             ceylonTypes.floatDeclaration.getMember("magnitude", null, false)
-                -> [ceylonTypes.floatType, "abs",
-                    ceylonTypes.floatType,
-                    dartFunction],
+                -> [ceylonTypes.floatType, DartNamedFunction("abs"),
+                    ceylonTypes.floatType],
             ceylonTypes.stringDeclaration.getMember("string", null, false)
-                -> [ceylonTypes.stringType, "toString",
-                    ceylonTypes.stringType,
-                    dartFunction],
+                -> [ceylonTypes.stringType, DartNamedFunction("toString"),
+                    ceylonTypes.stringType],
             ceylonTypes.integerDeclaration.getMember("string", null, false)
-                -> [ceylonTypes.stringType, "toString",
-                    ceylonTypes.integerType,
-                    dartFunction],
+                -> [ceylonTypes.stringType, DartNamedFunction("toString"),
+                    ceylonTypes.integerType],
             ceylonTypes.floatDeclaration.getMember("string", null, false)
-                -> [ceylonTypes.stringType, "toString",
-                    ceylonTypes.floatType,
-                    dartFunction],
+                -> [ceylonTypes.stringType, DartNamedFunction("toString"),
+                    ceylonTypes.floatType],
             ceylonTypes.integerDeclaration.getMember("nearestFloat", null, false)
-                -> [ceylonTypes.floatType, "toDouble",
-                    ceylonTypes.integerType,
-                    dartFunction],
+                -> [ceylonTypes.floatType, DartNamedFunction("toDouble"),
+                    ceylonTypes.integerType],
             ceylonTypes.floatDeclaration.getMember("integer", null, false)
-                -> [ceylonTypes.integerType, "toInt",
-                    ceylonTypes.floatType,
-                    dartFunction]
+                -> [ceylonTypes.integerType, DartNamedFunction("toInt"),
+                    ceylonTypes.floatType]
         }.get;
     })();
 
@@ -977,7 +944,7 @@ class BaseGenerator(CompilationContext ctx)
                 assert (!is ValueModel | SetterModel memberDeclaration);
 
                 value [type, optimizedReceiverType, optimizedMember,
-                            optimizedArgumentType, elementType]
+                            optimizedArgumentType]
                     =   optimization;
 
                 value rightOperandTypeDetail
@@ -1001,8 +968,8 @@ class BaseGenerator(CompilationContext ctx)
 
                 dartFunctionOrValue
                     =   DartInvocable {
-                            DartSimpleIdentifier(optimizedMember);
-                            elementType;
+                            DartSimpleIdentifier(optimizedMember.name);
+                            optimizedMember.type;
                             false;
                         };
 
@@ -1019,7 +986,7 @@ class BaseGenerator(CompilationContext ctx)
 
                 assert (!is SetterModel memberDeclaration);
 
-                value [type, operand, leftOperandType, dartElementType]
+                value [type, operand, leftOperandType]
                     =   optimization;
 
                 dartReceiverType
@@ -1040,8 +1007,8 @@ class BaseGenerator(CompilationContext ctx)
 
                 dartFunctionOrValue
                     =   DartInvocable {
-                            DartSimpleIdentifier(operand);
-                            dartElementType;
+                            DartSimpleIdentifier(operand.name);
+                            operand.type;
                             false;
                         };
 
