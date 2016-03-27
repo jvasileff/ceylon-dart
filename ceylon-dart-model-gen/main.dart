@@ -397,8 +397,29 @@ Map<String, Map<String, Object>> attributesToMap(
 }
 
 Map<String, String> methodNameMap = {
+    // list access and assignment operators
     "[]" : "get_",
-    "[]=" : "set_"
+    "[]=" : "set_",
+    // additive operators
+    "+" : "plus_",
+    "-" : "minus_",
+    // multiplicative operators
+    "*" : "times_",
+    "/" : "divided_",
+    "~/" : "dividedInt_",
+    "%" : "remainder_",
+    // relational operators
+    ">" : "largerThan_",
+    "<" : "smallerThan_",
+    ">=" : "notSmallerThan_",
+    "<=" : "notLargerThan_",
+    // bitwise operators
+    "|" : "or_",
+    "^" : "xor_",
+    "&" : "and_",
+    // shift operator
+    "<<" : "shiftLeft_",
+    ">>" : "shiftRight_"
 };
 
 Map<String, Map<String, Object>> methodsToMap(

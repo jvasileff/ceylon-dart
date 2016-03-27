@@ -101,11 +101,26 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }.get;
     })();
 
-
     [String, DartElementType]?(String) dartMappedFunctionOrValue = (() {
+        // TODO typesafe operators
         return map {
             "get_" -> ["[]", dartListAccess],
-            "set_" -> ["[]=", dartListAssignment]
+            "set_" -> ["[]=", dartListAssignment],
+            "plus_" -> ["+", dartBinaryOperator],
+            "minus_" -> ["-", dartBinaryOperator],
+            "times_" -> ["*", dartBinaryOperator],
+            "divided_" -> ["/", dartBinaryOperator],
+            "dividedInt_" -> ["~/", dartBinaryOperator],
+            "remainder_" -> ["%", dartBinaryOperator],
+            "largerThan_" -> [">", dartBinaryOperator],
+            "smallerThan_" -> ["<", dartBinaryOperator],
+            "notSmallerThan_" -> [">=", dartBinaryOperator],
+            "notLargerThan_" -> ["<=", dartBinaryOperator],
+            "or_" -> ["|", dartBinaryOperator],
+            "xor_" -> ["^", dartBinaryOperator],
+            "and_" -> ["&", dartBinaryOperator],
+            "shiftLeft_" -> ["<<", dartBinaryOperator],
+            "shiftRight_" -> [">>", dartBinaryOperator]
         }.get;
     })();
 
