@@ -934,8 +934,7 @@ class BaseString
 
     shared actual
     String repeat(Integer times)
-        // TODO use dart String '*' operator
-        =>  String(sequence().repeat(times));
+        =>  dartString(val).times_(times);
 
     shared
     String replace(String substring, String replacement)
