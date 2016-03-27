@@ -788,21 +788,25 @@ class BaseString
     shared
     String normalized {
         variable value previousWasWhitespace = false;
+        variable value leadingWhitespace = true;
         value sb = StringBuilder();
         for (character in this) {
             if (character.whitespace) {
-                if (!previousWasWhitespace) {
-                    sb.append(" ");
+                if (leadingWhitespace) {
+                    continue;
                 }
                 previousWasWhitespace = true;
             }
             else {
-                previousWasWhitespace = false;
+                leadingWhitespace = false;
+                if (previousWasWhitespace) {
+                    sb.append(" ");
+                    previousWasWhitespace = false;
+                }
                 sb.appendCharacter(character);
             }
         }
-        // TODO trim in previous loop
-        return sb.string.trimmed;
+        return sb.string;
     }
 
     shared actual
