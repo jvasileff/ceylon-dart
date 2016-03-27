@@ -1,5 +1,6 @@
 import ceylon.interop.dart {
-    dartString
+    dartString,
+    DartIterable
 }
 import dart.core {
     DStringClass = String_C
@@ -755,21 +756,8 @@ class BaseString
     Integer[] keys => 0:size;
 
     shared
-    String join({Object*} objects) {
-        // FIXME optimize (use StringBuilder)
-        variable value result = "";
-        variable value first = true;
-        for (el in objects) {
-            if (first) {
-                first = false;
-            }
-            else {
-                result = result + val;
-            }
-            result = result + el.string;
-        }
-        return result;
-    }
+    String join({Object*} objects)
+        =>  DartIterable(objects).join(self);
 
     shared
     {String*} lines
