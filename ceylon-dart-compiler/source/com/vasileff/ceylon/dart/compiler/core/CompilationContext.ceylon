@@ -23,14 +23,13 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
     DartSimpleIdentifier
 }
-import com.vasileff.jl4c.guava.collect {
-    LinkedHashMultimap,
-    SetMultimap,
-    ImmutableSetMultimap
-}
 
 import org.antlr.runtime {
     Token
+}
+import com.vasileff.ceylon.structures {
+    SetMultimap,
+    HashMultimap
 }
 
 shared
@@ -61,19 +60,19 @@ class CompilationContext(PhasedUnit phasedUnit, Context typeCheckerContext) {
      items as [[capturedInitializerDeclarations]]."
     shared variable
     SetMultimap<ClassModel, FunctionOrValueModel> initializerCaptures
-        =   ImmutableSetMultimap<ClassModel, FunctionOrValueModel> {};
+        =   HashMultimap<ClassModel, FunctionOrValueModel> {};
 
     shared variable
-    ImmutableSetMultimap<FunctionOrValueModel,ClassOrInterfaceModel> capturedDeclarations
-        =   ImmutableSetMultimap<FunctionOrValueModel, ClassOrInterfaceModel> {};
+    SetMultimap<FunctionOrValueModel, ClassOrInterfaceModel> capturedDeclarations
+        =   HashMultimap<FunctionOrValueModel, ClassOrInterfaceModel> {};
 
     "A multimap to associated each capturing class and interface with its list of
-     captures. A [[LinkedHashMultimap]] is used to preserve insertion order. A
-     consistent order is important as the capture lists will be used to build parameter
-     and argument lists."
+     captures. A [[HashMultimap]] with linked stability is used to preserve insertion
+     order. A consistent order is important as the capture lists will be used to build
+     parameter and argument lists."
     shared variable
     SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
-        =   ImmutableSetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
+        =   HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
 
     "Dart declaration names for Ceylon declarations.
 

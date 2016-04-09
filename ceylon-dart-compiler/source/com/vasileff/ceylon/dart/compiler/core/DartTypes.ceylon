@@ -56,9 +56,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     unspecifiedVariableInfo,
     variadicVariableInfo
 }
-import com.vasileff.jl4c.guava.collect {
-    ImmutableMap
-}
 
 shared
 class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
@@ -71,7 +68,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     BaseGenerator baseGenerator => ctx.expressionTransformer;
 
     DartNamedElement?(DeclarationModel) mappedFunctionOrValue = (() {
-        return ImmutableMap {
+        return map {
             ceylonTypes.objectDeclaration.getMember("string", null, false)
                 -> DartNamedFunction("toString"),
             ceylonTypes.objectDeclaration.getMember("hash", null, false)

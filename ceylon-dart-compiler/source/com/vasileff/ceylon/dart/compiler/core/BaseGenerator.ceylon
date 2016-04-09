@@ -72,7 +72,9 @@ import com.redhat.ceylon.model.typechecker.model {
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
-    Warning
+    Warning,
+    javaList,
+    linkedMap
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
@@ -161,10 +163,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     qualifiedExpressionInfo,
     comprehensionClauseInfo
 }
-import com.vasileff.jl4c.guava.collect {
-    ImmutableMap,
-    javaList
-}
 
 import java.util {
     JList=List
@@ -179,7 +177,7 @@ class BaseGenerator(CompilationContext ctx)
 
     [TypeModel, TypeModel, DartNamedElement, TypeModel]?(DeclarationModel)
     simpleNativeBinaryFunctions = (() {
-        return ImmutableMap {
+        return map {
             ceylonTypes.stringDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.stringType,
                     ceylonTypes.stringType, dartPlusOperator,
@@ -313,7 +311,7 @@ class BaseGenerator(CompilationContext ctx)
 
     [TypeModel, DartNamedElement, TypeModel]?(DeclarationModel)
     nativeNoArgOptimizations = (() {
-        return ImmutableMap {
+        return map {
             ceylonTypes.integerDeclaration.getMember("negated", null, false)
                 -> [ceylonTypes.integerType, dartNegationOperator,
                     ceylonTypes.integerType],
@@ -4993,7 +4991,7 @@ class BaseGenerator(CompilationContext ctx)
             - [[FunctionOrValueModel]] the parameter's declaration
             - [[DartSimpleIdentifier]] Dart temp variable identifier"
         value parameterDetails
-            =   ImmutableMap {
+            =   linkedMap {
                     for (i->[p,a] in zipPairs(parameters, signature).indexed)
                     p -> [i, a, p.model,
                           DartSimpleIdentifier(tmpVariable + "$" + i.string)]

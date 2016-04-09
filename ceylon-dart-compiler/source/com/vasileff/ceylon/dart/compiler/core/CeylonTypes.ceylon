@@ -19,7 +19,7 @@ import com.redhat.ceylon.model.typechecker.model {
     Function,
     Package
 }
-import com.vasileff.jl4c.guava.collect {
+import com.vasileff.ceylon.dart.compiler {
     javaList
 }
 

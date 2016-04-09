@@ -21,11 +21,6 @@ import com.redhat.ceylon.compiler.typechecker.io {
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnit
 }
-import com.vasileff.jl4c.guava.collect {
-    javaList,
-    ImmutableListMultimap,
-    ImmutableSetMultimap
-}
 
 import java.io {
     ByteArrayInputStream,
@@ -37,6 +32,10 @@ import java.lang {
 }
 import java.util {
     EnumSet
+}
+import com.vasileff.ceylon.structures {
+    ArrayListMultimap,
+    HashMultimap
 }
 
 shared
@@ -108,8 +107,8 @@ shared
             { for (i in 1:segments.size) "/".join(segments.take(i)) };
 
     value files
-        =   ImmutableListMultimap<String, VirtualFile> {
-                listings.map((listing)
+        =   ArrayListMultimap<String, VirtualFile> {
+                *listings.map((listing)
                     =>  let ([d, p, n] = pathParts(listing.key))
                         d -> object satisfies VirtualFile {
                             children = javaList<VirtualFile> {};
@@ -131,11 +130,11 @@ shared
                                     case (smaller) -1
                                     case (larger) 1
                                     case (equal) 0;
-                        });
+                        })
             };
 
     value directories
-        =   ImmutableSetMultimap<String, String> {
+        =   HashMultimap<String, String> {
                 *files.keys.flatMap(directorayAndParents).map((directory)
                     =>  let ([d, p, n] = pathParts(directory))
                         d -> p)

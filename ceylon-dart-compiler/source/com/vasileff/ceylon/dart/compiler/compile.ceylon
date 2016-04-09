@@ -112,10 +112,6 @@ import com.vasileff.ceylon.dart.compiler.loader {
     DartModuleManagerFactory,
     MetamodelVisitor
 }
-import com.vasileff.jl4c.guava.collect {
-    javaList,
-    LinkedListMultimap
-}
 
 import java.io {
     JFile=File,
@@ -135,6 +131,9 @@ import java.util {
     EnumSet,
     JMap=Map,
     JList=List
+}
+import com.vasileff.ceylon.structures {
+    LinkedListMultimap
 }
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.

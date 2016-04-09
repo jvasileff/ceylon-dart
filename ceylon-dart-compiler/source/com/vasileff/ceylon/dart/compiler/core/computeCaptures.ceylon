@@ -32,9 +32,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     valueSpecificationInfo,
     baseExpressionInfo
 }
-import com.vasileff.jl4c.guava.collect {
-    LinkedHashMultimap,
-    ImmutableSetMultimap
+import com.vasileff.ceylon.structures {
+    HashMultimap
 }
 
 "Identify captured functions and values. For each class and interface, determine list of
@@ -43,7 +42,7 @@ import com.vasileff.jl4c.guava.collect {
 shared
 void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
-    value builder = LinkedHashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
+    value captures = HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
 
     "For proper operation, this visitor must be visited by a [[CompilationUnit]]."
     object captureVisitor satisfies Visitor {
@@ -213,7 +212,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             // capture all that the class captures.
             value targets
                 =   supertypeDeclarations(classModel)
-                        .flatMap(builder.get)
+                        .flatMap(captures.get)
                         .distinct;
 
             for (target in targets) {
@@ -292,7 +291,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             while (true) {
                 value byClassOrInterface = getContainingClassOrInterface(by.container);
                 if (eq(targetsClassOrInterface, byClassOrInterface)) {
-                    builder.put(by, target);
+                    captures.put(by, target);
                     return;
                 }
                 assert (exists byClassOrInterface);
@@ -307,9 +306,11 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
     function redundant(ClassOrInterfaceModel->FunctionOrValueModel entry)
         =>  let (by->target = entry)
             supertypeDeclarations(by).skip(1).any((d)
-                =>  builder.contains(d->target));
+                =>  captures.contains(d->target));
 
-    value captures = ImmutableSetMultimap(builder.filter(not(redundant)));
+    captures.removeEntries(captures.filter(redundant).sequence());
     ctx.captures = captures;
-    ctx.capturedDeclarations = captures.inverse;
+    ctx.capturedDeclarations = HashMultimap {
+        *ctx.captures.map((e) => e.item->e.key)
+    };
 }

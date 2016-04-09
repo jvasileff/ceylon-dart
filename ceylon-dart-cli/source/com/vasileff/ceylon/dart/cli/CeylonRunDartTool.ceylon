@@ -29,9 +29,7 @@ import com.redhat.ceylon.common.tools {
     CeylonTool
 }
 import com.vasileff.ceylon.dart.compiler {
-    ReportableException
-}
-import com.vasileff.jl4c.guava.collect {
+    ReportableException,
     javaList
 }
 

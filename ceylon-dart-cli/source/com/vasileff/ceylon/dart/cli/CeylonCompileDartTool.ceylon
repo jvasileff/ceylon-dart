@@ -31,9 +31,7 @@ import com.vasileff.ceylon.dart.compiler {
     compileDart,
     CompilationStatus,
     ReportableException,
-    Warning
-}
-import com.vasileff.jl4c.guava.collect {
+    Warning,
     javaList
 }
 

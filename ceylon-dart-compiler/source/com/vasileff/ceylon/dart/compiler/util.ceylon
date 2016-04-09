@@ -24,6 +24,16 @@ import java.nio.file {
     JPath=Path,
     JFiles=Files
 }
+import java.util {
+    JList=List
+}
+import ceylon.interop.java {
+    JavaList
+}
+import ceylon.collection {
+    linked,
+    HashMap
+}
 
 shared
 JFile javaFile(Resource | Path | JFile | String resource)
@@ -83,3 +93,13 @@ Boolean hasRunFunction(ModuleModel m)
             runFunction.parameterLists.get(0).parameters.size() == 0)
         then true
         else false;
+
+shared
+JList<Element> javaList<Element>({Element*} elements)
+        given Element satisfies Object
+    =>  JavaList(elements.sequence());
+
+shared
+Map<Key, Item> linkedMap<Key, Item>({<Key->Item>*} entries)
+        given Key satisfies Object
+    =>  HashMap { stability = linked; *entries };

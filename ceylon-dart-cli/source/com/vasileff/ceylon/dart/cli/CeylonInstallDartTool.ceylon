@@ -26,9 +26,7 @@ import com.redhat.ceylon.model.cmr {
     ArtifactResult
 }
 import com.vasileff.ceylon.dart.compiler {
-    ReportableException
-}
-import com.vasileff.jl4c.guava.collect {
+    ReportableException,
     javaList
 }
 

@@ -14,9 +14,6 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
 }
-import com.vasileff.jl4c.guava.collect {
-    javaList
-}
 
 import java.lang {
     JString=String,
@@ -29,7 +26,8 @@ import java.util {
 }
 
 import com.vasileff.ceylon.dart.compiler {
-    dartBackend
+    dartBackend,
+    javaList
 }
 
 class DartModuleManager() extends ModuleManager() {
@@ -82,9 +80,9 @@ class DartModuleManager() extends ModuleManager() {
 
     shared actual
     JsonModule createModule(JList<JString> moduleName, String version) {
-		JsonModule m = JsonModule();
-		m.name = moduleName;
-		m.version = version;
+        JsonModule m = JsonModule();
+        m.name = moduleName;
+        m.version = version;
 
         // Add an implicit import for the language module
         if (!m.nameAsString == Module.\iLANGUAGE_MODULE_NAME) {

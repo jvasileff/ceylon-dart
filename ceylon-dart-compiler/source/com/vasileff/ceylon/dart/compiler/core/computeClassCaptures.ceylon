@@ -15,9 +15,8 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     nodeInfo
 }
-import com.vasileff.jl4c.guava.collect {
-    ImmutableSetMultimapBuilder,
-    ImmutableSet
+import com.vasileff.ceylon.structures {
+    HashMultimap
 }
 
 shared
@@ -35,7 +34,7 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
     //       declaration we are actually using in the Dart code. May not be too hard...
     //       withLhs (or withBoxing) could probably handle this.
 
-    value builder = ImmutableSetMultimapBuilder<ClassModel, FunctionOrValueModel>();
+    value initializerCaptures = HashMultimap<ClassModel, FunctionOrValueModel>();
 
     object classCaptureVisitor satisfies Visitor {
 
@@ -78,7 +77,7 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
                         .flatMap((conditionTuple) => conditionTuple[2...])
                         .map(VariableTriple.declarationModel);
 
-            builder.putMultiple(classModel, *declarations);
+            initializerCaptures.putMultiple(classModel, declarations);
 
             // Keep going, could have classes defined within an expression of a Condition!
             that.visitChildren(this);
@@ -89,6 +88,6 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
     unit.visit(classCaptureVisitor);
 
     // Save results to the context
-    ctx.initializerCaptures = builder.build();
-    ctx.capturedInitializerDeclarations = ImmutableSet(ctx.initializerCaptures.items);
+    ctx.initializerCaptures = initializerCaptures;
+    ctx.capturedInitializerDeclarations = set(ctx.initializerCaptures.items);
 }
