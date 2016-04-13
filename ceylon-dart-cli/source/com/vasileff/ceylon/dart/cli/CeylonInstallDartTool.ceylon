@@ -3,13 +3,12 @@ import ceylon.interop.java {
     javaString
 }
 
+import com.redhat.ceylon.cmr.ceylon {
+    ModuleCopycat
+}
 import com.redhat.ceylon.cmr.api {
     ArtifactContext,
     ModuleQuery
-}
-import com.redhat.ceylon.cmr.ceylon {
-    OutputRepoUsingTool,
-    ModuleCopycat
 }
 import com.redhat.ceylon.common {
     ModuleUtil
@@ -20,7 +19,8 @@ import com.redhat.ceylon.common.tool {
     description=description__SETTER
 }
 import com.redhat.ceylon.common.tools {
-    CeylonTool
+    CeylonTool,
+    OutputRepoUsingTool
 }
 import com.redhat.ceylon.model.cmr {
     ArtifactResult

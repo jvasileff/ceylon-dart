@@ -6,9 +6,6 @@ import ceylon.interop.java {
     CeylonIterable
 }
 
-import com.redhat.ceylon.cmr.ceylon {
-    OutputRepoUsingTool
-}
 import com.redhat.ceylon.common.config {
     DefaultToolOptions
 }
@@ -26,7 +23,8 @@ import com.redhat.ceylon.common.tool {
 import com.redhat.ceylon.common.tools {
     CeylonTool,
     SourceArgumentsResolver,
-    CeylonToolLoader
+    CeylonToolLoader,
+    OutputRepoUsingTool
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,

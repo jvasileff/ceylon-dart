@@ -11,9 +11,6 @@ import ceylon.process {
 import com.redhat.ceylon.cmr.api {
     ModuleQuery
 }
-import com.redhat.ceylon.cmr.ceylon {
-    RepoUsingTool
-}
 import com.redhat.ceylon.common {
     ModuleUtil
 }
@@ -26,7 +23,8 @@ import com.redhat.ceylon.common.tool {
     description=description__SETTER
 }
 import com.redhat.ceylon.common.tools {
-    CeylonTool
+    CeylonTool,
+    RepoUsingTool
 }
 import com.vasileff.ceylon.dart.compiler {
     ReportableException,
