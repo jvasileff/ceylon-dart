@@ -5,6 +5,7 @@ import ceylon.collection {
 import ceylon.file {
     File,
     Path,
+    Resource,
     Directory,
     parsePath,
     Link,
@@ -213,13 +214,15 @@ Map<String,String> gatherDependencies(
 File? findExecutableInPath(String fileName) {
     assert (exists sep = operatingSystem.pathSeparator.first);
 
-    // TODO handle Links, support windows (dart.exe?)
     return process.environmentVariableValue("PATH")
             ?.split(sep.equals)
             ?.map(parsePath)
             ?.map(Path.resource)
+            ?.map(Resource.linkedResource)
             ?.narrow<Directory>()
-            ?.flatMap((d) => d.files(fileName))
+            ?.flatMap((d) => d.children(fileName))
+            ?.map(Resource.linkedResource)
+            ?.narrow<File>()
             ?.filter(File.executable)
             ?.first;
 }
