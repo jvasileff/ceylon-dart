@@ -22,8 +22,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ValueModel=Value,
     ClassModel=Class,
-    ConstructorModel=Constructor,
-    InterfaceModel=Interface
+    ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -129,10 +128,17 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             value targetDeclaration
                 =   info.declaration;
 
+            // for value constructors, capture the synthetic function that memoizes and
+            // returns the value
             if (is ValueModel targetDeclaration,
-                exists constructorDeclaration = getConstructor(targetDeclaration),
+                    exists constructorDeclaration
+                        =   getConstructor(targetDeclaration),
                     constructorDeclaration.valueConstructor) {
-                value declarationToCapture = ctx.dartTypes.syntheticValueForValueConstructor(constructorDeclaration);
+
+                value declarationToCapture
+                    =   ctx.dartTypes.syntheticValueForValueConstructor {
+                            constructorDeclaration;
+                        };
 
                 maybeCapture {
                     declarationToCapture;
@@ -140,22 +146,10 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
                     getContainingClassOrInterface(info.scope);
                 };
 
-                assert (is QualifiedExpression | BaseExpression receiver
-                    =   that.receiverExpression);
-
-                switch (receiver)
-                case (is BaseExpression) {
-                    // don't visit; no need to capture for the class since we are not
-                    // instantiating it.
-                }
-                case (is QualifiedExpression) {
-                    // A.B.C.instance
-                    // (A.B).C).instance
-
-                    // don't visit this qualified expression's qualified expression's
-                    // target, for the same reason as above.
-                    that.receiverExpression.visit(this);
-                }
+                // The receiver expression may require captures (not be entirely
+                // static). For example, for 'Outer().Member.instance', we'll need
+                // to capture anything necessary to invoke 'Outer()'.
+                that.receiverExpression.visit(this);
             }
             else {
                 super.visitQualifiedExpression(that);
@@ -167,22 +161,23 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
             value info
                 =   baseExpressionInfo(that);
 
+            if (info.staticMethodReferencePrimary) {
+                // A reference to a type that we are not constructing. For 'T.C', this
+                // would be the 'T', but we only need to worry about captures for 'C'.
+                return;
+            }
+
             value targetDeclaration
                 =   info.declaration;
 
-            "A BaseExpression is never a ConstructorModel (constructors appear as
-             functions or values."
-            assert (is FunctionOrValueModel | InterfaceModel
-                    | ClassModel targetDeclaration);
+            "BaseExpressions are never a ConstructorModels since constructors appear as
+             functions or values. Nor are they ever Interface | TypeAlias | TypeParameter
+             when !staticMethodReferencePrimary."
+            assert (is FunctionOrValueModel | ClassModel targetDeclaration);
 
             switch (targetDeclaration)
-            case (is InterfaceModel) {
-                return;
-            }
             case (is ClassModel) {
-                // TODO don't capture classes that are only used as static qualifiers for
-                // value constructors, but make sure A.B.C.instance makes captures
-                // for A and B.
+                // Capture what the class captures, so we can instantiate it.
                 captureForClass(info, targetDeclaration);
             }
             case (is FunctionOrValueModel) {
