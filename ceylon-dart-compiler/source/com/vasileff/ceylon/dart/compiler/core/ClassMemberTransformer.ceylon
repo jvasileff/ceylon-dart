@@ -32,7 +32,8 @@ import ceylon.ast.core {
     ClassDefinition
 }
 import ceylon.interop.java {
-    CeylonList
+    CeylonList,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -653,11 +654,13 @@ class ClassMemberTransformer(CompilationContext ctx)
             dartElementType is DartOperator;
             identifier;
             parameters =
-                if (dartElementType != dartValue, is AnyFunction that) then
+                if (dartElementType != dartValue, is FunctionModel declarationModel) then
                     generateFormalParameterList {
                         !dartElementType is DartOperator; false;
                         info;
-                        that.parameterLists.first;
+                        CeylonIterable {
+                            declarationModel.firstParameterList.parameters;
+                        };
                     }
                 else if (is SetterModel declarationModel) then
                     DartFormalParameterList {
