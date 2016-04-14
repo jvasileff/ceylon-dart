@@ -11,7 +11,8 @@ import ceylon.ast.redhat {
 import ceylon.collection {
     HashMap,
     LinkedList,
-    linked
+    linked,
+    MutableMap
 }
 import ceylon.file {
     Directory,
@@ -77,8 +78,7 @@ import com.redhat.ceylon.model.typechecker.context {
     TypeCache
 }
 import com.redhat.ceylon.model.typechecker.model {
-    ModuleModel=Module,
-    ModuleImport
+    ModuleModel=Module
 }
 import com.vasileff.ceylon.dart.compiler.core {
     CompilationContext,
@@ -112,6 +112,9 @@ import com.vasileff.ceylon.dart.compiler.loader {
     DartModuleManagerFactory,
     MetamodelVisitor
 }
+import com.vasileff.ceylon.structures {
+    LinkedListMultimap
+}
 
 import java.io {
     JFile=File,
@@ -131,9 +134,6 @@ import java.util {
     EnumSet,
     JMap=Map,
     JList=List
-}
-import com.vasileff.ceylon.structures {
-    LinkedListMultimap
 }
 
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
@@ -585,9 +585,7 @@ shared
                     .plus(".dart");
 
         value importedModules
-            =   CeylonIterable(m.imports)
-                .filter(isForDartBackend)
-                .map(ModuleImport.\imodule)
+            =   gatherCompileDependencies(m).keys.rest
                 .map((m) =>
                     if (m.name.size() == 1
                             && m.name.get(0).string.startsWith("dart:")) then
@@ -913,4 +911,42 @@ Integer countNodesTcVisitor(Tree.CompilationUnit unit) {
     }
     unit.visit(visitor);
     return count;
+}
+
+"Gather all depencies of the given module, including exported transitive dependencies.
+ The returned map will include the passed in module, unless the module is not for the
+ Dart backend."
+Map<ModuleModel, String> gatherCompileDependencies(
+        ModuleModel moduleModel,
+        Boolean excludeNonExported = false,
+        MutableMap<ModuleModel, String> dependencies
+            =   HashMap<ModuleModel, String> { stability = linked; }) {
+
+    value previousVersion = dependencies[moduleModel];
+    if (exists previousVersion) {
+        if (moduleModel.version != previousVersion) {
+            throw ReportableException(
+                "Two versions of the same module cannot be imported. Module \
+                 ``ModuleUtil.makeModuleName(
+                        moduleModel.nameAsString, moduleModel.version)`` conflicts \
+                 with ``ModuleUtil.makeModuleName(
+                        moduleModel.nameAsString, previousVersion)``");
+        }
+        return dependencies;
+    }
+
+    dependencies.put(moduleModel, moduleModel.version);
+
+    for (dependency in moduleModel.imports) {
+        if (!isForDartBackend(dependency)) {
+            continue;
+        }
+        // TODO we should search for version incompatibilites in non-exported
+        //      versions too.
+        if (!excludeNonExported || dependency.export) {
+            gatherCompileDependencies(dependency.\imodule, true, dependencies);
+        }
+    }
+
+    return dependencies;
 }

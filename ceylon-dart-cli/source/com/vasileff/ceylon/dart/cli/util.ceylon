@@ -127,7 +127,7 @@ JsonObject moduleModel(
     });
 }
 
-MutableMap<String,String> gatherDependencies(
+Map<String,String> gatherDependencies(
         RepositoryManager repositoryManager,
         variable String moduleName,
         String moduleVersion,
