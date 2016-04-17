@@ -286,22 +286,7 @@ public class MetamodelGenerator {
             m.put(KEY_TYPES, subs);
             return m;
         }
-        final TypeDeclaration d = pt.getDeclaration();
-        m.put(KEY_NAME, d.getName());
-        if (d.getDeclarationKind()==DeclarationKind.TYPE_PARAMETER) {
-            //Don't add package, etc
-            return m;
-        }
-        com.redhat.ceylon.model.typechecker.model.Package pkg = d.getUnit().getPackage();
-        if (pkg.equals(from.getUnit().getPackage())) {
-            addPackage(m, ".");
-        } else {
-            addPackage(m, pkg.getNameAsString());
-        }
-        if (!pkg.getModule().equals(module)) {
-            final String modname = d.getUnit().getPackage().getModule().getNameAsString();
-            m.put(KEY_MODULE, Module.LANGUAGE_MODULE_NAME.equals(modname)?"$":modname);
-        }
+        m.putAll(typeMap(pt, from));
         putTypeParameters(m, pt, from);
         return m;
     }
