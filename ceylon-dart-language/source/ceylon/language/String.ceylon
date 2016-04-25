@@ -1030,20 +1030,20 @@ class BaseString
     String padLeading(Integer size, Character character=' ') {
         value length = this.size;
         if (size <= length) {
-            return self;
+            return val;
         }
         value padAmount = size - length;
-        return character.string.repeat(padAmount) + self;
+        return character.string.repeat(padAmount) + val;
     }
 
     shared
     String padTrailing(Integer size, Character character=' ') {
         value length = this.size;
         if (size <= length) {
-            return self;
+            return val;
         }
         value padAmount = size - length;
-        return self + character.string.repeat(padAmount);
+        return val + character.string.repeat(padAmount);
     }
 
     shared
