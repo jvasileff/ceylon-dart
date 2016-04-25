@@ -143,17 +143,17 @@ shared final native("dart") class Byte(Integer congruent)
             else unsigned;
 
     shared actual native("dart") Byte negated
-        =>  Byte(-unsigned);
+        =>  (-unsigned).byte;
 
     shared actual native("dart") Byte plus(Byte other)
-        =>  Byte(unsigned.plus(other.unsigned));
+        =>  unsigned.plus(other.unsigned).byte;
 
     shared actual native("dart") Byte and(Byte other)
-        =>  Byte(unsigned.and(other.unsigned));
+        =>  unsigned.and(other.unsigned).byte;
 
     shared actual native("dart") Byte flip(Integer index)
         =>  if (0 <= index <= 7)
-            then Byte(unsigned.flip(index))
+            then (unsigned.flip(index)).byte
             else this;
 
     shared actual native("dart") Boolean get(Integer index)
@@ -162,34 +162,34 @@ shared final native("dart") class Byte(Integer congruent)
             else false;
 
     shared actual native("dart") Byte not
-        =>  Byte(unsigned.not);
+        =>  unsigned.not.byte;
 
     shared actual native("dart") Byte or(Byte other)
-        =>  Byte(unsigned.or(other.unsigned));
+        =>  unsigned.or(other.unsigned).byte;
 
     shared actual native("dart") Byte leftLogicalShift(Integer shift)
-        =>  Byte(unsigned.leftLogicalShift(shift.and($111)));
+        =>  unsigned.leftLogicalShift(shift.and($111)).byte;
 
     shared actual native("dart") Byte rightArithmeticShift(Integer shift)
-        =>  Byte(signed.rightArithmeticShift(shift.and($111)));
+        =>  signed.rightArithmeticShift(shift.and($111)).byte;
 
     shared actual native("dart") Byte rightLogicalShift(Integer shift)
-        =>  Byte(unsigned.rightLogicalShift(shift.and($111)));
+        =>  unsigned.rightLogicalShift(shift.and($111)).byte;
 
     shared actual native("dart") Byte set(Integer index, Boolean bit)
-        =>  Byte(unsigned.set(index, bit));
+        =>  unsigned.set(index, bit).byte;
 
     shared actual native("dart") Byte xor(Byte other)
-        =>  Byte(unsigned.xor(other.unsigned));
+        =>  unsigned.xor(other.unsigned).byte;
 
     shared actual native("dart") Byte predecessor
-        =>  Byte(unsigned - 1);
+        =>  (unsigned - 1).byte;
 
     shared actual native("dart") Byte successor
-        =>  Byte(unsigned + 1);
+        =>  (unsigned + 1).byte;
 
     shared actual native("dart") Byte neighbour(Integer offset)
-        =>  Byte(unsigned + offset);
+        =>  (unsigned + offset).byte;
 
     shared actual native("dart") Integer offset(Byte other)
         =>  (unsigned - other.unsigned).and(255);
