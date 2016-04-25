@@ -182,6 +182,10 @@ class BaseGenerator(CompilationContext ctx)
                 -> [ceylonTypes.stringType,
                     ceylonTypes.stringType, dartPlusOperator,
                     ceylonTypes.stringType],
+            ceylonTypes.stringDeclaration.getMember("repeat", null, false)
+                -> [ceylonTypes.stringType,
+                    ceylonTypes.stringType, dartTimesOperator,
+                    ceylonTypes.integerType],
             ceylonTypes.integerDeclaration.getMember("plus", null, false)
                 -> [ceylonTypes.integerType,
                     ceylonTypes.integerType, dartPlusOperator,
