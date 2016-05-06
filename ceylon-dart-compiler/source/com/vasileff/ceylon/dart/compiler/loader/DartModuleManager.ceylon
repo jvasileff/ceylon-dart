@@ -70,7 +70,6 @@ class DartModuleManager() extends ModuleManager() {
             value defaultModuleName = Collections.singletonList(
                     javaString(Module.\iDEFAULT_MODULE_NAME));
             value defaultModule = createModule(defaultModuleName, "unversioned");
-            defaultModule.default = true;
             defaultModule.available = true;
             bindPackageToModule(emptyPackage, defaultModule);
             modules.defaultModule = defaultModule;

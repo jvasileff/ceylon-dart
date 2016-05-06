@@ -58,7 +58,7 @@ public class JsonModule extends Module {
                 Annotation ann = new Annotation();
                 ann.setName(name);
                 for (String arg : (List<String>)e.getValue()) {
-                    ann.addPositionalArgment(arg);
+                    ann.addPositionalArgument(arg);
                 }
                 getAnnotations().add(ann);
             }
