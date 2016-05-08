@@ -80,15 +80,13 @@ import ceylon.interop.java {
     CeylonList
 }
 
-import com.redhat.ceylon.compiler.typechecker.context {
-    TypecheckerUnit
-}
 import com.redhat.ceylon.compiler.typechecker.tree {
     TcNode=Node,
     Message
 }
 import com.redhat.ceylon.model.typechecker.model {
-    ScopeModel=Scope
+    ScopeModel=Scope,
+    Unit
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -230,7 +228,7 @@ class NodeInfo()
     shared Token token => tcNode.token;
     shared Token endToken => tcNode.endToken;
 
-    shared TypecheckerUnit typecheckerUnit => tcNode.unit;
+    shared Unit unit => tcNode.unit;
 
     // FIXME location and filename doesn't work for ArgumentListInfo
     // https://github.com/ceylon/ceylon-spec/issues/1385
