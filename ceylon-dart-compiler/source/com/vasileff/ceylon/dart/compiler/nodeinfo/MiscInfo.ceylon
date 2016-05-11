@@ -542,7 +542,7 @@ class SpreadArgumentInfo(shared actual SpreadArgument node)
 
 shared abstract
 class TypeIshInfo()
-        of NameWithTypeArgumentsInfo | DefaultTypeInfo | DefaultTypeIshInfo
+        of NameWithTypeArgumentsInfo | TypeArgumentInfo | DefaultTypeInfo | DefaultTypeIshInfo
         extends NodeInfo() {}
 
 shared
@@ -557,9 +557,31 @@ shared class VariadicTypeInfo(VariadicType that) => DefaultTypeIshInfo(that);
 shared class DefaultedTypeInfo(DefaultedType that) => DefaultTypeIshInfo(that);
 shared class TypeListInfo(TypeList that) => DefaultTypeIshInfo(that);
 shared class SpreadTypeInfo(SpreadType that) => DefaultTypeIshInfo(that);
-shared class TypeArgumentInfo(TypeArgument that) => DefaultTypeIshInfo(that);
 shared class TypeArgumentsInfo(TypeArguments that) => DefaultTypeIshInfo(that);
 shared class PackageQualifierInfo(PackageQualifier that) => DefaultTypeIshInfo(that);
+
+"This info object is largely worthless for us, since TypeArgument nodes are only
+ available for type arguments that are not inferred.
+
+ So, instead of using this, get the type parameters from the parent BaseExpression or
+ QualifiedExpression's `declaration`, and the type arguments from the expression's
+ `target`, which for invocations, will be a TypedReference.
+
+ The corresponding typechecker node for this node is the same as that of the Type
+ child node."
+shared
+class TypeArgumentInfo(shared actual TypeArgument node)
+        extends TypeIshInfo() {
+
+    shared alias TcNodeType => Tree.Type;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared TypeModel typeModel => tcNode.typeModel;
+}
 
 shared
 class DefaultTypeInfo(shared actual Type node)
