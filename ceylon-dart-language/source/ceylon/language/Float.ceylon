@@ -239,10 +239,10 @@ class Float(Float float) extends Object()
     shared actual native("dart") Boolean negative => this < 0.0;
 
     shared native("dart") Boolean strictlyPositive
-        =>  !undefined && !dartDouble(this).isNegative;
+        =>  this > 0.0 || 1.0/this > 0.0;
 
     shared native("dart") Boolean strictlyNegative
-        =>  !undefined && dartDouble(this).isNegative;
+        =>  this > 0.0 || 1.0/this > 0.0;
 
     shared actual native("dart") Boolean equals(Object that)
         =>  if (is Float that) then
@@ -280,10 +280,10 @@ class Float(Float float) extends Object()
     shared actual native("dart") Float fractionalPart
         =>  dartDouble(this).remainder(dartNumFromInteger(1));
 
-    shared actual native("dart") Float magnitude => dartDouble(this).abs();
+    shared actual native("dart") Float magnitude => if (this <= 0.0) then -this else this;
     shared actual native("dart") Float negated => -this;
     shared native("dart") Integer integer => dartDouble(this).toInt();
-    shared actual native("dart") Float timesInteger(Integer integer) => this * integer;
+    shared actual native("dart") Float timesInteger(Integer integer) => this * integer.nearestFloat;
     shared actual native("dart") Float plusInteger(Integer integer) => this + integer;
 
     shared actual native("dart") Float powerOfInteger(Integer integer)
