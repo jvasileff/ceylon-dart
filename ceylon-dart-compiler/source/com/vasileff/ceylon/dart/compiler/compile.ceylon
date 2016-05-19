@@ -455,7 +455,7 @@ shared
         Integer start = system.nanoseconds;
 
         try {
-            value ctx = CompilationContext(phasedUnit, typeChecker.context);
+            value ctx = CompilationContext(phasedUnit);
 
             AnyCompilationUnit unit;
             try (timer.Measurement("anyCompilationUnitToCeylon")) {

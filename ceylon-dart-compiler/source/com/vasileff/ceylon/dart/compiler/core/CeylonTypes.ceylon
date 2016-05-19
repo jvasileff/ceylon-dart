@@ -3,9 +3,6 @@ import ceylon.interop.java {
     JavaList
 }
 
-import com.redhat.ceylon.compiler.typechecker.context {
-    Context
-}
 import com.redhat.ceylon.model.typechecker.model {
     Type,
     Unit,
@@ -24,7 +21,7 @@ import com.vasileff.ceylon.dart.compiler {
 }
 
 shared
-class CeylonTypes(Unit unit, Context typeCheckerContext) {
+class CeylonTypes(Unit unit) {
 
     /////////////////////////////////////////////
     // common types
@@ -123,15 +120,16 @@ class CeylonTypes(Unit unit, Context typeCheckerContext) {
     // Dart Specific Types and Declarations
     /////////////////////////////////////////////
 
+    Package? interopPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.interop.dart");
+
     shared
     Class? asyncDeclaration {
-        for (m in typeCheckerContext.modules.listOfModules) {
-            if (m.nameAsString == "ceylon.interop.dart") {
-                assert (is Class async
-                    =   m.getPackage("ceylon.interop.dart")
-                        .getDirectMember("AsyncAnnotation", null, false));
-                return async;
-            }
+        if (exists interopPackage = this.interopPackage) {
+            assert (is Class async
+                =   interopPackage
+                    .getDirectMember("AsyncAnnotation", null, false));
+            return async;
         }
         return null;
     }
@@ -142,13 +140,11 @@ class CeylonTypes(Unit unit, Context typeCheckerContext) {
 
     shared
     Function? awaitDeclaration {
-        for (m in typeCheckerContext.modules.listOfModules) {
-            if (m.nameAsString == "ceylon.interop.dart") {
-                assert (is Function await
-                    =   m.getPackage("ceylon.interop.dart")
-                        .getDirectMember("await", null, false));
-                return await;
-            }
+        if (exists interopPackage = this.interopPackage) {
+            assert (is Function await
+                =   interopPackage
+                    .getDirectMember("await", null, false));
+            return await;
         }
         return null;
     }

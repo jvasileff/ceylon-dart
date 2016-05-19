@@ -9,8 +9,7 @@ import ceylon.interop.java {
 }
 
 import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit,
-    Context
+    PhasedUnit
 }
 import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
@@ -23,17 +22,17 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
     DartSimpleIdentifier
 }
-
-import org.antlr.runtime {
-    Token
-}
 import com.vasileff.ceylon.structures {
     SetMultimap,
     HashMultimap
 }
 
+import org.antlr.runtime {
+    Token
+}
+
 shared
-class CompilationContext(PhasedUnit phasedUnit, Context typeCheckerContext) {
+class CompilationContext(PhasedUnit phasedUnit) {
 
     shared
     UnitModel unit = phasedUnit.unit;
@@ -123,7 +122,7 @@ class CompilationContext(PhasedUnit phasedUnit, Context typeCheckerContext) {
     MutableSet<ClassModel> withinConstructorSignatureSet = HashSet<ClassModel>();
 
     shared
-    CeylonTypes ceylonTypes = CeylonTypes(unit, typeCheckerContext);
+    CeylonTypes ceylonTypes = CeylonTypes(unit);
 
     variable
     DartTypes? dartTypesMemo = null;
