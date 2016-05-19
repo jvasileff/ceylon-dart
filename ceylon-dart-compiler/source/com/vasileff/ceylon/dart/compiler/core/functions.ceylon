@@ -548,17 +548,30 @@ DScope dScope(
         ScopeModel scope = toScopeModel(node))
     =>  let (passedScope = scope, passedNode = node)
         object satisfies DScope {
-            shared actual Node node
-                =   if (is Node passedNode)
-                    then passedNode
-                    else passedNode.node;
-
-            shared actual NodeInfo nodeInfo
+            value nodeInfo
                 =   if (is NodeInfo passedNode)
                     then passedNode
                     else getNodeInfo(passedNode);
 
-            shared actual ScopeModel scope => passedScope;
+            shared actual
+            ScopeModel scope
+                =>  passedScope;
+
+            shared actual
+            void addError(String string)
+                =>  nodeInfo.addError(string);
+
+            shared actual
+            void addUnexpectedError(String string)
+                =>  nodeInfo.addUnexpectedError(string);
+
+            shared actual
+            void addUnsupportedError(String string)
+                =>  nodeInfo.addUnsupportedError(string);
+
+            shared actual
+            void addWarning(Warning warning, String message)
+                =>  nodeInfo.addWarning(warning, message);
         };
 
 shared
@@ -642,7 +655,7 @@ void addWarning(Node|NodeInfo|DScope node, Warning warning, String message) {
         =   switch (node)
             case (is Node) nodeInfo(node)
             case (is NodeInfo) node
-            else node.nodeInfo;
+            else node;
     info.addWarning(warning, message);
 }
 
@@ -652,7 +665,7 @@ void addError(Node|NodeInfo|DScope node, String message) {
         =   switch (node)
             case (is Node) nodeInfo(node)
             case (is NodeInfo) node
-            else node.nodeInfo;
+            else node;
     info.addUnexpectedError(message);
 }
 

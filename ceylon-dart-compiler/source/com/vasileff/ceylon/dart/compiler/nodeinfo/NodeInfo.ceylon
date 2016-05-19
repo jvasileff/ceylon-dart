@@ -220,7 +220,7 @@ class NodeInfo()
             | IfClauseInfo | TryClauseInfo
         satisfies DScope {
 
-    shared actual formal Node node;
+    shared formal Node node;
 
     shared formal TcNode tcNode;
 
@@ -239,19 +239,19 @@ class NodeInfo()
 
     shared actual ScopeModel scope => tcNode.scope;
 
-    shared actual default NodeInfo nodeInfo => this;
+    shared default NodeInfo nodeInfo => this;
 
     shared {Message*} errors => CeylonList(tcNode.errors);
 
-    shared void addError(String string)
+    shared actual void addError(String string)
         =>  tcNode.addError(string, dartBackend);
 
-    shared void addUnsupportedError(String string)
+    shared actual void addUnsupportedError(String string)
         =>  tcNode.addUnsupportedError(string, dartBackend);
 
-    shared void addUnexpectedError(String string)
+    shared actual void addUnexpectedError(String string)
         =>  tcNode.addUnexpectedError(string, dartBackend);
 
-    shared void addWarning(Warning warning, String message)
+    shared actual void addWarning(Warning warning, String message)
         =>  tcNode.addUsageWarning(warning, message, dartBackend);
 }
