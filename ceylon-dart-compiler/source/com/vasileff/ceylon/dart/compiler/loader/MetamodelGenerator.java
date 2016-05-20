@@ -19,6 +19,7 @@ import com.redhat.ceylon.model.typechecker.model.Interface;
 import com.redhat.ceylon.model.typechecker.model.ModelUtil;
 import com.redhat.ceylon.model.typechecker.model.Module;
 import com.redhat.ceylon.model.typechecker.model.ModuleImport;
+import com.redhat.ceylon.model.typechecker.model.NothingType;
 import com.redhat.ceylon.model.typechecker.model.Parameter;
 import com.redhat.ceylon.model.typechecker.model.ParameterList;
 import com.redhat.ceylon.model.typechecker.model.SiteVariance;
@@ -230,7 +231,13 @@ public class MetamodelGenerator {
             //For types that reference type parameters, we're done
             return m;
         }
-        com.redhat.ceylon.model.typechecker.model.Package pkg = d.getUnit().getPackage();
+        com.redhat.ceylon.model.typechecker.model.Package pkg;
+        if (d instanceof NothingType) {
+            pkg = (com.redhat.ceylon.model.typechecker.model.Package) d.getContainer();
+        }
+        else {
+            pkg = d.getUnit().getPackage();
+        }
         if (pkg == null || pkg.equals(from.getUnit().getPackage())) {
             addPackage(m, ".");
         } else {
