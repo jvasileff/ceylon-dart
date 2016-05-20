@@ -39,4 +39,5 @@ module ceylon.language "1.2.2-DP2-SNAPSHOT" {
     native("dart") import dart.collection "1.2.2";
     native("dart") import ceylon.interop.dart "1.2.2";
     native("dart") import ceylon.dart.runtime.core "1.2.2";
+    native("dart") import ceylon.dart.runtime.model "1.2.2";
 }
