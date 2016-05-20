@@ -511,7 +511,7 @@ shared
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
-                    ctx.topLevelVisitor.visitCompilationUnit(unit);
+                    unit.visit(ctx.topLevelVisitor);
                 }
 
                 if (baselinePerfTest) {
@@ -622,9 +622,15 @@ shared
 
         value dcu
             =   DartCompilationUnit {
+                    // Make dart.core and ceylon.interop.dart available, even if not
+                    // imported in module.ceylon.
                     {DartImportDirective {
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
+                    },
+                    DartImportDirective {
+                        DartSimpleStringLiteral("package:ceylon/interop/dart/dart.dart");
+                        DartSimpleIdentifier("$ceylon$interop$dart");
                     },
                     *importedModules}.coalesced.distinct.sequence();
                     ds.sequence();
