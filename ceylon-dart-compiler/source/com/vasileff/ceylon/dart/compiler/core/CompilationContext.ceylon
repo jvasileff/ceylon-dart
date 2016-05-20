@@ -4,13 +4,7 @@ import ceylon.collection {
     HashMap,
     MutableSet
 }
-import ceylon.interop.java {
-    CeylonList
-}
 
-import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit
-}
 import com.redhat.ceylon.model.typechecker.model {
     UnitModel=Unit,
     ClassModel=Class,
@@ -32,13 +26,13 @@ import org.antlr.runtime {
 }
 
 shared
-class CompilationContext(PhasedUnit phasedUnit) {
+class CompilationContext(unit, tokens) {
 
     shared
-    UnitModel unit = phasedUnit.unit;
+    UnitModel unit;
 
     shared
-    List<Token> tokens = CeylonList(phasedUnit.tokens);
+    List<Token> tokens;
 
     "The output."
     shared

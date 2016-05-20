@@ -26,7 +26,8 @@ import ceylon.interop.java {
     CeylonIterable,
     javaClass,
     JavaIterable,
-    javaString
+    javaString,
+    CeylonList
 }
 import ceylon.json {
     JsonObject=Object,
@@ -455,7 +456,11 @@ shared
         Integer start = system.nanoseconds;
 
         try {
-            value ctx = CompilationContext(phasedUnit);
+            value ctx
+                =   CompilationContext {
+                        phasedUnit.unit;
+                        CeylonList(phasedUnit.tokens);
+                    };
 
             AnyCompilationUnit unit;
             try (timer.Measurement("anyCompilationUnitToCeylon")) {
