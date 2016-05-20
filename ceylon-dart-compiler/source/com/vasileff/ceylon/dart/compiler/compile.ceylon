@@ -87,7 +87,8 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeCaptures,
     computeClassCaptures,
     isForDartBackend,
-    moduleImportPrefix
+    moduleImportPrefix,
+    ModelGenerator
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -560,6 +561,25 @@ shared
             logError("-- end   " + path
                 + " (``((end-start)/10^6).string``ms)");
         }
+    }
+
+    // add runtime model info
+    for (mod -> members in moduleMembers) {
+        // jump through hoops to support default modules
+        value unit
+            =   if (mod.default)
+                then mod.packages.get(0).units.iterator().next()
+                else mod.unit;
+
+        value pkg
+            =   if (mod.default)
+                then mod.packages.get(0)
+                else mod.unit.\ipackage;
+
+        value ctx
+            =   CompilationContext(unit, []);
+
+        members.addAll(ModelGenerator(ctx).generateRuntimeModel(mod, pkg));
     }
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
