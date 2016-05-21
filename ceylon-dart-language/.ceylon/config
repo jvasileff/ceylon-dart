@@ -1,0 +1,6 @@
+[compiler]
+source=./support
+suppresswarning=ceylonNamespace
+
+[defaults]
+encoding=UTF-8
