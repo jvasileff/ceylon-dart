@@ -142,8 +142,10 @@ shared sealed interface ClassDeclaration
          and a default constructor.")
     shared default Object memberInstantiate
             (Object container, AppliedType<>[] typeArguments = [], Anything* arguments)
-                => memberClassApply<Nothing, Object, Nothing>(`Nothing`, *typeArguments).bind(container).apply(*arguments);
-    
+                // Workaround to make compile
+                //=> memberClassApply<Nothing, Object, Nothing>(`Nothing`, *typeArguments).bind(container).apply(*arguments);
+                => memberClassApply<Nothing, Object, Nothing>(nothing, *typeArguments).bind(container).apply(*arguments);
+
     "Looks up a constructor declaration directly declared on this class, by name. 
      Returns `null` if no such constructor matches. 
      This includes unshared constructors but not inherited constructors 

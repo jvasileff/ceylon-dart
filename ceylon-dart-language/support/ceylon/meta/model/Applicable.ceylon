@@ -1,7 +1,8 @@
 """Represents classes or functions that you can apply in a type-unsafe way.
    """
 shared sealed interface Applicable<out Type=Anything, in Arguments=Nothing> 
-        satisfies Callable<Type,Arguments>
+        // Workaround to make compile
+        //satisfies Callable<Type,Arguments>
         given Arguments satisfies Anything[] {
     
     "Type-unsafe application, to be used when the argument types are unknown until runtime.

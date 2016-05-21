@@ -78,7 +78,9 @@ shared sealed interface ValueDeclaration
     throws(`class StorageException`,
            "If this attribute is not stored at runtime, for example if it is neither shared nor captured.")
     shared actual default Anything memberGet(Object container)
-            => memberApply<Nothing, Anything, Nothing>(`Nothing`).bind(container).get();
+            // Workaround to make compile
+            //=> memberApply<Nothing, Anything, Nothing>(`Nothing`).bind(container).get();
+            => memberApply<Nothing, Anything, Nothing>(nothing).bind(container).get();
 
     "Sets the current value of this toplevel value."
     shared default void set(Anything newValue)

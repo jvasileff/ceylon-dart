@@ -11,8 +11,10 @@
  simply invoke it. Alternatively use [[bind]] if the qualifying instance's 
  type is unknown until runtime.
 "
-shared sealed interface Qualified<out Kind=Anything, in Container=Nothing> 
-        satisfies Kind(Container) {
+shared sealed interface Qualified<out Kind=Anything, in Container=Nothing>
+        // Workaround to make compile
+        //satisfies Kind(Container)
+        {
     
     "Type-unsafe container binding, to be used when the container type is unknown until runtime.
      

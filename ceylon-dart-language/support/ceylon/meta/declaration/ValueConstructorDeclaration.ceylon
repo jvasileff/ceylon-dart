@@ -47,7 +47,9 @@ shared sealed interface ValueConstructorDeclaration
         "If this attribute is not stored at runtime, for example if it is 
          neither shared nor captured.")
     shared actual default Object memberGet(Object container)
-            => memberApply<Nothing, Object>(`Nothing`).bind(container).get();
+            // Workaround to make compile
+            //=> memberApply<Nothing, Object>(`Nothing`).bind(container).get();
+            => memberApply<Nothing, Object>(nothing).bind(container).get();
     
     /*"Sets the current value of this toplevel value."
      shared actual default void set(Nothing newValue) {
