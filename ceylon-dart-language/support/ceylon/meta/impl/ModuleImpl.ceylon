@@ -6,7 +6,7 @@ import ceylon.dart.runtime.model {
 import ceylon.language {
     AnnotationType=Annotation
 }
-import ceylon.language.meta.declaration {
+import ceylon.meta.declaration {
     Module,
     Package,
     Import,
@@ -25,7 +25,7 @@ import ceylon.language.meta.declaration {
     ConstructorDeclaration,
     ValueConstructorDeclaration
 }
-import ceylon.language.meta.model {
+import ceylon.meta.model {
     Class,
     MemberClass,
     AppliedType=Type,
