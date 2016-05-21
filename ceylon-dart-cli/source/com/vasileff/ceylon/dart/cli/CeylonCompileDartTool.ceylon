@@ -19,7 +19,9 @@ import com.redhat.ceylon.common.tool {
     option=option__SETTER,
     description=description__SETTER,
     optionArgument=optionArgument__SETTER,
-    ToolError
+    ToolError,
+    parsedBy=parsedBy__SETTER,
+    StandardArgumentParsers
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool,
@@ -35,6 +37,9 @@ import com.vasileff.ceylon.dart.compiler {
     javaList
 }
 
+import java.io {
+    JFile=File
+}
 import java.lang {
     JString=String
 }
@@ -108,6 +113,25 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     }
     Boolean quiet = false;
 
+    optionArgument { longName="source"; argumentName="dirs"; }
+    parsedBy { `class StandardArgumentParsers.PathArgumentParser`; }
+    description {
+        "An alias for `--src` (default: `./source`)";
+    }
+    shared variable
+    JList<JFile>? source = null;
+
+    optionArgument { shortName='s'; longName="src"; argumentName="dirs"; }
+    parsedBy { `class StandardArgumentParsers.PathArgumentParser`; }
+    description {
+        "Path to source files. \
+         Can be specified multiple times; you can also specify several \
+         paths separated by your operating system's `PATH` separator. \
+         (default: `./source`)";
+    }
+    shared variable
+    JList<JFile>? src = null;
+
     shared variable optionArgument
     description("Repeat compilation the specified number of times (useful for
                  performance testing).")
@@ -156,10 +180,18 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         }
         verifyLanguageModuleAvailability(repositoryManager);
 
-        value sourceDirectories = applyCwd(DefaultToolOptions.compilerSourceDirs);
-        value resources = DefaultToolOptions.compilerResourceDirs;
-        value resolver = SourceArgumentsResolver(
-                sourceDirectories, resources, ".ceylon", ".dart");
+        // TODO figure out why typechecking fails when sources for a single module
+        //      are split among multiple source directories, sometimes, based on the
+        //      order of the directories.
+        value sourceDirectories
+            =   applyCwd(src else source else DefaultToolOptions.compilerSourceDirs);
+
+        value resources
+            =   DefaultToolOptions.compilerResourceDirs;
+
+        value resolver
+            =   SourceArgumentsResolver(
+                    sourceDirectories, resources, ".ceylon", ".dart");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
 

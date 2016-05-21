@@ -193,7 +193,7 @@ void bootstrapCompile() {
 }
 
 Integer doBootstrapCompile([String?*] arguments) {
-    assert (exists sourceDirectory = arguments[0]);
+    assert (exists sourceArg = arguments[0]);
     assert (exists outputDirectory = arguments[1]);
 
     value systemRepoDirectory = arguments[2];
@@ -212,7 +212,9 @@ Integer doBootstrapCompile([String?*] arguments) {
             else null;
 
     value sourceDirectories
-        =   javaList { File(sourceDirectory) };
+        =   javaList {
+                sourceArg.split(':'.equals).map((d) => File(d));
+            };
 
     value outputRepositoryManager
         =   CeylonUtils.repoManager()
