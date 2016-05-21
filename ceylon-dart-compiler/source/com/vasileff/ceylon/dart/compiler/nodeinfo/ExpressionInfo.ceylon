@@ -115,6 +115,7 @@ import com.redhat.ceylon.compiler.typechecker.tree {
     Tree
 }
 import com.redhat.ceylon.model.typechecker.model {
+    ModuleModel=Module,
     TypeModel=Type,
     TypedReferenceModel=TypedReference,
     DeclarationModel=Declaration,
@@ -146,12 +147,12 @@ class ValueExpressionInfo()
 shared abstract
 class PrimaryInfo()
         of  AtomInfo | BaseExpressionInfo | QualifiedExpressionInfo | InvocationInfo
-            | DefaultPrimaryInfo
+            | DecInfo | DefaultPrimaryInfo
         extends ValueExpressionInfo() {}
 
 shared
 class DefaultPrimaryInfo(shared actual Expression node)
-        //of MetaInfo | DecInfo | ElementOrSubrangeExpressionInfo
+        //of MetaInfo | ElementOrSubrangeExpressionInfo
         extends PrimaryInfo() {
 
     shared alias TcNodeType => Tree.Term;
@@ -160,6 +161,81 @@ class DefaultPrimaryInfo(shared actual Expression node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared abstract
+class DecInfo()
+        of TypeDecInfo | MemberDecInfo | ConstructorDecInfo | PackageDecInfo
+            | ModuleDecInfo
+        extends PrimaryInfo() {
+
+    shared actual formal Dec node;
+    shared actual formal Tree.MetaLiteral tcNode;
+}
+
+shared
+class TypeDecInfo(shared actual TypeDec node)
+        extends DecInfo() {
+
+    shared alias TcNodeType => Tree.TypeLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class MemberDecInfo(shared actual MemberDec node)
+        extends DecInfo() {
+
+    shared alias TcNodeType => Tree.MemberLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class ConstructorDecInfo(shared actual ConstructorDec node)
+        extends DecInfo() {
+
+    shared alias TcNodeType => Tree.NewLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class PackageDecInfo(shared actual PackageDec node)
+        extends DecInfo() {
+
+    shared alias TcNodeType => Tree.PackageLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class ModuleDecInfo(shared actual ModuleDec node)
+        extends DecInfo() {
+
+    shared alias TcNodeType => Tree.ModuleLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared ModuleModel model {
+        assert (is ModuleModel m = tcNode.importPath.model);
+        return m;
+    }
 }
 
 shared abstract
@@ -534,19 +610,8 @@ shared class StringLiteralInfo(StringLiteral that) => LiteralInfo(that);
 shared class StringTemplateInfo(StringTemplate that) => DefaultAtomInfo(that);
 shared class TupleInfo(Tuple that) => DefaultAtomInfo(that);
 
-shared class DecInfo(Dec that) => DefaultPrimaryInfo(that);
-
-shared class ConstructorDecInfo(ConstructorDec that) => DecInfo(that);
-
-shared class MemberDecInfo(MemberDec that) => DecInfo(that);
-
 shared class FunctionDecInfo(FunctionDec that) => MemberDecInfo(that);
 shared class ValueDecInfo(ValueDec that) => MemberDecInfo(that);
-
-shared class ModuleDecInfo(ModuleDec that) => DecInfo(that);
-shared class PackageDecInfo(PackageDec that) => DecInfo(that);
-
-shared class TypeDecInfo(TypeDec that) => DecInfo(that);
 
 shared class AliasDecInfo(AliasDec that) => TypeDecInfo(that);
 shared class ClassDecInfo(ClassDec that) => TypeDecInfo(that);

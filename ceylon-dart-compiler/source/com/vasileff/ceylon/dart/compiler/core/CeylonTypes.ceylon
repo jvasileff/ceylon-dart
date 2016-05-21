@@ -122,9 +122,13 @@ class CeylonTypes(Unit unit) {
 
     Package interopPackage
         // Hack: this unit's module may not import ceylon.interop.dart, even though it
-        // will always be available (it's imported by the language module). So, use the
-        // language module to find it.
+        // will always be available (it's imported by the language module, and force
+        // imported within all generated dart files). So, use the language module to
+        // find it.
         =>  unit.\ipackage.\imodule.languageModule.getPackage("ceylon.interop.dart");
+
+    Package implMetaPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta");
 
     shared
     Class asyncDeclaration {
@@ -153,6 +157,14 @@ class CeylonTypes(Unit unit) {
                 .getDirectMember("await", null, false));
         return await;
     }
+
+    shared
+    Class jsonObjectDeclaration
+        =>  assertClass(interopPackage.getDirectMember("JsonObject", null, false));
+
+    shared
+    Class moduleImplDeclaration
+        =>  assertClass(implMetaPackage.getDirectMember("ModuleImpl", null, false));
 
     shared
     Boolean isAwaitDeclaration(Function declaration)

@@ -110,7 +110,8 @@ import ceylon.ast.core {
     DynamicBlock,
     DynamicValue,
     MemberOperator,
-    Dec
+    Dec,
+    ModuleDec
 }
 import ceylon.collection {
     LinkedList
@@ -193,7 +194,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectExpressionInfo,
     functionExpressionInfo,
     isCaseInfo,
-    ifElseExpressionInfo
+    ifElseExpressionInfo,
+    moduleDecInfo
 }
 
 shared
@@ -2830,6 +2832,25 @@ class ExpressionTransformer(CompilationContext ctx)
                     }];
                 };
             };
+        };
+    }
+
+    shared actual
+    DartExpression transformModuleDec(ModuleDec that) {
+        value info = moduleDecInfo(that);
+
+        return dartTypes.dartInvocable(info, ceylonTypes.moduleImplDeclaration)
+                    .expressionForInvocation {
+            receiver = null;
+            arguments = [
+                if (getModule(info) == info.model)
+                then DartSimpleIdentifier("$module")
+                else DartPrefixedIdentifier {
+                    DartSimpleIdentifier {
+                        moduleImportPrefix(info.model);
+                    };
+                    DartSimpleIdentifier("$module");
+                }];
         };
     }
 

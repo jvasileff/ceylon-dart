@@ -45,6 +45,8 @@ import com.vasileff.ceylon.dart.compiler.loader {
 shared
 class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
 
+    // FIXME use $package prefix for toplevel $module value
+
     shared
     [DartCompilationUnitMember*] generateRuntimeModel(ModuleModel mod, Package pkg)
         =>  let (scope = errorThrowingDScope(pkg))
@@ -98,7 +100,7 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                                 DartTypeName {
                                                     DartPrefixedIdentifier {
                                                         DartSimpleIdentifier {
-                                                            "com$vasileff$ceylon$model";
+                                                            "$ceylon$dart$runtime$model";
                                                         };
                                                         DartSimpleIdentifier {
                                                             "json$LazyJsonModule";
@@ -108,13 +110,19 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                                 null;
                                             };
                                             DartArgumentList {
-                                                [DartSimpleIdentifier("_$jsonModel")];
+                                                [dartTypes.invocableForBaseExpression {
+                                                    scope;
+                                                    // ceylon.interop.dart::JsonObject()
+                                                    ceylonTypes.jsonObjectDeclaration;
+                                                }.expressionForInvocation {
+                                                    [DartSimpleIdentifier("_$jsonModel")];
+                                                }];
                                             };
                                         };
                                     },
                                     // initialize imports
                                     createMethodInvocationStatement {
-                                        DartSimpleIdentifier("_$jsonModel");
+                                        DartSimpleIdentifier("_$module");
                                         DartSimpleIdentifier("initializeImports");
                                         DartArgumentList {
                 [withLhs {
@@ -131,19 +139,23 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                     scope;
                                     ceylonTypes.ceylonIterable;
                                 }.expressionForInvocation {
-                                    CeylonIterable(mod.imports)
-                                            // TODO remove filter once dart interop
-                                            //      modules include runtime model info
-                                            .filter(not(dartNative))
-                                            .collect {
-                                        // the.imported.module.$module
-                                        (imp) => DartPrefixedIdentifier {
-                                            DartSimpleIdentifier {
-                                                moduleImportPrefix(imp.\imodule);
+                                    [DartListLiteral {
+                                        false;
+                                        CeylonIterable(mod.imports)
+                                                // TODO remove filter once dart interop
+                                                //      modules include runtime model info
+                                                .filter(not(dartNative))
+                                                .filter(isForDartBackend)
+                                                .collect {
+                                            // the.imported.module.$module
+                                            (imp) => DartPrefixedIdentifier {
+                                                DartSimpleIdentifier {
+                                                    moduleImportPrefix(imp.\imodule);
+                                                };
+                                                DartSimpleIdentifier("$module");
                                             };
-                                            DartSimpleIdentifier("$module");
                                         };
-                                    };
+                                    }];
                                 };
 
                         memberName = "sequence";

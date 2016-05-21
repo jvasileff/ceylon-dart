@@ -33,11 +33,15 @@ module ceylon.language "1.2.2-DP2-SNAPSHOT" {
     native("jvm") import java.base "7";
     native("dart") import dart.core "1.2.2";
     native("dart") import dart.math "1.2.2";
-    // Import async to Workaround tc bug in
-    // https://github.com/ceylon/ceylon/pull/6024
-    native("dart") import dart.async "1.2.2";
     native("dart") import dart.collection "1.2.2";
     native("dart") import ceylon.interop.dart "1.2.2";
     native("dart") import ceylon.dart.runtime.core "1.2.2";
-    native("dart") import ceylon.dart.runtime.model "1.2.2";
+    // can't be native("dart") unless we un-share the c.l.meta impls
+    import ceylon.dart.runtime.model "1.2.2";
+
+    // TODO remove imports below; workaround for 1.2.2 tc bug
+    // https://github.com/ceylon/ceylon/pull/6024
+    native("dart") import dart.async "1.2.2";
+    import ceylon.collection "1.2.2";
+    import ceylon.dart.runtime.structures "1.2.2";
 }

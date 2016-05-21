@@ -642,8 +642,8 @@ shared
 
         value dcu
             =   DartCompilationUnit {
-                    // Make dart.core and ceylon.interop.dart available, even if not
-                    // imported in module.ceylon.
+                    // Make dart.core, ceylon.interop.dart, and ceylon.dart.runtime.model
+                    // available, even if not imported in module.ceylon.
                     {DartImportDirective {
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
@@ -651,6 +651,11 @@ shared
                     DartImportDirective {
                         DartSimpleStringLiteral("package:ceylon/interop/dart/dart.dart");
                         DartSimpleIdentifier("$ceylon$interop$dart");
+                    },
+                    DartImportDirective {
+                        DartSimpleStringLiteral(
+                            "package:ceylon/dart/runtime/model/model.dart");
+                        DartSimpleIdentifier("$ceylon$dart$runtime$model");
                     },
                     *importedModules}.coalesced.distinct.sequence();
                     ds.sequence();
@@ -705,7 +710,9 @@ shared
                     // persist the json model
                     try (appender = modelFile.Appender("utf-8")) {
                         assert (exists metamodelVisitor = metamodelVisitors.get(m));
-                        if (m.nameAsString.startsWith("ceylon.dart.runtime.")) {
+                        if (m.nameAsString in
+                                ["ceylon.dart.runtime.web",
+                                 "ceylon.dart.runtime.standard"]) {
                             // ceylon.dart.runtime.standard and
                             // ceylon.dart.runtime.web masquerade as
                             // ceylon.dart.runtime.core. Only "core" is used at compile
