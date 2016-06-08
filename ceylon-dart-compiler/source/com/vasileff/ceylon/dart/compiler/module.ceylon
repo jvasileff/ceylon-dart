@@ -8,7 +8,7 @@ module com.vasileff.ceylon.dart.compiler "1.2.2-DP2-SNAPSHOT" {
     import ceylon.collection "1.2.3";
     import ceylon.interop.java "1.2.3";
 
-    import com.vasileff.ceylon.structures "0.0.2-SNAPSHOT";
+    import com.vasileff.ceylon.structures "0.0.2-1.2.3-SNAPSHOT";
 
     import com.redhat.ceylon.cli "1.2.3";
 
