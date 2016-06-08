@@ -660,7 +660,7 @@ shared
                 // persist to output repository
                 if (exists outputRepositoryManager) {
                     // the code
-                    value artifact = ArtifactContext(m.nameAsString, m.version,
+                    value artifact = ArtifactContext(null, m.nameAsString, m.version,
                             ArtifactContext.\iDART);
 
                     artifact.forceOperation = true; // what does this do?
@@ -671,7 +671,7 @@ shared
                             javaFile(dartFile), null);
 
                     // the model
-                    value modelArtifact = ArtifactContext(m.nameAsString, m.version,
+                    value modelArtifact = ArtifactContext(null, m.nameAsString, m.version,
                             ArtifactContext.\iDART_MODEL);
 
                     modelArtifact.forceOperation = true; // what does this do?

@@ -114,7 +114,7 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
             //      Bug in JsModuleSourceMapper:73?
             value backends = dependencyModule.nativeBackends;
 
-            value mi = ModuleImport(dependencyModule, optional, export, backends);
+            value mi = ModuleImport(null, dependencyModule, optional, export, backends);
 
             m.addImport(mi);
         }
@@ -141,7 +141,7 @@ class DartModuleSourceMapper(Context context, ModuleManager moduleManager)
         "The json artifact for the model. The passed in artifact is no good; for the
          reason, see [[DartModuleManager.searchedArtifactExtensions]]"
         value modelAc
-            =   ArtifactContext(artifact.name(), artifact.version(),
+            =   ArtifactContext(null, artifact.name(), artifact.version(),
                                 ArtifactContext.\iDART_MODEL);
 
         value modelAcResult

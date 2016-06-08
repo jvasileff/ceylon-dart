@@ -90,7 +90,7 @@ class DartModuleManager() extends ModuleManager() {
                     else modules.languageModule;
 
             value moduleImport
-                =   ModuleImport(languageModule, false, false);
+                =   ModuleImport(null, languageModule, false, false);
 
             m.addImport(moduleImport);
             m.languageModule = languageModule;
