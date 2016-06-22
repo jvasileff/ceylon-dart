@@ -39,7 +39,7 @@ void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
     value version = `module`.version;
 
     value languageModuleFile = repositoryManager.getArtifact(
-        ArtifactContext("ceylon.language", version, ArtifactContext.\iDART))
+        ArtifactContext(null, "ceylon.language", version, ArtifactContext.\iDART))
         else null;
 
     if (!exists languageModuleFile) {
@@ -73,7 +73,7 @@ File moduleFile(
         RepositoryManager repositoryManager,
         String moduleName, String? moduleVersion) {
     if (exists file = ceylonFile(repositoryManager.getArtifact(ArtifactContext(
-                    moduleName, moduleVersion, ArtifactContext.\iDART)))) {
+                    null, moduleName, moduleVersion, ArtifactContext.\iDART)))) {
         return file;
     }
     throw ReportableException("Cannot find module \
@@ -84,7 +84,7 @@ File moduleModelFile(
         RepositoryManager repositoryManager,
         String moduleName, String? moduleVersion) {
     if (exists file = ceylonFile(repositoryManager.getArtifact(ArtifactContext(
-                    moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)))) {
+                    null, moduleName, moduleVersion, ArtifactContext.\iDART_MODEL)))) {
         return file;
     }
     throw ReportableException("Cannot find model metadata for module \
