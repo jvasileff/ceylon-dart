@@ -181,12 +181,14 @@ shared native final class String(characters)
      `\\n` or `\\r\\n`."
     see (`value lines`)
     shared native {String*} linesWithBreaks
-            => split('\n'.equals, false, false)
-            .partition(2)
-            .map(([line, *rest])
-                    => if (nonempty rest)
-                    then line + rest[0]
-                    else line);
+// FIXME Dart workaround
+            => nothing;
+            //=> split('\n'.equals, false, false)
+            //.partition(2)
+            //.map(([line, *rest])
+            //        => if (nonempty rest)
+            //        then line + rest[0]
+            //        else line);
     
     "A string containing the characters of this string, 
      after discarding [[whitespace|Character.whitespace]] 
