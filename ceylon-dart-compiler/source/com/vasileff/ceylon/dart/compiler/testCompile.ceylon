@@ -54,6 +54,14 @@ shared
                 folder => false;
                 \iexists() => true;
 
+                shared actual
+                String? getRelativePath(VirtualFile ancestor)
+                    =>  if (path == ancestor.path)
+                            then ""
+                        else if (path.startsWith("``ancestor.path``/"))
+                            then path[ancestor.path.size+1...]
+                        else null;
+
                 inputStream
                     =>  ByteArrayInputStream(createJavaByteArray(
                             utf8.encode(listing.item)));
@@ -121,6 +129,14 @@ shared
 
                             \iexists() => true;
 
+                            shared actual
+                            String? getRelativePath(VirtualFile ancestor)
+                                =>  if (path == ancestor.path)
+                                        then ""
+                                    else if (path.startsWith("``ancestor.path``/"))
+                                        then path[ancestor.path.size+1...]
+                                    else null;
+
                             inputStream
                                 =>  ByteArrayInputStream(createJavaByteArray(
                                         utf8.encode(listing.item)));
@@ -148,6 +164,14 @@ shared
         folder = true;
 
         \iexists() => true;
+
+        shared actual
+        String? getRelativePath(VirtualFile ancestor)
+            =>  if (path == ancestor.path)
+                    then ""
+                else if (path.startsWith("``ancestor.path``/"))
+                    then path[ancestor.path.size+1...]
+                else null;
 
         children
             =   javaList<VirtualFile> {
