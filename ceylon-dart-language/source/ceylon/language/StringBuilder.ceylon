@@ -38,7 +38,7 @@ shared native final class StringBuilder()
     "Returns a string of the given [[length]] containing
      the characters beginning at the given [[index]]."
     deprecated ("use [[measure]]")
-    shared 
+    shared native
     String substring(Integer index, Integer length)
             => measure(index, length);
     
@@ -728,7 +728,7 @@ shared native("js") final class StringBuilder()
 }
 
 native("dart") shared final class StringBuilder()
-        satisfies List<Character> {
+        satisfies SearchableList<Character> {
 
     value delegate = DStringBufferClass();
 
@@ -742,12 +742,33 @@ native("dart") shared final class StringBuilder()
     native("dart") shared actual String string
         =>  delegate.string;
 
+    native("dart") assign string {
+        clear();
+        append(string);
+    }
+
     native("dart") shared actual Iterator<Character> iterator()
         =>  string.iterator();
 
     native("dart") shared
     String substring(Integer index, Integer length)
         =>  string.measure(index, length);
+
+    native("dart") shared actual
+    String measure(Integer from, Integer length)
+        =>  string[from:length];
+    
+    native("dart") shared actual
+    String span(Integer from, Integer to)
+        =>  string[from:to];
+    
+    native("dart") shared actual
+    String spanTo(Integer to)
+        =>  string[...to];
+    
+    native("dart") shared actual
+    String spanFrom(Integer from)
+        =>  string[from...];
 
     native("dart") shared actual
     Character? getFromFirst(Integer index)
@@ -898,6 +919,30 @@ native("dart") shared final class StringBuilder()
         delegate.write(oldString.reversed);
         return this;
     }
+
+    native("dart") shared actual
+    Integer? firstInclusion(List<Character> sublist, Integer from)
+        =>  string.firstInclusion(sublist, from);
+
+    native("dart") shared actual
+    Integer? lastInclusion(List<Character> sublist, Integer from)
+        =>  string.lastInclusion(sublist, from);
+
+    native("dart") shared actual
+    Integer? firstOccurrence(Character character, Integer from, Integer length)
+        =>  string.firstOccurrence(character, from, length);
+
+    native("dart") shared actual
+    Integer? lastOccurrence(Character character, Integer from, Integer length)
+        =>  string.lastOccurrence(character, from, length);
+
+    native("dart") shared actual
+    {Integer*} inclusions(List<Character> sublist, Integer from)
+        =>  string.inclusions(sublist, from);
+
+    native("dart") shared actual
+    {Integer*} occurrences(Character character, Integer from, Integer length)
+        =>  string.occurrences(character, from, length);
 
     native("dart") shared actual
     Boolean equals(Object that)
