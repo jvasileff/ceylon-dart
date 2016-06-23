@@ -418,7 +418,7 @@ class Integer(Integer integer)
     shared actual native("dart") Boolean zero => this == 0;
     shared native("dart") Boolean even => this % 2 == 0;
     shared actual native("dart") Integer magnitude => integer.magnitude;
-    shared actual native("dart") Integer sign => if (positive) then 1 else if (negative) then -1 else 0;
+    shared actual native("dart") Integer sign => if (this > 0) then 1 else if (this < 0) then -1 else 0;
     shared actual native("dart") Boolean negative => this < 0;
     shared actual native("dart") Boolean positive => this > 0;
     shared actual native("dart") Integer wholePart => this;
