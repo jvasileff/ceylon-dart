@@ -132,6 +132,8 @@ native("jvm") Integer maximumIntegerExponent
             - 1;
 native("js") Integer maximumIntegerExponent => 17;
 
+native("dart") Integer maximumIntegerExponent => 17;
+
 Integer? parseFloatExponent(String string) {
     switch (string)
     case ("k") {
