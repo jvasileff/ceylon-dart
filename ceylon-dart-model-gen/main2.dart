@@ -1,6 +1,6 @@
 import "dart:mirrors";
 import "dart:convert";
-import "dart:io";
+//import "dart:io";
 //import "dart:typed_data";
 
 // WEB ONLY
@@ -75,64 +75,65 @@ Set<LibraryMirror> allowedLibraries;
  *        extends and satisfies
  */
 main() {
-  // dart.async
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.async),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
+//  // dart.async
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.async),
+//    [currentMirrorSystem().findLibrary(#dart.core)]);
+//
+//  // dart.collection
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.collection),
+//    [currentMirrorSystem().findLibrary(#dart.core)]);
+//
+//  // dart.convert
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.convert),
+//    [currentMirrorSystem().findLibrary(#dart.core)]);
+//
+//  // dart.core
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.core), []);
+//
+//  // dart.developer
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.developer),
+//    [currentMirrorSystem().findLibrary(#dart.core)]);
+//
+//  // dart.io
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.io),
+//    [currentMirrorSystem().findLibrary(#dart.core),
+//     currentMirrorSystem().findLibrary(#dart.async)]);
+//
+//  // dart.isolate
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.isolate),
+//    [currentMirrorSystem().findLibrary(#dart.core),
+//     currentMirrorSystem().findLibrary(#dart.async)]);
+//
+//  // dart.math
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.math),
+//    [currentMirrorSystem().findLibrary(#dart.core)]);
+//
+//  // dart.mirrors
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.mirrors),
+//    [currentMirrorSystem().findLibrary(#dart.core),
+//     currentMirrorSystem().findLibrary(#dart.async)]);
+//
+//  // dart.typed_data
+//  moduleToMap(
+//    currentMirrorSystem().findLibrary(#dart.typed_data),
+//    [currentMirrorSystem().findLibrary(#dart.core),
+//     currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // dart.collection
+  // dart.html
   moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.collection),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
-
-  // dart.convert
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.convert),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
-
-  // dart.core
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.core), []);
-
-  // dart.developer
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.developer),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
-
-  // dart.io
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.io),
+    currentMirrorSystem().findLibrary(#dart.dom.html),
     [currentMirrorSystem().findLibrary(#dart.core),
      currentMirrorSystem().findLibrary(#dart.async)]);
 
-  // dart.isolate
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.isolate),
-    [currentMirrorSystem().findLibrary(#dart.core),
-     currentMirrorSystem().findLibrary(#dart.async)]);
-
-  // dart.math
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.math),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
-
-  // dart.mirrors
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.mirrors),
-    [currentMirrorSystem().findLibrary(#dart.core),
-     currentMirrorSystem().findLibrary(#dart.async)]);
-
-  // dart.typed_data
-  moduleToMap(
-    currentMirrorSystem().findLibrary(#dart.typed_data),
-    [currentMirrorSystem().findLibrary(#dart.core),
-     currentMirrorSystem().findLibrary(#dart.async)]);
-
-  // // dart.html
-  // moduleToMap(
-  //   currentMirrorSystem().findLibrary(#dart.html),
-  //   [currentMirrorSystem().findLibrary(#dart.core)]);
-  //
   // // dart.indexed_db
   // moduleToMap(
   //   currentMirrorSystem().findLibrary(#dart.indexed_db),
@@ -211,10 +212,11 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
   map[packageName(libraryMirror)] = declarationMap;
 
   // print("-- Module: " + moduleName(libraryMirror).toString() + " --");
-  // print(JSON.encode(map));
+  //print((new JsonEncoder.withIndent(" ")).convert(map));
+  print(JSON.encode(map));
 
-  var file = new File("modules/" +  moduleName(libraryMirror) + "-1.2.3-dartmodel.json");
-  file.writeAsString(JSON.encode(map));
+  //var file = new File("modules/" +  moduleName(libraryMirror) + "-1.2.3-dartmodel.json");
+  //file.writeAsString(JSON.encode(map));
 
   return map;
 }
@@ -344,7 +346,9 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
     if (d is MethodMirror && d.isConstructor) {
       var name = MirrorSystem.getName(d.constructorName);
       var key = name.isNotEmpty ? name : "\$def";
-      constructors[key] = constructorToMap(d, from);
+      if (name != "internal_") { // Internal without this 'if'
+        constructors[key] = constructorToMap(d, from);
+      }
     }
   }
   map[keyConstructors] =  constructors;
