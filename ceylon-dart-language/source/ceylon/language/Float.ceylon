@@ -345,7 +345,7 @@ class Float(Float float) extends Object()
     shared actual native("dart") Float magnitude => if (this <= 0.0) then -this else this;
     shared actual native("dart") Float negated => -this;
     shared native("dart") Integer integer => dartDouble(this).toInt();
-    shared actual native("dart") Float timesInteger(Integer integer) => this * integer.nearestFloat;
+    shared actual native("dart") Float timesInteger(Integer integer) => this * integer;
     shared actual native("dart") Float plusInteger(Integer integer) => this + integer;
 
     shared actual native("dart") Float powerOfInteger(Integer integer)
