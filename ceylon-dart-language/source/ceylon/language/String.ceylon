@@ -1276,6 +1276,18 @@ class BaseString
             else dartString(val).replaceFirst(
                 dartString(substring), replacement, startIndex);
 
+    shared
+    String removeInitial(String prefix) 
+        =>  if (startsWith(prefix))
+            then spanFrom(prefix.size)
+            else self;
+    
+    shared
+    String removeTerminal(String postfix) 
+        =>  if (endsWith(postfix))
+            then spanTo(size-postfix.size)
+            else self;
+
     shared actual
     Comparison compare(String other)
         =>  let (result = dartString(val).compareTo(dartString(other)))
@@ -1370,6 +1382,18 @@ class BaseString
                              ``i - destinationPosition`` items");
         }
     }
+    
+    shared
+    String substring(Integer from = 0, Integer end = size)
+        =>  self[from:end-from];
+
+    shared
+    Integer indexOf(String string, Integer from = 0)
+        =>  firstInclusion(string, from) else -1;
+    
+    shared
+    Integer lastIndexOf(String string, Integer to = size)
+        =>  lastInclusion(string, size-to) else -1;
 
     //shared actual native List<Character> sublistFrom(Integer from);
     //shared actual native List<Character> sublistTo(Integer to);
