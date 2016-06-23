@@ -29,14 +29,14 @@
 by ("Gavin King", "Tom Bentley", "Tako Schotanus",
    "Stephane Epardaud", "Enrique Zamudio")
 license ("http://www.apache.org/licenses/LICENSE-2.0.html")
-module ceylon.language "1.2.2-DP2-SNAPSHOT" {
+module ceylon.language "1.2.3-DP2-SNAPSHOT" {
     native("jvm") import java.base "7";
-    native("dart") import dart.core "1.2.2";
-    native("dart") import dart.math "1.2.2";
+    native("dart") import dart.core "1.2.3";
+    native("dart") import dart.math "1.2.3";
     // Import async to Workaround tc bug in
     // https://github.com/ceylon/ceylon/pull/6024
-    native("dart") import dart.async "1.2.2";
-    native("dart") import dart.collection "1.2.2";
-    native("dart") import ceylon.interop.dart "1.2.2";
-    native("dart") import ceylon.dart.runtime.core "1.2.2";
+    native("dart") import dart.async "1.2.3";
+    native("dart") import dart.collection "1.2.3";
+    native("dart") import ceylon.interop.dart "1.2.3";
+    native("dart") import ceylon.dart.runtime.core "1.2.3";
 }
