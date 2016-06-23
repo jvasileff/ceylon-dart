@@ -58,7 +58,7 @@ shared native final class Integer(Integer integer)
              `0..#10FFFF` of legal Unicode code points")
     shared native Character character;
     
-    shared actual native Boolean divides(Integer other);
+    shared actual native Integer negated;
     
     shared actual native Integer plus(Integer other);
     shared actual native Integer minus(Integer other);
@@ -66,6 +66,11 @@ shared native final class Integer(Integer integer)
     shared actual native Integer divided(Integer other);
     shared actual native Integer remainder(Integer other);
     shared actual native Integer modulo(Integer modulus);
+    
+    "Determines if this integer is a factor of the given 
+     integer, that is, if `remainder(other)==0 `."
+    shared actual native Boolean divides(Integer other)
+            => other % this == 0;
     
     "The result of raising this number to the given 
      non-negative integer power, where `0^0` evaluates to 
@@ -96,61 +101,117 @@ shared native final class Integer(Integer integer)
     "The hash code of this `Integer`, which is just the
      `Integer` itself, except on the JVM platform where, as 
      with all `hash` codes, this 64-bit `Integer` value is 
-     truncated to 32 bits by removal of the 32 higher-order
-     bits."
+     truncated to 32 bits by taking the exclusive 
+     disjunction of the 32 lowest-order bits with the 32 
+     highest-order bits, that is:
+     
+         int.hash == int.rightArithmeticShift(32).exclusiveOr(int)"
     shared actual native Integer hash => this;
     
-    shared actual native Comparison compare(Integer other);
+    "Compare this integer with the given integer, returning:
+     
+     - `smaller`, if `this < other`,
+     - `larger`, if `this > other`, or
+     - `equal`, if `this == other`."
+    shared actual native Comparison compare(Integer other)
+            =>   if (this < other) then smaller
+            else if (this > other) then larger
+            else equal;
+    
+    function indexInRange(Integer index)
+            => 0 <= index < runtime.integerAddressableSize;
+    
+    function mask(Integer index) 
+            => 1.leftLogicalShift(index);
     
     "If the `index` is for an addressable bit, the value of 
      that bit. Otherwise false."
-    shared actual native Boolean get(Integer index);
+    shared actual native Boolean get(Integer index) 
+            => indexInRange(index)
+            then and(mask(index)) != 0 
+            else false;
     
     "If the `index` is for an addressable bit, an instance 
      with the same addressable bits as this instance, but 
      with that bit cleared. Otherwise an instance with the 
      same addressable bits as this instance."
-    shared actual native Integer clear(Integer index);
+    shared actual native Integer clear(Integer index) 
+            => indexInRange(index)
+            then and(mask(index).not) 
+            else this;
     
     "If the `index` is for an addressable bit, an instance 
      with the same addressable bits as this instance, but 
      with that bit flipped. Otherwise an instance with the 
      same addressable bits as this instance."
-    shared actual native Integer flip(Integer index);
+    shared actual native Integer flip(Integer index)
+            => indexInRange(index)
+            then xor(mask(index)) 
+            else this;
     
     "If the `index` is for an addressable bit, an instance 
      with the same addressable bits as this instance, but 
      with that bit set to `bit`. Otherwise an instance with 
      the same addressable bits as this instance."
-    shared actual native Integer set(Integer index, Boolean bit);
+    shared actual native Integer set(Integer index, Boolean bit)
+            => indexInRange(index)
+            then (bit then or(mask(index)) 
+                      else and(mask(index).not))
+            else this;
     
     shared actual native Integer not;
     shared actual native Integer or(Integer other);
     shared actual native Integer xor(Integer other);
     shared actual native Integer and(Integer other);
     
-    "If shift is in the range of addressable bits 
-     (`0..runtime.integerAddressableSize-1`), shift the 
-     addressable bits to the right by `shift` positions, 
-     with sign extension. Otherwise shift the addressable 
-     bits to the right by `(bits + (shift % bits)) % bits` 
-     where `bits=runtime.integerAddressableSize`."
+    "If the given [[shift]] is in the range of 
+     [[addressable bits|runtime.integerAddressableSize]]
+     given by
+     
+         0..runtime.integerAddressableSize-1
+     
+     shift the addressable bits to the right by `shift` 
+     positions, using sign extension to fill in the most
+     significant bits. Otherwise shift the 
+     addressable bits to the right by 
+     
+         shift.and(runtime.integerAddressableSize-1)
+     
+     positions, using sign extension."
     shared actual native Integer rightArithmeticShift(Integer shift);
     
-    "If shift is in the range of addressable bits 
-     (`0..runtime.integerAddressableSize-1`), shift the 
-     addressable bits to the right by `shift` positions, 
-     with zero extension. Otherwise shift the addressable 
-     bits to the right by `(bits + (shift % bits)) % bits` 
-     where `bits=runtime.integerAddressableSize`."
+    "If the given [[shift]] is in the range of 
+     [[addressable bits|runtime.integerAddressableSize]]
+     given by
+     
+         0..runtime.integerAddressableSize-1
+     
+     shift the addressable bits to the right by `shift` 
+     positions, using zero extension to fill in the most
+     significant bits. Otherwise shift the addressable bits 
+     to the right by 
+     
+         shift.and(runtime.integerAddressableSize-1)
+     
+     positions, using zero extension."
+    aliased ("rightShift")
     shared actual native Integer rightLogicalShift(Integer shift);
     
-    "If shift is in the range of addressable bits 
-     (`0..runtime.integerAddressableSize-1`), shift the 
-     addressable bits to the left by `shift` positions.
-     Otherwise shift the addressable bits to the left by 
-     `(bits + (shift % bits)) % bits` where 
-     `bits=runtime.integerAddressableSize`."
+    "If the given [[shift]] is in the range of 
+     [[addressable bits|runtime.integerAddressableSize]]
+     given by
+     
+         0..runtime.integerAddressableSize-1
+     
+     shift the addressable bits to the left by `shift` 
+     positions, using zero extension to fill in the least
+     significant bits. Otherwise shift the addressable bits 
+     to the left by 
+     
+         shift.and(runtime.integerAddressableSize-1)
+     
+     positions, using zero extension."
+    aliased ("leftShift")
     shared actual native Integer leftLogicalShift(Integer shift);
     
     "The number, represented as a [[Float]], if such a 
@@ -160,13 +221,18 @@ shared native final class Integer(Integer integer)
        [[runtime.maxExactIntegralFloat]] (2<sup>53</sup>) 
        has such a representation.
      - For larger integers on the JVM platform, an 
-       [[OverflowException]] is thrown."
+       [[OverflowException]] is thrown. If this behavior is 
+       not desired, use [[nearestFloat]] instead."
     throws (`class OverflowException`,
         "if the number cannot be represented as a `Float`
          without loss of precision, that is, if 
          
-             this.magnitude>runtime.maxExactIntegralFloat")
-    see (`value runtime.maxExactIntegralFloat`)
+             this.magnitude>runtime.maxExactIntegralFloat
+         
+         (Note that [[nearestFloat]] does not produce an
+         exception in this case.)")
+    see (`value runtime.maxExactIntegralFloat`,
+         `value nearestFloat`)
     shared native Float float;
 
     "The nearest [[Float]] to this number. 
@@ -180,16 +246,23 @@ shared native final class Integer(Integer integer)
        loss of precision.
      
      This method never throws an [[OverflowException]]."
+    see (`value float`)
     shared native Float nearestFloat;
 
-    shared actual native Integer predecessor;
-    shared actual native Integer successor;
-    shared actual native Integer neighbour(Integer offset);
-    shared actual native Integer offset(Integer other);
-    shared actual native Integer offsetSign(Integer other);
+    shared actual native Integer predecessor => minus(1);
+    shared actual native Integer successor => plus(1);
     
-    shared actual native Boolean unit;
-    shared actual native Boolean zero;
+    shared actual native Integer neighbour(Integer offset)
+            => plus(offset);
+    
+    shared actual native Integer offset(Integer other)
+            => minus(other);
+    
+    shared actual native Integer offsetSign(Integer other)
+            => super.offsetSign(other);
+    
+    shared actual native Boolean unit => this==1;
+    shared actual native Boolean zero => this==0;
     
     "Determine if this integer is even.
      
@@ -202,25 +275,33 @@ shared native final class Integer(Integer integer)
     shared native Boolean even => 2.divides(this);
     
     aliased("absolute")
-    shared actual native Integer magnitude;    
-    shared actual native Integer sign;
-    shared actual native Boolean negative;
-    shared actual native Boolean positive;
+    shared actual native Integer magnitude 
+            => this < 0 then -this else this;
+        
+    shared actual native Integer sign
+            =>   if (this < 0) then -1
+            else if (this > 0) then 1
+            else 0;
+        
+    shared actual native Boolean negative => this < 0;
+    shared actual native Boolean positive => this > 0;
     
-    shared actual native Integer wholePart;
-    shared actual native Integer fractionalPart;
+    shared actual native Integer wholePart => this;
+    shared actual native Integer fractionalPart => 0;
     
-    shared actual native Integer negated;
-    
-    shared actual native Integer timesInteger(Integer integer);    
-    shared actual native Integer plusInteger(Integer integer);
+    shared actual native Integer timesInteger(Integer integer)
+            => times(integer);
+        
+    shared actual native Integer plusInteger(Integer integer)
+            => plus(integer);
     
     "The result of raising this number to the given 
      non-negative integer power, where `0^0` evaluates to 
      `1`."
     throws (`class AssertionError`, 
         "if the given [[power|integer]] is negative")
-    shared actual native Integer powerOfInteger(Integer integer);
+    shared actual native Integer powerOfInteger(Integer integer)
+            => power(integer);
     
     see (`function formatInteger`)
     shared actual native String string;
@@ -233,7 +314,7 @@ shared native final class Integer(Integer integer)
     "A [[Byte]] whose [[signed|Byte.signed]] and
      [[unsigned|Byte.unsigned]] interpretations are 
      congruent modulo 256 to this integer."
-    shared native Byte byte;
+    shared native Byte byte => Byte(this);
     
 }
 

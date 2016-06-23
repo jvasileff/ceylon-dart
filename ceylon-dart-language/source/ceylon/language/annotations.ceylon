@@ -292,7 +292,9 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      Allowed warning types are:
      `filenameNonAscii`,
      `filenameCaselessCollision`,
-     `deprecation`,
+     `deprecation`, 
+     `disjointEquals`,
+     `disjointContainment`,
      `compilerAnnotation`,
      `doclink`,
      `expressionTypeNothing`,
@@ -304,7 +306,10 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `suppressesNothing`, 
      `unknownWarning`, 
      `ambiguousAnnotation`,
-     `javaAnnotationElement`."
+     `javaAnnotationElement`,
+     `syntaxDeprecation`,
+     `smallIgnored`,
+     `literalNotSmall`."
     String* warnings) 
         => SuppressWarningsAnnotation(*warnings);
 
@@ -320,3 +325,15 @@ shared final annotation class SerializableAnnotation()
  instances of non-serializable classes."
 shared annotation SerializableAnnotation serializable() 
         => SerializableAnnotation();
+
+
+"The annotation class for the [[small]] annotation."
+shared final annotation class SmallAnnotation()
+        satisfies OptionalAnnotation<SmallAnnotation,ValueDeclaration|FunctionDeclaration> {
+}
+
+"Annotation to hint to the compiler that an `Integer` or `Float` 
+ typed value or function can be represented using a 32-bit signed integer or 
+ 32-bit IEEE float."
+shared annotation SmallAnnotation small() 
+        => SmallAnnotation();
