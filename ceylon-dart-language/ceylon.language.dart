@@ -753,27 +753,27 @@ class Byte implements dart$$Object, Binary, Invertible, Enumerable {
     $dart$core.bool get zero => $ceylonInteger(unsigned).zero;
     $dart$core.bool get unit => $ceylonInteger(unsigned).unit;
     $dart$core.int get signed => unsigned >= 128 ? unsigned - 256 : unsigned;
-    Byte operator -() => new Byte(-unsigned);
-    Byte operator +(Byte other) => new Byte(unsigned + other.unsigned);
-    Byte and([Byte other]) => new Byte($dartInt($ceylonInteger(unsigned).and($ceylonInteger(other.unsigned))));
-    Byte flip([$dart$core.int index]) => (index >= 0) && (index <= 7) ? new Byte($dartInt($ceylonInteger(unsigned).flip(index))) : this;
-    $dart$core.bool get([$dart$core.int index]) => (index >= 0) && (index <= 7) ? $ceylonInteger(signed).get(index) : false;
-    Byte get not => new Byte($dartInt($ceylonInteger(unsigned).not));
-    Byte or([Byte other]) => new Byte($dartInt($ceylonInteger(unsigned).or($ceylonInteger(other.unsigned))));
-    Byte leftLogicalShift([$dart$core.int shift]) => new Byte($dartInt($ceylonInteger(signed).leftLogicalShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7))))));
-    Byte rightArithmeticShift([$dart$core.int shift]) => new Byte($dartInt($ceylonInteger(signed).rightArithmeticShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7))))));
-    Byte rightLogicalShift([$dart$core.int shift]) => new Byte($dartInt($ceylonInteger(signed).and($ceylonInteger(255)).rightLogicalShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7))))));
+    Byte operator -() => $ceylonInteger(-unsigned).byte;
+    Byte operator +(Byte other) => $ceylonInteger(unsigned + other.unsigned).byte;
+    Byte and([Byte other]) => $ceylonInteger(unsigned).and($ceylonInteger(other.unsigned)).byte;
+    Byte flip([$dart$core.int index]) => (index >= 0) && (index <= 7) ? $ceylonInteger(unsigned).flip(index).byte : this;
+    $dart$core.bool get([$dart$core.int index]) => (index >= 0) && (index <= 7) ? $ceylonInteger(unsigned).get(index) : false;
+    Byte get not => $ceylonInteger(unsigned).not.byte;
+    Byte or([Byte other]) => $ceylonInteger(unsigned).or($ceylonInteger(other.unsigned)).byte;
+    Byte leftLogicalShift([$dart$core.int shift]) => $ceylonInteger(unsigned).leftLogicalShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7)))).byte;
+    Byte rightArithmeticShift([$dart$core.int shift]) => $ceylonInteger(signed).rightArithmeticShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7)))).byte;
+    Byte rightLogicalShift([$dart$core.int shift]) => $ceylonInteger(unsigned).rightLogicalShift($dartInt($ceylonInteger(shift).and($ceylonInteger(7)))).byte;
     Byte set([$dart$core.int index, $dart$core.Object bit = $package$dart$default]) {
         if ($dart$core.identical(bit, $package$dart$default)) {
             bit = Binary.$set$bit(this, index);
         }
-        return new Byte($dartInt($ceylonInteger(signed).set(index, bit)));
+        return $ceylonInteger(unsigned).set(index, bit).byte;
     }
-    Byte xor([Byte other]) => new Byte($dartInt($ceylonInteger(signed).xor($ceylonInteger(other.unsigned))));
-    Byte get predecessor => new Byte(unsigned - 1);
-    Byte get successor => new Byte(unsigned + 1);
-    Byte neighbour([$dart$core.int offset]) => new Byte(unsigned + offset);
-    $dart$core.int offset([Byte other]) => (signed - other.signed).abs();
+    Byte xor([Byte other]) => $ceylonInteger(unsigned).xor($ceylonInteger(other.unsigned)).byte;
+    Byte get predecessor => $ceylonInteger(unsigned - 1).byte;
+    Byte get successor => $ceylonInteger(unsigned + 1).byte;
+    Byte neighbour([$dart$core.int offset]) => $ceylonInteger(unsigned + offset).byte;
+    $dart$core.int offset([Byte other]) => $dartInt($ceylonInteger(unsigned - other.unsigned).and($ceylonInteger(255)));
     $dart$core.int offsetSign([Byte other]) => unsigned == other.unsigned ? 0 : 1;
     $dart$core.bool operator ==($dart$core.Object that) => (() {
         $dart$core.bool doElse$0 = true;
@@ -2272,8 +2272,8 @@ class Float implements dart$$Object, Number, Exponentiable {
     $dart$core.int get sign => $dartDouble(this) > 0.0 ? 1 : $dartDouble(this) < 0.0 ? -1 : 0;
     $dart$core.bool get positive => $dartDouble(this) > 0.0;
     $dart$core.bool get negative => $dartDouble(this) < 0.0;
-    $dart$core.bool get strictlyPositive => (!undefined) && (!$ceylon$interop$dart.dartDouble($dartDouble(this)).isNegative);
-    $dart$core.bool get strictlyNegative => (!undefined) && $ceylon$interop$dart.dartDouble($dartDouble(this)).isNegative;
+    $dart$core.bool get strictlyPositive => ($dartDouble(this) > 0.0) || ((1.0 / $dartDouble(this)) > 0.0);
+    $dart$core.bool get strictlyNegative => ($dartDouble(this) > 0.0) || ((1.0 / $dartDouble(this)) > 0.0);
     $dart$core.bool operator ==($dart$core.Object that) => (() {
         $dart$core.bool doElse$0 = true;
         if (that is Float) {
@@ -2312,7 +2312,7 @@ class Float implements dart$$Object, Number, Exponentiable {
         return $ceylonFloat(result);
     }
     Float get fractionalPart => $ceylonFloat($ceylon$interop$dart.dartDouble($dartDouble(this)).remainder($ceylon$interop$dart.dartNumFromInteger(1)));
-    Float get magnitude => $ceylonFloat($ceylon$interop$dart.dartDouble($dartDouble(this)).abs());
+    Float get magnitude => $dartDouble(this) <= 0.0 ? $ceylonFloat(-$dartDouble(this)) : this;
     Float operator -() => $ceylonFloat(-$dartDouble(this));
     $dart$core.int get integer => $ceylon$interop$dart.dartDouble($dartDouble(this)).toInt();
     Float timesInteger([$dart$core.int integer]) => $ceylonFloat($dartDouble(this) * integer.toDouble());
@@ -10561,10 +10561,10 @@ abstract class Resource {
 class runtime_ implements dart$$Basic {
     runtime_() {
         name = "DartVM";
-        integerSize = 64;
+        integerSize = 53;
         integerAddressableSize = 32;
-        maxIntegerValue = $dartInt($ceylonInteger(2).power($ceylonInteger(63))) - 1;
-        minIntegerValue = -$dartInt($ceylonInteger(2).power($ceylonInteger(63)));
+        maxIntegerValue = $dartInt($ceylonInteger(2).power($ceylonInteger(53))) - 1;
+        minIntegerValue = -($dartInt($ceylonInteger(2).power($ceylonInteger(53))) - 1);
         maxArraySize = $dartInt($ceylonInteger(2).power($ceylonInteger(63))) - 1;
         maxFloatValue = 1.7976931348623157E308;
         minFloatValue = $dartDouble((new dart$Callable(() {
@@ -13233,11 +13233,11 @@ abstract class BaseStringBoxer {
     $dart$core.Object get self;
     Comparison compare([$dart$core.Object other]);
 }
-class BaseString$split$$anonymous$1_$iterator$$anonymous$2_ implements dart$$Basic, Iterator {
-    BaseString$split$$anonymous$1_ $outer$ceylon$language$BaseString$split$$anonymous$1_;
-    BaseString$split$$anonymous$1_$iterator$$anonymous$2_([BaseString$split$$anonymous$1_ $outer$ceylon$language$BaseString$split$$anonymous$1_]) {
-        this.$outer$ceylon$language$BaseString$split$$anonymous$1_ = $outer$ceylon$language$BaseString$split$$anonymous$1_;
-        _$seq = $outer$ceylon$language$BaseString$split$$anonymous$1_.$outer$ceylon$language$BaseString.self.sequence();
+class BaseString$split$$anonymous$2_$iterator$$anonymous$3_ implements dart$$Basic, Iterator {
+    BaseString$split$$anonymous$2_ $outer$ceylon$language$BaseString$split$$anonymous$2_;
+    BaseString$split$$anonymous$2_$iterator$$anonymous$3_([BaseString$split$$anonymous$2_ $outer$ceylon$language$BaseString$split$$anonymous$2_]) {
+        this.$outer$ceylon$language$BaseString$split$$anonymous$2_ = $outer$ceylon$language$BaseString$split$$anonymous$2_;
+        _$seq = $outer$ceylon$language$BaseString$split$$anonymous$2_.$outer$ceylon$language$BaseString.self.sequence();
         _$it = _$seq.iterator();
         _$index = 0;
         _$first = true;
@@ -13266,7 +13266,7 @@ class BaseString$split$$anonymous$1_$iterator$$anonymous$2_ implements dart$$Bas
                         Character next;
                         next = next$3 as Character;
                         doElse$2 = false;
-                        _$peekedWasSeparator = $dartBool(($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$splitting as Callable).f(next) as Boolean);
+                        _$peekedWasSeparator = $dartBool(($outer$ceylon$language$BaseString$split$$anonymous$2_.$capture$BaseString$split$splitting as Callable).f(next) as Boolean);
                     }
                 }
                 if (doElse$2) {
@@ -13299,10 +13299,10 @@ class BaseString$split$$anonymous$1_$iterator$$anonymous$2_ implements dart$$Bas
                 return $ceylonString("");
             }
             if (_$eatSeparator()) {
-                if ($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$groupSeparators as $dart$core.bool) {
+                if ($outer$ceylon$language$BaseString$split$$anonymous$2_.$capture$BaseString$split$groupSeparators as $dart$core.bool) {
                     while (_$eatSeparator()) {}
                 }
-                if (!($outer$ceylon$language$BaseString$split$$anonymous$1_.$capture$BaseString$split$discardSeparators as $dart$core.bool)) {
+                if (!($outer$ceylon$language$BaseString$split$$anonymous$2_.$capture$BaseString$split$discardSeparators as $dart$core.bool)) {
                     _$lastWasSeparator = true;
                     return $ceylonString(_$substring(start, _$index));
                 }
@@ -13321,18 +13321,18 @@ class BaseString$split$$anonymous$1_$iterator$$anonymous$2_ implements dart$$Bas
         }
     }
 }
-class BaseString$split$$anonymous$1_ implements dart$$Basic, Iterable {
+class BaseString$split$$anonymous$2_ implements dart$$Basic, Iterable {
     BaseString $outer$ceylon$language$BaseString;
     Callable $capture$BaseString$split$splitting;
     $dart$core.Object $capture$BaseString$split$groupSeparators;
     $dart$core.Object $capture$BaseString$split$discardSeparators;
-    BaseString$split$$anonymous$1_([BaseString $outer$ceylon$language$BaseString, Callable $capture$BaseString$split$splitting, $dart$core.Object $capture$BaseString$split$groupSeparators, $dart$core.Object $capture$BaseString$split$discardSeparators]) {
+    BaseString$split$$anonymous$2_([BaseString $outer$ceylon$language$BaseString, Callable $capture$BaseString$split$splitting, $dart$core.Object $capture$BaseString$split$groupSeparators, $dart$core.Object $capture$BaseString$split$discardSeparators]) {
         this.$outer$ceylon$language$BaseString = $outer$ceylon$language$BaseString;
         this.$capture$BaseString$split$splitting = $capture$BaseString$split$splitting;
         this.$capture$BaseString$split$groupSeparators = $capture$BaseString$split$groupSeparators;
         this.$capture$BaseString$split$discardSeparators = $capture$BaseString$split$discardSeparators;
     }
-    Iterator iterator() => new BaseString$split$$anonymous$1_$iterator$$anonymous$2_(this);
+    Iterator iterator() => new BaseString$split$$anonymous$2_$iterator$$anonymous$3_(this);
     $dart$core.String toString() => Iterable.$get$string(this);
     $dart$core.bool contains([$dart$core.Object element]) => Iterable.$contains(this, element);
     $dart$core.bool get empty => Iterable.$get$empty(this);
@@ -13391,9 +13391,9 @@ class BaseString$split$$anonymous$1_ implements dart$$Basic, Iterable {
     $dart$core.bool containsEvery([Iterable elements]) => Category.$containsEvery(this, elements);
     $dart$core.bool containsAny([Iterable elements]) => Category.$containsAny(this, elements);
 }
-class BaseString$iterator$$anonymous$4_ implements dart$$Basic, Iterator {
+class BaseString$iterator$$anonymous$5_ implements dart$$Basic, Iterator {
     BaseString $outer$ceylon$language$BaseString;
-    BaseString$iterator$$anonymous$4_([BaseString $outer$ceylon$language$BaseString]) {
+    BaseString$iterator$$anonymous$5_([BaseString $outer$ceylon$language$BaseString]) {
         this.$outer$ceylon$language$BaseString = $outer$ceylon$language$BaseString;
         _$runeIterator = $ceylon$interop$dart.dartString($outer$ceylon$language$BaseString._$val).runes.iterator;
     }
@@ -13411,9 +13411,7 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
                     _$val = characters$1;
                 }
                 if (doElse$0) {
-                    StringBuilder sb = new StringBuilder();
-                    $$characters.each(new dart$Callable(([$dart$core.Object $0]) => sb.appendCharacter($0 as Character)));
-                    _$val = sb.toString();
+                    _$val = (new $dart$core.String.fromCharCodes(new $ceylon$interop$dart.DartIterable($$characters.map(new dart$Callable(([Character c]) => $ceylon$interop$dart.dartInt(c.integer)))))).toString();
                 }
             }
         }
@@ -13443,7 +13441,7 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         if ($dart$core.identical(groupSeparators, $package$dart$default)) {
             groupSeparators = true;
         }
-        return empty ? new Singleton(self) : new BaseString$split$$anonymous$1_(this, splitting, groupSeparators, discardSeparators);
+        return empty ? new Singleton(self) : new BaseString$split$$anonymous$2_(this, splitting, groupSeparators, discardSeparators);
     }
     Character get first => !empty ? $package$characterFromInteger(($ceylon$interop$dart.dartString(_$val).runes.first as $dart$core.num).toInt()) : null;
     Character get last => !empty ? $package$characterFromInteger($ceylon$interop$dart.dartString(_$val).runes.last) : null;
@@ -13456,27 +13454,7 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         return index < runes.length ? $package$characterFromInteger((runes.elementAt((runes.length - 1) - index) as $dart$core.num).toInt()) : null;
     })();
     Sequential get keys => $package$measure($ceylonInteger(0), size) as Sequential;
-    $dart$core.String join([Iterable objects]) {
-        $dart$core.String result = "";
-        $dart$core.bool first = true;
-        {
-            $dart$core.Object element$5;
-            Iterator iterator$4 = objects.iterator();
-            while ((element$5 = iterator$4.next()) is !Finished) {
-                $dart$core.Object el;
-                {
-                    el = element$5;
-                }
-                if (first) {
-                    first = false;
-                } else {
-                    result = result + _$val;
-                }
-                result = result + el.toString();
-            }
-        }
-        return result;
-    }
+    $dart$core.String join([Iterable objects]) => (new $ceylon$interop$dart.DartIterable(objects)).join($dartString(self));
     Iterable get lines => split((() {
         Character $r = new Character.$fromInt(10);
         return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r == $0));
@@ -13497,14 +13475,14 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
             br = $dartString(lineWithBreak.getFromFirst(1) as String);
         }
         return (() {
-            $dart$core.bool doElse$6 = true;
+            $dart$core.bool doElse$4 = true;
             if (!(null == br)) {
-                doElse$6 = false;
+                doElse$4 = false;
                 return $ceylonString(line + br);
             }
-            if (doElse$6) {
-                $dart$core.Object br$7;
-                br$7 = $ceylonString(br);
+            if (doElse$4) {
+                $dart$core.Object br$5;
+                br$5 = $ceylonString(br);
                 return $ceylonString(line);
             }
         })();
@@ -13515,36 +13493,70 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
     String trimTrailing([Callable trimming]) => new String(List.$trimTrailing(this, trimming));
     $dart$core.String get normalized {
         $dart$core.bool previousWasWhitespace = false;
+        $dart$core.bool leadingWhitespace = true;
         StringBuilder sb = new StringBuilder();
         {
-            $dart$core.Object element$9;
-            Iterator iterator$8 = this.iterator();
-            while ((element$9 = iterator$8.next()) is !Finished) {
+            $dart$core.Object element$7;
+            Iterator iterator$6 = this.iterator();
+            while ((element$7 = iterator$6.next()) is !Finished) {
                 Character character;
                 {
-                    character = element$9 as Character;
+                    character = element$7 as Character;
                 }
                 if (character.whitespace) {
-                    if (!previousWasWhitespace) {
-                        sb.append(" ");
+                    if (leadingWhitespace) {
+                        continue;
                     }
                     previousWasWhitespace = true;
                 } else {
-                    previousWasWhitespace = false;
+                    leadingWhitespace = false;
+                    if (previousWasWhitespace) {
+                        sb.append(" ");
+                        previousWasWhitespace = false;
+                    }
                     sb.appendCharacter(character);
                 }
             }
         }
-        return $ceylonString(sb.toString()).trimmed;
+        return sb.toString();
     }
     String get reversed => $ceylonString((new $dart$core.String.fromCharCodes($ceylon$interop$dart.dartString(_$val).runes.toList().reversed)).toString());
     $dart$core.bool defines([Integer index]) => ($dartInt(index) >= 0) && ($dartInt(index) < size);
-    String span([Integer from, Integer to]) => new String(sequence().span(from, to) as Iterable);
+    String span([Integer from, Integer to]) {
+        $dart$core.bool reverse = $dartInt(to) < $dartInt(from);
+        if (reverse) {
+            $dart$core.int tmp = $dartInt(to);
+            to = from;
+            from = $ceylonInteger(tmp);
+        }
+        if ($dartInt(to) < 0) {
+            return $ceylonString("");
+        }
+        $dart$core.int len = size;
+        if (len == 0) {
+            return self;
+        }
+        if ($dartInt(from) >= len) {
+            return $ceylonString("");
+        }
+        if ($dartInt(to) >= len) {
+            to = $ceylonInteger(len - 1);
+        }
+        if ($dartInt(from) < 0) {
+            from = $ceylonInteger(0);
+        }
+        $dart$core.Iterable runes = $ceylon$interop$dart.dartString(_$val).runes.skip($dartInt(from)).take(($dartInt(to) - $dartInt(from)) + 1);
+        if (reverse) {
+            return $ceylonString((new $dart$core.String.fromCharCodes(runes.toList().reversed)).toString());
+        } else {
+            return $ceylonString((new $dart$core.String.fromCharCodes(runes)).toString());
+        }
+    }
     String spanFrom([Integer from]) => span(from, $ceylonInteger($package$runtime.maxIntegerValue));
     String spanTo([Integer to]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)($dartInt(to) >= 0 ? span($ceylonInteger(0), to) : null);
     String measure([Integer from, $dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? span(from, $ceylonInteger(($dartInt(from) + length) - 1)) : null);
     String initial([$dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? span($ceylonInteger(0), $ceylonInteger(length - 1)) : null);
-    String terminal([$dart$core.int length]) => ((String $lhs$) => null == $lhs$ ? $ceylonString("") : $lhs$)(length > 0 ? new String(sequence().terminal(length)) : null);
+    String terminal([$dart$core.int length]) => spanFrom($ceylonInteger(size - length));
     Tuple slice([$dart$core.int index]) {
         if (index < 1) {
             return new Tuple.$withList([$ceylonString(""), self]);
@@ -13554,7 +13566,7 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
     }
     $dart$core.int get size => $ceylon$interop$dart.dartString(_$val).runes.length;
     $dart$core.int get lastIndex => !empty ? size - 1 : null;
-    Iterator iterator() => new BaseString$iterator$$anonymous$4_(this);
+    Iterator iterator() => new BaseString$iterator$$anonymous$5_(this);
     Character getFromFirst([$dart$core.int index]) {
         if (index < 0) {
             return null;
@@ -13566,26 +13578,26 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         return null;
     }
     $dart$core.bool contains([$dart$core.Object element]) {{
-            $dart$core.bool doElse$10 = true;
+            $dart$core.bool doElse$8 = true;
             if (element is String) {
-                $dart$core.String element$11;
-                element$11 = $dartString(element as String);
-                doElse$10 = false;
-                return $ceylon$interop$dart.dartString(_$val).contains($ceylon$interop$dart.dartString(element$11));
+                $dart$core.String element$9;
+                element$9 = $dartString(element as String);
+                doElse$8 = false;
+                return $ceylon$interop$dart.dartString(_$val).contains($ceylon$interop$dart.dartString(element$9));
             }
-            if (doElse$10) {
+            if (doElse$8) {
                 if (element is Character) {
-                    Character element$12;
-                    element$12 = element as Character;
+                    Character element$10;
+                    element$10 = element as Character;
                     {
-                        $dart$core.Object element$14;
-                        Iterator iterator$13 = this.iterator();
-                        while ((element$14 = iterator$13.next()) is !Finished) {
+                        $dart$core.Object element$12;
+                        Iterator iterator$11 = this.iterator();
+                        while ((element$12 = iterator$11.next()) is !Finished) {
                             Character c;
                             {
-                                c = element$14 as Character;
+                                c = element$12 as Character;
                             }
-                            if (c == element$12) {
+                            if (c == element$10) {
                                 return true;
                             }
                         }
@@ -13596,41 +13608,41 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         return false;
     }
     $dart$core.bool startsWith([List substring]) => (() {
-        $dart$core.bool doElse$15 = true;
+        $dart$core.bool doElse$13 = true;
         if (substring is String) {
-            $dart$core.String substring$16;
-            substring$16 = $dartString(substring as String);
-            doElse$15 = false;
-            return $ceylon$interop$dart.dartString(_$val).startsWith($ceylon$interop$dart.dartString(substring$16));
+            $dart$core.String substring$14;
+            substring$14 = $dartString(substring as String);
+            doElse$13 = false;
+            return $ceylon$interop$dart.dartString(_$val).startsWith($ceylon$interop$dart.dartString(substring$14));
         }
-        if (doElse$15) {
+        if (doElse$13) {
             return $package$everyPair(new dart$Callable(([Character first, $dart$core.Object second]) => (() {
-                $dart$core.bool doElse$17 = true;
+                $dart$core.bool doElse$15 = true;
                 if (second is Character) {
-                    Character second$18;
-                    second$18 = second as Character;
-                    doElse$17 = false;
-                    return $ceylonBoolean(first == second$18);
+                    Character second$16;
+                    second$16 = second as Character;
+                    doElse$15 = false;
+                    return $ceylonBoolean(first == second$16);
                 }
-                if (doElse$17) {
+                if (doElse$15) {
                     return $package$$false;
                 }
             })()), this, substring);
         }
     })();
     $dart$core.bool endsWith([List substring]) => (() {
-        $dart$core.bool doElse$19 = true;
+        $dart$core.bool doElse$17 = true;
         if (substring is String) {
-            $dart$core.String substring$20;
-            substring$20 = $dartString(substring as String);
-            doElse$19 = false;
-            return $ceylon$interop$dart.dartString(_$val).endsWith(substring$20);
+            $dart$core.String substring$18;
+            substring$18 = $dartString(substring as String);
+            doElse$17 = false;
+            return $ceylon$interop$dart.dartString(_$val).endsWith(substring$18);
         }
-        if (doElse$19) {
+        if (doElse$17) {
             return List.$endsWith(this, substring);
         }
     })();
-    String repeat([$dart$core.int times]) => new String(sequence().repeat(times));
+    String repeat([$dart$core.int times]) => $ceylonString($ceylon$interop$dart.dartString(_$val) * times);
     $dart$core.String replace([$dart$core.String substring, $dart$core.String replacement]) => $ceylon$interop$dart.dartString(_$val).replaceAll($ceylon$interop$dart.dartString(substring), replacement);
     $dart$core.String replaceFirst([$dart$core.String substring, $dart$core.String replacement]) => $ceylon$interop$dart.dartString(_$val).replaceFirst($ceylon$interop$dart.dartString(substring), replacement);
     $dart$core.String replaceLast([$dart$core.String substring, $dart$core.String replacement]) => (() {
@@ -13651,14 +13663,14 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
     $dart$core.bool longerThan([$dart$core.int length]) => !(null == getFromFirst(length));
     $dart$core.bool shorterThan([$dart$core.int length]) => !(!(null == getFromFirst(length - 1)));
     $dart$core.bool operator ==($dart$core.Object that) => (() {
-        $dart$core.bool doElse$21 = true;
+        $dart$core.bool doElse$19 = true;
         if (that is String) {
-            $dart$core.String that$22;
-            that$22 = $dartString(that as String);
-            doElse$21 = false;
-            return $ceylon$interop$dart.dartString(_$val) == $ceylon$interop$dart.dartString(that$22);
+            $dart$core.String that$20;
+            that$20 = $dartString(that as String);
+            doElse$19 = false;
+            return $ceylon$interop$dart.dartString(_$val) == $ceylon$interop$dart.dartString(that$20);
         }
-        if (doElse$21) {
+        if (doElse$19) {
             return false;
         }
     })();
@@ -13680,24 +13692,24 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         $dart$core.int rightPad = (size - leftPad) - length;
         StringBuilder sb = new StringBuilder();
         {
-            $dart$core.Object element$24;
-            Iterator iterator$23 = ($package$measure($ceylonInteger(0), leftPad) as List).iterator();
-            while ((element$24 = iterator$23.next()) is !Finished) {
+            $dart$core.Object element$22;
+            Iterator iterator$21 = ($package$measure($ceylonInteger(0), leftPad) as List).iterator();
+            while ((element$22 = iterator$21.next()) is !Finished) {
                 Integer _;
                 {
-                    _ = element$24 as Integer;
+                    _ = element$22 as Integer;
                 }
                 sb.appendCharacter(character as Character);
             }
         }
         sb.append($dartString(self));
         {
-            $dart$core.Object element$26;
-            Iterator iterator$25 = ($package$measure($ceylonInteger(0), rightPad) as List).iterator();
-            while ((element$26 = iterator$25.next()) is !Finished) {
+            $dart$core.Object element$24;
+            Iterator iterator$23 = ($package$measure($ceylonInteger(0), rightPad) as List).iterator();
+            while ((element$24 = iterator$23.next()) is !Finished) {
                 Integer _;
                 {
-                    _ = element$26 as Integer;
+                    _ = element$24 as Integer;
                 }
                 sb.appendCharacter(character as Character);
             }
@@ -13710,23 +13722,10 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         }
         $dart$core.int length = this.size;
         if (size <= length) {
-            return $dartString(self);
+            return _$val;
         }
         $dart$core.int padAmount = size - length;
-        StringBuilder sb = new StringBuilder();
-        {
-            $dart$core.Object element$28;
-            Iterator iterator$27 = ($package$measure($ceylonInteger(0), padAmount) as List).iterator();
-            while ((element$28 = iterator$27.next()) is !Finished) {
-                Integer _;
-                {
-                    _ = element$28 as Integer;
-                }
-                sb.appendCharacter(character as Character);
-            }
-        }
-        sb.append($dartString(self));
-        return sb.toString();
+        return ((character as Character).toString() * padAmount) + _$val;
     }
     $dart$core.String padTrailing([$dart$core.int size, $dart$core.Object character = $package$dart$default]) {
         if ($dart$core.identical(character, $package$dart$default)) {
@@ -13734,23 +13733,10 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         }
         $dart$core.int length = this.size;
         if (size <= length) {
-            return $dartString(self);
+            return _$val;
         }
         $dart$core.int padAmount = size - length;
-        StringBuilder sb = new StringBuilder();
-        sb.append($dartString(self));
-        {
-            $dart$core.Object element$30;
-            Iterator iterator$29 = ($package$measure($ceylonInteger(0), padAmount) as List).iterator();
-            while ((element$30 = iterator$29.next()) is !Finished) {
-                Integer _;
-                {
-                    _ = element$30 as Integer;
-                }
-                sb.appendCharacter(character as Character);
-            }
-        }
-        return sb.toString();
+        return _$val + ((character as Character).toString() * padAmount);
     }
     void copyTo([Array destination, $dart$core.Object sourcePosition = $package$dart$default, $dart$core.Object destinationPosition = $package$dart$default, $dart$core.Object length = $package$dart$default]) {
         if ($dart$core.identical(sourcePosition, $package$dart$default)) {
@@ -13764,17 +13750,17 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         }
         $dart$core.int i = destinationPosition as $dart$core.int;
         {
-            $dart$core.Object element$32;
-            Iterator iterator$31 = skip((sourcePosition as $dart$core.int) - 1).take(length as $dart$core.int).iterator();
-            while ((element$32 = iterator$31.next()) is !Finished) {
+            $dart$core.Object element$26;
+            Iterator iterator$25 = skip((sourcePosition as $dart$core.int) - 1).take(length as $dart$core.int).iterator();
+            while ((element$26 = iterator$25.next()) is !Finished) {
                 Character c;
                 {
-                    c = element$32 as Character;
+                    c = element$26 as Character;
                 }
                 destination.set((() {
-                    $dart$core.int tmp$33 = i;
+                    $dart$core.int tmp$27 = i;
                     i = $dartInt($ceylonInteger(i).successor);
-                    return tmp$33;
+                    return tmp$27;
                 })(), c);
             }
         }
