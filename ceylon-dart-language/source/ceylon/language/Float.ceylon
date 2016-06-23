@@ -304,7 +304,7 @@ class Float(Float float) extends Object()
         =>  this > 0.0 || 1.0/this > 0.0;
 
     shared native("dart") Boolean strictlyNegative
-        =>  this > 0.0 || 1.0/this > 0.0;
+        =>  this < 0.0 || 1.0/this < 0.0;
 
     shared actual native("dart") Boolean equals(Object that)
         =>  if (is Float that) then
