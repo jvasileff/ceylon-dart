@@ -35,3 +35,5 @@ shared native object modules {
     
     // FIXME: add load/unload
 }
+
+shared native("jvm") object modules {}
