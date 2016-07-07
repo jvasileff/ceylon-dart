@@ -1221,10 +1221,13 @@ class BaseGenerator(CompilationContext ctx)
         // `Sequential.spanFrom()`, which would have the most precise return type,
         // since in this case, the realzation of `Ranged.spanFrom()` is `[Element*]`
         // rather than `List<Element>`.
-        assert (is FunctionOrValueModel memberDeclaration =
-                    receiverType.declaration.getMember(memberName, null, false));
 
-        value typedReference = receiverType.getTypedMember(memberDeclaration, null);
+        value resolvedReceiver = receiverType.resolveAliases();
+
+        assert (is FunctionOrValueModel memberDeclaration
+            =   resolvedReceiver.declaration.getMember(memberName, null, false));
+
+        value typedReference = resolvedReceiver.getTypedMember(memberDeclaration, null);
 
         value signature = CeylonList {
             ctx.unit.getCallableArgumentTypes(typedReference.fullType);
