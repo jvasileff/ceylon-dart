@@ -282,6 +282,10 @@ HashMap<String, Object> encodeType(TypeModel type, DeclarationModel scope) {
 Map<String, Map<String, Object>>? encodeTypeArguments
         (TypeModel type, DeclarationModel scope) {
 
+    if (type.typeConstructor) {
+        return null;
+    }
+
     value types
         =   loop(type)((TypeModel t)
             =>  t.qualifyingType else finished);
