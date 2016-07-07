@@ -241,11 +241,15 @@ shared native("jvm") final class StringBuilder()
     }
     
     shared actual native("jvm")
-    Character? getFromFirst(Integer index) 
-            => if (index<0 || index>size)
-            then null
-            else builder.codePointAt(startIndex(index))
-                        .character;
+    Character? getFromFirst(Integer index) {
+        try {
+            return builder.codePointAt(startIndex(index))
+                          .character;
+        }
+        catch (IndexOutOfBoundsException ioobe) {
+            return null;
+        }
+    }
     
     shared native("jvm") 
     StringBuilder append(String string) {
@@ -581,9 +585,7 @@ shared native("js") final class StringBuilder()
     
     shared actual native("js")
     Character? getFromFirst(Integer index) 
-            => if (index<0 || index>size) 
-            then null 
-            else string.getFromFirst(index);
+            => string.getFromFirst(index);
     
     shared native("js") 
     StringBuilder append(String string) {
