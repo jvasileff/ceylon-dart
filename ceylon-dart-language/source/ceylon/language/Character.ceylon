@@ -256,8 +256,10 @@ class BaseCharacter(shared Integer integer) extends Object()
 
     shared Character titlecased => uppercased;
 
+    suppressWarnings("disjointEquals")
     shared Boolean lowercase => uppercased != this;
 
+    suppressWarnings("disjointEquals")
     shared Boolean uppercase => lowercased != this;
 
     shared Boolean titlecase => uppercase;
