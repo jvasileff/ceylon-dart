@@ -1397,10 +1397,15 @@ class BaseString
     Integer lastIndexOf(String string, Integer to = size)
         =>  lastInclusion(string, size-to) else -1;
 
+    shared actual
+    {Integer*} indexesWhere(Boolean selecting(Character element))
+        =>  { for (index->element in this.indexed)
+                if (exists element, selecting(element))
+                  index };
+
     //shared actual native List<Character> sublistFrom(Integer from);
     //shared actual native List<Character> sublistTo(Integer to);
 
-    //shared actual native {Integer*} indexesWhere(Boolean selecting(Character element));
     //shared actual native Integer? firstIndexWhere(Boolean selecting(Character element));
     //shared actual native Integer? lastIndexWhere(Boolean selecting(Character element));
 
