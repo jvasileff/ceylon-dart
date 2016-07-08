@@ -177,10 +177,7 @@ $dart$core.int $package$intSet($dart$core.int integer, $dart$core.int index, $da
 
 $dart$core.int intSet($dart$core.int integer, $dart$core.int index, $dart$core.bool bit) {
   if (index < 0 || index > 31) {
-    // Match JS behavior, for now
-    // https://github.com/ceylon/ceylon/issues/5799
-    //return new Integer(_value.toSigned(32));
-    return integer;
+    return integer.toSigned(32);
   }
   $dart$core.int mask = (1 << index).toSigned(32);
   if (bit) {
@@ -196,10 +193,7 @@ $dart$core.int $package$intFlip($dart$core.int integer, $dart$core.int index)
 
 $dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
   if (index < 0 || index > 31) {
-    // Match JS behavior, for now
-    // https://github.com/ceylon/ceylon/issues/5799
-    //return new Integer(_value.toSigned(32));
-    return integer;
+    return integer.toSigned(32);
   }
   $dart$core.int mask = (1 << index).toSigned(32);
   return integer.toSigned(32) ^ mask;
