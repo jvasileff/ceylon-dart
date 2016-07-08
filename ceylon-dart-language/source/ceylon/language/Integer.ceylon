@@ -411,8 +411,26 @@ class Integer(Integer integer)
     shared native("dart") Float nearestFloat => integer.nearestFloat;
     shared actual native("dart") Integer predecessor => this - 1;
     shared actual native("dart") Integer successor => this + 1;
-    shared actual native("dart") Integer neighbour(Integer offset) => this + offset;
-    shared actual native("dart") Integer offset(Integer other) => this - other;
+
+    shared actual native("dart") Integer neighbour(Integer offset) {
+        // The overflow check could be skipped when running on the DartVM
+        value result = this + offset;
+        if (!runtime.minIntegerValue <= result <= runtime.maxIntegerValue) {
+            throw OverflowException("``this`` has no neighbour with offset ``offset``");
+        }
+        return result;
+    }
+
+    shared actual native("dart") Integer offset(Integer other) {
+        // The overflow check could be skipped when running on the DartVM
+        value result = this - other;
+        if (!runtime.minIntegerValue <= result <= runtime.maxIntegerValue) {
+            throw OverflowException("offset from ``this`` to ``other`` \
+                                     cannot be represented as an Integer.");
+        }
+        return result;
+    }
+
     shared actual native("dart") Integer offsetSign(Integer other) => offset(other).sign;
     shared actual native("dart") Boolean unit => this == 1;
     shared actual native("dart") Boolean zero => this == 0;
