@@ -79,8 +79,10 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          If no `warnings` are given then suppresss the reporting of all warnings, \
          otherwise just suppresss those which are present. \
          Allowed flags include: \
+
          `filenameNonAscii`, `filenameCaselessCollision`,
-         `deprecation`, `compilerAnnotation`,
+         `deprecation`, `disjointEquals`,
+         `disjointContainment`, `compilerAnnotation`,
          `doclink`, `expressionTypeNothing`,
          `unusedDeclaration`, `unusedImport`,
          `ceylonNamespace`, `javaNamespace`,
@@ -88,7 +90,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `unknownWarning`, `ambiguousAnnotation`,
          `similarModule`, `importsOtherJdk`,
          `javaAnnotationElement`, `syntaxDeprecation`,
-         `unsoundTypeTest`.";
+         `literalNotSmall`, `redundantNarrowing`,
+         `redundantIteration`, `unsoundTypeTest`";
     }
     EnumSet<Warning> suppressWarning = EnumSet.noneOf(javaClass<Warning>());
 

@@ -4,6 +4,8 @@ public enum Warning {
     filenameNonAscii,
     filenameCaselessCollision,
     deprecation,
+    disjointEquals,
+    disjointContainment,
     compilerAnnotation,
     doclink,
     expressionTypeNothing,
@@ -19,5 +21,9 @@ public enum Warning {
     importsOtherJdk,
     javaAnnotationElement,
     syntaxDeprecation,
+    smallIgnored,
+    literalNotSmall,
+    redundantNarrowing,
+    redundantIteration,
     unsoundTypeTest
 }
