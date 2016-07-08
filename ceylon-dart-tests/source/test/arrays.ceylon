@@ -229,20 +229,17 @@ shared void testArrays() {
     value a13=Array.ofSize(5,1);
     check(a13.size==5, "Array.ofSize 1");
     check(every { for (i in a13) i==1 }, "Array.ofSize 2");
-
     try {
         check(Array.ofSize(-1,1).size==0, "Array.ofSize(-1) should be empty");
     } catch (Throwable ex) {
         fail("Array.ofSize(-1)");
     }
-
     try {
         Array.ofSize(runtime.maxArraySize+1,1);
         fail("Array.ofSize(runtime.maxArraySize+1)");
     } catch (Throwable t) {
         check(t is AssertionError, "Array.ofSize 4");
     }
-
     value testSwap=Array{0,1,2,3,4,5,6,7,8,9};
     testSwap.swap(5,6);
     check(testSwap==Array{0,1,2,3,4,6,5,7,8,9}, "Array.swap 1 expected 0,1,2,3,4,6,5,7,8,9 got ``testSwap``");

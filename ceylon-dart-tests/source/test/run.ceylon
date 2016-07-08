@@ -81,6 +81,7 @@ shared void run() {
 // FIXME Dart workaround
     //print("Native extensions");
     //testNativeClassesAndObjects();
+    //testNativeInterfaces();
     print("Contextual");
     testContextual();
     

@@ -83,14 +83,13 @@ shared void numbers() {
     check((-7).remainder(3)==-1, "-7 remainder 3");
     check(7.modulo(3)==1, "7 modulo 3");
     check((-7).modulo(3)==2, "-7 modulo 3");
-
     try{
         7.modulo(-3);
         check(false, "modulo assertion");
     }catch(AssertionError x){
         check(true, "modulo assertion");
     }
-
+    
     checkWholePart();
     
     check((+2).sign==+1, "integer sign");
@@ -144,7 +143,6 @@ shared void numbers() {
     check(exp(0,0)==1, "exp(0,0)==0");
     check(exp(-1,0)==1, "exp(-1,0)==-1");
     check(exp(-2,0)==1, "exp(-2,0)==-2");
-
     try { 
         exp(2,-1);
         fail("exp(2,-1) should throw");
@@ -174,7 +172,7 @@ shared void numbers() {
         exp(-2,-2);
         fail("exp(-2,-2) should throw");
     } catch (AssertionError e) {}
-
+    
     Integer twoToPowerTen = 2*2*2*2*2*2*2*2*2*2;
     check(exp(2,10)==twoToPowerTen, "exp(2,10)==twoToPowerTen");
     check(exp(2,20)==twoToPowerTen*twoToPowerTen, "exp(2,30)==twoToPowerTen*twoToPowerTen");
@@ -206,13 +204,12 @@ shared void numbers() {
     
     
     
-
     try {
        fail("Should have thrown Overflow Exception: ``922337203685477632.float``");
     } catch(OverflowException ex) {
-        check(ex.message == "922337203685477632 cannot be coerced into a 64 bit floating point value");
+        check("cannot be coerced into" in ex.message, "922337203685477632.float message: ``ex.message``");
     }
-
+    
     check(922337203685477632.nearestFloat == 9.2233720368547763E17, "large nearest float 1");
     check((-922337203685477632).nearestFloat == -9.2233720368547763E17, "large negative nearest float");
     check(922337203685477635.nearestFloat == 9.2233720368547763E17, "large nearest float 2");
@@ -399,7 +396,6 @@ shared void numbers() {
     check(!(0.0/0.0).infinite, "NaN not infinite");
 
     //ArithmeticException
-
     try {
         print(0/0);
         fail("0/0 should throw");
@@ -412,10 +408,10 @@ shared void numbers() {
     } catch (Exception ex) {
         check(true, "ArithmeticException");
     }
-
     checkParseInteger();
     checkFormatInteger();
     checkParseFloat();
+    checkFormatFloat();
 
     //type safety
     check(obj(1+1)    is Integer, "int+int Integer");
@@ -450,7 +446,7 @@ shared void numbers() {
     check(#ffff_ffff == 4294967295, "ffff_ffff");
     check($1111_1111 == 255, "1111_1111");
 
-    if (runtime.integerAddressableSize== 64) {
+    if (runtime.integerSize== 64) {
         check(#ff.not == #ffffffffffffff00, "~xff == xffffffffffffff00");
         check(box(#ff).not == #ffffffffffffff00, "~xff == xffffffffffffff00 boxed");
         check(0.not == #ffffffffffffffff, "~0 == xffffffffffffffff");
@@ -467,7 +463,7 @@ shared void numbers() {
                 "b1010101010101010101010101010101010101010101010101010101010101010 >>> 1 == b1101010101010101010101010101010101010101010101010101010101010101 boxed");
         check((-1).rightLogicalShift(1) == runtime.maxIntegerValue, "-1.rightLogicalShift(1) == MAXINT");
         check(box(-1).rightLogicalShift(1) == runtime.maxIntegerValue, "-1.rightLogicalShift(1) == MAXINT");
-    } else if (runtime.integerAddressableSize == 32) {
+    } else if (runtime.integerSize == 53) {
         check(#ff.not == -256, "~xff == -256");
         check(box(#ff).not == -256, "~xff == -256 boxed");
         check(0.not == -1, "~0 == -1");
@@ -519,43 +515,80 @@ shared void numbers() {
     check(!($10).get(0), "b10.get(0) == false");
     check($10.get(1), "b10.get(1) == true");
     check(!($10).get(2), "b10.get(2) == false");
-    
-    Integer allOnes =     $1111111111111111111111111111111111111111111111111111111111111111;
-    Integer leftmostOne = $1000000000000000000000000000000000000000000000000000000000000000;
-    Integer rightmostOne =$0000000000000000000000000000000000000000000000000000000000000001;
-    Integer allZeros =    $0000000000000000000000000000000000000000000000000000000000000000;
+
+    Integer allOnes;
+    Integer leftmostOne;
+    Integer rightmostOne;
+    Integer allZeros;
+    if (runtime.name=="jvm") {
+        allOnes =     $1111111111111111111111111111111111111111111111111111111111111111;
+        leftmostOne = $1000000000000000000000000000000000000000000000000000000000000000;
+        rightmostOne =$0000000000000000000000000000000000000000000000000000000000000001;
+        allZeros =    $0000000000000000000000000000000000000000000000000000000000000000;
+    } else {
+        allOnes =     $11111111111111111111111111111111;
+        leftmostOne = $10000000000000000000000000000000;
+        rightmostOne =$00000000000000000000000000000000;
+        allZeros =    $00000000000000000000000000000000;
+    }
     value oobIndices = (-2..-1).chain(runtime.integerAddressableSize..runtime.integerAddressableSize+2);
     // by doing the tests using values of the real type and on type parameters
     // we test both jvm optimized and non-optimized paths
     void binaryOob<T>(T ones, T zeros, T leftmost, T rightmost)
-        given T satisfies Binary<T> {
+            given T satisfies Binary<T> {
+        Integer intResult(Integer lhs) =>
+          switch(lhs)
+          case (4294967295) -1
+          case (2147483648) -2147483648
+          else lhs;
+        Integer tResult(T lhs) {
+          assert(is Integer ihs=lhs);
+          return switch(ihs)
+          case (4294967295) -1
+          case (2147483648) -2147483648
+          else ihs;
+        }
         for (oobIndex in oobIndices) {
             value ibIndex = ((oobIndex % runtime.integerAddressableSize) + runtime.integerAddressableSize) % runtime.integerAddressableSize;
             for (lhs in [ones, zeros, leftmost, rightmost]) {
                 // Theses are weirdly circular
-                check(lhs.leftLogicalShift(oobIndex) == lhs.leftLogicalShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``)");
-                check(lhs.rightLogicalShift(oobIndex) == lhs.rightLogicalShift(ibIndex), "``lhs``.rightLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``)");
-                check(lhs.rightArithmeticShift(oobIndex) == lhs.rightArithmeticShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.rightArithmeticShift(``ibIndex``)");
+                check(lhs.leftLogicalShift(oobIndex) == lhs.leftLogicalShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``) (1)");
+                check(lhs.rightLogicalShift(oobIndex) == lhs.rightLogicalShift(ibIndex), "``lhs``.rightLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``) (2)");
+                check(lhs.rightArithmeticShift(oobIndex) == lhs.rightArithmeticShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.rightArithmeticShift(``ibIndex``) (3)");
                 // These should be noops
-                check(lhs.clear(oobIndex) == lhs,      "``lhs``.clear(``oobIndex``) == ``lhs``");
-                check(lhs.flip(oobIndex) == lhs,       "``lhs``.flip(``oobIndex``) == ``lhs``");
-                check(lhs.set(oobIndex) == lhs,        "``lhs``.set(``oobIndex``) == ``lhs``");
-                check(lhs.set(oobIndex, false) == lhs, "``lhs``.set(``oobIndex``, false) == ``lhs``");
+                if (runtime.name=="jvm") {
+                    check(lhs.clear(oobIndex) == lhs,      "``lhs``.clear(``oobIndex``) expected ``lhs`` got ``lhs.clear(oobIndex)`` (4)");
+                    check(lhs.flip(oobIndex) == lhs,       "``lhs``.flip(``oobIndex``) == ``lhs`` (5)");
+                    check(lhs.set(oobIndex) == lhs,        "``lhs``.set(``oobIndex``) expected ``lhs`` got ``lhs.set(oobIndex)`` (6)");
+                    check(lhs.set(oobIndex, false) == lhs, "``lhs``.set(``oobIndex``, false) expected ``lhs`` got ``lhs.set(oobIndex, false)`` (7)");
+                } else {
+                    check(lhs.clear(oobIndex) == tResult(lhs),      "``lhs``.clear(``oobIndex``) expected ``lhs`` got ``lhs.clear(oobIndex)`` (4)");
+                    check(lhs.flip(oobIndex) == tResult(lhs),       "``lhs``.flip(``oobIndex``) == ``lhs`` (5)");
+                    check(lhs.set(oobIndex) == tResult(lhs),        "``lhs``.set(``oobIndex``) expected ``lhs`` got ``lhs.set(oobIndex)`` (6)");
+                    check(lhs.set(oobIndex, false) == tResult(lhs), "``lhs``.set(``oobIndex``, false) expected ``lhs`` got ``lhs.set(oobIndex, false)`` (7)");
+                }
                 // This should be false
-                check(lhs.get(oobIndex) == false,      "``lhs``.get(``oobIndex``) == false");
+                check(lhs.get(oobIndex) == false,      "``lhs``.get(``oobIndex``) == false (8)");
             }
             for (lhs in [allOnes, allZeros, leftmostOne, rightmostOne]) {
                 // Theses are weirdly circular
-                check(lhs.leftLogicalShift(oobIndex) == lhs.leftLogicalShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``)");
-                check(lhs.rightLogicalShift(oobIndex) == lhs.rightLogicalShift(ibIndex), "``lhs``.rightLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``)");
-                check(lhs.rightArithmeticShift(oobIndex) == lhs.rightArithmeticShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.rightArithmeticShift(``ibIndex``)");
+                check(lhs.leftLogicalShift(oobIndex) == lhs.leftLogicalShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``) (9)");
+                check(lhs.rightLogicalShift(oobIndex) == lhs.rightLogicalShift(ibIndex), "``lhs``.rightLogicalShift(``oobIndex``) == ``lhs``.leftLogicalShift(``ibIndex``) (10)");
+                check(lhs.rightArithmeticShift(oobIndex) == lhs.rightArithmeticShift(ibIndex), "``lhs``.leftLogicalShift(``oobIndex``) == ``lhs``.rightArithmeticShift(``ibIndex``) (11)");
                 // These should be noops
-                check(lhs.clear(oobIndex) == lhs,      "``lhs``.clear(``oobIndex``) == ``lhs``");
-                check(lhs.flip(oobIndex) == lhs,       "``lhs``.flip(``oobIndex``) == ``lhs``");
-                check(lhs.set(oobIndex) == lhs,        "``lhs``.set(``oobIndex``) == ``lhs``");
-                check(lhs.set(oobIndex, false) == lhs, "``lhs``.set(``oobIndex``, false) == ``lhs``");
+                if (runtime.name=="jvm") {
+                    check(lhs.clear(oobIndex) == lhs,      "``lhs``.clear(``oobIndex``) expected ``lhs`` got ``lhs.clear(oobIndex)`` (12)");
+                    check(lhs.flip(oobIndex) == lhs,       "``lhs``.flip(``oobIndex``) expected ``lhs`` got ``lhs.flip(oobIndex)`` (13)");
+                    check(lhs.set(oobIndex) == lhs,        "``lhs``.set(``oobIndex``) expected ``lhs`` got ``lhs.set(oobIndex)`` (14)");
+                    check(lhs.set(oobIndex, false) == lhs, "``lhs``.set(``oobIndex``, false) expected ``lhs`` got ``lhs.set(oobIndex, false)`` (15)");
+                } else {
+                    check(lhs.clear(oobIndex) == intResult(lhs),      "``lhs``.clear(``oobIndex``) expected ``lhs`` got ``lhs.clear(oobIndex)`` (12)");
+                    check(lhs.flip(oobIndex) == intResult(lhs),       "``lhs``.flip(``oobIndex``) expected ``lhs`` got ``lhs.flip(oobIndex)`` (13)");
+                    check(lhs.set(oobIndex) == intResult(lhs),        "``lhs``.set(``oobIndex``) expected ``lhs`` got ``lhs.set(oobIndex)`` (14)");
+                    check(lhs.set(oobIndex, false) == intResult(lhs), "``lhs``.set(``oobIndex``, false) expected ``lhs`` got ``lhs.set(oobIndex, false)`` (15)");
+                }
                 // This should be false
-                check(lhs.get(oobIndex) == false,      "``lhs``.get(``oobIndex``) == false");
+                check(lhs.get(oobIndex) == false,      "``lhs``.get(``oobIndex``) == false (16)");
             }
         }
     }
@@ -648,7 +681,6 @@ void checkParseInteger() {
     check(!parseInteger("123_456", 8) exists, "!parseInteger(123_456, 8) exists");
     check(!parseInteger("1234_5678", 8) exists, "!parseInteger(1234_5678, 8) exists");
     
-
     try {
         parseInteger("0", 1);
         fail("parseInteger(0, 1) should throw");
@@ -661,7 +693,7 @@ void checkParseInteger() {
     } catch (AssertionError ex) {
         // OK
     }
-
+    
     print("Testing `` runtime.integerSize ``-bit integers");
     if (runtime.integerSize == 64) {
         check(9223372036854775807==(parseInteger("9223372036854775807") else ""), "parseInteger(9223372036854775807)");
@@ -765,7 +797,6 @@ void checkFormatInteger() {
     check("-1"==formatInteger(-1), "formatInteger(-1)");
     check("1234567890"==formatInteger(1234567890), "formatInteger(1234567890)");
     check("-1234567890"==formatInteger(-1234567890), "formatInteger(-1234567890)");
-
     try {
         formatInteger(0, 1);
         fail("formatInteger(0, 1) should throw");
@@ -778,7 +809,6 @@ void checkFormatInteger() {
     } catch (AssertionError ex) {
         // OK
     }
-
     if (runtime.integerSize == 64) {
         Integer maxIntegerValue = 9_223_372_036_854_775_807;
         Integer minIntegerValue = -9_223_372_036_854_775_808;
@@ -868,7 +898,49 @@ void checkParseFloat() {
     check(parseFloat0("-0").string=="-0.0", "parseFloat(-0)");
     check(parseFloat0("0.0").string=="0.0", "parseFloat(0.0)");
     check(parseFloat0("-0.0").string=="-0.0", "parseFloat(-0.0)");
-    
+
+    check(parseFloat0("1e55555555555555555555555555555555555555555").string=="Infinity", "parseFloat(bigExponent)");
+    check(parseFloat0("1")==1.0, "parseFloat(1)");
+    check(parseFloat0("+1")==1.0, "parseFloat(+1)");
+    check(parseFloat0("-1")==-1.0, "parseFloat(-1)");
+    check(parseFloat0("1e1")==10.0, "parseFloat(1e1)");
+    check(parseFloat0("1e-1")==0.1, "parseFloat(1e-1)");
+    check(parseFloat0("1e+1")==10.0, "parseFloat(1e+1)");
+    check(parseFloat0(".123")==0.123, "parseFloat(.123)");
+    check(parseFloat(".") is Null, "parseFloat(.)");
+    check(parseFloat("e10") is Null, "parseFloat(e10)");
+    check(parseFloat0("1.")==1.0, "parseFloat(1.)");
+    check(parseFloat0("+.1")==0.1, "parseFloat(+.1)");
+    check(parseFloat0("-.1")==-0.1, "parseFloat(-.1)");
+    check(parseFloat0("+1.")==1.0, "parseFloat(+1.)");
+    check(parseFloat0("-1.")==-1.0, "parseFloat(-1.)");
+    check(parseFloat0("1.e1")==10.0, "parseFloat(1.e1)");
+    check(parseFloat0("1.e-1")==0.1, "parseFloat(1.e-1)");
+    check(parseFloat0("1.e+1")==10.0, "parseFloat(1.e+1)");
+    check(parseFloat0("1.1")==1.1, "parseFloat(1.1)");
+    check(parseFloat0("+1.1")==1.1, "parseFloat(+1.1)");
+    check(parseFloat0("-1.1")==-1.1, "parseFloat(-1.1)");
+    check(parseFloat0("1.1e1")==11.0, "parseFloat(1.1e1)");
+    check(parseFloat0("1.1e-1")==0.11, "parseFloat(1.1e-1)");
+    check(parseFloat0("1.1e+1")==11.0, "parseFloat(1.1e+1)");
+    check(parseFloat0("123456.789e20")==123456.789e20, "parseFloat(123456.789e20)");
+    check(parseFloat0("123456.789f")==123456.789f, "parseFloat(123456.789f)");
+    check(parseFloat0("123456.")==123456.0, "parseFloat(123456.)");
+    check(parseFloat0("123456")==123456.0, "parseFloat(123456)");
+    check(parseFloat("1ee10") is Null, "parseFloat(1ee10)");
+    check(parseFloat0("0.000000000000000000000123456789")==0.000000000000000000000123456789,
+                "parseFloat(0.000000000000000000000123456789)");
+
+    // https://github.com/ceylon/ceylon/issues/6175
+    check(parseFloat0("9999999999999999")==9999999999999999.0, "parseFloat(9999999999999999)");
+
+    // https://github.com/ceylon/ceylon/issues/6152
+    check(parseFloat0("00000000000000.12345678901234567")==0.12345678901234567, "parseFloat()");
+    check(parseFloat0("00.12345678901234567")==0.12345678901234567, "parseFloat(00.12345678901234567)");
+    check(parseFloat0("0.12345678901234567")==0.12345678901234567, "parseFloat(0.12345678901234567)");
+    check(parseFloat0(".12345678901234567")==0.12345678901234567, "parseFloat(.12345678901234567)");
+    check(parseFloat0(".123456789012345678")==0.123456789012345678, "parseFloat(.123456789012345678)");
+
     check(1.leftLogicalShift(31).get(31), "logicalShift.get 1");
     check(1.leftLogicalShift(31).clear(31).zero, "logicalShift.get 2");
     check(0.set(31).get(31), "logicalShift.get 3");
@@ -883,24 +955,18 @@ void checkParseFloat() {
     check(0.flip(31).get(31), "logicalShift.get 8");
     check(2.divides(6), "Integer.divides 1");
     check(!5.divides(6), "Integer.divides 2");
-
     try {
-        // Dart has no max integer value
-        if (runtime.maxIntegerValue.neighbour(1) < runtime.maxIntegerValue) {
-            fail("Integer.neighbour should throw");
-        }
+        runtime.maxIntegerValue.neighbour(1);
+        fail("Integer.neighbour should throw");
     } catch (OverflowException ex) {
         check(true);
     }
     try {
-        // Dart has no max integer value
-        if (runtime.maxIntegerValue.offset(-1) < runtime.maxIntegerValue) {
-            fail("Integer.offset should throw");
-        }
+        runtime.maxIntegerValue.offset(-1);
+        fail("Integer.offset should throw");
     } catch (OverflowException ex) {
         check(true);
     }
-
     check((1).neighbour(5)==6, "Integer.neighbour 1");
     check((1).neighbour(0)==1, "Integer.neighbour 2");
     check((1).neighbour(-5)==-4, "Integer.neighbour 3");
@@ -960,10 +1026,95 @@ void checkWholePart(){
     check(1 / +0.4.wholePart > 0.0, "preserve positive 0.d");
     check(1 / (-0.6).wholePart < 0.0, "preserve negative 0.e");
     check(1 / +0.6.wholePart > 0.0, "preserve positive 0.f");
+    check(1.0/-0 == infinity, "1.0/-0 should be Infinity");
+    check(1.0/-0.0 == -infinity, "1.0/-0.0 should be -Infinity");
+    check(-1.0/0 == -infinity, "-1.0/0 should be -infinity");
     
     check((-infinity).wholePart == -infinity);
     check(infinity.wholePart == infinity);
     value nan = 0.0/0.0;
     check(nan.wholePart.undefined);
 
+}
+
+void checkFormatFloat() {
+    check(formatFloat(1234.5678)=="1234.5678", "formatFloat(1234.5678)");
+    check(formatFloat(1234.5678,4,4)=="1234.5678", "formatFloat(1234.5678,4,4)");
+    check(formatFloat(5678.1234)=="5678.1234", "formatFloat(5678.1234)");
+    check(formatFloat(5678.1234,4,4)=="5678.1234", "formatFloat(5678.1234,4,4)");
+    check(formatFloat(1234.5678,2,2)=="1234.56", "formatFloat(1234.5678,2,2)");
+    check(formatFloat(5678.1234,3,3)=="5678.123", "formatFloat(5678.1234,3,3)");
+    check(formatFloat(1234.1234)=="1234.1234", "formatFloat(1234.1234)");
+    check(formatFloat(1234.1234,4,4)=="1234.1234", "formatFloat(1234.1234,4,4)");
+    check(formatFloat(0.1234)=="0.1234", "formatFloat(0.1234)");
+    check(formatFloat(0.1234,4,4)=="0.1234", "formatFloat(0.1234,4,4)");
+    check(formatFloat(1234.0)=="1234.0", "formatFloat(1234.0)");
+    check(formatFloat(1234.0,0)=="1234", "formatFloat(1234.0,0)");
+    check(formatFloat(1234.1234,6)=="1234.123400", "formatFloat(1234.1234,6)");
+    check(formatFloat(1234.1234,0,2)=="1234.12", "formatFloat(1234.1234,0,2)");
+    check(formatFloat(0.0001,2,2)=="0.00", "formatFloat(0.0001,2,2)");
+    check(formatFloat(0.0001,0,2)=="0", "formatFloat(0.0001,0,2)");
+    check(formatFloat(-0.0)=="0.0", "formatFloat(-0.0)");
+    check(formatFloat(0.0/0)=="NaN", "formatFloat(0.0/0)");
+    check(formatFloat(1.0/0)=="Infinity", "formatFloat(1.0/0)");
+    check(formatFloat(-1.0/0)=="-Infinity", "formatFloat(-1.0/0)");
+    check(formatFloat(100000.0)=="100000.0", "formatFloat(100000.0)");
+    check(formatFloat(200000.0)=="200000.0", "formatFloat(200000.0)");
+    check(formatFloat(300000.0)=="300000.0", "formatFloat(300000.0)");
+    check(formatFloat(900000.0)=="900000.0", "formatFloat(900000.0)");
+    check(formatFloat(999999.999)=="999999.999", "formatFloat(999999.999)");
+    check(formatFloat(1000000000.0)=="1000000000.0", "formatFloat(1000000000.0)");
+    check(formatFloat(2000000000.0)=="2000000000.0", "formatFloat(2000000000.0)");
+    check(formatFloat(3000000000.0)=="3000000000.0", "formatFloat(3000000000.0)");
+    check(formatFloat(9000000000.0)=="9000000000.0", "formatFloat(9000000000.0)");
+    check(formatFloat(9999999999.999)=="9999999999.999", "formatFloat(9999999999.999)");
+    check(formatFloat(-1.234567e+10)=="-12345670000.0", "formatFloat(-1.234567e+10)");
+    check(formatFloat(-1.234567e+15)=="-1234567000000000.0", "formatFloat(-1.234567e+15)");
+    check(formatFloat(-1.234567e+20)=="-123456700000000000000.0", "formatFloat(-1.234567e+20)");
+    check(formatFloat(-1.234e+20)=="-123400000000000000000.0", "formatFloat(-1.234e+20)");
+    check(formatFloat(-1.234e+25)=="-12340000000000000000000000.0", "formatFloat(-1.234e+25)");
+    check(formatFloat(-1.234e+30)=="-1234000000000000000000000000000.0", "formatFloat(-1.234e+30)");
+    
+    void checkNanComparisons<T>(T nan, T zero) 
+            given T satisfies Comparable<T> {
+        check(!nan == zero, "generic nan comparison");
+        check(nan != zero, "generic nan comparison");
+        check(!nan == nan, "generic nan comparison");
+        check(nan != nan, "generic nan comparison");
+        check(!nan < zero, "generic nan comparison");
+        check(!nan > zero, "generic nan comparison");
+        check(!nan <= zero, "generic nan comparison");
+        check(!nan >= zero, "generic nan comparison");
+        check(!nan < nan, "generic nan comparison");
+        check(!nan > nan, "generic nan comparison");
+        check(!nan <= nan, "generic nan comparison");
+        check(!nan >= nan, "generic nan comparison");
+    }
+    
+    value nan = 0.0/0.0;
+    
+    check(!0.0<nan, "nan comparison");
+    check(!0.0>nan, "nan comparison");
+    check(!0.0<=nan, "nan comparison");
+    check(!0.0>=nan, "nan comparison");
+    check(!0.0==nan, "nan equality");
+    check(0.0!=nan, "nan equality");
+    check(!nan<nan, "nan comparison");
+    check(!nan>nan, "nan comparison");
+    check(!nan<=nan, "nan comparison");
+    check(!nan>=nan, "nan comparison");
+    check(!nan==nan, "nan equality");
+    check(nan!=nan, "nan equality");
+    check(largest(nan,0.0)==0.0, "largest nan");
+    check(largest(0.0,nan)==0.0, "largest nan");
+    check(largest(nan,nan).undefined, "largest nan");
+    check(smallest(nan,0.0)==0.0, "smallest nan");
+    check(smallest(0.0,nan)==0.0, "smallest nan");
+    check(smallest(nan,nan).undefined, "largest nan");
+    check(min { nan, 0.0, nan, 1.0 }==0.0, "min nan");
+    check(max { nan, 0.0, nan, 1.0 }==1.0, "max nan");
+    check(min { nan, nan }.undefined, "min nan");
+    check(max { nan, nan }.undefined, "max nan");
+    checkNanComparisons(nan, 0.0);
+    
 }

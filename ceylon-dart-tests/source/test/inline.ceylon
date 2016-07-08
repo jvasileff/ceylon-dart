@@ -81,7 +81,6 @@ shared void testInlineExpressions() {
     check((object {
         hash=449;
     }).hash==449, "Object expressions 2");
-
     check("``(object {
         string="HEY";
     })``"=="HEY", "Object expressions 3");

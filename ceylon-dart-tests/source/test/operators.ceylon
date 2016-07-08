@@ -46,7 +46,6 @@ shared void operators() {
 
     String[] empty = [];
     String[] full = [ "hello", "world" ];
-
     check(!empty*.uppercased nonempty, "spread 1");
     check(full*.uppercased nonempty, "spread 2");
     value spread1 = full*.uppercased;

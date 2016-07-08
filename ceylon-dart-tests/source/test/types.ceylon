@@ -207,8 +207,8 @@ shared void types() {
     if (is Boolean|Character|T nothing) { fail("union type 4"); } else {check(true);}
     //if (is Object&Castable<Nothing> one) {check(true);} else { fail("intersection type 1"); }
     //if (is Object&Castable<Nothing> bool) { fail("intersection type 2"); } else {check(true);}
-    if (is Category&Iterable<Anything> str) {check(true);} else { fail("intersection type 3"); }
-    if (is Category&Iterable<Anything> t) { fail("intersection type 4"); } else {check(true);}
+    if (is Category<>&Iterable<Anything> str) {check(true);} else { fail("intersection type 3"); }
+    if (is Category<>&Iterable<Anything> t) { fail("intersection type 4"); } else {check(true);}
     //if (is String[] empty) {check(true);} else { fail("sequence type 1"); }
     //if (is String[] seq) {check(true);} else { fail("sequence type 2"); }
     //if (is String[]? seq) {check(true);} else { fail("sequence type 3"); }
@@ -224,12 +224,14 @@ shared void types() {
     if (runtime.name == "jvm") {
         check(className(true)=="ceylon.language.true_", "true classname");
         check(className(false)=="ceylon.language.false_", "false classname");
-    } else if (runtime.name == "dart") {
-        check(className(true)=="true", "true classname");
-        check(className(false)=="false", "false classname");
+    } else if (runtime.name == "DartVM") {
+        check(className(true)=="true_", "true classname");
+        check(className(false)=="false_", "false classname");
     } else if (runtime.name in {"node.js", "Browser"}) {
         check(className(true)=="ceylon.language::true", "true classname");
         check(className(false)=="ceylon.language::false", "false classname");
+    } else {
+        fail("Missing className tests for ``runtime.name`` runtime");
     }
     //from ceylon-js
     value pair = TypesPair("hello", "world");
@@ -262,6 +264,9 @@ shared void types() {
     reifiedIs<Anything>("abc");
     reifiedIs<Null>(null);
     reifiedIs<Anything>(null);
+    value ex = Exception();
+    reifiedIs<Exception>(ex);
+    reifiedIs<Throwable>(ex);
     
     // https://github.com/ceylon/ceylon.language/issues/723
     Object x = 1;
@@ -269,6 +274,8 @@ shared void types() {
     //check(!x is Comparable<Anything>, "Integer is Comparable<Anything>");
 }
 
-void reifiedIs<T>(T|Integer obj) {
+void reifiedIs<T>(T|Integer obj){
+// FIXME Dart workaround - no metamodel
+    //check(obj is T, "reified is: ``(obj else "<null DAMNIT>")`` is `` `T` ``");
     check(obj is T, "reified is");
 }

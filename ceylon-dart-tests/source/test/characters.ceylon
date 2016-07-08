@@ -47,9 +47,13 @@ shared void characters() {
     check(69.character.integer==69, "integer/character conversion");
 
     check('a'.largerThan('A'), "Character.largerThan");
+    check('a'>'A', "Character >");
     check('A'.smallerThan('a'), "Character.smallerThan");
+    check('A'<'a', "Character <");
     check('A'.notLargerThan('B'), "Character.notLargerThan");
+    check('A'<='B', "Character <=");
     check('B'.notSmallerThan('A'), "Character.notSmallerThan");
+    check('B'>='A', "Character >=");
     check('A'.neighbour(2)=='C', "Character.neighbour 1");
     check('Z'.neighbour(-2)=='X', "Character.neighbour 2");
     // check that those don't throw OverflowExceptions:
@@ -57,7 +61,6 @@ shared void characters() {
     check(zero == '\{#0000}', "zero character");
     value max = (#10ffff).character;
     check (max == '\{#10ffff}');
-
     try {
         fail("Character out of range: ``(2147483650).character`` ");
     } catch (OverflowException ex) {
