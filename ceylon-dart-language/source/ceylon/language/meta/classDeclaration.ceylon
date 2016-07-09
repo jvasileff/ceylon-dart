@@ -9,3 +9,6 @@ shared native ClassDeclaration classDeclaration(Anything instance);
 
 shared native("dart") ClassDeclaration classDeclaration(Anything instance)
     =>  nothing;
+
+shared native("jvm") ClassDeclaration classDeclaration(Anything instance)
+    =>  nothing;

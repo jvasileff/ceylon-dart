@@ -87,7 +87,8 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeCaptures,
     computeClassCaptures,
     isForDartBackend,
-    moduleImportPrefix
+    moduleImportPrefix,
+    ModelGenerator
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -511,7 +512,7 @@ shared
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
-                    ctx.topLevelVisitor.visitCompilationUnit(unit);
+                    unit.visit(ctx.topLevelVisitor);
                 }
 
                 if (baselinePerfTest) {
@@ -560,6 +561,25 @@ shared
             logError("-- end   " + path
                 + " (``((end-start)/10^6).string``ms)");
         }
+    }
+
+    // add runtime model info
+    for (mod -> members in moduleMembers) {
+        // jump through hoops to support default modules
+        value unit
+            =   if (mod.default)
+                then mod.packages.get(0).units.iterator().next()
+                else mod.unit;
+
+        value pkg
+            =   if (mod.default)
+                then mod.packages.get(0)
+                else mod.unit.\ipackage;
+
+        value ctx
+            =   CompilationContext(unit, []);
+
+        members.addAll(ModelGenerator(ctx).generateRuntimeModel(mod, pkg));
     }
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
@@ -622,9 +642,20 @@ shared
 
         value dcu
             =   DartCompilationUnit {
+                    // Make dart.core, ceylon.interop.dart, and ceylon.dart.runtime.model
+                    // available, even if not imported in module.ceylon.
                     {DartImportDirective {
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
+                    },
+                    DartImportDirective {
+                        DartSimpleStringLiteral("package:ceylon/interop/dart/dart.dart");
+                        DartSimpleIdentifier("$ceylon$interop$dart");
+                    },
+                    DartImportDirective {
+                        DartSimpleStringLiteral(
+                            "package:ceylon/dart/runtime/model/model.dart");
+                        DartSimpleIdentifier("$ceylon$dart$runtime$model");
                     },
                     *importedModules}.coalesced.distinct.sequence();
                     ds.sequence();
@@ -679,7 +710,9 @@ shared
                     // persist the json model
                     try (appender = modelFile.Appender("utf-8")) {
                         assert (exists metamodelVisitor = metamodelVisitors.get(m));
-                        if (m.nameAsString.startsWith("ceylon.dart.runtime.")) {
+                        if (m.nameAsString in
+                                ["ceylon.dart.runtime.web",
+                                 "ceylon.dart.runtime.standard"]) {
                             // ceylon.dart.runtime.standard and
                             // ceylon.dart.runtime.web masquerade as
                             // ceylon.dart.runtime.core. Only "core" is used at compile

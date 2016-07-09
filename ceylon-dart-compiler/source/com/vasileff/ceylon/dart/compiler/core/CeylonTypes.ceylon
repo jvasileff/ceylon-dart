@@ -120,18 +120,30 @@ class CeylonTypes(Unit unit) {
     // Dart Specific Types and Declarations
     /////////////////////////////////////////////
 
-    Package? interopPackage
-        =>  unit.\ipackage.\imodule.getPackage("ceylon.interop.dart");
+    Package interopPackage
+        // Hack: this unit's module may not import ceylon.interop.dart, even though it
+        // will always be available (it's imported by the language module, and force
+        // imported within all generated dart files). So, use the language module to
+        // find it.
+        =>  unit.\ipackage.\imodule.languageModule.getPackage("ceylon.interop.dart");
+
+    Package implMetaPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta");
 
     shared
-    Class? asyncDeclaration {
-        if (exists interopPackage = this.interopPackage) {
-            assert (is Class async
-                =   interopPackage
-                    .getDirectMember("AsyncAnnotation", null, false));
-            return async;
-        }
-        return null;
+    Class asyncDeclaration {
+        assert (is Class async
+            =   interopPackage
+                .getDirectMember("AsyncAnnotation", null, false));
+        return async;
+    }
+
+    shared
+    Class ceylonIterable {
+        assert (is Class c
+            =   interopPackage
+                .getDirectMember("CeylonIterable", null, false));
+        return c;
     }
 
     shared
@@ -139,23 +151,24 @@ class CeylonTypes(Unit unit) {
         =>  declaration.qualifiedNameString == "ceylon.interop.dart::AsyncAnnotation";
 
     shared
-    Function? awaitDeclaration {
-        if (exists interopPackage = this.interopPackage) {
-            assert (is Function await
-                =   interopPackage
-                    .getDirectMember("await", null, false));
-            return await;
-        }
-        return null;
+    Function awaitDeclaration {
+        assert (is Function await
+            =   interopPackage
+                .getDirectMember("await", null, false));
+        return await;
     }
 
     shared
-    Boolean isAwaitDeclaration(Function declaration) {
-        if (exists await = awaitDeclaration) {
-            return declaration == await;
-        }
-        return false;
-    }
+    Class jsonObjectDeclaration
+        =>  assertClass(interopPackage.getDirectMember("JsonObject", null, false));
+
+    shared
+    Class moduleImplDeclaration
+        =>  assertClass(implMetaPackage.getDirectMember("ModuleImpl", null, false));
+
+    shared
+    Boolean isAwaitDeclaration(Function declaration)
+        =>  declaration == awaitDeclaration;
 
     /////////////////////////////////////////////
     // Boolean isCeylonX(type)
