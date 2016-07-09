@@ -174,7 +174,7 @@ Map<String,String> gatherDependencies(
         Map<String,String> dependencies, RepositoryManager repositoryManager)
     =>  dependencies.map((pair)
         =>  let (name -> version = pair)
-            (if (name.startsWith("ceylon.dart.runtime."))
+            (if (name in ["ceylon.dart.runtime.web", "ceylon.dart.runtime.standard"])
                 // Let ceylon.dart.runtime.web and
                 // ceylon.dart.runtime.standard masquerade as
                 // ceylon.dart.runtime.core. The name assigned here will be used

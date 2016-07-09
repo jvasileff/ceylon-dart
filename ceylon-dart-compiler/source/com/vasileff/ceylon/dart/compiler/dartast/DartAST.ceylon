@@ -429,7 +429,7 @@ class DartListLiteral(const, elements)
     shared actual
     void write(CodeWriter writer) {
         if (const) {
-           writer.write("const ");
+           writer.write("const");
         }
         writer.write("[");
         for (e in elements.interpose(", ")) {
@@ -441,6 +441,47 @@ class DartListLiteral(const, elements)
             }
         }
         writer.write("]");
+    }
+}
+
+"A map literal."
+shared
+class DartMapLiteral(const, entries)
+        extends DartTypedLiteral() {
+
+    Boolean const;
+    [DartMapLiteralEntry*] entries;
+
+    shared actual
+    void write(CodeWriter writer) {
+        if (const) {
+           writer.write("const");
+        }
+        writer.write("{");
+        for (e in entries.interpose(",")) {
+            if (is DartMapLiteralEntry e) {
+                e.write(writer);
+            }
+            else {
+                writer.write(e);
+            }
+        }
+        writer.write("}");
+    }
+}
+
+shared
+class DartMapLiteralEntry(key, item)
+        extends DartNode() {
+
+    DartExpression key;
+    DartExpression item;
+
+    shared actual
+    void write(CodeWriter writer) {
+        key.write(writer);
+        writer.write(":");
+        item.write(writer);
     }
 }
 

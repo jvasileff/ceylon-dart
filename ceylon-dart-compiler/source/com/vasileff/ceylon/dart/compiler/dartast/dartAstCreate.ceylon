@@ -124,3 +124,29 @@ DartVariableDeclarationStatement createVariableDeclaration(
                 }];
             };
         };
+
+shared
+DartExpressionStatement createAssignmentStatement(
+        DartExpression lhsExpression,
+        DartAssignmentOperator operator,
+        DartExpression rhsExpression)
+    =>  DartExpressionStatement {
+            DartAssignmentExpression {
+                lhsExpression;
+                operator;
+                rhsExpression;
+            };
+        };
+
+shared
+DartExpressionStatement createMethodInvocationStatement(
+        DartExpression? target,
+        DartSimpleIdentifier methodName,
+        DartArgumentList argumentList)
+    =>  DartExpressionStatement {
+            DartMethodInvocation {
+                target;
+                methodName;
+                argumentList;
+            };
+        };

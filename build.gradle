@@ -130,8 +130,10 @@ project('ceylon-dart-language') {
 
         ext.destinationDir = file("build/modules-dart/main")
         ext.sourceDir = file("source")
+        ext.sourceDir2 = file("support")
 
         inputs.dir sourceDir
+        inputs.dir sourceDir2
         outputs.dir destinationDir
 
         String repository = project(':ceylon-dart-compiler')
@@ -142,7 +144,7 @@ project('ceylon-dart-language') {
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
                 'com.vasileff.ceylon.dart.compiler/1.2.3-DP2-SNAPSHOT',
-                "${sourceDir.toString()}",
+                "${sourceDir.toString()}:${sourceDir2.toString()}",
                 "${destinationDir.toString()}",
                 file("modules-dart")
     }

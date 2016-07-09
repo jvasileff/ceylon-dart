@@ -3,8 +3,11 @@ import "dart:core" as $dart$core;
 import "dart:math" as $dart$math;
 import "dart:async" as $dart$async;
 import "dart:collection" as $dart$collection;
-import "build/modules-dart/main/ceylon/interop/dart/1.2.2/ceylon.interop.dart-1.2.2.dart" as $ceylon$interop$dart;
-import "build/modules-dart/main/ceylon/dart/runtime/core/1.2.2/ceylon.dart.runtime.core-1.2.2.dart" as $ceylon$dart$runtime$core;
+import "build/modules-dart/main/ceylon/interop/dart/1.2.3/ceylon.interop.dart-1.2.3.dart" as $ceylon$interop$dart;
+import "build/modules-dart/main/ceylon/dart/runtime/model/1.2.3/ceylon.dart.runtime.model-1.2.3.dart" as $ceylon$dart$runtime$model;
+import "build/modules-dart/main/ceylon/dart/runtime/core/1.2.3/ceylon.dart.runtime.core-1.2.3.dart" as $ceylon$dart$runtime$core;
+import "build/modules-dart/main/ceylon/dart/runtime/structures/1.2.3/ceylon.dart.runtime.structures-1.2.3.dart" as $ceylon$dart$runtime$structures;
+import "build/modules-dart/main/ceylon/collection/1.2.3/ceylon.collection-1.2.3.dart" as $ceylon$collection;
 import "source/ceylon/language/module.dart";
 
 Callable $package$and([Callable p, Callable q]) => new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean((([$dart$core.Object val]) => $dartBool(p.f(val) as Boolean) && $dartBool(q.f(val) as Boolean))($0)));
@@ -2987,6 +2990,121 @@ class impl$MemberImpl implements dart$$Basic, serialization$Member {
         }
     }
 }
+class impl$meta$ModuleImpl implements dart$$Basic, meta$declaration$Module {
+    impl$meta$ModuleImpl([$ceylon$dart$runtime$model.Module _$delegate]) {
+        this._$delegate = _$delegate;
+    }
+    $ceylon$dart$runtime$model.Module _$delegate;
+    $dart$core.bool annotated() => $dartBool($package$nothing as Boolean);
+    Sequential annotations() => $package$nothing as Sequential;
+    Sequential get dependencies => $package$nothing as Sequential;
+    meta$declaration$Package findImportedPackage([$dart$core.String name]) => (() {
+        $dart$core.bool doElse$0 = true;
+        {
+            $ceylon$dart$runtime$model.Package tmp$1 = _$delegate.findPackage(name);
+            if (!(null == tmp$1)) {
+                $ceylon$dart$runtime$model.Package p;
+                p = tmp$1;
+                doElse$0 = false;
+                return new impl$meta$PackageImpl(p);
+            }
+        }
+        if (doElse$0) {
+            return null;
+        }
+    })();
+    meta$declaration$Package findPackage([$dart$core.String name]) => (() {
+        $dart$core.bool doElse$2 = true;
+        {
+            $ceylon$dart$runtime$model.Package tmp$3 = _$delegate.findDirectPackage(name);
+            if (!(null == tmp$3)) {
+                $ceylon$dart$runtime$model.Package p;
+                p = tmp$3;
+                doElse$2 = false;
+                return new impl$meta$PackageImpl(p);
+            }
+        }
+        if (doElse$2) {
+            return null;
+        }
+    })();
+    Sequential get members => _$delegate.packages.collect(new dart$Callable(([$ceylon$dart$runtime$model.Package $0]) => new impl$meta$PackageImpl($0)));
+    $dart$core.String get name => _$delegate.nameAsString;
+    $dart$core.String get qualifiedName => _$delegate.nameAsString;
+    Resource resourceByPath([$dart$core.String path]) => $package$nothing as Resource;
+    $dart$core.String get version => (($dart$core.String $lhs$) => null == $lhs$ ? "unknownVersion" : $lhs$)(_$delegate.version);
+    $dart$core.String toString() => ((("module " + name) + "/") + version) + "";
+}
+class impl$meta$PackageImpl implements dart$$Basic, meta$declaration$Package {
+    impl$meta$PackageImpl([$ceylon$dart$runtime$model.Package _$delegate]) {
+        this._$delegate = _$delegate;
+    }
+    $ceylon$dart$runtime$model.Package _$delegate;
+    $dart$core.bool annotated() => $dartBool($package$nothing as Boolean);
+    Sequential annotatedMembers() => $package$nothing as Sequential;
+    Sequential annotations() => $package$nothing as Sequential;
+    meta$declaration$Module get container => new impl$meta$ModuleImpl(_$delegate.mod);
+    meta$declaration$AliasDeclaration getAlias([$dart$core.String name]) => $package$nothing as meta$declaration$AliasDeclaration;
+    meta$declaration$ClassOrInterfaceDeclaration getClassOrInterface([$dart$core.String name]) => $package$nothing as meta$declaration$ClassOrInterfaceDeclaration;
+    meta$declaration$FunctionDeclaration getFunction([$dart$core.String name]) => $package$nothing as meta$declaration$FunctionDeclaration;
+    $dart$core.Object getMember([$dart$core.String name]) => $package$nothing;
+    meta$declaration$ValueDeclaration getValue([$dart$core.String name]) => $package$nothing as meta$declaration$ValueDeclaration;
+    Sequential members() => _$delegate.members.items.narrow().map(new dart$Callable(([$ceylon$dart$runtime$model.Class $0]) => new impl$meta$ClassWithConstructorsDeclarationImpl($0))).narrow().sequence();
+    $dart$core.String get name => qualifiedName;
+    $dart$core.String get qualifiedName => _$delegate.qualifiedName;
+    $dart$core.bool get shared => $dartBool($package$nothing as Boolean);
+    $dart$core.String toString() => ("package " + name) + "";
+}
+class impl$meta$ClassWithConstructorsDeclarationImpl implements dart$$Basic, meta$declaration$ClassWithConstructorsDeclaration {
+    impl$meta$ClassWithConstructorsDeclarationImpl([$ceylon$dart$runtime$model.Class _$delegate]) {
+        this._$delegate = _$delegate;
+    }
+    $ceylon$dart$runtime$model.Class _$delegate;
+    $dart$core.bool get abstract => _$delegate.isAbstract;
+    $dart$core.bool get actual => _$delegate.isActual;
+    $dart$core.bool annotated() => $dartBool($package$nothing as Boolean);
+    Sequential annotatedConstructorDeclarations() => $package$nothing as Sequential;
+    Sequential annotatedDeclaredMemberDeclarations() => $package$nothing as Sequential;
+    Sequential annotatedMemberDeclarations() => $package$nothing as Sequential;
+    $dart$core.bool get annotation => $dartBool($package$nothing as Boolean);
+    Sequential annotations() => $package$nothing as Sequential;
+    $dart$core.bool get anonymous => _$delegate.isAnonymous;
+    meta$model$ClassOrInterface apply([Sequential typeArguments]) => $package$nothing as meta$model$ClassOrInterface;
+    Sequential get caseTypes => $package$nothing as Sequential;
+    meta$model$Class classApply([Sequential typeArguments]) => $package$nothing as meta$model$Class;
+    $dart$core.Object get container => $package$nothing;
+    meta$declaration$Module get containingModule => new impl$meta$ModuleImpl(_$delegate.mod);
+    meta$declaration$Package get containingPackage => new impl$meta$PackageImpl(_$delegate.pkg);
+    Sequential declaredMemberDeclarations() => $package$nothing as Sequential;
+    $dart$core.bool get $default => _$delegate.isDefault;
+    meta$declaration$CallableConstructorDeclaration get defaultConstructor => $package$nothing as meta$declaration$CallableConstructorDeclaration;
+    meta$declaration$OpenClassType get extendedType => $package$nothing as meta$declaration$OpenClassType;
+    $dart$core.bool get $final => _$delegate.isFinal;
+    $dart$core.bool get formal => _$delegate.isFormal;
+    $dart$core.Object getDeclaredMemberDeclaration([$dart$core.String name]) => $package$nothing;
+    $dart$core.Object getMemberDeclaration([$dart$core.String name]) => $package$nothing;
+    meta$declaration$FunctionOrValueDeclaration getParameterDeclaration([$dart$core.String name]) => $package$nothing as meta$declaration$FunctionOrValueDeclaration;
+    meta$declaration$TypeParameter getTypeParameterDeclaration([$dart$core.String name]) => $package$nothing as meta$declaration$TypeParameter;
+    $dart$core.bool get isAlias => _$delegate.isAlias;
+    $dart$core.Object memberApply([meta$model$Type containerType, Sequential typeArguments]) => $package$nothing;
+    meta$model$MemberClass memberClassApply([meta$model$Type containerType, Sequential typeArguments]) => $package$nothing as meta$model$MemberClass;
+    Sequential memberDeclarations() => $package$nothing as Sequential;
+    $dart$core.String get name => _$delegate.name;
+    meta$declaration$ValueDeclaration get objectValue => $package$nothing as meta$declaration$ValueDeclaration;
+    meta$declaration$OpenType get openType => $package$nothing as meta$declaration$OpenType;
+    Sequential get parameterDeclarations => $package$nothing as Sequential;
+    $dart$core.String get qualifiedName => _$delegate.qualifiedName;
+    Sequential get satisfiedTypes => $package$nothing as Sequential;
+    $dart$core.bool get serializable => $dartBool($package$nothing as Boolean);
+    $dart$core.bool get shared => _$delegate.isShared;
+    $dart$core.bool get toplevel => _$delegate.isToplevel;
+    Sequential get typeParameterDeclarations => $package$nothing as Sequential;
+    Sequential constructorDeclarations() => $package$nothing as Sequential;
+    $dart$core.Object getConstructorDeclaration([$dart$core.String name]) => $package$nothing;
+    $dart$core.String toString() => ("class " + qualifiedName) + "";
+    $dart$core.Object instantiate([$dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) => meta$declaration$ClassDeclaration.$instantiate(this, typeArguments, arguments);
+    $dart$core.Object memberInstantiate([$dart$core.Object container, $dart$core.Object typeArguments = $package$dart$default, Sequential arguments]) => meta$declaration$ClassDeclaration.$memberInstantiate(this, container, typeArguments, arguments);
+}
 class impl$outerImpl_ implements dart$$Basic, serialization$Outer {
     impl$outerImpl_() {}
     $dart$core.Object referred([$dart$core.Object instance]) {
@@ -3102,8 +3220,20 @@ class Integer implements dart$$Object, Integral, Binary, Exponentiable {
     $dart$core.double get nearestFloat => _$integer.toDouble();
     Integer get predecessor => $ceylonInteger($dartInt(this) - 1);
     Integer get successor => $ceylonInteger($dartInt(this) + 1);
-    Integer neighbour([$dart$core.int offset]) => $ceylonInteger($dartInt(this) + offset);
-    $dart$core.int offset([Integer other]) => $dartInt(this) - $dartInt(other);
+    Integer neighbour([$dart$core.int offset]) {
+        $dart$core.int result = $dartInt(this) + offset;
+        if (!((result >= $package$runtime.minIntegerValue) && (result <= $package$runtime.maxIntegerValue))) {
+            throw new OverflowException(((("" + $dartInt(this).toString()) + " has no neighbour with offset ") + offset.toString()) + "");
+        }
+        return $ceylonInteger(result);
+    }
+    $dart$core.int offset([Integer other]) {
+        $dart$core.int result = $dartInt(this) - $dartInt(other);
+        if (!((result >= $package$runtime.minIntegerValue) && (result <= $package$runtime.maxIntegerValue))) {
+            throw new OverflowException(((("offset from " + $dartInt(this).toString()) + " to ") + $dartInt(other).toString()) + " cannot be represented as an Integer.");
+        }
+        return result;
+    }
     $dart$core.int offsetSign([Integer other]) => $ceylonInteger(offset(other)).sign;
     $dart$core.bool get unit => $dartInt(this) == 1;
     $dart$core.bool get zero => $dartInt(this) == 0;
@@ -10254,171 +10384,233 @@ $dart$core.bool $package$parseBoolean([$dart$core.String string]) {{
 
 $dart$core.bool parseBoolean([$dart$core.String string]) => $package$parseBoolean(string);
 
-$dart$core.double $package$parseFloat([$dart$core.String string]) {
-    $dart$core.int sign;
-    $dart$core.String unsignedPart;
-    if ($ceylonString(string).startsWith($ceylonString("-"))) {
-        sign = -1;
-        unsignedPart = $dartString($ceylonString(string).spanFrom($ceylonInteger(1)));
-    } else if ($ceylonString(string).startsWith($ceylonString("+"))) {
-        sign = 1;
-        unsignedPart = $dartString($ceylonString(string).spanFrom($ceylonInteger(1)));
-    } else {
-        sign = 1;
-        unsignedPart = string;
+class ParseFloatState implements dart$$Basic {
+    void _$init$ParseFloatState([$dart$core.int $bitmap]) {
+        if (0 != ($bitmap & 1024)) {}
+        if (0 != ($bitmap & 512)) {}
+        if (0 != ($bitmap & 256)) {}
+        if (0 != ($bitmap & 128)) {}
+        if (0 != ($bitmap & 64)) {}
+        if (0 != ($bitmap & 32)) {}
+        if (0 != ($bitmap & 16)) {}
+        if (0 != ($bitmap & 8)) {}
+        if (0 != ($bitmap & 4)) {}
+        if (0 != ($bitmap & 2)) {}
+        if (0 != ($bitmap & 1)) {}
     }
-    $dart$core.String wholePart;
-    $dart$core.String fractionalPart;
-    $dart$core.String rest;
-    {
-        $dart$core.bool doElse$0 = true;
-        {
-            $dart$core.int tmp$1 = $ceylonString(unsignedPart).firstOccurrence(new Character.$fromInt(46));
-            if (!(null == tmp$1)) {
-                $dart$core.int dot;
-                dot = tmp$1;
-                doElse$0 = false;
-                wholePart = $dartString($ceylonString(unsignedPart).spanTo($ceylonInteger(dot - 1)));
-                $dart$core.String afterWholePart = $dartString($ceylonString(unsignedPart).spanFrom($ceylonInteger(dot + 1)));
-                {
-                    $dart$core.bool doElse$2 = true;
-                    {
-                        $dart$core.int tmp$3 = $ceylonString(afterWholePart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
-                        if (!(null == tmp$3)) {
-                            $dart$core.int mag;
-                            mag = tmp$3;
-                            doElse$2 = false;
-                            fractionalPart = $dartString($ceylonString(afterWholePart).spanTo($ceylonInteger(mag - 1)));
-                            rest = $dartString($ceylonString(afterWholePart).spanFrom($ceylonInteger(mag)));
-                        }
-                    }
-                    if (doElse$2) {
-                        fractionalPart = afterWholePart;
-                        rest = null;
-                    }
-                }
-            }
-        }
-        if (doElse$0) {{
-                $dart$core.bool doElse$4 = true;
-                {
-                    $dart$core.int tmp$5 = $ceylonString(unsignedPart).firstIndexWhere(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).letter)));
-                    if (!(null == tmp$5)) {
-                        $dart$core.int mag;
-                        mag = tmp$5;
-                        doElse$4 = false;
-                        wholePart = $dartString($ceylonString(unsignedPart).spanTo($ceylonInteger(mag - 1)));
-                        rest = $dartString($ceylonString(unsignedPart).spanFrom($ceylonInteger(mag)));
-                    }
-                }
-                if (doElse$4) {
-                    wholePart = unsignedPart;
-                    rest = null;
-                }
-            }
-            fractionalPart = "0";
-        }
+    ParseFloatState.start() : this.start$d(1024);
+    ParseFloatState.start$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 1024);
     }
-    if ((!$ceylonString(wholePart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit)))) || (!$ceylonString(fractionalPart).every(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit))))) {
-        return null;
+    ParseFloatState.afterPlusMinus() : this.afterPlusMinus$d(512);
+    ParseFloatState.afterPlusMinus$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 512);
     }
-    $dart$core.String usableWholePart = $dartString($ceylonString(wholePart).measure($ceylonInteger(0), $package$maximumIntegerExponent));
-    $dart$core.String usableFractionalPart = $dartString($ceylonString(fractionalPart).measure($ceylonInteger(0), $package$maximumIntegerExponent - $ceylonString(usableWholePart).size));
-    $dart$core.String digits = usableWholePart + usableFractionalPart;
-    $dart$core.int shift = (($dart$core.int $lhs$) => null == $lhs$ ? $ceylonString(usableFractionalPart).size : $lhs$)($ceylonString(usableFractionalPart).empty ? $ceylonString(usableWholePart).size - $ceylonString(wholePart).size : null);
-    $dart$core.int exponent;
-    {
-        $dart$core.bool doElse$6 = true;
-        if (!(null == rest)) {
-            doElse$6 = false;
-            {
-                $dart$core.bool doElse$7 = true;
-                {
-                    $dart$core.int tmp$8 = $package$parseFloatExponent(rest);
-                    if (!(null == tmp$8)) {
-                        $dart$core.int magnitude;
-                        magnitude = tmp$8;
-                        doElse$7 = false;
-                        exponent = magnitude - shift;
-                    }
-                }
-                if (doElse$7) {
-                    return null;
-                }
-            }
-        }
-        if (doElse$6) {
-            $dart$core.Object rest$9;
-            rest$9 = $ceylonString(rest);
-            exponent = -shift;
-        }
+    ParseFloatState.digitsBeforeDecimal() : this.digitsBeforeDecimal$d(256);
+    ParseFloatState.digitsBeforeDecimal$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 256);
     }
-    {
-        $dart$core.int tmp$10 = $package$parseInteger(digits);
-        if (!(null == tmp$10)) {
-            $dart$core.int unsigned;
-            unsigned = tmp$10;
-            $dart$core.double signed = (($dart$core.double $lhs$) => null == $lhs$ ? (sign * unsigned).toDouble() : $lhs$)(unsigned == 0 ? 0.toDouble() * $ceylonInteger(sign).float : null);
-            $dart$core.int exponentMagnitude = exponent.abs();
-            if (exponentMagnitude == 0) {
-                return signed;
-            } else if (exponentMagnitude <= $package$maximumIntegerExponent) {
-                $dart$core.int scale = $dartInt($ceylonInteger(10).power($ceylonInteger(exponentMagnitude)));
-                return (($dart$core.double $lhs$) => null == $lhs$ ? signed * scale.toDouble() : $lhs$)(exponent < 0 ? signed / scale.toDouble() : null);
-            } else {
-                return signed * $dartDouble($ceylonFloat(10.0).power($ceylonFloat(exponent.toDouble())));
-            }
-        }
+    ParseFloatState.afterJustDecimal() : this.afterJustDecimal$d(128);
+    ParseFloatState.afterJustDecimal$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 128);
     }
-    return null;
+    ParseFloatState.afterDecimal() : this.afterDecimal$d(64);
+    ParseFloatState.afterDecimal$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 64);
+    }
+    ParseFloatState.digitsAfterDecimal() : this.digitsAfterDecimal$d(32);
+    ParseFloatState.digitsAfterDecimal$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 32);
+    }
+    ParseFloatState.afterE() : this.afterE$d(16);
+    ParseFloatState.afterE$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 16);
+    }
+    ParseFloatState.exponentDigits() : this.exponentDigits$d(8);
+    ParseFloatState.exponentDigits$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 8);
+    }
+    ParseFloatState.afterEPlusMinus() : this.afterEPlusMinus$d(4);
+    ParseFloatState.afterEPlusMinus$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 4);
+    }
+    ParseFloatState.afterSuffix() : this.afterSuffix$d(2);
+    ParseFloatState.afterSuffix$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 2);
+    }
+    ParseFloatState.invalid() : this.invalid$d(1);
+    ParseFloatState.invalid$d([$dart$core.int $bitmap]) {
+        _$init$ParseFloatState($bitmap | 1);
+    }
 }
+ParseFloatState _$s$ParseFloatState$start;
 
-$dart$core.double parseFloat([$dart$core.String string]) => $package$parseFloat(string);
+ParseFloatState get $package$$new$ParseFloatState$start => _$s$ParseFloatState$start != null ? _$s$ParseFloatState$start : _$s$ParseFloatState$start = new ParseFloatState.start();
 
-$dart$core.int get $package$maximumIntegerExponent => 17;
+ParseFloatState _$s$ParseFloatState$afterPlusMinus;
 
-$dart$core.int get maximumIntegerExponent => $package$maximumIntegerExponent;
+ParseFloatState get $package$$new$ParseFloatState$afterPlusMinus => _$s$ParseFloatState$afterPlusMinus != null ? _$s$ParseFloatState$afterPlusMinus : _$s$ParseFloatState$afterPlusMinus = new ParseFloatState.afterPlusMinus();
 
-$dart$core.int $package$parseFloatExponent([$dart$core.String string]) {{
-        $dart$core.String switch$11 = string;
-        if (switch$11 == "k") {
-            return 3;
-        } else if (switch$11 == "M") {
-            return 6;
-        } else if (switch$11 == "G") {
-            return 9;
-        } else if (switch$11 == "T") {
-            return 12;
-        } else if (switch$11 == "P") {
-            return 15;
-        } else if (switch$11 == "m") {
-            return -3;
-        } else if (switch$11 == "u") {
-            return -6;
-        } else if (switch$11 == "n") {
-            return -9;
-        } else if (switch$11 == "p") {
-            return -12;
-        } else if (switch$11 == "f") {
-            return -15;
-        } else {
-            if ($ceylonString($ceylonString(string).lowercased).startsWith($ceylonString("e")) && $ceylonString(string).rest.every($package$digitOrSign)) {
-                return $package$parseInteger($dartString($ceylonString(string).rest));
-            } else {
+ParseFloatState _$s$ParseFloatState$digitsBeforeDecimal;
+
+ParseFloatState get $package$$new$ParseFloatState$digitsBeforeDecimal => _$s$ParseFloatState$digitsBeforeDecimal != null ? _$s$ParseFloatState$digitsBeforeDecimal : _$s$ParseFloatState$digitsBeforeDecimal = new ParseFloatState.digitsBeforeDecimal();
+
+ParseFloatState _$s$ParseFloatState$afterJustDecimal;
+
+ParseFloatState get $package$$new$ParseFloatState$afterJustDecimal => _$s$ParseFloatState$afterJustDecimal != null ? _$s$ParseFloatState$afterJustDecimal : _$s$ParseFloatState$afterJustDecimal = new ParseFloatState.afterJustDecimal();
+
+ParseFloatState _$s$ParseFloatState$afterDecimal;
+
+ParseFloatState get $package$$new$ParseFloatState$afterDecimal => _$s$ParseFloatState$afterDecimal != null ? _$s$ParseFloatState$afterDecimal : _$s$ParseFloatState$afterDecimal = new ParseFloatState.afterDecimal();
+
+ParseFloatState _$s$ParseFloatState$digitsAfterDecimal;
+
+ParseFloatState get $package$$new$ParseFloatState$digitsAfterDecimal => _$s$ParseFloatState$digitsAfterDecimal != null ? _$s$ParseFloatState$digitsAfterDecimal : _$s$ParseFloatState$digitsAfterDecimal = new ParseFloatState.digitsAfterDecimal();
+
+ParseFloatState _$s$ParseFloatState$afterE;
+
+ParseFloatState get $package$$new$ParseFloatState$afterE => _$s$ParseFloatState$afterE != null ? _$s$ParseFloatState$afterE : _$s$ParseFloatState$afterE = new ParseFloatState.afterE();
+
+ParseFloatState _$s$ParseFloatState$exponentDigits;
+
+ParseFloatState get $package$$new$ParseFloatState$exponentDigits => _$s$ParseFloatState$exponentDigits != null ? _$s$ParseFloatState$exponentDigits : _$s$ParseFloatState$exponentDigits = new ParseFloatState.exponentDigits();
+
+ParseFloatState _$s$ParseFloatState$afterEPlusMinus;
+
+ParseFloatState get $package$$new$ParseFloatState$afterEPlusMinus => _$s$ParseFloatState$afterEPlusMinus != null ? _$s$ParseFloatState$afterEPlusMinus : _$s$ParseFloatState$afterEPlusMinus = new ParseFloatState.afterEPlusMinus();
+
+ParseFloatState _$s$ParseFloatState$afterSuffix;
+
+ParseFloatState get $package$$new$ParseFloatState$afterSuffix => _$s$ParseFloatState$afterSuffix != null ? _$s$ParseFloatState$afterSuffix : _$s$ParseFloatState$afterSuffix = new ParseFloatState.afterSuffix();
+
+ParseFloatState _$s$ParseFloatState$invalid;
+
+ParseFloatState get $package$$new$ParseFloatState$invalid => _$s$ParseFloatState$invalid != null ? _$s$ParseFloatState$invalid : _$s$ParseFloatState$invalid = new ParseFloatState.invalid();
+
+ParseFloatState get $new$ParseFloatState$start => $package$$new$ParseFloatState$start;
+
+ParseFloatState get $new$ParseFloatState$afterPlusMinus => $package$$new$ParseFloatState$afterPlusMinus;
+
+ParseFloatState get $new$ParseFloatState$digitsBeforeDecimal => $package$$new$ParseFloatState$digitsBeforeDecimal;
+
+ParseFloatState get $new$ParseFloatState$afterJustDecimal => $package$$new$ParseFloatState$afterJustDecimal;
+
+ParseFloatState get $new$ParseFloatState$afterDecimal => $package$$new$ParseFloatState$afterDecimal;
+
+ParseFloatState get $new$ParseFloatState$digitsAfterDecimal => $package$$new$ParseFloatState$digitsAfterDecimal;
+
+ParseFloatState get $new$ParseFloatState$afterE => $package$$new$ParseFloatState$afterE;
+
+ParseFloatState get $new$ParseFloatState$exponentDigits => $package$$new$ParseFloatState$exponentDigits;
+
+ParseFloatState get $new$ParseFloatState$afterEPlusMinus => $package$$new$ParseFloatState$afterEPlusMinus;
+
+ParseFloatState get $new$ParseFloatState$afterSuffix => $package$$new$ParseFloatState$afterSuffix;
+
+ParseFloatState get $new$ParseFloatState$invalid => $package$$new$ParseFloatState$invalid;
+
+$dart$core.double $package$parseFloat([$dart$core.String string]) {
+    ParseFloatState state = $package$$new$ParseFloatState$start;
+    $dart$core.int size = 0;
+    $dart$core.int suffixExponent = null;
+    {
+        $dart$core.Object element$1;
+        Iterator iterator$0 = $ceylonString(string).iterator();
+        while ((element$1 = iterator$0.next()) is !Finished) {
+            Character c;
+            {
+                c = element$1 as Character;
+            }
+            size = $dartInt($ceylonInteger(size).successor);
+            state = (() {
+                ParseFloatState switch$2 = state;
+                if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$start)) {
+                    return (c == (new Character.$fromInt(43))) || (c == (new Character.$fromInt(45))) ? $package$$new$ParseFloatState$afterPlusMinus : (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$digitsBeforeDecimal : c == (new Character.$fromInt(46)) ? $package$$new$ParseFloatState$afterJustDecimal : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$afterPlusMinus)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$digitsBeforeDecimal : c == (new Character.$fromInt(46)) ? $package$$new$ParseFloatState$afterJustDecimal : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$digitsBeforeDecimal)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$digitsBeforeDecimal : c == (new Character.$fromInt(46)) ? $package$$new$ParseFloatState$afterDecimal : (c == (new Character.$fromInt(101))) || (c == (new Character.$fromInt(69))) ? $package$$new$ParseFloatState$afterE : $ceylonString("PTGMkmunpf").contains(c) ? $package$$new$ParseFloatState$afterSuffix : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$afterJustDecimal)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$digitsAfterDecimal : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$digitsAfterDecimal) || $dart$core.identical(switch$2, $package$$new$ParseFloatState$afterDecimal)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$digitsAfterDecimal : (c == (new Character.$fromInt(101))) || (c == (new Character.$fromInt(69))) ? $package$$new$ParseFloatState$afterE : $ceylonString("PTGMkmunpf").contains(c) ? $package$$new$ParseFloatState$afterSuffix : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$afterE)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$exponentDigits : (c == (new Character.$fromInt(43))) || (c == (new Character.$fromInt(45))) ? $package$$new$ParseFloatState$afterEPlusMinus : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$exponentDigits) || $dart$core.identical(switch$2, $package$$new$ParseFloatState$afterEPlusMinus)) {
+                    return (c >= (new Character.$fromInt(48))) && (c <= (new Character.$fromInt(57))) ? $package$$new$ParseFloatState$exponentDigits : $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$afterSuffix)) {
+                    return $package$$new$ParseFloatState$invalid;
+                } else if ($dart$core.identical(switch$2, $package$$new$ParseFloatState$invalid)) {
+                    return $package$$new$ParseFloatState$invalid;
+                } else {
+                    throw new AssertionError("Supposedly exhaustive switch was not exhaustive");
+                }
+            })();
+            if (state == $package$$new$ParseFloatState$afterSuffix) {
+                suffixExponent = $package$parseSuffix(c);
+            }
+            if (state == $package$$new$ParseFloatState$invalid) {
                 return null;
             }
         }
     }
+    if (!(new Tuple.$withList([$package$$new$ParseFloatState$digitsBeforeDecimal, $package$$new$ParseFloatState$afterDecimal, $package$$new$ParseFloatState$digitsAfterDecimal, $package$$new$ParseFloatState$exponentDigits, $package$$new$ParseFloatState$afterSuffix])).contains(state)) {
+        return null;
+    }
+    {
+        $dart$core.bool doElse$3 = true;
+        {
+            $dart$core.int tmp$4 = suffixExponent;
+            if (!(null == tmp$4)) {
+                $dart$core.int exponent;
+                exponent = tmp$4;
+                doElse$3 = false;
+                return $package$nativeParseFloat(((("" + $dartString($ceylonString(string).spanTo($ceylonInteger(size - 2)))) + "E") + exponent.toString()) + "");
+            }
+        }
+        if (doElse$3) {
+            return $package$nativeParseFloat(string);
+        }
+    }
 }
 
-$dart$core.int parseFloatExponent([$dart$core.String string]) => $package$parseFloatExponent(string);
+$dart$core.double parseFloat([$dart$core.String string]) => $package$parseFloat(string);
 
-Callable $package$digitOrSign = $package$or(new dart$Callable(([$dart$core.Object $r]) => $ceylonBoolean(($r as Character).digit)), (() {
-    String $r = $ceylonString("+-");
-    return new dart$Callable(([$dart$core.Object $0]) => $ceylonBoolean($r.contains($0)));
-})());
+$dart$core.int $package$parseSuffix([Character suffix]) {{
+        Character switch$5 = suffix;
+        if (switch$5 == (new Character.$fromInt(80))) {
+            return 15;
+        } else if (switch$5 == (new Character.$fromInt(84))) {
+            return 12;
+        } else if (switch$5 == (new Character.$fromInt(71))) {
+            return 9;
+        } else if (switch$5 == (new Character.$fromInt(77))) {
+            return 6;
+        } else if (switch$5 == (new Character.$fromInt(107))) {
+            return 3;
+        } else if (switch$5 == (new Character.$fromInt(109))) {
+            return -3;
+        } else if (switch$5 == (new Character.$fromInt(117))) {
+            return -6;
+        } else if (switch$5 == (new Character.$fromInt(110))) {
+            return -9;
+        } else if (switch$5 == (new Character.$fromInt(112))) {
+            return -12;
+        } else if (switch$5 == (new Character.$fromInt(102))) {
+            return -15;
+        } else {
+            if (!false) {
+                throw new AssertionError("Violated: false");
+            }
+        }
+    }
+}
 
-Callable get digitOrSign => $package$digitOrSign;
+$dart$core.int parseSuffix([Character suffix]) => $package$parseSuffix(suffix);
+
+$dart$core.double $package$nativeParseFloat([$dart$core.String string]) => $dart$core.double.parse(string);
+
+$dart$core.double nativeParseFloat([$dart$core.String string]) => $package$nativeParseFloat(string);
 
 $dart$core.int $package$minRadix = 2;
 
@@ -14057,6 +14249,76 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
         }
         return (($dart$core.int $lhs$) => null == $lhs$ ? -1 : $lhs$)(lastInclusion($ceylonString(string), size - (to as $dart$core.int)));
     }
+    Iterable indexesWhere([Callable selecting]) => dart$functionIterable(new dart$Callable(() {
+        $dart$core.bool step$0$expired$28 = false;
+        $dart$core.bool step$0$29() {
+            if (step$0$expired$28) {
+                return false;
+            }
+            step$0$expired$28 = true;
+            return true;
+        }
+
+        Iterator iterator_1$30;
+        $dart$core.bool step$1$Init$35() {
+            if (iterator_1$30 != null) {
+                return true;
+            }
+            if (!step$0$29()) {
+                return false;
+            }
+            iterator_1$30 = this.indexed.iterator();
+            return true;
+        }
+
+        Integer index$33;
+        Character element$34;
+        $dart$core.bool step$1$36() {
+            while (step$1$Init$35()) {
+                $dart$core.Object next$31;
+                if ((next$31 = iterator_1$30.next()) is !Finished) {
+                    Integer index;
+                    Character element;
+                    {
+                        Entry d$32 = next$31 as Entry;
+                        index = d$32.key as Integer;
+                        element = d$32.item as Character;
+                    }
+                    index$33 = index;
+                    element$34 = element;
+                    return true;
+                }
+                iterator_1$30 = null;
+            }
+            return false;
+        }
+
+        $dart$core.bool step$2$37() {
+            while (step$1$36()) {
+                Integer index = index$33;
+                Character element = element$34;
+                if (!(!(null == element))) {
+                    continue;
+                }
+                if (!$dartBool(selecting.f(element) as Boolean)) {
+                    continue;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        $dart$core.Object step$3$38() {
+            if (!step$2$37()) {
+                return $package$finished;
+            }
+            Integer index = index$33;
+            Character element = element$34;
+            return index;
+        }
+
+        return new dart$Callable(step$3$38);
+    }));
     $dart$core.bool occursAt([$dart$core.int index, $dart$core.Object element]) => SearchableList.$occursAt(this, index, element);
     Iterable occurrences([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurrences(this, element, from, length);
     $dart$core.bool occurs([$dart$core.Object element, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => SearchableList.$occurs(this, element, from, length);
@@ -14074,7 +14336,6 @@ abstract class BaseString implements dart$$Object, SearchableList, BaseStringBox
     List sublistTo([$dart$core.int to]) => List.$sublistTo(this, to);
     List sublist([$dart$core.int from, $dart$core.int to]) => List.$sublist(this, from, to);
     List patch([List list, $dart$core.Object from = $package$dart$default, $dart$core.Object length = $package$dart$default]) => List.$patch(this, list, from, length);
-    Iterable indexesWhere([Callable selecting]) => List.$indexesWhere(this, selecting);
     $dart$core.int firstIndexWhere([Callable selecting]) => List.$firstIndexWhere(this, selecting);
     $dart$core.int lastIndexWhere([Callable selecting]) => List.$lastIndexWhere(this, selecting);
     Sequential collect([Callable collecting]) => List.$collect(this, collecting);
@@ -14557,10 +14818,13 @@ abstract class BaseTuple implements dart$$Object, Sequence {
         return result;
     }
     Sequential spanFrom([Integer from]) {
-        if ($dartInt(from) > lastIndex) {
-            return $package$empty;
+        if ($dartInt(from) <= 0) {
+            return this;
+        } else if ($dartInt(from) < _$list.length) {
+            return $package$tupleWithList(_$list.sublist($dartInt(from)), _$restSequence);
+        } else {
+            return _$restSequence.spanFrom($ceylonInteger($dartInt(from) - _$list.length)) as Sequential;
         }
-        return $package$tupleOfElements(Sequence.$spanFrom(this, from));
     }
     BaseTuple clone() => this;
     Iterator iterator() => List.$iterator(this);
@@ -14706,4 +14970,16 @@ Iterable zipPairs([Iterable firstElements, Iterable secondElements]) => $package
 Iterable $package$zip([Iterable heads, Iterable tails]) => $package$mapPairs(new dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => new Tuple($0, $1)), heads, tails);
 
 Iterable zip([Iterable heads, Iterable tails]) => $package$zip(heads, tails);
+
+const _$jsonModel = const{"\$mod-name":"ceylon.language","\$mod-version":"1.2.3-DP2-SNAPSHOT","ceylon.language":const{"Annotated":const{"mt":"i","nm":"Annotated","sts":const[]},"Annotation":const{"mt":"i","nm":"Annotation","sts":const[]},"AnnotationAnnotation":const{"mt":"c","nm":"AnnotationAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"AnnotationAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"ClassDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"SharedAnnotation":const{"mt":"c","nm":"SharedAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"SharedAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ConstructorDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"Package","pk":"ceylon.language.meta.declaration"}, const{"nm":"Import","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"VariableAnnotation":const{"mt":"c","nm":"VariableAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"VariableAnnotation","pk":"."},"ProgramElement":const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"AbstractAnnotation":const{"mt":"c","nm":"AbstractAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"AbstractAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"ClassDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ConstructorDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"FinalAnnotation":const{"mt":"c","nm":"FinalAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"FinalAnnotation","pk":"."},"ProgramElement":const{"nm":"ClassDeclaration","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"SealedAnnotation":const{"mt":"c","nm":"SealedAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"SealedAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ConstructorDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"ActualAnnotation":const{"mt":"c","nm":"ActualAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"ActualAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"FormalAnnotation":const{"mt":"c","nm":"FormalAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"FormalAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"DefaultAnnotation":const{"mt":"c","nm":"DefaultAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"DefaultAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"LateAnnotation":const{"mt":"c","nm":"LateAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"LateAnnotation","pk":"."},"ProgramElement":const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"NativeAnnotation":const{"mt":"c","nm":"NativeAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"NativeAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"DocAnnotation":const{"mt":"c","nm":"DocAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"DocAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"SeeAnnotation":const{"mt":"c","nm":"SeeAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"SequencedAnnotation","pk":".","ta":const{"Value":const{"nm":"SeeAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"AuthorsAnnotation":const{"mt":"c","nm":"AuthorsAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"AuthorsAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"ThrownExceptionAnnotation":const{"mt":"c","nm":"ThrownExceptionAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"SequencedAnnotation","pk":".","ta":const{"Value":const{"nm":"ThrownExceptionAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ConstructorDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"DeprecationAnnotation":const{"mt":"c","nm":"DeprecationAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"DeprecationAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"TagsAnnotation":const{"mt":"c","nm":"TagsAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"TagsAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"AliasesAnnotation":const{"mt":"c","nm":"AliasesAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"AliasesAnnotation","pk":"."},"ProgramElement":const{"nm":"Annotated","pk":"."},"Type":const{"nm":"Anything","pk":"."}}}]},"LicenseAnnotation":const{"mt":"c","nm":"LicenseAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"LicenseAnnotation","pk":"."},"ProgramElement":const{"nm":"Module","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"OptionalImportAnnotation":const{"mt":"c","nm":"OptionalImportAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"OptionalImportAnnotation","pk":"."},"ProgramElement":const{"nm":"Import","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"SuppressWarningsAnnotation":const{"mt":"c","nm":"SuppressWarningsAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"SuppressWarningsAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ClassOrInterfaceDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"ConstructorDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"Module","pk":"ceylon.language.meta.declaration"}, const{"nm":"Package","pk":"ceylon.language.meta.declaration"}, const{"nm":"Import","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"SerializableAnnotation":const{"mt":"c","nm":"SerializableAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"SerializableAnnotation","pk":"."},"ProgramElement":const{"nm":"ClassDeclaration","pk":"ceylon.language.meta.declaration"},"Type":const{"nm":"Anything","pk":"."}}}]},"SmallAnnotation":const{"mt":"c","nm":"SmallAnnotation","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"OptionalAnnotation","pk":".","ta":const{"Value":const{"nm":"SmallAnnotation","pk":"."},"ProgramElement":const{"comp":"u","l":const[const{"nm":"ValueDeclaration","pk":"ceylon.language.meta.declaration"}, const{"nm":"FunctionDeclaration","pk":"ceylon.language.meta.declaration"}]},"Type":const{"nm":"Anything","pk":"."}}}]},"Anything":const{"mt":"c","nm":"Anything","sts":const[]},"Array":const{"mt":"c","nm":"Array","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"SearchableList","pk":".","ta":const{"Element":const{"nm":"Element"}}}, const{"nm":"Ranged","pk":".","ta":const{"Index":const{"nm":"Integer","pk":"."},"Subrange":const{"nm":"Array","pk":".","ta":const{"Element":const{"nm":"Element"}}},"Element":const{"nm":"Element"}}}]},"ArraySequence":const{"mt":"c","nm":"ArraySequence","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"AssertionError":const{"mt":"c","nm":"AssertionError","super":const{"nm":"Throwable","pk":"."},"sts":const[]},"Basic":const{"mt":"c","nm":"Basic","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Identifiable","pk":"."}]},"Binary":const{"mt":"i","nm":"Binary","sts":const[]},"Boolean":const{"mt":"c","nm":"Boolean","super":const{"nm":"Basic","pk":"."},"sts":const[]},"true":const{"mt":"c","nm":"true","super":const{"nm":"Boolean","pk":"."},"sts":const[]},"false":const{"mt":"c","nm":"false","super":const{"nm":"Boolean","pk":"."},"sts":const[]},"Byte":const{"mt":"c","nm":"Byte","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Binary","pk":".","ta":const{"Other":const{"nm":"Byte","pk":"."}}}, const{"nm":"Invertible","pk":".","ta":const{"Other":const{"nm":"Byte","pk":"."}}}, const{"nm":"Enumerable","pk":".","ta":const{"Other":const{"nm":"Byte","pk":"."}}}]},"Callable":const{"mt":"i","nm":"Callable","sts":const[]},"Category":const{"mt":"i","nm":"Category","sts":const[]},"ChainedIterator":const{"mt":"c","nm":"ChainedIterator","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Iterator","pk":".","ta":const{"Element":const{"comp":"u","l":const[const{"nm":"Element"}, const{"nm":"Other"}]}}}]},"Character":const{"mt":"c","nm":"Character","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Comparable","pk":".","ta":const{"Other":const{"nm":"Character","pk":"."}}}, const{"nm":"Enumerable","pk":".","ta":const{"Other":const{"nm":"Character","pk":"."}}}]},"BaseCharacter":const{"mt":"c","nm":"BaseCharacter","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Comparable","pk":".","ta":const{"Other":const{"nm":"BaseCharacter","pk":"."}}}]},"Collection":const{"mt":"i","nm":"Collection","sts":const[const{"nm":"Iterable","pk":".","ta":const{"Absent":const{"nm":"Null","pk":"."},"Element":const{"nm":"Element"}}}]},"nullElement":const{"mt":"c","nm":"nullElement","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Comparable":const{"mt":"i","nm":"Comparable","sts":const[]},"Comparison":const{"mt":"c","nm":"Comparison","super":const{"nm":"Basic","pk":"."},"sts":const[]},"equal":const{"mt":"c","nm":"equal","super":const{"nm":"Comparison","pk":"."},"sts":const[]},"smaller":const{"mt":"c","nm":"smaller","super":const{"nm":"Comparison","pk":"."},"sts":const[]},"larger":const{"mt":"c","nm":"larger","super":const{"nm":"Comparison","pk":"."},"sts":const[]},"ConstrainedAnnotation":const{"mt":"i","nm":"ConstrainedAnnotation","sts":const[const{"nm":"Annotation","pk":"."}]},"Contextual":const{"mt":"c","nm":"Contextual","super":const{"nm":"Basic","pk":"."},"sts":const[],"\$c":const{"Using":const{"mt":"c","nm":"Using","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Obtainable","pk":"."}]}}},"Correspondence":const{"mt":"i","nm":"Correspondence","sts":const[]},"CycledIterator":const{"mt":"c","nm":"CycledIterator","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Iterator","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Destroyable":const{"mt":"i","nm":"Destroyable","sts":const[const{"nm":"Usable","pk":"."}]},"Empty":const{"mt":"i","nm":"Empty","sts":const[const{"nm":"Sequential","pk":".","ta":const{"Element":const{"nm":"Nothing","pk":"."}}}, const{"nm":"Ranged","pk":".","ta":const{"Index":const{"nm":"Integer","pk":"."},"Subrange":const{"nm":"Empty","pk":"."},"Element":const{"nm":"Nothing","pk":"."}}}]},"empty":const{"mt":"c","nm":"empty","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Empty","pk":"."}]},"emptyIterator":const{"mt":"c","nm":"emptyIterator","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Iterator","pk":".","ta":const{"Element":const{"nm":"Nothing","pk":"."}}}]},"Entry":const{"mt":"c","nm":"Entry","super":const{"nm":"Object","pk":"."},"sts":const[]},"Enumerable":const{"mt":"i","nm":"Enumerable","sts":const[const{"nm":"Ordinal","pk":".","ta":const{"Other":const{"nm":"Other"}}}]},"Exception":const{"mt":"c","nm":"Exception","super":const{"nm":"Throwable","pk":"."},"sts":const[]},"Exponentiable":const{"mt":"i","nm":"Exponentiable","sts":const[const{"nm":"Numeric","pk":".","ta":const{"Other":const{"nm":"This"}}}]},"Finished":const{"mt":"c","nm":"Finished","super":const{"nm":"Basic","pk":"."},"sts":const[]},"finished":const{"mt":"c","nm":"finished","super":const{"nm":"Finished","pk":"."},"sts":const[]},"Float":const{"mt":"c","nm":"Float","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Number","pk":".","ta":const{"Other":const{"nm":"Float","pk":"."}}}, const{"nm":"Exponentiable","pk":".","ta":const{"Other":const{"nm":"Float","pk":"."},"This":const{"nm":"Float","pk":"."}}}]},"Identifiable":const{"mt":"i","nm":"Identifiable","sts":const[]},"InitializationError":const{"mt":"c","nm":"InitializationError","super":const{"nm":"AssertionError","pk":"."},"sts":const[]},"Integer":const{"mt":"c","nm":"Integer","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Integral","pk":".","ta":const{"Other":const{"nm":"Integer","pk":"."}}}, const{"nm":"Binary","pk":".","ta":const{"Other":const{"nm":"Integer","pk":"."}}}, const{"nm":"Exponentiable","pk":".","ta":const{"Other":const{"nm":"Integer","pk":"."},"This":const{"nm":"Integer","pk":"."}}}]},"Integral":const{"mt":"i","nm":"Integral","sts":const[const{"nm":"Number","pk":".","ta":const{"Other":const{"nm":"Other"}}}, const{"nm":"Enumerable","pk":".","ta":const{"Other":const{"nm":"Other"}}}]},"Invertible":const{"mt":"i","nm":"Invertible","sts":const[const{"nm":"Summable","pk":".","ta":const{"Other":const{"nm":"Other"}}}]},"Iterable":const{"mt":"i","nm":"Iterable","sts":const[const{"nm":"Category","pk":".","ta":const{"Element":const{"nm":"Object","pk":"."}}}]},"ElementEntry":const{"mt":"c","nm":"ElementEntry","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"GroupEntry":const{"mt":"c","nm":"GroupEntry","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Iterator":const{"mt":"i","nm":"Iterator","sts":const[]},"language":const{"mt":"c","nm":"language","super":const{"nm":"Basic","pk":"."},"sts":const[]},"List":const{"mt":"i","nm":"List","sts":const[const{"nm":"Collection","pk":".","ta":const{"Element":const{"nm":"Element"}}}, const{"nm":"Correspondence","pk":".","ta":const{"Item":const{"nm":"Element"},"Key":const{"nm":"Integer","pk":"."}}}, const{"nm":"Ranged","pk":".","ta":const{"Index":const{"nm":"Integer","pk":"."},"Subrange":const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}},"Element":const{"nm":"Element"}}}],"\$c":const{"Indexes":const{"mt":"c","nm":"Indexes","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Integer","pk":"."}}}]},"Sublist":const{"mt":"c","nm":"Sublist","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Rest":const{"mt":"c","nm":"Rest","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Repeat":const{"mt":"c","nm":"Repeat","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Patch":const{"mt":"c","nm":"Patch","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"comp":"u","l":const[const{"nm":"Element"}, const{"nm":"Other"}]}}}]},"Reversed":const{"mt":"c","nm":"Reversed","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}]}}},"Map":const{"mt":"i","nm":"Map","sts":const[const{"nm":"Collection","pk":".","ta":const{"Element":const{"nm":"Entry","pk":".","ta":const{"Item":const{"nm":"Item"},"Key":const{"nm":"Key"}}}}}, const{"nm":"Correspondence","pk":".","ta":const{"Item":const{"nm":"Item"},"Key":const{"nm":"Object","pk":"."}}}],"\$c":const{"Items":const{"mt":"c","nm":"Items","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Collection","pk":".","ta":const{"Element":const{"nm":"Item"}}}]}}},"emptyMap":const{"mt":"c","nm":"emptyMap","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Map","pk":".","ta":const{"Item":const{"nm":"Nothing","pk":"."},"Key":const{"nm":"Nothing","pk":"."}}}]},"Missing":const{"mt":"c","nm":"Missing","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Measure":const{"mt":"c","nm":"Measure","super":const{"nm":"Range","pk":".","ta":const{"Element":const{"nm":"Element"}}},"sts":const[],"\$c":const{"By":const{"mt":"c","nm":"By","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Iterable","pk":".","ta":const{"Absent":const{"nm":"Nothing","pk":"."},"Element":const{"nm":"Element"}}}]}}},"Null":const{"mt":"c","nm":"Null","super":const{"nm":"Anything","pk":"."},"sts":const[]},"null":const{"mt":"c","nm":"null","super":const{"nm":"Null","pk":"."},"sts":const[]},"Number":const{"mt":"i","nm":"Number","sts":const[const{"nm":"Numeric","pk":".","ta":const{"Other":const{"nm":"Other"}}}, const{"nm":"Comparable","pk":".","ta":const{"Other":const{"nm":"Other"}}}]},"Numeric":const{"mt":"i","nm":"Numeric","sts":const[const{"nm":"Invertible","pk":".","ta":const{"Other":const{"nm":"Other"}}}]},"Object":const{"mt":"c","nm":"Object","super":const{"nm":"Anything","pk":"."},"sts":const[]},"Obtainable":const{"mt":"i","nm":"Obtainable","sts":const[const{"nm":"Usable","pk":"."}]},"operatingSystem":const{"mt":"c","nm":"operatingSystem","super":const{"nm":"Basic","pk":"."},"sts":const[]},"OptionalAnnotation":const{"mt":"i","nm":"OptionalAnnotation","sts":const[const{"nm":"ConstrainedAnnotation","pk":".","ta":const{"Value":const{"nm":"Value"},"ProgramElement":const{"nm":"ProgramElement"},"Type":const{"nm":"Type"},"Values":const{"comp":"u","l":const[const{"nm":"Null","pk":"."}, const{"nm":"Value"}]}}}]},"Ordinal":const{"mt":"i","nm":"Ordinal","sts":const[]},"OverflowException":const{"mt":"c","nm":"OverflowException","super":const{"nm":"Exception","pk":"."},"sts":const[]},"ParseFloatState":const{"mt":"c","nm":"ParseFloatState","super":const{"nm":"Basic","pk":"."},"sts":const[]},"process":const{"mt":"c","nm":"process","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Range":const{"mt":"c","nm":"Range","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Ranged":const{"mt":"i","nm":"Ranged","sts":const[const{"nm":"Iterable","pk":".","ta":const{"Absent":const{"nm":"Null","pk":"."},"Element":const{"nm":"Element"}}}]},"Resource":const{"mt":"i","nm":"Resource","sts":const[]},"runtime":const{"mt":"c","nm":"runtime","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Scalable":const{"mt":"i","nm":"Scalable","sts":const[]},"SearchableList":const{"mt":"i","nm":"SearchableList","sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Sequence":const{"mt":"i","nm":"Sequence","sts":const[const{"nm":"Sequential","pk":".","ta":const{"Element":const{"nm":"Element"}}}, const{"nm":"Iterable","pk":".","ta":const{"Absent":const{"nm":"Nothing","pk":"."},"Element":const{"nm":"Element"}}}],"\$c":const{"Repeat":const{"mt":"c","nm":"Repeat","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Reverse":const{"mt":"c","nm":"Reverse","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]}}},"JoinedSequence":const{"mt":"c","nm":"JoinedSequence","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"SequencedAnnotation":const{"mt":"i","nm":"SequencedAnnotation","sts":const[const{"nm":"ConstrainedAnnotation","pk":".","ta":const{"Value":const{"nm":"Value"},"ProgramElement":const{"nm":"ProgramElement"},"Type":const{"nm":"Type"},"Values":const{"nm":"Sequential","pk":".","ta":const{"Element":const{"nm":"Value"}}}}}]},"Sequential":const{"mt":"i","nm":"Sequential","sts":const[const{"nm":"List","pk":".","ta":const{"Element":const{"nm":"Element"}}}, const{"nm":"Ranged","pk":".","ta":const{"Index":const{"nm":"Integer","pk":"."},"Subrange":const{"nm":"Sequential","pk":".","ta":const{"Element":const{"nm":"Element"}}},"Element":const{"nm":"Element"}}}]},"Set":const{"mt":"i","nm":"Set","sts":const[const{"nm":"Collection","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"emptySet":const{"mt":"c","nm":"emptySet","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Set","pk":".","ta":const{"Element":const{"nm":"Nothing","pk":"."}}}]},"Singleton":const{"mt":"c","nm":"Singleton","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Span":const{"mt":"c","nm":"Span","super":const{"nm":"Range","pk":".","ta":const{"Element":const{"nm":"Element"}}},"sts":const[],"\$c":const{"By":const{"mt":"c","nm":"By","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"Iterable","pk":".","ta":const{"Absent":const{"nm":"Nothing","pk":"."},"Element":const{"nm":"Element"}}}]}}},"String":const{"mt":"c","nm":"String","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"SearchableList","pk":".","ta":const{"Element":const{"nm":"Character","pk":"."}}}, const{"nm":"Comparable","pk":".","ta":const{"Other":const{"nm":"String","pk":"."}}}, const{"nm":"Summable","pk":".","ta":const{"Other":const{"nm":"String","pk":"."}}}, const{"nm":"Ranged","pk":".","ta":const{"Index":const{"nm":"Integer","pk":"."},"Subrange":const{"nm":"String","pk":"."},"Element":const{"nm":"Character","pk":"."}}}]},"BaseStringBoxer":const{"mt":"i","nm":"BaseStringBoxer","sts":const[]},"BaseString":const{"mt":"c","nm":"BaseString","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"SearchableList","pk":".","ta":const{"Element":const{"nm":"Character","pk":"."}}}, const{"nm":"BaseStringBoxer","pk":".","ta":const{"T":const{"nm":"String","pk":"."}}}]},"StringBuilder":const{"mt":"c","nm":"StringBuilder","super":const{"nm":"Basic","pk":"."},"sts":const[const{"nm":"SearchableList","pk":".","ta":const{"Element":const{"nm":"Character","pk":"."}}}]},"Summable":const{"mt":"i","nm":"Summable","sts":const[]},"system":const{"mt":"c","nm":"system","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Throwable":const{"mt":"c","nm":"Throwable","super":const{"nm":"Basic","pk":"."},"sts":const[]},"Tuple":const{"mt":"c","nm":"Tuple","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"BaseTuple":const{"mt":"c","nm":"BaseTuple","super":const{"nm":"Object","pk":"."},"sts":const[const{"nm":"Sequence","pk":".","ta":const{"Element":const{"nm":"Element"}}}]},"Usable":const{"mt":"i","nm":"Usable","sts":const[]}},"ceylon.language.dart":const{"VariableBox":const{"mt":"c","nm":"VariableBox","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"VariableBoxBool":const{"mt":"c","nm":"VariableBoxBool","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"VariableBoxInt":const{"mt":"c","nm":"VariableBoxInt","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"VariableBoxDouble":const{"mt":"c","nm":"VariableBoxDouble","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"VariableBoxString":const{"mt":"c","nm":"VariableBoxString","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}},"ceylon.language.impl":const{"BaseIterable":const{"mt":"c","nm":"BaseIterable","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"Iterable","pk":"\$","md":"\$","ta":const{"Absent":const{"nm":"Absent"},"Element":const{"nm":"Element"}}}]},"BaseIterator":const{"mt":"c","nm":"BaseIterator","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"Iterator","pk":"\$","md":"\$","ta":const{"Element":const{"nm":"Element"}}}]},"BaseMap":const{"mt":"c","nm":"BaseMap","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"Map","pk":"\$","md":"\$","ta":const{"Item":const{"nm":"Item"},"Key":const{"nm":"Key"}}}]},"BaseList":const{"mt":"c","nm":"BaseList","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"SearchableList","pk":"\$","md":"\$","ta":const{"Element":const{"nm":"Element"}}}]},"BaseCharacterList":const{"mt":"c","nm":"BaseCharacterList","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"SearchableList","pk":"\$","md":"\$","ta":const{"Element":const{"nm":"Character","pk":"."}}}]},"BaseSequence":const{"mt":"c","nm":"BaseSequence","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[const{"nm":"Sequence","pk":"\$","md":"\$","ta":const{"Element":const{"nm":"Element"}}}]},"ElementImpl":const{"mt":"c","nm":"ElementImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Element","pk":"ceylon.language.serialization"}]},"MemberImpl":const{"mt":"c","nm":"MemberImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Member","pk":"ceylon.language.serialization"}]},"outerImpl":const{"mt":"c","nm":"outerImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Outer","pk":"ceylon.language.serialization"}]},"reach":const{"mt":"c","nm":"reach","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}},"ceylon.language.impl.meta":const{"ModuleImpl":const{"mt":"c","nm":"ModuleImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Module","pk":"ceylon.language.meta.declaration"}]},"PackageImpl":const{"mt":"c","nm":"PackageImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Package","pk":"ceylon.language.meta.declaration"}]},"ClassWithConstructorsDeclarationImpl":const{"mt":"c","nm":"ClassWithConstructorsDeclarationImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"ClassWithConstructorsDeclaration","pk":"ceylon.language.meta.declaration"}]}},"ceylon.language.meta":const{"modules":const{"mt":"c","nm":"modules","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}},"ceylon.language.meta.declaration":const{"AliasDeclaration":const{"mt":"i","nm":"AliasDeclaration","sts":const[const{"nm":"NestableDeclaration","pk":"."}, const{"nm":"GenericDeclaration","pk":"."}]},"AnnotatedDeclaration":const{"mt":"i","nm":"AnnotatedDeclaration","sts":const[const{"nm":"Declaration","pk":"."}, const{"nm":"Annotated","pk":"\$","md":"\$"}]},"CallableConstructorDeclaration":const{"mt":"i","nm":"CallableConstructorDeclaration","sts":const[const{"nm":"FunctionalDeclaration","pk":"."}, const{"nm":"ConstructorDeclaration","pk":"."}]},"ClassDeclaration":const{"mt":"i","nm":"ClassDeclaration","sts":const[const{"nm":"ClassOrInterfaceDeclaration","pk":"."}]},"ClassOrInterfaceDeclaration":const{"mt":"i","nm":"ClassOrInterfaceDeclaration","sts":const[const{"nm":"NestableDeclaration","pk":"."}, const{"nm":"GenericDeclaration","pk":"."}]},"ClassWithConstructorsDeclaration":const{"mt":"i","nm":"ClassWithConstructorsDeclaration","sts":const[const{"nm":"ClassDeclaration","pk":"."}]},"ClassWithInitializerDeclaration":const{"mt":"i","nm":"ClassWithInitializerDeclaration","sts":const[const{"nm":"ClassDeclaration","pk":"."}]},"ConstructorDeclaration":const{"mt":"i","nm":"ConstructorDeclaration","sts":const[const{"nm":"NestableDeclaration","pk":"."}]},"Declaration":const{"mt":"i","nm":"Declaration","sts":const[]},"FunctionalDeclaration":const{"mt":"i","nm":"FunctionalDeclaration","sts":const[const{"nm":"GenericDeclaration","pk":"."}]},"FunctionDeclaration":const{"mt":"i","nm":"FunctionDeclaration","sts":const[const{"nm":"FunctionOrValueDeclaration","pk":"."}, const{"nm":"FunctionalDeclaration","pk":"."}]},"FunctionOrValueDeclaration":const{"mt":"i","nm":"FunctionOrValueDeclaration","sts":const[const{"nm":"NestableDeclaration","pk":"."}]},"GenericDeclaration":const{"mt":"i","nm":"GenericDeclaration","sts":const[]},"GettableDeclaration":const{"mt":"i","nm":"GettableDeclaration","sts":const[]},"InterfaceDeclaration":const{"mt":"i","nm":"InterfaceDeclaration","sts":const[const{"nm":"ClassOrInterfaceDeclaration","pk":"."}]},"Module":const{"mt":"i","nm":"Module","sts":const[const{"nm":"Identifiable","pk":"\$","md":"\$"}, const{"nm":"AnnotatedDeclaration","pk":"."}]},"Import":const{"mt":"i","nm":"Import","sts":const[const{"nm":"Identifiable","pk":"\$","md":"\$"}, const{"nm":"Annotated","pk":"\$","md":"\$"}]},"Package":const{"mt":"i","nm":"Package","sts":const[const{"nm":"Identifiable","pk":"\$","md":"\$"}, const{"nm":"AnnotatedDeclaration","pk":"."}]},"NestableDeclaration":const{"mt":"i","nm":"NestableDeclaration","sts":const[const{"nm":"AnnotatedDeclaration","pk":"."}, const{"nm":"TypedDeclaration","pk":"."}]},"nothingType":const{"mt":"c","nm":"nothingType","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"OpenType","pk":"."}]},"OpenClassOrInterfaceType":const{"mt":"i","nm":"OpenClassOrInterfaceType","sts":const[const{"nm":"OpenType","pk":"."}]},"OpenClassType":const{"mt":"i","nm":"OpenClassType","sts":const[const{"nm":"OpenClassOrInterfaceType","pk":"."}]},"OpenInterfaceType":const{"mt":"i","nm":"OpenInterfaceType","sts":const[const{"nm":"OpenClassOrInterfaceType","pk":"."}]},"OpenIntersection":const{"mt":"i","nm":"OpenIntersection","sts":const[const{"nm":"OpenType","pk":"."}]},"OpenType":const{"mt":"i","nm":"OpenType","sts":const[]},"OpenTypeVariable":const{"mt":"i","nm":"OpenTypeVariable","sts":const[const{"nm":"OpenType","pk":"."}]},"OpenUnion":const{"mt":"i","nm":"OpenUnion","sts":const[const{"nm":"OpenType","pk":"."}]},"SetterDeclaration":const{"mt":"i","nm":"SetterDeclaration","sts":const[const{"nm":"NestableDeclaration","pk":"."}]},"TypedDeclaration":const{"mt":"i","nm":"TypedDeclaration","sts":const[]},"TypeParameter":const{"mt":"i","nm":"TypeParameter","sts":const[const{"nm":"Declaration","pk":"."}]},"ValueConstructorDeclaration":const{"mt":"i","nm":"ValueConstructorDeclaration","sts":const[const{"nm":"GettableDeclaration","pk":"."}, const{"nm":"ConstructorDeclaration","pk":"."}]},"ValueDeclaration":const{"mt":"i","nm":"ValueDeclaration","sts":const[const{"nm":"FunctionOrValueDeclaration","pk":"."}, const{"nm":"NestableDeclaration","pk":"."}, const{"nm":"GettableDeclaration","pk":"."}]},"Variance":const{"mt":"i","nm":"Variance","sts":const[]},"invariant":const{"mt":"c","nm":"invariant","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Variance","pk":"."}]},"covariant":const{"mt":"c","nm":"covariant","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Variance","pk":"."}]},"contravariant":const{"mt":"c","nm":"contravariant","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Variance","pk":"."}]}},"ceylon.language.meta.model":const{"Applicable":const{"mt":"i","nm":"Applicable","sts":const[const{"nm":"Callable","pk":"\$","md":"\$","ta":const{"Return":const{"nm":"Type"},"Arguments":const{"nm":"Arguments"}}}]},"Attribute":const{"mt":"i","nm":"Attribute","sts":const[const{"nm":"ValueModel","pk":".","ta":const{"Set":const{"nm":"Set"},"Get":const{"nm":"Get"}}}, const{"nm":"Member","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"Value","pk":".","ta":const{"Set":const{"nm":"Set"},"Get":const{"nm":"Get"}}}}}]},"CallableConstructor":const{"mt":"i","nm":"CallableConstructor","sts":const[const{"nm":"FunctionModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Applicable","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}]},"Class":const{"mt":"i","nm":"Class","sts":const[const{"nm":"ClassModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Applicable","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}]},"ClassModel":const{"mt":"i","nm":"ClassModel","sts":const[const{"nm":"ClassOrInterface","pk":".","ta":const{"Type":const{"nm":"Type"}}}]},"ClassOrInterface":const{"mt":"i","nm":"ClassOrInterface","sts":const[const{"nm":"Model","pk":"."}, const{"nm":"Generic","pk":"."}, const{"nm":"Type","pk":".","ta":const{"Target":const{"nm":"Type"}}}]},"Declared":const{"mt":"i","nm":"Declared","sts":const[]},"Function":const{"mt":"i","nm":"Function","sts":const[const{"nm":"FunctionModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Applicable","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}]},"Functional":const{"mt":"i","nm":"Functional","sts":const[]},"FunctionModel":const{"mt":"i","nm":"FunctionModel","sts":const[const{"nm":"Model","pk":"."}, const{"nm":"Generic","pk":"."}, const{"nm":"Functional","pk":"."}]},"Generic":const{"mt":"i","nm":"Generic","sts":const[]},"Gettable":const{"mt":"i","nm":"Gettable","sts":const[]},"IncompatibleTypeException":const{"mt":"c","nm":"IncompatibleTypeException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"Interface":const{"mt":"i","nm":"Interface","sts":const[const{"nm":"InterfaceModel","pk":".","ta":const{"Type":const{"nm":"Type"}}}]},"InterfaceModel":const{"mt":"i","nm":"InterfaceModel","sts":const[const{"nm":"ClassOrInterface","pk":".","ta":const{"Type":const{"nm":"Type"}}}]},"IntersectionType":const{"mt":"i","nm":"IntersectionType","sts":const[const{"nm":"Type","pk":".","ta":const{"Target":const{"nm":"Intersection"}}}]},"InvocationException":const{"mt":"c","nm":"InvocationException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"Member":const{"mt":"i","nm":"Member","sts":const[const{"nm":"Qualified","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"Kind"}}}]},"MemberClass":const{"mt":"i","nm":"MemberClass","sts":const[const{"nm":"ClassModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Member","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"Class","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}}}]},"MemberClassCallableConstructor":const{"mt":"i","nm":"MemberClassCallableConstructor","sts":const[const{"nm":"FunctionModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Qualified","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"CallableConstructor","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}}}]},"MemberClassValueConstructor":const{"mt":"i","nm":"MemberClassValueConstructor","sts":const[const{"nm":"ValueModel","pk":".","ta":const{"Set":const{"nm":"Nothing","pk":"."},"Get":const{"nm":"Type"}}}, const{"nm":"Qualified","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"ValueConstructor","pk":".","ta":const{"Type":const{"nm":"Type"}}}}}]},"MemberInterface":const{"mt":"i","nm":"MemberInterface","sts":const[const{"nm":"InterfaceModel","pk":".","ta":const{"Type":const{"nm":"Type"}}}, const{"nm":"Member","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"Interface","pk":".","ta":const{"Type":const{"nm":"Type"}}}}}]},"Method":const{"mt":"i","nm":"Method","sts":const[const{"nm":"FunctionModel","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}, const{"nm":"Member","pk":".","ta":const{"Container":const{"nm":"Container"},"Kind":const{"nm":"Function","pk":".","ta":const{"Arguments":const{"nm":"Arguments"},"Type":const{"nm":"Type"}}}}}]},"Model":const{"mt":"i","nm":"Model","sts":const[const{"nm":"Declared","pk":"."}]},"MutationException":const{"mt":"c","nm":"MutationException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"nothingType":const{"mt":"c","nm":"nothingType","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"Type","pk":".","ta":const{"Target":const{"nm":"Nothing","pk":"."}}}]},"Qualified":const{"mt":"i","nm":"Qualified","sts":const[const{"nm":"Callable","pk":"\$","md":"\$","ta":const{"Return":const{"nm":"Kind"},"Arguments":const{"nm":"Tuple","pk":".","ta":const{"First":const{"nm":"Container"},"Rest":const{"nm":"Empty","pk":"."},"Element":const{"nm":"Container"}}}}}]},"StorageException":const{"mt":"c","nm":"StorageException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"Type":const{"mt":"i","nm":"Type","sts":const[]},"TypeApplicationException":const{"mt":"c","nm":"TypeApplicationException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"UnionType":const{"mt":"i","nm":"UnionType","sts":const[const{"nm":"Type","pk":".","ta":const{"Target":const{"nm":"Union"}}}]},"Value":const{"mt":"i","nm":"Value","sts":const[const{"nm":"ValueModel","pk":".","ta":const{"Set":const{"nm":"Set"},"Get":const{"nm":"Get"}}}, const{"nm":"Gettable","pk":".","ta":const{"Set":const{"nm":"Set"},"Get":const{"nm":"Get"}}}]},"ValueConstructor":const{"mt":"i","nm":"ValueConstructor","sts":const[const{"nm":"ValueModel","pk":".","ta":const{"Set":const{"nm":"Nothing","pk":"."},"Get":const{"nm":"Type"}}}, const{"nm":"Gettable","pk":".","ta":const{"Set":const{"nm":"Nothing","pk":"."},"Get":const{"nm":"Type"}}}]},"ValueModel":const{"mt":"i","nm":"ValueModel","sts":const[const{"nm":"Model","pk":"."}]}},"ceylon.language.serialization":const{"DeserializationContext":const{"mt":"i","nm":"DeserializationContext","sts":const[]},"DeserializationContextImpl":const{"mt":"c","nm":"DeserializationContextImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"DeserializationContext","pk":".","ta":const{"Id":const{"nm":"Id"}}}]},"DeserializationException":const{"mt":"c","nm":"DeserializationException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]},"Element":const{"mt":"i","nm":"Element","sts":const[const{"nm":"ReachableReference","pk":"."}]},"Member":const{"mt":"i","nm":"Member","sts":const[const{"nm":"ReachableReference","pk":"."}]},"UninitializedLateValue":const{"mt":"c","nm":"UninitializedLateValue","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"uninitializedLateValue":const{"mt":"c","nm":"uninitializedLateValue","super":const{"nm":"UninitializedLateValue","pk":"."},"sts":const[]},"NativeDeque":const{"mt":"c","nm":"NativeDeque","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"NativeMap":const{"mt":"c","nm":"NativeMap","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"Outer":const{"mt":"i","nm":"Outer","sts":const[const{"nm":"ReachableReference","pk":"."}]},"Partial":const{"mt":"c","nm":"Partial","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"PartialImpl":const{"mt":"c","nm":"PartialImpl","super":const{"nm":"Partial","pk":"."},"sts":const[]},"ReachableReference":const{"mt":"i","nm":"ReachableReference","sts":const[]},"References":const{"mt":"i","nm":"References","sts":const[const{"nm":"Iterable","pk":"\$","md":"\$","ta":const{"Absent":const{"nm":"Null","pk":"."},"Element":const{"nm":"Entry","pk":".","ta":const{"Item":const{"nm":"Anything","pk":"."},"Key":const{"nm":"ReachableReference","pk":"ceylon.language.serialization"}}}}}]},"ReferencesImpl":const{"mt":"c","nm":"ReferencesImpl","super":const{"nm":"BaseIterable","pk":"ceylon.language.impl","ta":const{"Absent":const{"nm":"Null","pk":"\$","md":"\$"},"Element":const{"nm":"Entry","pk":"\$","md":"\$","ta":const{"Item":const{"nm":"Anything","pk":"."},"Key":const{"nm":"ReachableReference","pk":"ceylon.language.serialization"}}}}},"sts":const[const{"nm":"References","pk":"."}, const{"nm":"Identifiable","pk":"\$","md":"\$"}]},"SerializationContext":const{"mt":"i","nm":"SerializationContext","sts":const[]},"SerializationContextImpl":const{"mt":"c","nm":"SerializationContextImpl","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"SerializationContext","pk":"."}]},"SerializationException":const{"mt":"c","nm":"SerializationException","super":const{"nm":"Exception","pk":"\$","md":"\$"},"sts":const[]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$interop$dart.$module, $ceylon$dart$runtime$core.$module, $ceylon$dart$runtime$model.$module])).sequence());
+    }
+    return _$module;
+}
 

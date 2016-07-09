@@ -113,13 +113,17 @@ UnitModel getUnit
             then declaration.unit
         else if (is ElementModel declaration)
             then declaration.unit
+        else if (is PackageModel declaration)
+            then declaration.unit
         else
             getUnit(declaration.container);
 
+shared
 PackageModel getPackage
         (Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     =>  getUnit(declaration).\ipackage;
 
+shared
 ModuleModel getModule
         (DScope|Node|ScopeModel|ElementModel|ModuleModel|UnitModel declaration)
     // Test for Node first; see https://github.com/ceylon/ceylon-spec/issues/1394
@@ -545,34 +549,65 @@ DScope dScope(
          for this is creating values for `object` definitions, where the value's
          scope must be used (which is the container of the `object` anonymous class
          scope.)"
-        ScopeModel scope = toScopeModel(node))
-    =>  let (passedScope = scope, passedNode = node)
-        object satisfies DScope {
-            value nodeInfo
-                =   if (is NodeInfo passedNode)
-                    then passedNode
-                    else getNodeInfo(passedNode);
+        ScopeModel scope = toScopeModel(node)) =>
+        let (passedScope = scope, passedNode = node) object
+        satisfies DScope {
 
-            shared actual
-            ScopeModel scope
-                =>  passedScope;
+    value nodeInfo
+        =   if (is NodeInfo passedNode)
+            then passedNode
+            else getNodeInfo(passedNode);
 
-            shared actual
-            void addError(String string)
-                =>  nodeInfo.addError(string);
+    shared actual
+    ScopeModel scope
+        =>  passedScope;
 
-            shared actual
-            void addUnexpectedError(String string)
-                =>  nodeInfo.addUnexpectedError(string);
+    shared actual
+    void addError(String string)
+        =>  nodeInfo.addError(string);
 
-            shared actual
-            void addUnsupportedError(String string)
-                =>  nodeInfo.addUnsupportedError(string);
+    shared actual
+    void addUnexpectedError(String string)
+        =>  nodeInfo.addUnexpectedError(string);
 
-            shared actual
-            void addWarning(Warning warning, String message)
-                =>  nodeInfo.addWarning(warning, message);
-        };
+    shared actual
+    void addUnsupportedError(String string)
+        =>  nodeInfo.addUnsupportedError(string);
+
+    shared actual
+    void addWarning(Warning warning, String message)
+        =>  nodeInfo.addWarning(warning, message);
+};
+
+shared
+DScope errorThrowingDScope(ScopeModel scope) =>
+        let (passedScope = scope) object
+        satisfies DScope {
+
+    shared actual
+    ScopeModel scope
+        =>  passedScope;
+
+    shared actual
+    void addError(String string) {
+        throw Exception("Compiler bug: ``string``");
+    }
+
+    shared actual
+    void addUnexpectedError(String string) {
+        throw Exception("Compiler bug: ``string``");
+    }
+
+    shared actual
+    void addUnsupportedError(String string) {
+        throw Exception("Compiler bug: ``string``");
+    }
+
+    shared actual
+    void addWarning(Warning warning, String message) {
+        throw Exception("Compiler bug: ``warning``: ``string``");
+    }
+};
 
 shared
 ScopeModel container(DeclarationModel declaration)
