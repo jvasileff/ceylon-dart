@@ -278,18 +278,18 @@ class BaseTuple<out Element, out First, out Rest = []>
 
     shared actual
     Element[] spanFrom(Integer from) {
-        // Important: Always return a Tuple.
-        //
-        // Destructuring and subrange expressions may have Tuple results when enough
-        // static type information is available.
-        //
-        // This could be optimized at some point; the Java backend uses a utility method
-        // for spanFrom for when a Tuple is the expected result, leaving the
-        // Tuple.spanFrom method free to return *just* a Sequential.
-        if (from > lastIndex) {
-            return package.empty;
+        // Important: Always return a Tuple, if possible. Destructuring and subrange
+        // expressions may have Tuple results when enough static type information is
+        // available.
+        if (from <= 0) {
+            return this;
         }
-        return tupleOfElements(super.spanFrom(from));
+        else if (from < list.length) {
+            return tupleWithList(list.sublist(from), restSequence);
+        }
+        else {
+            return restSequence.spanFrom(from - list.length);
+        }
     }
 
     shared actual
