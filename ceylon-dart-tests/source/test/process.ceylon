@@ -68,7 +68,7 @@ shared void testRuntime() {
     } else if (runtime.name in {"node.js", "Browser"}) {
         check(runtime.integerSize == 53, "js runtime.integerSize");
     } else if (runtime.name in {"DartVM"}) {
-        check(runtime.integerSize == 64, "dart runtime.integerSize");
+        check(runtime.integerSize == 53, "dart runtime.integerSize");
     } else {
         fail("UNKNOWN BACKEND ``runtime.name`` - please add tests for this runtime");
     }
