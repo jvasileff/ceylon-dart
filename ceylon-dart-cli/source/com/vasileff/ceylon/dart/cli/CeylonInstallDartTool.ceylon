@@ -114,10 +114,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                     ModuleQuery.Type.\iDART,
                     null, null, null, null);
 
-        function newArtifactContext(String shortName) {
-            value name
-                =   "ceylon.``shortName``";
-
+        function newArtifactContext(String name) {
             value version
                 =   moduleVersion(name);
 
@@ -133,9 +130,25 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         value artifactContexts
             =   javaList {
                     for (moduleName in {
-                        "language", "collection", "html", "json",
-                        "logging", "math", "promise", "time"
-                    })
+                        "ceylon.collection",
+                        "ceylon.dart.runtime.core",
+                        "ceylon.dart.runtime.model",
+                        "ceylon.dart.runtime.standard",
+                        "ceylon.dart.runtime.structures",
+                        "ceylon.dart.runtime.web",
+                        "ceylon.interop.dart",
+                        "ceylon.language",
+                        "ceylon.buffer",
+                        "ceylon.html",
+                        "ceylon.json",
+                        "ceylon.locale",
+                        "ceylon.logging",
+                        "ceylon.numeric",
+                        "ceylon.promise",
+                        "ceylon.random",
+                        "ceylon.test",
+                        "ceylon.time",
+                        "ceylon.whole"})
                     newArtifactContext(moduleName)
                 };
 
