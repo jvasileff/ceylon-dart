@@ -130,6 +130,17 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         value artifactContexts
             =   javaList {
                     for (moduleName in {
+                        "dart.async",
+                        "dart.collection",
+                        "dart.convert",
+                        "dart.core",
+                        "dart.developer",
+                        "dart.html",
+                        "dart.io",
+                        "dart.isolate",
+                        "dart.math",
+                        "dart.mirrors",
+                        "dart.typed_data",
                         "ceylon.collection",
                         "ceylon.dart.runtime.core",
                         "ceylon.dart.runtime.model",

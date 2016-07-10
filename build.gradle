@@ -152,6 +152,9 @@ project('ceylon-dart-language') {
     task repositoryZip(type: Zip) {
         dependsOn compileCeylonDart
 
+        // pre-generated dart models
+        from file("modules-dart")
+        // language and language support modules
         from compileCeylonDart.destinationDir
         into('repository')
     }
