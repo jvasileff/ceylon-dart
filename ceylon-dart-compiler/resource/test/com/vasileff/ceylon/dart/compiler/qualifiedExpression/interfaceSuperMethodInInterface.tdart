@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class Top {
@@ -24,4 +26,15 @@ abstract class Bottom implements Left, Right {
         $ceylon$language.Callable lFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => Left.$foo($this, $0 as $ceylon$language.Usable));
         $ceylon$language.Callable rFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => Right.$foo($this, $0 as $ceylon$language.Usable));
     }
+}
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Top":const{"mt":"i","nm":"Top","sts":const[]},"Left":const{"mt":"i","nm":"Left","sts":const[const{"nm":"Top","pk":"."}]},"Right":const{"mt":"i","nm":"Right","sts":const[const{"nm":"Top","pk":"."}]},"Bottom":const{"mt":"i","nm":"Bottom","sts":const[const{"nm":"Left","pk":"."}, const{"nm":"Right","pk":"."}]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
 }

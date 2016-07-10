@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Foo$FooMember implements $ceylon$language.dart$$Basic {
@@ -12,4 +14,15 @@ class Foo implements $ceylon$language.dart$$Basic {
         _$x = new Foo$FooMember(this);
     }
     Foo$FooMember _$x;
+}
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Foo":const{"mt":"c","nm":"Foo","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"FooMember":const{"mt":"c","nm":"FooMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
 }
