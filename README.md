@@ -44,7 +44,7 @@ from <https://www.dartlang.org/downloads/>.
 
 The commandline interface can be installed with:
 
-    $ ceylon plugin install com.vasileff.ceylon.dart.cli/1.2.2-DP2
+    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.2.2-DP2
 
 Upon using `ceylon compile-dart` or `ceylon run-dart` for the first time, you
 will be prompted to complete the installation by running:
