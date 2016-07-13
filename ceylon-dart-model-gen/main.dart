@@ -88,7 +88,8 @@ main() {
   // dart.convert
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.convert),
-    [currentMirrorSystem().findLibrary(#dart.core)]);
+    [currentMirrorSystem().findLibrary(#dart.core),
+     currentMirrorSystem().findLibrary(#dart.async)]);
 
   // dart.core
   moduleToMap(
