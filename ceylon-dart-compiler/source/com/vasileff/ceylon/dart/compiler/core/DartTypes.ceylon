@@ -342,7 +342,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             if (declaration.staticallyImportable) {
                 // This is a fake static member class ".Class" for Dart interop. Erase
                 // to its container.
-                assert (is InterfaceModel realDeclaration = container(declaration));
+                assert (is InterfaceModel realDeclaration = declaration.container);
                 return getName(realDeclaration);
             }
 
@@ -1047,7 +1047,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ClassOrInterfaceModel inheritedDeclaration) {
 
         assert (exists containingClassOrInterface
-            =   getContainingClassOrInterface(container(scope)));
+            =   getContainingClassOrInterface(scope.container));
 
         // up to and including a declarations that inherits inheritedDeclaration
         return ancestorChainToInheritingDeclaration {
@@ -1517,7 +1517,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         value container
             =   switch (validDeclaration)
                 case (is ConstructorModel) validDeclaration.container.container
-                else package.container(validDeclaration);
+                else validDeclaration.container;
 
         "Is it a Function implemented as a value?"
         value callableValue

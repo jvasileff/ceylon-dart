@@ -124,7 +124,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         // Shortcut refinement; just like function or getter definitions:
 
         value dartDeclaration
-            =   if (container(info.declaration) is InterfaceModel
+            =   if (info.declaration.container is InterfaceModel
                         && info.declaration.shared)
                 then generateMethodGetterOrSetterDeclaration(that)
                 else null;
@@ -782,7 +782,7 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         "The container of a class or interface member is surely a Class or Interface"
         assert (is ClassModel | InterfaceModel container
-            =   container(declarationModel));
+            =   declarationModel.container);
 
         "Parameters for the function, not including the possible addition of $this."
         value standardParameters

@@ -791,7 +791,7 @@ class BaseGenerator(CompilationContext ctx)
                 //       method, we need the interface that actually provides the
                 //       definition.)
                 assert (is InterfaceModel implementingContainer
-                    =   container(memberDeclaration));
+                    =   memberDeclaration.container);
 
                 optimizedNativeRhsType
                     =   null;
@@ -1023,7 +1023,7 @@ class BaseGenerator(CompilationContext ctx)
                 // for `dartReceiverType` if this invocation involves the
                 // safeMemberOperator.
                 assert (is ClassOrInterfaceModel container
-                    =   container(memberDeclaration));
+                    =   memberDeclaration.container);
 
                 value receiverDenotableType
                     =   ceylonTypes.denotableType {
@@ -4030,12 +4030,12 @@ class BaseGenerator(CompilationContext ctx)
 
         "What else would the container be than a Class or Interface?"
         assert (is ClassModel | InterfaceModel memberContainer
-            =   container(memberDeclaration));
+            =   memberDeclaration.container);
 
         "What else would the receiver be than a Class or Interface?"
         assert (is ClassModel | InterfaceModel receiverModel
             =   if (is ConstructorModel memberDeclaration)
-                then container(memberContainer)
+                then memberContainer.container
                 else memberContainer);
 
         value receiverDenotableType
@@ -4296,7 +4296,7 @@ class BaseGenerator(CompilationContext ctx)
                     && dartTypes.erasedToNative(functionModel))
                 || parameters.any((parameterModel)
                     =>  dartTypes.erasedToNative(parameterModel.model))
-                || !functionModel.shared && container(functionModel) is InterfaceModel;
+                || !functionModel.shared && functionModel.container is InterfaceModel;
 
         if (!needsWrapperFunction) {
             "A bit ugly, but we do know it's not a ClassModel | ConstructorModel
@@ -5276,7 +5276,7 @@ class BaseGenerator(CompilationContext ctx)
             valueType = info.typeModel;
 
             if (!valueDeclaration.shared,
-                is InterfaceModel targetContainer = container(valueDeclaration)) {
+                is InterfaceModel targetContainer = valueDeclaration.container) {
                 // Special case: invoking private interface member using a BaseExpression.
 
                 // Find the receiver (the $this argument) starting from the scope's

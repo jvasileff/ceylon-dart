@@ -779,8 +779,8 @@ class TopLevelVisitor(CompilationContext ctx)
                         assert (exists m);
                         return m;
                     })
-                    .filter((m) => container(m) is InterfaceModel)
-                    .filter((m) => container(m) != ceylonTypes.identifiableDeclaration)
+                    .filter((m) => m.container is InterfaceModel)
+                    .filter((m) => m.container != ceylonTypes.identifiableDeclaration)
                     .filter(not(DeclarationModel.formal))
                     // Don't bridge to a declaration made in a dart native library. Surely
                     // the member is available from the extended type, in some way.
@@ -1955,7 +1955,7 @@ class TopLevelVisitor(CompilationContext ctx)
         value interfaceModel
             =   if (is ConstructorModel declaration)
                 then declaration.container.container
-                else (declaration of DeclarationModel).container;
+                else declaration.container;
 
         "The container of the target of a bridge method is surely an Interface."
         assert (is InterfaceModel interfaceModel);

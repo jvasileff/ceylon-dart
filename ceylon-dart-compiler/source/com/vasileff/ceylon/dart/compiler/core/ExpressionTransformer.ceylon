@@ -2789,7 +2789,7 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformOuter(Outer that) {
         value info = outerInfo(that);
         assert (is ClassOrInterfaceModel ci = getContainingClassOrInterface(info.scope));
-        assert (exists outerDeclaration = getContainingClassOrInterface(container(ci)));
+        assert (exists outerDeclaration = getContainingClassOrInterface(ci.container));
         value outerIdentifier = dartTypes.identifierForOuter(outerDeclaration);
 
         return withBoxing {

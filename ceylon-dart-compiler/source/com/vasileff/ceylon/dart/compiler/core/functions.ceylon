@@ -155,10 +155,6 @@ String moduleImportPrefix(ModuleModel m)
             .interpose("$")
             .fold("$")(plus);
 
-"Shortcut for `(scope of ScopeModel).container`,"
-ScopeModel? containerOfScope(ScopeModel scope)
-    =>  scope.container;
-
 "Returns the `ScopeModel` for the argument, extracting from the `Node` or casting
  `ElementModel` to `ScopeModel` as necessary."
 ScopeModel toScopeModel(DScope|Node|NodeInfo|ScopeModel|ElementModel scope) {
@@ -260,7 +256,7 @@ ConstructorModel? getConstructor(FunctionOrValueModel model)
 ConstructorModel|Declaration replaceFunctionWithConstructor<Declaration>
         (Declaration model)
     =>  if (is FunctionModel model,
-            is ConstructorModel c = (model of FunctionModel).type.declaration)
+            is ConstructorModel c = model.type.declaration)
         then c
         else model;
 
@@ -361,7 +357,7 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
  that are necessary in order to disambiguate replacement declarations."
 ClassOrInterfaceModel | PackageModel | LocalNonInitializerScope
 getRealContainingScope(ElementModel scope) {
-    variable ScopeModel scopeModel = toScopeModel(scope).container;
+    variable ScopeModel scopeModel = scope.container;
     while (scopeModel is ConditionScopeModel) {
         scopeModel = scopeModel.container;
     }
@@ -381,7 +377,7 @@ shared
         =>  {
                 declaration,
                 *CeylonList(declaration.satisfiedTypes)
-                    .follow(declaration.extendedType of TypeModel?)
+                    .follow(declaration.extendedType else null)
                     .coalesced
                     .map(TypeModel.declaration)
                     .flatMap(collectx)
@@ -447,7 +443,7 @@ Boolean isScopeDefaultedParameterOfFormal(DScope | ScopeModel scope)
                 =   getContainingClassInterfaceOrParameter(scope),
             container.parameter,
             is FunctionModel containerContainer
-                =   package.container(container))
+                =   container.container)
         then containerContainer.formal || containerContainer.default
         else false;
 
@@ -610,11 +606,6 @@ DScope errorThrowingDScope(ScopeModel scope) =>
 };
 
 shared
-ScopeModel container(DeclarationModel declaration)
-    // workaround interop issue with FunctionModel|ValueModel|SetterModel
-    =>  declaration.container;
-
-shared
 DeclarationModel refinedDeclaration(DeclarationModel declaration) {
     // workaround https://github.com/ceylon/ceylon-spec/issues/1435
     variable value refined = declaration.refinedDeclaration;
@@ -642,8 +633,7 @@ Boolean withinPackage(Node|ScopeModel|ElementModel scope)
    > "Getters cannot be defined within methods or functions"
 """
 Boolean useGetterSetterMethods(ValueModel | SetterModel declaration)
-    =>  if (!(declaration of DeclarationModel).container is
-                PackageModel | ClassOrInterfaceModel)
+    =>  if (!declaration.container is PackageModel | ClassOrInterfaceModel)
         then (
             switch(declaration)
             case (is ValueModel) declaration.transient
