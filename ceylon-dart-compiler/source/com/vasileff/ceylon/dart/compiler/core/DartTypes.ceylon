@@ -282,7 +282,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // non-Dart-values, we'll return the Ceylon name, which may be used for a
         // synthetic field or setter.
         if (is ValueModel declaration,
-            exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
+            exists mapped = mappedFunctionOrValue(declaration.refinedDeclaration),
                 mapped.type == dartValue) {
             return mapped.name;
         }
@@ -747,7 +747,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     TypeModel formalType(FunctionOrValueModel declaration)
         =>  if (declaration.parameter,
                     is FunctionModel c = declaration.container,
-                    is FunctionModel r = refinedDeclaration(c)) then
+                    is FunctionModel r = c.refinedDeclaration) then
                 // for parameters of method refinements, use the type of the parameter
                 // of the refined method
                 refinedParameter(declaration).type
@@ -755,9 +755,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // same, for shortcut refinements
                     is SpecificationModel s = declaration.container,
                     is FunctionModel c = s.declaration,
-                    is FunctionModel r = refinedDeclaration(c)) then
+                    is FunctionModel r = c.refinedDeclaration) then
                 refinedParameter(declaration).type
-            else if (is FunctionOrValueModel r = refinedDeclaration(declaration)) then
+            else if (is FunctionOrValueModel r = declaration.refinedDeclaration) then
                 r.type
             else
                 declaration.type;
@@ -1631,7 +1631,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             value mapped
                 =   if (!ctx.withinConstructorSignatureSet.contains(container)
                             && !ctx.withinConstructorDefaultsSet.contains(container))
-                    then mappedFunctionOrValue(refinedDeclaration(validDeclaration))
+                    then mappedFunctionOrValue(validDeclaration.refinedDeclaration)
                     else null;
 
             value validIdentifier

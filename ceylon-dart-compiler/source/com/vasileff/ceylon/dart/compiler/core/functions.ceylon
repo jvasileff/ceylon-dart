@@ -605,16 +605,6 @@ DScope errorThrowingDScope(ScopeModel scope) =>
     }
 };
 
-shared
-DeclarationModel refinedDeclaration(DeclarationModel declaration) {
-    // workaround https://github.com/ceylon/ceylon-spec/issues/1435
-    variable value refined = declaration.refinedDeclaration;
-    while (refined != refined.refinedDeclaration) {
-        refined = refined.refinedDeclaration;
-    }
-    return refined;
-}
-
 Boolean withinClassOrInterface(Node|ScopeModel|ElementModel scope)
     =>  toScopeModel(scope).container is ClassOrInterfaceModel;
 
