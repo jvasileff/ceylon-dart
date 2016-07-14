@@ -6319,7 +6319,7 @@ abstract class Iterator {
 }
 class language_ implements dart$$Basic {
     language_() {}
-    $dart$core.String get version => "1.2.2-DP2";
+    $dart$core.String get version => "1.2.2-DP3-SNAPSHOT";
     $dart$core.int get majorVersion => 1;
     $dart$core.int get minorVersion => 2;
     $dart$core.int get releaseVersion => 2;

@@ -29,7 +29,7 @@
 by ("Gavin King", "Tom Bentley", "Tako Schotanus",
    "Stephane Epardaud", "Enrique Zamudio")
 license ("http://www.apache.org/licenses/LICENSE-2.0.html")
-module ceylon.language "1.2.2-DP2" {
+module ceylon.language "1.2.2-DP3-SNAPSHOT" {
     native("jvm") import java.base "7";
     native("dart") import dart.core "1.2.2";
     native("dart") import dart.math "1.2.2";
