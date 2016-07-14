@@ -1,25 +1,25 @@
 # Dart backend for Ceylon
 
-## Update (11/22)
+## Update (7/13/2016)
 
-**A developer preview release (DP1) of the Dart backend for Ceylon has been
-released!**
+**Developer preview release 2 (DP2) of the Dart backend for Ceylon is now
+available**
 
-The DP1 release of the Dart backend supports a significant portion of the
-Ceylon language specification 1.2.0, and can be used to compile and run
-sophisticated Ceylon commandline applications on the Dart VM. In fact, most
-existing Ceylon applications that use supported SDK modules (listed below) can
-be compiled with very few changes.
+This release includes:
 
-There is a significant amount of "fit and finish" included in the DP1 release,
-which heavily relies on Ceylon's excellent tools infrastructure.  Errors are
-almost always presented as well formatted compiler errors, rather than ugly or
-confusing stack traces, even for unfinished or unsupported features.
+- Complete support for the [Ceylon 1.2.2](http://ceylon-lang.org) language,
+  except reified generics and the metamodel.
+- A familiar CLI for compiling and running Ceylon programs (`ceylon
+  compile-dart` and `ceylon run-dart`).
+- A powerful application assembly tool (`ceylon assemble-dart`) that can
+  produce distributable Dart VM applications, single file Dart VM applications,
+  and single file JavaScript applications.
+- Eleven Ceylon SDK modules
+- Initial support for Dart interop, including async/await, the
+  `ceylon.interop.dart` module, and the ability to import and use 11 native
+  Dart modules such as `dart.core`, `dart.collection`, and `dart.html`.
 
-For anyone that is even mildly interested, there is no reason not to give it a
-try! As you will see, installation and usage is *very* straightforward.
-
-### Installing the Dart backend for Ceylon
+## Installing the Dart backend for Ceylon
 
 The commandline interface for the Dart backend is available on [Ceylon Herd]
 (https://modules.ceylon-lang.org/modules/com.vasileff.ceylon.dart.cli), and can
@@ -27,7 +27,7 @@ be easily installed on any OS X or Linux system.
 
 **Step 1: Install Ceylon**
 
-To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.2.0 is required.
+To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.2.2 is required.
 
 **Step 2: Install Dart**
 
@@ -42,9 +42,18 @@ from <https://www.dartlang.org/downloads/>.
 
 **Step 3: Install the Ceylon/Dart CLI Plugin**
 
-The Dart backend commandline interface can be installed with:
+The commandline interface can be installed with:
 
-    $ ceylon plugin install com.vasileff.ceylon.dart.cli/1.2.0-DP1
+    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.2.2-DP2
+
+Upon using `ceylon compile-dart` or `ceylon run-dart` for the first time, you
+will be prompted to complete the installation by running:
+
+    $ ceylon install-dart --out +USER
+
+This will install the Ceylon language module, several Ceylon SDK modules, and
+several Dart interop modules into your local Ceylon module repository, which,
+for default Ceylon installations, is located at `~/.ceylon/repo`.
 
 And that's it!
 
@@ -52,7 +61,7 @@ And that's it!
 dependencies may be downloaded. No feedback is provided that this is happening,
 and canceling early may result in a corrupted download. So please be patient!*
 
-### Using the Commandline Interface
+## Using the Commandline Interface
 
 Commandline tools for compiling and running Ceylon programs on the Dart VM
 mirror the tools used for the JVM and JavaScript backends:
@@ -62,6 +71,25 @@ mirror the tools used for the JVM and JavaScript backends:
 
 A third tool, `ceylon assemble-dart`, package a Ceylon module as a standalone
 executable for the Dart VM.
+
+## Ok, it's installed, what do I do now?
+
+There are three main types of applications that can be written today:
+
+- command line applications,
+- web client (JavaScript) applications using `dart.html`, and
+- server side applications using `dart.io`
+
+Support for pure-Ceylon CLI applications is quite advanced and supports nearly
+all valid Ceylon 1.2.2 programs. Modules can be compiled, run, and even
+imported using standard Ceylon tools and conventions. See the "Hello, World"
+walkthrough below to get started.
+
+Check back soon for more on building server and web applications. For now, you
+might want to check out
+[ColorTrompon](https://github.com/jvasileff/ColorTrompon), which is a Ceylon
+syntax highligher, written in Ceylon, compiled with `ceylon compile-dart colortrompon`, and
+packaged as a JavaScript application with `ceylon assemble-dart mode=js colortrompon`.
 
 ### "Hello, World" Walkthrough
 
@@ -119,7 +147,7 @@ copy the examples locally, and try them out on the Dart backend!
 #### About the `ceylon new` Command
 
 Note that the `ceylon new` command is not Dart specific; it is a standard
-command available with Ceylon 1.2.0. For help using the command, use `ceylon
+command available with Ceylon 1.2.2. For help using the command, use `ceylon
 help new`.
 
 You may notice options to create Eclipse and Ant configuration files. While
@@ -128,88 +156,48 @@ options may still be useful, as you might use Eclipse to develop a module using
 the Java or JavaScript backend, and then drop to the CLI to compile for Dart.
 
 Also note that the first argument to `ceylon new` must be the name of a
-template. Of the three templates available as part of Ceylon 1.2.0,
+template. Of the three templates available as part of Ceylon 1.2.2,
 `hello-world` and `simple` can be used for Dart projects. For example, to get
 started with a blank project, you might use:
 
     ceylon new simple --module-name=com.mydomain.myproject myprojectDir
 
-### SDK Modules Included in DP1
+## Ceylon/Dart DP2 Release Details
 
-Several SDK modules are available in DP1 (and most of them actually work!):
+### SDK Modules Included in DP2
 
+Several Ceylon SDK modules ship with DP2:
+
+- `ceylon.buffer` allows you to convert between text and binary forms of data
 - `ceylon.collection` provides general-purpose mutable lists, sets, and maps
 - `ceylon.html` allows you to write HTML templates for both server and client using only Ceylon 
+- `ceylon.interop.dart` types and utilities to work with native Dart code and libraries,
 - `ceylon.json` contains everything required to parse and serialise JSON data
-- `ceylon.math` provides common mathematical functions and the types `Whole` and `Long`
-- `ceylon.promise` support for promises loosely based upon the A+ specification (\*)
+- `ceylon.numeric` provides common math functions for floats and integers
+- `ceylon.promise` support for promises loosely based upon the A+ specification
+- `ceylon.random` provides a pseudorandom number generator and extendable API
+- `ceylon.test` simple framework to write repeatable tests
 - `ceylon.time` is a date and time library library that is loosely inspired by
   the JodaTime/JSR-310 library
+- `ceylon.whole` provides arbitrary-precision integer numeric type
 
-(\*) Several try/catch statements have been commented out of `ceylon.promise`
-for DP1, reducing its usefulness.
+### Dart Interop Modules Included in DP2
 
-### Supported Language Features in DP1
+Several Dart modules can be imported by DP2 programs:
 
-The vast majority of the language constructs have been implemented. Notable
-*exceptions* include:
+- `dart.async`
+- `dart.collection`
+- `dart.convert`
+- `dart.core`
+- `dart.developer`
+- `dart.html`
+- `dart.io`
+- `dart.isolate`
+- `dart.math`
+- `dart.mirrors`
+- `dart.typed_data`
 
-- Destructuring
-- Forward-declared functions
-- Try/Catch/Finally (but `throw` is supported)
-- `Object.string` and `Object.hash` implemented as _reference_ values
-- Capture of `variable` values
-- Spread attribute and spread method operators (`lhs*.member` expressions)
-- Value constructors
-- Extending a constructor with another constructor
-- Type families (polymorphic member classes)
-
-In practice, most existing code can be compiled after implementing workarounds
-for the first few items, with the remaining items occuring in real world code
-less frequently.
-
-There are two significant overarching features have not yet been implemented:
-
-- Reified generics
-- The metamodel
-
-Code that relies on reified generics may produce incorrect results. For
-instance, the expression `x is List<String>` will evaluate to `true` if `x` is
-*any* `List`, for example `List<Integer>`. Tests on unions (like `x is String |
-Integer`) and intersections (like `x is Obtainable & Serializable`) do work
-correctly.
-
-## Update (10/27)
-
-Quite a bit of the core of the backend has been completed:
-
-- The Ceylon language module compiles with very few changes.
-- A first cut of much of the native Dart code necessary for the main package of
-  the Ceylon language module has been written.
-- Fairly complex CLI programs can now be compiled and run using the standard
-  Ceylon commandline interface (i.e. `ceylon compile-dart com.example.module`
-  and `ceylon run-dart com.example.module`).
-
-Soon, installation instructions and easy to run code samples will be posted.
-
-Some small, but mostly "big" tasks that remain:
-
-- Improve and complete native Dart code for the core part of the language
-  module.
-- Improve tools, including performance, warning and error reporting, and CLI
-  options.
-- Round out support for core language features–destructuring, capture of
-  `variable`s, certain uses of specification statements, constructor
-  delegation, class aliases, etc.
-- Compile `ceylon.collection`
-- Add a model loader and support module imports. (Aside from the implicit
-  language module import, which works today.)
-- Implement the metamodel (`ceylon.language.meta` and meta expressions)
-- Support Annotations
-- Implement reified generics
-- Develop an interop story (calling Dart libraries from Ceylon)
-
-### License
+## License
 
 The content of this repository is released under the ASL v2.0 as provided in
 the LICENSE file that accompanied this code.

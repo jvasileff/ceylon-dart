@@ -181,7 +181,7 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
   map["\$mod-bin"] = "9.0";
 
   map["\$mod-deps"] =
-      ["ceylon.language/1.2.3-DP2-SNAPSHOT"]..addAll(
+      ["ceylon.language/1.2.3-DP3-SNAPSHOT"]..addAll(
       dependencies.map((d) => {"exp" : 1, "path" : moduleName(d) + "/1.2.3"}));
 
   map["\$mod-name"] = moduleName(libraryMirror);

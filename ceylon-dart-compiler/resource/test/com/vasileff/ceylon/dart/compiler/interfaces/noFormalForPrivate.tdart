@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class I1 {
@@ -8,4 +10,15 @@ abstract class I1 {
     static $dart$core.String $get$_$baz([final I1 $this]) => "";
     $dart$core.String get ban;
     static $dart$core.String $get$ban([final I1 $this]) => "";
+}
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I1":const{"mt":"i","nm":"I1","sts":const[]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
 }

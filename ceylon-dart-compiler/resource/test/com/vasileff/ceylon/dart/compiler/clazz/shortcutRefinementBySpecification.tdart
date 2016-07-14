@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class X implements $ceylon$language.dart$$Basic {
@@ -66,4 +68,15 @@ class C implements $ceylon$language.dart$$Basic, I {
         return $ceylon$language.$dartString(fdf$c.f());
     }
     $dart$core.String foo() => I.$foo(this);
+}
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"X":const{"mt":"c","nm":"X","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"Y":const{"mt":"c","nm":"Y","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"Z":const{"mt":"c","nm":"Z","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"I":const{"mt":"i","nm":"I","sts":const[]},"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
 }

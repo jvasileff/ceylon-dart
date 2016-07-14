@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$IC1 implements $ceylon$language.dart$$Basic {
@@ -101,4 +103,15 @@ class D  extends C implements I {
         D$CC3 d_cc3 = $new$C$CC3();
     }
     I$IC2 $new$I$IC2() => I.$$new$I$IC2(this);
+}
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC2":const{"mt":"c","nm":"IC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC2":const{"mt":"c","nm":"CC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"C","pk":"."},"sts":const[const{"nm":"I","pk":"."}],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"CC1","pk":"."},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"CC3","pk":"."},"sts":const[]},"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"IC1","pk":"."},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"IC3","pk":"."},"sts":const[]}}}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
 }

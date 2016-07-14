@@ -1,4 +1,6 @@
 import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class bridgeAssignmentExpression$I {
@@ -24,3 +26,15 @@ void $package$bridgeAssignmentExpression() {
 }
 
 void bridgeAssignmentExpression() => $package$bridgeAssignmentExpression();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

@@ -59,7 +59,7 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "test.com.vasileff.ceylon.dart.compiler/1.2.3-DP2-SNAPSHOT"
+        module "test.com.vasileff.ceylon.dart.compiler/1.2.3-DP3-SNAPSHOT"
         test "test.com.vasileff.ceylon.dart.compiler"
     }
 
@@ -143,7 +143,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.2.3-DP2-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.2.3-DP3-SNAPSHOT',
                 "${sourceDir.toString()}:${sourceDir2.toString()}",
                 "${destinationDir.toString()}",
                 file("modules-dart")
@@ -152,6 +152,9 @@ project('ceylon-dart-language') {
     task repositoryZip(type: Zip) {
         dependsOn compileCeylonDart
 
+        // pre-generated dart models
+        from file("modules-dart")
+        // language and language support modules
         from compileCeylonDart.destinationDir
         into('repository')
     }
@@ -210,7 +213,7 @@ project('ceylon-dart-sdk') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.2.3-DP2-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.2.3-DP3-SNAPSHOT',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}",
                 project(":ceylon-dart-language").compileCeylonDart.destinationDir,
