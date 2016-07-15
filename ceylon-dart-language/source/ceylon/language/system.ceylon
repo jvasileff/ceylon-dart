@@ -10,9 +10,7 @@ import java.nio.charset {
 }
 import dart.core {
     DStopwatch = Stopwatch,
-    DStopwatchClass = Stopwatch_C,
-    DDateTime = DateTime,
-    DDateTimeClass = DateTime_C
+    DDateTime = DateTime
 }
 
 "Represents the system on which the current process is 
@@ -108,11 +106,11 @@ shared native("js") object system {
 }
 
 shared native("dart") object system {
-    value stopwatch = DStopwatchClass();
+    value stopwatch = DStopwatch.Class();
     stopwatch.start();
 
     shared native("dart") Integer milliseconds
-        =>  DDateTimeClass.now().millisecondsSinceEpoch;
+        =>  DDateTime.Class.now().millisecondsSinceEpoch;
 
     shared native("dart") Integer nanoseconds
         =>  stopwatch.elapsedMicroseconds * 1000;
@@ -129,5 +127,5 @@ shared native("dart") object system {
         =>  "UTF-8";
 
     shared native("dart") Integer timezoneOffset
-        =   DDateTimeClass.now().timeZoneOffset.inMilliseconds;
+        =   DDateTime.Class.now().timeZoneOffset.inMilliseconds;
 }

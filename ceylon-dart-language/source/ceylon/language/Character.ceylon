@@ -1,6 +1,5 @@
 import dart.core {
-    DString = String,
-    DStringClass = String_C
+    DString = String
 }
 import ceylon.interop.dart {
     dartString
@@ -214,7 +213,7 @@ class BaseCharacter(shared Integer integer) extends Object()
         throw OverflowException("``integer`` is not a possible Unicode code point");
     }
 
-    shared actual String string => DStringClass.fromCharCode(integer).string;
+    shared actual String string => DString.Class.fromCharCode(integer).string;
 
     shared Character lowercased
         =>  characterFromInteger(

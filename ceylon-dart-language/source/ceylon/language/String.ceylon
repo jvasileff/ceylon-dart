@@ -4,7 +4,7 @@ import ceylon.interop.dart {
     DartIterable
 }
 import dart.core {
-    DStringClass = String_C
+    DString = String
 }
 
 """A string of characters. Each character in the string is a 
@@ -610,7 +610,7 @@ class BaseString
             val = characters;
         }
         else {
-            val = DStringClass.fromCharCodes(DartIterable(
+            val = DString.Class.fromCharCodes(DartIterable(
                     characters.map((c) => dartInt(c.integer)))).string;
         }
     }
@@ -740,7 +740,7 @@ class BaseString
 
     shared actual
     String rest
-        =>  DStringClass.fromCharCodes(dartString(val).runes.skip(1)).string;
+        =>  DString.Class.fromCharCodes(dartString(val).runes.skip(1)).string;
 
     shared actual
     Character? getFromLast(Integer index)
@@ -811,7 +811,7 @@ class BaseString
 
     shared actual
     String reversed
-        =>  DStringClass.fromCharCodes(dartString(val).runes.toList().reversed).string;
+        =>  DString.Class.fromCharCodes(dartString(val).runes.toList().reversed).string;
 
     shared actual
     Boolean defines(Integer index)
@@ -846,10 +846,10 @@ class BaseString
         value runes = dartString(val).runes.skip(from).take(to - from + 1);
 
         if (reverse) {
-            return DStringClass.fromCharCodes(runes.toList().reversed).string;
+            return DString.Class.fromCharCodes(runes.toList().reversed).string;
         }
         else {
-            return DStringClass.fromCharCodes(runes).string;
+            return DString.Class.fromCharCodes(runes).string;
         }
     }
 
@@ -880,8 +880,8 @@ class BaseString
         }
         value runes = dartString(val).runes;
         return [
-            DStringClass.fromCharCodes(runes.take(index)).string,
-            DStringClass.fromCharCodes(runes.skip(index)).string
+            DString.Class.fromCharCodes(runes.take(index)).string,
+            DString.Class.fromCharCodes(runes.skip(index)).string
         ];
     }
 

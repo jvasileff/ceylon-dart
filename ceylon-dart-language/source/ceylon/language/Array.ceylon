@@ -1,14 +1,6 @@
 import dart.core {
     DInt = \Iint,
-    DList = List,
-    DList_C = List_C,
-    DIterator = Iterator {
-        DIteratorClass2 = Class
-    },
-    DIteratorClass = Iterator_C
-}
-import dart.collection {
-    DIterableBaseClass = IterableBase_C
+    DList = List
 }
 import ceylon.interop.dart {
     DartIterable,
@@ -265,7 +257,7 @@ final serializable class Array<Element>
 
     shared native("dart")
     new ({Element*} elements) {
-        list = DList_C.from(DartIterable(elements));
+        list = DList.Class.from(DartIterable(elements));
     }
 
     shared native("dart")
@@ -273,7 +265,7 @@ final serializable class Array<Element>
         if (size > runtime.maxArraySize) {
             throw AssertionError("array size must be no larger than ``runtime.maxArraySize``");
         }
-        list = DList_C<Element>.filled(largest(size, 0), element);
+        list = DList.Class<Element>.filled(largest(size, 0), element);
     }
 
     new withList(DList<Element> list) {
