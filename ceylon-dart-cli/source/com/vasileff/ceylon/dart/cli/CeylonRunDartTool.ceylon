@@ -62,7 +62,8 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
     Boolean web = false;
 
     shared variable option
-    description("Disable Ceylon version compatibility check (default is false)")
+    description("Disable Ceylon version compatibility and language module availability \
+                 checks (default is false)")
     Boolean disableCompatibilityCheck = false;
 
     shared variable option
@@ -94,11 +95,10 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
     Integer doRun() {
         if (!disableCompatibilityCheck) {
             checkCeylonVersion();
+            // Make sure the language module has been installed
+            // Although, the program may actually import some other version...
+            verifyLanguageModuleAvailability(repositoryManager);
         }
-
-        // Make sure the language module has been installed
-        // Although, the program may actually import some other version...
-        verifyLanguageModuleAvailability(repositoryManager);
 
         value dartPath = findExecutableInPath("dart");
         if (!exists dartPath) {

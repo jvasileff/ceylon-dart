@@ -64,7 +64,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     Boolean doWithoutCaching = false;
 
     shared variable option
-    description("Disable Ceylon version compatibility check (default is false)")
+    description("Disable Ceylon version compatibility and language module availability \
+                 checks (default is false)")
     Boolean disableCompatibilityCheck = false;
 
     shared variable option
@@ -177,8 +178,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     CompilationStatus doRun() {
         if (!disableCompatibilityCheck) {
             checkCeylonVersion();
+            verifyLanguageModuleAvailability(repositoryManager);
         }
-        verifyLanguageModuleAvailability(repositoryManager);
 
         // TODO figure out why typechecking fails when sources for a single module
         //      are split among multiple source directories, sometimes, based on the
