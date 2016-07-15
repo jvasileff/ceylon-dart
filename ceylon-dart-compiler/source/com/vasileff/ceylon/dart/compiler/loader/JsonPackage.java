@@ -1103,17 +1103,17 @@ public class JsonPackage extends LazyPackage {
 
     /** Load a top-level declaration with the specified name, by parsing its model data. */
     Declaration load(String name, List<TypeParameter> existing) {
+        if ("Nothing".equals(name) && isLanguagePackage()) {
+            return nothing;
+        } else if ("$U".equals(name)) {
+            return unknown;
+        }
         if (model == null) {
             throw new IllegalStateException("No model available to load " + name);
         }
         @SuppressWarnings("unchecked")
         final Map<String,Object> map = model == null ? null : (Map<String,Object>)model.get(name);
         if (map == null) {
-            if ("Nothing".equals(name) && isLanguagePackage()) {
-                return nothing;
-            } else if ("$U".equals(name)) {
-                return unknown;
-            }
             throw new IllegalStateException("Cannot find " + pkgname + "::" + name + " in " + model.keySet());
         }
         Object metatype = map.get(MetamodelGenerator.KEY_METATYPE);
