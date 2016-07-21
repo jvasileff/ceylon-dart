@@ -195,7 +195,7 @@ shared
 
     return
     compileDart {
-        virtualFiles = [DirectoryVirtualFile("")];
+        virtualFiles = [DirectoryVirtualFile("/")];
         verboseAst = verbose;
         verboseRhAst = verbose;
         verboseCode = false;
