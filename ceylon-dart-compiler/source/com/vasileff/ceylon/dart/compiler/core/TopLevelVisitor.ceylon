@@ -764,6 +764,8 @@ class TopLevelVisitor(CompilationContext ctx)
         value declarationsToBridge
             // Shouldn't there be a better way?
             =   supertypeDeclarations(classModel)
+                    // don't consider constructors or any other class members
+                    .filter((d) => d is InterfaceModel)
                     .flatMap((d) => CeylonList(d.members))
                     .map((declaration)
                         =>  if (is FunctionOrValueModel | ClassModel declaration)
@@ -772,7 +774,6 @@ class TopLevelVisitor(CompilationContext ctx)
                     .coalesced
                     .filter(DeclarationModel.shared)
                     .filter(not(DeclarationModel.staticallyImportable))
-                    .filter(not(isConstructor))
                     .map(curry(mostRefined)(classModel))
                     .distinct
                     .map((m) {
