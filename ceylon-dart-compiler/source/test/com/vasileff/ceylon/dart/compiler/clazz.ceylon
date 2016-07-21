@@ -167,10 +167,6 @@ object clazz {
         =>  compileAndCompare2("clazz/toplevelClassAliasDefaults");
 
     shared test
-    void toplevelClassAliasConstructors()
-        =>  compileAndCompare2("clazz/toplevelClassAliasConstructors");
-
-    shared test
     void toplevelClassAliasRefs()
         =>  compileAndCompare2("clazz/toplevelClassAliasRefs");
 

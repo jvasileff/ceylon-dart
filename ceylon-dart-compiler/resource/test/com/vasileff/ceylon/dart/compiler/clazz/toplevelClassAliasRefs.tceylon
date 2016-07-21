@@ -15,12 +15,6 @@ shared void run() {
     value newCAlias = CAlias;
     value newCCreateAlias = CCreateAlias;
 
-    value newCAliasCreate = CAlias.create;
-    value newCCreateAliasCreate = CCreateAlias.create;
-
     assert (newCAlias(10).i == 10);
     assert (newCCreateAlias(10, 20).i == 30);
-
-    assert (newCAliasCreate(10, 20).i == 30);
-    assert (newCCreateAliasCreate(10, 20).i == 30);
 }
