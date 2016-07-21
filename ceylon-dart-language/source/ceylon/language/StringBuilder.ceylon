@@ -7,8 +7,9 @@ import java.lang {
     IndexOutOfBoundsException
 }
 import dart.core {
-    DStringBuffer = StringBuffer,
-    DStringBufferClass = StringBuffer_C
+    DStringBuffer = StringBuffer {
+        DStringBufferClass = Class
+    }
 }
 
 """Builder utility for constructing [[strings|String]] by 

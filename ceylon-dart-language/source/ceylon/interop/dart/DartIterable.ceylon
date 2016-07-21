@@ -1,9 +1,12 @@
 import dart.core {
-    DIterator = Iterator,
-    DIteratorClass = Iterator_C
+    DIterator = Iterator {
+        DIteratorClass = Class
+    }
 }
 import dart.collection {
-    DIterableBaseClass = IterableBase_C
+    DIterableBase = IterableBase {
+        DIterableBaseClass = Class
+    }
 }
 
 shared
