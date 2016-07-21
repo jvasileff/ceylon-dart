@@ -68,6 +68,8 @@ Map<String, int> annotationBits = {
   "serializable" : 1 << 11
 };
 
+TypeMirror voidType = currentMirrorSystem().voidType;
+
 Set<LibraryMirror> allowedLibraries;
 
 /*
@@ -267,8 +269,11 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
         // exclude dart._internal.EfficientLength and others?
         && MirrorSystem.getName(t.owner.qualifiedName) != "dart._internal";
     })
-    // don't erase in typeToMap...
-    .map((m) => typeToMap(m, from, false, false)).toList();
+    // - don't erase in typeToMap...
+    // - contravariant (i.e. dynamic=Nothing) type arguments for satisfied
+    //   types! The assumption is that most type parameters are covariant,
+    //   i.e. producers, and we use Nothing for return types.
+    .map((m) => typeToMap(m, from, false, false, false)).toList();
 
   // print("satisfies (i): " + map[keySatisfies].toString());
 
@@ -322,11 +327,11 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
       keyName : "Basic"
   };
 
-  // satisfy the corresponding Ceylon interface, using all type paramters as
+  // satisfy the corresponding Ceylon interface, using all type parameters as
   // type arguments. Do not erase.
   map[keySatisfies] = [typeToMap(cm, from, false, false)];
   var typeArgs = typeArgumentMap(
-      cm.declarations.values.where((d) => d is TypeVariableMirror), from);
+      cm.declarations.values.where((d) => d is TypeVariableMirror), from, true);
   if (!typeArgs.isEmpty) {
     map[keySatisfies][0][keyTypeParams] = typeArgs;
   }
@@ -444,7 +449,7 @@ Map<String, Map<String, Object>> methodsToMap(
 Map<String, Object> variableToMap(VariableMirror mm, DeclarationMirror from,
     bool forceAbstract) {
   var map = new Map();
-  map[keyType] = typeToMap(mm.type, from); // TODO what about void?
+  map[keyType] = typeToMap(mm.type, from);
 
   if (!mm.isFinal && !mm.isConst) {
     map["\$set"] = { keyMetatype : metatypeSetter };
@@ -473,7 +478,8 @@ Map<String, Object> methodToMap(MethodMirror mm, DeclarationMirror from,
     bool forceAbstract) {
 
   var map = new Map();
-  map[keyType] = typeToMap(mm.returnType, from); // TODO what about void?
+  // contraviarant return (i.e. dynamic=Nothing)
+  map[keyType] = typeToMap(mm.returnType, from, false, true, false);
 
   if (mm.isGetter) {
     // FIXME Find a way to determine if a setter exists. We could search
@@ -521,15 +527,24 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
       map["\$pt"] = "f";
       // Don't erase! Callable's are generic, so there is no automatic
       // type erasure.
-      map[keyType] = typeToMap(pt.returnType, from, false, false);
+
+      // For the return type of a function that is a parameter, we want
+      // covariant (i.e. dynamic=Anything) for maximum flexibility
+
+      // TODO: but what about when the function is a parameter of a
+      //    function of a parameter! parametersToList() needs a
+      //    covariant=true param.
+      map[keyType] = typeToMap(pt.returnType, from, false, false, true);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
+      // TODO these param types should be contravariant (i.e. Nothing)...
       List plist = parametersToList(pt.parameters, from);
       if (plist.isNotEmpty) {
         map[keyParams] = [plist];
       }
     }
     else {
+      // covariant (i.e. dynamic=Anything)
       map[keyType] = typeToMap(pm.type, from);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
@@ -548,16 +563,17 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
 }
 
 List<Map<String, Object>> typeArgumentMap(
-    Iterable<DeclarationMirror> typeArguments, DeclarationMirror from) {
+    Iterable<DeclarationMirror> typeArguments, DeclarationMirror from, bool isCovariant) {
   return typeArguments.where((tm) => tm is TypeMirror).map((tm) {
-    var map = typeToMap(tm, from, false, false); // keyModule, keyName
+    var map = typeToMap(tm, from, false, false, isCovariant); // keyModule, keyName
     map[keyMetatype] = metatypeTypeParameter;
     return map;
   }).toList();
 }
 
 Map<String, Object> typeToMap(
-    TypeMirror tm, DeclarationMirror from, [bool isClass = false, bool erase = true]) {
+    TypeMirror tm, DeclarationMirror from,
+      [bool isClass = false, bool erase = true, bool isCovariant = true]) {
 
   // FIXME tm is null sometimes
 
@@ -640,7 +656,7 @@ Map<String, Object> typeToMap(
       map[keyModule] = tmModuleName;
     }
 
-    var tam = typeArgumentMap(tm.typeArguments, from);
+    var tam = typeArgumentMap(tm.typeArguments, from, isCovariant);
     if (tam.isNotEmpty) {
       map[keyTypeParams] = tam;
     }
@@ -649,10 +665,15 @@ Map<String, Object> typeToMap(
     // TODO make sure this works (type is type parameter)
     map[keyName] = MirrorSystem.getName(tm.simpleName);
   }
+  else if (tm == voidType) {
+    map[keyModule] = "\$";
+    map[keyName] = "Anything";
+    map[keyPackage] = "\$";
+  }
   else {
     // it must be dynamic
     map[keyModule] = "\$";
-    map[keyName] = "Anything";
+    map[keyName] = isCovariant ? "Anything" : "Nothing";
     map[keyPackage] = "\$";
   }
   return map;

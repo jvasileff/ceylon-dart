@@ -539,7 +539,7 @@ class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
 
   noSuchMethod($dart$core.Invocation invocation) {
     var inArgs = invocation.positionalArguments;
-    if (invocation.memberName == #f) {
+    if (invocation.memberName == #f || invocation.memberName == #call) {
       var tuple = invocation.positionalArguments.length > 0
           ? new Tuple.$withList(inArgs, empty) : empty;
 
@@ -575,7 +575,7 @@ class dart$UnflatFunction implements dart$$Object, $dart$core.Function, dart$Cal
 
   noSuchMethod($dart$core.Invocation invocation) {
     var inArgs = invocation.positionalArguments;
-    if (invocation.memberName == #f) {
+    if (invocation.memberName == #f || invocation.memberName == #call) {
       // There will always be exactly one argument, which is a sequence
       return flatFunction.s(inArgs.first);
     }

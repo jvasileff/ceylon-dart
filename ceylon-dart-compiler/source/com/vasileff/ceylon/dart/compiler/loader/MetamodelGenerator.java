@@ -83,6 +83,7 @@ public class MetamodelGenerator {
 
     private final Map<String, Object> model = new HashMap<>();
     private static final Map<String,Object> unknownTypeMap = new HashMap<>();
+    private static final Map<String,Object> nothingTypeMap = new HashMap<>();
     private final Module module;
 
     private Backend dartBackend = Backend.registerBackend("Dart", "dart");
@@ -134,6 +135,10 @@ public class MetamodelGenerator {
         }
         if (unknownTypeMap.isEmpty()) {
             unknownTypeMap.put(KEY_NAME, "$U");
+        }
+        if (nothingTypeMap.isEmpty()) {
+            nothingTypeMap.put(KEY_NAME, "Nothing");
+            nothingTypeMap.put(KEY_PACKAGE, "$");
         }
     }
 
@@ -191,6 +196,8 @@ public class MetamodelGenerator {
     private Map<String, Object> typeMap(Type pt, Declaration from) {
         if (ModelUtil.isTypeUnknown(pt)) {
             return unknownTypeMap;
+        } else if (pt.isNothing()) {
+            return nothingTypeMap;
         }
         Map<String, Object> m = new HashMap<>();
         if (pt.isUnion() || pt.isIntersection()) {
@@ -266,7 +273,8 @@ public class MetamodelGenerator {
         }
         if (tp.getSatisfiedTypes() != null && !tp.getSatisfiedTypes().isEmpty()) {
             encodeTypes(tp.getSatisfiedTypes(), map, KEY_SATISFIES, from);
-        } else if (tp.getCaseTypes() != null && !tp.getCaseTypes().isEmpty()) {
+        }
+        if (tp.getCaseTypes() != null && !tp.getCaseTypes().isEmpty()) {
             encodeTypes(tp.getCaseTypes(), map, "of", from);
         }
         if (tp.getDefaultTypeArgument() != null) {

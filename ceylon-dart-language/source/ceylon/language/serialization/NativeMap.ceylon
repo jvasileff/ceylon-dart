@@ -4,7 +4,7 @@ import java.util{
 }
 import ceylon.language.impl{BaseIterable, BaseIterator}
 import dart.core {
-    DMapClass = Map_C
+    DMap = Map
 }
 import ceylon.interop.dart {
     CeylonIterable
@@ -218,7 +218,7 @@ native("js") class NativeMap<Key,Element>() {
 
 native("dart") class NativeMap<Key,Element>() {
 
-    native("dart") value m = DMapClass<Key, Element>();
+    native("dart") value m = DMap.Class<Key, Element>();
 
     shared native("dart") void put(Key id, Element instanceOrPartial)
         =>  m.set_(id, instanceOrPartial);

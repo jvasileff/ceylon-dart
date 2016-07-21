@@ -1,6 +1,5 @@
 import dart.core {
-    DList = List,
-    DListClass = List_C
+    DList = List
 }
 import ceylon.interop.dart {
     DartIterable
@@ -200,20 +199,20 @@ class BaseTuple<out Element, out First, out Rest = []>
 
     shared
     new (Element first, [Element*] rest = []) extends Object() {
-        list = DListClass(1);
+        list = DList.Class(1);
         list.set_(0, first);
         this.restSequence = rest;
     }
 
     shared
     new trailing({Element*} initial, Element element) extends Object() {
-        list = DListClass.from(DartIterable(initial.chain({element})));
+        list = DList.Class.from(DartIterable(initial.chain({element})));
         this.restSequence = [];
     }
 
     shared
     new ofElements({Element*} rest) extends Object() {
-        list = DListClass.from(DartIterable(rest));
+        list = DList.Class.from(DartIterable(rest));
         if (list.isEmpty) {
             throw AssertionError("list must not be empty");
         }
