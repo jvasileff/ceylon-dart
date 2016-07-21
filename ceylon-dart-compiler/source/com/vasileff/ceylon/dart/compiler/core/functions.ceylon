@@ -253,6 +253,10 @@ ConstructorModel? getConstructor(FunctionOrValueModel model)
         then c
         else null;
 
+"True if [[model]] is a [[ConstructorModel]] or a [[FunctionModel]] for a constructor."
+Boolean isConstructor(DeclarationModel model)
+    =>  replaceFunctionWithConstructor(model) is ConstructorModel;
+
 ConstructorModel|Declaration replaceFunctionWithConstructor<Declaration>
         (Declaration model)
     =>  if (is FunctionModel model,

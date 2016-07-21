@@ -759,7 +759,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
 
-        "Functions, values, classes (or their constructors) for which the most refined
+        "Functions, values, and classes for which the most refined
          member is contained by an Interface."
         value declarationsToBridge
             // Shouldn't there be a better way?
@@ -772,6 +772,7 @@ class TopLevelVisitor(CompilationContext ctx)
                     .coalesced
                     .filter(DeclarationModel.shared)
                     .filter(not(DeclarationModel.staticallyImportable))
+                    .filter(not(isConstructor))
                     .map(curry(mostRefined)(classModel))
                     .distinct
                     .map((m) {
