@@ -227,7 +227,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         }
 
         value copier = ModuleCopycat(repositoryManager, outputRepositoryManager,
-                            log, feedback);
+                            logger, feedback);
         copier.copyModules(artifactContexts);
     }
 
