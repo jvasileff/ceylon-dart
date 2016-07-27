@@ -571,6 +571,9 @@ public class JsonPackage extends LazyPackage {
                 _params.setNamedParametersSupported(first);
                 first = false;
                 md.addParameterList(_params);
+                for (Parameter p : _params.getParameters()) {
+                    md.addMember(p.getModel());
+                }
             }
         }
         return md;
