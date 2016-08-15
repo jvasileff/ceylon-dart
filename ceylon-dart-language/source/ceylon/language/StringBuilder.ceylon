@@ -38,6 +38,7 @@ shared native final class StringBuilder()
     "Returns a string of the given [[length]] containing
      the characters beginning at the given [[index]]."
     deprecated ("use [[measure]]")
+    since("1.1.0")
     shared native
     String substring(Integer index, Integer length)
             => measure(index, length);
@@ -59,10 +60,12 @@ shared native final class StringBuilder()
     }
     
     "Prepend the characters in the given [[string]]."
+    since("1.1.0")
     shared native 
     StringBuilder prepend(String string);
     
     "Prepend the characters in the given [[strings]]."
+    since("1.1.0")
     shared native 
     StringBuilder prependAll({String*} strings) {
         for (s in strings) {
@@ -76,6 +79,7 @@ shared native final class StringBuilder()
     StringBuilder appendCharacter(Character character);
     
     "Prepend the given [[character]]."
+    since("1.1.0")
     shared native 
     StringBuilder prependCharacter(Character character);
     
@@ -88,6 +92,7 @@ shared native final class StringBuilder()
     StringBuilder appendSpace() => appendCharacter(' ');
     
     "Remove all content and return to initial state."
+    since("1.1.0")
     shared native 
     StringBuilder clear();
     
@@ -105,6 +110,7 @@ shared native final class StringBuilder()
      [[index]], with the given [[string]]. If [[length]] is 
      nonpositive, nothing is replaced, and the `string` is
      simply inserted at the specified `index`."
+    since("1.1.0")
     shared native 
     StringBuilder replace
             (Integer index, Integer length, String string);
@@ -119,16 +125,19 @@ shared native final class StringBuilder()
     "Deletes the specified [[number of characters|length]] 
      from the start of the string. If `length` is 
      nonpositive, nothing is deleted."
+    since("1.1.0")
     shared native 
     StringBuilder deleteInitial(Integer length);
     
     "Deletes the specified [[number of characters|length]] 
      from the end of the string. If `length` is nonpositive, 
      nothing is deleted."
+    since("1.1.0")
     shared native 
     StringBuilder deleteTerminal(Integer length);
     
     "Reverses the order of the current characters."
+    since("1.1.0")
     shared native 
     StringBuilder reverseInPlace();
     
