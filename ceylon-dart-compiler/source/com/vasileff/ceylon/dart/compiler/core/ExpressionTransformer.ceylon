@@ -1671,14 +1671,30 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformAssignOperation(AssignOperation that) {
-        assert (is BaseExpression | QualifiedExpression leftOperand = that.leftOperand);
+        assert (is BaseExpression | QualifiedExpression | ElementOrSubrangeExpression
+                leftOperand = that.leftOperand);
+
         value info = expressionInfo(that);
-        return generateAssignment {
-            info;
-            leftOperand;
-            info.typeModel;
-            () => that.rightOperand.transform(expressionTransformer);
-        };
+
+        switch (leftOperand)
+        case (is ElementOrSubrangeExpression) {
+            assert (is KeySubscript subscript = leftOperand.subscript);
+            return generateInvocationSynthetic {
+                info;
+                expressionInfo(leftOperand.primary).typeModel;
+                () => leftOperand.primary.transform(expressionTransformer);
+                "set";
+                [subscript.key, that.rightOperand];
+            };
+        }
+        case (is BaseExpression | QualifiedExpression) {
+            return generateAssignment {
+                info;
+                leftOperand;
+                info.typeModel;
+                () => that.rightOperand.transform(expressionTransformer);
+            };
+        }
     }
 
     shared actual
