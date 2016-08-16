@@ -265,4 +265,8 @@ object clazz {
     shared test
     void valueConstructorToplevel()
         =>  compileAndCompare2("clazz/valueConstructorToplevel");
+
+    shared test
+    void shortcutRefinementFunctionValue()
+        =>  compileAndCompare2("clazz/shortcutRefinementFunctionValue");
 }

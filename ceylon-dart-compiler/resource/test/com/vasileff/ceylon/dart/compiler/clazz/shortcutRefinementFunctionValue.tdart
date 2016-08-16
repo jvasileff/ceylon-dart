@@ -1,0 +1,59 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class I {
+    $ceylon$language.Callable get v1;
+    $ceylon$language.Callable get v2;
+    $ceylon$language.Callable get v3;
+    $dart$core.String f1([$dart$core.String s]);
+    $dart$core.String f2([$dart$core.String s]);
+}
+class C implements $ceylon$language.dart$$Basic, I {
+    C() {
+        if (!((v1.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
+        }
+        v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        if (!((v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
+        }
+        if (!((v3.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: v3(\"hello\").size == 5");
+        }
+        if (!($ceylon$language.$ceylonString(f1("hello")).size == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
+        }
+        f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+        if (!($ceylon$language.$ceylonString(f2("hello")).size == 5)) {
+            throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
+        }
+        $ceylon$language.print($ceylon$language.$ceylonString("done!"));
+    }
+    $ceylon$language.Callable v1 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    $ceylon$language.Callable v2;
+    $ceylon$language.Callable get v3 => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    $dart$core.String f1([$dart$core.String s]) => s;
+    $ceylon$language.Callable f2$c;
+    $dart$core.String f2([$dart$core.String s]) {
+        return $ceylon$language.$dartString(f2$c.f($ceylon$language.$ceylonString(s)));
+    }
+}
+void $package$run() {
+    new C();
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

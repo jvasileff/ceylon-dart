@@ -96,7 +96,10 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     valueDefinitionInfo,
     valueSpecificationInfo,
     valueSetterDefinitionInfo,
-    objectDefinitionInfo
+    objectDefinitionInfo,
+    parametersInfo,
+    parameterInfo,
+    ParameterInfo
 }
 
 shared
@@ -129,7 +132,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 then generateMethodGetterOrSetterDeclaration(that)
                 else null;
 
-        DartMethodDeclaration dartDefinition;
+        DartMethodDeclaration | DartFieldDeclaration dartDefinition;
         switch (declaration = info.declaration)
         case (is FunctionModel) {
             assert (nonempty parameterLists = that.parameterLists);
@@ -147,17 +150,65 @@ class ClassMemberTransformer(CompilationContext ctx)
                     };
         }
         case (is ValueModel) {
-            dartDefinition
-                =   generateMethodDefinitionRaw {
-                        info;
-                        declaration;
-                        generateDefinitionForValueModelGetter {
+            if (nonempty parameterLists = that.parameterLists) {
+                // Shortcut refinement of a value with a specification that looks
+                // like a function. Assign a callable to the dart field.
+                //
+                // This is simpler than the more usual 'v = ...' value shortcut
+                // refinement, because with 'v() => ...', we do not have to eagerly
+                // evaluate an expression in the class body.
+
+                // use boxed type for all parameters (copy & paste from
+                // StatementTransformer.transformLazySpecification())
+                value allParameterModels
+                        =>  that.parameterLists
+                        .flatMap((pl) => pl.parameters)
+                        .map(parameterInfo)
+                        .map(ParameterInfo.parameterModel);
+
+                for (p in allParameterModels) {
+                    // TODO this should be in a separate visitor, probably.
+                    // Since we're generating Callables, force all parameters to be
+                    // non-native, to avoid lots of unnecessary boxing/unboxing.
+                    ctx.disableErasureToNative.add(p.model);
+                }
+
+                value functionModel = dartTypes.syntheticFunctionForSpecifier(info);
+
+                // the non-default (final) field
+                dartDefinition
+                    =   generateFieldDeclaration {
                             info;
                             declaration;
-                            //parameterLists;
-                            that.specifier;
-                        }.functionExpression;
-                    };
+                            generateCallableForBE {
+                                info;
+                                functionModel;
+                                generateFunctionExpressionRaw {
+                                    info;
+                                    functionModel;
+                                    parameterLists;
+                                    that.specifier;
+                                    forceNonNativeReturn = true;
+                                };
+                                parameterList
+                                    =   parametersInfo(parameterLists.first).model;
+                                hasForcedNonNativeReturn =  true;
+                            };
+                        };
+            }
+            else {
+                dartDefinition
+                    =   generateMethodDefinitionRaw {
+                            info;
+                            declaration;
+                            generateDefinitionForValueModelGetter {
+                                info;
+                                declaration;
+                                //parameterLists;
+                                that.specifier;
+                            }.functionExpression;
+                        };
+            }
         }
 
         return [dartDeclaration, dartDefinition].coalesced.sequence();
