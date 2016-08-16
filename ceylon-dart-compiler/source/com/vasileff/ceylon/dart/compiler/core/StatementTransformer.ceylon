@@ -537,6 +537,49 @@ class StatementTransformer(CompilationContext ctx)
         "StatementTransformer doesn't handle shortcut refinements."
         assert (!info.declaration.shortcutRefinement);
 
+        function generateCallable() {
+            // use boxed type for all parameters
+            value allParameterModels
+                =>  that.parameterLists
+                            .flatMap((pl) => pl.parameters)
+                            .map(parameterInfo)
+                            .map(ParameterInfo.parameterModel);
+
+            for (p in allParameterModels) {
+                // TODO this should be in a separate visitor, probably.
+                // Since we're generating Callables, force all parameters to be
+                // non-native, to avoid lots of unnecessary boxing/unboxing.
+                ctx.disableErasureToNative.add(p.model);
+            }
+
+            "If we're specifying a value as if it were a function, create a synthetic
+             FunctionModel. This is for code like:
+
+                String(String) foo;
+                foo(String s) => s;"
+            value declarationModel
+                =   switch (model = info.declaration)
+                    case (is FunctionModel) model
+                    case (is ValueModel) dartTypes.syntheticFunctionForSpecifier(info);
+
+            assert (nonempty parameterLists
+                =   that.parameterLists);
+
+            return generateCallableForBE {
+                info;
+                declarationModel;
+                generateFunctionExpressionRaw {
+                    info;
+                    declarationModel;
+                    parameterLists;
+                    that.specifier;
+                    forceNonNativeReturn = true;
+                };
+                parameterList = parametersInfo(parameterLists.first).model;
+                hasForcedNonNativeReturn =  true;
+            };
+        }
+
         switch (declarationModel = info.declaration)
         case (is FunctionModel) {
             // Specification for a forward declared function. Assign to the synthetic
@@ -585,19 +628,7 @@ class StatementTransformer(CompilationContext ctx)
                     withLhs {
                         callableType;
                         null;
-                        () => generateCallableForBE {
-                            info;
-                            declarationModel;
-                            generateFunctionExpressionRaw {
-                                info;
-                                declarationModel;
-                                parameterLists;
-                                that.specifier;
-                                forceNonNativeReturn = true;
-                            };
-                            parameterList = parametersInfo(parameterLists.first).model;
-                            hasForcedNonNativeReturn =  true;
-                        };
+                        generateCallable;
                     };
                 };
             }];
@@ -613,29 +644,62 @@ class StatementTransformer(CompilationContext ctx)
                     // is implemented as a Dart variable of type Function.
                     else dartTypes.getName(declarationModel);
 
-            return
-            [DartExpressionStatement {
-                DartAssignmentExpression {
-                    DartSimpleIdentifier {
-                        callableVariableName;
-                    };
-                    DartAssignmentOperator.equal;
-                    DartFunctionExpression {
-                        dartFormalParameterListEmpty;
-                        // same as in BG.generateDefinitionForValueModelGetter()
-                        DartExpressionFunctionBody {
-                            false;
-                            withLhs {
-                                null;
-                                declarationModel;
-                                () => that.specifier.expression.transform {
-                                    expressionTransformer;
+            value expressionGenerator
+                =   if (!that.parameterLists.empty) then
+                        // a function-style specification for a value, e.g. the following
+                        // assuming 'foo' was previously declared as a value.
+                        //      foo(String s) => ...;
+                        generateCallable
+                    else
+                        // a normal lazy value specification, e.g.
+                        //      foo => ...;
+                        (() => that.specifier.expression.transform {
+                            expressionTransformer;
+                        });
+
+            if (declarationModel.transient) {
+                return
+                [DartExpressionStatement {
+                    DartAssignmentExpression {
+                        DartSimpleIdentifier {
+                            callableVariableName;
+                        };
+                        DartAssignmentOperator.equal;
+                        DartFunctionExpression {
+                            dartFormalParameterListEmpty;
+                            // same as in BG.generateDefinitionForValueModelGetter()
+                            DartExpressionFunctionBody {
+                                false;
+                                withLhs {
+                                    null;
+                                    declarationModel;
+                                    expressionGenerator;
                                 };
                             };
                         };
                     };
-                };
-            }];
+                }];
+            }
+            else {
+                // For use after https://github.com/ceylon/ceylon/issues/6428.
+                // A values of type Callable that is specified with a LazySpecification
+                // that has a parameter list should *not* be transient. The '=>' is
+                // to define the function, not to indicate a lazy value.
+                return
+                [DartExpressionStatement {
+                    DartAssignmentExpression {
+                        DartSimpleIdentifier {
+                            callableVariableName;
+                        };
+                        DartAssignmentOperator.equal;
+                        withLhs {
+                            null;
+                            declarationModel;
+                            expressionGenerator;
+                        };
+                    };
+                }];
+            }
         }
     }
 

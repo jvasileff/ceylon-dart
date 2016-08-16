@@ -54,7 +54,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     superInfo,
     unspecifiedVariableInfo,
-    variadicVariableInfo
+    variadicVariableInfo,
+    LazySpecificationInfo,
+    parametersInfo,
+    ParametersInfo,
+    expressionInfo
 }
 
 shared
@@ -920,6 +924,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         f.refinedDeclaration = f;
         f.unit = constructorModel.unit;
 
+        return f;
+    }
+
+    shared
+    FunctionModel syntheticFunctionForSpecifier(LazySpecificationInfo that) {
+        value f = FunctionModel();
+        that.node.parameterLists.map(parametersInfo)
+                .map(ParametersInfo.model)
+                .each(f.addParameterList);
+        f.container = that.scope; // ok?
+        f.shared = false;
+        f.type = expressionInfo(that.node.specifier.expression).typeModel;
+        f.unit = that.typecheckerUnit;
         return f;
     }
 
