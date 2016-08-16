@@ -1679,13 +1679,62 @@ class ExpressionTransformer(CompilationContext ctx)
         switch (leftOperand)
         case (is ElementOrSubrangeExpression) {
             assert (is KeySubscript subscript = leftOperand.subscript);
-            return generateInvocationSynthetic {
-                info;
-                expressionInfo(leftOperand.primary).typeModel;
-                () => leftOperand.primary.transform(expressionTransformer);
-                "set";
-                [subscript.key, that.rightOperand];
-            };
+
+            if (ctx.lhsTypeTop is NoType) {
+                // Easy case: probably a statement. No need to save
+                // and return the rhs value
+                return generateInvocationFromName {
+                    info;
+                    leftOperand.primary;
+                    "set";
+                    [subscript.key, that.rightOperand];
+                };
+            }
+            else {
+                value rhsTempVar = DartSimpleIdentifier {
+                    dartTypes.createTempNameCustom();
+                };
+
+                value rightOperandInfo = expressionInfo(that.rightOperand);
+
+                return createExpressionEvaluationWithSetup {
+                    [createVariableDeclaration {
+                        dartTypes.dartTypeName {
+                            rightOperandInfo;
+                            rightOperandInfo.typeModel;
+                            // CorrespondenceMutator.set is generic, so don't
+                            // erase just to rebox later.
+                            eraseToNative = false;
+                            eraseToObject = false;
+                        };
+                        rhsTempVar;
+                        withLhsNonNative {
+                            rightOperandInfo.typeModel;
+                            () => that.rightOperand.transform(expressionTransformer);
+                        };
+                    },
+                    DartExpressionStatement {
+                        withLhsNoType {
+                            () => generateInvocationFromName {
+                                info;
+                                leftOperand.primary;
+                                "set";
+                                [() => subscript.key.transform(expressionTransformer),
+                                 () => withBoxingNonNative {
+                                    info;
+                                    rightOperandInfo.typeModel;
+                                    rhsTempVar;
+                                }];
+                            };
+                        };
+                    }];
+                    withBoxingNonNative {
+                        info;
+                        rightOperandInfo.typeModel;
+                        rhsTempVar;
+                    };
+                };
+            }
         }
         case (is BaseExpression | QualifiedExpression) {
             return generateAssignment {
