@@ -17,4 +17,8 @@ object assignment {
     shared test
     void specificationWithThis()
         =>  compileAndCompare2("assignment/specificationWithThis");
+
+    shared test
+    void correspondenceMutator()
+            =>  compileAndCompare2("assignment/correspondenceMutator");
 }

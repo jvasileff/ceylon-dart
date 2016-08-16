@@ -1,0 +1,40 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run([$ceylon$language.CorrespondenceMutator objectArray, $ceylon$language.CorrespondenceMutator stringArray, $ceylon$language.CorrespondenceMutator integerArray]) {
+    $dart$core.Object o = $ceylon$language.$ceylonInteger(10);
+    objectArray.set($ceylon$language.$ceylonInteger(10), o);
+    o = (() {
+        $dart$core.Object tmp$0 = o;
+        objectArray.set($ceylon$language.$ceylonInteger(10), tmp$0);
+        return tmp$0;
+    })();
+    stringArray.set($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonString("hello"));
+    $dart$core.String s = (() {
+        $ceylon$language.String tmp$1 = $ceylon$language.$ceylonString("hello");
+        stringArray.set($ceylon$language.$ceylonInteger(10), tmp$1);
+        return $ceylon$language.$dartString(tmp$1);
+    })();
+    $dart$core.double f = 1.0;
+    f = 1.0 + (() {
+        $ceylon$language.Integer tmp$2 = $ceylon$language.$ceylonInteger(1);
+        integerArray.set($ceylon$language.$ceylonInteger(10), tmp$2);
+        return $ceylon$language.$dartInt(tmp$2).toDouble();
+    })();
+}
+
+void run([$ceylon$language.CorrespondenceMutator objectArray, $ceylon$language.CorrespondenceMutator stringArray, $ceylon$language.CorrespondenceMutator integerArray]) => $package$run(objectArray, stringArray, integerArray);
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

@@ -1,0 +1,16 @@
+void run(
+        CorrespondenceMutator<Integer, Object> objectArray,
+        CorrespondenceMutator<Integer, String> stringArray,
+        CorrespondenceMutator<Integer, Integer> integerArray) {
+
+    variable Object o = 10;
+
+    objectArray[10] = o;
+    o = objectArray[10] = o;
+
+    stringArray[10] = "hello";
+    String s = stringArray[10] = "hello";
+
+    variable Float f = 1.0;
+    f = 1.0 + (integerArray[10] = 1);
+}
