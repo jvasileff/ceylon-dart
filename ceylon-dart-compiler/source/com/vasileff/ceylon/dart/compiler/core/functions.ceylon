@@ -276,6 +276,16 @@ ClassModel getClassOfConstructor(ClassModel | ConstructorModel constructor) {
     }
 }
 
+"The declaration, or if the declaration is a Constructor, the declaration's container."
+ClassModel | Declaration replaceConstructorWithClass<Declaration>
+        (Declaration | ConstructorModel declaration) {
+    if (is ConstructorModel declaration) {
+        assert (is ClassModel result = declaration.container);
+        return result;
+    }
+    return declaration;
+}
+
 "Return the `target` property of the base or qualified expression."
 TypeModel | TypedReferenceModel targetForExpressionInfo(
         QualifiedExpressionInfo | BaseExpressionInfo info)
