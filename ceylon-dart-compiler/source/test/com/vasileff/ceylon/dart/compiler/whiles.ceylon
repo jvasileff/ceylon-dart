@@ -7,21 +7,21 @@ object whiles {
 
     shared test
     void simpleWhileLoop()
-        =>  compileAndCompare2("whiles/simpleWhileLoop");
+        =>  compileAndCompare("whiles/simpleWhileLoop");
 
     shared test
     void isDeclareNewTest()
-        =>  compileAndCompare2("whiles/isDeclareNewTest");
+        =>  compileAndCompare("whiles/isDeclareNewTest");
 
     shared test
     void isTestReplacement()
-        =>  compileAndCompare2("whiles/isTestReplacement");
+        =>  compileAndCompare("whiles/isTestReplacement");
 
     shared test
     void isTestNoReplacement()
-        =>  compileAndCompare2("whiles/isTestNoReplacement");
+        =>  compileAndCompare("whiles/isTestNoReplacement");
 
     shared test
     void existsTestNoReplacement()
-        =>  compileAndCompare2("whiles/existsTestNoReplacement");
+        =>  compileAndCompare("whiles/existsTestNoReplacement");
 }

@@ -7,45 +7,45 @@ object erasure {
 
     shared test
     void booleanFunctionReturn()
-        =>  compileAndCompare2("erasure/booleanFunctionReturn");
+        =>  compileAndCompare("erasure/booleanFunctionReturn");
 
     shared test
     void integerFunctionReturn()
-        =>  compileAndCompare2("erasure/integerFunctionReturn");
+        =>  compileAndCompare("erasure/integerFunctionReturn");
 
     shared test
     void floatFunctionReturn()
-        =>  compileAndCompare2("erasure/floatFunctionReturn");
+        =>  compileAndCompare("erasure/floatFunctionReturn");
 
     shared test
     void stringFunctionReturn()
-        =>  compileAndCompare2("erasure/stringFunctionReturn");
+        =>  compileAndCompare("erasure/stringFunctionReturn");
 
     shared test
     void booleanArgument()
-        =>  compileAndCompare2("erasure/booleanArgument");
+        =>  compileAndCompare("erasure/booleanArgument");
 
     shared test
     void genericNon()
-        =>  compileAndCompare2("erasure/genericNon");
+        =>  compileAndCompare("erasure/genericNon");
 
     shared test
     void functionRefNon()
-        =>  compileAndCompare2("erasure/functionRefNon");
+        =>  compileAndCompare("erasure/functionRefNon");
 
     shared test
     void dontEraseArgumentsToValue()
-        =>  compileAndCompare2("erasure/dontEraseArgumentsToValue");
+        =>  compileAndCompare("erasure/dontEraseArgumentsToValue");
 
     shared test
     void methodRefinementArgument()
-        =>  compileAndCompare2("erasure/methodRefinementArgument");
+        =>  compileAndCompare("erasure/methodRefinementArgument");
 
     shared test
     void shortcutRefinementParameter()
-        =>  compileAndCompare2("erasure/shortcutRefinementParameter");
+        =>  compileAndCompare("erasure/shortcutRefinementParameter");
 
     shared test
     void aliasEraseToObject()
-        =>  compileAndCompare2("erasure/aliasEraseToObject");
+        =>  compileAndCompare("erasure/aliasEraseToObject");
 }

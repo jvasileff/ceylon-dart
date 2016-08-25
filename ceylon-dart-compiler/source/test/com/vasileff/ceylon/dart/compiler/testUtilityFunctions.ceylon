@@ -17,7 +17,7 @@ import java.nio.file {
     JFiles=Files
 }
 
-shared void compileAndCompare2(String key) {
+void compileAndCompare(String key) {
     value ceylonPathPart = key +  ".tceylon";
     value dartPathPart = key +  ".tdart";
 

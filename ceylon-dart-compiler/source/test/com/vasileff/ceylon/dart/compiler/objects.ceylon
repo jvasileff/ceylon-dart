@@ -7,42 +7,42 @@ object objects {
 
     shared test
     void simpleToplevelObject()
-        =>  compileAndCompare2("objects/simpleToplevelObject");
+        =>  compileAndCompare("objects/simpleToplevelObject");
 
     shared test
     void shortcutRefinement()
-        =>  compileAndCompare2("objects/shortcutRefinement");
+        =>  compileAndCompare("objects/shortcutRefinement");
 
     shared test
     void bridgeMethods()
-        =>  compileAndCompare2("objects/bridgeMethods");
+        =>  compileAndCompare("objects/bridgeMethods");
 
     shared test
     void simpleObjectInFunction()
-        =>  compileAndCompare2("objects/simpleObjectInFunction");
+        =>  compileAndCompare("objects/simpleObjectInFunction");
 
     shared test
     void simpleObjectInObject()
-        =>  compileAndCompare2("objects/simpleObjectInObject");
+        =>  compileAndCompare("objects/simpleObjectInObject");
 
     shared test
     void multipleCaptures()
-        =>  compileAndCompare2("objects/multipleCaptures");
+        =>  compileAndCompare("objects/multipleCaptures");
 
     shared test
     void outerForSupertypesSupertype()
-        =>  compileAndCompare2("objects/outerForSupertypesSupertype");
+        =>  compileAndCompare("objects/outerForSupertypesSupertype");
 
     "Replacement value from `assert` must be captured as class member."
     shared test
     void replacementDeclarationIsMember()
-        =>  compileAndCompare2("objects/replacementDeclarationIsMember");
+        =>  compileAndCompare("objects/replacementDeclarationIsMember");
 
     shared test
     void objectWithInitialization()
-        =>  compileAndCompare2("objects/objectWithInitialization");
+        =>  compileAndCompare("objects/objectWithInitialization");
 
     shared test
     void imports()
-        =>  compileAndCompare2("objects/imports");
+        =>  compileAndCompare("objects/imports");
 }

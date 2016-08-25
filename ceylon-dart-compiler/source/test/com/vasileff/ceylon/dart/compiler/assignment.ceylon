@@ -7,14 +7,14 @@ object assignment {
 
     shared test
     void assignExpressionNativeString()
-        =>  compileAndCompare2("assignment/assignExpressionNativeString");
+        =>  compileAndCompare("assignment/assignExpressionNativeString");
 
     shared test
     void assignExpressionRhsCast()
         // TODO remove unnecessary cast; see generateAssignmentExpression comments
-        =>  compileAndCompare2("assignment/assignExpressionRhsCast");
+        =>  compileAndCompare("assignment/assignExpressionRhsCast");
 
     shared test
     void specificationWithThis()
-        =>  compileAndCompare2("assignment/specificationWithThis");
+        =>  compileAndCompare("assignment/specificationWithThis");
 }

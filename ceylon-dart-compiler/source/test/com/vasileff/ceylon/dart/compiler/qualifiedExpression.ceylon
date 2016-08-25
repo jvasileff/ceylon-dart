@@ -7,68 +7,68 @@ object qualifiedExpression {
 
     shared test
     void simpleQualifiedExpressions()
-        =>  compileAndCompare2("qualifiedExpression/simpleQualifiedExpressions");
+        =>  compileAndCompare("qualifiedExpression/simpleQualifiedExpressions");
 
     shared test
     void toplevelQualifiedExpressionWithCasting()
-        =>  compileAndCompare2("qualifiedExpression/simpleQualifiedExpressions");
+        =>  compileAndCompare("qualifiedExpression/simpleQualifiedExpressions");
 
     shared test
     void toplevelQualifiedExpressionWithoutCasting()
-        =>  compileAndCompare2("qualifiedExpression/toplevelQualifiedExpressionWithoutCasting");
+        =>  compileAndCompare("qualifiedExpression/toplevelQualifiedExpressionWithoutCasting");
 
     shared test
     void nullSafeMemberOperator()
-        =>  compileAndCompare2("qualifiedExpression/nullSafeMemberOperator");
+        =>  compileAndCompare("qualifiedExpression/nullSafeMemberOperator");
 
     shared test
     void nullSafeMemberOperatorNoBoxing()
-        =>  compileAndCompare2("qualifiedExpression/nullSafeMemberOperatorNoBoxing");
+        =>  compileAndCompare("qualifiedExpression/nullSafeMemberOperatorNoBoxing");
 
     "Simple case: `foo()` is an inherited member, available through `this`."
     shared test
     void interfaceThisSharedMethod()
-        =>  compileAndCompare2("qualifiedExpression/interfaceThisSharedMethod");
+        =>  compileAndCompare("qualifiedExpression/interfaceThisSharedMethod");
 
     "Hard case: `foo()` is private and must be called statically, passing `this` as the
      first argument."
     shared test
     void interfaceThisUnsharedMethod()
-        =>  compileAndCompare2("qualifiedExpression/interfaceThisUnsharedMethod");
+        =>  compileAndCompare("qualifiedExpression/interfaceThisUnsharedMethod");
 
     shared test
     void interfaceSuperMethodInClass()
-        =>  compileAndCompare2("qualifiedExpression/interfaceSuperMethodInClass");
+        =>  compileAndCompare("qualifiedExpression/interfaceSuperMethodInClass");
 
     shared test
     void interfaceSuperMethodInInterface()
-        =>  compileAndCompare2("qualifiedExpression/interfaceSuperMethodInInterface");
+        =>  compileAndCompare("qualifiedExpression/interfaceSuperMethodInInterface");
 
     shared test
     void interfaceOuterMethodInInterface()
-        =>  compileAndCompare2("qualifiedExpression/interfaceOuterMethodInInterface");
+        =>  compileAndCompare("qualifiedExpression/interfaceOuterMethodInInterface");
 
     shared test
     void interfaceOuterMethodInClass()
-        =>  compileAndCompare2("qualifiedExpression/interfaceOuterMethodInClass");
+        =>  compileAndCompare("qualifiedExpression/interfaceOuterMethodInClass");
 
     shared test
     void refToClassInInterfaceInInterface()
-        =>  compileAndCompare2("qualifiedExpression/refToClassInInterfaceInInterface");
+        =>  compileAndCompare("qualifiedExpression/refToClassInInterfaceInInterface");
 
     shared test
     void eagerReceiverEvaluation()
-        =>  compileAndCompare2("qualifiedExpression/eagerReceiverEvaluation");
+        =>  compileAndCompare("qualifiedExpression/eagerReceiverEvaluation");
 
     shared test
     void refToSuperMethod()
-        =>  compileAndCompare2("qualifiedExpression/refToSuperMethod");
+        =>  compileAndCompare("qualifiedExpression/refToSuperMethod");
 
     shared test
     void nonStaticConstructorReference()
-        =>  compileAndCompare2("qualifiedExpression/nonStaticConstructorReference");
+        =>  compileAndCompare("qualifiedExpression/nonStaticConstructorReference");
 
     shared test
     void staticToplevelConstructorReference()
-        =>  compileAndCompare2("qualifiedExpression/staticToplevelConstructorReference");
+        =>  compileAndCompare("qualifiedExpression/staticToplevelConstructorReference");
 }
