@@ -377,6 +377,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.identifiableDeclaration;
 
     shared
+    Interface indexedCorrespondenceMutatorDeclaration
+        =>  unit.indexedCorrespondenceMutatorDeclaration;
+
+    shared
     Class integerDeclaration
         =>  assertClass(unit.integerDeclaration);
 
@@ -407,6 +411,10 @@ class CeylonTypes(Unit unit) {
     shared
     Interface listDeclaration
         =>  unit.listDeclaration;
+
+    shared
+    Interface keyedCorrespondenceMutatorDeclaration
+        =>  unit.keyedCorrespondenceMutatorDeclaration;
 
     shared
     Function measureFunctionDeclaration

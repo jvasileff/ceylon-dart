@@ -3,29 +3,47 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-void $package$run([$ceylon$language.CorrespondenceMutator objectArray, $ceylon$language.CorrespondenceMutator stringArray, $ceylon$language.CorrespondenceMutator integerArray]) {
+void $package$run([$ceylon$language.IndexedCorrespondenceMutator objectArray, $ceylon$language.IndexedCorrespondenceMutator stringArray, $ceylon$language.IndexedCorrespondenceMutator integerArray, $ceylon$language.KeyedCorrespondenceMutator objectMap, $ceylon$language.KeyedCorrespondenceMutator stringMap, $ceylon$language.KeyedCorrespondenceMutator integerMap]) {
     $dart$core.Object o = $ceylon$language.$ceylonInteger(10);
-    objectArray.set($ceylon$language.$ceylonInteger(10), o);
+    $dart$core.double f = 1.0;
+    $dart$core.String s = "hello";
+    objectArray.set(10, o);
     o = (() {
         $dart$core.Object tmp$0 = o;
-        objectArray.set($ceylon$language.$ceylonInteger(10), tmp$0);
+        objectArray.set(10, tmp$0);
         return tmp$0;
     })();
-    stringArray.set($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonString("hello"));
-    $dart$core.String s = (() {
-        $ceylon$language.String tmp$1 = $ceylon$language.$ceylonString("hello");
-        stringArray.set($ceylon$language.$ceylonInteger(10), tmp$1);
+    stringArray.set(10, $ceylon$language.$ceylonString(s));
+    s = (() {
+        $ceylon$language.String tmp$1 = $ceylon$language.$ceylonString(s);
+        stringArray.set(10, tmp$1);
         return $ceylon$language.$dartString(tmp$1);
     })();
-    $dart$core.double f = 1.0;
     f = 1.0 + (() {
         $ceylon$language.Integer tmp$2 = $ceylon$language.$ceylonInteger(1);
-        integerArray.set($ceylon$language.$ceylonInteger(10), tmp$2);
+        integerArray.set(10, tmp$2);
         return $ceylon$language.$dartInt(tmp$2).toDouble();
+    })();
+    objectMap.put($ceylon$language.$ceylonInteger(10), o);
+    o = (() {
+        $dart$core.Object tmp$3 = o;
+        objectArray.set(10, tmp$3);
+        return tmp$3;
+    })();
+    stringMap.put($ceylon$language.$ceylonInteger(10), $ceylon$language.$ceylonString(s));
+    s = (() {
+        $ceylon$language.String tmp$4 = $ceylon$language.$ceylonString(s);
+        stringMap.put($ceylon$language.$ceylonInteger(10), tmp$4);
+        return $ceylon$language.$dartString(tmp$4);
+    })();
+    f = 1.0 + (() {
+        $ceylon$language.Integer tmp$5 = $ceylon$language.$ceylonInteger(1);
+        integerMap.put($ceylon$language.$ceylonInteger(10), tmp$5);
+        return $ceylon$language.$dartInt(tmp$5).toDouble();
     })();
 }
 
-void run([$ceylon$language.CorrespondenceMutator objectArray, $ceylon$language.CorrespondenceMutator stringArray, $ceylon$language.CorrespondenceMutator integerArray]) => $package$run(objectArray, stringArray, integerArray);
+void run([$ceylon$language.IndexedCorrespondenceMutator objectArray, $ceylon$language.IndexedCorrespondenceMutator stringArray, $ceylon$language.IndexedCorrespondenceMutator integerArray, $ceylon$language.KeyedCorrespondenceMutator objectMap, $ceylon$language.KeyedCorrespondenceMutator stringMap, $ceylon$language.KeyedCorrespondenceMutator integerMap]) => $package$run(objectArray, stringArray, integerArray, objectMap, stringMap, integerMap);
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 

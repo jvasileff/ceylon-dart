@@ -1,16 +1,30 @@
 void run(
-        CorrespondenceMutator<Integer, Object> objectArray,
-        CorrespondenceMutator<Integer, String> stringArray,
-        CorrespondenceMutator<Integer, Integer> integerArray) {
+        IndexedCorrespondenceMutator<Object> objectArray,
+        IndexedCorrespondenceMutator<String> stringArray,
+        IndexedCorrespondenceMutator<Integer> integerArray,
+        KeyedCorrespondenceMutator<Integer, Object> objectMap,
+        KeyedCorrespondenceMutator<Integer, String> stringMap,
+        KeyedCorrespondenceMutator<Integer, Integer> integerMap) {
 
     variable Object o = 10;
+    variable Float f = 1.0;
+    variable String s = "hello";
 
     objectArray[10] = o;
     o = objectArray[10] = o;
 
-    stringArray[10] = "hello";
-    String s = stringArray[10] = "hello";
+    stringArray[10] = s;
+    s = stringArray[10] = s;
 
-    variable Float f = 1.0;
+    // integer-to-float coercion
     f = 1.0 + (integerArray[10] = 1);
+
+    objectMap[10] = o;
+    o = objectArray[10] = o;
+
+    stringMap[10] = s;
+    s = stringMap[10] = s;
+
+    // integer-to-float coercion
+    f = 1.0 + (integerMap[10] = 1);
 }

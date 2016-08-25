@@ -1680,13 +1680,22 @@ class ExpressionTransformer(CompilationContext ctx)
         case (is ElementOrSubrangeExpression) {
             assert (is KeySubscript subscript = leftOperand.subscript);
 
+            // left operand primary is either a KeyedCorrespondenceMutator or an
+            // IndexedCorrespondenceMutator
+            value primaryInfo = expressionInfo(leftOperand.primary);
+            value methodName
+                =   if (primaryInfo.typeModel.declaration.inherits(
+                            ceylonTypes.keyedCorrespondenceMutatorDeclaration))
+                    then "put"
+                    else "set";
+
             if (ctx.lhsTypeTop is NoType) {
                 // Easy case: probably a statement. No need to save
                 // and return the rhs value
                 return generateInvocationFromName {
                     info;
                     leftOperand.primary;
-                    "set";
+                    methodName;
                     [subscript.key, that.rightOperand];
                 };
             }
@@ -1718,7 +1727,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             () => generateInvocationFromName {
                                 info;
                                 leftOperand.primary;
-                                "set";
+                                methodName;
                                 [() => subscript.key.transform(expressionTransformer),
                                  () => withBoxingNonNative {
                                     info;
