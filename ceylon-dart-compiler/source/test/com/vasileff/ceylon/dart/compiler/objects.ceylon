@@ -41,4 +41,8 @@ object objects {
     shared test
     void objectWithInitialization()
         =>  compileAndCompare2("objects/objectWithInitialization");
+
+    shared test
+    void imports()
+        =>  compileAndCompare2("objects/imports");
 }
