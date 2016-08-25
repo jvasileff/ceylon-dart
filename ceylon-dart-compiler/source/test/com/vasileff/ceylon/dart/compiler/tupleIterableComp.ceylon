@@ -7,21 +7,21 @@ object tupleIterableComp {
 
     shared test
     void tupleExpressions()
-        =>  compileAndCompare2("tupleIterableComp/tupleExpressions");
+        =>  compileAndCompare("tupleIterableComp/tupleExpressions");
 
     shared test
     void iterableExpressions()
-        =>  compileAndCompare2("tupleIterableComp/iterableExpressions");
+        =>  compileAndCompare("tupleIterableComp/iterableExpressions");
 
     shared test
     void simpleComprehension()
-        =>  compileAndCompare2("tupleIterableComp/simpleComprehension");
+        =>  compileAndCompare("tupleIterableComp/simpleComprehension");
 
     shared test
     void comprehensionCartesionIf()
-        =>  compileAndCompare2("tupleIterableComp/comprehensionCartesionIf");
+        =>  compileAndCompare("tupleIterableComp/comprehensionCartesionIf");
 
     shared test
     void comprehensionCaptureTests()
-        =>  compileAndCompare2("tupleIterableComp/comprehensionCaptureTests");
+        =>  compileAndCompare("tupleIterableComp/comprehensionCaptureTests");
 }

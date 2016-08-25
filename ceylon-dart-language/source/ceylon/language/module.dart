@@ -32,8 +32,19 @@ class LazyIterator implements Iterator {
 
   LazyIterator(this.count, this.generate, this.spread) {}
 
+  Iterator flatten()
+      =>  rest;
+
   $dart$core.Object next() {
     if (rest != null) {
+      while (rest is LazyIterator) {
+        var replacement = rest.flatten();
+        if (replacement != null) {
+          rest = replacement;
+        } else {
+          break;
+        }
+      }
       return rest.next();
     }
     else if (index >= count) {

@@ -1,0 +1,142 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class HasVar implements $ceylon$language.dart$$Basic {
+    HasVar([$dart$core.Object $var]) {
+        this.$var = $var;
+    }
+    $dart$core.Object $var;
+}
+class obj_$ObjMemberClass implements $ceylon$language.dart$$Basic {
+    obj_ $outer$simple$obj_;
+    void _$init$obj_$obj_$ObjMemberClass([$dart$core.int $bitmap, obj_ $outer$simple$obj_]) {
+        if (0 != ($bitmap & 4)) {
+            this.$outer$simple$obj_ = $outer$simple$obj_;
+        }
+        if (0 != ($bitmap & 2)) {
+            this.$outer$simple$obj_ = $outer$simple$obj_;
+        }
+        if (0 != ($bitmap & 1)) {
+            this.$outer$simple$obj_ = $outer$simple$obj_;
+        }
+    }
+    obj_$ObjMemberClass([obj_ $outer$simple$obj_]) : this.$d(4, $outer$simple$obj_);
+    obj_$ObjMemberClass.$d([$dart$core.int $bitmap, obj_ $outer$simple$obj_]) {
+        _$init$obj_$obj_$ObjMemberClass($bitmap | 4, $outer$simple$obj_);
+    }
+    obj_$ObjMemberClass.instance([obj_ $outer$simple$obj_]) : this.instance$d(2, $outer$simple$obj_);
+    obj_$ObjMemberClass.instance$d([$dart$core.int $bitmap, obj_ $outer$simple$obj_]) {
+        _$init$obj_$obj_$ObjMemberClass($bitmap | 2, $outer$simple$obj_);
+    }
+    obj_$ObjMemberClass.create([obj_ $outer$simple$obj_]) : this.create$d(1, $outer$simple$obj_);
+    obj_$ObjMemberClass.create$d([$dart$core.int $bitmap, obj_ $outer$simple$obj_]) {
+        _$init$obj_$obj_$ObjMemberClass($bitmap | 1, $outer$simple$obj_);
+    }
+    $dart$core.String foo() => "foo";
+}
+class obj_$objObject_ implements $ceylon$language.dart$$Basic {
+    obj_ $outer$simple$obj_;
+    obj_$objObject_([obj_ $outer$simple$obj_]) {
+        this.$outer$simple$obj_ = $outer$simple$obj_;
+    }
+    $dart$core.String bar() => "bar";
+}
+class obj_  extends HasVar {
+    obj_() : super($ceylon$language.$ceylonString("initialValue")) {
+        objObject = new obj_$objObject_(this);
+    }
+    obj_$ObjMemberClass $new$obj_$ObjMemberClass() => new obj_$ObjMemberClass(this);
+    obj_$ObjMemberClass $new$obj_$ObjMemberClass$create() => new obj_$ObjMemberClass.create(this);
+    obj_$ObjMemberClass _$s$obj_$obj_$ObjMemberClass$instance;
+    obj_$ObjMemberClass get $new$obj_$ObjMemberClass$instance => _$s$obj_$obj_$ObjMemberClass$instance != null ? _$s$obj_$obj_$ObjMemberClass$instance : _$s$obj_$obj_$ObjMemberClass$instance = new obj_$ObjMemberClass.instance(this);
+    obj_$objObject_ objObject;
+}
+final obj_ $package$obj = new obj_();
+
+obj_ get obj => $package$obj;
+
+class Run implements $ceylon$language.dart$$Object {
+    Run() {
+        if (!($package$obj.$new$obj_$ObjMemberClass().foo() == "foo")) {
+            throw new $ceylon$language.AssertionError("Violated: ObjMemberClass().foo() == \"foo\"");
+        }
+        if (!($package$obj.$new$obj_$ObjMemberClass$create().foo() == "foo")) {
+            throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.create().foo() == \"foo\"");
+        }
+        if (!($package$obj.$new$obj_$ObjMemberClass$instance.foo() == "foo")) {
+            throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.instance.foo() == \"foo\"");
+        }
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
+            throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.foo(obj.ObjMemberClass())() == \"foo\"");
+        }
+        if (!($package$obj.hashCode == $package$obj.hashCode)) {
+            throw new $ceylon$language.AssertionError("Violated: objhash == obj.hash");
+        }
+        if (!($ceylon$language.$dartString(($package$obj.$var = $ceylon$language.$ceylonString("x")) as $ceylon$language.String) == "x")) {
+            throw new $ceylon$language.AssertionError("Violated: (objVar = \"x\") == \"x\"");
+        }
+        if (!($package$obj.$var == $ceylon$language.$ceylonString("x"))) {
+            throw new $ceylon$language.AssertionError("Violated: objVar == \"x\"");
+        }
+        if (!($package$obj.objObject.bar() == "bar")) {
+            throw new $ceylon$language.AssertionError("Violated: objObject.bar() == \"bar\"");
+        }
+        if (!($ceylon$language.runtime.maxIntegerValue == $ceylon$language.runtime.maxIntegerValue)) {
+            throw new $ceylon$language.AssertionError("Violated: maxIntegerValue == runtime.maxIntegerValue");
+        }
+        if (!($ceylon$language.$true.toString() == $ceylon$language.$true.toString())) {
+            throw new $ceylon$language.AssertionError("Violated: trueString == true.string");
+        }
+    }
+    $dart$core.int get hashCode => $ceylon$language.$dartInt($ceylon$language.nothing as $ceylon$language.Integer);
+    $dart$core.bool operator ==($dart$core.Object other) => $ceylon$language.$dartBool($ceylon$language.nothing as $ceylon$language.Boolean);
+}
+void $package$run() {
+    new Run();
+    if (!($package$obj.$new$obj_$ObjMemberClass().foo() == "foo")) {
+        throw new $ceylon$language.AssertionError("Violated: ObjMemberClass().foo() == \"foo\"");
+    }
+    if (!($package$obj.$new$obj_$ObjMemberClass$create().foo() == "foo")) {
+        throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.create().foo() == \"foo\"");
+    }
+    if (!($package$obj.$new$obj_$ObjMemberClass$instance.foo() == "foo")) {
+        throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.instance.foo() == \"foo\"");
+    }
+    if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
+        throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.foo(obj.ObjMemberClass())() == \"foo\"");
+    }
+    if (!($package$obj.hashCode == $package$obj.hashCode)) {
+        throw new $ceylon$language.AssertionError("Violated: objhash == obj.hash");
+    }
+    if (!($ceylon$language.$dartString(($package$obj.$var = $ceylon$language.$ceylonString("y")) as $ceylon$language.String) == "y")) {
+        throw new $ceylon$language.AssertionError("Violated: (objVar = \"y\") == \"y\"");
+    }
+    if (!($package$obj.$var == $ceylon$language.$ceylonString("y"))) {
+        throw new $ceylon$language.AssertionError("Violated: objVar == \"y\"");
+    }
+    if (!($package$obj.objObject.bar() == "bar")) {
+        throw new $ceylon$language.AssertionError("Violated: objObject.bar() == \"bar\"");
+    }
+    if (!($ceylon$language.runtime.maxIntegerValue == $ceylon$language.runtime.maxIntegerValue)) {
+        throw new $ceylon$language.AssertionError("Violated: maxIntegerValue == runtime.maxIntegerValue");
+    }
+    if (!($ceylon$language.$true.toString() == $ceylon$language.$true.toString())) {
+        throw new $ceylon$language.AssertionError("Violated: trueString == true.string");
+    }
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"simple","\$mod-version":"1.0.0","simple":const{"HasVar":const{"mt":"c","nm":"HasVar","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"obj":const{"mt":"c","nm":"obj","super":const{"nm":"HasVar","pk":"."},"sts":const[],"\$c":const{"ObjMemberClass":const{"mt":"c","nm":"ObjMemberClass","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"objObject":const{"mt":"c","nm":"objObject","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"Run":const{"mt":"c","nm":"Run","super":const{"nm":"Object","pk":"\$","md":"\$"},"sts":const[]}}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

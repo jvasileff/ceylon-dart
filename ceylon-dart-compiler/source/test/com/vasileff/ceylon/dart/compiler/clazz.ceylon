@@ -7,258 +7,262 @@ object clazz {
 
     shared test
     void simpleNestedClasses()
-        =>  compileAndCompare2("clazz/simpleNestedClasses");
+        =>  compileAndCompare("clazz/simpleNestedClasses");
 
     shared test
     void captureMembersDeclaredByAssert()
-        =>  compileAndCompare2("clazz/captureMembersDeclaredByAssert");
+        =>  compileAndCompare("clazz/captureMembersDeclaredByAssert");
 
     shared test
     void memberClassInstantiation()
-        =>  compileAndCompare2("clazz/memberClassInstantiation");
+        =>  compileAndCompare("clazz/memberClassInstantiation");
 
     shared test
     void functionMemberClassInstantiation()
-        =>  compileAndCompare2("clazz/functionMemberClassInstantiation");
+        =>  compileAndCompare("clazz/functionMemberClassInstantiation");
 
     shared test
     void functionMemberClassInstantiationCaptures()
-        =>  compileAndCompare2("clazz/functionMemberClassInstantiationCaptures");
+        =>  compileAndCompare("clazz/functionMemberClassInstantiationCaptures");
 
     shared test
     void noBridgeForFormals()
-        =>  compileAndCompare2("clazz/noBridgeForFormals");
+        =>  compileAndCompare("clazz/noBridgeForFormals");
 
     shared test
     void capturedCallableParameter()
-        =>  compileAndCompare2("clazz/capturedCallableParameter");
+        =>  compileAndCompare("clazz/capturedCallableParameter");
 
     shared test
     void valueSpecificationShortcutRefinement()
-        =>  compileAndCompare2("clazz/valueSpecificationShortcutRefinement");
+        =>  compileAndCompare("clazz/valueSpecificationShortcutRefinement");
 
     shared test
     void variableReferences()
-        =>  compileAndCompare2("clazz/variableReferences");
+        =>  compileAndCompare("clazz/variableReferences");
 
     shared test
     void nonVariableReferences()
-        =>  compileAndCompare2("clazz/nonVariableReferences");
+        =>  compileAndCompare("clazz/nonVariableReferences");
 
     shared test
     void nonVariableGetters()
-        =>  compileAndCompare2("clazz/nonVariableGetters");
+        =>  compileAndCompare("clazz/nonVariableGetters");
 
     shared test
     void variableGetters()
-        =>  compileAndCompare2("clazz/variableGetters");
+        =>  compileAndCompare("clazz/variableGetters");
 
     shared test
     void referencesToNonReferences()
-        =>  compileAndCompare2("clazz/referencesToNonReferences");
+        =>  compileAndCompare("clazz/referencesToNonReferences");
 
     shared test
     void invokeClassMethodStatically()
         // This is very unoptimized.
-        =>  compileAndCompare2("clazz/invokeClassMethodStatically");
+        =>  compileAndCompare("clazz/invokeClassMethodStatically");
 
     shared test
     void invokeMemberClass()
-        =>  compileAndCompare2("clazz/invokeMemberClass");
+        =>  compileAndCompare("clazz/invokeMemberClass");
 
     shared test
     void invokeMemberClassSafe()
-        =>  compileAndCompare2("clazz/invokeMemberClassSafe");
+        =>  compileAndCompare("clazz/invokeMemberClassSafe");
 
     shared test
     void outerReferenceTest()
-        =>  compileAndCompare2("clazz/outerReferenceTest");
+        =>  compileAndCompare("clazz/outerReferenceTest");
 
     shared test
     void captureWithAnonymousClass()
-        =>  compileAndCompare2("clazz/captureWithAnonymousClass");
+        =>  compileAndCompare("clazz/captureWithAnonymousClass");
 
     shared test
     void defaultedParameter()
-        =>  compileAndCompare2("clazz/defaultedParameter");
+        =>  compileAndCompare("clazz/defaultedParameter");
 
     shared test
     void defaultedCallableParameter()
-        =>  compileAndCompare2("clazz/defaultedCallableParameter");
+        =>  compileAndCompare("clazz/defaultedCallableParameter");
 
     shared test
     void defaultedWithCapture()
-        =>  compileAndCompare2("clazz/defaultedWithCapture");
+        =>  compileAndCompare("clazz/defaultedWithCapture");
 
     shared test
     void defaultedMemberWithCapture()
-        =>  compileAndCompare2("clazz/defaultedMemberWithCapture");
+        =>  compileAndCompare("clazz/defaultedMemberWithCapture");
 
     shared test
     void capturedFunction()
-        =>  compileAndCompare2("clazz/capturedFunction");
+        =>  compileAndCompare("clazz/capturedFunction");
 
     shared test
     void capturedGetter()
-        =>  compileAndCompare2("clazz/capturedGetter");
+        =>  compileAndCompare("clazz/capturedGetter");
 
     shared test
     void constructorsCombined()
-        =>  compileAndCompare2("clazz/constructorsCombined");
+        =>  compileAndCompare("clazz/constructorsCombined");
 
     shared test
     void initializersCombined()
-        =>  compileAndCompare2("clazz/initializersCombined");
+        =>  compileAndCompare("clazz/initializersCombined");
 
     shared test
     void outersWithSameDepth()
-        =>  compileAndCompare2("clazz/outersWithSameDepth");
+        =>  compileAndCompare("clazz/outersWithSameDepth");
 
     shared test
     void outersWithMixedDepth()
-        =>  compileAndCompare2("clazz/outersWithMixedDepth");
+        =>  compileAndCompare("clazz/outersWithMixedDepth");
 
     shared test
     void outerAndCaptureInSuperInvocation()
-        =>  compileAndCompare2("clazz/outerAndCaptureInSuperInvocation");
+        =>  compileAndCompare("clazz/outerAndCaptureInSuperInvocation");
 
     shared test
     void valueDeclarationInConstructor()
-        =>  compileAndCompare2("clazz/valueDeclarationInConstructor");
+        =>  compileAndCompare("clazz/valueDeclarationInConstructor");
 
     shared test
     void functionDeclarationInConstructor()
-        =>  compileAndCompare2("clazz/functionDeclarationInConstructor");
+        =>  compileAndCompare("clazz/functionDeclarationInConstructor");
 
     shared test
     void mappingsForString()
-        =>  compileAndCompare2("clazz/mappingsForString");
+        =>  compileAndCompare("clazz/mappingsForString");
 
     shared test
     void mappingsForHash()
-        =>  compileAndCompare2("clazz/mappingsForHash");
+        =>  compileAndCompare("clazz/mappingsForHash");
 
     shared test
     void mappingsForNegated()
-        =>  compileAndCompare2("clazz/mappingsForNegated");
+        =>  compileAndCompare("clazz/mappingsForNegated");
 
     shared test
     void mappedMembersAsParameters()
-        =>  compileAndCompare2("clazz/mappedMembersAsParameters");
+        =>  compileAndCompare("clazz/mappedMembersAsParameters");
 
     shared test
     void mappedMembersAsDeclarations()
-        =>  compileAndCompare2("clazz/mappedMembersAsDeclarations");
+        =>  compileAndCompare("clazz/mappedMembersAsDeclarations");
 
     shared test
     void superRefsMember()
-        =>  compileAndCompare2("clazz/superRefsMember");
+        =>  compileAndCompare("clazz/superRefsMember");
 
     shared test
     void superRefsParam()
-        =>  compileAndCompare2("clazz/superRefsParam");
+        =>  compileAndCompare("clazz/superRefsParam");
 
     shared test
     void toplevelClassAlias()
-        =>  compileAndCompare2("clazz/toplevelClassAlias");
+        =>  compileAndCompare("clazz/toplevelClassAlias");
 
     shared test
     void toplevelClassAliasDefaults()
-        =>  compileAndCompare2("clazz/toplevelClassAliasDefaults");
+        =>  compileAndCompare("clazz/toplevelClassAliasDefaults");
 
     shared test
     void toplevelClassAliasRefs()
-        =>  compileAndCompare2("clazz/toplevelClassAliasRefs");
+        =>  compileAndCompare("clazz/toplevelClassAliasRefs");
 
     shared test
     void toplevelClassAliasTypes()
-        =>  compileAndCompare2("clazz/toplevelClassAliasTypes");
+        =>  compileAndCompare("clazz/toplevelClassAliasTypes");
 
     shared test
     void capturedByConstructor()
-        =>  compileAndCompare2("clazz/capturedByConstructor");
+        =>  compileAndCompare("clazz/capturedByConstructor");
 
     shared test
     void forwardDeclaredValue()
-        =>  compileAndCompare2("clazz/forwardDeclaredValue");
+        =>  compileAndCompare("clazz/forwardDeclaredValue");
 
     shared test
     void forwardDeclaredValueMapped()
-        =>  compileAndCompare2("clazz/forwardDeclaredValueMapped");
+        =>  compileAndCompare("clazz/forwardDeclaredValueMapped");
 
     shared test
     void capturedImplicitlyByInstantiation()
-        =>  compileAndCompare2("clazz/capturedImplicitlyByInstantiation");
+        =>  compileAndCompare("clazz/capturedImplicitlyByInstantiation");
 
     shared test
     void capturedImplicitlyByMemberClassAlias()
-        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassAlias");
+        =>  compileAndCompare("clazz/capturedImplicitlyByMemberClassAlias");
 
     shared test
     void capturedImplicitlyByMemberClassSuper()
-        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassSuper");
+        =>  compileAndCompare("clazz/capturedImplicitlyByMemberClassSuper");
 
     shared test
     void capturedImplicitlyByMemberClassSatisfied()
-        =>  compileAndCompare2("clazz/capturedImplicitlyByMemberClassSatisfied");
+        =>  compileAndCompare("clazz/capturedImplicitlyByMemberClassSatisfied");
 
     shared test
     void superMemberClassInstantiations()
-        =>  compileAndCompare2("clazz/superMemberClassInstantiations");
+        =>  compileAndCompare("clazz/superMemberClassInstantiations");
 
     shared test
     void memberClassRefinement()
-        =>  compileAndCompare2("clazz/memberClassRefinement");
+        =>  compileAndCompare("clazz/memberClassRefinement");
 
     shared test
     void memberClassAliases()
-        =>  compileAndCompare2("clazz/memberClassAliases");
+        =>  compileAndCompare("clazz/memberClassAliases");
 
     shared test
     void memberClassAliasesComplex()
-        =>  compileAndCompare2("clazz/memberClassAliasesComplex");
+        =>  compileAndCompare("clazz/memberClassAliasesComplex");
 
     shared test
     void extendConstructorAnotherClass()
-        =>  compileAndCompare2("clazz/extendConstructorAnotherClass");
+        =>  compileAndCompare("clazz/extendConstructorAnotherClass");
 
     shared test
     void extendDefaultConstructor()
-        =>  compileAndCompare2("clazz/extendDefaultConstructor");
+        =>  compileAndCompare("clazz/extendDefaultConstructor");
 
     shared test
     void extendConstructorWithDefaults()
-        =>  compileAndCompare2("clazz/extendConstructorWithDefaults");
+        =>  compileAndCompare("clazz/extendConstructorWithDefaults");
 
     shared test
     void shortcutRefinementBySpecification()
-        =>  compileAndCompare2("clazz/shortcutRefinementBySpecification");
+        =>  compileAndCompare("clazz/shortcutRefinementBySpecification");
 
     shared test
     void extendNoArgConstructor()
-        =>  compileAndCompare2("clazz/extendNoArgConstructor");
+        =>  compileAndCompare("clazz/extendNoArgConstructor");
 
     shared test
     void valueConstructorCaptureOwn()
-        =>  compileAndCompare2("clazz/valueConstructorCaptureOwn");
+        =>  compileAndCompare("clazz/valueConstructorCaptureOwn");
 
     shared test
     void valueConstructorInnerClass()
-        =>  compileAndCompare2("clazz/valueConstructorInnerClass");
+        =>  compileAndCompare("clazz/valueConstructorInnerClass");
 
     shared test
     void valueConstructorMemberClass()
-        =>  compileAndCompare2("clazz/valueConstructorMemberClass");
+        =>  compileAndCompare("clazz/valueConstructorMemberClass");
 
     shared test
     void valueConstructorStaticRef()
-        =>  compileAndCompare2("clazz/valueConstructorStaticRef");
+        =>  compileAndCompare("clazz/valueConstructorStaticRef");
 
     shared test
     void valueConstructorSwitch()
-        =>  compileAndCompare2("clazz/valueConstructorSwitch");
+        =>  compileAndCompare("clazz/valueConstructorSwitch");
 
     shared test
     void valueConstructorToplevel()
-        =>  compileAndCompare2("clazz/valueConstructorToplevel");
+        =>  compileAndCompare("clazz/valueConstructorToplevel");
+
+    shared test
+    void shortcutRefinementFunctionValue()
+        =>  compileAndCompare("clazz/shortcutRefinementFunctionValue");
 }

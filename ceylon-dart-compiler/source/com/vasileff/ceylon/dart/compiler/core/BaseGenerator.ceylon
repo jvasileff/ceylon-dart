@@ -5538,8 +5538,10 @@ class BaseGenerator(CompilationContext ctx)
 
      For `default` `Value`s, a synthetic field name will be used."
     shared
-    DartFieldDeclaration generateFieldDeclaration
-            (DScope scope, FunctionOrValueModel functionOrValueModel)
+    DartFieldDeclaration generateFieldDeclaration(
+            DScope scope,
+            FunctionOrValueModel functionOrValueModel,
+            DartExpression? initializer = null)
         =>  DartFieldDeclaration {
                 false;
                 DartVariableDeclarationList {
@@ -5552,6 +5554,7 @@ class BaseGenerator(CompilationContext ctx)
                         // The field for the Callable or the possibly synthetic field for
                         // the value
                         dartTypes.identifierForField(functionOrValueModel);
+                        initializer;
                     }];
                 };
             };

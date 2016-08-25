@@ -7,22 +7,22 @@ object forFail {
 
     shared test
     void iterableIsAString()
-        =>  compileAndCompare2("forFail/iterableIsAString");
+        =>  compileAndCompare("forFail/iterableIsAString");
 
     shared test
     void iterableOfIntegers()
-        =>  compileAndCompare2("forFail/iterableOfIntegers");
+        =>  compileAndCompare("forFail/iterableOfIntegers");
 
     shared test
     void iterableIsAUnion()
-        =>  compileAndCompare2("forFail/iterableIsAUnion");
+        =>  compileAndCompare("forFail/iterableIsAUnion");
 
     shared test
     void iterableOfAUnion()
-        =>  compileAndCompare2("forFail/iterableOfAUnion");
+        =>  compileAndCompare("forFail/iterableOfAUnion");
 
     shared test
     void iterableOfNulls()
         // Note: the iteration variable is of type Finished, of course!
-        =>  compileAndCompare2("forFail/iterableOfNulls");
+        =>  compileAndCompare("forFail/iterableOfNulls");
 }

@@ -7,76 +7,80 @@ object functions {
 
     shared test
     void voidFunction()
-        =>  compileAndCompare2("functions/voidFunction");
+        =>  compileAndCompare("functions/voidFunction");
 
     shared test
     void anonymousFunction()
-        =>  compileAndCompare2("functions/anonymousFunction");
+        =>  compileAndCompare("functions/anonymousFunction");
 
     shared test
     void functionReturnBoxing()
-        =>  compileAndCompare2("functions/functionReturnBoxing");
+        =>  compileAndCompare("functions/functionReturnBoxing");
 
     shared test
     void nestedFunction()
-        =>  compileAndCompare2("functions/nestedFunction");
+        =>  compileAndCompare("functions/nestedFunction");
 
     shared test
     void functionReference()
-        =>  compileAndCompare2("functions/functionReference");
+        =>  compileAndCompare("functions/functionReference");
 
     shared test
     void functionDefaultedParameters()
-        =>  compileAndCompare2("functions/functionDefaultedParameters");
+        =>  compileAndCompare("functions/functionDefaultedParameters");
 
     shared test
     void functionDefaultedParameters2()
-        =>  compileAndCompare2("functions/functionDefaultedParameters2");
+        =>  compileAndCompare("functions/functionDefaultedParameters2");
 
     shared test
     void functionDefaultedBoolean()
-        =>  compileAndCompare2("functions/functionDefaultedBoolean");
+        =>  compileAndCompare("functions/functionDefaultedBoolean");
 
     shared test
     void functionDefaultedFloat()
-        =>  compileAndCompare2("functions/functionDefaultedFloat");
+        =>  compileAndCompare("functions/functionDefaultedFloat");
 
     "Return and parameter types of callable parameters should not be erased to native.
      Otherwise, boxing/unboxing wrapper functions would be necessary when generating
      Callables to hold them."
     shared test
     void dontEraseForCallableParameters()
-        =>  compileAndCompare2("functions/dontEraseForCallableParameters");
+        =>  compileAndCompare("functions/dontEraseForCallableParameters");
 
     shared test
     void useBlocksVoidFunctions()
-        =>  compileAndCompare2("functions/useBlocksVoidFunctions");
+        =>  compileAndCompare("functions/useBlocksVoidFunctions");
 
     shared test
     void forwardDeclaredSimple()
-        =>  compileAndCompare2("functions/forwardDeclaredSimple");
+        =>  compileAndCompare("functions/forwardDeclaredSimple");
 
     shared test
     void forwardDeclaredCurried()
-        =>  compileAndCompare2("functions/forwardDeclaredCurried");
+        =>  compileAndCompare("functions/forwardDeclaredCurried");
 
     shared test
     void forwardDeclaredCurriedSideEffects()
-        =>  compileAndCompare2("functions/forwardDeclaredCurriedSideEffects");
+        =>  compileAndCompare("functions/forwardDeclaredCurriedSideEffects");
 
     shared test
     void forwardDeclaredMember()
-        =>  compileAndCompare2("functions/forwardDeclaredMember");
+        =>  compileAndCompare("functions/forwardDeclaredMember");
 
     shared test
     void forwardDeclaredVoid()
-        =>  compileAndCompare2("functions/forwardDeclaredVoid");
+        =>  compileAndCompare("functions/forwardDeclaredVoid");
 
     shared test
     void forwardDeclaredDefaultArg()
-        =>  compileAndCompare2("functions/forwardDeclaredDefaultArg");
+        =>  compileAndCompare("functions/forwardDeclaredDefaultArg");
 
     shared test
     void forwardDeclaredValue()
-        =>  compileAndCompare2("functions/forwardDeclaredValue");
+        =>  compileAndCompare("functions/forwardDeclaredValue");
+
+    shared test
+    void forwardDeclaredFunctionValue()
+        =>  compileAndCompare("functions/forwardDeclaredFunctionValue");
 }

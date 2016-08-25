@@ -7,69 +7,69 @@ object interfaces {
 
     shared test
     void simpleInterface()
-        =>  compileAndCompare2("interfaces/simpleInterface");
+        =>  compileAndCompare("interfaces/simpleInterface");
 
     shared test
     void formalFunctionsAndValues()
-        =>  compileAndCompare2("interfaces/formalFunctionsAndValues");
+        =>  compileAndCompare("interfaces/formalFunctionsAndValues");
 
     shared test
     void defaultFunctionsAndValues()
-        =>  compileAndCompare2("interfaces/defaultFunctionsAndValues");
+        =>  compileAndCompare("interfaces/defaultFunctionsAndValues");
 
     shared test
     void simpleMemberInterface()
-        =>  compileAndCompare2("interfaces/simpleMemberInterface");
+        =>  compileAndCompare("interfaces/simpleMemberInterface");
 
     shared test
     void simpleMemberMemberInterface()
-        =>  compileAndCompare2("interfaces/simpleMemberMemberInterface");
+        =>  compileAndCompare("interfaces/simpleMemberMemberInterface");
 
     shared test
     void nestedInterfaceFunctions()
-        =>  compileAndCompare2("interfaces/nestedInterfaceFunctions");
+        =>  compileAndCompare("interfaces/nestedInterfaceFunctions");
 
     shared test
     void nestedInterfaceValuesLazy()
-        =>  compileAndCompare2("interfaces/nestedInterfaceValuesLazy");
+        =>  compileAndCompare("interfaces/nestedInterfaceValuesLazy");
 
     shared test
     void nestedInterfaceValuesBlock()
-        =>  compileAndCompare2("interfaces/nestedInterfaceValuesBlock");
+        =>  compileAndCompare("interfaces/nestedInterfaceValuesBlock");
 
     shared test
     void nestedCombined()
-        =>  compileAndCompare2("interfaces/nestedCombined");
+        =>  compileAndCompare("interfaces/nestedCombined");
 
     shared test
     void simpleImplement()
-        =>  compileAndCompare2("interfaces/simpleImplement");
+        =>  compileAndCompare("interfaces/simpleImplement");
 
     shared test
     void implementAndOverrideFunctions()
-        =>  compileAndCompare2("interfaces/implementAndOverrideFunctions");
+        =>  compileAndCompare("interfaces/implementAndOverrideFunctions");
 
     shared test
     void implementAndOverrideValues()
-        =>  compileAndCompare2("interfaces/implementAndOverrideValues");
+        =>  compileAndCompare("interfaces/implementAndOverrideValues");
 
     shared test
     void outerWhenMemberSatisfiesContainer()
-        =>  compileAndCompare2("interfaces/outerWhenMemberSatisfiesContainer");
+        =>  compileAndCompare("interfaces/outerWhenMemberSatisfiesContainer");
 
     shared test
     void superDisambiguation()
         // NOTE based on the JVM compiler, (super of Right2).fun should
         //      disambiguate to Right.fun, since Right2 doesn't override fun().
-        =>  compileAndCompare2("interfaces/superDisambiguation");
+        =>  compileAndCompare("interfaces/superDisambiguation");
 
     shared test
     void simpleFunctionInterface()
-        =>  compileAndCompare2("interfaces/simpleFunctionInterface");
+        =>  compileAndCompare("interfaces/simpleFunctionInterface");
 
     shared test
     void captureAndAssert()
-        =>  compileAndCompare2("interfaces/captureAndAssert");
+        =>  compileAndCompare("interfaces/captureAndAssert");
 
     shared test
     void captureAndAssertScopeVsContainer()
@@ -90,90 +90,90 @@ object interfaces {
             should work find, and it's the one we will usually use in other areas of the
             code. (Easier to just always use the same property).
          */
-        =>  compileAndCompare2("interfaces/captureAndAssertScopeVsContainer");
+        =>  compileAndCompare("interfaces/captureAndAssertScopeVsContainer");
 
     shared test
     void captureAndControlBlocks()
-        =>  compileAndCompare2("interfaces/captureAndControlBlocks");
+        =>  compileAndCompare("interfaces/captureAndControlBlocks");
 
     "The outermost possible class or interface should make the capture."
     shared test
     void captureOnBehalfOfInner()
-        =>  compileAndCompare2("interfaces/captureOnBehalfOfInner");
+        =>  compileAndCompare("interfaces/captureOnBehalfOfInner");
 
     "The outermost possible class or interface should make the capture."
     shared test
     void captureOnBehalfOfInnerInner()
-        =>  compileAndCompare2("interfaces/captureOnBehalfOfInnerInner");
+        =>  compileAndCompare("interfaces/captureOnBehalfOfInnerInner");
 
     "Don't bother capturing something already captured by a supertype."
     shared test
     void dontCaptureIfSupertypeCaptures()
-        =>  compileAndCompare2("interfaces/dontCaptureIfSupertypeCaptures");
+        =>  compileAndCompare("interfaces/dontCaptureIfSupertypeCaptures");
 
     "Don't bother capturing something already captured by a supertype's supertype."
     shared test
     void dontCaptureIfSupertypeSupertypeCaptures()
-        =>  compileAndCompare2("interfaces/dontCaptureIfSupertypeSupertypeCaptures");
+        =>  compileAndCompare("interfaces/dontCaptureIfSupertypeSupertypeCaptures");
 
      "The outer type doesn't make the capture, but its supertype does."
     shared test
     void captureMadeByOutersSupertype()
-        =>  compileAndCompare2("interfaces/captureMadeByOutersSupertype");
+        =>  compileAndCompare("interfaces/captureMadeByOutersSupertype");
 
     shared test
     void noFormalForPrivate()
-        =>  compileAndCompare2("interfaces/noFormalForPrivate");
+        =>  compileAndCompare("interfaces/noFormalForPrivate");
 
     shared test
     void useOutermostOuter()
-        =>  compileAndCompare2("interfaces/useOutermostOuter");
+        =>  compileAndCompare("interfaces/useOutermostOuter");
 
     shared test
     void useOutermostOuter2()
-        =>  compileAndCompare2("interfaces/useOutermostOuter2");
+        =>  compileAndCompare("interfaces/useOutermostOuter2");
 
     shared test
     void useOutermostOuter3()
-        =>  compileAndCompare2("interfaces/useOutermostOuter3");
+        =>  compileAndCompare("interfaces/useOutermostOuter3");
 
     shared test
     void outerInterfaceSandwich()
-        =>  compileAndCompare2("interfaces/outerInterfaceSandwich");
+        =>  compileAndCompare("interfaces/outerInterfaceSandwich");
 
     shared test
     void invokeLocalValue()
-        =>  compileAndCompare2("interfaces/invokeLocalValue");
+        =>  compileAndCompare("interfaces/invokeLocalValue");
 
     shared test
     void invokeLocalFunction()
-        =>  compileAndCompare2("interfaces/invokeLocalFunction");
+        =>  compileAndCompare("interfaces/invokeLocalFunction");
 
     shared test
     void bridgeSetter()
-        =>  compileAndCompare2("interfaces/bridgeSetter");
+        =>  compileAndCompare("interfaces/bridgeSetter");
 
     shared test
     void assignToSuperValues()
-        =>  compileAndCompare2("interfaces/assignToSuperValues");
+        =>  compileAndCompare("interfaces/assignToSuperValues");
 
     shared test
     void assignToNonSharedInterfaceValue()
-        =>  compileAndCompare2("interfaces/assignToNonSharedInterfaceValue");
+        =>  compileAndCompare("interfaces/assignToNonSharedInterfaceValue");
 
     shared test
     void bridgeAssignmentExpression()
-        =>  compileAndCompare2("interfaces/bridgeAssignmentExpression");
+        =>  compileAndCompare("interfaces/bridgeAssignmentExpression");
 
     shared test
     void toplevelInterfaceAlias()
-        =>  compileAndCompare2("interfaces/toplevelInterfaceAlias");
+        =>  compileAndCompare("interfaces/toplevelInterfaceAlias");
 
     shared test
     void toplevelInterfaceAliasTypes()
-        =>  compileAndCompare2("interfaces/toplevelInterfaceAliasTypes");
+        =>  compileAndCompare("interfaces/toplevelInterfaceAliasTypes");
 
     shared test
     void outerInvocationOfNonSharedMembers()
-        =>  compileAndCompare2("interfaces/outerInvocationOfNonSharedMembers");
+        =>  compileAndCompare("interfaces/outerInvocationOfNonSharedMembers");
 }

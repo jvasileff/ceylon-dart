@@ -8,49 +8,58 @@ import ceylon.test {
     assertEquals
 }
 
-import com.vasileff.ceylon.dart.compiler.dartast {
-    CodeWriter
+import com.vasileff.ceylon.dart.compiler {
+    testCompile,
+    testModuleCompile
 }
-
 
 import java.nio.file {
     JFiles=Files
 }
-import com.vasileff.ceylon.dart.compiler {
-    testCompile
-}
 
-void compileAndCompare(String ceylon, String expected) {
-    value dartUnits = testCompile { false; ceylon };
-    assert (exists dartUnit = dartUnits[0]);
-
-    value sb = StringBuilder();
-    dartUnit.write(CodeWriter(sb.append));
-
-    assertEquals {
-        actual = sb.string.trimmed;
-        expected =  expected.trimmed;
-    };
-}
-
-void compileAndCompare2(String key) {
+void compileAndCompare(String key) {
     value ceylonPathPart = key +  ".tceylon";
     value dartPathPart = key +  ".tdart";
 
-    assert (exists ceylonResource = `module`.resourceByPath(ceylonPathPart));
+    assert (exists ceylonResource
+        =   `module`.resourceByPath(ceylonPathPart));
 
-    value dartUnits = testCompile { false; ceylonResource.textContent() };
-    assert (exists dartUnit = dartUnits[0]);
-    value dartCode = dartUnit.string.trimmed;
+    assert (nonempty files
+        =   splitBetween(ceylonResource.textContent().lines)((first, second)
+                =>  second.startsWith("// file:")).sequence());
+
+    value dartUnits
+        =   if (files.size == 1) then
+                // single file, not a module
+                testCompile {
+                    verbose = false;
+                    "\n".join(files[0])
+                }
+            else
+                // multiple source files separated by comment of the form:
+                //      // file:path/filename.ceylon
+                testModuleCompile {
+                    verbose = false;
+                    suppressAllWarnings = true;
+                    files.map((lines)
+                        // 'of String' to workaround
+                        // https://github.com/ceylon/ceylon/issues/6450
+                        =>  (lines.first of String)[8...].trimmed
+                                -> "\n".join(lines.rest));
+                };
+
+    value dartCode
+        =   "\n".join(dartUnits.interpose("/".repeat(70)));
 
     if (outputToTemp) {
         writeNewTempFile(dartPathPart, dartCode);
     }
 
-    value dartText = `module`.resourceByPath(dartPathPart)?.textContent() else "";
+    value dartText
+        =   `module`.resourceByPath(dartPathPart)?.textContent() else "";
 
     assertEquals {
-        actual = dartCode;
+        actual = dartCode.trimmed;
         expected =  dartText.trimmed;
     };
 }
@@ -84,3 +93,56 @@ Directory createTemporaryDirectory(String prefix = "") {
     assert (is Directory result = parsePath(javaFile.string).resource);
     return result;
 }
+
+{[Element+]*} splitBetween<Element>
+        ({Element*} elements)
+        (Boolean split(Element first, Element second)) => object
+        satisfies {[Element+]*} {
+
+    shared actual Iterator<[Element+]> iterator() => object
+            satisfies Iterator<[Element+]> {
+
+        value it = elements.iterator();
+        variable value nextRead = false;
+        variable value nextElement = finished of Element | Finished;
+        variable value splitNext = false;
+
+        void prepareNext() {
+            if (!nextRead) {
+                value first = nextElement;
+                value second = nextElement = it.next();
+                nextRead = true;
+                splitNext = if (!is Finished first,
+                                !is Finished second)
+                            then split(first, second)
+                            else false;
+            }
+        }
+
+        function consumeNext() {
+            nextRead = false;
+            return nextElement;
+        }
+
+        shared actual [Element+] | Finished next() {
+            prepareNext();
+            if (nextElement is Finished ) {
+                return finished;
+            }
+            value result = object satisfies Iterable<Element> {
+                iterator() => object satisfies Iterator<Element> {
+                    shared actual Element | Finished next() {
+                        prepareNext();
+                        if (splitNext) {
+                            splitNext = false;
+                            return finished;
+                        }
+                        return consumeNext();
+                    }
+                };
+            }.sequence();
+            assert (nonempty result);
+            return result;
+        }
+    };
+};

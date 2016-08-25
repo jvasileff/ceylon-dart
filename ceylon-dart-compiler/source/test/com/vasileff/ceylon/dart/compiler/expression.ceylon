@@ -7,57 +7,57 @@ object expression {
 
     shared test
     void genericComparable()
-        =>  compileAndCompare2("expression/genericComparable");
+        =>  compileAndCompare("expression/genericComparable");
 
     shared test
     void addNumbers()
-        =>  compileAndCompare2("expression/addNumbers");
+        =>  compileAndCompare("expression/addNumbers");
 
     shared test
     void boxIfElseExpression()
-        =>  compileAndCompare2("expression/boxIfElseExpression");
+        =>  compileAndCompare("expression/boxIfElseExpression");
 
     shared test
     void letExpression()
-        =>  compileAndCompare2("expression/letExpression");
+        =>  compileAndCompare("expression/letExpression");
 
     shared test
     void letExpressionMultiple()
-        =>  compileAndCompare2("expression/letExpressionMultiple");
+        =>  compileAndCompare("expression/letExpressionMultiple");
 
     shared test
     void elseOp()
-        =>  compileAndCompare2("expression/elseOp");
+        =>  compileAndCompare("expression/elseOp");
 
     shared test
     void elseOpGeneric()
-        =>  compileAndCompare2("expression/elseOpGeneric");
+        =>  compileAndCompare("expression/elseOpGeneric");
 
     shared test
     void elseOpPrimitive()
-        =>  compileAndCompare2("expression/elseOpPrimitive");
+        =>  compileAndCompare("expression/elseOpPrimitive");
 
     shared test
     void elseOpPrimitiveGeneric()
-        =>  compileAndCompare2("expression/elseOpPrimitiveGeneric");
+        =>  compileAndCompare("expression/elseOpPrimitiveGeneric");
 
     shared test
     void elseOpDenotableLhs()
-        =>  compileAndCompare2("expression/elseOpDenotableLhs");
+        =>  compileAndCompare("expression/elseOpDenotableLhs");
 
     shared test
     void assignmentExpressionCoercion()
-        =>  compileAndCompare2("expression/assignmentExpressionCoercion");
+        =>  compileAndCompare("expression/assignmentExpressionCoercion");
 
     shared test
     void spreadMethodsMemberClass()
-        =>  compileAndCompare2("expression/spreadMethodsMemberClass");
+        =>  compileAndCompare("expression/spreadMethodsMemberClass");
 
     shared test
     void spreadAttributes()
-        =>  compileAndCompare2("expression/spreadAttributes");
+        =>  compileAndCompare("expression/spreadAttributes");
 
     shared test
     void spreadMethods()
-        =>  compileAndCompare2("expression/spreadMethods");
+        =>  compileAndCompare("expression/spreadMethods");
 }

@@ -7,9 +7,9 @@ object tryCatchFinally {
 
     shared test
     void destroyableResources()
-        =>  compileAndCompare2("tryCatchFinally/destroyableResources");
+        =>  compileAndCompare("tryCatchFinally/destroyableResources");
 
     shared test
     void obtainableResources()
-        =>  compileAndCompare2("tryCatchFinally/obtainableResources");
+        =>  compileAndCompare("tryCatchFinally/obtainableResources");
 }

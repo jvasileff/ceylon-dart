@@ -1,0 +1,63 @@
+// file:simple/module.ceylon
+module simple "1.0.0" {}
+
+// file:simple/run.ceylon
+import ceylon.language {
+    runtime { maxIntegerValue },
+    true { trueString = string }
+}
+
+import simple {
+    obj { objhash = hash, objVar = var, ObjMemberClass, objObject }
+}
+
+class HasVar(shared variable Object var) {}
+
+object obj extends HasVar("initialValue") {
+    shared class ObjMemberClass {
+        shared new () {}
+        shared new instance {}
+        shared new create() {}
+        shared String foo() => "foo";
+    }
+    shared object objObject {
+        shared String bar() => "bar";
+    }
+}
+
+shared class Run() extends Object() {
+    assert (ObjMemberClass().foo() == "foo");
+    assert (ObjMemberClass.create().foo() == "foo");
+    assert (ObjMemberClass.instance.foo() == "foo");
+    assert (ObjMemberClass.foo(obj.ObjMemberClass())() == "foo");
+
+    assert (objhash == obj.hash);
+    assert ((objVar = "x") == "x");
+    assert (objVar == "x");
+
+    assert (objObject.bar() == "bar");
+
+    assert (maxIntegerValue == runtime.maxIntegerValue);
+    assert (trueString == true.string);
+
+    hash => nothing;
+    equals(Object other) => nothing;
+}
+
+shared void run() {
+    Run();
+
+    assert (ObjMemberClass().foo() == "foo");
+    assert (ObjMemberClass.create().foo() == "foo");
+    assert (ObjMemberClass.instance.foo() == "foo");
+    assert (ObjMemberClass.foo(obj.ObjMemberClass())() == "foo");
+
+    assert (objhash == obj.hash);
+    assert ((objVar = "y") == "y");
+    assert (objVar == "y");
+
+    assert (objObject.bar() == "bar");
+
+    assert (maxIntegerValue == runtime.maxIntegerValue);
+    assert (trueString == true.string);
+}

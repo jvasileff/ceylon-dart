@@ -1,0 +1,31 @@
+interface I {
+    shared formal String(String) v1;
+    shared formal String(String) v2;
+    shared formal String(String) v3;
+
+    shared formal String f1(String s);
+    shared formal String f2(String s);
+}
+
+class C() satisfies I {
+    v1(String s) => s;
+    assert (v1("hello").size == 5);
+
+    v2 = (String s) => s;
+    assert (v2("hello").size == 5);
+
+    v3 => (String s) => s;
+    assert (v3("hello").size == 5);
+
+    f1(String s) => s;
+    assert (f1("hello").size == 5);
+
+    f2 = (String s) => s;
+    assert (f2("hello").size == 5);
+
+    print("done!");
+}
+
+shared void run() {
+    C();
+}

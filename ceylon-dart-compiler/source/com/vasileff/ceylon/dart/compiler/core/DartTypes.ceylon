@@ -18,6 +18,7 @@ import com.redhat.ceylon.model.loader {
 }
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
+    TypeDeclarationModel=TypeDeclaration,
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
     ClassModel=Class,
@@ -54,7 +55,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     superInfo,
     unspecifiedVariableInfo,
-    variadicVariableInfo
+    variadicVariableInfo,
+    LazySpecificationInfo,
+    parametersInfo,
+    ParametersInfo,
+    expressionInfo
 }
 
 shared
@@ -923,6 +928,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         return f;
     }
 
+    shared
+    FunctionModel syntheticFunctionForSpecifier(LazySpecificationInfo that) {
+        value f = FunctionModel();
+        that.node.parameterLists.map(parametersInfo)
+                .map(ParametersInfo.model)
+                .each(f.addParameterList);
+        f.container = that.scope; // ok?
+        f.shared = false;
+        f.type = expressionInfo(that.node.specifier.expression).typeModel;
+        f.unit = that.unit;
+        return f;
+    }
+
     // TODO improve naming and functional consistency for get...Name and identifierFor...
 
     "The name of the static method used for the implementation of
@@ -1031,16 +1049,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             takeUntil(ancestorChain(scope))
                     (declaration.equals);
 
+    "Returns null if an inheriting declaration cannot be found"
     shared
-    {ClassOrInterfaceModel+} ancestorChainToInheritingDeclaration(
+    [ClassOrInterfaceModel+]? ancestorChainToInheritingDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel inheritedDeclaration)
-        =>  // up to and including a declarations that inherits inheritedDeclaration
-            takeUntil(ancestorChain(scope))((c)
-                =>  c.inherits(inheritedDeclaration));
+        =>  let (chain = sequence(
+                    takeUntil(ancestorChain(scope))((c)
+                        =>  c.inherits(inheritedDeclaration))))
+            (chain.last.inherits(inheritedDeclaration) then chain);
 
     "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in
-     the case that `this` satisfies [[inheritedDeclaration]]."
+     the case that `this` satisfies [[inheritedDeclaration]].
+
+     This function asserts that an inheriting declaration is found."
     shared
     {ClassOrInterfaceModel+} ancestorChainToOuterInheritingDeclaration(
             ClassModel|InterfaceModel scope,
@@ -1050,10 +1072,14 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             =   getContainingClassOrInterface(scope.container));
 
         // up to and including a declarations that inherits inheritedDeclaration
-        return ancestorChainToInheritingDeclaration {
-            containingClassOrInterface;
-            inheritedDeclaration;
-        }.follow(scope);
+
+        assert (exists chain
+            =   ancestorChainToInheritingDeclaration {
+                    containingClassOrInterface;
+                    inheritedDeclaration;
+                });
+
+        return chain.follow(scope);
     }
 
     shared
@@ -1163,6 +1189,49 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         };
                 };
 
+    DartExpression? expressionForReceiverOfImportAlias(scope, declaration) {
+        DScope scope;
+        variable FunctionOrValueModel | ClassModel | ConstructorModel  declaration;
+
+        if (is ConstructorModel d = declaration) {
+            declaration = getClassOfConstructor(d);
+        }
+
+        TypeDeclarationModel? container;
+        if (is ClassModel declarationContainer = declaration.container,
+                declarationContainer.anonymous,
+                declarationContainer.toplevel) {
+            // easy
+            container = declarationContainer;
+        }
+        else {
+            // search imports
+            value imports = CeylonIterable(getUnit(scope.scope).imports);
+            container = imports.find {
+                (i) => !i.ambiguous && eq(declaration, i.declaration);
+            }?.typeDeclaration;
+        }
+
+        if (!exists container) {
+            return null;
+        }
+
+        assert (is ValueModel? toplevel
+            =  container.container.getDirectMember(container.name, null, false));
+
+        if (!exists toplevel) {
+            return null;
+        }
+
+        // boxing/casting should be a wash, so don't worry about
+        // withLhs and withBoxing, which we can't do from here.
+        return invocableForBaseExpression {
+            scope;
+            toplevel;
+            false;
+        }.expressionForInvocation();
+    }
+
     "Returns a [[DartQualifiedInvocable]] for the [[declaration]] in [[scope]], with
      [[declaration]] being the target of a Ceylon base expression."
     shared
@@ -1190,175 +1259,197 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     setter;
                 };
 
-        if (exists scopeContainer = getContainingClassOrInterface(scope)) {
+        "The declaration's container, or in the case of a Constructor, the
+         Constructor's class's container."
+        value declarationContainer
+            =   if (is ConstructorModel originalDeclaration)
+                then getRealContainingScope(getClassOfConstructor(originalDeclaration))
+                else getRealContainingScope(originalDeclaration);
 
-            "The declaration's container, or in the case of a Constructor, the
-             Constructor's class's container."
-            value declarationContainer
-                =   if (is ConstructorModel originalDeclaration)
-                    then getRealContainingScope(
-                            getClassOfConstructor(originalDeclaration))
-                    else getRealContainingScope(originalDeclaration);
+        value scopeContainer = getContainingClassOrInterface(scope);
 
-            "Arguments in named argument lists cannot be referenced."
-            assert(!is NamedArgumentListModel declarationContainer);
+        "Arguments in named argument lists cannot be referenced."
+        assert(!is NamedArgumentListModel declarationContainer);
 
-            switch (declarationContainer)
-            case (is ClassOrInterfaceModel) {
-                // Some member of a class or interface: a function, value, class, or
-                // or class's constructor.
-                //
-                // Usually, this will be a normal invocation like 'receiver.member()',
-                // with 'receiver' being 'this' or some 'outer' calculated below.
-                //
-                // But, for non-shared member classes and non-shared constructors, the
-                // result will be a Dart instance creation expression (invocation of a
-                // Dart constructor) with the "receiver" being passed as the first
-                // argument.
-                //
-                // All we need to do is determine the receiver. The 'invocable' we already
-                // have handles the form of the invocation.
+        switch (declarationContainer)
+        case (is ClassOrInterfaceModel) {
+            // Some member of a class or interface: a function, value, class, or
+            // or class's constructor.
+            //
+            // Usually, this will be a normal invocation like 'receiver.member()',
+            // with 'receiver' being 'this' or some 'outer' calculated below.
+            //
+            // But, for non-shared member classes and non-shared constructors, the
+            // result will be a Dart instance creation expression (invocation of a
+            // Dart constructor) with the "receiver" being passed as the first
+            // argument.
+            //
+            // All we need to do is determine the receiver. The 'invocable' we already
+            // have handles the form of the invocation.
 
-                // Non-shared declarations do not have factory methods, so we'll be
-                // instantiating the class directly. And, the class may be a ClassAlias
-                // to a class with a *different* container than that of the ClassAlias's.
-                if (is ClassModel | ConstructorModel validDeclaration,
-                        !getClassOfConstructor(validDeclaration).shared
-                        || !validDeclaration.shared) {
+            // Non-shared declarations do not have factory methods, so we'll be
+            // instantiating the class directly. And, the class may be a ClassAlias
+            // to a class with a *different* container than that of the ClassAlias's.
+            if (is ClassModel | ConstructorModel originalDeclaration,
+                    !getClassOfConstructor(originalDeclaration).shared
+                    || !originalDeclaration.shared) {
 
-                    return DartQualifiedInvocable {
-                        baseGenerator.generateArgumentForOuter {
-                            scope;
-                            validDeclaration;
-                        }[0];
-                        invocable;
-                    };
-                }
-
-                return
-                DartQualifiedInvocable {
-                    // We need to qualify with `this`
-                    //
-                    // - inside constructors due to name conflicts with constructor
-                    //   parameters.
-                    //
-                    // - when the invocation requires an operator
-                    //
-                    // Note: using `LoneThis()` we don't need `this` when referencing
-                    //       outers, like (what would be)
-                    //       `this.$outer$ceylon$language$.cap`.
-                    if (invocable.elementType is DartOperator
-                        || (originalDeclaration.parameter
-                            && ctx.withinConstructor(declarationContainer))) then
-                        expressionToThisOrOuterStripNonLoneThis {
-                            scope;
-                            ancestorChainToInheritingDeclaration {
-                                scopeContainer;
-                                declarationContainer;
-                            };
-                        }
-                    else
-                        expressionToThisOrOuterStripThis {
-                            scope;
-                            ancestorChainToInheritingDeclaration {
-                                scopeContainer;
-                                declarationContainer;
-                            };
-                        };
+                return DartQualifiedInvocable {
+                    baseGenerator.generateArgumentForOuter {
+                        scope;
+                        originalDeclaration;
+                    }[0];
                     invocable;
                 };
             }
-            case (is ConstructorModel | ControlBlockModel
-                    | FunctionOrValueModel | SpecificationModel) {
 
-                if (is ClassModel | ConstructorModel originalDeclaration) {
-                        assert (is ClassModel | ConstructorModel validDeclaration);
+            value ancestoryToReceiver
+                =   if (exists scopeContainer)
+                    then ancestorChainToInheritingDeclaration {
+                        scopeContainer;
+                        declarationContainer;
+                    }
+                    else null;
 
-                    // It's a non-member class (or constructor), but it does need a
-                    // reference to the outer class or interface if there is one. The
-                    // 'outer' capture looks pretty much like a qualifying instance.
-                    return DartQualifiedInvocable {
-                        baseGenerator.generateArgumentForOuter {
-                            scope;
-                            validDeclaration;
-                        }[0];
-                        invocable;
-                    };
-                }
+            DartExpression? receiver;
 
-                "This was just handled, but we don't have guards yet."
-                assert (!is ClassModel | ConstructorModel validDeclaration);
-
-                // Handle the non-class & constructor cases.
-
-                value declarationsClassOrInterface
-                    =   getContainingClassOrInterface(originalDeclaration);
-
-                if (eq(scopeContainer, declarationsClassOrInterface)) {
-                    // The declaration's outer class or interface is the same as the
-                    // current scope's class or interface. So it's not a capture, and we
-                    // can reference it directly.
-                    return DartQualifiedInvocable {
-                        null;
-                        invocable;
-                    };
-                }
-                else {
-                    // The declaration doesn't belong to a class or interface, and it
-                    // does not share a containing class or interface, so it must be
-                    // a capture.
-
-                    // The capture must have been made by $this, a supertype of $this,
-                    // some $outer, or a supertype of some $outer.
-
-                    return DartQualifiedInvocable {
-                        expressionToThisOrOuterStripThis {
-                            scope;
-                            ancestorChainToCapturerOfDeclaration {
-                                scopeContainer;
-                                originalDeclaration;
+            if (exists ancestoryToReceiver) {
+                // We need to qualify with `this`
+                //
+                // - inside constructors due to name conflicts with constructor
+                //   parameters.
+                //
+                // - when the invocation requires an operator
+                //
+                // Note: using `LoneThis()` we don't need `this` when referencing
+                //       outers, like (what would be)
+                //       `this.$outer$ceylon$language$.cap`.
+                receiver
+                    =   if (invocable.elementType is DartOperator
+                            || (originalDeclaration.parameter
+                                && ctx.withinConstructor(declarationContainer))) then
+                            expressionToThisOrOuterStripNonLoneThis {
+                                scope;
+                                ancestoryToReceiver;
+                            }
+                        else
+                            expressionToThisOrOuterStripThis {
+                                scope;
+                                ancestoryToReceiver;
                             };
-                        };
-                        invocable.with {
-                            // Note on identifier name: we're using `declaration`, not
-                            // originalDeclaration, since when class declarations are
-                            // made, we don't know which replacements have been elided,
-                            // so the parameter name for the capture will always assume
-                            // no elided declarations. The result is that there may be
-                            // more '$' is the name (an *extra* '$' for each refinement
-                            // that was skipped.)
-
-                            // TODO but we really need to have a visitor determine which
-                            //      replacements we'll honor (before the capture visitor)
-                            //      so that we *can* acknowledge elided replacements, and
-                            //      in some cases consolidate/de-dup captures. And, make
-                            //      sure the types all line up....
-
-                            reference
-                                =   identifierForCapture(validDeclaration);
-
-                            // operators become functions when closurized
-                            elementType
-                                =   switch (et = invocable.elementType)
-                                    case (package.dartFunction | dartValue) et
-                                    case (is DartOperator) package.dartFunction;
-
-                            setter
-                                =   setter;
-
-                            capturedReferenceValue
-                                =   if (is ValueModel validDeclaration)
-                                    then capturedReferenceValue(validDeclaration)
-                                    else false;
-                        };
-                    };
-                }
             }
-            case (is PackageModel) {
+            else if (!replaceConstructorWithClass(originalDeclaration)
+                        .staticallyImportable) {
+                // the reciever is a toplevel object w/an import alias
+                receiver = expressionForReceiverOfImportAlias(scope, originalDeclaration);
+
+                "Unable to determine receiver from import aliases"
+                assert (receiver exists);
+            }
+            else {
+                // statically importable; no receiver is necessary
+                receiver = null;
+            }
+
+            return
+            DartQualifiedInvocable {
+                receiver;
+                invocable;
+            };
+        }
+        case (is ConstructorModel | ControlBlockModel
+                | FunctionOrValueModel | SpecificationModel) {
+
+            if (is ClassModel | ConstructorModel originalDeclaration) {
+                // It's a non-member class (or constructor), but it does need a
+                // reference to the outer class or interface if there is one. The
+                // 'outer' capture looks pretty much like a qualifying instance.
+                return DartQualifiedInvocable {
+                    baseGenerator.generateArgumentForOuter {
+                        scope;
+                        originalDeclaration;
+                    }[0];
+                    invocable;
+                };
+            }
+
+            //"This was just handled, but we don't have guards yet."
+            //assert (!is ClassModel | ConstructorModel originalDeclaration);
+
+            // Handle the non-class & constructor cases.
+
+            value declarationsClassOrInterface
+                =   getContainingClassOrInterface(originalDeclaration);
+
+            if (eq(scopeContainer, declarationsClassOrInterface)) {
+                // The declaration's outer class or interface is the same as the
+                // current scope's class or interface. So it's not a capture, and we
+                // can reference it directly.
+                return DartQualifiedInvocable {
+                    null;
+                    invocable;
+                };
+            }
+            else if (!exists scopeContainer) {
+                // The current scope is not within a class or interface, so the
+                // declaration must not be a capture! We can reference it directly.
                 return DartQualifiedInvocable(null, invocable);
             }
+            else {
+                // The current scope is within a class or interface, the declaration
+                // is not toplevel and doesn't belong to a class or interface, and it
+                // does not share a containing class or interface, so it must be a
+                // capture.
+
+                // The capture must have been made by $this, a supertype of $this,
+                // some $outer, or a supertype of some $outer.
+
+                assert (is FunctionOrValueModel validDeclaration);
+
+                return DartQualifiedInvocable {
+                    expressionToThisOrOuterStripThis {
+                        scope;
+                        ancestorChainToCapturerOfDeclaration {
+                            scopeContainer;
+                            originalDeclaration;
+                        };
+                    };
+                    invocable.with {
+                        // Note on identifier name: we're using `declaration`, not
+                        // originalDeclaration, since when class declarations are
+                        // made, we don't know which replacements have been elided,
+                        // so the parameter name for the capture will always assume
+                        // no elided declarations. The result is that there may be
+                        // more '$' is the name (an *extra* '$' for each refinement
+                        // that was skipped.)
+
+                        // TODO but we really need to have a visitor determine which
+                        //      replacements we'll honor (before the capture visitor)
+                        //      so that we *can* acknowledge elided replacements, and
+                        //      in some cases consolidate/de-dup captures. And, make
+                        //      sure the types all line up....
+
+                        reference
+                            =   identifierForCapture(validDeclaration);
+
+                        // operators become functions when closurized
+                        elementType
+                            =   switch (et = invocable.elementType)
+                                case (package.dartFunction | dartValue) et
+                                case (is DartOperator) package.dartFunction;
+
+                        setter
+                            =   setter;
+
+                        capturedReferenceValue
+                            =   if (is ValueModel validDeclaration)
+                                then capturedReferenceValue(validDeclaration)
+                                else false;
+                    };
+                };
+            }
         }
-        else {
+        case (is PackageModel) {
             return DartQualifiedInvocable(null, invocable);
         }
     }

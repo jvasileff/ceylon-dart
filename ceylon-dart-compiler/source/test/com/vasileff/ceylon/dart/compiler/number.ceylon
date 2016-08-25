@@ -7,5 +7,5 @@ object number {
 
     shared test
     void simpleIntegerFloatWidening()
-        =>  compileAndCompare2("number/simpleIntegerFloatWidening");
+        =>  compileAndCompare("number/simpleIntegerFloatWidening");
 }
