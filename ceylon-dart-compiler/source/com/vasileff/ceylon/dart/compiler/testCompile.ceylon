@@ -109,7 +109,7 @@ shared
     }
 
     "The path, and all parent directories."
-    function directorayAndParents(String path)
+    function directoryAndParents(String path)
         =>  let (trimmed = path.trim('/'.equals),
                 segments = trimmed.split('/'.equals).sequence())
             { for (i in 1:segments.size) "/".join(segments.take(i)) };
@@ -133,6 +133,8 @@ shared
                             String? getRelativePath(VirtualFile ancestor)
                                 =>  if (path == ancestor.path)
                                         then ""
+                                    else if (ancestor.path == "")
+                                        then path
                                     else if (path.startsWith("``ancestor.path``/"))
                                         then path[ancestor.path.size+1...]
                                     else null;
@@ -151,13 +153,17 @@ shared
 
     value directories
         =   HashMultimap<String, String> {
-                *files.keys.flatMap(directorayAndParents).map((directory)
+                *files.keys.flatMap(directoryAndParents).map((directory)
                     =>  let ([d, p, n] = pathParts(directory))
                         d -> p)
             };
 
-    class DirectoryVirtualFile(path) satisfies VirtualFile {
+    class DirectoryVirtualFile satisfies VirtualFile {
         shared actual String path;
+
+        shared new (String path) {
+            this.path = path.trimLeading('/'.equals);
+        }
 
         name = pathParts(path)[2];
 
@@ -169,6 +175,8 @@ shared
         String? getRelativePath(VirtualFile ancestor)
             =>  if (path == ancestor.path)
                     then ""
+                else if (ancestor.path == "")
+                    then path
                 else if (path.startsWith("``ancestor.path``/"))
                     then path[ancestor.path.size+1...]
                 else null;
@@ -195,7 +203,7 @@ shared
 
     return
     compileDart {
-        virtualFiles = [DirectoryVirtualFile("/")];
+        virtualFiles = [DirectoryVirtualFile("")];
         verboseAst = verbose;
         verboseRhAst = verbose;
         verboseCode = false;
