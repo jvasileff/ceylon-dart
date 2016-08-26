@@ -21,6 +21,9 @@ import java.io {
     IOException,
     InputStreamReader
 }
+import com.redhat.ceylon.common {
+    OSUtil
+}
 
 // translated from ErrorCollectingVisitor java source
 Integer printErrors(void write(String message),
@@ -52,15 +55,15 @@ Integer printErrors(void write(String message),
                 then unit.fullPath
                 else "unknown";
 
-        write(fileName);
+        write(OSUtil.color(fileName, OSUtil.Color.blue));
         write(":");
         write(line.string);
         write(": ");
         if (is UsageWarning message) {
-            write("warning");
+            write(OSUtil.color("warning", OSUtil.Color.yellow));
             warningCount++;
         } else {
-            write("error");
+            write(OSUtil.color("error", OSUtil.Color.red));
             errorCount++;
         }
 
