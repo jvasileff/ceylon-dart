@@ -683,7 +683,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             assertedExpression {
                                 dartTypes.expressionToThisOrOuterStripThis {
                                     scope;
-                                    dartTypes.ancestorChainToOuterInheritingDeclaration {
+                                    dartTypes.ancestorClassOrInterfacesToOuterInheritingDeclaration {
                                         classModel;
                                         outerDeclaration;
                                     };

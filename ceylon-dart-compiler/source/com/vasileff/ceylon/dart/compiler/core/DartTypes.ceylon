@@ -1034,28 +1034,42 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             then DartSimpleIdentifier("$this")
             else DartSimpleIdentifier("this");
 
+    "A stream containing the given [[element]] followed by element for all
+     of [[element]]'s ancestors."
+    shared
+    {ElementModel+} ancestorElements(ElementModel element)
+        =>  loop<ElementModel>(element)((element)
+            =>  if (is ElementModel e = element.scope) then e else finished);
+
+    "The [[element]] and all ancestor elements up to and including the closest
+     containing class or interface."
+    shared
+    {ElementModel+} ancestorElementsToContainingClassOrInterface(ElementModel element)
+        =>  takeUntil(ancestorElements(element))((d)
+            =>  d is ClassOrInterfaceModel);
+
     "A stream containing the given [[declaration]] followed by declarations for all
      of [[declaration]]'s ancestor Classes and Interfaces."
-    {ClassOrInterfaceModel+} ancestorChain
+    shared
+    {ClassOrInterfaceModel+} ancestorClassOrInterfaces
             (ClassOrInterfaceModel declaration)
         =>  loop<ClassOrInterfaceModel>(declaration)((c)
             =>  getContainingClassOrInterface(c.container) else finished);
 
     shared
-    {ClassOrInterfaceModel+} ancestorChainToExactDeclaration(
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToExactDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel declaration)
         =>  // up to and including an exact match for `declaration`
-            takeUntil(ancestorChain(scope))
-                    (declaration.equals);
+            takeUntil(ancestorClassOrInterfaces(scope))(declaration.equals);
 
     "Returns null if an inheriting declaration cannot be found"
     shared
-    [ClassOrInterfaceModel+]? ancestorChainToInheritingDeclaration(
+    [ClassOrInterfaceModel+]? ancestorClassOrInterfacesToInheritingDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel inheritedDeclaration)
         =>  let (chain = sequence(
-                    takeUntil(ancestorChain(scope))((c)
+                    takeUntil(ancestorClassOrInterfaces(scope))((c)
                         =>  c.inherits(inheritedDeclaration))))
             (chain.last.inherits(inheritedDeclaration) then chain);
 
@@ -1064,7 +1078,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
      This function asserts that an inheriting declaration is found."
     shared
-    {ClassOrInterfaceModel+} ancestorChainToOuterInheritingDeclaration(
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToOuterInheritingDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel inheritedDeclaration) {
 
@@ -1074,7 +1088,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // up to and including a declarations that inherits inheritedDeclaration
 
         assert (exists chain
-            =   ancestorChainToInheritingDeclaration {
+            =   ancestorClassOrInterfacesToInheritingDeclaration {
                     containingClassOrInterface;
                     inheritedDeclaration;
                 });
@@ -1083,12 +1097,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     }
 
     shared
-    {ClassOrInterfaceModel+} ancestorChainToCapturerOfDeclaration(
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToCapturerOfDeclaration(
             ClassModel|InterfaceModel scope,
             FunctionOrValueModel capturedDeclaration)
-        =>  // up to and including a declarations that inherits inheritedDeclaration
-            takeUntil(ancestorChain(scope))((c)
-                =>  capturedBySelfOrSupertype(capturedDeclaration, c));
+        =>  // up to and including the capturer of capturedDeclaration
+            takeUntil(ancestorClassOrInterfaces(scope))((c)
+            =>  capturedBySelfOrSupertype(capturedDeclaration, c));
 
     """
        Returns a dart expression for [[outerDeclaration]] from [[scope]]. The expression
@@ -1305,7 +1319,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
             value ancestoryToReceiver
                 =   if (exists scopeContainer)
-                    then ancestorChainToInheritingDeclaration {
+                    then ancestorClassOrInterfacesToInheritingDeclaration {
                         scopeContainer;
                         declarationContainer;
                     }
@@ -1409,7 +1423,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 return DartQualifiedInvocable {
                     expressionToThisOrOuterStripThis {
                         scope;
-                        ancestorChainToCapturerOfDeclaration {
+                        ancestorClassOrInterfacesToCapturerOfDeclaration {
                             scopeContainer;
                             originalDeclaration;
                         };
@@ -1476,7 +1490,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "A stream containing the given [[declaration]] followed by declarations for all
      of [[declaration]]'s ancestors, including all declarations and control blocks.
-     See also [[ancestorChain]]."
+     See also [[ancestorClassOrInterfaces]]."
     {DeclarationModel|ControlBlockModel+} ancestorDeclarations
             (DeclarationModel declaration)
         =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)
