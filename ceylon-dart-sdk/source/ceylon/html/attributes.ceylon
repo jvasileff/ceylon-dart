@@ -14,9 +14,7 @@ shared interface AttributeValueProvider {
     "The attribute value."
     shared formal String? attributeValue;
     
-// FIXME Dart Workaround https://github.com/jvasileff/ceylon-dart/issues/10
-//    string => attributeValue else super.string;
-    string => attributeValue else "Instance of 'className(this)'";
+    string => attributeValue else super.string;
     
 }
 
