@@ -600,7 +600,30 @@ class ExpressionTransformer(CompilationContext ctx)
             if (ceylonTypes.isCeylonString(info.typeModel)) {
                 return e.transform(this);
             } else {
-                return generateInvocationFromName(info, e, "string", []);
+                if (!ceylonTypes.isCeylonNothing(info.typeModel)) {
+                    // e could be a primitive that we don't want to box, so don't
+                    // use generateInvocationSynthetic() below if we don't have to.
+                    return generateInvocationFromName(info, e, "string", []);
+                }
+                else {
+                    // Expressions like "``nothing``" are allowed, but Nothing doesn't
+                    // have a 'string' member. So, treat the expression like an `Object`.
+                    // In theory, in an "else" of a "supposedly exhaustive" switch,
+                    // a Nothing could be inhabited by null. But we won't worry about
+                    // that broken scenerio.
+                    return generateInvocationSynthetic {
+                        info;
+                        ceylonTypes.objectType;
+                        () => withBoxing {
+                            info;
+                            ceylonTypes.objectType;
+                            null;
+                            e.transform(this);
+                        };
+                        "string";
+                        [];
+                    };
+                }
             }
         }
 
