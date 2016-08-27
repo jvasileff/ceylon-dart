@@ -818,8 +818,38 @@ class BaseGenerator(CompilationContext ctx)
                 argsSetupAndExpressions
                     =   standardArgs();
             }
-            else {
-                // super refers to the superclass
+            else if (memberDeclaration.name == "string"
+                        && getContainingClassOrInterface(scope) is InterfaceModel) {
+
+                // super refers to Object, and we're invoking 'string'.
+
+                // super.string from within an interface always means Object.string,
+                // but in Dart, we can't use super.toString() here. So, we'll use a
+                // utility function that does the same thing as Object.toString().
+
+                optimizedNativeRhsType
+                    =   null;
+
+                dartReceiver
+                    =   dartTypes.expressionForThis(scope);
+
+                dartFunctionOrValue
+                    =   DartInvocable {
+                            DartPropertyAccess {
+                                dartTypes.dartIdentifierForDartModel {
+                                    scope;
+                                    dartTypes.dartCeylonObjectModel;
+                                };
+                                DartSimpleIdentifier("$get$string");
+                            };
+                            dartFunction;
+                            false;
+                        };
+
+                argsSetupAndExpressions
+                    =   standardArgs();
+            }
+            else { // super refers to the superclass
 
                 optimizedNativeRhsType
                     =   null;

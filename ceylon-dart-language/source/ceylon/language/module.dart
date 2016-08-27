@@ -382,7 +382,11 @@ initializeProcess($dart$core.List<$dart$core.String> arguments) {
 //
 /////////////////////////////////////////////////
 
-abstract class dart$$Object {}
+abstract class dart$$Object {
+  // used for 'super.string' from within an interface
+  static $dart$core.String $get$string([final Object $this])
+    => "Instance of '" + className($this) + "'";
+}
 abstract class dart$$Identifiable extends dart$$Object {}
 abstract class dart$$Basic extends dart$$Identifiable {}
 
