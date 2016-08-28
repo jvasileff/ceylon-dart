@@ -1,0 +1,135 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$testAssertShadow1$C implements $ceylon$language.dart$$Basic {
+    run$testAssertShadow1$C() {
+        x = 10;
+    }
+    $dart$core.int x;
+    void foo() {
+        if (!(x == 10)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 10");
+        }
+        $dart$core.int x$s1;
+        {
+            $dart$core.Object x$0 = $ceylon$language.$ceylonInteger(20);
+            if (!(x$0 is $ceylon$language.Integer)) {
+                throw new $ceylon$language.AssertionError("Violated: is Integer x = 20 of Anything");
+            }
+            x$s1 = $ceylon$language.$dartInt(x$0 as $ceylon$language.Integer);
+        }
+        if (!(x$s1 == 20)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 20");
+        }
+    }
+}
+class run$testAssertShadow2$B implements $ceylon$language.dart$$Basic {
+    run$testAssertShadow2$B() {
+        x = 10;
+    }
+    $dart$core.int x;
+}
+class run$testAssertShadow2$C  extends run$testAssertShadow2$B {
+    run$testAssertShadow2$C() {}
+    void foo() {
+        if (!(x == 10)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 10");
+        }
+        $dart$core.int x$s1;
+        {
+            $dart$core.Object x$1 = $ceylon$language.$ceylonInteger(20);
+            if (!(x$1 is $ceylon$language.Integer)) {
+                throw new $ceylon$language.AssertionError("Violated: is Integer x = 20 of Anything");
+            }
+            x$s1 = $ceylon$language.$dartInt(x$1 as $ceylon$language.Integer);
+        }
+        if (!(x$s1 == 20)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 20");
+        }
+    }
+}
+class run$testAssertShadow4$C$CMember implements $ceylon$language.dart$$Basic {
+    run$testAssertShadow4$C $outer$default$run$testAssertShadow4$C;
+    run$testAssertShadow4$C$CMember([run$testAssertShadow4$C $outer$default$run$testAssertShadow4$C]) {
+        this.$outer$default$run$testAssertShadow4$C = $outer$default$run$testAssertShadow4$C;
+    }
+    void foo() {
+        if (!($outer$default$run$testAssertShadow4$C.x == 10)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 10");
+        }
+        $dart$core.int x;
+        {
+            $dart$core.Object x$3 = $ceylon$language.$ceylonInteger(20);
+            if (!(x$3 is $ceylon$language.Integer)) {
+                throw new $ceylon$language.AssertionError("Violated: is Integer x = 20 of Anything");
+            }
+            x = $ceylon$language.$dartInt(x$3 as $ceylon$language.Integer);
+        }
+        if (!(x == 20)) {
+            throw new $ceylon$language.AssertionError("Violated: x == 20");
+        }
+    }
+}
+class run$testAssertShadow4$C implements $ceylon$language.dart$$Basic {
+    run$testAssertShadow4$C() {
+        x = 10;
+    }
+    $dart$core.int x;
+    run$testAssertShadow4$C$CMember $new$run$testAssertShadow4$C$CMember() => new run$testAssertShadow4$C$CMember(this);
+}
+void $package$run() {
+    void testAssertShadow1() {
+        (new run$testAssertShadow1$C()).foo();
+    }
+
+    void testAssertShadow2() {
+        (new run$testAssertShadow2$C()).foo();
+    }
+
+    void testAssertShadow3() {
+        $dart$core.int x = 10;
+        void foo() {
+            if (!(x == 10)) {
+                throw new $ceylon$language.AssertionError("Violated: x == 10");
+            }
+            $dart$core.int x$s1;
+            {
+                $dart$core.Object x$2 = $ceylon$language.$ceylonInteger(20);
+                if (!(x$2 is $ceylon$language.Integer)) {
+                    throw new $ceylon$language.AssertionError("Violated: is Integer x = 20 of Anything");
+                }
+                x$s1 = $ceylon$language.$dartInt(x$2 as $ceylon$language.Integer);
+            }
+            if (!(x$s1 == 20)) {
+                throw new $ceylon$language.AssertionError("Violated: x == 20");
+            }
+        }
+
+        foo();
+    }
+
+    void testAssertShadow4() {
+        (new run$testAssertShadow4$C()).$new$run$testAssertShadow4$C$CMember().foo();
+    }
+
+    testAssertShadow1();
+    testAssertShadow2();
+    testAssertShadow3();
+    testAssertShadow4();
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}
