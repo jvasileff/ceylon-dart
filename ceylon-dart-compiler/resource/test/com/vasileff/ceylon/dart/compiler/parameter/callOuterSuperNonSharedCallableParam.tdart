@@ -5,16 +5,16 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNonSharedCallableParam$Outer {
     callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer;
-    callOuterSuperNonSharedCallableParam$Outer$Inner([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $dart$core.Object _$foo2 = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$foo2, $ceylon$language.dart$default)) {
-            _$foo2 = new $ceylon$language.dart$Callable(() => $outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f());
+    callOuterSuperNonSharedCallableParam$Outer$Inner([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $dart$core.Object foo2 = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(foo2, $ceylon$language.dart$default)) {
+            foo2 = new $ceylon$language.dart$Callable(() => $outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f());
         }
-        return [$outer$default$callOuterSuperNonSharedCallableParam$Outer, _$foo2];
+        return [$outer$default$callOuterSuperNonSharedCallableParam$Outer, foo2];
     })());
     callOuterSuperNonSharedCallableParam$Outer$Inner.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    callOuterSuperNonSharedCallableParam$Outer$Inner.$w([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $ceylon$language.Callable _$foo2]) {
+    callOuterSuperNonSharedCallableParam$Outer$Inner.$w([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $ceylon$language.Callable foo2]) {
         this.$outer$default$callOuterSuperNonSharedCallableParam$Outer = $outer$default$callOuterSuperNonSharedCallableParam$Outer;
-        this._$foo2 = _$foo2;
+        this._$foo2 = foo2;
     }
     $ceylon$language.Callable _$foo2;
     void test() {
@@ -30,18 +30,18 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
     }
 }
 class callOuterSuperNonSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
-    callOuterSuperNonSharedCallableParam$Outer([$dart$core.Object _$foo = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$foo, $ceylon$language.dart$default)) {
-            _$foo = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger(1));
+    callOuterSuperNonSharedCallableParam$Outer([$dart$core.Object foo = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(foo, $ceylon$language.dart$default)) {
+            foo = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger(1));
         }
-        return [_$foo];
+        return [foo];
     })());
     callOuterSuperNonSharedCallableParam$Outer.$s([$dart$core.List a]) : this.$w(a[0]);
-    callOuterSuperNonSharedCallableParam$Outer.$w([$ceylon$language.Callable _$foo]) {
-        this._$foo = _$foo;
+    callOuterSuperNonSharedCallableParam$Outer.$w([$ceylon$language.Callable foo]) {
+        this._$foo = foo;
     }
     $ceylon$language.Callable _$foo;
-    callOuterSuperNonSharedCallableParam$Outer$Inner $new$callOuterSuperNonSharedCallableParam$Outer$Inner([$dart$core.Object _$foo2 = $ceylon$language.dart$default]) => new callOuterSuperNonSharedCallableParam$Outer$Inner(this, _$foo2);
+    callOuterSuperNonSharedCallableParam$Outer$Inner $new$callOuterSuperNonSharedCallableParam$Outer$Inner([$dart$core.Object foo2 = $ceylon$language.dart$default]) => new callOuterSuperNonSharedCallableParam$Outer$Inner(this, foo2);
 }
 void $package$callOuterSuperNonSharedCallableParam() {
     (new callOuterSuperNonSharedCallableParam$Outer()).$new$callOuterSuperNonSharedCallableParam$Outer$Inner().test();

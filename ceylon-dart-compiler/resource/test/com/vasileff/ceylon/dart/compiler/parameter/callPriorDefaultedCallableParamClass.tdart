@@ -4,21 +4,21 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class callPriorDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
-    callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object _$b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
+    callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(a, $ceylon$language.dart$default)) {
             a = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
         }
-        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
-            _$b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
+        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+            b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
         }
         if ($dart$core.identical(c, $ceylon$language.dart$default)) {
-            c = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (_$b as $ceylon$language.Callable).f(i));
+            c = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (b as $ceylon$language.Callable).f(i));
         }
-        return [a, _$b, c];
+        return [a, b, c];
     })());
     callPriorDefaultedCallableParamClass$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
-    callPriorDefaultedCallableParamClass$C.$w([$ceylon$language.Callable a, $ceylon$language.Callable _$b, $ceylon$language.Callable c]) {
-        this._$b = _$b;
+    callPriorDefaultedCallableParamClass$C.$w([$ceylon$language.Callable a, $ceylon$language.Callable b, $ceylon$language.Callable c]) {
+        this._$b = b;
         this._a$c = a;
         this._c$c = c;
     }

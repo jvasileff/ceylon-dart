@@ -4,8 +4,8 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class callNonDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
-    callNonDefaultedCallableParamClass$C([$ceylon$language.Callable a, $ceylon$language.Callable _$b, $ceylon$language.Callable c]) {
-        this._$b = _$b;
+    callNonDefaultedCallableParamClass$C([$ceylon$language.Callable a, $ceylon$language.Callable b, $ceylon$language.Callable c]) {
+        this._$b = b;
         this._a$c = a;
         this._c$c = c;
     }

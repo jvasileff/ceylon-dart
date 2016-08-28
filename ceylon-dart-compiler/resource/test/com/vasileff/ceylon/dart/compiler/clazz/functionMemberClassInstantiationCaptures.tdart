@@ -11,9 +11,9 @@ set counter($dart$core.int value) => $package$counter = value;
 
 class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
     run$Foo $outer$default$run$Foo;
-    run$Foo$FooMember([run$Foo $outer$default$run$Foo, $dart$core.int _$fooMemberInt]) {
+    run$Foo$FooMember([run$Foo $outer$default$run$Foo, $dart$core.int fooMemberInt]) {
         this.$outer$default$run$Foo = $outer$default$run$Foo;
-        this._$fooMemberInt = _$fooMemberInt;
+        this._$fooMemberInt = fooMemberInt;
     }
     $dart$core.int _$fooMemberInt;
     $dart$core.String get _$fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
@@ -23,10 +23,10 @@ class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
 class run$Foo implements $ceylon$language.dart$$Basic {
     $dart$core.String $capture$run$runString1;
     $dart$core.String $capture$run$runString2;
-    run$Foo([$dart$core.String $capture$run$runString1, $dart$core.String $capture$run$runString2, $dart$core.int _$fooInt]) {
+    run$Foo([$dart$core.String $capture$run$runString1, $dart$core.String $capture$run$runString2, $dart$core.int fooInt]) {
         this.$capture$run$runString1 = $capture$run$runString1;
         this.$capture$run$runString2 = $capture$run$runString2;
-        this._$fooInt = _$fooInt;
+        this._$fooInt = fooInt;
         x = $new$run$Foo$FooMember((() {
             $dart$core.int tmp$0 = $package$counter;
             $package$counter = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger($package$counter).successor);
@@ -35,7 +35,7 @@ class run$Foo implements $ceylon$language.dart$$Basic {
     }
     $dart$core.int _$fooInt;
     $dart$core.String get _$fooString1 => $capture$run$runString1;
-    run$Foo$FooMember $new$run$Foo$FooMember([$dart$core.int _$fooMemberInt]) => new run$Foo$FooMember(this, _$fooMemberInt);
+    run$Foo$FooMember $new$run$Foo$FooMember([$dart$core.int fooMemberInt]) => new run$Foo$FooMember(this, fooMemberInt);
     run$Foo$FooMember x;
 }
 void $package$run() {

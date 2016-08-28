@@ -17,10 +17,10 @@ d_ get d => $package$d;
 
 class A$B$C implements $ceylon$language.dart$$Basic {
     A$B $outer$default$A$B;
-    A$B$C([A$B $outer$default$A$B, $dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
+    A$B$C([A$B $outer$default$A$B, $dart$core.int i, $ceylon$language.Destroyable d]) {
         this.$outer$default$A$B = $outer$default$A$B;
-        this._$i = _$i;
-        this._$d = _$d;
+        this._$i = i;
+        this._$d = d;
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;
@@ -47,10 +47,10 @@ class A$B$C implements $ceylon$language.dart$$Basic {
 }
 class A$B implements $ceylon$language.dart$$Basic {
     A $outer$default$A;
-    A$B([A $outer$default$A, $dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
+    A$B([A $outer$default$A, $dart$core.int i, $ceylon$language.Destroyable d]) {
         this.$outer$default$A = $outer$default$A;
-        this._$i = _$i;
-        this._$d = _$d;
+        this._$i = i;
+        this._$d = d;
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;
@@ -69,12 +69,12 @@ class A$B implements $ceylon$language.dart$$Basic {
     $ceylon$language.Callable get cFactory24 => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => this.$new$A$B$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable));
     $ceylon$language.Callable get cFactory25 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
     $ceylon$language.Callable get cFactory26 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
-    A$B$C $new$A$B$C([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) => new A$B$C(this, _$i, _$d);
+    A$B$C $new$A$B$C([$dart$core.int i, $ceylon$language.Destroyable d]) => new A$B$C(this, i, d);
 }
 class A implements $ceylon$language.dart$$Basic {
-    A([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
-        this._$i = _$i;
-        this._$d = _$d;
+    A([$dart$core.int i, $ceylon$language.Destroyable d]) {
+        this._$i = i;
+        this._$d = d;
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;
@@ -102,7 +102,7 @@ class A implements $ceylon$language.dart$$Basic {
     })();
     $ceylon$language.Callable get cFactory10 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
     $ceylon$language.Callable get cFactory11 => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => ($r as A$B).$new$A$B$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer), $1 as $ceylon$language.Destroyable)));
-    A$B $new$A$B([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) => new A$B(this, _$i, _$d);
+    A$B $new$A$B([$dart$core.int i, $ceylon$language.Destroyable d]) => new A$B(this, i, d);
 }
 A$B $package$val = (new A($package$i, $package$d)).$new$A$B($package$i, $package$d);
 

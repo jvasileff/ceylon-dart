@@ -18,19 +18,19 @@ class mappedInitializerParameters$C implements $ceylon$language.dart$$Basic {
     $dart$core.String toString() => _$s$mappedInitializerParameters$mappedInitializerParameters$C$string;
 }
 class mappedInitializerParameters$D  extends mappedInitializerParameters$C {
-    mappedInitializerParameters$D([$dart$core.Object string = $ceylon$language.dart$default, $dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
+    mappedInitializerParameters$D([$dart$core.Object string = $ceylon$language.dart$default, $dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(string, $ceylon$language.dart$default)) {
             string = "s";
         }
-        if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
-            _$a = string;
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = string;
         }
-        return [string, _$a];
+        return [string, a];
     })());
     mappedInitializerParameters$D.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    mappedInitializerParameters$D.$w([$dart$core.String string, $dart$core.String _$a]) : super(string) {
+    mappedInitializerParameters$D.$w([$dart$core.String string, $dart$core.String a]) : super(string) {
         this.string = string;
-        this._$a = _$a;
+        this._$a = a;
     }
     $dart$core.String string;
     $dart$core.String _$a;
@@ -52,33 +52,33 @@ class mappedInitializerParameters$D  extends mappedInitializerParameters$C {
     }
 }
 class mappedInitializerParameters$E implements $ceylon$language.dart$$Basic {
-    mappedInitializerParameters$E([$dart$core.Object hashCode = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(hashCode, $ceylon$language.dart$default)) {
-            hashCode = 1;
+    mappedInitializerParameters$E([$dart$core.Object hash = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(hash, $ceylon$language.dart$default)) {
+            hash = 1;
         }
-        return [hashCode];
+        return [hash];
     })());
     mappedInitializerParameters$E.$s([$dart$core.List a]) : this.$w(a[0]);
-    mappedInitializerParameters$E.$w([$dart$core.int hashCode]) {
-        this._$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode = hashCode;
+    mappedInitializerParameters$E.$w([$dart$core.int hash]) {
+        this._$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode = hash;
     }
     $dart$core.int _$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode;
     $dart$core.int get hashCode => _$s$mappedInitializerParameters$mappedInitializerParameters$E$hashCode;
 }
 class mappedInitializerParameters$F  extends mappedInitializerParameters$E {
-    mappedInitializerParameters$F([$dart$core.Object hashCode = $ceylon$language.dart$default, $dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(hashCode, $ceylon$language.dart$default)) {
-            hashCode = 2;
+    mappedInitializerParameters$F([$dart$core.Object hash = $ceylon$language.dart$default, $dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(hash, $ceylon$language.dart$default)) {
+            hash = 2;
         }
-        if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
-            _$a = hashCode;
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = hash;
         }
-        return [hashCode, _$a];
+        return [hash, a];
     })());
     mappedInitializerParameters$F.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    mappedInitializerParameters$F.$w([$dart$core.int hashCode, $dart$core.int _$a]) : super(hashCode) {
-        this.hashCode = hashCode;
-        this._$a = _$a;
+    mappedInitializerParameters$F.$w([$dart$core.int hash, $dart$core.int a]) : super(hash) {
+        this.hashCode = hash;
+        this._$a = a;
     }
     $dart$core.int hashCode;
     $dart$core.int _$a;
@@ -115,18 +115,18 @@ class mappedInitializerParameters$G implements $ceylon$language.dart$$Basic {
     }
 }
 class mappedInitializerParameters$H  extends mappedInitializerParameters$G {
-    mappedInitializerParameters$H([$dart$core.Object equals = $ceylon$language.dart$default, $dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
+    mappedInitializerParameters$H([$dart$core.Object equals = $ceylon$language.dart$default, $dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(equals, $ceylon$language.dart$default)) {
             equals = new $ceylon$language.dart$Callable(([$dart$core.Object other]) => $ceylon$language.$true);
         }
-        if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
-            _$a = equals;
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = equals;
         }
-        return [equals, _$a];
+        return [equals, a];
     })());
     mappedInitializerParameters$H.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    mappedInitializerParameters$H.$w([$ceylon$language.Callable equals, $ceylon$language.Callable _$a]) : super(equals) {
-        this._$a = _$a;
+    mappedInitializerParameters$H.$w([$ceylon$language.Callable equals, $ceylon$language.Callable a]) : super(equals) {
+        this._$a = a;
         this._equals$c = equals;
     }
     $ceylon$language.Callable _$a;

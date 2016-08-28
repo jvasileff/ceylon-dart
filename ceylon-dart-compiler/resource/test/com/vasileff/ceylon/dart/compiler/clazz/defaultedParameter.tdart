@@ -4,15 +4,15 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C implements $ceylon$language.dart$$Basic {
-    C([$dart$core.Object _$a = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$a, $ceylon$language.dart$default)) {
-            _$a = 5;
+    C([$dart$core.Object a = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+            a = 5;
         }
-        return [_$a];
+        return [a];
     })());
     C.$s([$dart$core.List a]) : this.$w(a[0]);
-    C.$w([$dart$core.int _$a]) {
-        this._$a = _$a;
+    C.$w([$dart$core.int a]) {
+        this._$a = a;
         $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
     }
     $dart$core.int _$a;

@@ -4,19 +4,19 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class referenceToCallableParam$C implements $ceylon$language.dart$$Basic {
-    referenceToCallableParam$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable _$echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object _$echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
+    referenceToCallableParam$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(echoSharedDefaulted, $ceylon$language.dart$default)) {
             echoSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
         }
-        if ($dart$core.identical(_$echoNonSharedDefaulted, $ceylon$language.dart$default)) {
-            _$echoNonSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
+        if ($dart$core.identical(echoNonSharedDefaulted, $ceylon$language.dart$default)) {
+            echoNonSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
         }
-        return [echoShared, _$echoNonShared, echoSharedDefaulted, _$echoNonSharedDefaulted];
+        return [echoShared, echoNonShared, echoSharedDefaulted, echoNonSharedDefaulted];
     })());
     referenceToCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2], a[3]);
-    referenceToCallableParam$C.$w([$ceylon$language.Callable echoShared, $ceylon$language.Callable _$echoNonShared, $ceylon$language.Callable echoSharedDefaulted, $ceylon$language.Callable _$echoNonSharedDefaulted]) {
-        this._$echoNonShared = _$echoNonShared;
-        this._$echoNonSharedDefaulted = _$echoNonSharedDefaulted;
+    referenceToCallableParam$C.$w([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $ceylon$language.Callable echoSharedDefaulted, $ceylon$language.Callable echoNonSharedDefaulted]) {
+        this._$echoNonShared = echoNonShared;
+        this._$echoNonSharedDefaulted = echoNonSharedDefaulted;
         this._echoShared$c = echoShared;
         this._echoSharedDefaulted$c = echoSharedDefaulted;
         _$echoSharedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0))));

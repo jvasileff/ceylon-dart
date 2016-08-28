@@ -4,10 +4,10 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Foo implements $ceylon$language.dart$$Basic {
-    Foo([$dart$core.Object _$si1, $dart$core.Object _$si2, $dart$core.Object _$isf]) {
-        this._$si1 = _$si1;
-        this._$si2 = _$si2;
-        this._$isf = _$isf;
+    Foo([$dart$core.Object si1, $dart$core.Object si2, $dart$core.Object isf]) {
+        this._$si1 = si1;
+        this._$si2 = si2;
+        this._$isf = isf;
         if (!(_$si1 is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String si1");
         }

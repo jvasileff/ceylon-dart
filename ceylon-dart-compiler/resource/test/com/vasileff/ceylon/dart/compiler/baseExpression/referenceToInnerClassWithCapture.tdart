@@ -6,10 +6,10 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class C$_$foo$D implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
     $dart$core.String $capture$C$_$foo$captureMe;
-    C$_$foo$D([C $outer$default$C, $dart$core.String $capture$C$_$foo$captureMe, $dart$core.String _$s]) {
+    C$_$foo$D([C $outer$default$C, $dart$core.String $capture$C$_$foo$captureMe, $dart$core.String s]) {
         this.$outer$default$C = $outer$default$C;
         this.$capture$C$_$foo$captureMe = $capture$C$_$foo$captureMe;
-        this._$s = _$s;
+        this._$s = s;
     }
     $dart$core.String _$s;
     $dart$core.String get _$useCM => $capture$C$_$foo$captureMe;

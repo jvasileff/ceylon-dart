@@ -12,15 +12,15 @@ class superAndOuterCallableParam$Outer$Inner  extends superAndOuterCallableParam
     $dart$core.String bar() => $ceylon$language.$dartString($outer$default$superAndOuterCallableParam$Outer._$f.f($ceylon$language.$ceylonString("works")) as $ceylon$language.String);
 }
 class superAndOuterCallableParam$Outer implements $ceylon$language.dart$$Basic {
-    superAndOuterCallableParam$Outer([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
-            _$f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_outer"));
+    superAndOuterCallableParam$Outer([$dart$core.Object f = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+            f = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + "_outer"));
         }
-        return [_$f];
+        return [f];
     })());
     superAndOuterCallableParam$Outer.$s([$dart$core.List a]) : this.$w(a[0]);
-    superAndOuterCallableParam$Outer.$w([$ceylon$language.Callable _$f]) {
-        this._$f = _$f;
+    superAndOuterCallableParam$Outer.$w([$ceylon$language.Callable f]) {
+        this._$f = f;
     }
     $ceylon$language.Callable _$f;
     superAndOuterCallableParam$Outer$Inner $new$superAndOuterCallableParam$Outer$Inner() => new superAndOuterCallableParam$Outer$Inner(this);

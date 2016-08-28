@@ -4,15 +4,15 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class recursiveNonSharedDefaultedCallableClass$C implements $ceylon$language.dart$$Basic {
-    recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object _$factNonShared = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$factNonShared, $ceylon$language.dart$default)) {
-            _$factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((_$factNonShared as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
+    recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object factNonShared = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(factNonShared, $ceylon$language.dart$default)) {
+            factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((factNonShared as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
         }
-        return [_$factNonShared];
+        return [factNonShared];
     })());
     recursiveNonSharedDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
-    recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable _$factNonShared]) {
-        this._$factNonShared = _$factNonShared;
+    recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable factNonShared]) {
+        this._$factNonShared = factNonShared;
     }
     $ceylon$language.Callable _$factNonShared;
     $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_$factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);

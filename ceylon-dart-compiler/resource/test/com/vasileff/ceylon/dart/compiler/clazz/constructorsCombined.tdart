@@ -90,9 +90,9 @@ class A$B implements $ceylon$language.dart$$Basic {
     A$B$C $new$A$B$C$createC([$dart$core.int i, $ceylon$language.Destroyable d]) => new A$B$C.createC(this, i, d);
 }
 class A implements $ceylon$language.dart$$Basic {
-    A([$dart$core.int _$i, $ceylon$language.Destroyable _$d]) {
-        this._$i = _$i;
-        this._$d = _$d;
+    A([$dart$core.int i, $ceylon$language.Destroyable d]) {
+        this._$i = i;
+        this._$d = d;
     }
     $dart$core.int _$i;
     $ceylon$language.Destroyable _$d;

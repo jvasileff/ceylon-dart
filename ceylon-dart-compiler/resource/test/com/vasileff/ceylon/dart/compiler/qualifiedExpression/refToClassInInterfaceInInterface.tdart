@@ -5,16 +5,16 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$J$C implements $ceylon$language.dart$$Basic {
     I$J $outer$default$I$J;
-    I$J$C([I$J $outer$default$I$J, $dart$core.String _$s]) {
+    I$J$C([I$J $outer$default$I$J, $dart$core.String s]) {
         this.$outer$default$I$J = $outer$default$I$J;
-        this._$s = _$s;
+        this._$s = s;
     }
     $dart$core.String _$s;
 }
 abstract class I$J {
     I get $outer$default$I;
-    static I$J$C $$new$I$J$C([final I$J $this, $dart$core.String _$s]) => new I$J$C($this, _$s);
-    I$J$C $new$I$J$C([$dart$core.String _$s]);
+    static I$J$C $$new$I$J$C([final I$J $this, $dart$core.String s]) => new I$J$C($this, s);
+    I$J$C $new$I$J$C([$dart$core.String s]);
 }
 abstract class I {
 }

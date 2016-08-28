@@ -4,9 +4,9 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Foo implements $ceylon$language.dart$$Basic {
-    Foo([$dart$core.String _$s, $ceylon$language.Destroyable _$d]) {
-        this._$s = _$s;
-        this._$d = _$d;
+    Foo([$dart$core.String s, $ceylon$language.Destroyable d]) {
+        this._$s = s;
+        this._$d = d;
     }
     $dart$core.String _$s;
     $ceylon$language.Destroyable _$d;

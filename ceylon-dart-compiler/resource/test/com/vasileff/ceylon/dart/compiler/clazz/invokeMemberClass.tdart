@@ -5,9 +5,9 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C$D implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
-    C$D([C $outer$default$C, $dart$core.String _$s]) {
+    C$D([C $outer$default$C, $dart$core.String s]) {
         this.$outer$default$C = $outer$default$C;
-        this._$s = _$s;
+        this._$s = s;
     }
     $dart$core.String _$s;
 }
@@ -16,7 +16,7 @@ class C implements $ceylon$language.dart$$Basic {
         d1 = $new$C$D("d1");
         d2 = (new C()).$new$C$D("d2");
     }
-    C$D $new$C$D([$dart$core.String _$s]) => new C$D(this, _$s);
+    C$D $new$C$D([$dart$core.String s]) => new C$D(this, s);
     C$D d1;
     C$D d2;
 }
