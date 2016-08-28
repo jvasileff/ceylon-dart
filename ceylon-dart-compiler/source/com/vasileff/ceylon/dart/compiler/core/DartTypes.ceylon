@@ -215,11 +215,31 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else escapeDartIdentifier(id);
 
     function uniquifiedName(DeclarationModel declaration) {
+        value originalDeclaration = getOriginalDeclaration(declaration);
+
+        // For class or interface members, use a unique name if the member is not shared
+        // and the type inherits a non-shared member of the same name. This is because
+        // in Dart, private is more like Java's package-private, so *all* members are
+        // polymorphic and we need to use unique names to avoid unintentional refinements.
+        if (is FunctionOrValueModel originalDeclaration,
+                is ClassOrInterfaceModel container = originalDeclaration.container,
+                !originalDeclaration.shared) {
+
+            value conflictCount
+                =   supertypeDeclarations(container).rest.count((superType)
+                    =>  if (exists member = superType.getDirectMember(
+                                originalDeclaration.name, null, false))
+                        then !member.shared
+                        else false);
+
+            return if (conflictCount > 0)
+                   then originalDeclaration.name + "$" + conflictCount.string
+                   else originalDeclaration.name;
+        }
+
         if (!is ValueModel declaration) {
             return declaration.name;
         }
-
-        value originalDeclaration = getOriginalDeclaration(declaration);
 
         // Use a unique name if:
         //
@@ -321,6 +341,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // Dart packages. And for convenience, leaving the non `$package$` qualified
             // bridges alone.
             if ((isClassOrInterfaceMember(declaration)) && !declaration.shared) {
+                // see https://github.com/jvasileff/ceylon-dart/issues/25
                 return "_$" + baseName;
             }
             return baseName;
