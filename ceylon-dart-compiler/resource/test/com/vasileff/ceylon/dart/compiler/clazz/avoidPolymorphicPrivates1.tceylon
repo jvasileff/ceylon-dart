@@ -1,0 +1,14 @@
+shared void run() {
+    class C() {
+        String foo();
+        foo = () => "C";
+        shared String fooValueC => foo();
+    }
+    class D() extends C() {
+        String foo();
+        foo = () => "D";
+        shared String fooValueD => foo();
+    }
+    assert(D().fooValueC == "C");
+    assert(D().fooValueD == "D");
+}

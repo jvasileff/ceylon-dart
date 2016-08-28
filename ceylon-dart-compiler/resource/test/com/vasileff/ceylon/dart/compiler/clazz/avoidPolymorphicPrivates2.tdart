@@ -1,0 +1,51 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$C$c1_ implements $ceylon$language.dart$$Basic {
+    run$C $outer$default$run$C;
+    run$C$c1_([run$C $outer$default$run$C]) {
+        this.$outer$default$run$C = $outer$default$run$C;
+    }
+    $dart$core.String get id => "C.c1";
+}
+class run$C implements $ceylon$language.dart$$Basic {
+    run$C() {
+        _c1 = new run$C$c1_(this);
+    }
+    run$C$c1_ _c1;
+    $dart$core.String get c1id => _c1.id;
+}
+class run$D$c1_ implements $ceylon$language.dart$$Basic {
+    run$D $outer$default$run$D;
+    run$D$c1_([run$D $outer$default$run$D]) {
+        this.$outer$default$run$D = $outer$default$run$D;
+    }
+    $dart$core.String get id => "D.c1";
+}
+class run$D  extends run$C {
+    run$D() {
+        _c1$1 = new run$D$c1_(this);
+    }
+    run$D$c1_ _c1$1;
+}
+void $package$run() {
+    if (!((new run$D()).c1id == "C.c1")) {
+        throw new $ceylon$language.AssertionError("Violated: D().c1id == \"C.c1\"");
+    }
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

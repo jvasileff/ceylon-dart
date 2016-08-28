@@ -281,4 +281,16 @@ object clazz {
     shared test
     void shadowPrivateMember3()
         =>  compileAndCompare("clazz/shadowPrivateMember3");
+
+    shared test
+    void avoidPolymorphicPrivates1()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates1");
+
+    shared test
+    void avoidPolymorphicPrivates2()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates2");
+
+    shared test
+    void avoidPolymorphicPrivates3()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates3");
 }
