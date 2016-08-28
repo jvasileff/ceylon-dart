@@ -11,9 +11,9 @@ class Foo$FooMember implements $ceylon$language.dart$$Basic {
 }
 class Foo implements $ceylon$language.dart$$Basic {
     Foo() {
-        _$x = new Foo$FooMember(this);
+        _x = new Foo$FooMember(this);
     }
-    Foo$FooMember _$x;
+    Foo$FooMember _x;
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Foo":const{"mt":"c","nm":"Foo","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"FooMember":const{"mt":"c","nm":"FooMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
 

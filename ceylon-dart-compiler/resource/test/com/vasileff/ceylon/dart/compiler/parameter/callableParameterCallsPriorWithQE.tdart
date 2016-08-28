@@ -5,11 +5,11 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class callableParameterCallsPriorWithQE$B implements $ceylon$language.dart$$Basic {
     callableParameterCallsPriorWithQE$B([$dart$core.Object x, $dart$core.Object y]) {
-        this._$x = x;
-        this._$y = y;
+        this._x = x;
+        this._y = y;
     }
-    $dart$core.Object _$x;
-    $dart$core.Object _$y;
+    $dart$core.Object _x;
+    $dart$core.Object _y;
     $dart$core.int f([$dart$core.int i]);
     $dart$core.int g([$dart$core.int j]);
 }

@@ -15,35 +15,35 @@ class referenceToCallableParam$C implements $ceylon$language.dart$$Basic {
     })());
     referenceToCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2], a[3]);
     referenceToCallableParam$C.$w([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $ceylon$language.Callable echoSharedDefaulted, $ceylon$language.Callable echoNonSharedDefaulted]) {
-        this._$echoNonShared = echoNonShared;
-        this._$echoNonSharedDefaulted = echoNonSharedDefaulted;
+        this._echoNonShared = echoNonShared;
+        this._echoNonSharedDefaulted = echoNonSharedDefaulted;
         this._echoShared$c = echoShared;
         this._echoSharedDefaulted$c = echoSharedDefaulted;
-        _$echoSharedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0))));
-        _$echoNonSharedRef = this._$echoNonShared;
-        _$echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0))));
-        _$echoNonSharedDefaultedRef = this._$echoNonSharedDefaulted;
-        if (!($ceylon$language.$dartInt(_$echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+        _echoSharedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0))));
+        _echoNonSharedRef = this._echoNonShared;
+        _echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0))));
+        _echoNonSharedDefaultedRef = this._echoNonSharedDefaulted;
+        if (!($ceylon$language.$dartInt(_echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoSharedRef(1) == 1");
         }
-        if (!($ceylon$language.$dartInt(_$echoNonSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_echoNonSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoNonSharedRef(1) == 1");
         }
-        if (!($ceylon$language.$dartInt(_$echoSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_echoSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoSharedDefaultedRef(1) == 1");
         }
-        if (!($ceylon$language.$dartInt(_$echoNonSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+        if (!($ceylon$language.$dartInt(_echoNonSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
             throw new $ceylon$language.AssertionError("Violated: echoNonSharedDefaultedRef(1) == 1");
         }
     }
-    $ceylon$language.Callable _$echoNonShared;
-    $ceylon$language.Callable _$echoNonSharedDefaulted;
+    $ceylon$language.Callable _echoNonShared;
+    $ceylon$language.Callable _echoNonSharedDefaulted;
     $ceylon$language.Callable _echoShared$c;
     $ceylon$language.Callable _echoSharedDefaulted$c;
-    $ceylon$language.Callable _$echoSharedRef;
-    $ceylon$language.Callable _$echoNonSharedRef;
-    $ceylon$language.Callable _$echoSharedDefaultedRef;
-    $ceylon$language.Callable _$echoNonSharedDefaultedRef;
+    $ceylon$language.Callable _echoSharedRef;
+    $ceylon$language.Callable _echoNonSharedRef;
+    $ceylon$language.Callable _echoSharedDefaultedRef;
+    $ceylon$language.Callable _echoNonSharedDefaultedRef;
     $dart$core.int echoShared([$dart$core.int i]) {
         return $ceylon$language.$dartInt(_echoShared$c.f($ceylon$language.$ceylonInteger(i)));
     }

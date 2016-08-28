@@ -5,12 +5,12 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class stringAssign$A implements $ceylon$language.dart$$Basic {
     stringAssign$A() {
-        _$x = "1";
+        _x = "1";
     }
-    $dart$core.String _$x;
-    $dart$core.String toString() => _$x;
+    $dart$core.String _x;
+    $dart$core.String toString() => _x;
     void set string($dart$core.String string) {
-        _$x = string;
+        _x = string;
     }
 }
 void $package$stringAssign() {

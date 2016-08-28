@@ -14,10 +14,10 @@ class C implements $ceylon$language.dart$$Basic {
     })());
     C.$s([$dart$core.List a]) : this.$w(a[0]);
     C.$w([$ceylon$language.Callable f]) {
-        this._$f = f;
-        this._$f.f($ceylon$language.$ceylonInteger(5));
+        this._f = f;
+        this._f.f($ceylon$language.$ceylonInteger(5));
     }
-    $ceylon$language.Callable _$f;
+    $ceylon$language.Callable _f;
 }
 void $package$run() {
     new C();

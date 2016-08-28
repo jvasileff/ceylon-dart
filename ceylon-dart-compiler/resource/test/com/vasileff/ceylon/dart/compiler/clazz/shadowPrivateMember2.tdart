@@ -8,12 +8,12 @@ class run$C$D  extends run$C {
     run$C$D([run$C $outer$default$run$C]) {
         this.$outer$default$run$C = $outer$default$run$C;
     }
-    $dart$core.String get _$id$1 => $ceylon$language.$dartString($ceylon$language.nothing as $ceylon$language.String);
-    $dart$core.String get outerId => $outer$default$run$C._$id;
+    $dart$core.String get _id$1 => $ceylon$language.$dartString($ceylon$language.nothing as $ceylon$language.String);
+    $dart$core.String get outerId => $outer$default$run$C._id;
 }
 class run$C implements $ceylon$language.dart$$Basic {
     run$C() {}
-    $dart$core.String get _$id => "C";
+    $dart$core.String get _id => "C";
     run$C$D $new$run$C$D() => new run$C$D(this);
 }
 void $package$run() {

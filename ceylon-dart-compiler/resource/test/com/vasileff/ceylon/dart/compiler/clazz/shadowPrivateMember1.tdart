@@ -5,13 +5,13 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class run$A implements $ceylon$language.dart$$Basic {
     run$A() {}
-    $dart$core.String get _$id => "A";
-    $dart$core.String get idA => _$id;
+    $dart$core.String get _id => "A";
+    $dart$core.String get idA => _id;
 }
 class run$B  extends run$A {
     run$B() {}
-    $dart$core.String get _$id$1 => "B";
-    $dart$core.String get idB => _$id$1;
+    $dart$core.String get _id$1 => "B";
+    $dart$core.String get idB => _id$1;
 }
 void $package$run() {
     if (!((new run$B()).idA == "A")) {

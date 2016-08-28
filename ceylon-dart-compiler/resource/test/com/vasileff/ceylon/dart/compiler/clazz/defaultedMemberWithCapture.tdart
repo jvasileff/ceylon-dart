@@ -5,16 +5,16 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Sup implements $ceylon$language.dart$$Basic {
     Sup([$dart$core.int a]) {
-        this._$a = a;
-        $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
+        this._a = a;
+        $ceylon$language.print($ceylon$language.$ceylonInteger(this._a));
     }
-    $dart$core.int _$a;
+    $dart$core.int _a;
 }
 class run$Outer$Sub  extends Sup {
     run$Outer $outer$default$run$Outer;
     run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-            b = $outer$default$run$Outer._$b;
+            b = $outer$default$run$Outer._b;
         }
         if ($dart$core.identical(c, $ceylon$language.dart$default)) {
             c = (b as $dart$core.int) + 1;
@@ -24,12 +24,12 @@ class run$Outer$Sub  extends Sup {
     run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
     run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int b, $dart$core.int c]) : super(c) {
         this.$outer$default$run$Outer = $outer$default$run$Outer;
-        this._$b = b;
-        this._$c = c;
+        this._b = b;
+        this._c = c;
         $ceylon$language.print($ceylon$language.$ceylonInteger($outer$default$run$Outer.$capture$run$x));
     }
-    $dart$core.int _$b;
-    $dart$core.int _$c;
+    $dart$core.int _b;
+    $dart$core.int _c;
 }
 class run$Outer implements $ceylon$language.dart$$Basic {
     $dart$core.int $capture$run$x;
@@ -42,10 +42,10 @@ class run$Outer implements $ceylon$language.dart$$Basic {
     run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
     run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int b]) {
         this.$capture$run$x = $capture$run$x;
-        this._$b = b;
+        this._b = b;
         new run$Outer$Sub(this);
     }
-    $dart$core.int _$b;
+    $dart$core.int _b;
 }
 void $package$run() {
     $dart$core.int x = 5;

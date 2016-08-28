@@ -5,10 +5,10 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Sup implements $ceylon$language.dart$$Basic {
     Sup([$dart$core.int a]) {
-        this._$a = a;
-        $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
+        this._a = a;
+        $ceylon$language.print($ceylon$language.$ceylonInteger(this._a));
     }
-    $dart$core.int _$a;
+    $dart$core.int _a;
 }
 class run$Sub  extends Sup {
     $dart$core.int $capture$run$x;
@@ -24,11 +24,11 @@ class run$Sub  extends Sup {
     run$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
     run$Sub.$w([$dart$core.int $capture$run$x, $dart$core.int b, $dart$core.int c]) : super(c) {
         this.$capture$run$x = $capture$run$x;
-        this._$b = b;
-        this._$c = c;
+        this._b = b;
+        this._c = c;
     }
-    $dart$core.int _$b;
-    $dart$core.int _$c;
+    $dart$core.int _b;
+    $dart$core.int _c;
 }
 void $package$run() {
     $dart$core.int x = 5;

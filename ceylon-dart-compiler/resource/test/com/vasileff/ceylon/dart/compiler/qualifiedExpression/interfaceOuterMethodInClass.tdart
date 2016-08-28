@@ -11,13 +11,13 @@ class I$C implements $ceylon$language.dart$$Basic {
     $ceylon$language.Usable foo([$ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
     void run() {
         $ceylon$language.Callable iFoo = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $outer$default$I.foo($0 as $ceylon$language.Usable));
-        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => I.$_$bar($outer$default$I, $0 as $ceylon$language.Usable));
+        $ceylon$language.Callable iBar = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => I.$_bar($outer$default$I, $0 as $ceylon$language.Usable));
     }
 }
 abstract class I {
     $ceylon$language.Usable foo([$ceylon$language.Usable u]);
     static $ceylon$language.Usable $foo([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
-    static $ceylon$language.Usable $_$bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
+    static $ceylon$language.Usable $_bar([final I $this, $ceylon$language.Usable u]) => $ceylon$language.nothing as $ceylon$language.Usable;
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
 

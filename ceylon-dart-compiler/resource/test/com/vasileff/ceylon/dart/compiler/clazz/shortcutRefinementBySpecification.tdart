@@ -47,11 +47,11 @@ class A implements $ceylon$language.dart$$Basic, I {
 }
 class B implements $ceylon$language.dart$$Basic, I {
     B() {
-        _$barCurryRef = new $ceylon$language.dart$Callable($package$barCurry);
-        foo$c = _$barCurryRef.f() as $ceylon$language.Callable;
+        _barCurryRef = new $ceylon$language.dart$Callable($package$barCurry);
+        foo$c = _barCurryRef.f() as $ceylon$language.Callable;
     }
     $dart$core.String get id => "hello";
-    $ceylon$language.Callable _$barCurryRef;
+    $ceylon$language.Callable _barCurryRef;
     $ceylon$language.Callable foo$c;
     $dart$core.String foo() {
         return $ceylon$language.$dartString(foo$c.f());

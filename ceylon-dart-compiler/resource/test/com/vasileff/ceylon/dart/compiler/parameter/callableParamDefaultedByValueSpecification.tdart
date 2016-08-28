@@ -21,10 +21,10 @@ class Two implements $ceylon$language.dart$$Basic {
     })());
     Two.$s([$dart$core.List a]) : this.$w(a[0]);
     Two.$w([$ceylon$language.Callable f]) {
-        this._$f = f;
+        this._f = f;
     }
-    $ceylon$language.Callable _$f;
-    $dart$core.int get val => $ceylon$language.$dartInt(_$f.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
+    $ceylon$language.Callable _f;
+    $dart$core.int get val => $ceylon$language.$dartInt(_f.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
 }
 void $package$run() {
     if (!($package$two() == 2)) {

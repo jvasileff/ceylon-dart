@@ -12,10 +12,10 @@ class recursiveNonSharedDefaultedCallableClass$C implements $ceylon$language.dar
     })());
     recursiveNonSharedDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
     recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable factNonShared]) {
-        this._$factNonShared = factNonShared;
+        this._factNonShared = factNonShared;
     }
-    $ceylon$language.Callable _$factNonShared;
-    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_$factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
+    $ceylon$language.Callable _factNonShared;
+    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
 }
 void $package$recursiveNonSharedDefaultedCallableClass() {
     if (!((new recursiveNonSharedDefaultedCallableClass$C()).fact(4) == 24)) {

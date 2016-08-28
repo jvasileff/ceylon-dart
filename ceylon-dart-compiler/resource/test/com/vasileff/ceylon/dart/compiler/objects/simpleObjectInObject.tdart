@@ -12,9 +12,9 @@ class o1_$o2_ implements $ceylon$language.dart$$Basic {
 }
 class o1_ implements $ceylon$language.dart$$Basic {
     o1_() {
-        _$o2 = new o1_$o2_(this);
+        _o2 = new o1_$o2_(this);
     }
-    o1_$o2_ _$o2;
+    o1_$o2_ _o2;
 }
 final o1_ $package$o1 = new o1_();
 

@@ -5,24 +5,24 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Foo implements $ceylon$language.dart$$Basic {
     Foo([$dart$core.Object si1, $dart$core.Object si2, $dart$core.Object isf]) {
-        this._$si1 = si1;
-        this._$si2 = si2;
-        this._$isf = isf;
-        if (!(_$si1 is $ceylon$language.String)) {
+        this._si1 = si1;
+        this._si2 = si2;
+        this._isf = isf;
+        if (!(_si1 is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String si1");
         }
-        si1$0 = $ceylon$language.$dartString(this._$si1 as $ceylon$language.String);
-        if (!(_$si2 is $ceylon$language.String)) {
+        si1$0 = $ceylon$language.$dartString(this._si1 as $ceylon$language.String);
+        if (!(_si2 is $ceylon$language.String)) {
             throw new $ceylon$language.AssertionError("Violated: is String si2");
         }
-        si2$1 = $ceylon$language.$dartString(this._$si2 as $ceylon$language.String);
-        if (!((_$isf is $ceylon$language.String) || (_$isf is $ceylon$language.Integer))) {
+        si2$1 = $ceylon$language.$dartString(this._si2 as $ceylon$language.String);
+        if (!((_isf is $ceylon$language.String) || (_isf is $ceylon$language.Integer))) {
             throw new $ceylon$language.AssertionError("Violated: is String | Integer isf");
         }
     }
-    $dart$core.Object _$si1;
-    $dart$core.Object _$si2;
-    $dart$core.Object _$isf;
+    $dart$core.Object _si1;
+    $dart$core.Object _si2;
+    $dart$core.Object _isf;
     $dart$core.String si1$0;
     $dart$core.String si2$1;
 }

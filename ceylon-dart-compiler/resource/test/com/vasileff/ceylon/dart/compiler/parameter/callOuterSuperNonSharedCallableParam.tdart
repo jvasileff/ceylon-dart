@@ -7,24 +7,24 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
     callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer;
     callOuterSuperNonSharedCallableParam$Outer$Inner([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $dart$core.Object foo2 = $ceylon$language.dart$default]) : this.$s((() {
         if ($dart$core.identical(foo2, $ceylon$language.dart$default)) {
-            foo2 = new $ceylon$language.dart$Callable(() => $outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f());
+            foo2 = new $ceylon$language.dart$Callable(() => $outer$default$callOuterSuperNonSharedCallableParam$Outer._foo.f());
         }
         return [$outer$default$callOuterSuperNonSharedCallableParam$Outer, foo2];
     })());
     callOuterSuperNonSharedCallableParam$Outer$Inner.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
     callOuterSuperNonSharedCallableParam$Outer$Inner.$w([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $ceylon$language.Callable foo2]) {
         this.$outer$default$callOuterSuperNonSharedCallableParam$Outer = $outer$default$callOuterSuperNonSharedCallableParam$Outer;
-        this._$foo2 = foo2;
+        this._foo2 = foo2;
     }
-    $ceylon$language.Callable _$foo2;
+    $ceylon$language.Callable _foo2;
     void test() {
-        if (!(($ceylon$language.$dartInt(_$foo2.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt(_foo2.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: foo2() + 1 == 2");
         }
-        if (!(($ceylon$language.$dartInt($outer$default$callOuterSuperNonSharedCallableParam$Outer._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt($outer$default$callOuterSuperNonSharedCallableParam$Outer._foo.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: outer.foo() + 1 == 2");
         }
-        if (!(($ceylon$language.$dartInt(super._$foo.f() as $ceylon$language.Integer) + 1) == 2)) {
+        if (!(($ceylon$language.$dartInt(super._foo.f() as $ceylon$language.Integer) + 1) == 2)) {
             throw new $ceylon$language.AssertionError("Violated: super.foo() + 1 == 2");
         }
     }
@@ -38,9 +38,9 @@ class callOuterSuperNonSharedCallableParam$Outer implements $ceylon$language.dar
     })());
     callOuterSuperNonSharedCallableParam$Outer.$s([$dart$core.List a]) : this.$w(a[0]);
     callOuterSuperNonSharedCallableParam$Outer.$w([$ceylon$language.Callable foo]) {
-        this._$foo = foo;
+        this._foo = foo;
     }
-    $ceylon$language.Callable _$foo;
+    $ceylon$language.Callable _foo;
     callOuterSuperNonSharedCallableParam$Outer$Inner $new$callOuterSuperNonSharedCallableParam$Outer$Inner([$dart$core.Object foo2 = $ceylon$language.dart$default]) => new callOuterSuperNonSharedCallableParam$Outer$Inner(this, foo2);
 }
 void $package$callOuterSuperNonSharedCallableParam() {
