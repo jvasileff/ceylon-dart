@@ -342,7 +342,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // bridges alone.
             if ((isClassOrInterfaceMember(declaration)) && !declaration.shared) {
                 // see https://github.com/jvasileff/ceylon-dart/issues/25
-                return "_$" + baseName;
+                return "_" + baseName;
             }
             return baseName;
         }
