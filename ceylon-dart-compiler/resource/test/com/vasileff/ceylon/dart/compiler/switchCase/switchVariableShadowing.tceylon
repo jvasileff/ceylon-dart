@@ -1,0 +1,54 @@
+shared void run() {
+    void testSwitchShadow1() {
+        class C() {
+            shared String? attribute = "x";
+            shared void foo() {
+                switch (attribute = attribute)
+                case (is Null)   { assert (1==0); }
+                case (is String) { assert (attribute == "x"); }
+            }
+        }
+        C().foo();
+    }
+    void testSwitchShadow2() {
+        class B() {
+            shared String? attribute = "x";
+        }
+        class C() extends B() {
+            shared void foo() {
+                switch (attribute = attribute)
+                case (is Null)   { assert (1==0); }
+                case (is String) { assert (attribute == "x"); }
+            }
+        }
+        C().foo();
+    }
+    void testSwitchShadow3() {
+        String? attribute = "x";
+        void foo() {
+            switch (attribute = attribute)
+            case (is Null)   { assert (1==0); }
+            case (is String) { assert (attribute == "x"); }
+        }
+        foo();
+    }
+    void testSwitchShadow4() {
+        // does not need suffixes to prevent shadowing, since
+        // attribute is captured!
+        class C() {
+            shared String? attribute = "x";
+            shared class CMember() {
+                shared void foo() {
+                    switch (attribute = attribute)
+                    case (is Null)   { assert (1==0); }
+                    case (is String) { assert (attribute == "x"); }
+                }
+            }
+        }
+        C().CMember().foo();
+    }
+    testSwitchShadow1();
+    testSwitchShadow2();
+    testSwitchShadow3();
+    testSwitchShadow4();
+}
