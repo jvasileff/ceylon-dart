@@ -1,0 +1,10 @@
+shared void run() {
+    class C() {
+        String id => "C";
+        shared class D() extends C() {
+            String id => nothing;
+            shared String outerId => outer.id;
+        }
+    }
+    assert (C().D().D().outerId == "C");
+}

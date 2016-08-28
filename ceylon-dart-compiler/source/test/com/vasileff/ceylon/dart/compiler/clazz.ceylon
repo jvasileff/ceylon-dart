@@ -269,4 +269,16 @@ object clazz {
     shared test
     void shortcutRefinementFunctionValue()
         =>  compileAndCompare("clazz/shortcutRefinementFunctionValue");
+
+    shared test
+    void shadowPrivateMember1()
+        =>  compileAndCompare("clazz/shadowPrivateMember1");
+
+    shared test
+    void shadowPrivateMember2()
+        =>  compileAndCompare("clazz/shadowPrivateMember2");
+
+    shared test
+    void shadowPrivateMember3()
+        =>  compileAndCompare("clazz/shadowPrivateMember3");
 }

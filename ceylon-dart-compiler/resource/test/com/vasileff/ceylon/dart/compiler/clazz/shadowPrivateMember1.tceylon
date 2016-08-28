@@ -1,0 +1,12 @@
+shared void run() {
+    class A() {
+        String id => "A";
+        shared String idA => id;
+    }
+    class B() extends A() {
+        String id => "B";
+        shared String idB => id;
+    }
+    assert (B().idA == "A");
+    assert (B().idB == "B");
+}
