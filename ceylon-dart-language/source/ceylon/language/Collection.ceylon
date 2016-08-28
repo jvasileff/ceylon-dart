@@ -99,9 +99,7 @@ shared interface Collection<out Element=Anything>
         value multiset =
             outer
             .indexed
-// FIXME workaround https://github.com/ceylon/ceylon/issues/6427
-            .group((_->item) => (item else nullElement))
-            //.group((_->item) => item else nullElement)
+            .group((_->item) => item else nullElement)
             .items
             .sort((x,y) => x.first.key<=>y.first.key)
             .indexed
