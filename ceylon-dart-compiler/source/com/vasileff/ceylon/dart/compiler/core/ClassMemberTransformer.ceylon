@@ -45,7 +45,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassAliasModel=ClassAlias,
     ValueModel=Value,
     ConstructorModel=Constructor,
-    FunctionalModel=Functional,
     ClassModel=Class
 }
 import com.vasileff.ceylon.dart.compiler {
@@ -986,8 +985,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                             true; false;
                             info;
                             CeylonList {
-                                (constructor of FunctionalModel)
-                                        .firstParameterList.parameters;
+                                constructor.firstParameterList.parameters;
                             };
                         }.parameters;
                     };

@@ -432,7 +432,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // synthetic field or setter.
         if (is ValueModel declaration,
             exists mapped = mappedFunctionOrValue(refinedDeclaration(declaration)),
-                mapped.type == dartValue) {
+                mapped.type == dartValue,
+                !ctx.withinConstructorDefaultsSet.contains(declaration.container),
+                !ctx.withinConstructorSignatureSet.contains(declaration.container)) {
             return mapped.name;
         }
 
@@ -461,14 +463,35 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // mangle the name to the capture box name. For non-values, unwrap and try
             // again. (This won't conflict with "mapped" logic, because "mapped" is for
             // members, and captures always have non-class-or-interface containers.)
+
+            // Translation: this is for a parameter that is variable and also captured.
+            // The value will be "$b$paramName", but for the parameter, the identifier is
+            // simply "paramName".
             if (is ValueModel valueModel = declaration.model,
                     capturedReferenceValue(valueModel)) {
                 return identifierPackagePrefix(valueModel)
                         + getUnprefixedName(declaration);
             }
+
+            // If this is a class initializer parameter, don't uniquify or privatize.
+            // The Dart identifier should match the Ceylon identifier as closely as
+            // possible.
+            if (declaration.model.scope is ClassModel) {
+                if (is FunctionOrValueModel model = declaration.model) {
+                    return sanitizeIdentifier(declaration.name);
+                }
+            }
+
             return getName(declaration.model);
         }
         case (is ValueModel) {
+            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+                // If we're really accessing the parameter for default value
+                // initialiation or calls to super, use the identifier for the
+                // parameter as described in the (is ParameterModel) case.
+                return sanitizeIdentifier(declaration.name);
+            }
             value result
                 =   identifierPackagePrefix(declaration)
                         + getUnprefixedName(declaration);
@@ -484,6 +507,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getterSetterSuffix(declaration);
         }
         case (is FunctionModel) {
+            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+                // See notes about parameters in (is ValueModel) case
+                return sanitizeIdentifier(declaration.name);
+            }
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }

@@ -860,11 +860,11 @@ class TopLevelVisitor(CompilationContext ctx)
         value memberParameterInitializers
             =   parameters
                 .map {
-                    (p) => parameterInfo(p).parameterModel.model;
+                    (p) => parameterInfo(p).parameterModel;
                 }.filter {
                     // Skip assignments for *shared* callable parameters; they will have
                     // a synthetic name and are handled below.
-                    (model) => !model is FunctionModel || !model.shared;
+                    (model) => !model.model is FunctionModel || !model.model.shared;
                 }.collect {
                     (model) => DartExpressionStatement {
                         DartAssignmentExpression {
@@ -872,7 +872,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 DartSimpleIdentifier("this");
                                 // The field for the Callable or the possibly synthetic
                                 // field for the value
-                                dartTypes.identifierForField(model);
+                                dartTypes.identifierForField(model.model);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier(dartTypes.getName(model));
@@ -884,16 +884,16 @@ class TopLevelVisitor(CompilationContext ctx)
         value sharedCallableValueMemberParameterInitializers
             =   parameters
                 .map {
-                    (p) => parameterInfo(p).parameterModel.model;
+                    (p) => parameterInfo(p).parameterModel;
                 }.filter {
-                    (model) => model is FunctionModel && model.shared;
+                    (model) => model.model is FunctionModel && model.model.shared;
                 }.collect {
                     (model) => DartExpressionStatement {
                         DartAssignmentExpression {
                             DartPrefixedIdentifier {
                                 DartSimpleIdentifier("this");
                                 DartSimpleIdentifier(
-                                    "_" + dartTypes.getName(model) + "$c");
+                                    "_" + dartTypes.getName(model.model) + "$c");
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier(dartTypes.getName(model));
@@ -953,9 +953,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                             parameters.map {
                                                 (p) => DartSimpleIdentifier {
                                                     dartTypes.getName {
-                                                        parameterInfo(p)
-                                                                .parameterModel
-                                                                .model;
+                                                        parameterInfo(p).parameterModel;
                                                     };
                                                 };
                                             }
@@ -1976,7 +1974,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         [DartSimpleIdentifier("this"),
                          *parameterModels.collect { (parameterModel) =>
                             DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel.model);
+                                dartTypes.getName(parameterModel);
                             };
                         }];
                     };
