@@ -214,6 +214,53 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             then "$" + id
             else escapeDartIdentifier(id);
 
+    function uniquifiedName(DeclarationModel declaration) {
+        if (!is ValueModel declaration) {
+            return declaration.name;
+        }
+
+        value originalDeclaration = getOriginalDeclaration(declaration);
+
+        // Use a unique name if:
+        //
+        //   - shadowing within a 'assert' ConditionScope, or
+        //   - declaring a new variable that might shadow an in-scope declaration
+        //     in a 'switch (x = x)' ControlBlock.
+        //
+        // In either case, the shadowed declaration could be
+        //
+        //   - a declaration in an outer scope, or
+        //   - an inherited member
+
+        // To reduce unnecessary name uniquifications, we need:
+        //
+        //    if (!originalDeclaration.scope
+        //              is ControlBlockModel | ConditionScopeModel) {
+        //        return originalDeclaration.name;
+        //    }
+        //
+        // But... some future Ceylon may allow shadowing to occur in the middle of any
+        // block, without 'assert', and after the shadowed declaration has been
+        // referenced (Java allows this). Therefore, we'll reduce the exclusions to
+        // the minimum:
+        if (originalDeclaration.scope is ClassOrInterfaceModel
+                || originalDeclaration.parameter) {
+            return originalDeclaration.name;
+        }
+
+        "Including this declaration, the number of declarations sharing this
+         declaration's name that are in scope, excluding captures. (Captures are
+         declarations made by an ancestor with an intervening class or interface.)"
+        value shadowCount
+            =   ancestorElementsToContainingClassOrInterface(originalDeclaration)
+                .rest.count((e)
+                    =>  e.getMember(originalDeclaration.name, null, false) exists);
+
+        return if (shadowCount > 1)
+               then "``originalDeclaration.name``$s``shadowCount - 1``"
+               else originalDeclaration.name;
+    }
+
     String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
         String usableShortName(ClassModel | FunctionModel | ValueModel declaration)
             =>  if (declaration.anonymous) then
@@ -222,7 +269,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // the same as their values.
                     declaration.name.replace("anonymous#", "$anonymous$") + "_"
                 else
-                    declaration.name;
+                    uniquifiedName(declaration);
 
         // TODO refactor this code to reduce chance of caching a mangled name!!! As it
         // stands, only explicitly requested replacement names will be cached, so we're
@@ -445,7 +492,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return replacement;
         }
 
-        value replacement = declaration.name + "$" + (counter++).string;
+        value replacement = uniquifiedName(declaration) + "$" + (counter++).string;
         nameCache.put(declaration, replacement);
         return replacement;
     }
