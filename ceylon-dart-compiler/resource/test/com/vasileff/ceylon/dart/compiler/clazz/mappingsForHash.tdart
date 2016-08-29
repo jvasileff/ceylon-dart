@@ -5,12 +5,12 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class hashAssign$A implements $ceylon$language.dart$$Basic {
     hashAssign$A() {
-        _$x = 1;
+        _x = 1;
     }
-    $dart$core.int _$x;
-    $dart$core.int get hashCode => _$x;
+    $dart$core.int _x;
+    $dart$core.int get hashCode => _x;
     void set hashCode($dart$core.int hash) {
-        _$x = hash;
+        _x = hash;
     }
 }
 void $package$hashAssign() {

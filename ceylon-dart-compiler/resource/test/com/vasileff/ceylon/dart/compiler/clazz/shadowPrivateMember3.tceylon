@@ -1,0 +1,10 @@
+shared void run() {
+    class E() {
+        String id => "E";
+        shared class F() extends E() {
+            String id => nothing;
+            shared String eId => E.id(this);
+        }
+    }
+    assert (E().F().eId == "E");
+}

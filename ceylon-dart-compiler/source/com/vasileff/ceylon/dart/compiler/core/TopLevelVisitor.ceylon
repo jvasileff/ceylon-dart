@@ -683,7 +683,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             assertedExpression {
                                 dartTypes.expressionToThisOrOuterStripThis {
                                     scope;
-                                    dartTypes.ancestorChainToOuterInheritingDeclaration {
+                                    dartTypes.ancestorClassOrInterfacesToOuterInheritingDeclaration {
                                         classModel;
                                         outerDeclaration;
                                     };
@@ -761,9 +761,9 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "Functions, values, and classes for which the most refined
          member is contained by an Interface."
-        value declarationsToBridge
-            // Shouldn't there be a better way?
-            =   supertypeDeclarations(classModel)
+        function allDeclarationsToBridge(ClassModel classModel)
+                // Shouldn't there be a better way?
+            =>  supertypeDeclarations(classModel)
                     // don't consider constructors or any other class members
                     .filter((d) => d is InterfaceModel)
                     .flatMap((d) => CeylonList(d.members))
@@ -787,7 +787,15 @@ class TopLevelVisitor(CompilationContext ctx)
                     // Don't bridge to a declaration made in a dart native library. Surely
                     // the member is available from the extended type, in some way.
                     .filter(not(nativeDart))
-                    .flatMap(replaceClassWithSharedConstructors)
+                    .flatMap(replaceClassWithSharedConstructors);
+
+        assert (is ClassModel superClass = classModel.extendedType.declaration);
+
+        value superClassBridged = set(allDeclarationsToBridge(superClass));
+
+        value declarationsToBridge
+            =   allDeclarationsToBridge(classModel)
+                    .filter(not(superClassBridged.contains))
                     .sequence();
 
         value bridgeFunctions
@@ -862,11 +870,11 @@ class TopLevelVisitor(CompilationContext ctx)
         value memberParameterInitializers
             =   parameters
                 .map {
-                    (p) => parameterInfo(p).parameterModel.model;
+                    (p) => parameterInfo(p).parameterModel;
                 }.filter {
                     // Skip assignments for *shared* callable parameters; they will have
                     // a synthetic name and are handled below.
-                    (model) => !model is FunctionModel || !model.shared;
+                    (model) => !model.model is FunctionModel || !model.model.shared;
                 }.collect {
                     (model) => DartExpressionStatement {
                         DartAssignmentExpression {
@@ -874,7 +882,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 DartSimpleIdentifier("this");
                                 // The field for the Callable or the possibly synthetic
                                 // field for the value
-                                dartTypes.identifierForField(model);
+                                dartTypes.identifierForField(model.model);
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier(dartTypes.getName(model));
@@ -886,16 +894,16 @@ class TopLevelVisitor(CompilationContext ctx)
         value sharedCallableValueMemberParameterInitializers
             =   parameters
                 .map {
-                    (p) => parameterInfo(p).parameterModel.model;
+                    (p) => parameterInfo(p).parameterModel;
                 }.filter {
-                    (model) => model is FunctionModel && model.shared;
+                    (model) => model.model is FunctionModel && model.model.shared;
                 }.collect {
                     (model) => DartExpressionStatement {
                         DartAssignmentExpression {
                             DartPrefixedIdentifier {
                                 DartSimpleIdentifier("this");
                                 DartSimpleIdentifier(
-                                    "_" + dartTypes.getName(model) + "$c");
+                                    "_" + dartTypes.getName(model.model) + "$c");
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier(dartTypes.getName(model));
@@ -955,9 +963,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                             parameters.map {
                                                 (p) => DartSimpleIdentifier {
                                                     dartTypes.getName {
-                                                        parameterInfo(p)
-                                                                .parameterModel
-                                                                .model;
+                                                        parameterInfo(p).parameterModel;
                                                     };
                                                 };
                                             }
@@ -1978,7 +1984,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         [DartSimpleIdentifier("this"),
                          *parameterModels.collect { (parameterModel) =>
                             DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel.model);
+                                dartTypes.getName(parameterModel);
                             };
                         }];
                     };

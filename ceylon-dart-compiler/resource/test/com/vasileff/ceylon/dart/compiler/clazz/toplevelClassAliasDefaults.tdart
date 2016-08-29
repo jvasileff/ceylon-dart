@@ -40,18 +40,18 @@ class C implements $ceylon$language.dart$$Basic {
     $dart$core.int i;
 }
 class D  extends C {
-    D([$dart$core.int _$p]) : super(_$p) {
-        this._$p = _$p;
+    D([$dart$core.int p]) : super(p) {
+        this._p = p;
     }
-    $dart$core.int _$p;
+    $dart$core.int _p;
 }
 class DCreate  extends C {
-    DCreate([$dart$core.int _$p, $dart$core.int _$q]) : super.create(_$p, _$q) {
-        this._$p = _$p;
-        this._$q = _$q;
+    DCreate([$dart$core.int p, $dart$core.int q]) : super.create(p, q) {
+        this._p = p;
+        this._q = q;
     }
-    $dart$core.int _$p;
-    $dart$core.int _$q;
+    $dart$core.int _p;
+    $dart$core.int _q;
 }
 void $package$run() {
     if (!((new C(10)).i == 10)) {

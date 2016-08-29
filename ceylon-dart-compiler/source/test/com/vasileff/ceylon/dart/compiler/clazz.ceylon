@@ -265,4 +265,32 @@ object clazz {
     shared test
     void shortcutRefinementFunctionValue()
         =>  compileAndCompare("clazz/shortcutRefinementFunctionValue");
+
+    shared test
+    void shadowPrivateMember1()
+        =>  compileAndCompare("clazz/shadowPrivateMember1");
+
+    shared test
+    void shadowPrivateMember2()
+        =>  compileAndCompare("clazz/shadowPrivateMember2");
+
+    shared test
+    void shadowPrivateMember3()
+        =>  compileAndCompare("clazz/shadowPrivateMember3");
+
+    shared test
+    void avoidPolymorphicPrivates1()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates1");
+
+    shared test
+    void avoidPolymorphicPrivates2()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates2");
+
+    shared test
+    void avoidPolymorphicPrivates3()
+        =>  compileAndCompare("clazz/avoidPolymorphicPrivates3");
+
+    shared test
+    void elideBridgesIfPossible()
+        =>  compileAndCompare("clazz/elideBridgesIfPossible");
 }

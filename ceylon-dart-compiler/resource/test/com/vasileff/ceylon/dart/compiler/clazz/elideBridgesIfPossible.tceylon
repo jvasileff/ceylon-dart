@@ -1,0 +1,12 @@
+interface I {
+    shared default void foo() {}
+}
+interface I2 satisfies I {
+    shared actual default void foo() {}
+}
+
+class C1() satisfies I {}
+class C2() extends C1() {} // don't include bridge to foo()
+class C3() extends C1() satisfies I2 {} // do include bridge to foo()
+
+

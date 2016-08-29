@@ -45,4 +45,8 @@ object assertIsNarrowing {
     shared test
     void nativeNarrowing()
         =>  compileAndCompare("assertIsNarrowing/nativeNarrowing");
+
+    shared test
+    void assertShadowing()
+        =>  compileAndCompare("assertIsNarrowing/assertShadowing");
 }

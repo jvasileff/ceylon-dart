@@ -1,0 +1,11 @@
+shared void run() {
+    class C() {
+        shared String foo();
+        foo() => "hello C";
+    }
+    class D() extends C() {
+        String foo();
+        foo() => "hello D";
+    }
+    assert (C().foo() == "hello C");
+}

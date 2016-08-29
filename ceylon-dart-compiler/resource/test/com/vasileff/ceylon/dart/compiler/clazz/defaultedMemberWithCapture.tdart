@@ -4,48 +4,48 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Sup implements $ceylon$language.dart$$Basic {
-    Sup([$dart$core.int _$a]) {
-        this._$a = _$a;
-        $ceylon$language.print($ceylon$language.$ceylonInteger(this._$a));
+    Sup([$dart$core.int a]) {
+        this._a = a;
+        $ceylon$language.print($ceylon$language.$ceylonInteger(this._a));
     }
-    $dart$core.int _$a;
+    $dart$core.int _a;
 }
 class run$Outer$Sub  extends Sup {
     run$Outer $outer$default$run$Outer;
-    run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object _$b = $ceylon$language.dart$default, $dart$core.Object _$c = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
-            _$b = $outer$default$run$Outer._$b;
+    run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+            b = $outer$default$run$Outer._b;
         }
-        if ($dart$core.identical(_$c, $ceylon$language.dart$default)) {
-            _$c = (_$b as $dart$core.int) + 1;
+        if ($dart$core.identical(c, $ceylon$language.dart$default)) {
+            c = (b as $dart$core.int) + 1;
         }
-        return [$outer$default$run$Outer, _$b, _$c];
+        return [$outer$default$run$Outer, b, c];
     })());
     run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
-    run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int _$b, $dart$core.int _$c]) : super(_$c) {
+    run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int b, $dart$core.int c]) : super(c) {
         this.$outer$default$run$Outer = $outer$default$run$Outer;
-        this._$b = _$b;
-        this._$c = _$c;
+        this._b = b;
+        this._c = c;
         $ceylon$language.print($ceylon$language.$ceylonInteger($outer$default$run$Outer.$capture$run$x));
     }
-    $dart$core.int _$b;
-    $dart$core.int _$c;
+    $dart$core.int _b;
+    $dart$core.int _c;
 }
 class run$Outer implements $ceylon$language.dart$$Basic {
     $dart$core.int $capture$run$x;
-    run$Outer([$dart$core.int $capture$run$x, $dart$core.Object _$b = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$b, $ceylon$language.dart$default)) {
-            _$b = $capture$run$x;
+    run$Outer([$dart$core.int $capture$run$x, $dart$core.Object b = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+            b = $capture$run$x;
         }
-        return [$capture$run$x, _$b];
+        return [$capture$run$x, b];
     })());
     run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int _$b]) {
+    run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int b]) {
         this.$capture$run$x = $capture$run$x;
-        this._$b = _$b;
+        this._b = b;
         new run$Outer$Sub(this);
     }
-    $dart$core.int _$b;
+    $dart$core.int _b;
 }
 void $package$run() {
     $dart$core.int x = 5;

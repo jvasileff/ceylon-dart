@@ -52,7 +52,7 @@ void compileAndCompare(String key) {
         =   "\n".join(dartUnits.interpose("/".repeat(70)));
 
     if (outputToTemp) {
-        writeNewTempFile(dartPathPart, dartCode);
+        writeNewTempFile(dartPathPart, dartCode.trimmed);
     }
 
     value dartText

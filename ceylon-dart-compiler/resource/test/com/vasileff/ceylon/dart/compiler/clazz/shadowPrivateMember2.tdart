@@ -1,0 +1,37 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$C$D  extends run$C {
+    run$C $outer$default$run$C;
+    run$C$D([run$C $outer$default$run$C]) {
+        this.$outer$default$run$C = $outer$default$run$C;
+    }
+    $dart$core.String get _id$1 => $ceylon$language.$dartString($ceylon$language.nothing as $ceylon$language.String);
+    $dart$core.String get outerId => $outer$default$run$C._id;
+}
+class run$C implements $ceylon$language.dart$$Basic {
+    run$C() {}
+    $dart$core.String get _id => "C";
+    run$C$D $new$run$C$D() => new run$C$D(this);
+}
+void $package$run() {
+    if (!((new run$C()).$new$run$C$D().$new$run$C$D().outerId == "C")) {
+        throw new $ceylon$language.AssertionError("Violated: C().D().D().outerId == \"C\"");
+    }
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

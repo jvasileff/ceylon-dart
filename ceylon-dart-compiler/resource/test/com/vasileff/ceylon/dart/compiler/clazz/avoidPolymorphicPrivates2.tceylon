@@ -1,0 +1,14 @@
+shared void run() {
+    class C() {
+        object c1 {
+            shared String id => "C.c1";
+        }
+        shared String c1id => c1.id;
+    }
+    class D() extends C() {
+        object c1 {
+            shared String id => "D.c1";
+        }
+    }
+    assert (D().c1id == "C.c1");
+}

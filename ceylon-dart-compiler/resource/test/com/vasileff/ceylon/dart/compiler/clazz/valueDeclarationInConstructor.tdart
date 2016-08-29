@@ -7,9 +7,9 @@ class C implements $ceylon$language.dart$$Basic {
     void _$init$C([$dart$core.int $bitmap]) {
         t = "t";
         if (0 != ($bitmap & 1)) {
-            $dart$core.String s = "s";
-            $ceylon$language.print($ceylon$language.$ceylonString(s));
-            this.s = s;
+            $dart$core.String s$s1 = "s";
+            $ceylon$language.print($ceylon$language.$ceylonString(s$s1));
+            this.s = s$s1;
             $ceylon$language.print($ceylon$language.$ceylonString(t));
         }
     }

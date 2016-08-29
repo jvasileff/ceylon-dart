@@ -98,7 +98,7 @@ class Character extends BaseCharacter implements dart$$Object, Comparable, Enume
 /////////////////////////////////////////////////
 
 $dart$core.double $dartDouble(Float value)
-  =>  value == null ? null : value._$float;
+  =>  value == null ? null : value._float;
 
 Float $ceylonFloat($dart$core.double value)
   =>  value == null ? null : new Float(value);
@@ -110,7 +110,7 @@ Float $ceylonFloat($dart$core.double value)
 /////////////////////////////////////////////////
 
 $dart$core.int $dartInt(Integer value)
-  =>  value == null ? null : value._$integer;
+  =>  value == null ? null : value._integer;
 
 Integer $ceylonInteger($dart$core.int value)
   =>  value == null ? null : new Integer(value);
@@ -217,7 +217,7 @@ $dart$core.int intFlip($dart$core.int integer, $dart$core.int index) {
 /////////////////////////////////////////////////
 
 $dart$core.String $dartString(String value)
-  =>  value == null ? null : value._$val;
+  =>  value == null ? null : value._val;
 
 String $ceylonString($dart$core.String value)
   =>  value == null ? null : new String.withString(value);
@@ -234,23 +234,23 @@ class String extends BaseString implements Summable, Comparable, Ranged {
 
   @$dart$core.override
   String operator +(String other)
-    =>  new String.withString(_$val + other._$val);
+    =>  new String.withString(_val + other._val);
 
   @$dart$core.override
   $dart$core.bool operator >(String other)
-    =>  _$val.compareTo(other._$val) > 0;
+    =>  _val.compareTo(other._val) > 0;
 
   @$dart$core.override
   $dart$core.bool operator <(String other)
-    =>  _$val.compareTo(other._$val) < 0;
+    =>  _val.compareTo(other._val) < 0;
 
   @$dart$core.override
   $dart$core.bool operator >=(String other)
-    =>  _$val.compareTo(other._$val) >= 0;
+    =>  _val.compareTo(other._val) >= 0;
 
   @$dart$core.override
   $dart$core.bool operator <=(String other)
-    =>  _$val.compareTo(other._$val) <= 0;
+    =>  _val.compareTo(other._val) <= 0;
 }
 
 /////////////////////////////////////////////////

@@ -4,16 +4,16 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class callNonDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
-    callNonDefaultedCallableParamClass$C([$ceylon$language.Callable a, $ceylon$language.Callable _$b, $ceylon$language.Callable c]) {
-        this._$b = _$b;
+    callNonDefaultedCallableParamClass$C([$ceylon$language.Callable a, $ceylon$language.Callable b, $ceylon$language.Callable c]) {
+        this._b = b;
         this._a$c = a;
         this._c$c = c;
     }
-    $ceylon$language.Callable _$b;
+    $ceylon$language.Callable _b;
     $ceylon$language.Callable _a$c;
     $ceylon$language.Callable _c$c;
     $dart$core.int callA([$dart$core.int i]) => a(i);
-    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.$dartInt(_$b.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
+    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.$dartInt(_b.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
     $dart$core.int callC([$dart$core.int i]) => c(i);
     $dart$core.int a([$dart$core.int i]) {
         return $ceylon$language.$dartInt(_a$c.f($ceylon$language.$ceylonInteger(i)));

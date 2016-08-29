@@ -4,22 +4,22 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class staticInvocationOfCallableParam$CP implements $ceylon$language.dart$$Basic {
-    staticInvocationOfCallableParam$CP([$dart$core.Object _$echo = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$echo, $ceylon$language.dart$default)) {
-            _$echo = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    staticInvocationOfCallableParam$CP([$dart$core.Object echo = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(echo, $ceylon$language.dart$default)) {
+            echo = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
         }
-        return [_$echo];
+        return [echo];
     })());
     staticInvocationOfCallableParam$CP.$s([$dart$core.List a]) : this.$w(a[0]);
-    staticInvocationOfCallableParam$CP.$w([$ceylon$language.Callable _$echo]) {
-        this._$echo = _$echo;
+    staticInvocationOfCallableParam$CP.$w([$ceylon$language.Callable echo]) {
+        this._echo = echo;
     }
-    $ceylon$language.Callable _$echo;
+    $ceylon$language.Callable _echo;
     void test() {
-        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(\"hello\") == \"hello\"");
         }
-        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._$echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("hello")])) as $ceylon$language.String) == "hello")) {
+        if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as staticInvocationOfCallableParam$CP)._echo.f($0 as $ceylon$language.String) as $ceylon$language.String))).f(new staticInvocationOfCallableParam$CP()) as $ceylon$language.Callable).s(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("hello")])) as $ceylon$language.String) == "hello")) {
             throw new $ceylon$language.AssertionError("Violated: CP.echo(CP())(*[\"hello\"]) == \"hello\"");
         }
     }

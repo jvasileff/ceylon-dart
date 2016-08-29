@@ -11,9 +11,9 @@ class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
 }
 class run$Foo implements $ceylon$language.dart$$Basic {
     run$Foo() {
-        _$x = new run$Foo$FooMember(this);
+        _x = new run$Foo$FooMember(this);
     }
-    run$Foo$FooMember _$x;
+    run$Foo$FooMember _x;
 }
 void $package$run() {}
 

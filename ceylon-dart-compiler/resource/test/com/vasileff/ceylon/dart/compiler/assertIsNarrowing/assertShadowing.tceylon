@@ -1,0 +1,54 @@
+shared void run() {
+    void testAssertShadow1() {
+        class C() {
+            shared Integer x = 10;
+            shared void foo() {
+                assert (x == 10);
+                assert (is Integer x = 20 of Anything);
+                assert (x == 20);
+            }
+        }
+        C().foo();
+    }
+    void testAssertShadow2() {
+        class B() {
+            shared Integer x = 10;
+        }
+        class C() extends B() {
+            shared void foo() {
+                assert (x == 10);
+                assert (is Integer x = 20 of Anything);
+                assert (x == 20);
+            }
+        }
+        C().foo();
+    }
+    void testAssertShadow3() {
+        Integer x = 10;
+        void foo() {
+            assert (x == 10);
+            assert (is Integer x = 20 of Anything);
+            assert (x == 20);
+        }
+        foo();
+    }
+    void testAssertShadow4() {
+        // does not need suffixes to prevent shadowing, since
+        // x is captured!
+        class C() {
+            shared Integer x = 10;
+            shared class CMember() {
+                shared void foo() {
+                    assert (x == 10);
+                    assert (is Integer x = 20 of Anything);
+                    assert (x == 20);
+                }
+            }
+        }
+        C().CMember().foo();
+    }
+    testAssertShadow1();
+    testAssertShadow2();
+    testAssertShadow3();
+    testAssertShadow4();
+}

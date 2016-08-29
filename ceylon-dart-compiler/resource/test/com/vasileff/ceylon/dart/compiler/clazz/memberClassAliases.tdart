@@ -8,7 +8,7 @@ class memberClassAliases$C implements $ceylon$language.dart$$Basic {
         $ceylon$language.print(new $ceylon$language.Singleton("1"));
         $ceylon$language.print($new$memberClassAliases$C$BoxShared("2"));
     }
-    $ceylon$language.Singleton $new$memberClassAliases$C$BoxShared([$dart$core.String _$s]) => new $ceylon$language.Singleton(_$s);
+    $ceylon$language.Singleton $new$memberClassAliases$C$BoxShared([$dart$core.String s]) => new $ceylon$language.Singleton(s);
 }
 void $package$memberClassAliases() {
     $ceylon$language.print((new memberClassAliases$C()).$new$memberClassAliases$C$BoxShared("3"));

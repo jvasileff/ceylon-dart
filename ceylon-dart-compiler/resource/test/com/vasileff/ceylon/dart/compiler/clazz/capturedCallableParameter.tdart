@@ -11,11 +11,11 @@ class fun$C implements $ceylon$language.dart$$Basic {
         this.$capture$fun$captureMe2 = $capture$fun$captureMe2;
         $capture$fun$captureMe1.f();
         $capture$fun$captureMe2.f();
-        _$cm1 = $capture$fun$captureMe1;
-        _$cm2 = $capture$fun$captureMe2;
+        _cm1 = $capture$fun$captureMe1;
+        _cm2 = $capture$fun$captureMe2;
     }
-    $ceylon$language.Callable _$cm1;
-    $ceylon$language.Callable _$cm2;
+    $ceylon$language.Callable _cm1;
+    $ceylon$language.Callable _cm2;
 }
 void $package$fun([$ceylon$language.Callable captureMe1, $ceylon$language.Callable captureMe2]) {}
 

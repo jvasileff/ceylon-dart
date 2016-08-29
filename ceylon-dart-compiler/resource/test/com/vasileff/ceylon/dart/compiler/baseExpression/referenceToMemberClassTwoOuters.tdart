@@ -12,9 +12,9 @@ class I1$I2$C implements $ceylon$language.dart$$Basic, I1$I2 {
 }
 abstract class I1$I2 {
     I1 get $outer$default$I1;
-    static $ceylon$language.Callable $get$_$newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
-    static $ceylon$language.Callable $get$_$newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
-    static void $_$foo([final I1$I2 $this]) {
+    static $ceylon$language.Callable $get$_newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    static $ceylon$language.Callable $get$_newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    static void $_foo([final I1$I2 $this]) {
         $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
 
         $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));

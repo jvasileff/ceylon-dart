@@ -1,0 +1,139 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class run$testSwitchShadow1$C implements $ceylon$language.dart$$Basic {
+    run$testSwitchShadow1$C() {
+        attribute = "x";
+    }
+    $dart$core.String attribute;
+    void foo() {{
+            $dart$core.String attribute$s1 = attribute;
+            if (null == attribute$s1) {
+                $dart$core.Object attribute$s1$0;
+                attribute$s1$0 = $ceylon$language.$ceylonString(attribute$s1);
+                if (!(1 == 0)) {
+                    throw new $ceylon$language.AssertionError("Violated: 1==0");
+                }
+            } else if (attribute$s1 is $dart$core.String) {
+                if (!(attribute$s1 == "x")) {
+                    throw new $ceylon$language.AssertionError("Violated: attribute == \"x\"");
+                }
+            } else {
+                throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+            }
+        }
+    }
+}
+class run$testSwitchShadow2$B implements $ceylon$language.dart$$Basic {
+    run$testSwitchShadow2$B() {
+        attribute = "x";
+    }
+    $dart$core.String attribute;
+}
+class run$testSwitchShadow2$C  extends run$testSwitchShadow2$B {
+    run$testSwitchShadow2$C() {}
+    void foo() {{
+            $dart$core.String attribute$s1 = attribute;
+            if (null == attribute$s1) {
+                $dart$core.Object attribute$s1$1;
+                attribute$s1$1 = $ceylon$language.$ceylonString(attribute$s1);
+                if (!(1 == 0)) {
+                    throw new $ceylon$language.AssertionError("Violated: 1==0");
+                }
+            } else if (attribute$s1 is $dart$core.String) {
+                if (!(attribute$s1 == "x")) {
+                    throw new $ceylon$language.AssertionError("Violated: attribute == \"x\"");
+                }
+            } else {
+                throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+            }
+        }
+    }
+}
+class run$testSwitchShadow4$C$CMember implements $ceylon$language.dart$$Basic {
+    run$testSwitchShadow4$C $outer$default$run$testSwitchShadow4$C;
+    run$testSwitchShadow4$C$CMember([run$testSwitchShadow4$C $outer$default$run$testSwitchShadow4$C]) {
+        this.$outer$default$run$testSwitchShadow4$C = $outer$default$run$testSwitchShadow4$C;
+    }
+    void foo() {{
+            $dart$core.String attribute = $outer$default$run$testSwitchShadow4$C.attribute;
+            if (null == attribute) {
+                $dart$core.Object attribute$3;
+                attribute$3 = $ceylon$language.$ceylonString(attribute);
+                if (!(1 == 0)) {
+                    throw new $ceylon$language.AssertionError("Violated: 1==0");
+                }
+            } else if (attribute is $dart$core.String) {
+                if (!(attribute == "x")) {
+                    throw new $ceylon$language.AssertionError("Violated: attribute == \"x\"");
+                }
+            } else {
+                throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+            }
+        }
+    }
+}
+class run$testSwitchShadow4$C implements $ceylon$language.dart$$Basic {
+    run$testSwitchShadow4$C() {
+        attribute = "x";
+    }
+    $dart$core.String attribute;
+    run$testSwitchShadow4$C$CMember $new$run$testSwitchShadow4$C$CMember() => new run$testSwitchShadow4$C$CMember(this);
+}
+void $package$run() {
+    void testSwitchShadow1() {
+        (new run$testSwitchShadow1$C()).foo();
+    }
+
+    void testSwitchShadow2() {
+        (new run$testSwitchShadow2$C()).foo();
+    }
+
+    void testSwitchShadow3() {
+        $dart$core.String attribute = "x";
+        void foo() {{
+                $dart$core.String attribute$s1 = attribute;
+                if (null == attribute$s1) {
+                    $dart$core.Object attribute$s1$2;
+                    attribute$s1$2 = $ceylon$language.$ceylonString(attribute$s1);
+                    if (!(1 == 0)) {
+                        throw new $ceylon$language.AssertionError("Violated: 1==0");
+                    }
+                } else if (attribute$s1 is $dart$core.String) {
+                    if (!(attribute$s1 == "x")) {
+                        throw new $ceylon$language.AssertionError("Violated: attribute == \"x\"");
+                    }
+                } else {
+                    throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
+                }
+            }
+        }
+
+        foo();
+    }
+
+    void testSwitchShadow4() {
+        (new run$testSwitchShadow4$C()).$new$run$testSwitchShadow4$C$CMember().foo();
+    }
+
+    testSwitchShadow1();
+    testSwitchShadow2();
+    testSwitchShadow3();
+    testSwitchShadow4();
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

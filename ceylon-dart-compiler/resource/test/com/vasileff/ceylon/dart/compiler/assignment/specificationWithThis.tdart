@@ -9,7 +9,7 @@ class C implements $ceylon$language.dart$$Basic {
         s = "s2";
     }
     $dart$core.String s;
-    void _$foo([$dart$core.String s]) {
+    void _foo([$dart$core.String s]) {
         s = "foo's s";
         this.s = "s3";
     }

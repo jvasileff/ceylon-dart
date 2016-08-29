@@ -36,4 +36,8 @@ object switchCase {
     shared test
     void switchExprVariableSpec()
         =>  compileAndCompare("switchCase/switchExprVariableSpec");
+
+    shared test
+    void switchVariableShadowing()
+        =>  compileAndCompare("switchCase/switchVariableShadowing");
 }

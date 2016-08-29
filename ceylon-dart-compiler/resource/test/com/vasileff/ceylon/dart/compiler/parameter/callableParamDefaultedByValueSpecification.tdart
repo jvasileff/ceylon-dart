@@ -13,18 +13,18 @@ $dart$core.int $package$two([$dart$core.Object f = $ceylon$language.dart$default
 $dart$core.int two([$dart$core.Object f = $ceylon$language.dart$default]) => $package$two(f);
 
 class Two implements $ceylon$language.dart$$Basic {
-    Two([$dart$core.Object _$f = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(_$f, $ceylon$language.dart$default)) {
-            _$f = new $ceylon$language.dart$Callable($ceylon$language.plus);
+    Two([$dart$core.Object f = $ceylon$language.dart$default]) : this.$s((() {
+        if ($dart$core.identical(f, $ceylon$language.dart$default)) {
+            f = new $ceylon$language.dart$Callable($ceylon$language.plus);
         }
-        return [_$f];
+        return [f];
     })());
     Two.$s([$dart$core.List a]) : this.$w(a[0]);
-    Two.$w([$ceylon$language.Callable _$f]) {
-        this._$f = _$f;
+    Two.$w([$ceylon$language.Callable f]) {
+        this._f = f;
     }
-    $ceylon$language.Callable _$f;
-    $dart$core.int get val => $ceylon$language.$dartInt(_$f.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
+    $ceylon$language.Callable _f;
+    $dart$core.int get val => $ceylon$language.$dartInt(_f.f($ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer);
 }
 void $package$run() {
     if (!($package$two() == 2)) {

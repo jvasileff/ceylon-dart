@@ -45,10 +45,10 @@ class run$C implements $ceylon$language.dart$$Basic {
 }
 class run$D  extends run$C {
     run$D() {
-        _$i = 0;
+        _i = 0;
     }
-    $dart$core.int _$i;
-    $dart$core.int get other => _$i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger(_$i).successor);
+    $dart$core.int _i;
+    $dart$core.int get other => _i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger(_i).successor);
 }
 void $package$run() {
     $dart$core.int i = 0;

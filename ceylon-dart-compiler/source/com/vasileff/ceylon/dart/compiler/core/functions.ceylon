@@ -842,10 +842,15 @@ Boolean dartIdentifierCharacter(Character c)
             || c == '$'
             || c == '_';
 
+String escapeLeadingUnderscore(String s)
+    =>  if (eq(s[0], '_'))
+        then "$" + s
+        else s;
+
 String escapeDartIdentifier(String s)
     =>  if (s.every(dartIdentifierCharacter))
-        then s
-        else String(s.flatMap((c)
+        then escapeLeadingUnderscore(s)
+        else String(escapeLeadingUnderscore(s).flatMap((c)
             =>  if (!dartIdentifierCharacter(c))
                 then base62Digits(c.integer).follow('u').follow('$')
                 else [c]));

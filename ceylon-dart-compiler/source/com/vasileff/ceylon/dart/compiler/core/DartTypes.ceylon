@@ -132,11 +132,154 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         "switch", "this", "throw", "true", "try", "var", "void", "while", "with"
     };
 
+    "Return true if [[target]] is captured by [[by]] or one of its supertypes."
+    Boolean capturedBySelfOrSupertype
+            (FunctionOrValueModel target, ClassOrInterfaceModel by)
+        =>  supertypeDeclarations(by).any((d)
+            =>  ctx.captures.contains(d->target));
+
+    "A stream containing the given [[element]] followed by element for all
+     of [[element]]'s ancestors."
+    shared
+    {ElementModel+} ancestorElements(ElementModel element)
+        =>  loop<ElementModel>(element)((element)
+            =>  if (is ElementModel e = element.scope) then e else finished);
+
+    "The [[element]] and all ancestor elements up to and including the closest
+     containing class or interface."
+    shared
+    {ElementModel+} ancestorElementsToContainingClassOrInterface(ElementModel element)
+        =>  takeUntil(ancestorElements(element))((d)
+            =>  d is ClassOrInterfaceModel);
+
+    "A stream containing the given [[declaration]] followed by declarations for all
+     of [[declaration]]'s ancestor Classes and Interfaces."
+    shared
+    {ClassOrInterfaceModel+} ancestorClassOrInterfaces
+            (ClassOrInterfaceModel declaration)
+        =>  loop<ClassOrInterfaceModel>(declaration)((c)
+            =>  getContainingClassOrInterface(c.container) else finished);
+
+    shared
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToExactDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel declaration)
+        =>  // up to and including an exact match for `declaration`
+            takeUntil(ancestorClassOrInterfaces(scope))(declaration.equals);
+
+    "Returns null if an inheriting declaration cannot be found"
+    shared
+    [ClassOrInterfaceModel+]? ancestorClassOrInterfacesToInheritingDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel inheritedDeclaration)
+        =>  let (chain = sequence(
+                    takeUntil(ancestorClassOrInterfaces(scope))((c)
+                        =>  c.inherits(inheritedDeclaration))))
+            (chain.last.inherits(inheritedDeclaration) then chain);
+
+    "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in
+     the case that `this` satisfies [[inheritedDeclaration]].
+
+     This function asserts that an inheriting declaration is found."
+    shared
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToOuterInheritingDeclaration(
+            ClassModel|InterfaceModel scope,
+            ClassOrInterfaceModel inheritedDeclaration) {
+
+        assert (exists containingClassOrInterface
+            =   getContainingClassOrInterface(scope.container));
+
+        // up to and including a declarations that inherits inheritedDeclaration
+
+        assert (exists chain
+            =   ancestorClassOrInterfacesToInheritingDeclaration {
+                    containingClassOrInterface;
+                    inheritedDeclaration;
+                });
+
+        return chain.follow(scope);
+    }
+
+    shared
+    {ClassOrInterfaceModel+} ancestorClassOrInterfacesToCapturerOfDeclaration(
+            ClassModel|InterfaceModel scope,
+            FunctionOrValueModel capturedDeclaration)
+        =>  // up to and including the capturer of capturedDeclaration
+            takeUntil(ancestorClassOrInterfaces(scope))((c)
+            =>  capturedBySelfOrSupertype(capturedDeclaration, c));
+
     // TODO improve this.
     function sanitizeIdentifier(String id)
         =>  if (reservedWords.contains(id))
             then "$" + id
             else escapeDartIdentifier(id);
+
+    function uniquifiedName(DeclarationModel declaration) {
+        value originalDeclaration = getOriginalDeclaration(declaration);
+
+        // For class or interface members, use a unique name if the member is not shared
+        // and the type inherits a non-shared member of the same name. This is because
+        // in Dart, private is more like Java's package-private, so *all* members are
+        // polymorphic and we need to use unique names to avoid unintentional refinements.
+        if (is FunctionOrValueModel originalDeclaration,
+                is ClassOrInterfaceModel container = originalDeclaration.container,
+                !originalDeclaration.shared) {
+
+            value conflictCount
+                =   supertypeDeclarations(container).rest.count((superType)
+                    =>  if (exists member = superType.getDirectMember(
+                                originalDeclaration.name, null, false))
+                        then !member.shared
+                        else false);
+
+            return if (conflictCount > 0)
+                   then originalDeclaration.name + "$" + conflictCount.string
+                   else originalDeclaration.name;
+        }
+
+        if (!is ValueModel declaration) {
+            return declaration.name;
+        }
+
+        // Use a unique name if:
+        //
+        //   - shadowing within a 'assert' ConditionScope, or
+        //   - declaring a new variable that might shadow an in-scope declaration
+        //     in a 'switch (x = x)' ControlBlock.
+        //
+        // In either case, the shadowed declaration could be
+        //
+        //   - a declaration in an outer scope, or
+        //   - an inherited member
+
+        // To reduce unnecessary name uniquifications, we need:
+        //
+        //    if (!originalDeclaration.scope
+        //              is ControlBlockModel | ConditionScopeModel) {
+        //        return originalDeclaration.name;
+        //    }
+        //
+        // But... some future Ceylon may allow shadowing to occur in the middle of any
+        // block, without 'assert', and after the shadowed declaration has been
+        // referenced (Java allows this). Therefore, we'll reduce the exclusions to
+        // the minimum:
+        if (originalDeclaration.scope is ClassOrInterfaceModel
+                || originalDeclaration.parameter) {
+            return originalDeclaration.name;
+        }
+
+        "Including this declaration, the number of declarations sharing this
+         declaration's name that are in scope, excluding captures. (Captures are
+         declarations made by an ancestor with an intervening class or interface.)"
+        value shadowCount
+            =   ancestorElementsToContainingClassOrInterface(originalDeclaration)
+                .rest.count((e)
+                    =>  e.getMember(originalDeclaration.name, null, false) exists);
+
+        return if (shadowCount > 1)
+               then "``originalDeclaration.name``$s``shadowCount - 1``"
+               else originalDeclaration.name;
+    }
 
     String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
         String usableShortName(ClassModel | FunctionModel | ValueModel declaration)
@@ -146,7 +289,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     // the same as their values.
                     declaration.name.replace("anonymous#", "$anonymous$") + "_"
                 else
-                    declaration.name;
+                    uniquifiedName(declaration);
 
         // TODO refactor this code to reduce chance of caching a mangled name!!! As it
         // stands, only explicitly requested replacement names will be cached, so we're
@@ -198,7 +341,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // Dart packages. And for convenience, leaving the non `$package$` qualified
             // bridges alone.
             if ((isClassOrInterfaceMember(declaration)) && !declaration.shared) {
-                return "_$" + baseName;
+                // see https://github.com/jvasileff/ceylon-dart/issues/25
+                return "_" + baseName;
             }
             return baseName;
         }
@@ -288,7 +432,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // synthetic field or setter.
         if (is ValueModel declaration,
             exists mapped = mappedFunctionOrValue(declaration.refinedDeclaration),
-                mapped.type == dartValue) {
+                mapped.type == dartValue,
+                !ctx.withinConstructorDefaultsSet.contains(declaration.container),
+                !ctx.withinConstructorSignatureSet.contains(declaration.container)) {
             return mapped.name;
         }
 
@@ -317,14 +463,35 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // mangle the name to the capture box name. For non-values, unwrap and try
             // again. (This won't conflict with "mapped" logic, because "mapped" is for
             // members, and captures always have non-class-or-interface containers.)
+
+            // Translation: this is for a parameter that is variable and also captured.
+            // The value will be "$b$paramName", but for the parameter, the identifier is
+            // simply "paramName".
             if (is ValueModel valueModel = declaration.model,
                     capturedReferenceValue(valueModel)) {
                 return identifierPackagePrefix(valueModel)
                         + getUnprefixedName(declaration);
             }
+
+            // If this is a class initializer parameter, don't uniquify or privatize.
+            // The Dart identifier should match the Ceylon identifier as closely as
+            // possible.
+            if (declaration.model.scope is ClassModel) {
+                if (is FunctionOrValueModel model = declaration.model) {
+                    return sanitizeIdentifier(declaration.name);
+                }
+            }
+
             return getName(declaration.model);
         }
         case (is ValueModel) {
+            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+                // If we're really accessing the parameter for default value
+                // initialiation or calls to super, use the identifier for the
+                // parameter as described in the (is ParameterModel) case.
+                return sanitizeIdentifier(declaration.name);
+            }
             value result
                 =   identifierPackagePrefix(declaration)
                         + getUnprefixedName(declaration);
@@ -340,6 +507,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getterSetterSuffix(declaration);
         }
         case (is FunctionModel) {
+            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+                // See notes about parameters in (is ValueModel) case
+                return sanitizeIdentifier(declaration.name);
+            }
             return identifierPackagePrefix(declaration)
                     + getUnprefixedName(declaration);
         }
@@ -369,7 +541,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             return replacement;
         }
 
-        value replacement = declaration.name + "$" + (counter++).string;
+        value replacement = uniquifiedName(declaration) + "$" + (counter++).string;
         nameCache.put(declaration, replacement);
         return replacement;
     }
@@ -1034,62 +1206,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             then DartSimpleIdentifier("$this")
             else DartSimpleIdentifier("this");
 
-    "A stream containing the given [[declaration]] followed by declarations for all
-     of [[declaration]]'s ancestor Classes and Interfaces."
-    {ClassOrInterfaceModel+} ancestorChain
-            (ClassOrInterfaceModel declaration)
-        =>  loop<ClassOrInterfaceModel>(declaration)((c)
-            =>  getContainingClassOrInterface(c.container) else finished);
-
-    shared
-    {ClassOrInterfaceModel+} ancestorChainToExactDeclaration(
-            ClassModel|InterfaceModel scope,
-            ClassOrInterfaceModel declaration)
-        =>  // up to and including an exact match for `declaration`
-            takeUntil(ancestorChain(scope))
-                    (declaration.equals);
-
-    "Returns null if an inheriting declaration cannot be found"
-    shared
-    [ClassOrInterfaceModel+]? ancestorChainToInheritingDeclaration(
-            ClassModel|InterfaceModel scope,
-            ClassOrInterfaceModel inheritedDeclaration)
-        =>  let (chain = sequence(
-                    takeUntil(ancestorChain(scope))((c)
-                        =>  c.inherits(inheritedDeclaration))))
-            (chain.last.inherits(inheritedDeclaration) then chain);
-
-    "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in
-     the case that `this` satisfies [[inheritedDeclaration]].
-
-     This function asserts that an inheriting declaration is found."
-    shared
-    {ClassOrInterfaceModel+} ancestorChainToOuterInheritingDeclaration(
-            ClassModel|InterfaceModel scope,
-            ClassOrInterfaceModel inheritedDeclaration) {
-
-        assert (exists containingClassOrInterface
-            =   getContainingClassOrInterface(scope.container));
-
-        // up to and including a declarations that inherits inheritedDeclaration
-
-        assert (exists chain
-            =   ancestorChainToInheritingDeclaration {
-                    containingClassOrInterface;
-                    inheritedDeclaration;
-                });
-
-        return chain.follow(scope);
-    }
-
-    shared
-    {ClassOrInterfaceModel+} ancestorChainToCapturerOfDeclaration(
-            ClassModel|InterfaceModel scope,
-            FunctionOrValueModel capturedDeclaration)
-        =>  // up to and including a declarations that inherits inheritedDeclaration
-            takeUntil(ancestorChain(scope))((c)
-                =>  capturedBySelfOrSupertype(capturedDeclaration, c));
-
     """
        Returns a dart expression for [[outerDeclaration]] from [[scope]]. The expression
        will be of the form:
@@ -1305,7 +1421,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
             value ancestoryToReceiver
                 =   if (exists scopeContainer)
-                    then ancestorChainToInheritingDeclaration {
+                    then ancestorClassOrInterfacesToInheritingDeclaration {
                         scopeContainer;
                         declarationContainer;
                     }
@@ -1409,7 +1525,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 return DartQualifiedInvocable {
                     expressionToThisOrOuterStripThis {
                         scope;
-                        ancestorChainToCapturerOfDeclaration {
+                        ancestorClassOrInterfacesToCapturerOfDeclaration {
                             scopeContainer;
                             originalDeclaration;
                         };
@@ -1468,15 +1584,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             Boolean found(ClassOrInterfaceModel declaration))
         =>  takeUntil(classOrInterfaceContainers(inner))(found);
 
-    "Return true if [[target]] is captured by [[by]] or one of its supertypes."
-    Boolean capturedBySelfOrSupertype
-            (FunctionOrValueModel target, ClassOrInterfaceModel by)
-        =>  supertypeDeclarations(by).any((d)
-            =>  ctx.captures.contains(d->target));
-
     "A stream containing the given [[declaration]] followed by declarations for all
      of [[declaration]]'s ancestors, including all declarations and control blocks.
-     See also [[ancestorChain]]."
+     See also [[ancestorClassOrInterfaces]]."
     {DeclarationModel|ControlBlockModel+} ancestorDeclarations
             (DeclarationModel declaration)
         =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)

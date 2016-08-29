@@ -3,23 +3,23 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class C$_$foo$D implements $ceylon$language.dart$$Basic {
+class C$_foo$D implements $ceylon$language.dart$$Basic {
     C $outer$default$C;
-    $dart$core.String $capture$C$_$foo$captureMe;
-    C$_$foo$D([C $outer$default$C, $dart$core.String $capture$C$_$foo$captureMe, $dart$core.String _$s]) {
+    $dart$core.String $capture$C$_foo$captureMe;
+    C$_foo$D([C $outer$default$C, $dart$core.String $capture$C$_foo$captureMe, $dart$core.String s]) {
         this.$outer$default$C = $outer$default$C;
-        this.$capture$C$_$foo$captureMe = $capture$C$_$foo$captureMe;
-        this._$s = _$s;
+        this.$capture$C$_foo$captureMe = $capture$C$_foo$captureMe;
+        this._s = s;
     }
-    $dart$core.String _$s;
-    $dart$core.String get _$useCM => $capture$C$_$foo$captureMe;
+    $dart$core.String _s;
+    $dart$core.String get _useCM => $capture$C$_foo$captureMe;
 }
 class C implements $ceylon$language.dart$$Basic {
     C() {}
-    void _$foo() {
+    void _foo() {
         $dart$core.String captureMe = "";
-        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new C$_$foo$D(this, captureMe, $ceylon$language.$dartString($0)));
-        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$_$foo$D(this, captureMe, $ceylon$language.$dartString(s)));
+        $ceylon$language.Callable newD1 = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new C$_foo$D(this, captureMe, $ceylon$language.$dartString($0)));
+        $ceylon$language.Callable newD2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new C$_foo$D(this, captureMe, $ceylon$language.$dartString(s)));
     }
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};

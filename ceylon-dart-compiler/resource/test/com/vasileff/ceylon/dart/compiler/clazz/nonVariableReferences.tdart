@@ -13,15 +13,15 @@ class C implements $ceylon$language.dart$$Basic, I {
         i2 = "i2-1";
         c1 = "";
         c2 = "c2-1";
-        _$c3 = "";
-        _$c4 = "c4-1";
+        _c3 = "";
+        _c4 = "c4-1";
     }
     $dart$core.String i1;
     $dart$core.String i2;
     $dart$core.String c1;
     $dart$core.String c2;
-    $dart$core.String _$c3;
-    $dart$core.String _$c4;
+    $dart$core.String _c3;
+    $dart$core.String _c4;
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
 

@@ -24,15 +24,15 @@ class C implements $ceylon$language.dart$$Basic, I {
         i3 = "i3-2";
         i4 = "i4-2";
         c1 = "";
-        _$c3 = "";
+        _c3 = "";
         c1 = "c1-1";
         c2 = "c2-1";
-        _$c3 = "c3-1";
-        _$c4 = "c4-1";
+        _c3 = "c3-1";
+        _c4 = "c4-1";
         c1 = "c1-2";
         c2 = "c2-2";
-        _$c3 = "c3-2";
-        _$c4 = "c4-2";
+        _c3 = "c3-2";
+        _c4 = "c4-2";
     }
     $dart$core.String i1;
     $dart$core.String i2;
@@ -40,8 +40,8 @@ class C implements $ceylon$language.dart$$Basic, I {
     $dart$core.String i4;
     $dart$core.String c1;
     $dart$core.String c2;
-    $dart$core.String _$c3;
-    $dart$core.String _$c4;
+    $dart$core.String _c3;
+    $dart$core.String _c4;
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
 

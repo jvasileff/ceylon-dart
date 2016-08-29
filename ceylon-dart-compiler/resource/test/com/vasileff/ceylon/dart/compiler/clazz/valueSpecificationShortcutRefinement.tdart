@@ -9,10 +9,10 @@ abstract class I {
 class Foo implements $ceylon$language.dart$$Basic, I {
     Foo() {
         s = "";
-        _$x = "";
+        _x = "";
     }
     $dart$core.String s;
-    $dart$core.String _$x;
+    $dart$core.String _x;
 }
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"Foo":const{"mt":"c","nm":"Foo","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
 
