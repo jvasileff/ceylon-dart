@@ -293,4 +293,8 @@ object clazz {
     shared test
     void avoidPolymorphicPrivates3()
         =>  compileAndCompare("clazz/avoidPolymorphicPrivates3");
+
+    shared test
+    void elideBridgesIfPossible()
+        =>  compileAndCompare("clazz/elideBridgesIfPossible");
 }

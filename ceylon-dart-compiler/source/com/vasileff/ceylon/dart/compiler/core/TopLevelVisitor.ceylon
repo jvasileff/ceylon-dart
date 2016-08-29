@@ -761,9 +761,9 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "Functions, values, classes (or their constructors) for which the most refined
          member is contained by an Interface."
-        value declarationsToBridge
-            // Shouldn't there be a better way?
-            =   supertypeDeclarations(classModel)
+        function allDeclarationsToBridge(ClassModel classModel)
+                // Shouldn't there be a better way?
+            =>  supertypeDeclarations(classModel)
                     .flatMap((d) => CeylonList(d.members))
                     .map((declaration)
                         =>  if (is FunctionOrValueModel | ClassModel declaration)
@@ -785,7 +785,15 @@ class TopLevelVisitor(CompilationContext ctx)
                     // Don't bridge to a declaration made in a dart native library. Surely
                     // the member is available from the extended type, in some way.
                     .filter(not(nativeDart))
-                    .flatMap(replaceClassWithSharedConstructors)
+                    .flatMap(replaceClassWithSharedConstructors);
+
+        assert (is ClassModel superClass = classModel.extendedType.declaration);
+
+        value superClassBridged = set(allDeclarationsToBridge(superClass));
+
+        value declarationsToBridge
+            =   allDeclarationsToBridge(classModel)
+                    .filter(not(superClassBridged.contains))
                     .sequence();
 
         value bridgeFunctions

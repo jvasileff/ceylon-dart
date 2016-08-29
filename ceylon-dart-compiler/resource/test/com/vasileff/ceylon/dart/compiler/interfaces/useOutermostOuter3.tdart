@@ -29,8 +29,6 @@ class run$OuterClass$MiddleClass$InnerClass  extends run$OuterClass$MiddleClass 
         this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
     }
     $dart$core.Object get someT => outerT;
-    $dart$core.Object get outerT => run$OuterInterface$InnerInterface.$get$outerT(this);
-    $dart$core.String get outerIdentFromInnerInterface => run$OuterInterface$InnerInterface.$get$outerIdentFromInnerInterface(this);
 }
 class run$OuterClass$MiddleClass implements $ceylon$language.dart$$Basic, run$OuterInterface, run$OuterInterface$InnerInterface {
     run$OuterClass $outer$default$run$OuterClass;
