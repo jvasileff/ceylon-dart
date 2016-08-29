@@ -589,6 +589,7 @@ shared
 
     swDartCompilation.destroy(null);
     value swDartSerialization = timerStages.Measurement("Dart serialization");
+    variable value createdModules = [] of {String*};
 
     for (m -> ds in moduleMembers) {
         if (!suppressMainFunction) {
@@ -758,8 +759,10 @@ shared
                     forEachLine(dartFile, process.writeErrorLine);
                 }
             }
-            logInfo("Note: Created module \
-                     ``ModuleUtil.makeModuleName(m.nameAsString, m.version)``");
+            createdModules
+                =   createdModules.follow {
+                        ModuleUtil.makeModuleName(m.nameAsString, m.version);
+                    };
         }
     }
 
@@ -807,6 +810,10 @@ shared
 
     standardOutWriter.flush();
     standardErrorWriter.flush();
+
+    createdModules.sequence().reversed.each {
+        (moduleName) => logInfo("Note: Created module ``moduleName``");
+    };
 
     return [dartCompilationUnits.sequence(),
         if (errorVisitor.errorCount > 0)
