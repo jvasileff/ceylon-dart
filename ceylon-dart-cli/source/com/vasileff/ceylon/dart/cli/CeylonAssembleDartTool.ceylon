@@ -66,10 +66,10 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
     shared variable
     optionArgument
     description {
-        "The output mode. May be 'dart' or 'js' to generate a single file, or 'expanded'
-         to create a Dart project directory.";
+        "The output mode. May be 'js' to generate a single file JavaScript application, \
+         or 'dart' to create a self contained Dart VM application.";
     }
-    AssembleMode mode = AssembleMode.dart;
+    AssembleMode mode = AssembleMode.js;
 
     shared variable
     optionArgument
@@ -162,7 +162,7 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
         value dependencyFiles
             =   mapToDependencyFiles(dependencies, repositoryManager);
 
-        if (mode == AssembleMode.expanded) {
+        if (mode == AssembleMode.dart) {
             value assemblyRootPath
                 =   cwdPath.childPath(\iout?.string else "``moduleShortName``-assembly");
 
@@ -242,7 +242,6 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
                             arguments = [
                                 "--enable-experimental-mirrors",
                                 !runtime == "web" then "--categories=Server",
-                                mode == AssembleMode.dart then "--output-type=dart",
                                 "--package-root=" + packageRootPath.string,
                                 minify then "-m", // minify
                                 "-o", tempScriptFile.path.string,
