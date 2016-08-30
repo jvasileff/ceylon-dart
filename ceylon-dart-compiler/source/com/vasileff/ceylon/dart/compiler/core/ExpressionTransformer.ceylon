@@ -1641,6 +1641,20 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformElseOperation(ElseOperation that) {
+        // if this is the else part of an expression like "bool then x else y",
+        // translate to a Dart ?: expression
+        if (is ThenOperation thenOp = that.optionalValue) {
+            return
+            DartConditionalExpression {
+                withLhsNative {
+                    ceylonTypes.booleanType;
+                    () => thenOp.condition.transform(this);
+                };
+                thenOp.result.transform(this);
+                that.defaultValue.transform(this);
+            };
+        }
+
         // The current `ctx.lhsTypeTop` or `ctx.lhsDenotableTop` is non-Null, given
         // that this is an else operation. But our left operand is potentially null.
 

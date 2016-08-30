@@ -1,0 +1,17 @@
+shared void run() {
+    value b = true;
+
+    value unboxed1 = b then 1 else 2;
+    value unboxed2 = !b then "a" else "b";
+    value unboxed3 = !b then 1 else null;
+
+    value boxed1 = b then 1 else "b";
+    value boxed2 = !b then "a" else 2;
+
+    assert (unboxed1 == 1);
+    assert (unboxed2 == "b");
+    assert (!exists unboxed3);
+
+    assert (boxed1 == 1);
+    assert (boxed2 == 2);
+}

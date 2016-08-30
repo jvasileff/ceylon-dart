@@ -1,0 +1,44 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.bool b = true;
+    $dart$core.int unboxed1 = b ? 1 : 2;
+    $dart$core.String unboxed2 = !b ? "a" : "b";
+    $dart$core.int unboxed3 = !b ? 1 : null;
+    $dart$core.Object boxed1 = b ? $ceylon$language.$ceylonInteger(1) : $ceylon$language.$ceylonString("b");
+    $dart$core.Object boxed2 = !b ? $ceylon$language.$ceylonString("a") : $ceylon$language.$ceylonInteger(2);
+    if (!(unboxed1 == 1)) {
+        throw new $ceylon$language.AssertionError("Violated: unboxed1 == 1");
+    }
+    if (!(unboxed2 == "b")) {
+        throw new $ceylon$language.AssertionError("Violated: unboxed2 == \"b\"");
+    }
+    $dart$core.Object unboxed3$0;
+    if (!(null == unboxed3)) {
+        throw new $ceylon$language.AssertionError("Violated: !exists unboxed3");
+    }
+    unboxed3$0 = $ceylon$language.$ceylonInteger(unboxed3);
+    if (!(boxed1 == $ceylon$language.$ceylonInteger(1))) {
+        throw new $ceylon$language.AssertionError("Violated: boxed1 == 1");
+    }
+    if (!(boxed2 == $ceylon$language.$ceylonInteger(2))) {
+        throw new $ceylon$language.AssertionError("Violated: boxed2 == 2");
+    }
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

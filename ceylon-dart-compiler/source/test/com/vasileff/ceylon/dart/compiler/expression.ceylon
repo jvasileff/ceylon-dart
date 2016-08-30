@@ -60,4 +60,8 @@ object expression {
     shared test
     void spreadMethods()
         =>  compileAndCompare("expression/spreadMethods");
+
+    shared test
+    void thenElseExpressions()
+        =>  compileAndCompare("expression/thenElseExpressions");
 }
