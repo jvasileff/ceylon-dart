@@ -1653,6 +1653,26 @@ class DartWhileStatement(expression, statement)
 }
 
 shared
+class DartDoWhileStatement(statement, expression)
+        extends DartStatement() {
+
+    shared DartStatement statement;
+    shared DartExpression expression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        writer.writeLine();
+        writer.writeIndent();
+        writer.write("do ");
+        statement.write(writer);
+        writer.write(" while (");
+        expression.write(writer);
+        writer.write(")");
+        writer.endStatement();
+    }
+}
+
+shared
 alias DartPrimary =>
         DartIdentifier | DartLiteral | DartMethodInvocation |
         DartParenthesizedExpression  | DartPropertyAccess |

@@ -25,4 +25,8 @@ object forFail {
     void iterableOfNulls()
         // Note: the iteration variable is of type Finished, of course!
         =>  compileAndCompare("forFail/iterableOfNulls");
+
+    shared test
+    void atLeastOnce()
+        =>  compileAndCompare("forFail/atLeastOnce");
 }

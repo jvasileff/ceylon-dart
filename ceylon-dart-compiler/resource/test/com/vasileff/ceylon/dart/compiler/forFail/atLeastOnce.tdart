@@ -1,0 +1,44 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+    $dart$core.Object string;
+    {
+        $ceylon$language.Iterator iterator$0 = (new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+            switch ($i$) {
+            case 0 :
+            return $ceylon$language.finished;
+            }
+        }, null)).iterator();
+        $ceylon$language.Finished element$1 = iterator$0.next() as $ceylon$language.Finished;
+        do {
+            $ceylon$language.finished_ ignore;
+            {
+                ignore = element$1 as $ceylon$language.finished_;
+            }
+            string = $ceylon$language.$ceylonString("");
+            break;
+        } while ((element$1 = iterator$0.next() as $ceylon$language.Finished) is !$ceylon$language.Finished);
+    }
+    $dart$core.String string$2;
+    if (!(string is $ceylon$language.String)) {
+        throw new $ceylon$language.AssertionError("Violated: is String string");
+    }
+    string$2 = $ceylon$language.$dartString(string as $ceylon$language.String);
+}
+
+void run() => $package$run();
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
+
+var _$module = null;
+
+get $module {
+    if (_$module == null) {
+        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
+        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    }
+    return _$module;
+}

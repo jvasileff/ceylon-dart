@@ -95,7 +95,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     createVariableDeclaration,
     DartTypeName,
     DartBinaryExpression,
-    DartNullLiteral
+    DartNullLiteral,
+    DartDoWhileStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -785,6 +786,9 @@ class StatementTransformer(CompilationContext ctx)
         // Don't erase to native loop variables; avoid premature unboxing
         dartTypes.disableErasureToNative(that.forClause.iterator.pattern);
 
+        value iteratedInfo
+            =   expressionInfo(that.forClause.iterator.iterated);
+
         // VariableTriples for inside the loop
         value variableTriples
             =   generateForPattern {
@@ -798,8 +802,7 @@ class StatementTransformer(CompilationContext ctx)
                     // instead of the possibly refined 'next' type that we're using for
                     // loopVariableType. So, we can use the less precise type too, likely
                     // without risk of unnecessary casting.
-                    ctx.unit.getIteratedType (
-                            expressionInfo(that.forClause.iterator.iterated).typeModel);
+                    ctx.unit.getIteratedType(iteratedInfo.typeModel);
                     () => withBoxing {
                         info;
                         loopVariableType;
@@ -817,6 +820,15 @@ class StatementTransformer(CompilationContext ctx)
                     }]
                 };
 
+        "Will we have at least one element? If so, use a do-while loop to guarantee
+         one iteration of the loop.
+
+         This helps avoid definite assignment bugs when the iterable's first element is
+         Finished, which would result in 0 iterations! This will never happen in real
+         code, but there is a test for it..."
+        value nonemptyIterable
+            =   ctx.unit.isNonemptyIterableType(iteratedInfo.typeModel);
+
         return
         [DartBlock {
             // Declare the forFail boolean
@@ -832,21 +844,6 @@ class StatementTransformer(CompilationContext ctx)
                     };
                 }
             else null,
-            // Declare the loop variable
-            DartVariableDeclarationStatement {
-                DartVariableDeclarationList {
-                    null;
-                    dartTypes.dartTypeName {
-                        info;
-                        loopVariableType;
-                        false; false;
-                    };
-                    [DartVariableDeclaration {
-                        dartLoopVariable;
-                        null;
-                    }];
-                };
-            },
             // Declare and create the iterator
             DartVariableDeclarationStatement {
                 DartVariableDeclarationList {
@@ -866,39 +863,63 @@ class StatementTransformer(CompilationContext ctx)
                     }];
                 };
             },
-            DartWhileStatement {
-                // Invoke next() and test for Finished
-                DartIsExpression {
-                    DartAssignmentExpression {
+            // Declare the loop variable
+            DartVariableDeclarationStatement {
+                DartVariableDeclarationList {
+                    null;
+                    dartTypes.dartTypeName {
+                        info;
+                        loopVariableType;
+                        false; false;
+                    };
+                    [DartVariableDeclaration {
                         dartLoopVariable;
-                        DartAssignmentOperator.equal;
-                        withLhs {
+                        // initialize the first element now if nonempty iterable,
+                        // and we'll use a while(true) loop.
+                        nonemptyIterable then withLhs {
                             loopVariableType;
                             null;
                             nextInvocationGenerator;
                         };
-                    };
-                    dartTypes.dartTypeName {
-                        info;
-                        ceylonTypes.finishedType;
-                        false; false;
-                    };
-                    true;
-                };
-                // The forClause block
-                DartBlock {
-                    // Define the loop variables
-                    concatenate {
-                        variables,
-                        // Statements
-                        withDoFailVariable {
-                            doFailVariable;
-                            () => expand(that.forClause.block.transformChildren(
-                                statementTransformer));
-                        }
-                    };
+                    }];
                 };
             },
+            // Invoke next() and test for Finished
+            let (condition
+                =   DartIsExpression {
+                        DartAssignmentExpression {
+                            dartLoopVariable;
+                            DartAssignmentOperator.equal;
+                            withLhs {
+                                loopVariableType;
+                                null;
+                                nextInvocationGenerator;
+                            };
+                        };
+                        dartTypes.dartTypeName {
+                            info;
+                            ceylonTypes.finishedType;
+                            false; false;
+                        };
+                        true;
+                    })
+            // The forClause block
+            let (block
+                =   DartBlock {
+                        // Define the loop variables
+                        concatenate {
+                            variables,
+                            // Statements
+                            withDoFailVariable {
+                                doFailVariable;
+                                () => expand(that.forClause.block.transformChildren(
+                                    statementTransformer));
+                            }
+                        };
+                    })
+            if (!nonemptyIterable)
+            then DartWhileStatement(condition, block)
+            else DartDoWhileStatement(block, condition),
             // Conditional Fail Block
             if (exists doFailVariable, exists failClause = that.failClause) then
                 DartIfStatement {

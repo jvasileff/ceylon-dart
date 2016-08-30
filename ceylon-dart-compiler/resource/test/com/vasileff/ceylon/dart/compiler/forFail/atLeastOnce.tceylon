@@ -1,0 +1,8 @@
+shared void run() {
+    Anything string;
+    for (value ignore in ({ finished })) {
+        string = "";
+        break;
+    }
+    assert (is String string);
+}

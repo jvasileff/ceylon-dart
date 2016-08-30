@@ -8,8 +8,8 @@ $ceylon$language.Iterable $package$myIterable = $ceylon$language.nothing as $cey
 $ceylon$language.Iterable get myIterable => $package$myIterable;
 
 void $package$run() {{
-        $ceylon$language.Finished element$1;
         $ceylon$language.Iterator iterator$0 = $package$myIterable.iterator();
+        $ceylon$language.Finished element$1;
         while ((element$1 = iterator$0.next() as $ceylon$language.Finished) is !$ceylon$language.Finished) {
             $dart$core.Object x;
             {
