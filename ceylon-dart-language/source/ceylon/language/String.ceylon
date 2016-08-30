@@ -284,6 +284,13 @@ shared native final class String(characters)
                 .reverseInPlace()
                 .string;
     
+    "Determine if this string contains only 
+     [[whitespace characters|Character.whitespace]]. Returns
+     `false` if the string contains at least one character
+     which is not a whitespace character."
+    shared native Boolean whitespace
+            => every(Character.whitespace);
+    
     "Determines if this string contains a character at the
      given [[index]], that is, if `0<=index<size`."
     shared native actual Boolean defines(Integer index)
@@ -1132,6 +1139,9 @@ class BaseString
     shared actual
     String reversed
         =>  DString.Class.fromCharCodes(dartString(val).runes.toList().reversed).string;
+
+    shared Boolean whitespace
+        =>  every(Character.whitespace);
 
     shared actual
     Boolean defines(Integer index)
