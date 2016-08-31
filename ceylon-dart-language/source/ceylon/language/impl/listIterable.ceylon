@@ -41,7 +41,7 @@ shared
 
         first => list.get(start);
 
-        last => list.get(start + step * size - 1);
+        last => list.get(start + step * (size - 1));
 
         rest => listIterable(list, start + step, size - 1, step);
 
