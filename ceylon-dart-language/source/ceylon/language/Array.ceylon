@@ -6,6 +6,9 @@ import ceylon.interop.dart {
     DartIterable,
     dartComparator
 }
+import ceylon.language.impl {
+    listIterable
+}
 
 "A fixed-sized array of mutable elements. An _empty_ array 
  is an array of [[size]] `0`. An array may be created with
@@ -424,6 +427,27 @@ final serializable class Array<Element>
     shared actual native("dart")
     Array<Element> measure(Integer from, Integer length)
         =>  Array((super of List<Element>).measure(from, length));
+
+    shared actual native("dart")
+    {Element*} skip(Integer skipping)
+        =>  listIterable {
+                list = this;
+                offset = skipping;
+            };
+
+    shared actual native("dart")
+    {Element*} take(Integer taking)
+        =>  listIterable {
+                list = this;
+                limit = taking;
+            };
+
+    shared actual native("dart")
+    {Element*} by(Integer step)
+        =>  listIterable {
+                list = this;
+                step = step;
+            };
 
     shared actual native("dart")
     Sequential<Element> sort(Comparison comparing(Element x, Element y)) {

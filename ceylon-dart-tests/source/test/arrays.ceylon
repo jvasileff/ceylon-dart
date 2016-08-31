@@ -86,22 +86,19 @@ shared void testArrays() {
     
     check(Array{1,2,3}.take(-1).size==0, "Array take -1 ``Array{1,2,3}.take(-1)``");
     check(Array{1,2,3}.take(0).size==0, "Array take 0 ``Array{1,2,3}.take(0)``");
-    // Dart change to "[]"; Java has a special ArrayIterable that prints "{}"
-    check("[]"==Array{1,2,3}.take(0).string, "Array take 0 ``Array{1,2,3}.take(0)``");
-    // Dart change to "[]" and add sequence(); we're just using the default methods that don't print
-    // the same as Java's custom iterables
-    check("[1]"==Array{1,2,3}.take(1).sequence().string, "Array take 1 ``Array{1,2,3}.take(1)``");
-    check("[1, 2]"==Array{1,2,3}.take(2).sequence().string, "Array take 2 ``Array{1,2,3}.take(2)``");
-    check("[1, 2, 3]"==Array{1,2,3}.take(3).sequence().string, "Array take 3 ``Array{1,2,3}.take(3)``");
-    check("[1, 2, 3]"==Array{1,2,3}.take(4).sequence().string, "Array take 4 ``Array{1,2,3}.take(4)``");
+    check(Array{1,2,3}.take(0).string in ["{}", "[]"], "Array take 0 ``Array{1,2,3}.take(0)``");
+    check("{ 1 }"==Array{1,2,3}.take(1).string, "Array take 1 ``Array{1,2,3}.take(1)``");
+    check("{ 1, 2 }"==Array{1,2,3}.take(2).string, "Array take 2 ``Array{1,2,3}.take(2)``");
+    check("{ 1, 2, 3 }"==Array{1,2,3}.take(3).string, "Array take 3 ``Array{1,2,3}.take(3)``");
+    check("{ 1, 2, 3 }"==Array{1,2,3}.take(4).string, "Array take 4 ``Array{1,2,3}.take(4)``");
     
     check([1, 2, 3]==Array{1,2,3}.skip(-1), "Array skip -1 ``Array{1,2,3}.skip(-1)``");
     check([1, 2, 3]==Array{1,2,3}.skip(0), "Array skip 0 ``Array{1,2,3}.skip(0)``");
-    check("[2, 3]"==Array{1,2,3}.skip(1).sequence().string, "Array skip 1 ``Array{1,2,3}.skip(1)``");
-    check("[3]"==Array{1,2,3}.skip(2).sequence().string, "Array skip 2 ``Array{1,2,3}.skip(2)``");
-    check("[]"==Array{1,2,3}.skip(3).sequence().string, "Array skip 3 ``Array{1,2,3}.skip(3)``");
-    check("[]"==Array{1,2,3}.skip(4).sequence().string, "Array skip 4 ``Array{1,2,3}.skip(4)``");
-
+    check("{ 2, 3 }"==Array{1,2,3}.skip(1).string, "Array skip 1 ``Array{1,2,3}.skip(1)``");
+    check("{ 3 }"==Array{1,2,3}.skip(2).string, "Array skip 2 ``Array{1,2,3}.skip(2)``");
+    check(Array{1,2,3}.skip(3).string in ["{}", "[]"], "Array skip 3 ``Array{1,2,3}.skip(3)``");
+    check(Array{1,2,3}.skip(4).string in ["{}", "[]"], "Array skip 4 ``Array{1,2,3}.skip(4)``");
+    
     try {
         Array{1,2,3}.by(-1);
         fail("Array by -1");
@@ -114,19 +111,16 @@ shared void testArrays() {
     } catch (AssertionError e) {
         
     }
-
-    // Dart change to "[]" and add sequence(); we're just using the default methods that don't print
-    // the same as Java's custom iterables
     check([1, 2, 3]==Array{1,2,3}.by(1), "Array by 1 ``Array{1,2,3}.by(1)``");
-    check("[1, 3]"==Array{1,2,3}.by(2).sequence().string, "Array by 2 ``Array{1,2,3}.by(2)``");
-    check("[1]"==Array{1,2}.by(2).sequence().string, "Array by 2 (again) ``Array{1,2,3}.by(2)``");
-    check("[1]"==Array{1,2,3}.by(3).sequence().string, "Array by 3 ``Array{1,2,3}.by(3)``");
-    check("[1]"==Array{1,2,3}.by(4).sequence().string, "Array by 4 ``Array{1,2,3}.by(4)``");
+    check("{ 1, 3 }"==Array{1,2,3}.by(2).string, "Array by 2 ``Array{1,2,3}.by(2)``");
+    check("{ 1 }"==Array{1,2}.by(2).string, "Array by 2 (again) ``Array{1,2,3}.by(2)``");
+    check("{ 1 }"==Array{1,2,3}.by(3).string, "Array by 3 ``Array{1,2,3}.by(3)``");
+    check("{ 1 }"==Array{1,2,3}.by(4).string, "Array by 4 ``Array{1,2,3}.by(4)``");
     
-    check("[2, 4, 6]"==Array{1,2,3,4,5,6}.skip(1).by(2).sequence().string, "Array skip 1 by 2");
-    check("[1, 3, 5]"==Array{1,2,3,4,5,6}.take(5).by(2).sequence().string, "Array take 5 by 2");
-    check("[2, 4]"==Array{1,2,3,4,5,6}.take(5).skip(1).by(2).sequence().string, "Array take 5 skip 1 by 2");
-    check("[3]"==Array{1,2,3,4,5,6}.by(2).take(2).skip(1).sequence().string, "Array by 2 take 2 skip 1");
+    check("{ 2, 4, 6 }"==Array{1,2,3,4,5,6}.skip(1).by(2).string, "Array skip 1 by 2");
+    check("{ 1, 3, 5 }"==Array{1,2,3,4,5,6}.take(5).by(2).string, "Array take 5 by 2");
+    check("{ 2, 4 }"==Array{1,2,3,4,5,6}.take(5).skip(1).by(2).string, "Array take 5 skip 1 by 2");
+    check("{ 3 }"==Array{1,2,3,4,5,6}.by(2).take(2).skip(1).string, "Array by 2 take 2 skip 1");
     
     value ae = AssertionError("");
     value assertionErrors = arrayOfSize<AssertionError>(2, ae);
