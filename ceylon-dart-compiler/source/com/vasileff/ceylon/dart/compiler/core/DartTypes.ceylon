@@ -445,6 +445,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         + getUnprefixedName(container) + "$"
                 else "";
 
+        String classOrInterfaceSuffix(DeclarationModel member) {
+            // If the qualifier is != 1, use the qualifier as a suffix. Qualifiers
+            // disambiguate local classes that share a common name and ancestory;
+            // for example, two classes with the same name in different branches of
+            // an if/else statement.
+            if (exists qualifier = member.qualifier,
+                    qualifier != "1",
+                    member is ClassOrInterfaceModel) {
+                return "$``qualifier``";
+            }
+            return "";
+        }
+
         String getterSetterSuffix(ValueModel | SetterModel declaration)
             =>  if (useGetterSetterMethods(declaration))
                 then (if (declaration is SetterModel) then "$set" else "$get")
@@ -525,7 +538,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
             return identifierPackagePrefix(declaration)
                     + classOrInterfacePrefix(declaration)
-                    + getUnprefixedName(declaration);
+                    + getUnprefixedName(declaration)
+                    + classOrInterfaceSuffix(declaration);
         }
         else {
             // TODO let's encode this is the method signature

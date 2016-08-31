@@ -25,11 +25,11 @@ abstract class I {
     I$J get j;
     static I$J $get$j([final I $this]) => new I$j$$anonymous$0_($this);
 }
-class j$$anonymous$1_ implements $ceylon$language.dart$$Basic, I {
-    j$$anonymous$1_() {}
+class j$$anonymous$1_$1j$1 implements $ceylon$language.dart$$Basic, I {
+    j$$anonymous$1_$1j$1() {}
     I$J get j => I.$get$j(this);
 }
-I$J $package$j = (new j$$anonymous$1_()).j;
+I$J $package$j = (new j$$anonymous$1_$1j$1()).j;
 
 I$J get j => $package$j;
 

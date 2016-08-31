@@ -293,4 +293,8 @@ object clazz {
     shared test
     void elideBridgesIfPossible()
         =>  compileAndCompare("clazz/elideBridgesIfPossible");
+
+    shared test
+    void uniqueNamesForLocalClasses()
+        =>  compileAndCompare("clazz/uniqueNamesForLocalClasses");
 }

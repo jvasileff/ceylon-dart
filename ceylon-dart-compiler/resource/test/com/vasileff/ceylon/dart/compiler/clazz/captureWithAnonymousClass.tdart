@@ -3,25 +3,25 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-class o$$anonymous$0_$foo$o2$$anonymous$1_ implements $ceylon$language.dart$$Basic {
-    o$$anonymous$0_ $outer$default$o$$anonymous$0_;
-    $dart$core.String $capture$o$o$$anonymous$0_$foo$s;
-    o$$anonymous$0_$foo$o2$$anonymous$1_([o$$anonymous$0_ $outer$default$o$$anonymous$0_, $dart$core.String $capture$o$o$$anonymous$0_$foo$s]) {
-        this.$outer$default$o$$anonymous$0_ = $outer$default$o$$anonymous$0_;
-        this.$capture$o$o$$anonymous$0_$foo$s = $capture$o$o$$anonymous$0_$foo$s;
-        $ceylon$language.print($ceylon$language.$ceylonString($capture$o$o$$anonymous$0_$foo$s));
+class o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1 implements $ceylon$language.dart$$Basic {
+    o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1;
+    $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s;
+    o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1([o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1, $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s]) {
+        this.$outer$default$o$$anonymous$0_$1o$1 = $outer$default$o$$anonymous$0_$1o$1;
+        this.$capture$o$o$$anonymous$0_$1o$1$foo$s = $capture$o$o$$anonymous$0_$1o$1$foo$s;
+        $ceylon$language.print($ceylon$language.$ceylonString($capture$o$o$$anonymous$0_$1o$1$foo$s));
     }
 }
-class o$$anonymous$0_ implements $ceylon$language.dart$$Basic {
-    o$$anonymous$0_() {
+class o$$anonymous$0_$1o$1 implements $ceylon$language.dart$$Basic {
+    o$$anonymous$0_$1o$1() {
         foo();
     }
     void foo() {
         $dart$core.String s = "s";
-        $dart$core.Object o2 = new o$$anonymous$0_$foo$o2$$anonymous$1_(this, s);
+        $dart$core.Object o2 = new o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1(this, s);
     }
 }
-$dart$core.Object $package$o = new o$$anonymous$0_();
+$dart$core.Object $package$o = new o$$anonymous$0_$1o$1();
 
 $dart$core.Object get o => $package$o;
 

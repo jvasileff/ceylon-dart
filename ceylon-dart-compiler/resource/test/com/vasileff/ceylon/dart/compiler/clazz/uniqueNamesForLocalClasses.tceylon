@@ -1,0 +1,16 @@
+shared void run() {
+    void testit(Boolean first) {
+        if (first) {
+            interface I {}
+            class C() satisfies I {}
+            assert ((C() of Anything) is I);
+        }
+        else {
+            interface I {}
+            class C() satisfies I {}
+            assert ((C() of Anything) is I);
+        }
+    }
+    testit(true);
+    testit(false);
+}
