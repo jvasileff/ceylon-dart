@@ -8,10 +8,6 @@ import ceylon.ast.core {
     Primary,
     QualifiedExpression
 }
-import ceylon.ast.redhat {
-    RedHatTransformer,
-    SimpleTokenFactory
-}
 import ceylon.collection {
     HashMap
 }
@@ -26,9 +22,6 @@ import ceylon.whole {
 
 import com.redhat.ceylon.common {
     Backends
-}
-import com.redhat.ceylon.compiler.typechecker.tree {
-    TCNode=Node
 }
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
@@ -63,6 +56,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPrefixExpression,
     DartIntegerLiteral
 }
+import com.vasileff.ceylon.dart.compiler.loader {
+    JsonModule
+}
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     DeclarationInfo,
@@ -79,9 +75,6 @@ import java.lang {
     JDouble=Double {
         jparseDouble=parseDouble
     }
-}
-import com.vasileff.ceylon.dart.compiler.loader {
-    JsonModule
 }
 
 UnitModel getUnit
