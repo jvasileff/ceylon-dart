@@ -2,7 +2,6 @@ native("jvm")
 module com.vasileff.ceylon.dart.compiler "1.2.3-DP3-SNAPSHOT" {
     import ceylon.whole "1.2.3";
     import ceylon.buffer "1.2.3";
-    import ceylon.formatter "1.2.3";
     import ceylon.ast.create "1.2.3";
     import ceylon.ast.redhat "1.2.3";
     import ceylon.collection "1.2.3";

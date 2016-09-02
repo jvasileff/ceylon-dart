@@ -15,12 +15,6 @@ import ceylon.ast.redhat {
 import ceylon.collection {
     HashMap
 }
-import ceylon.formatter {
-    format
-}
-import ceylon.formatter.options {
-    FormattingOptions
-}
 import ceylon.interop.java {
     CeylonList,
     CeylonIterable
@@ -88,18 +82,6 @@ import java.lang {
 }
 import com.vasileff.ceylon.dart.compiler.loader {
     JsonModule
-}
-
-void printNodeAsCode(Node node) {
-    TCNode tcNode(Node node)
-    =>  node.transform(
-            RedHatTransformer(
-                SimpleTokenFactory()));
-
-    value fo = FormattingOptions {
-        maxLineLength = 80;
-    };
-    print(format(tcNode(node), fo));
 }
 
 UnitModel getUnit
