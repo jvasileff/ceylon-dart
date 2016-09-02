@@ -70,7 +70,8 @@ import com.redhat.ceylon.compiler.typechecker.io {
 import com.redhat.ceylon.compiler.typechecker.tree {
     TCVisitor=Visitor,
     TreeNode=Node,
-    Tree
+    Tree,
+    Message
 }
 import com.redhat.ceylon.compiler.typechecker.util {
     WarningSuppressionVisitor
@@ -141,7 +142,7 @@ import java.util {
 // TODO produce error on import of modules with conflicting versions, even if non-shared.
 
 shared
-[[DartCompilationUnit*], CompilationStatus] compileDart(
+[[DartCompilationUnit*], CompilationStatus, [Message*]] compileDart(
         virtualFiles = [],
         sourceDirectories = [],
         sourceFiles = [],
@@ -417,7 +418,9 @@ shared
             };
             standardErrorWriter.flush();
         }
-        return [[], CompilationStatus.errorTypeChecker];
+        return [[],
+            CompilationStatus.errorTypeChecker,
+            errorVisitor.positionedMessages.collect(PositionedMessage.message)];
     }
     errorVisitor.clear();
 
@@ -815,10 +818,12 @@ shared
         (moduleName) => logInfo("Note: Created module ``moduleName``");
     };
 
-    return [dartCompilationUnits.sequence(),
+    return [
+        dartCompilationUnits.sequence(),
         if (errorVisitor.errorCount > 0)
-        then CompilationStatus.errorTypeChecker
-        else CompilationStatus.success];
+            then CompilationStatus.errorTypeChecker
+            else CompilationStatus.success,
+        errorVisitor.positionedMessages.collect(PositionedMessage.message)];
 }
 
 shared
