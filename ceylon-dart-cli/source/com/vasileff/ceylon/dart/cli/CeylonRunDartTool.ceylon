@@ -73,6 +73,20 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
          Allowed flags include: `never`, `once`, `force`, `check`."; }
     String compile = "never";
 
+    shared variable
+    optionArgument {
+        longName = "run";
+        argumentName = "toplevel";
+    }
+    description {
+        "Specifies the fully qualified name of a toplevel method or class to run. \
+         The indicated declaration must be shared by the <module> and have no \
+         parameters. The format is: `qualified.package.name::classOrMethodName` with \
+         `::` acting as separator between the package name and the toplevel class or \
+         method name. (default: `<module>::run`)";
+    }
+    String? runDeclaration = null;
+
     shared actual
     void initialize(CeylonTool? ceylonTool) {
         // noop
@@ -114,6 +128,14 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                     ModuleQuery.Type.\iDART,
                     null, null, null, null,
                     if (compile.empty) then "check" else compile) else "";
+
+        if (exists d = runDeclaration,
+                d != "``moduleName``::run",
+                d != "``moduleName``.run") {
+            throw ReportableException(
+                "Invalid --run option '``d``'. Currently, only the toplevel run() \
+                 function in a module's root package is supported.");
+        }
 
         value dependencies
             =   gatherDependencies(repositoryManager, moduleName, moduleVersion,
