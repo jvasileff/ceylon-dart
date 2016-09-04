@@ -4,26 +4,34 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class I {
-    $dart$core.String get s1;
-    $dart$core.String s2();
+  $dart$core.String get s1;
+  $dart$core.String s2();
 }
 class o_ implements $ceylon$language.dart$$Basic, I {
-    o_() {}
-    $dart$core.String get s1 => "s1Value";
-    $dart$core.String s2() => "s2Value";
+  o_() {}
+  $dart$core.String get s1 => "s1Value";
+  $dart$core.String s2() => "s2Value";
 }
 final o_ $package$o = new o_();
 
 o_ get o => $package$o;
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"o":const{"mt":"c","nm":"o","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,46 +4,59 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $dart$core.int i = 0;
-    $ceylon$language.Callable f$c;
-    $ceylon$language.Callable f() {
-        $ceylon$language.Callable f$c1 = f$c.f();
-        return new $ceylon$language.dart$Callable(() {
-            $ceylon$language.Callable f$c2 = f$c1.f();
-            return new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger((() {
-                return $ceylon$language.$dartInt(f$c2.f());
-            })()));
-        });
-    }
-
-    f$c = new $ceylon$language.dart$Callable(() {
-        $dart$core.int i1 = i;
-        return new $ceylon$language.dart$Callable(() {
-            $dart$core.int i2 = i;
-            return new $ceylon$language.dart$Callable(() {
-                return $ceylon$language.$ceylonInteger((i1 + i2) + i);
-            });
-        });
+  $dart$core.int i = 0;
+  $ceylon$language.Callable f$c;
+  $ceylon$language.Callable f() {
+    $ceylon$language.Callable f$c1 = f$c.f();
+    return new $ceylon$language.dart$Callable(() {
+      $ceylon$language.Callable f$c2 = f$c1.f();
+      return new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger((() {
+        return $ceylon$language.$dartInt(f$c2.f());
+      })()));
     });
-    $ceylon$language.Callable f1 = f();
-    i = 1;
-    $ceylon$language.Callable f2 = f1.f() as $ceylon$language.Callable;
-    i = 10;
-    if (!($ceylon$language.$dartInt(f2.f() as $ceylon$language.Integer) == 11)) {
-        throw new $ceylon$language.AssertionError("Violated: f2() == 11");
-    }
+  }
+
+  f$c = new $ceylon$language.dart$Callable(() {
+    $dart$core.int i1 = i;
+    return new $ceylon$language.dart$Callable(() {
+      $dart$core.int i2 = i;
+      return new $ceylon$language.dart$Callable(() {
+        return $ceylon$language.$ceylonInteger((i1 + i2) + i);
+      });
+    });
+  });
+  $ceylon$language.Callable f1 = f();
+  i = 1;
+  $ceylon$language.Callable f2 = f1.f() as $ceylon$language.Callable;
+  i = 10;
+  if (!($ceylon$language.$dartInt(f2.f() as $ceylon$language.Integer) == 11)) {
+    throw new $ceylon$language.AssertionError("Violated: f2() == 11");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,52 +4,65 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class assignToNonSharedInterfaceValue$I$C implements $ceylon$language.dart$$Basic {
-    assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I;
-    assignToNonSharedInterfaceValue$I$C([assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I]) {
-        this.$outer$default$assignToNonSharedInterfaceValue$I = $outer$default$assignToNonSharedInterfaceValue$I;
-    }
-    void test() {
-        $ceylon$language.print($ceylon$language.$ceylonString(assignToNonSharedInterfaceValue$I.$set$_s($outer$default$assignToNonSharedInterfaceValue$I, "theNewValueC")));
-    }
+  assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I;
+  assignToNonSharedInterfaceValue$I$C([assignToNonSharedInterfaceValue$I $outer$default$assignToNonSharedInterfaceValue$I]) {
+    this.$outer$default$assignToNonSharedInterfaceValue$I = $outer$default$assignToNonSharedInterfaceValue$I;
+  }
+  void test() {
+    $ceylon$language.print($ceylon$language.$ceylonString(assignToNonSharedInterfaceValue$I.$set$_s($outer$default$assignToNonSharedInterfaceValue$I, "theNewValueC")));
+  }
 }
 abstract class assignToNonSharedInterfaceValue$I {
-    static $dart$core.String $get$_s([final assignToNonSharedInterfaceValue$I $this]) => "s";
-    static $dart$core.String $set$_s([final assignToNonSharedInterfaceValue$I $this, $dart$core.String s]) {
-        $ceylon$language.print($ceylon$language.$ceylonString(("Assigning value " + s) + ""));
-        return s;
-    }
-    void test();
-    static void $test([final assignToNonSharedInterfaceValue$I $this]) {
-        $ceylon$language.print($ceylon$language.$ceylonString(assignToNonSharedInterfaceValue$I.$set$_s($this, "theNewValue")));
-    }
-    static assignToNonSharedInterfaceValue$I$C $$new$assignToNonSharedInterfaceValue$I$C([final assignToNonSharedInterfaceValue$I $this]) => new assignToNonSharedInterfaceValue$I$C($this);
-    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C();
+  static $dart$core.String $get$_s([final assignToNonSharedInterfaceValue$I $this]) => "s";
+  static $dart$core.String $set$_s([final assignToNonSharedInterfaceValue$I $this, $dart$core.String s]) {
+    $ceylon$language.print($ceylon$language.$ceylonString(("Assigning value " + s) + ""));
+    return s;
+  }
+  void test();
+  static void $test([final assignToNonSharedInterfaceValue$I $this]) {
+    $ceylon$language.print($ceylon$language.$ceylonString(assignToNonSharedInterfaceValue$I.$set$_s($this, "theNewValue")));
+  }
+  static assignToNonSharedInterfaceValue$I$C $$new$assignToNonSharedInterfaceValue$I$C([final assignToNonSharedInterfaceValue$I $this]) => new assignToNonSharedInterfaceValue$I$C($this);
+  assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C();
 }
 class assignToNonSharedInterfaceValue$$anonymous$0_ implements $ceylon$language.dart$$Basic, assignToNonSharedInterfaceValue$I {
-    assignToNonSharedInterfaceValue$$anonymous$0_() {}
-    void test() => assignToNonSharedInterfaceValue$I.$test(this);
-    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
+  assignToNonSharedInterfaceValue$$anonymous$0_() {}
+  void test() => assignToNonSharedInterfaceValue$I.$test(this);
+  assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
 }
 class assignToNonSharedInterfaceValue$$anonymous$1_ implements $ceylon$language.dart$$Basic, assignToNonSharedInterfaceValue$I {
-    assignToNonSharedInterfaceValue$$anonymous$1_() {}
-    void test() => assignToNonSharedInterfaceValue$I.$test(this);
-    assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
+  assignToNonSharedInterfaceValue$$anonymous$1_() {}
+  void test() => assignToNonSharedInterfaceValue$I.$test(this);
+  assignToNonSharedInterfaceValue$I$C $new$assignToNonSharedInterfaceValue$I$C() => assignToNonSharedInterfaceValue$I.$$new$assignToNonSharedInterfaceValue$I$C(this);
 }
 void $package$assignToNonSharedInterfaceValue() {
-    (new assignToNonSharedInterfaceValue$$anonymous$0_()).test();
-    (new assignToNonSharedInterfaceValue$$anonymous$1_()).$new$assignToNonSharedInterfaceValue$I$C().test();
+  (new assignToNonSharedInterfaceValue$$anonymous$0_()).test();
+  (new assignToNonSharedInterfaceValue$$anonymous$1_()).$new$assignToNonSharedInterfaceValue$I$C().test();
 }
 
 void assignToNonSharedInterfaceValue() => $package$assignToNonSharedInterfaceValue();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "assignToNonSharedInterfaceValue" :
+    $package$assignToNonSharedInterfaceValue();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

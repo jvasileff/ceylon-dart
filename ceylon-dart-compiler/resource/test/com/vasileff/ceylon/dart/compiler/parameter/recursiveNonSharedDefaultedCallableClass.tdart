@@ -4,35 +4,48 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class recursiveNonSharedDefaultedCallableClass$C implements $ceylon$language.dart$$Basic {
-    recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object factNonShared = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(factNonShared, $ceylon$language.dart$default)) {
-            factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((factNonShared as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
-        }
-        return [factNonShared];
-    })());
-    recursiveNonSharedDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
-    recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable factNonShared]) {
-        this._factNonShared = factNonShared;
+  recursiveNonSharedDefaultedCallableClass$C([$dart$core.Object factNonShared = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(factNonShared, $ceylon$language.dart$default)) {
+      factNonShared = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((factNonShared as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
     }
-    $ceylon$language.Callable _factNonShared;
-    $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
+    return [factNonShared];
+  })());
+  recursiveNonSharedDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
+  recursiveNonSharedDefaultedCallableClass$C.$w([$ceylon$language.Callable factNonShared]) {
+    this._factNonShared = factNonShared;
+  }
+  $ceylon$language.Callable _factNonShared;
+  $dart$core.int fact([$dart$core.int i]) => $ceylon$language.$dartInt(_factNonShared.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
 }
 void $package$recursiveNonSharedDefaultedCallableClass() {
-    if (!((new recursiveNonSharedDefaultedCallableClass$C()).fact(4) == 24)) {
-        throw new $ceylon$language.AssertionError("Violated: C().fact(4) == 24");
-    }
+  if (!((new recursiveNonSharedDefaultedCallableClass$C()).fact(4) == 24)) {
+    throw new $ceylon$language.AssertionError("Violated: C().fact(4) == 24");
+  }
 }
 
 void recursiveNonSharedDefaultedCallableClass() => $package$recursiveNonSharedDefaultedCallableClass();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "recursiveNonSharedDefaultedCallableClass" :
+    $package$recursiveNonSharedDefaultedCallableClass();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,30 +4,30 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$J$C implements $ceylon$language.dart$$Basic {
-    I$J $outer$default$I$J;
-    I$J$C([I$J $outer$default$I$J]) {
-        this.$outer$default$I$J = $outer$default$I$J;
-    }
+  I$J $outer$default$I$J;
+  I$J$C([I$J $outer$default$I$J]) {
+    this.$outer$default$I$J = $outer$default$I$J;
+  }
 }
 abstract class I$J {
-    I get $outer$default$I;
-    static I$J$C $$new$I$J$C([final I$J $this]) => new I$J$C($this);
-    I$J$C $new$I$J$C();
+  I get $outer$default$I;
+  static I$J$C $$new$I$J$C([final I$J $this]) => new I$J$C($this);
+  I$J$C $new$I$J$C();
 }
 class I$j$$anonymous$0_ implements $ceylon$language.dart$$Basic, I$J {
-    I $outer$default$I;
-    I$j$$anonymous$0_([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
-    I$J$C $new$I$J$C() => I$J.$$new$I$J$C(this);
+  I $outer$default$I;
+  I$j$$anonymous$0_([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
+  I$J$C $new$I$J$C() => I$J.$$new$I$J$C(this);
 }
 abstract class I {
-    I$J get j;
-    static I$J $get$j([final I $this]) => new I$j$$anonymous$0_($this);
+  I$J get j;
+  static I$J $get$j([final I $this]) => new I$j$$anonymous$0_($this);
 }
 class j$$anonymous$1_$1j$1 implements $ceylon$language.dart$$Basic, I {
-    j$$anonymous$1_$1j$1() {}
-    I$J get j => I.$get$j(this);
+  j$$anonymous$1_$1j$1() {}
+  I$J get j => I.$get$j(this);
 }
 I$J $package$j = (new j$$anonymous$1_$1j$1()).j;
 
@@ -37,14 +37,22 @@ $ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(() 
 
 $ceylon$language.Callable get newC => $package$newC;
 
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$i":const{"J":const{"mt":"i","nm":"J","sts":const[],"\$c":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

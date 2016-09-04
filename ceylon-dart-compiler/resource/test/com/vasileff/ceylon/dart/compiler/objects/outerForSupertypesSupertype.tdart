@@ -4,36 +4,44 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I1$I2 implements run$I1 {
-    run$I1 get $outer$default$run$I1;
+  run$I1 get $outer$default$run$I1;
 }
 abstract class run$I1$I3 implements run$I1$I2 {
-    run$I1 get $outer$default$run$I1;
+  run$I1 get $outer$default$run$I1;
 }
 class run$I1$foo$o_ implements $ceylon$language.dart$$Basic, run$I1$I3 {
-    run$I1 $outer$default$run$I1;
-    run$I1$foo$o_([run$I1 $outer$default$run$I1]) {
-        this.$outer$default$run$I1 = $outer$default$run$I1;
-    }
-    void foo() => run$I1.$foo(this);
+  run$I1 $outer$default$run$I1;
+  run$I1$foo$o_([run$I1 $outer$default$run$I1]) {
+    this.$outer$default$run$I1 = $outer$default$run$I1;
+  }
+  void foo() => run$I1.$foo(this);
 }
 abstract class run$I1 {
-    void foo();
-    static void $foo([final run$I1 $this]) {
-        final run$I1$foo$o_ o = new run$I1$foo$o_($this);
-    }
+  void foo();
+  static void $foo([final run$I1 $this]) {
+    final run$I1$foo$o_ o = new run$I1$foo$o_($this);
+  }
 }
 void $package$run() {}
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

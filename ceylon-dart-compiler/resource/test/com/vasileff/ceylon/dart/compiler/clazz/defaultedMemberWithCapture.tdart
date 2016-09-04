@@ -4,64 +4,77 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Sup implements $ceylon$language.dart$$Basic {
-    Sup([$dart$core.int a]) {
-        this._a = a;
-        $ceylon$language.print($ceylon$language.$ceylonInteger(this._a));
-    }
-    $dart$core.int _a;
+  Sup([$dart$core.int a]) {
+    this._a = a;
+    $ceylon$language.print($ceylon$language.$ceylonInteger(this._a));
+  }
+  $dart$core.int _a;
 }
 class run$Outer$Sub  extends Sup {
-    run$Outer $outer$default$run$Outer;
-    run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-            b = $outer$default$run$Outer._b;
-        }
-        if ($dart$core.identical(c, $ceylon$language.dart$default)) {
-            c = (b as $dart$core.int) + 1;
-        }
-        return [$outer$default$run$Outer, b, c];
-    })());
-    run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
-    run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int b, $dart$core.int c]) : super(c) {
-        this.$outer$default$run$Outer = $outer$default$run$Outer;
-        this._b = b;
-        this._c = c;
-        $ceylon$language.print($ceylon$language.$ceylonInteger($outer$default$run$Outer.$capture$run$x));
+  run$Outer $outer$default$run$Outer;
+  run$Outer$Sub([run$Outer $outer$default$run$Outer, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+      b = $outer$default$run$Outer._b;
     }
-    $dart$core.int _b;
-    $dart$core.int _c;
+    if ($dart$core.identical(c, $ceylon$language.dart$default)) {
+      c = (b as $dart$core.int) + 1;
+    }
+    return [$outer$default$run$Outer, b, c];
+  })());
+  run$Outer$Sub.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
+  run$Outer$Sub.$w([run$Outer $outer$default$run$Outer, $dart$core.int b, $dart$core.int c]) : super(c) {
+    this.$outer$default$run$Outer = $outer$default$run$Outer;
+    this._b = b;
+    this._c = c;
+    $ceylon$language.print($ceylon$language.$ceylonInteger($outer$default$run$Outer.$capture$run$x));
+  }
+  $dart$core.int _b;
+  $dart$core.int _c;
 }
 class run$Outer implements $ceylon$language.dart$$Basic {
-    $dart$core.int $capture$run$x;
-    run$Outer([$dart$core.int $capture$run$x, $dart$core.Object b = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-            b = $capture$run$x;
-        }
-        return [$capture$run$x, b];
-    })());
-    run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int b]) {
-        this.$capture$run$x = $capture$run$x;
-        this._b = b;
-        new run$Outer$Sub(this);
+  $dart$core.int $capture$run$x;
+  run$Outer([$dart$core.int $capture$run$x, $dart$core.Object b = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+      b = $capture$run$x;
     }
-    $dart$core.int _b;
+    return [$capture$run$x, b];
+  })());
+  run$Outer.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+  run$Outer.$w([$dart$core.int $capture$run$x, $dart$core.int b]) {
+    this.$capture$run$x = $capture$run$x;
+    this._b = b;
+    new run$Outer$Sub(this);
+  }
+  $dart$core.int _b;
 }
 void $package$run() {
-    $dart$core.int x = 5;
-    new run$Outer(x);
+  $dart$core.int x = 5;
+  new run$Outer(x);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Sup":const{"mt":"c","nm":"Sup","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

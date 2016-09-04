@@ -4,35 +4,43 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1 implements $ceylon$language.dart$$Basic {
-    o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1;
-    $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s;
-    o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1([o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1, $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s]) {
-        this.$outer$default$o$$anonymous$0_$1o$1 = $outer$default$o$$anonymous$0_$1o$1;
-        this.$capture$o$o$$anonymous$0_$1o$1$foo$s = $capture$o$o$$anonymous$0_$1o$1$foo$s;
-        $ceylon$language.print($ceylon$language.$ceylonString($capture$o$o$$anonymous$0_$1o$1$foo$s));
-    }
+  o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1;
+  $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s;
+  o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1([o$$anonymous$0_$1o$1 $outer$default$o$$anonymous$0_$1o$1, $dart$core.String $capture$o$o$$anonymous$0_$1o$1$foo$s]) {
+    this.$outer$default$o$$anonymous$0_$1o$1 = $outer$default$o$$anonymous$0_$1o$1;
+    this.$capture$o$o$$anonymous$0_$1o$1$foo$s = $capture$o$o$$anonymous$0_$1o$1$foo$s;
+    $ceylon$language.print($ceylon$language.$ceylonString($capture$o$o$$anonymous$0_$1o$1$foo$s));
+  }
 }
 class o$$anonymous$0_$1o$1 implements $ceylon$language.dart$$Basic {
-    o$$anonymous$0_$1o$1() {
-        foo();
-    }
-    void foo() {
-        $dart$core.String s = "s";
-        $dart$core.Object o2 = new o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1(this, s);
-    }
+  o$$anonymous$0_$1o$1() {
+    foo();
+  }
+  void foo() {
+    $dart$core.String s = "s";
+    $dart$core.Object o2 = new o$$anonymous$0_$foo$o2$$anonymous$1_$1o$1(this, s);
+  }
 }
 $dart$core.Object $package$o = new o$$anonymous$0_$1o$1();
 
 $dart$core.Object get o => $package$o;
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

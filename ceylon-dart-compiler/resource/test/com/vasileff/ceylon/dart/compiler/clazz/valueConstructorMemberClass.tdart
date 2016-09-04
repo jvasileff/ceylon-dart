@@ -4,63 +4,76 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A$B implements $ceylon$language.dart$$Basic {
-    A $outer$default$A;
-    void _$init$A$A$B([$dart$core.int $bitmap, A $outer$default$A, $dart$core.String $create$string]) {
-        if (0 != ($bitmap & 4)) {
-            this.$outer$default$A = $outer$default$A;
-            this.string = $create$string;
-        }
-        if (0 != ($bitmap & 2)) {
-            this.$outer$default$A = $outer$default$A;
-        }
-        if (0 != ($bitmap & 1)) {
-            this.$outer$default$A = $outer$default$A;
-            this.string = "instance2";
-        }
+  A $outer$default$A;
+  void _$init$A$A$B([$dart$core.int $bitmap, A $outer$default$A, $dart$core.String $create$string]) {
+    if (0 != ($bitmap & 4)) {
+      this.$outer$default$A = $outer$default$A;
+      this.string = $create$string;
     }
-    A$B.create([A $outer$default$A, $dart$core.String string]) : this.create$d(4, $outer$default$A, string);
-    A$B.create$d([$dart$core.int $bitmap, A $outer$default$A, $dart$core.String $create$string]) {
-        _$init$A$A$B($bitmap | 4, $outer$default$A, $create$string);
+    if (0 != ($bitmap & 2)) {
+      this.$outer$default$A = $outer$default$A;
     }
-    A$B.instance1([A $outer$default$A]) : this.instance1$d(2, $outer$default$A);
-    A$B.instance1$d([$dart$core.int $bitmap, A $outer$default$A]) : this.create$d($bitmap | 2, $outer$default$A, "instance1");
-    A$B.instance2([A $outer$default$A]) : this.instance2$d(1, $outer$default$A);
-    A$B.instance2$d([$dart$core.int $bitmap, A $outer$default$A]) {
-        _$init$A$A$B($bitmap | 1, $outer$default$A);
+    if (0 != ($bitmap & 1)) {
+      this.$outer$default$A = $outer$default$A;
+      this.string = "instance2";
     }
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+  }
+  A$B.create([A $outer$default$A, $dart$core.String string]) : this.create$d(4, $outer$default$A, string);
+  A$B.create$d([$dart$core.int $bitmap, A $outer$default$A, $dart$core.String $create$string]) {
+    _$init$A$A$B($bitmap | 4, $outer$default$A, $create$string);
+  }
+  A$B.instance1([A $outer$default$A]) : this.instance1$d(2, $outer$default$A);
+  A$B.instance1$d([$dart$core.int $bitmap, A $outer$default$A]) : this.create$d($bitmap | 2, $outer$default$A, "instance1");
+  A$B.instance2([A $outer$default$A]) : this.instance2$d(1, $outer$default$A);
+  A$B.instance2$d([$dart$core.int $bitmap, A $outer$default$A]) {
+    _$init$A$A$B($bitmap | 1, $outer$default$A);
+  }
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 class A implements $ceylon$language.dart$$Basic {
-    A() {}
-    A$B $new$A$B$create([$dart$core.String string]) => new A$B.create(this, string);
-    A$B _$s$A$A$B$instance1;
-    A$B get $new$A$B$instance1 => _$s$A$A$B$instance1 != null ? _$s$A$A$B$instance1 : _$s$A$A$B$instance1 = new A$B.instance1(this);
-    A$B _$s$A$A$B$instance2;
-    A$B get $new$A$B$instance2 => _$s$A$A$B$instance2 != null ? _$s$A$A$B$instance2 : _$s$A$A$B$instance2 = new A$B.instance2(this);
+  A() {}
+  A$B $new$A$B$create([$dart$core.String string]) => new A$B.create(this, string);
+  A$B _$s$A$A$B$instance1;
+  A$B get $new$A$B$instance1 => _$s$A$A$B$instance1 != null ? _$s$A$A$B$instance1 : _$s$A$A$B$instance1 = new A$B.instance1(this);
+  A$B _$s$A$A$B$instance2;
+  A$B get $new$A$B$instance2 => _$s$A$A$B$instance2 != null ? _$s$A$A$B$instance2 : _$s$A$A$B$instance2 = new A$B.instance2(this);
 }
 void $package$run() {
-    if (!((new A()).$new$A$B$instance1.toString() == "instance1")) {
-        throw new $ceylon$language.AssertionError("Violated: A().B.instance1.string == \"instance1\"");
-    }
-    if (!((new A()).$new$A$B$instance2.toString() == "instance2")) {
-        throw new $ceylon$language.AssertionError("Violated: A().B.instance2.string == \"instance2\"");
-    }
-    if (!(!$dart$core.identical((new A()).$new$A$B$instance1, (new A()).$new$A$B$instance1))) {
-        throw new $ceylon$language.AssertionError("Violated: !A().B.instance1 === A().B.instance1");
-    }
+  if (!((new A()).$new$A$B$instance1.toString() == "instance1")) {
+    throw new $ceylon$language.AssertionError("Violated: A().B.instance1.string == \"instance1\"");
+  }
+  if (!((new A()).$new$A$B$instance2.toString() == "instance2")) {
+    throw new $ceylon$language.AssertionError("Violated: A().B.instance2.string == \"instance2\"");
+  }
+  if (!(!$dart$core.identical((new A()).$new$A$B$instance1, (new A()).$new$A$B$instance1))) {
+    throw new $ceylon$language.AssertionError("Violated: !A().B.instance1 === A().B.instance1");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,64 +4,80 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A$I$B implements $ceylon$language.dart$$Basic {
-    A$I $outer$default$A$I;
-    A$I$B([A$I $outer$default$A$I]) {
-        this.$outer$default$A$I = $outer$default$A$I;
-    }
-    $dart$core.String get sba => $outer$default$A$I.$outer$default$A.s;
-    $dart$core.String get sbi => $outer$default$A$I.si;
+  A$I $outer$default$A$I;
+  A$I$B([A$I $outer$default$A$I]) {
+    this.$outer$default$A$I = $outer$default$A$I;
+  }
+  $dart$core.String get sba => $outer$default$A$I.$outer$default$A.s;
+  $dart$core.String get sbi => $outer$default$A$I.si;
 }
 abstract class A$I {
-    A get $outer$default$A;
-    $dart$core.String get si;
-    static $dart$core.String $get$si([final A$I $this]) => $this.$outer$default$A.s;
-    static A$I$B $$new$A$I$B([final A$I $this]) => new A$I$B($this);
-    A$I$B $new$A$I$B();
+  A get $outer$default$A;
+  $dart$core.String get si;
+  static $dart$core.String $get$si([final A$I $this]) => $this.$outer$default$A.s;
+  static A$I$B $$new$A$I$B([final A$I $this]) => new A$I$B($this);
+  A$I$B $new$A$I$B();
 }
 class A$i_ implements $ceylon$language.dart$$Basic, A$I {
-    A $outer$default$A;
-    A$i_([A $outer$default$A]) {
-        this.$outer$default$A = $outer$default$A;
-    }
-    $dart$core.String get si => A$I.$get$si(this);
-    A$I$B $new$A$I$B() => A$I.$$new$A$I$B(this);
+  A $outer$default$A;
+  A$i_([A $outer$default$A]) {
+    this.$outer$default$A = $outer$default$A;
+  }
+  $dart$core.String get si => A$I.$get$si(this);
+  A$I$B $new$A$I$B() => A$I.$$new$A$I$B(this);
 }
 class A implements $ceylon$language.dart$$Basic {
-    A() {
-        i = new A$i_(this);
-    }
-    $dart$core.String get s => "s";
-    A$i_ i;
+  A() {
+    i = new A$i_(this);
+  }
+  $dart$core.String get s => "s";
+  A$i_ i;
 }
 void $package$run() {
-    A a = new A();
-    $dart$core.Object i = a.i;
-    A$I$B b = (new $ceylon$language.dart$Callable(() => (i as A$I).$new$A$I$B())).f() as A$I$B;
-    if (!(a.s == "s")) {
-        throw new $ceylon$language.AssertionError("Violated: a.s == \"s\"");
-    }
-    if (!((i as A$I).si == "s")) {
-        throw new $ceylon$language.AssertionError("Violated: i.si == \"s\"");
-    }
-    if (!(b.sba == "s")) {
-        throw new $ceylon$language.AssertionError("Violated: b.sba == \"s\"");
-    }
-    if (!(b.sbi == "s")) {
-        throw new $ceylon$language.AssertionError("Violated: b.sbi == \"s\"");
-    }
-    $ceylon$language.print($ceylon$language.$ceylonString("done."));
+  A a = new A();
+  $dart$core.Object i = a.i;
+  A$I$B b = (new $ceylon$language.dart$Callable(() => (i as A$I).$new$A$I$B())).f() as A$I$B;
+  if (!(a.s == "s")) {
+    throw new $ceylon$language.AssertionError("Violated: a.s == \"s\"");
+  }
+  if (!((i as A$I).si == "s")) {
+    throw new $ceylon$language.AssertionError("Violated: i.si == \"s\"");
+  }
+  if (!(b.sba == "s")) {
+    throw new $ceylon$language.AssertionError("Violated: b.sba == \"s\"");
+  }
+  if (!(b.sbi == "s")) {
+    throw new $ceylon$language.AssertionError("Violated: b.sbi == \"s\"");
+  }
+  $ceylon$language.print($ceylon$language.$ceylonString("done."));
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  case "A" :
+    new A();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"i":const{"mt":"c","nm":"i","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}},"\$i":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

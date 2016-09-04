@@ -4,105 +4,118 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class hashAssign$A implements $ceylon$language.dart$$Basic {
-    hashAssign$A() {
-        _x = 1;
-    }
-    $dart$core.int _x;
-    $dart$core.int get hashCode => _x;
-    void set hashCode($dart$core.int hash) {
-        _x = hash;
-    }
+  hashAssign$A() {
+    _x = 1;
+  }
+  $dart$core.int _x;
+  $dart$core.int get hashCode => _x;
+  void set hashCode($dart$core.int hash) {
+    _x = hash;
+  }
 }
 void $package$hashAssign() {
-    hashAssign$A a = new hashAssign$A();
-    if (!(a.hashCode == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
-    }
-    a.hashCode = 2;
-    if (!(a.hashCode == 2)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
-    }
+  hashAssign$A a = new hashAssign$A();
+  if (!(a.hashCode == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+  }
+  a.hashCode = 2;
+  if (!(a.hashCode == 2)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
+  }
 }
 
 void hashAssign() => $package$hashAssign();
 
 class hashReference$A implements $ceylon$language.dart$$Basic {
-    hashReference$A() {
-        hashCode = 1;
-    }
-    $dart$core.int hashCode;
+  hashReference$A() {
+    hashCode = 1;
+  }
+  $dart$core.int hashCode;
 }
 void $package$hashReference() {
-    hashReference$A a = new hashReference$A();
-    if (!(a.hashCode == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
-    }
+  hashReference$A a = new hashReference$A();
+  if (!(a.hashCode == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+  }
 }
 
 void hashReference() => $package$hashReference();
 
 class hashReferenceVariable$A implements $ceylon$language.dart$$Basic {
-    hashReferenceVariable$A() {
-        hashCode = 1;
-    }
-    $dart$core.int hashCode;
+  hashReferenceVariable$A() {
+    hashCode = 1;
+  }
+  $dart$core.int hashCode;
 }
 void $package$hashReferenceVariable() {
-    hashReferenceVariable$A a = new hashReferenceVariable$A();
-    if (!(a.hashCode == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
-    }
-    a.hashCode = 2;
-    if (!(a.hashCode == 2)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
-    }
+  hashReferenceVariable$A a = new hashReferenceVariable$A();
+  if (!(a.hashCode == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+  }
+  a.hashCode = 2;
+  if (!(a.hashCode == 2)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 2");
+  }
 }
 
 void hashReferenceVariable() => $package$hashReferenceVariable();
 
 abstract class hashInterface$I {
-    $dart$core.int get hashCode;
-    static $dart$core.int $get$hashCode([final hashInterface$I $this]) => 1;
-    void set hashCode($dart$core.int hash);
-    static $dart$core.int $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
-        $ceylon$language.print($ceylon$language.$ceylonInteger(hash));
-        return hash;
-    }
+  $dart$core.int get hashCode;
+  static $dart$core.int $get$hashCode([final hashInterface$I $this]) => 1;
+  void set hashCode($dart$core.int hash);
+  static $dart$core.int $set$hash([final hashInterface$I $this, $dart$core.int hash]) {
+    $ceylon$language.print($ceylon$language.$ceylonInteger(hash));
+    return hash;
+  }
 }
 class hashInterface$o_ implements $ceylon$language.dart$$Object, hashInterface$I {
-    hashInterface$o_() {}
-    $dart$core.bool operator ==($dart$core.Object that) => that is hashInterface$o_;
-    $dart$core.int get hashCode => hashInterface$I.$get$hashCode(this);
-    void set hashCode($dart$core.int hash) {
-        hashInterface$I.$set$hash(this, hash);
-    }
+  hashInterface$o_() {}
+  $dart$core.bool operator ==($dart$core.Object that) => that is hashInterface$o_;
+  $dart$core.int get hashCode => hashInterface$I.$get$hashCode(this);
+  void set hashCode($dart$core.int hash) {
+    hashInterface$I.$set$hash(this, hash);
+  }
 }
 void $package$hashInterface() {
-    final hashInterface$o_ o = new hashInterface$o_();
-    if (!(o.hashCode == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: o.hash == 1");
-    }
+  final hashInterface$o_ o = new hashInterface$o_();
+  if (!(o.hashCode == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: o.hash == 1");
+  }
 }
 
 void hashInterface() => $package$hashInterface();
 
 void $package$run() {
-    $package$hashAssign();
-    $package$hashReference();
-    $package$hashReferenceVariable();
-    $package$hashInterface();
+  $package$hashAssign();
+  $package$hashReference();
+  $package$hashReferenceVariable();
+  $package$hashInterface();
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

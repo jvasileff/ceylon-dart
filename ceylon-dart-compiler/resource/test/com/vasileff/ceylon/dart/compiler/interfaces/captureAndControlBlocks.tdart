@@ -4,66 +4,74 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class capturesWithControlBlocks$Bar {
-    void capturesIFS();
-    static void $capturesIFS([final capturesWithControlBlocks$Bar $this]) {
-        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
-        $ceylon$language.print(capture);
-    }
-    $dart$core.Object $capture$capturesWithControlBlocks$x;
+  void capturesIFS();
+  static void $capturesIFS([final capturesWithControlBlocks$Bar $this]) {
+    $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$x;
+    $ceylon$language.print(capture);
+  }
+  $dart$core.Object $capture$capturesWithControlBlocks$x;
 }
 abstract class capturesWithControlBlocks$Baz implements capturesWithControlBlocks$Bar {
-    void capturesIF();
-    static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
-        $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
-        $ceylon$language.print(capture);
-    }
-    $dart$core.Object $capture$capturesWithControlBlocks$$$x;
+  void capturesIF();
+  static void $capturesIF([final capturesWithControlBlocks$Baz $this]) {
+    $dart$core.Object capture = $this.$capture$capturesWithControlBlocks$$$x;
+    $ceylon$language.print(capture);
+  }
+  $dart$core.Object $capture$capturesWithControlBlocks$$$x;
 }
 abstract class capturesWithControlBlocks$Ban implements capturesWithControlBlocks$Baz {
-    void capturesI();
-    static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
-        $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
-        $ceylon$language.print($ceylon$language.$ceylonInteger(capture));
-    }
-    $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
+  void capturesI();
+  static void $capturesI([final capturesWithControlBlocks$Ban $this]) {
+    $dart$core.int capture = $this.$capture$capturesWithControlBlocks$$$$$x$0;
+    $ceylon$language.print($ceylon$language.$ceylonInteger(capture));
+  }
+  $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
 }
 class capturesWithControlBlocks$b_ implements $ceylon$language.dart$$Basic, capturesWithControlBlocks$Ban {
-    $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
-    $dart$core.Object $capture$capturesWithControlBlocks$$$x;
-    $dart$core.Object $capture$capturesWithControlBlocks$x;
-    capturesWithControlBlocks$b_([$dart$core.int $capture$capturesWithControlBlocks$$$$$x$0, $dart$core.Object $capture$capturesWithControlBlocks$$$x, $dart$core.Object $capture$capturesWithControlBlocks$x]) {
-        this.$capture$capturesWithControlBlocks$$$$$x$0 = $capture$capturesWithControlBlocks$$$$$x$0;
-        this.$capture$capturesWithControlBlocks$$$x = $capture$capturesWithControlBlocks$$$x;
-        this.$capture$capturesWithControlBlocks$x = $capture$capturesWithControlBlocks$x;
-    }
-    void capturesI() => capturesWithControlBlocks$Ban.$capturesI(this);
-    void capturesIF() => capturesWithControlBlocks$Baz.$capturesIF(this);
-    void capturesIFS() => capturesWithControlBlocks$Bar.$capturesIFS(this);
+  $dart$core.int $capture$capturesWithControlBlocks$$$$$x$0;
+  $dart$core.Object $capture$capturesWithControlBlocks$$$x;
+  $dart$core.Object $capture$capturesWithControlBlocks$x;
+  capturesWithControlBlocks$b_([$dart$core.int $capture$capturesWithControlBlocks$$$$$x$0, $dart$core.Object $capture$capturesWithControlBlocks$$$x, $dart$core.Object $capture$capturesWithControlBlocks$x]) {
+    this.$capture$capturesWithControlBlocks$$$$$x$0 = $capture$capturesWithControlBlocks$$$$$x$0;
+    this.$capture$capturesWithControlBlocks$$$x = $capture$capturesWithControlBlocks$$$x;
+    this.$capture$capturesWithControlBlocks$x = $capture$capturesWithControlBlocks$x;
+  }
+  void capturesI() => capturesWithControlBlocks$Ban.$capturesI(this);
+  void capturesIF() => capturesWithControlBlocks$Baz.$capturesIF(this);
+  void capturesIFS() => capturesWithControlBlocks$Bar.$capturesIFS(this);
 }
 void $package$capturesWithControlBlocks() {
-    $dart$core.Object x = $ceylon$language.$ceylonInteger(5);
-    if ((x is $ceylon$language.Integer) || (x is $ceylon$language.Float)) {
-        if (x is $ceylon$language.Integer) {
-            $dart$core.int x$0;
-            x$0 = $ceylon$language.$dartInt(x as $ceylon$language.Integer);
-            final capturesWithControlBlocks$b_ b = new capturesWithControlBlocks$b_(x$0, x, x);
-            b.capturesI();
-            b.capturesIF();
-            b.capturesIFS();
-        }
+  $dart$core.Object x = $ceylon$language.$ceylonInteger(5);
+  if ((x is $ceylon$language.Integer) || (x is $ceylon$language.Float)) {
+    if (x is $ceylon$language.Integer) {
+      $dart$core.int x$0;
+      x$0 = $ceylon$language.$dartInt(x as $ceylon$language.Integer);
+      final capturesWithControlBlocks$b_ b = new capturesWithControlBlocks$b_(x$0, x, x);
+      b.capturesI();
+      b.capturesIF();
+      b.capturesIFS();
     }
+  }
 }
 
 void capturesWithControlBlocks() => $package$capturesWithControlBlocks();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,38 +4,51 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A implements $ceylon$language.dart$$Basic {
-    void _$init$A([$dart$core.int $bitmap, $dart$core.String $create2$t, $dart$core.String $$s]) {
-        string = "";
-        if (0 != ($bitmap & 2)) {
-            string = $$s;
-        }
-        if (0 != ($bitmap & 1)) {}
+  void _$init$A([$dart$core.int $bitmap, $dart$core.String $create2$t, $dart$core.String $$s]) {
+    string = "";
+    if (0 != ($bitmap & 2)) {
+      string = $$s;
     }
-    A([$dart$core.String s]) : this.$d(2, null, s);
-    A.$d([$dart$core.int $bitmap, $dart$core.String $create2$t, $dart$core.String $$s]) {
-        _$init$A($bitmap | 2, $create2$t, $$s);
-    }
-    A.create2([$dart$core.String t]) : this.create2$d(1, t);
-    A.create2$d([$dart$core.int $bitmap, $dart$core.String $create2$t]) : this.$d($bitmap | 1, $create2$t, $create2$t);
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+    if (0 != ($bitmap & 1)) {}
+  }
+  A([$dart$core.String s]) : this.$d(2, null, s);
+  A.$d([$dart$core.int $bitmap, $dart$core.String $create2$t, $dart$core.String $$s]) {
+    _$init$A($bitmap | 2, $create2$t, $$s);
+  }
+  A.create2([$dart$core.String t]) : this.create2$d(1, t);
+  A.create2$d([$dart$core.int $bitmap, $dart$core.String $create2$t]) : this.$d($bitmap | 1, $create2$t, $create2$t);
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 void $package$run() {
-    if (!((new A.create2("1")).toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create2(\"1\").string == \"1\"");
-    }
+  if (!((new A.create2("1")).toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create2(\"1\").string == \"1\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

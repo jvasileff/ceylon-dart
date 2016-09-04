@@ -6,40 +6,53 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 abstract class run$testit$I {
 }
 class run$testit$C implements $ceylon$language.dart$$Basic, run$testit$I {
-    run$testit$C() {}
+  run$testit$C() {}
 }
 abstract class run$testit$I$2 {
 }
 class run$testit$C$2 implements $ceylon$language.dart$$Basic, run$testit$I$2 {
-    run$testit$C$2() {}
+  run$testit$C$2() {}
 }
 void $package$run() {
-    void testit([$dart$core.bool first]) {
-        if (first) {
-            if (!((new run$testit$C()) is run$testit$I)) {
-                throw new $ceylon$language.AssertionError("Violated: (C() of Anything) is I");
-            }
-        } else {
-            if (!((new run$testit$C$2()) is run$testit$I$2)) {
-                throw new $ceylon$language.AssertionError("Violated: (C() of Anything) is I");
-            }
-        }
+  void testit([$dart$core.bool first]) {
+    if (first) {
+      if (!((new run$testit$C()) is run$testit$I)) {
+        throw new $ceylon$language.AssertionError("Violated: (C() of Anything) is I");
+      }
+    } else {
+      if (!((new run$testit$C$2()) is run$testit$I$2)) {
+        throw new $ceylon$language.AssertionError("Violated: (C() of Anything) is I");
+      }
     }
+  }
 
-    testit(true);
-    testit(false);
+  testit(true);
+  testit(false);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

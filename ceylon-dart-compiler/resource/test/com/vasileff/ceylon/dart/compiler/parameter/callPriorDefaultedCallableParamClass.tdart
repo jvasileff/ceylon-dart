@@ -4,65 +4,78 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class callPriorDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
-    callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
-            a = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
-        }
-        if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-            b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
-        }
-        if ($dart$core.identical(c, $ceylon$language.dart$default)) {
-            c = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (b as $ceylon$language.Callable).f(i));
-        }
-        return [a, b, c];
-    })());
-    callPriorDefaultedCallableParamClass$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
-    callPriorDefaultedCallableParamClass$C.$w([$ceylon$language.Callable a, $ceylon$language.Callable b, $ceylon$language.Callable c]) {
-        this._b = b;
-        this._a$c = a;
-        this._c$c = c;
+  callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+      a = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
     }
-    $ceylon$language.Callable _b;
-    $ceylon$language.Callable _a$c;
-    $ceylon$language.Callable _c$c;
-    $dart$core.int callA([$dart$core.int i]) => a(i);
-    $dart$core.int callB([$dart$core.int i]) => $ceylon$language.$dartInt(_b.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
-    $dart$core.int callC([$dart$core.int i]) => c(i);
-    $dart$core.int a([$dart$core.int i]) {
-        return $ceylon$language.$dartInt(_a$c.f($ceylon$language.$ceylonInteger(i)));
+    if ($dart$core.identical(b, $ceylon$language.dart$default)) {
+      b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
     }
-    $dart$core.int c([$dart$core.int i]) {
-        return $ceylon$language.$dartInt(_c$c.f($ceylon$language.$ceylonInteger(i)));
+    if ($dart$core.identical(c, $ceylon$language.dart$default)) {
+      c = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (b as $ceylon$language.Callable).f(i));
     }
+    return [a, b, c];
+  })());
+  callPriorDefaultedCallableParamClass$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2]);
+  callPriorDefaultedCallableParamClass$C.$w([$ceylon$language.Callable a, $ceylon$language.Callable b, $ceylon$language.Callable c]) {
+    this._b = b;
+    this._a$c = a;
+    this._c$c = c;
+  }
+  $ceylon$language.Callable _b;
+  $ceylon$language.Callable _a$c;
+  $ceylon$language.Callable _c$c;
+  $dart$core.int callA([$dart$core.int i]) => a(i);
+  $dart$core.int callB([$dart$core.int i]) => $ceylon$language.$dartInt(_b.f($ceylon$language.$ceylonInteger(i)) as $ceylon$language.Integer);
+  $dart$core.int callC([$dart$core.int i]) => c(i);
+  $dart$core.int a([$dart$core.int i]) {
+    return $ceylon$language.$dartInt(_a$c.f($ceylon$language.$ceylonInteger(i)));
+  }
+  $dart$core.int c([$dart$core.int i]) {
+    return $ceylon$language.$dartInt(_c$c.f($ceylon$language.$ceylonInteger(i)));
+  }
 }
 void $package$callPriorDefaultedCallableParamClass() {
-    if (!((new callPriorDefaultedCallableParamClass$C()).a(1) == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: C().a(1) == 1");
-    }
-    if (!((new callPriorDefaultedCallableParamClass$C()).c(1) == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: C().c(1) == 1");
-    }
-    if (!((new callPriorDefaultedCallableParamClass$C()).callA(1) == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: C().callA(1) == 1");
-    }
-    if (!((new callPriorDefaultedCallableParamClass$C()).callB(1) == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: C().callB(1) == 1");
-    }
-    if (!((new callPriorDefaultedCallableParamClass$C()).callC(1) == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: C().callC(1) == 1");
-    }
+  if (!((new callPriorDefaultedCallableParamClass$C()).a(1) == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: C().a(1) == 1");
+  }
+  if (!((new callPriorDefaultedCallableParamClass$C()).c(1) == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: C().c(1) == 1");
+  }
+  if (!((new callPriorDefaultedCallableParamClass$C()).callA(1) == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: C().callA(1) == 1");
+  }
+  if (!((new callPriorDefaultedCallableParamClass$C()).callB(1) == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: C().callB(1) == 1");
+  }
+  if (!((new callPriorDefaultedCallableParamClass$C()).callC(1) == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: C().callC(1) == 1");
+  }
 }
 
 void callPriorDefaultedCallableParamClass() => $package$callPriorDefaultedCallableParamClass();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "callPriorDefaultedCallableParamClass" :
+    $package$callPriorDefaultedCallableParamClass();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

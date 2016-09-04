@@ -4,70 +4,83 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$OuterInterface$InnerInterface {
-    run$OuterInterface get $outer$default$run$OuterInterface;
-    $dart$core.Object get outerT;
-    static $dart$core.Object $get$outerT([final run$OuterInterface$InnerInterface $this]) => $this.$outer$default$run$OuterInterface.t;
-    $dart$core.String get outerIdentFromInnerInterface;
-    static $dart$core.String $get$outerIdentFromInnerInterface([final run$OuterInterface$InnerInterface $this]) => $this.$outer$default$run$OuterInterface.outerInterfaceIdent;
+  run$OuterInterface get $outer$default$run$OuterInterface;
+  $dart$core.Object get outerT;
+  static $dart$core.Object $get$outerT([final run$OuterInterface$InnerInterface $this]) => $this.$outer$default$run$OuterInterface.t;
+  $dart$core.String get outerIdentFromInnerInterface;
+  static $dart$core.String $get$outerIdentFromInnerInterface([final run$OuterInterface$InnerInterface $this]) => $this.$outer$default$run$OuterInterface.outerInterfaceIdent;
 }
 abstract class run$OuterInterface {
-    $dart$core.String get outerInterfaceIdent;
-    static $dart$core.String $get$outerInterfaceIdent([final run$OuterInterface $this]) => "OuterInterface.ident, OuterInterface impl";
-    $dart$core.Object get t;
+  $dart$core.String get outerInterfaceIdent;
+  static $dart$core.String $get$outerInterfaceIdent([final run$OuterInterface $this]) => "OuterInterface.ident, OuterInterface impl";
+  $dart$core.Object get t;
 }
 class run$OuterClass$MiddleClass$t$$anonymous$0_ implements $ceylon$language.dart$$Basic {
-    run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
-    run$OuterClass$MiddleClass$t$$anonymous$0_([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) {
-        this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
-    }
+  run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
+  run$OuterClass$MiddleClass$t$$anonymous$0_([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) {
+    this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
+  }
 }
 class run$OuterClass$MiddleClass$InnerClass  extends run$OuterClass$MiddleClass implements run$OuterInterface$InnerInterface {
-    run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
-    run$OuterClass get $outer$default$run$OuterClass => $outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass;
-    run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass$MiddleClass;
-    run$OuterClass$MiddleClass$InnerClass([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) : super($outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass) {
-        this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
-    }
-    $dart$core.Object get someT => outerT;
+  run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass;
+  run$OuterClass get $outer$default$run$OuterClass => $outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass;
+  run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass$MiddleClass;
+  run$OuterClass$MiddleClass$InnerClass([run$OuterClass$MiddleClass $outer$default$run$OuterClass$MiddleClass]) : super($outer$default$run$OuterClass$MiddleClass.$outer$default$run$OuterClass) {
+    this.$outer$default$run$OuterClass$MiddleClass = $outer$default$run$OuterClass$MiddleClass;
+  }
+  $dart$core.Object get someT => outerT;
 }
 class run$OuterClass$MiddleClass implements $ceylon$language.dart$$Basic, run$OuterInterface, run$OuterInterface$InnerInterface {
-    run$OuterClass $outer$default$run$OuterClass;
-    run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass;
-    run$OuterClass$MiddleClass([run$OuterClass $outer$default$run$OuterClass]) {
-        this.$outer$default$run$OuterClass = $outer$default$run$OuterClass;
-    }
-    $dart$core.Object get t => new run$OuterClass$MiddleClass$t$$anonymous$0_(this);
-    $dart$core.String get outerInterfaceIdent => "OuterInterface.ident; MiddleClass impl";
-    $dart$core.Object get someT => outerT;
-    run$OuterClass$MiddleClass$InnerClass $new$run$OuterClass$MiddleClass$InnerClass() => new run$OuterClass$MiddleClass$InnerClass(this);
-    $dart$core.Object get outerT => run$OuterInterface$InnerInterface.$get$outerT(this);
-    $dart$core.String get outerIdentFromInnerInterface => run$OuterInterface$InnerInterface.$get$outerIdentFromInnerInterface(this);
+  run$OuterClass $outer$default$run$OuterClass;
+  run$OuterInterface get $outer$default$run$OuterInterface => $outer$default$run$OuterClass;
+  run$OuterClass$MiddleClass([run$OuterClass $outer$default$run$OuterClass]) {
+    this.$outer$default$run$OuterClass = $outer$default$run$OuterClass;
+  }
+  $dart$core.Object get t => new run$OuterClass$MiddleClass$t$$anonymous$0_(this);
+  $dart$core.String get outerInterfaceIdent => "OuterInterface.ident; MiddleClass impl";
+  $dart$core.Object get someT => outerT;
+  run$OuterClass$MiddleClass$InnerClass $new$run$OuterClass$MiddleClass$InnerClass() => new run$OuterClass$MiddleClass$InnerClass(this);
+  $dart$core.Object get outerT => run$OuterInterface$InnerInterface.$get$outerT(this);
+  $dart$core.String get outerIdentFromInnerInterface => run$OuterInterface$InnerInterface.$get$outerIdentFromInnerInterface(this);
 }
 class run$OuterClass implements $ceylon$language.dart$$Basic, run$OuterInterface {
-    run$OuterClass() {}
-    $dart$core.Object get t => null;
-    $dart$core.String get outerInterfaceIdent => "OuterInterface.ident; OuterClass impl";
-    run$OuterClass$MiddleClass $new$run$OuterClass$MiddleClass() => new run$OuterClass$MiddleClass(this);
+  run$OuterClass() {}
+  $dart$core.Object get t => null;
+  $dart$core.String get outerInterfaceIdent => "OuterInterface.ident; OuterClass impl";
+  run$OuterClass$MiddleClass $new$run$OuterClass$MiddleClass() => new run$OuterClass$MiddleClass(this);
 }
 void $package$run() {
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerInterfaceIdent));
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdentFromInnerInterface));
-    $ceylon$language.print((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().someT);
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerInterfaceIdent));
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdentFromInnerInterface));
-    $ceylon$language.print((new run$OuterClass()).$new$run$OuterClass$MiddleClass().someT);
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerInterfaceIdent));
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().outerIdentFromInnerInterface));
+  $ceylon$language.print((new run$OuterClass()).$new$run$OuterClass$MiddleClass().$new$run$OuterClass$MiddleClass$InnerClass().someT);
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerInterfaceIdent));
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$OuterClass()).$new$run$OuterClass$MiddleClass().outerIdentFromInnerInterface));
+  $ceylon$language.print((new run$OuterClass()).$new$run$OuterClass$MiddleClass().someT);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

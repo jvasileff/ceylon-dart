@@ -4,34 +4,47 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Iterable iter0 = $ceylon$language.empty;
-    $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
-    $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
-    $ceylon$language.Sequential x = iter0.sequence();
-    $ceylon$language.Sequential y = iter1.sequence();
-    $ceylon$language.Sequence z = iter2.sequence() as $ceylon$language.Sequence;
-    $ceylon$language.Tuple a = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("1"), $ceylon$language.$ceylonString("2"), $ceylon$language.$ceylonString("3")]);
-    $ceylon$language.Empty b = $ceylon$language.empty;
-    $ceylon$language.Tuple c = a;
-    $ceylon$language.Tuple d = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("4")], a);
-    $ceylon$language.Empty e = b;
-    $ceylon$language.print(a);
-    $ceylon$language.print(b);
-    $ceylon$language.print(c);
-    $ceylon$language.print(d);
-    $ceylon$language.print(e);
+  $ceylon$language.Iterable iter0 = $ceylon$language.empty;
+  $ceylon$language.Iterable iter1 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+  $ceylon$language.Iterable iter2 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+  $ceylon$language.Sequential x = iter0.sequence();
+  $ceylon$language.Sequential y = iter1.sequence();
+  $ceylon$language.Sequence z = iter2.sequence() as $ceylon$language.Sequence;
+  $ceylon$language.Tuple a = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("1"), $ceylon$language.$ceylonString("2"), $ceylon$language.$ceylonString("3")]);
+  $ceylon$language.Empty b = $ceylon$language.empty;
+  $ceylon$language.Tuple c = a;
+  $ceylon$language.Tuple d = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("4")], a);
+  $ceylon$language.Empty e = b;
+  $ceylon$language.print(a);
+  $ceylon$language.print(b);
+  $ceylon$language.print(c);
+  $ceylon$language.print(d);
+  $ceylon$language.print(e);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

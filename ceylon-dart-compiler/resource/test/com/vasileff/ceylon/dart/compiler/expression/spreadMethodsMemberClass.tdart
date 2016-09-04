@@ -4,69 +4,82 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class spreadMethodsMemberClass$C$D implements $ceylon$language.dart$$Basic {
-    spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C;
-    spreadMethodsMemberClass$C$D([spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C, $dart$core.int i]) {
-        this.$outer$default$spreadMethodsMemberClass$C = $outer$default$spreadMethodsMemberClass$C;
-        this.i = i;
-    }
-    $dart$core.int i;
+  spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C;
+  spreadMethodsMemberClass$C$D([spreadMethodsMemberClass$C $outer$default$spreadMethodsMemberClass$C, $dart$core.int i]) {
+    this.$outer$default$spreadMethodsMemberClass$C = $outer$default$spreadMethodsMemberClass$C;
+    this.i = i;
+  }
+  $dart$core.int i;
 }
 class spreadMethodsMemberClass$C implements $ceylon$language.dart$$Basic {
-    spreadMethodsMemberClass$C() {}
-    spreadMethodsMemberClass$C$D $new$spreadMethodsMemberClass$C$D([$dart$core.int i]) => new spreadMethodsMemberClass$C$D(this, i);
+  spreadMethodsMemberClass$C() {}
+  spreadMethodsMemberClass$C$D $new$spreadMethodsMemberClass$C$D([$dart$core.int i]) => new spreadMethodsMemberClass$C$D(this, i);
 }
 void $package$spreadMethodsMemberClass() {
-    $ceylon$language.Iterable cs = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
-        switch ($i$) {
-        case 0 :
+  $ceylon$language.Iterable cs = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+    switch ($i$) {
+    case 0 :
+      return new spreadMethodsMemberClass$C();
+    }
+  }, null);
+  $ceylon$language.Sequence a = ((new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+    switch ($i$) {
+    case 0 :
+      return new spreadMethodsMemberClass$C();
+    }
+  }, null)).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
+  $ceylon$language.Callable b = (() {
+    $dart$core.Object $r = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+      switch ($i$) {
+      case 0 :
         return new spreadMethodsMemberClass$C();
-        }
+      }
     }, null);
-    $ceylon$language.Sequence a = ((new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
-        switch ($i$) {
-        case 0 :
-        return new spreadMethodsMemberClass$C();
-        }
-    }, null)).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
-    $ceylon$language.Callable b = (() {
-        $dart$core.Object $r = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
-            switch ($i$) {
-            case 0 :
-            return new spreadMethodsMemberClass$C();
-            }
-        }, null);
-        return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($r as $ceylon$language.Iterable).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
-    })();
-    if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
-        throw new $ceylon$language.AssertionError("Violated: (a[0] of Anything) is C.D");
-    }
-    if (!(((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
-        throw new $ceylon$language.AssertionError("Violated: (b(5)[0] of Anything) is C.D");
-    }
-    if (!(a.size == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: a.size == 1");
-    }
-    if (!((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Sequence).size == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: b(5).size == 1");
-    }
-    if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D).i == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: a[0].i == 5");
-    }
-    if (!(((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).getFromFirst(0) as spreadMethodsMemberClass$C$D).i == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: b(5)[0].i == 5");
-    }
+    return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($r as $ceylon$language.Iterable).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
+  })();
+  if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
+    throw new $ceylon$language.AssertionError("Violated: (a[0] of Anything) is C.D");
+  }
+  if (!(((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
+    throw new $ceylon$language.AssertionError("Violated: (b(5)[0] of Anything) is C.D");
+  }
+  if (!(a.size == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: a.size == 1");
+  }
+  if (!((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Sequence).size == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: b(5).size == 1");
+  }
+  if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D).i == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: a[0].i == 5");
+  }
+  if (!(((b.f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).getFromFirst(0) as spreadMethodsMemberClass$C$D).i == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: b(5)[0].i == 5");
+  }
 }
 
 void spreadMethodsMemberClass() => $package$spreadMethodsMemberClass();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "spreadMethodsMemberClass" :
+    $package$spreadMethodsMemberClass();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

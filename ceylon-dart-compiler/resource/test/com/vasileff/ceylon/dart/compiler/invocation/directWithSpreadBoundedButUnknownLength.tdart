@@ -4,60 +4,73 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $dart$core.Object opt01 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)]);
-    $dart$core.Object opt012 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)]);
-    $dart$core.Object opt0123 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
-    $ceylon$language.Tuple opt1 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)]);
-    $dart$core.Object opt12 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)]);
-    $dart$core.Object opt123 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
-    $ceylon$language.Sequence fa([$dart$core.Object a = $ceylon$language.dart$default, $ceylon$language.Sequential rest]) {
-        if ($dart$core.identical(a, $ceylon$language.dart$default)) {
-            a = 99;
-        }
-        return new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a as $dart$core.int)], rest);
+  $dart$core.Object opt01 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)]);
+  $dart$core.Object opt012 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)]);
+  $dart$core.Object opt0123 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+  $ceylon$language.Tuple opt1 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1)]);
+  $dart$core.Object opt12 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2)]);
+  $dart$core.Object opt123 = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(1), $ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3)]);
+  $ceylon$language.Sequence fa([$dart$core.Object a = $ceylon$language.dart$default, $ceylon$language.Sequential rest]) {
+    if ($dart$core.identical(a, $ceylon$language.dart$default)) {
+      a = 99;
     }
+    return new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a as $dart$core.int)], rest);
+  }
 
-    $ceylon$language.print((() {
-        $dart$core.Object arg$0$s = opt01;
-        $dart$core.int arg$0$l = (arg$0$s as $ceylon$language.Sequential).size;
-        return fa(arg$0$l > 0 ? $ceylon$language.$dartInt((arg$0$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, $ceylon$language.empty);
-    })());
-    $ceylon$language.print((() {
-        $dart$core.Object arg$1$s = opt012;
-        $dart$core.int arg$1$l = (arg$1$s as $ceylon$language.Sequential).size;
-        return fa(arg$1$l > 0 ? $ceylon$language.$dartInt((arg$1$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$1$s as $ceylon$language.List).spanFrom($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Sequential);
-    })());
-    $ceylon$language.print((() {
-        $dart$core.Object arg$2$s = opt0123;
-        $dart$core.int arg$2$l = (arg$2$s as $ceylon$language.Sequential).size;
-        return fa(arg$2$l > 0 ? $ceylon$language.$dartInt((arg$2$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$2$s as $ceylon$language.List).spanFrom($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Sequential);
-    })());
-    $ceylon$language.Sequence fb([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a)], rest);
+  $ceylon$language.print((() {
+    $dart$core.Object arg$0$s = opt01;
+    $dart$core.int arg$0$l = (arg$0$s as $ceylon$language.Sequential).size;
+    return fa(arg$0$l > 0 ? $ceylon$language.$dartInt((arg$0$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, $ceylon$language.empty);
+  })());
+  $ceylon$language.print((() {
+    $dart$core.Object arg$1$s = opt012;
+    $dart$core.int arg$1$l = (arg$1$s as $ceylon$language.Sequential).size;
+    return fa(arg$1$l > 0 ? $ceylon$language.$dartInt((arg$1$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$1$s as $ceylon$language.List).spanFrom($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Sequential);
+  })());
+  $ceylon$language.print((() {
+    $dart$core.Object arg$2$s = opt0123;
+    $dart$core.int arg$2$l = (arg$2$s as $ceylon$language.Sequential).size;
+    return fa(arg$2$l > 0 ? $ceylon$language.$dartInt((arg$2$s as $ceylon$language.List).getFromFirst(0) as $ceylon$language.Integer) : $ceylon$language.dart$default, (arg$2$s as $ceylon$language.List).spanFrom($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Sequential);
+  })());
+  $ceylon$language.Sequence fb([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a)], rest);
 
-    $ceylon$language.print((() {
-        $ceylon$language.Tuple arg$3$s = opt1;
-        return fb($ceylon$language.$dartInt(arg$3$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
-    })());
-    $ceylon$language.print((() {
-        $dart$core.Object arg$4$s = opt12;
-        return fb($ceylon$language.$dartInt((arg$4$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$4$s as $ceylon$language.Tuple).spanFrom($ceylon$language.$ceylonInteger(1)));
-    })());
-    $ceylon$language.print((() {
-        $dart$core.Object arg$5$s = opt123;
-        return fb($ceylon$language.$dartInt((arg$5$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$5$s as $ceylon$language.Tuple).spanFrom($ceylon$language.$ceylonInteger(1)));
-    })());
+  $ceylon$language.print((() {
+    $ceylon$language.Tuple arg$3$s = opt1;
+    return fb($ceylon$language.$dartInt(arg$3$s.getFromFirst(0) as $ceylon$language.Integer), $ceylon$language.empty);
+  })());
+  $ceylon$language.print((() {
+    $dart$core.Object arg$4$s = opt12;
+    return fb($ceylon$language.$dartInt((arg$4$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$4$s as $ceylon$language.Tuple).spanFrom($ceylon$language.$ceylonInteger(1)));
+  })());
+  $ceylon$language.print((() {
+    $dart$core.Object arg$5$s = opt123;
+    return fb($ceylon$language.$dartInt((arg$5$s as $ceylon$language.Tuple).getFromFirst(0) as $ceylon$language.Integer), (arg$5$s as $ceylon$language.Tuple).spanFrom($ceylon$language.$ceylonInteger(1)));
+  })());
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

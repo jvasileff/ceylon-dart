@@ -4,37 +4,50 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class recursiveDefaultedCallableClass$C implements $ceylon$language.dart$$Basic {
-    recursiveDefaultedCallableClass$C([$dart$core.Object fact = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(fact, $ceylon$language.dart$default)) {
-            fact = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((fact as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
-        }
-        return [fact];
-    })());
-    recursiveDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
-    recursiveDefaultedCallableClass$C.$w([$ceylon$language.Callable fact]) {
-        this._fact$c = fact;
+  recursiveDefaultedCallableClass$C([$dart$core.Object fact = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(fact, $ceylon$language.dart$default)) {
+      fact = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((fact as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
     }
-    $ceylon$language.Callable _fact$c;
-    $dart$core.int fact([$dart$core.int i]) {
-        return $ceylon$language.$dartInt(_fact$c.f($ceylon$language.$ceylonInteger(i)));
-    }
+    return [fact];
+  })());
+  recursiveDefaultedCallableClass$C.$s([$dart$core.List a]) : this.$w(a[0]);
+  recursiveDefaultedCallableClass$C.$w([$ceylon$language.Callable fact]) {
+    this._fact$c = fact;
+  }
+  $ceylon$language.Callable _fact$c;
+  $dart$core.int fact([$dart$core.int i]) {
+    return $ceylon$language.$dartInt(_fact$c.f($ceylon$language.$ceylonInteger(i)));
+  }
 }
 void $package$recursiveDefaultedCallableClass() {
-    if (!((new recursiveDefaultedCallableClass$C()).fact(4) == 24)) {
-        throw new $ceylon$language.AssertionError("Violated: C().fact(4) == 24");
-    }
+  if (!((new recursiveDefaultedCallableClass$C()).fact(4) == 24)) {
+    throw new $ceylon$language.AssertionError("Violated: C().fact(4) == 24");
+  }
 }
 
 void recursiveDefaultedCallableClass() => $package$recursiveDefaultedCallableClass();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "recursiveDefaultedCallableClass" :
+    $package$recursiveDefaultedCallableClass();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

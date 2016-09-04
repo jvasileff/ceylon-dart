@@ -4,69 +4,82 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class referenceToCallableParam$C implements $ceylon$language.dart$$Basic {
-    referenceToCallableParam$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(echoSharedDefaulted, $ceylon$language.dart$default)) {
-            echoSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
-        }
-        if ($dart$core.identical(echoNonSharedDefaulted, $ceylon$language.dart$default)) {
-            echoNonSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
-        }
-        return [echoShared, echoNonShared, echoSharedDefaulted, echoNonSharedDefaulted];
-    })());
-    referenceToCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2], a[3]);
-    referenceToCallableParam$C.$w([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $ceylon$language.Callable echoSharedDefaulted, $ceylon$language.Callable echoNonSharedDefaulted]) {
-        this._echoNonShared = echoNonShared;
-        this._echoNonSharedDefaulted = echoNonSharedDefaulted;
-        this._echoShared$c = echoShared;
-        this._echoSharedDefaulted$c = echoSharedDefaulted;
-        _echoSharedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0))));
-        _echoNonSharedRef = this._echoNonShared;
-        _echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0))));
-        _echoNonSharedDefaultedRef = this._echoNonSharedDefaulted;
-        if (!($ceylon$language.$dartInt(_echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: echoSharedRef(1) == 1");
-        }
-        if (!($ceylon$language.$dartInt(_echoNonSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: echoNonSharedRef(1) == 1");
-        }
-        if (!($ceylon$language.$dartInt(_echoSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: echoSharedDefaultedRef(1) == 1");
-        }
-        if (!($ceylon$language.$dartInt(_echoNonSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: echoNonSharedDefaultedRef(1) == 1");
-        }
+  referenceToCallableParam$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(echoSharedDefaulted, $ceylon$language.dart$default)) {
+      echoSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
     }
-    $ceylon$language.Callable _echoNonShared;
-    $ceylon$language.Callable _echoNonSharedDefaulted;
-    $ceylon$language.Callable _echoShared$c;
-    $ceylon$language.Callable _echoSharedDefaulted$c;
-    $ceylon$language.Callable _echoSharedRef;
-    $ceylon$language.Callable _echoNonSharedRef;
-    $ceylon$language.Callable _echoSharedDefaultedRef;
-    $ceylon$language.Callable _echoNonSharedDefaultedRef;
-    $dart$core.int echoShared([$dart$core.int i]) {
-        return $ceylon$language.$dartInt(_echoShared$c.f($ceylon$language.$ceylonInteger(i)));
+    if ($dart$core.identical(echoNonSharedDefaulted, $ceylon$language.dart$default)) {
+      echoNonSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
     }
-    $dart$core.int echoSharedDefaulted([$dart$core.int i]) {
-        return $ceylon$language.$dartInt(_echoSharedDefaulted$c.f($ceylon$language.$ceylonInteger(i)));
+    return [echoShared, echoNonShared, echoSharedDefaulted, echoNonSharedDefaulted];
+  })());
+  referenceToCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1], a[2], a[3]);
+  referenceToCallableParam$C.$w([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $ceylon$language.Callable echoSharedDefaulted, $ceylon$language.Callable echoNonSharedDefaulted]) {
+    this._echoNonShared = echoNonShared;
+    this._echoNonSharedDefaulted = echoNonSharedDefaulted;
+    this._echoShared$c = echoShared;
+    this._echoSharedDefaulted$c = echoSharedDefaulted;
+    _echoSharedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0))));
+    _echoNonSharedRef = this._echoNonShared;
+    _echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0))));
+    _echoNonSharedDefaultedRef = this._echoNonSharedDefaulted;
+    if (!($ceylon$language.$dartInt(_echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: echoSharedRef(1) == 1");
     }
+    if (!($ceylon$language.$dartInt(_echoNonSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: echoNonSharedRef(1) == 1");
+    }
+    if (!($ceylon$language.$dartInt(_echoSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: echoSharedDefaultedRef(1) == 1");
+    }
+    if (!($ceylon$language.$dartInt(_echoNonSharedDefaultedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: echoNonSharedDefaultedRef(1) == 1");
+    }
+  }
+  $ceylon$language.Callable _echoNonShared;
+  $ceylon$language.Callable _echoNonSharedDefaulted;
+  $ceylon$language.Callable _echoShared$c;
+  $ceylon$language.Callable _echoSharedDefaulted$c;
+  $ceylon$language.Callable _echoSharedRef;
+  $ceylon$language.Callable _echoNonSharedRef;
+  $ceylon$language.Callable _echoSharedDefaultedRef;
+  $ceylon$language.Callable _echoNonSharedDefaultedRef;
+  $dart$core.int echoShared([$dart$core.int i]) {
+    return $ceylon$language.$dartInt(_echoShared$c.f($ceylon$language.$ceylonInteger(i)));
+  }
+  $dart$core.int echoSharedDefaulted([$dart$core.int i]) {
+    return $ceylon$language.$dartInt(_echoSharedDefaulted$c.f($ceylon$language.$ceylonInteger(i)));
+  }
 }
 void $package$referenceToCallableParam() {
-    $dart$core.int echo([$dart$core.int i]) => i;
+  $dart$core.int echo([$dart$core.int i]) => i;
 
-    new referenceToCallableParam$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))));
+  new referenceToCallableParam$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))));
 }
 
 void referenceToCallableParam() => $package$referenceToCallableParam();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "referenceToCallableParam" :
+    $package$referenceToCallableParam();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

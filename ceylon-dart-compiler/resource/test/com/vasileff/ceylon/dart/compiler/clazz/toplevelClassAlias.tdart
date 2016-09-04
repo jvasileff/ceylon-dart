@@ -4,89 +4,102 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C implements $ceylon$language.dart$$Basic {
-    void _$init$C([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
-        if (0 != ($bitmap & 2)) {
-            this.i = $$a;
-        }
-        if (0 != ($bitmap & 1)) {
-            this.i = $create$a + $create$b;
-        }
+  void _$init$C([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
+    if (0 != ($bitmap & 2)) {
+      this.i = $$a;
     }
-    C([$dart$core.int a]) : this.$d(2, null, null, a);
-    C.$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
-        _$init$C($bitmap | 2, $create$a, $create$b, $$a);
+    if (0 != ($bitmap & 1)) {
+      this.i = $create$a + $create$b;
     }
-    C.create([$dart$core.int a, $dart$core.int b]) : this.create$d(1, a, b);
-    C.create$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b]) {
-        _$init$C($bitmap | 1, $create$a, $create$b);
-    }
-    $dart$core.int i;
+  }
+  C([$dart$core.int a]) : this.$d(2, null, null, a);
+  C.$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b, $dart$core.int $$a]) {
+    _$init$C($bitmap | 2, $create$a, $create$b, $$a);
+  }
+  C.create([$dart$core.int a, $dart$core.int b]) : this.create$d(1, a, b);
+  C.create$d([$dart$core.int $bitmap, $dart$core.int $create$a, $dart$core.int $create$b]) {
+    _$init$C($bitmap | 1, $create$a, $create$b);
+  }
+  $dart$core.int i;
 }
 class D  extends C {
-    D([$dart$core.int p]) : super(p) {
-        this._p = p;
-    }
-    $dart$core.int _p;
+  D([$dart$core.int p]) : super(p) {
+    this._p = p;
+  }
+  $dart$core.int _p;
 }
 class DCreate  extends C {
-    DCreate([$dart$core.int p, $dart$core.int q]) : super.create(p, q) {
-        this._p = p;
-        this._q = q;
-    }
-    $dart$core.int _p;
-    $dart$core.int _q;
+  DCreate([$dart$core.int p, $dart$core.int q]) : super.create(p, q) {
+    this._p = p;
+    this._q = q;
+  }
+  $dart$core.int _p;
+  $dart$core.int _q;
 }
 void $package$run() {
-    if (!((new C(10)).i == 10)) {
-        throw new $ceylon$language.AssertionError("Violated: CAlias(10).i == 10");
-    }
-    if (!((new C.create(10, 20)).i == 30)) {
-        throw new $ceylon$language.AssertionError("Violated: CCreateAlias(10, 20).i == 30");
-    }
-    if (!((() {
-        $dart$core.int arg$0$0 = 10;
-        return new C(arg$0$0);
-    })().i == 10)) {
-        throw new $ceylon$language.AssertionError("Violated: CAlias {x = 10;}.i == 10");
-    }
-    if (!((() {
-        $dart$core.int arg$1$0 = 10;
-        $dart$core.int arg$1$1 = 20;
-        return new C.create(arg$1$0, arg$1$1);
-    })().i == 30)) {
-        throw new $ceylon$language.AssertionError("Violated: CCreateAlias {x = 10; y = 20;}.i == 30");
-    }
-    if (!((new D(10)).i == 10)) {
-        throw new $ceylon$language.AssertionError("Violated: D(10).i == 10");
-    }
-    if (!((new DCreate(10, 20)).i == 30)) {
-        throw new $ceylon$language.AssertionError("Violated: DCreate(10, 20).i == 30");
-    }
-    if (!((() {
-        $dart$core.int arg$2$0 = 10;
-        return new D(arg$2$0);
-    })().i == 10)) {
-        throw new $ceylon$language.AssertionError("Violated: D {p = 10;}.i == 10");
-    }
-    if (!((() {
-        $dart$core.int arg$3$0 = 10;
-        $dart$core.int arg$3$1 = 20;
-        return new DCreate(arg$3$0, arg$3$1);
-    })().i == 30)) {
-        throw new $ceylon$language.AssertionError("Violated: DCreate {p = 10; q = 20;}.i == 30");
-    }
+  if (!((new C(10)).i == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: CAlias(10).i == 10");
+  }
+  if (!((new C.create(10, 20)).i == 30)) {
+    throw new $ceylon$language.AssertionError("Violated: CCreateAlias(10, 20).i == 30");
+  }
+  if (!((() {
+    $dart$core.int arg$0$0 = 10;
+    return new C(arg$0$0);
+  })().i == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: CAlias {x = 10;}.i == 10");
+  }
+  if (!((() {
+    $dart$core.int arg$1$0 = 10;
+    $dart$core.int arg$1$1 = 20;
+    return new C.create(arg$1$0, arg$1$1);
+  })().i == 30)) {
+    throw new $ceylon$language.AssertionError("Violated: CCreateAlias {x = 10; y = 20;}.i == 30");
+  }
+  if (!((new D(10)).i == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: D(10).i == 10");
+  }
+  if (!((new DCreate(10, 20)).i == 30)) {
+    throw new $ceylon$language.AssertionError("Violated: DCreate(10, 20).i == 30");
+  }
+  if (!((() {
+    $dart$core.int arg$2$0 = 10;
+    return new D(arg$2$0);
+  })().i == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: D {p = 10;}.i == 10");
+  }
+  if (!((() {
+    $dart$core.int arg$3$0 = 10;
+    $dart$core.int arg$3$1 = 20;
+    return new DCreate(arg$3$0, arg$3$1);
+  })().i == 30)) {
+    throw new $ceylon$language.AssertionError("Violated: DCreate {p = 10; q = 20;}.i == 30");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CAlias":const{"mt":"c","nm":"CAlias","super":const{"nm":"C","pk":"."},"sts":const[]},"CCreateAlias":const{"mt":"c","nm":"CCreateAlias","super":const{"nm":"C","pk":"."},"sts":const[]},"D":const{"mt":"c","nm":"D","super":const{"nm":"CAlias","pk":"."},"sts":const[]},"DCreate":const{"mt":"c","nm":"DCreate","super":const{"nm":"CCreateAlias","pk":"."},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

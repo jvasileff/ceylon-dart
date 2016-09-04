@@ -4,62 +4,70 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$SharedClass implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$SharedClass([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
+  I $outer$default$I;
+  I$SharedClass([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
 }
 class I$NonSharedClass implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$NonSharedClass([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
+  I $outer$default$I;
+  I$NonSharedClass([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
 }
 class I$C implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$C([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
-    void test() {
-        $outer$default$I.sharedInt();
-        I.$_nonSharedInt($outer$default$I);
-        $ceylon$language.Callable si = new $ceylon$language.dart$Callable($outer$default$I.sharedInt);
-        $ceylon$language.Callable nsi = new $ceylon$language.dart$Callable(() => I.$_nonSharedInt($outer$default$I));
-        $outer$default$I.$new$I$SharedClass();
-        new I$NonSharedClass($outer$default$I);
-        $ceylon$language.Callable sc = new $ceylon$language.dart$Callable(() => $outer$default$I.$new$I$SharedClass());
-        $ceylon$language.Callable nsc = new $ceylon$language.dart$Callable(() => new I$NonSharedClass($outer$default$I));
-        $ceylon$language.noop(new $ceylon$language.Tuple.$withList([$outer$default$I.sharedTransient]));
-        $ceylon$language.noop(new $ceylon$language.Tuple.$withList([I.$get$_nonSharedTransient($outer$default$I)]));
-        $outer$default$I.sharedTransient = $ceylon$language.$ceylonInteger(4);
-        I.$set$_nonSharedTransient($outer$default$I, $ceylon$language.$ceylonInteger(5));
-    }
+  I $outer$default$I;
+  I$C([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
+  void test() {
+    $outer$default$I.sharedInt();
+    I.$_nonSharedInt($outer$default$I);
+    $ceylon$language.Callable si = new $ceylon$language.dart$Callable($outer$default$I.sharedInt);
+    $ceylon$language.Callable nsi = new $ceylon$language.dart$Callable(() => I.$_nonSharedInt($outer$default$I));
+    $outer$default$I.$new$I$SharedClass();
+    new I$NonSharedClass($outer$default$I);
+    $ceylon$language.Callable sc = new $ceylon$language.dart$Callable(() => $outer$default$I.$new$I$SharedClass());
+    $ceylon$language.Callable nsc = new $ceylon$language.dart$Callable(() => new I$NonSharedClass($outer$default$I));
+    $ceylon$language.noop(new $ceylon$language.Tuple.$withList([$outer$default$I.sharedTransient]));
+    $ceylon$language.noop(new $ceylon$language.Tuple.$withList([I.$get$_nonSharedTransient($outer$default$I)]));
+    $outer$default$I.sharedTransient = $ceylon$language.$ceylonInteger(4);
+    I.$set$_nonSharedTransient($outer$default$I, $ceylon$language.$ceylonInteger(5));
+  }
 }
 abstract class I {
-    $dart$core.Object sharedInt();
-    static $dart$core.Object $sharedInt([final I $this]) => $ceylon$language.$ceylonInteger(1);
-    static $dart$core.Object $_nonSharedInt([final I $this]) => $ceylon$language.$ceylonInteger(1);
-    $dart$core.Object get sharedTransient;
-    static $dart$core.Object $get$sharedTransient([final I $this]) => $ceylon$language.$ceylonInteger(1);
-    static $dart$core.Object $get$_nonSharedTransient([final I $this]) => $ceylon$language.$ceylonInteger(1);
-    void set sharedTransient($dart$core.Object sharedTransient);
-    static $dart$core.Object $set$sharedTransient([final I $this, $dart$core.Object sharedTransient]) {
-        return sharedTransient;
-    }
-    static $dart$core.Object $set$_nonSharedTransient([final I $this, $dart$core.Object nonSharedTransient]) {
-        return nonSharedTransient;
-    }
-    static I$SharedClass $$new$I$SharedClass([final I $this]) => new I$SharedClass($this);
-    I$SharedClass $new$I$SharedClass();
+  $dart$core.Object sharedInt();
+  static $dart$core.Object $sharedInt([final I $this]) => $ceylon$language.$ceylonInteger(1);
+  static $dart$core.Object $_nonSharedInt([final I $this]) => $ceylon$language.$ceylonInteger(1);
+  $dart$core.Object get sharedTransient;
+  static $dart$core.Object $get$sharedTransient([final I $this]) => $ceylon$language.$ceylonInteger(1);
+  static $dart$core.Object $get$_nonSharedTransient([final I $this]) => $ceylon$language.$ceylonInteger(1);
+  void set sharedTransient($dart$core.Object sharedTransient);
+  static $dart$core.Object $set$sharedTransient([final I $this, $dart$core.Object sharedTransient]) {
+    return sharedTransient;
+  }
+  static $dart$core.Object $set$_nonSharedTransient([final I $this, $dart$core.Object nonSharedTransient]) {
+    return nonSharedTransient;
+  }
+  static I$SharedClass $$new$I$SharedClass([final I $this]) => new I$SharedClass($this);
+  I$SharedClass $new$I$SharedClass();
 }
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"NonSharedClass":const{"mt":"c","nm":"NonSharedClass","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"SharedClass":const{"mt":"c","nm":"SharedClass","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

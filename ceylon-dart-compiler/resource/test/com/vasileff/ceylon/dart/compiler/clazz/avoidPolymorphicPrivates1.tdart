@@ -4,44 +4,57 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class run$C implements $ceylon$language.dart$$Basic {
-    run$C() {
-        _foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("C"));
-    }
-    $ceylon$language.Callable _foo$c;
-    $dart$core.String _foo() {
-        return $ceylon$language.$dartString(_foo$c.f());
-    }
-    $dart$core.String get fooValueC => _foo();
+  run$C() {
+    _foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("C"));
+  }
+  $ceylon$language.Callable _foo$c;
+  $dart$core.String _foo() {
+    return $ceylon$language.$dartString(_foo$c.f());
+  }
+  $dart$core.String get fooValueC => _foo();
 }
 class run$D  extends run$C {
-    run$D() {
-        _foo$1$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("D"));
-    }
-    $ceylon$language.Callable _foo$1$c;
-    $dart$core.String _foo$1() {
-        return $ceylon$language.$dartString(_foo$1$c.f());
-    }
-    $dart$core.String get fooValueD => _foo$1();
+  run$D() {
+    _foo$1$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("D"));
+  }
+  $ceylon$language.Callable _foo$1$c;
+  $dart$core.String _foo$1() {
+    return $ceylon$language.$dartString(_foo$1$c.f());
+  }
+  $dart$core.String get fooValueD => _foo$1();
 }
 void $package$run() {
-    if (!((new run$D()).fooValueC == "C")) {
-        throw new $ceylon$language.AssertionError("Violated: D().fooValueC == \"C\"");
-    }
-    if (!((new run$D()).fooValueD == "D")) {
-        throw new $ceylon$language.AssertionError("Violated: D().fooValueD == \"D\"");
-    }
+  if (!((new run$D()).fooValueC == "C")) {
+    throw new $ceylon$language.AssertionError("Violated: D().fooValueC == \"C\"");
+  }
+  if (!((new run$D()).fooValueD == "D")) {
+    throw new $ceylon$language.AssertionError("Violated: D().fooValueD == \"D\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,57 +4,70 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A implements $ceylon$language.dart$$Basic {
-    void _$init$A([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s, $dart$core.String $create1$s]) {
-        string = "";
-        if (0 != ($bitmap & 4)) {
-            string = $create1$s;
-        }
-        if (0 != ($bitmap & 2)) {}
-        if (0 != ($bitmap & 1)) {}
+  void _$init$A([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s, $dart$core.String $create1$s]) {
+    string = "";
+    if (0 != ($bitmap & 4)) {
+      string = $create1$s;
     }
-    A.create1([$dart$core.String s]) : this.create1$d(4, null, null, s);
-    A.create1$d([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s, $dart$core.String $create1$s]) {
-        _$init$A($bitmap | 4, $create3$s, $create2$s, $create1$s);
+    if (0 != ($bitmap & 2)) {}
+    if (0 != ($bitmap & 1)) {}
+  }
+  A.create1([$dart$core.String s]) : this.create1$d(4, null, null, s);
+  A.create1$d([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s, $dart$core.String $create1$s]) {
+    _$init$A($bitmap | 4, $create3$s, $create2$s, $create1$s);
+  }
+  A.create2([$dart$core.Object s = $ceylon$language.dart$default]) : this.create2$d(2, null, s);
+  A.create2$d([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s = $ceylon$language.dart$default]) : this.create2$s($bitmap | 2, $create3$s, (() {
+    if ($dart$core.identical($create2$s, $ceylon$language.dart$default)) {
+      $create2$s = "2";
     }
-    A.create2([$dart$core.Object s = $ceylon$language.dart$default]) : this.create2$d(2, null, s);
-    A.create2$d([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s = $ceylon$language.dart$default]) : this.create2$s($bitmap | 2, $create3$s, (() {
-        if ($dart$core.identical($create2$s, $ceylon$language.dart$default)) {
-            $create2$s = "2";
-        }
-        return [$create2$s];
-    })());
-    A.create2$s([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.List a]) : this.create2$w($bitmap, $create3$s, a[0]);
-    A.create2$w([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s]) : this.create1$d($bitmap | 2, $create3$s, $create2$s, $create2$s as $dart$core.String);
-    A.create3([$dart$core.String s]) : this.create3$d(1, s);
-    A.create3$d([$dart$core.int $bitmap, $dart$core.String $create3$s]) : this.create1$d($bitmap | 1, $create3$s, null, $create3$s);
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+    return [$create2$s];
+  })());
+  A.create2$s([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.List a]) : this.create2$w($bitmap, $create3$s, a[0]);
+  A.create2$w([$dart$core.int $bitmap, $dart$core.String $create3$s, $dart$core.Object $create2$s]) : this.create1$d($bitmap | 2, $create3$s, $create2$s, $create2$s as $dart$core.String);
+  A.create3([$dart$core.String s]) : this.create3$d(1, s);
+  A.create3$d([$dart$core.int $bitmap, $dart$core.String $create3$s]) : this.create1$d($bitmap | 1, $create3$s, null, $create3$s);
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 void $package$run() {
-    if (!((new A.create1("1")).toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create1(\"1\").string == \"1\"");
-    }
-    if (!((new A.create2()).toString() == "2")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create2().string == \"2\"");
-    }
-    if (!((new A.create2("3")).toString() == "3")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create2(\"3\").string == \"3\"");
-    }
-    if (!((new A.create3("4")).toString() == "4")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create3(\"4\").string == \"4\"");
-    }
+  if (!((new A.create1("1")).toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create1(\"1\").string == \"1\"");
+  }
+  if (!((new A.create2()).toString() == "2")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create2().string == \"2\"");
+  }
+  if (!((new A.create2("3")).toString() == "3")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create2(\"3\").string == \"3\"");
+  }
+  if (!((new A.create3("4")).toString() == "4")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create3(\"4\").string == \"4\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,37 +4,50 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class bridgeAssignmentExpression$I {
-    $dart$core.String get s;
-    static $dart$core.String $get$s([final bridgeAssignmentExpression$I $this]) => "sValue";
-    void set s($dart$core.String s);
-    static $dart$core.String $set$s([final bridgeAssignmentExpression$I $this, $dart$core.String s]) {
-        return s;
-    }
+  $dart$core.String get s;
+  static $dart$core.String $get$s([final bridgeAssignmentExpression$I $this]) => "sValue";
+  void set s($dart$core.String s);
+  static $dart$core.String $set$s([final bridgeAssignmentExpression$I $this, $dart$core.String s]) {
+    return s;
+  }
 }
 class bridgeAssignmentExpression$C implements $ceylon$language.dart$$Basic, bridgeAssignmentExpression$I {
-    bridgeAssignmentExpression$C() {}
-    $dart$core.String test([$dart$core.String v]) => s = v;
-    $dart$core.String get s => bridgeAssignmentExpression$I.$get$s(this);
-    void set s($dart$core.String s) {
-        bridgeAssignmentExpression$I.$set$s(this, s);
-    }
+  bridgeAssignmentExpression$C() {}
+  $dart$core.String test([$dart$core.String v]) => s = v;
+  $dart$core.String get s => bridgeAssignmentExpression$I.$get$s(this);
+  void set s($dart$core.String s) {
+    bridgeAssignmentExpression$I.$set$s(this, s);
+  }
 }
 void $package$bridgeAssignmentExpression() {
-    if (!((new bridgeAssignmentExpression$C()).test("newValue") == "newValue")) {
-        throw new $ceylon$language.AssertionError("Violated: C().test(\"newValue\") == \"newValue\"");
-    }
+  if (!((new bridgeAssignmentExpression$C()).test("newValue") == "newValue")) {
+    throw new $ceylon$language.AssertionError("Violated: C().test(\"newValue\") == \"newValue\"");
+  }
 }
 
 void bridgeAssignmentExpression() => $package$bridgeAssignmentExpression();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "bridgeAssignmentExpression" :
+    $package$bridgeAssignmentExpression();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

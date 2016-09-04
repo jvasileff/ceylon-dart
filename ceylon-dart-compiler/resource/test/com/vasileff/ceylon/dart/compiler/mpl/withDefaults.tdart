@@ -4,34 +4,47 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 $ceylon$language.Callable $package$adder([$dart$core.int x, $dart$core.Object y = $ceylon$language.dart$default]) {
-    if ($dart$core.identical(y, $ceylon$language.dart$default)) {
-        y = 10;
-    }
-    return new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger((([$ceylon$language.Integer z]) {
-        return (x + (y as $dart$core.int)) + $ceylon$language.$dartInt(z);
-    })($0)));
+  if ($dart$core.identical(y, $ceylon$language.dart$default)) {
+    y = 10;
+  }
+  return new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger((([$ceylon$language.Integer z]) {
+    return (x + (y as $dart$core.int)) + $ceylon$language.$dartInt(z);
+  })($0)));
 }
 
 $ceylon$language.Callable adder([$dart$core.int x, $dart$core.Object y = $ceylon$language.dart$default]) => $package$adder(x, y);
 
 void $package$run() {
-    $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1 = $ceylon$language.dart$default]) => $package$adder($ceylon$language.$dartInt($0), $dart$core.identical($1, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.$dartInt($1)));
-    $ceylon$language.Callable g = $package$adder(1);
-    $ceylon$language.Callable h = $package$adder(2, 3);
-    $dart$core.int i = $ceylon$language.$dartInt($package$adder(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Integer);
-    $dart$core.int j = $ceylon$language.$dartInt($package$adder(6, 7).f($ceylon$language.$ceylonInteger(8)) as $ceylon$language.Integer);
+  $ceylon$language.Callable f = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0, $ceylon$language.Integer $1 = $ceylon$language.dart$default]) => $package$adder($ceylon$language.$dartInt($0), $dart$core.identical($1, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.$dartInt($1)));
+  $ceylon$language.Callable g = $package$adder(1);
+  $ceylon$language.Callable h = $package$adder(2, 3);
+  $dart$core.int i = $ceylon$language.$dartInt($package$adder(4).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Integer);
+  $dart$core.int j = $ceylon$language.$dartInt($package$adder(6, 7).f($ceylon$language.$ceylonInteger(8)) as $ceylon$language.Integer);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

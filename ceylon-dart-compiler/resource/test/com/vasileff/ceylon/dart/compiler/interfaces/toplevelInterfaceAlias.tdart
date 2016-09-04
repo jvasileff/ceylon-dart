@@ -4,46 +4,59 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class I {
-    $dart$core.String get id;
-    static $dart$core.String $get$id([final I $this]) => "I";
+  $dart$core.String get id;
+  static $dart$core.String $get$id([final I $this]) => "I";
 }
 class C1 implements $ceylon$language.dart$$Basic, I {
-    C1() {}
-    $dart$core.String get id => "C";
-    $dart$core.String get id_i => I.$get$id(this);
+  C1() {}
+  $dart$core.String get id => "C";
+  $dart$core.String get id_i => I.$get$id(this);
 }
 class C2 implements $ceylon$language.dart$$Basic, I {
-    C2() {}
-    $dart$core.String get id => "C";
-    $dart$core.String get id_i => I.$get$id(this);
+  C2() {}
+  $dart$core.String get id => "C";
+  $dart$core.String get id_i => I.$get$id(this);
 }
 void $package$run() {
-    C1 c1 = new C1();
-    C2 c2 = new C2();
-    if (!(c1.id == "C")) {
-        throw new $ceylon$language.AssertionError("Violated: c1.id == \"C\"");
-    }
-    if (!(c1.id_i == "I")) {
-        throw new $ceylon$language.AssertionError("Violated: c1.id_i == \"I\"");
-    }
-    if (!(c2.id == "C")) {
-        throw new $ceylon$language.AssertionError("Violated: c2.id == \"C\"");
-    }
-    if (!(c2.id_i == "I")) {
-        throw new $ceylon$language.AssertionError("Violated: c2.id_i == \"I\"");
-    }
+  C1 c1 = new C1();
+  C2 c2 = new C2();
+  if (!(c1.id == "C")) {
+    throw new $ceylon$language.AssertionError("Violated: c1.id == \"C\"");
+  }
+  if (!(c1.id_i == "I")) {
+    throw new $ceylon$language.AssertionError("Violated: c1.id_i == \"I\"");
+  }
+  if (!(c2.id == "C")) {
+    throw new $ceylon$language.AssertionError("Violated: c2.id == \"C\"");
+  }
+  if (!(c2.id_i == "I")) {
+    throw new $ceylon$language.AssertionError("Violated: c2.id_i == \"I\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"IAlias":const{"mt":"i","nm":"IAlias","sts":const[]},"IAliasAlias":const{"mt":"i","nm":"IAliasAlias","sts":const[]},"C1":const{"mt":"c","nm":"C1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IAlias","pk":"."}]},"C2":const{"mt":"c","nm":"C2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IAliasAlias","pk":"."}]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

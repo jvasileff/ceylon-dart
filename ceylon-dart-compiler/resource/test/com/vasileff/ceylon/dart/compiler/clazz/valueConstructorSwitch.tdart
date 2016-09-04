@@ -4,24 +4,24 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class Enum implements $ceylon$language.dart$$Basic {
-    void _$init$Enum([$dart$core.int $bitmap]) {
-        if (0 != ($bitmap & 4)) {}
-        if (0 != ($bitmap & 2)) {}
-        if (0 != ($bitmap & 1)) {}
-    }
-    Enum.value1() : this.value1$d(4);
-    Enum.value1$d([$dart$core.int $bitmap]) {
-        _$init$Enum($bitmap | 4);
-    }
-    Enum.value2() : this.value2$d(2);
-    Enum.value2$d([$dart$core.int $bitmap]) {
-        _$init$Enum($bitmap | 2);
-    }
-    Enum.value3() : this.value3$d(1);
-    Enum.value3$d([$dart$core.int $bitmap]) {
-        _$init$Enum($bitmap | 1);
-    }
-    $dart$core.bool operator ==($dart$core.Object other) => true;
+  void _$init$Enum([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 4)) {}
+    if (0 != ($bitmap & 2)) {}
+    if (0 != ($bitmap & 1)) {}
+  }
+  Enum.value1() : this.value1$d(4);
+  Enum.value1$d([$dart$core.int $bitmap]) {
+    _$init$Enum($bitmap | 4);
+  }
+  Enum.value2() : this.value2$d(2);
+  Enum.value2$d([$dart$core.int $bitmap]) {
+    _$init$Enum($bitmap | 2);
+  }
+  Enum.value3() : this.value3$d(1);
+  Enum.value3$d([$dart$core.int $bitmap]) {
+    _$init$Enum($bitmap | 1);
+  }
+  $dart$core.bool operator ==($dart$core.Object other) => true;
 }
 Enum _$s$Enum$value1;
 
@@ -42,34 +42,47 @@ Enum get $new$Enum$value2 => $package$$new$Enum$value2;
 Enum get $new$Enum$value3 => $package$$new$Enum$value3;
 
 void $package$run() {
-    Enum val = $package$$new$Enum$value2;
-    $dart$core.int item = (() {
-        Enum switch$0 = val;
-        if ($dart$core.identical(switch$0, $package$$new$Enum$value1)) {
-            return 1;
-        } else if ($dart$core.identical(switch$0, $package$$new$Enum$value2)) {
-            return 2;
-        } else if ($dart$core.identical(switch$0, $package$$new$Enum$value3) || (null == switch$0)) {
-            return 3;
-        } else {
-            throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
-        }
-    })();
-    if (!(item == 2)) {
-        throw new $ceylon$language.AssertionError("Violated: item == 2");
+  Enum val = $package$$new$Enum$value2;
+  $dart$core.int item = (() {
+    Enum switch$0 = val;
+    if ($dart$core.identical(switch$0, $package$$new$Enum$value1)) {
+      return 1;
+    } else if ($dart$core.identical(switch$0, $package$$new$Enum$value2)) {
+      return 2;
+    } else if ($dart$core.identical(switch$0, $package$$new$Enum$value3) || (null == switch$0)) {
+      return 3;
+    } else {
+      throw new $ceylon$language.AssertionError("Supposedly exhaustive switch was not exhaustive");
     }
+  })();
+  if (!(item == 2)) {
+    throw new $ceylon$language.AssertionError("Violated: item == 2");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Enum":const{"mt":"c","nm":"Enum","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,114 +4,122 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class I$IC1 implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$IC1([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
+  I $outer$default$I;
+  I$IC1([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
 }
 class I$IC2 implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$IC2([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
+  I $outer$default$I;
+  I$IC2([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
 }
 class I$IC3 implements $ceylon$language.dart$$Basic {
-    I $outer$default$I;
-    I$IC3([I $outer$default$I]) {
-        this.$outer$default$I = $outer$default$I;
-    }
+  I $outer$default$I;
+  I$IC3([I $outer$default$I]) {
+    this.$outer$default$I = $outer$default$I;
+  }
 }
 abstract class I {
-    static I$IC1 $$new$I$IC1([final I $this]) => new I$IC1($this);
-    I$IC1 $new$I$IC1();
-    static I$IC2 $$new$I$IC2([final I $this]) => new I$IC2($this);
-    I$IC2 $new$I$IC2();
-    I$IC3 $new$I$IC3();
+  static I$IC1 $$new$I$IC1([final I $this]) => new I$IC1($this);
+  I$IC1 $new$I$IC1();
+  static I$IC2 $$new$I$IC2([final I $this]) => new I$IC2($this);
+  I$IC2 $new$I$IC2();
+  I$IC3 $new$I$IC3();
 }
 class C$CC1 implements $ceylon$language.dart$$Basic {
-    C $outer$default$C;
-    C$CC1([C $outer$default$C]) {
-        this.$outer$default$C = $outer$default$C;
-    }
+  C $outer$default$C;
+  C$CC1([C $outer$default$C]) {
+    this.$outer$default$C = $outer$default$C;
+  }
 }
 class C$CC2 implements $ceylon$language.dart$$Basic {
-    C $outer$default$C;
-    C$CC2([C $outer$default$C]) {
-        this.$outer$default$C = $outer$default$C;
-    }
+  C $outer$default$C;
+  C$CC2([C $outer$default$C]) {
+    this.$outer$default$C = $outer$default$C;
+  }
 }
 class C$CC3 implements $ceylon$language.dart$$Basic {
-    C $outer$default$C;
-    C$CC3([C $outer$default$C]) {
-        this.$outer$default$C = $outer$default$C;
-    }
+  C $outer$default$C;
+  C$CC3([C $outer$default$C]) {
+    this.$outer$default$C = $outer$default$C;
+  }
 }
 abstract class C implements $ceylon$language.dart$$Basic {
-    C() {}
-    C$CC1 $new$C$CC1() => new C$CC1(this);
-    C$CC2 $new$C$CC2() => new C$CC2(this);
-    C$CC3 $new$C$CC3();
+  C() {}
+  C$CC1 $new$C$CC1() => new C$CC1(this);
+  C$CC2 $new$C$CC2() => new C$CC2(this);
+  C$CC3 $new$C$CC3();
 }
 class D$IC1  extends I$IC1 {
-    D $outer$default$D;
-    I get $outer$default$I => $outer$default$D;
-    D$IC1([D $outer$default$D]) : super($outer$default$D) {
-        this.$outer$default$D = $outer$default$D;
-    }
+  D $outer$default$D;
+  I get $outer$default$I => $outer$default$D;
+  D$IC1([D $outer$default$D]) : super($outer$default$D) {
+    this.$outer$default$D = $outer$default$D;
+  }
 }
 class D$IC3  extends I$IC3 {
-    D $outer$default$D;
-    I get $outer$default$I => $outer$default$D;
-    D$IC3([D $outer$default$D]) : super($outer$default$D) {
-        this.$outer$default$D = $outer$default$D;
-    }
+  D $outer$default$D;
+  I get $outer$default$I => $outer$default$D;
+  D$IC3([D $outer$default$D]) : super($outer$default$D) {
+    this.$outer$default$D = $outer$default$D;
+  }
 }
 class D$CC1  extends C$CC1 {
-    D $outer$default$D;
-    C get $outer$default$C => $outer$default$D;
-    D$CC1([D $outer$default$D]) : super($outer$default$D) {
-        this.$outer$default$D = $outer$default$D;
-    }
+  D $outer$default$D;
+  C get $outer$default$C => $outer$default$D;
+  D$CC1([D $outer$default$D]) : super($outer$default$D) {
+    this.$outer$default$D = $outer$default$D;
+  }
 }
 class D$CC3  extends C$CC3 {
-    D $outer$default$D;
-    C get $outer$default$C => $outer$default$D;
-    D$CC3([D $outer$default$D]) : super($outer$default$D) {
-        this.$outer$default$D = $outer$default$D;
-    }
+  D $outer$default$D;
+  C get $outer$default$C => $outer$default$D;
+  D$CC3([D $outer$default$D]) : super($outer$default$D) {
+    this.$outer$default$D = $outer$default$D;
+  }
 }
 class D  extends C implements I {
-    D() {}
-    D$IC1 $new$I$IC1() => new D$IC1(this);
-    D$IC3 $new$I$IC3() => new D$IC3(this);
-    D$CC1 $new$C$CC1() => new D$CC1(this);
-    D$CC3 $new$C$CC3() => new D$CC3(this);
-    void test() {
-        D$IC1 d_ic1 = $new$I$IC1();
-        I$IC1 c_ic1_1 = I.$$new$I$IC1(this);
-        I$IC1 c_ic1_2 = I.$$new$I$IC1(this);
-        I$IC2 d_ic2 = $new$I$IC2();
-        I$IC2 c_ic2_1 = I.$$new$I$IC2(this);
-        I$IC2 c_ic2_2 = I.$$new$I$IC2(this);
-        D$IC3 d_ic3 = $new$I$IC3();
-        D$CC1 d_cc1 = $new$C$CC1();
-        C$CC1 c_cc1_1 = super.$new$C$CC1();
-        C$CC1 c_cc1_2 = super.$new$C$CC1();
-        C$CC2 d_cc2 = $new$C$CC2();
-        C$CC2 c_cc2_1 = super.$new$C$CC2();
-        C$CC2 c_cc2_2 = super.$new$C$CC2();
-        D$CC3 d_cc3 = $new$C$CC3();
-    }
-    I$IC2 $new$I$IC2() => I.$$new$I$IC2(this);
+  D() {}
+  D$IC1 $new$I$IC1() => new D$IC1(this);
+  D$IC3 $new$I$IC3() => new D$IC3(this);
+  D$CC1 $new$C$CC1() => new D$CC1(this);
+  D$CC3 $new$C$CC3() => new D$CC3(this);
+  void test() {
+    D$IC1 d_ic1 = $new$I$IC1();
+    I$IC1 c_ic1_1 = I.$$new$I$IC1(this);
+    I$IC1 c_ic1_2 = I.$$new$I$IC1(this);
+    I$IC2 d_ic2 = $new$I$IC2();
+    I$IC2 c_ic2_1 = I.$$new$I$IC2(this);
+    I$IC2 c_ic2_2 = I.$$new$I$IC2(this);
+    D$IC3 d_ic3 = $new$I$IC3();
+    D$CC1 d_cc1 = $new$C$CC1();
+    C$CC1 c_cc1_1 = super.$new$C$CC1();
+    C$CC1 c_cc1_2 = super.$new$C$CC1();
+    C$CC2 d_cc2 = $new$C$CC2();
+    C$CC2 c_cc2_1 = super.$new$C$CC2();
+    C$CC2 c_cc2_2 = super.$new$C$CC2();
+    D$CC3 d_cc3 = $new$C$CC3();
+  }
+  I$IC2 $new$I$IC2() => I.$$new$I$IC2(this);
 }
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC2":const{"mt":"c","nm":"IC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC2":const{"mt":"c","nm":"CC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"C","pk":"."},"sts":const[const{"nm":"I","pk":"."}],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"CC1","pk":"."},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"CC3","pk":"."},"sts":const[]},"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"IC1","pk":"."},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"IC3","pk":"."},"sts":const[]}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

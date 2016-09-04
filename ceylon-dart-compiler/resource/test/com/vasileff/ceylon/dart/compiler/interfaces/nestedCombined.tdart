@@ -4,58 +4,66 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class Outer$Inner$Innest {
-    Outer$Inner get $outer$default$Outer$Inner;
-    $dart$core.String get innestValue;
-    $dart$core.String innestFn();
-    static $dart$core.String $innestFn([final Outer$Inner$Innest $this]) {
-        return "innestFn";
-    }
-    void useFns();
-    static void $useFns([final Outer$Inner$Innest $this]) {
-        $dart$core.String a = $this.$outer$default$Outer$Inner.$outer$default$Outer.outerValue;
-        $dart$core.String b = $this.$outer$default$Outer$Inner.$outer$default$Outer.outerFn();
-        $dart$core.String c = $this.$outer$default$Outer$Inner.innerValue;
-        $dart$core.String d = $this.$outer$default$Outer$Inner.innerFn();
-        $dart$core.String e = $this.innestValue;
-        $dart$core.String f = $this.innestFn();
-        $dart$core.String g = $this.toString();
-    }
+  Outer$Inner get $outer$default$Outer$Inner;
+  $dart$core.String get innestValue;
+  $dart$core.String innestFn();
+  static $dart$core.String $innestFn([final Outer$Inner$Innest $this]) {
+    return "innestFn";
+  }
+  void useFns();
+  static void $useFns([final Outer$Inner$Innest $this]) {
+    $dart$core.String a = $this.$outer$default$Outer$Inner.$outer$default$Outer.outerValue;
+    $dart$core.String b = $this.$outer$default$Outer$Inner.$outer$default$Outer.outerFn();
+    $dart$core.String c = $this.$outer$default$Outer$Inner.innerValue;
+    $dart$core.String d = $this.$outer$default$Outer$Inner.innerFn();
+    $dart$core.String e = $this.innestValue;
+    $dart$core.String f = $this.innestFn();
+    $dart$core.String g = $this.toString();
+  }
 }
 abstract class Outer$Inner {
-    Outer get $outer$default$Outer;
-    $dart$core.String get innerValue;
-    $dart$core.String innerFn();
-    static $dart$core.String $innerFn([final Outer$Inner $this]) {
-        return "innerFn";
-    }
-    void useFns();
-    static void $useFns([final Outer$Inner $this]) {
-        $dart$core.String a = $this.$outer$default$Outer.outerValue;
-        $dart$core.String b = $this.$outer$default$Outer.outerFn();
-        $dart$core.String c = $this.innerValue;
-        $dart$core.String d = $this.innerFn();
-    }
+  Outer get $outer$default$Outer;
+  $dart$core.String get innerValue;
+  $dart$core.String innerFn();
+  static $dart$core.String $innerFn([final Outer$Inner $this]) {
+    return "innerFn";
+  }
+  void useFns();
+  static void $useFns([final Outer$Inner $this]) {
+    $dart$core.String a = $this.$outer$default$Outer.outerValue;
+    $dart$core.String b = $this.$outer$default$Outer.outerFn();
+    $dart$core.String c = $this.innerValue;
+    $dart$core.String d = $this.innerFn();
+  }
 }
 abstract class Outer {
-    $dart$core.String get outerValue;
-    $dart$core.String outerFn();
-    static $dart$core.String $outerFn([final Outer $this]) {
-        return "outerFn";
-    }
-    void useFns();
-    static void $useFns([final Outer $this]) {
-        $dart$core.String a = $this.outerValue;
-        $dart$core.String b = $this.outerFn();
-    }
+  $dart$core.String get outerValue;
+  $dart$core.String outerFn();
+  static $dart$core.String $outerFn([final Outer $this]) {
+    return "outerFn";
+  }
+  void useFns();
+  static void $useFns([final Outer $this]) {
+    $dart$core.String a = $this.outerValue;
+    $dart$core.String b = $this.outerFn();
+  }
 }
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"Outer":const{"mt":"i","nm":"Outer","sts":const[],"\$i":const{"Inner":const{"mt":"i","nm":"Inner","sts":const[],"\$i":const{"Innest":const{"mt":"i","nm":"Innest","sts":const[]}}}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

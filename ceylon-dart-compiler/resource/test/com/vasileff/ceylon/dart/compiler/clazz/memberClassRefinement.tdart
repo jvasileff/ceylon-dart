@@ -4,45 +4,58 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class memberClassRefinement$Super$Inner implements $ceylon$language.dart$$Basic {
-    memberClassRefinement$Super $outer$default$memberClassRefinement$Super;
-    memberClassRefinement$Super$Inner([memberClassRefinement$Super $outer$default$memberClassRefinement$Super]) {
-        this.$outer$default$memberClassRefinement$Super = $outer$default$memberClassRefinement$Super;
-    }
-    $dart$core.String toString() => "Super.inner";
-    memberClassRefinement$Super$Inner get newInner => $outer$default$memberClassRefinement$Super.$new$memberClassRefinement$Super$Inner();
+  memberClassRefinement$Super $outer$default$memberClassRefinement$Super;
+  memberClassRefinement$Super$Inner([memberClassRefinement$Super $outer$default$memberClassRefinement$Super]) {
+    this.$outer$default$memberClassRefinement$Super = $outer$default$memberClassRefinement$Super;
+  }
+  $dart$core.String toString() => "Super.inner";
+  memberClassRefinement$Super$Inner get newInner => $outer$default$memberClassRefinement$Super.$new$memberClassRefinement$Super$Inner();
 }
 class memberClassRefinement$Super implements $ceylon$language.dart$$Basic {
-    memberClassRefinement$Super() {}
-    memberClassRefinement$Super$Inner $new$memberClassRefinement$Super$Inner() => new memberClassRefinement$Super$Inner(this);
+  memberClassRefinement$Super() {}
+  memberClassRefinement$Super$Inner $new$memberClassRefinement$Super$Inner() => new memberClassRefinement$Super$Inner(this);
 }
 class memberClassRefinement$Sub$Inner  extends memberClassRefinement$Super$Inner {
-    memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub;
-    memberClassRefinement$Super get $outer$default$memberClassRefinement$Super => $outer$default$memberClassRefinement$Sub;
-    memberClassRefinement$Sub$Inner([memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub]) : super($outer$default$memberClassRefinement$Sub) {
-        this.$outer$default$memberClassRefinement$Sub = $outer$default$memberClassRefinement$Sub;
-    }
-    $dart$core.String toString() => "Sub.inner";
+  memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub;
+  memberClassRefinement$Super get $outer$default$memberClassRefinement$Super => $outer$default$memberClassRefinement$Sub;
+  memberClassRefinement$Sub$Inner([memberClassRefinement$Sub $outer$default$memberClassRefinement$Sub]) : super($outer$default$memberClassRefinement$Sub) {
+    this.$outer$default$memberClassRefinement$Sub = $outer$default$memberClassRefinement$Sub;
+  }
+  $dart$core.String toString() => "Sub.inner";
 }
 class memberClassRefinement$Sub  extends memberClassRefinement$Super {
-    memberClassRefinement$Sub() {}
-    memberClassRefinement$Sub$Inner $new$memberClassRefinement$Super$Inner() => new memberClassRefinement$Sub$Inner(this);
+  memberClassRefinement$Sub() {}
+  memberClassRefinement$Sub$Inner $new$memberClassRefinement$Super$Inner() => new memberClassRefinement$Sub$Inner(this);
 }
 void $package$memberClassRefinement() {
-    if (!((new memberClassRefinement$Sub()).$new$memberClassRefinement$Super$Inner().newInner is memberClassRefinement$Sub$Inner)) {
-        throw new $ceylon$language.AssertionError("Violated: Sub().Inner().newInner is Sub.Inner");
-    }
+  if (!((new memberClassRefinement$Sub()).$new$memberClassRefinement$Super$Inner().newInner is memberClassRefinement$Sub$Inner)) {
+    throw new $ceylon$language.AssertionError("Violated: Sub().Inner().newInner is Sub.Inner");
+  }
 }
 
 void memberClassRefinement() => $package$memberClassRefinement();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "memberClassRefinement" :
+    $package$memberClassRefinement();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

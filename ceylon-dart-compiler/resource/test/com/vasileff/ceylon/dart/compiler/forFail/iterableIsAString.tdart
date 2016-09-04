@@ -8,28 +8,41 @@ $dart$core.String $package$myIterable = "abcd";
 $dart$core.String get myIterable => $package$myIterable;
 
 void $package$run() {{
-        $ceylon$language.Iterator iterator$0 = $ceylon$language.$ceylonString($package$myIterable).iterator();
-        $dart$core.Object element$1;
-        while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
-            $ceylon$language.Character x;
-            {
-                x = element$1 as $ceylon$language.Character;
-            }
-            $ceylon$language.print(x);
-        }
+    $ceylon$language.Iterator iterator$0 = $ceylon$language.$ceylonString($package$myIterable).iterator();
+    $dart$core.Object element$1;
+    while ((element$1 = iterator$0.next()) is !$ceylon$language.Finished) {
+      $ceylon$language.Character x;
+      {
+        x = element$1 as $ceylon$language.Character;
+      }
+      $ceylon$language.print(x);
     }
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

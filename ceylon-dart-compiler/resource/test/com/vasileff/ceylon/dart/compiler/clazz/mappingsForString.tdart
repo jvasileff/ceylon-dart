@@ -4,106 +4,119 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class stringAssign$A implements $ceylon$language.dart$$Basic {
-    stringAssign$A() {
-        _x = "1";
-    }
-    $dart$core.String _x;
-    $dart$core.String toString() => _x;
-    void set string($dart$core.String string) {
-        _x = string;
-    }
+  stringAssign$A() {
+    _x = "1";
+  }
+  $dart$core.String _x;
+  $dart$core.String toString() => _x;
+  void set string($dart$core.String string) {
+    _x = string;
+  }
 }
 void $package$stringAssign() {
-    stringAssign$A a = new stringAssign$A();
-    if (!(a.toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
-    }
-    a.string = "2";
-    if (!(a.toString() == "2")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
-    }
+  stringAssign$A a = new stringAssign$A();
+  if (!(a.toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+  }
+  a.string = "2";
+  if (!(a.toString() == "2")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
+  }
 }
 
 void stringAssign() => $package$stringAssign();
 
 class stringReference$A implements $ceylon$language.dart$$Basic {
-    stringReference$A() {
-        string = "1";
-    }
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+  stringReference$A() {
+    string = "1";
+  }
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 void $package$stringReference() {
-    stringReference$A a = new stringReference$A();
-    if (!(a.toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
-    }
+  stringReference$A a = new stringReference$A();
+  if (!(a.toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+  }
 }
 
 void stringReference() => $package$stringReference();
 
 class stringReferenceVariable$A implements $ceylon$language.dart$$Basic {
-    stringReferenceVariable$A() {
-        string = "1";
-    }
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+  stringReferenceVariable$A() {
+    string = "1";
+  }
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 void $package$stringReferenceVariable() {
-    stringReferenceVariable$A a = new stringReferenceVariable$A();
-    if (!(a.toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
-    }
-    a.string = "2";
-    if (!(a.toString() == "2")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
-    }
+  stringReferenceVariable$A a = new stringReferenceVariable$A();
+  if (!(a.toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"1\"");
+  }
+  a.string = "2";
+  if (!(a.toString() == "2")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"2\"");
+  }
 }
 
 void stringReferenceVariable() => $package$stringReferenceVariable();
 
 abstract class stringInterface$I {
-    $dart$core.String toString();
-    static $dart$core.String $get$string([final stringInterface$I $this]) => "1";
-    void set string($dart$core.String string);
-    static $dart$core.String $set$string([final stringInterface$I $this, $dart$core.String string]) {
-        $ceylon$language.print($ceylon$language.$ceylonString(string));
-        return string;
-    }
+  $dart$core.String toString();
+  static $dart$core.String $get$string([final stringInterface$I $this]) => "1";
+  void set string($dart$core.String string);
+  static $dart$core.String $set$string([final stringInterface$I $this, $dart$core.String string]) {
+    $ceylon$language.print($ceylon$language.$ceylonString(string));
+    return string;
+  }
 }
 class stringInterface$o_ implements $ceylon$language.dart$$Basic, stringInterface$I {
-    stringInterface$o_() {}
-    $dart$core.String toString() => stringInterface$I.$get$string(this);
-    void set string($dart$core.String string) {
-        stringInterface$I.$set$string(this, string);
-    }
+  stringInterface$o_() {}
+  $dart$core.String toString() => stringInterface$I.$get$string(this);
+  void set string($dart$core.String string) {
+    stringInterface$I.$set$string(this, string);
+  }
 }
 void $package$stringInterface() {
-    final stringInterface$o_ o = new stringInterface$o_();
-    if (!(o.toString() == "1")) {
-        throw new $ceylon$language.AssertionError("Violated: o.string == \"1\"");
-    }
+  final stringInterface$o_ o = new stringInterface$o_();
+  if (!(o.toString() == "1")) {
+    throw new $ceylon$language.AssertionError("Violated: o.string == \"1\"");
+  }
 }
 
 void stringInterface() => $package$stringInterface();
 
 void $package$run() {
-    $package$stringAssign();
-    $package$stringReference();
-    $package$stringReferenceVariable();
-    $package$stringInterface();
+  $package$stringAssign();
+  $package$stringReference();
+  $package$stringReferenceVariable();
+  $package$stringInterface();
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

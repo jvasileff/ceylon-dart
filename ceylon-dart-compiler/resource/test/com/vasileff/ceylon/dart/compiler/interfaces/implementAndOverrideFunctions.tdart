@@ -4,31 +4,39 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class I {
-    $dart$core.String f1();
-    $dart$core.String f2();
+  $dart$core.String f1();
+  $dart$core.String f2();
 }
 abstract class J implements I {
-    $dart$core.String f1();
-    static $dart$core.String $f1([final J $this]) => "";
-    $dart$core.String f2();
-    static $dart$core.String $f2([final J $this]) {
-        return "";
-    }
-    $dart$core.String fj1();
-    static $dart$core.String $fj1([final J $this]) => $this.f1();
-    $dart$core.String fj2();
-    static $dart$core.String $fj2([final J $this]) {
-        return $this.f2();
-    }
+  $dart$core.String f1();
+  static $dart$core.String $f1([final J $this]) => "";
+  $dart$core.String f2();
+  static $dart$core.String $f2([final J $this]) {
+    return "";
+  }
+  $dart$core.String fj1();
+  static $dart$core.String $fj1([final J $this]) => $this.f1();
+  $dart$core.String fj2();
+  static $dart$core.String $fj2([final J $this]) {
+    return $this.f2();
+  }
 }
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"J":const{"mt":"i","nm":"J","sts":const[const{"nm":"I","pk":"."}]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

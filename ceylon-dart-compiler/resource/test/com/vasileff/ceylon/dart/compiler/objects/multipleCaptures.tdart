@@ -4,46 +4,59 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class run$I1$I2$i2Foo$o_ implements $ceylon$language.dart$$Basic, run$I1$I2 {
-    run$I1$I2 $outer$default$run$I1$I2;
-    run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2;
-    $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
-    $dart$core.String $capture$run$s1;
-    run$I1$I2$i2Foo$o_([run$I1$I2 $outer$default$run$I1$I2, $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String $capture$run$s1]) {
-        this.$outer$default$run$I1$I2 = $outer$default$run$I1$I2;
-        this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo = $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
-        this.$capture$run$s1 = $capture$run$s1;
-    }
-    $dart$core.String get i2fooo => $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
-    void i2Foo() => run$I1$I2.$i2Foo(this);
-    $dart$core.String get i1s1 => run$I1.$get$i1s1(this);
+  run$I1$I2 $outer$default$run$I1$I2;
+  run$I1 get $outer$default$run$I1 => $outer$default$run$I1$I2;
+  $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
+  $dart$core.String $capture$run$s1;
+  run$I1$I2$i2Foo$o_([run$I1$I2 $outer$default$run$I1$I2, $dart$core.String $capture$run$run$I1$run$I1$I2$i2Foo$i2foo, $dart$core.String $capture$run$s1]) {
+    this.$outer$default$run$I1$I2 = $outer$default$run$I1$I2;
+    this.$capture$run$run$I1$run$I1$I2$i2Foo$i2foo = $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
+    this.$capture$run$s1 = $capture$run$s1;
+  }
+  $dart$core.String get i2fooo => $capture$run$run$I1$run$I1$I2$i2Foo$i2foo;
+  void i2Foo() => run$I1$I2.$i2Foo(this);
+  $dart$core.String get i1s1 => run$I1.$get$i1s1(this);
 }
 abstract class run$I1$I2 implements run$I1 {
-    run$I1 get $outer$default$run$I1;
-    void i2Foo();
-    static void $i2Foo([final run$I1$I2 $this]) {
-        $dart$core.String i2foo = "";
-        final run$I1$I2$i2Foo$o_ o = new run$I1$I2$i2Foo$o_($this, i2foo, $this.$capture$run$s1);
-    }
+  run$I1 get $outer$default$run$I1;
+  void i2Foo();
+  static void $i2Foo([final run$I1$I2 $this]) {
+    $dart$core.String i2foo = "";
+    final run$I1$I2$i2Foo$o_ o = new run$I1$I2$i2Foo$o_($this, i2foo, $this.$capture$run$s1);
+  }
 }
 abstract class run$I1 {
-    $dart$core.String get i1s1;
-    static $dart$core.String $get$i1s1([final run$I1 $this]) => $this.$capture$run$s1;
-    $dart$core.String $capture$run$s1;
+  $dart$core.String get i1s1;
+  static $dart$core.String $get$i1s1([final run$I1 $this]) => $this.$capture$run$s1;
+  $dart$core.String $capture$run$s1;
 }
 void $package$run() {
-    $dart$core.String s1 = "";
+  $dart$core.String s1 = "";
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

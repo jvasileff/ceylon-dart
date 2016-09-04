@@ -4,61 +4,74 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A implements $ceylon$language.dart$$Basic {
-    void _$init$A([$dart$core.int $bitmap]) {
-        if (0 != ($bitmap & 1)) {}
-    }
-    A.create() : this.create$d(1);
-    A.create$d([$dart$core.int $bitmap]) {
-        _$init$A($bitmap | 1);
-    }
-    $dart$core.String toString() => "A";
+  void _$init$A([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  A.create() : this.create$d(1);
+  A.create$d([$dart$core.int $bitmap]) {
+    _$init$A($bitmap | 1);
+  }
+  $dart$core.String toString() => "A";
 }
 class B  extends A {
-    B() : super.create() {}
+  B() : super.create() {}
 }
 class C  extends A {
-    void _$init$C([$dart$core.int $bitmap]) {
-        if (0 != ($bitmap & 1)) {}
-    }
-    C.create() : this.create$d(1);
-    C.create$d([$dart$core.int $bitmap]) : super.create() {
-        _$init$C($bitmap | 1);
-    }
+  void _$init$C([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  C.create() : this.create$d(1);
+  C.create$d([$dart$core.int $bitmap]) : super.create() {
+    _$init$C($bitmap | 1);
+  }
 }
 class D  extends A {
-    void _$init$D([$dart$core.int $bitmap]) {
-        if (0 != ($bitmap & 1)) {}
-    }
-    D.create() : this.create$d(1);
-    D.create$d([$dart$core.int $bitmap]) : super.create() {
-        _$init$D($bitmap | 1);
-    }
+  void _$init$D([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  D.create() : this.create$d(1);
+  D.create$d([$dart$core.int $bitmap]) : super.create() {
+    _$init$D($bitmap | 1);
+  }
 }
 void $package$run() {
-    if (!((new A.create()).toString() == "A")) {
-        throw new $ceylon$language.AssertionError("Violated: A.create().string == \"A\"");
-    }
-    if (!((new B()).toString() == "A")) {
-        throw new $ceylon$language.AssertionError("Violated: B().string == \"A\"");
-    }
-    if (!((new C.create()).toString() == "A")) {
-        throw new $ceylon$language.AssertionError("Violated: C.create().string == \"A\"");
-    }
-    if (!((new D.create()).toString() == "A")) {
-        throw new $ceylon$language.AssertionError("Violated: D.create().string == \"A\"");
-    }
+  if (!((new A.create()).toString() == "A")) {
+    throw new $ceylon$language.AssertionError("Violated: A.create().string == \"A\"");
+  }
+  if (!((new B()).toString() == "A")) {
+    throw new $ceylon$language.AssertionError("Violated: B().string == \"A\"");
+  }
+  if (!((new C.create()).toString() == "A")) {
+    throw new $ceylon$language.AssertionError("Violated: C.create().string == \"A\"");
+  }
+  if (!((new D.create()).toString() == "A")) {
+    throw new $ceylon$language.AssertionError("Violated: D.create().string == \"A\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"ACreate":const{"mt":"c","nm":"ACreate","super":const{"nm":"A","pk":"."},"sts":const[]},"B":const{"mt":"c","nm":"B","super":const{"nm":"ACreate","pk":"."},"sts":const[]},"C":const{"mt":"c","nm":"C","super":const{"nm":"ACreate","pk":"."},"sts":const[]},"D":const{"mt":"c","nm":"D","super":const{"nm":"A","pk":"."},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

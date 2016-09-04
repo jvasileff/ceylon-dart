@@ -4,40 +4,48 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class forwardDeclaredValueMapped$A implements $ceylon$language.dart$$Basic, $ceylon$language.Invertible {
-    forwardDeclaredValueMapped$A() {
-        _negated$f = () => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
-        _string$f = () => "hello";
-        _hashCode$f = () => 1;
-    }
-    forwardDeclaredValueMapped$A operator +(forwardDeclaredValueMapped$A other) => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
-    $dart$core.Function _negated$f;
-    forwardDeclaredValueMapped$A operator -() => _negated$f();
-    $dart$core.Function _string$f;
-    $dart$core.String toString() => _string$f();
-    $dart$core.Function _hashCode$f;
-    $dart$core.int get hashCode => _hashCode$f();
-    $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
+  forwardDeclaredValueMapped$A() {
+    _negated$f = () => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
+    _string$f = () => "hello";
+    _hashCode$f = () => 1;
+  }
+  forwardDeclaredValueMapped$A operator +(forwardDeclaredValueMapped$A other) => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
+  $dart$core.Function _negated$f;
+  forwardDeclaredValueMapped$A operator -() => _negated$f();
+  $dart$core.Function _string$f;
+  $dart$core.String toString() => _string$f();
+  $dart$core.Function _hashCode$f;
+  $dart$core.int get hashCode => _hashCode$f();
+  $dart$core.Object operator -($dart$core.Object other) => $ceylon$language.Invertible.$minus(this, other);
 }
 void $package$forwardDeclaredValueMapped() {
-    forwardDeclaredValueMapped$A a = new forwardDeclaredValueMapped$A();
-    if (!(a.toString() == "hello")) {
-        throw new $ceylon$language.AssertionError("Violated: a.string == \"hello\"");
-    }
-    if (!(a.hashCode == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
-    }
+  forwardDeclaredValueMapped$A a = new forwardDeclaredValueMapped$A();
+  if (!(a.toString() == "hello")) {
+    throw new $ceylon$language.AssertionError("Violated: a.string == \"hello\"");
+  }
+  if (!(a.hashCode == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: a.hash == 1");
+  }
 }
 
 void forwardDeclaredValueMapped() => $package$forwardDeclaredValueMapped();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,53 +4,61 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A$B$C$asdf$D implements $ceylon$language.dart$$Basic {
-    A$B$C $outer$default$A$B$C;
-    $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1;
-    A$B$C$asdf$D([A$B$C $outer$default$A$B$C, $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String x]) {
-        this.$outer$default$A$B$C = $outer$default$A$B$C;
-        this.$capture$A$A$B$A$B$C$asdf$cap1 = $capture$A$A$B$A$B$C$asdf$cap1;
-        this._x = x;
-    }
-    $dart$core.String _x;
-    $dart$core.String get useit => $capture$A$A$B$A$B$C$asdf$cap1;
+  A$B$C $outer$default$A$B$C;
+  $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1;
+  A$B$C$asdf$D([A$B$C $outer$default$A$B$C, $dart$core.String $capture$A$A$B$A$B$C$asdf$cap1, $dart$core.String x]) {
+    this.$outer$default$A$B$C = $outer$default$A$B$C;
+    this.$capture$A$A$B$A$B$C$asdf$cap1 = $capture$A$A$B$A$B$C$asdf$cap1;
+    this._x = x;
+  }
+  $dart$core.String _x;
+  $dart$core.String get useit => $capture$A$A$B$A$B$C$asdf$cap1;
 }
 class A$B$C implements $ceylon$language.dart$$Basic {
-    A$B $outer$default$A$B;
-    A$B$C([A$B $outer$default$A$B]) {
-        this.$outer$default$A$B = $outer$default$A$B;
-        _newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
-        _newB2 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
-        _newB3 = new $ceylon$language.dart$Callable(() => new A$B$C($outer$default$A$B));
-    }
-    $ceylon$language.Callable _newB1;
-    $ceylon$language.Callable _newB2;
-    $ceylon$language.Callable _newB3;
-    void asdf() {
-        $dart$core.String cap1 = "";
-        $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.$dartString($0)));
-    }
+  A$B $outer$default$A$B;
+  A$B$C([A$B $outer$default$A$B]) {
+    this.$outer$default$A$B = $outer$default$A$B;
+    _newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
+    _newB2 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B$C($r as A$B)));
+    _newB3 = new $ceylon$language.dart$Callable(() => new A$B$C($outer$default$A$B));
+  }
+  $ceylon$language.Callable _newB1;
+  $ceylon$language.Callable _newB2;
+  $ceylon$language.Callable _newB3;
+  void asdf() {
+    $dart$core.String cap1 = "";
+    $ceylon$language.Callable newd = new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => new A$B$C$asdf$D(this, cap1, $ceylon$language.$dartString($0)));
+  }
 }
 class A$B implements $ceylon$language.dart$$Basic {
-    A $outer$default$A;
-    A$B([A $outer$default$A]) {
-        this.$outer$default$A = $outer$default$A;
-        _newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B($r as A)));
-        _newB2 = new $ceylon$language.dart$Callable(() => new A$B($outer$default$A));
-    }
-    $ceylon$language.Callable _newB1;
-    $ceylon$language.Callable _newB2;
+  A $outer$default$A;
+  A$B([A $outer$default$A]) {
+    this.$outer$default$A = $outer$default$A;
+    _newB1 = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => new A$B($r as A)));
+    _newB2 = new $ceylon$language.dart$Callable(() => new A$B($outer$default$A));
+  }
+  $ceylon$language.Callable _newB1;
+  $ceylon$language.Callable _newB2;
 }
 class A implements $ceylon$language.dart$$Basic {
-    A() {}
+  A() {}
 }
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
+
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

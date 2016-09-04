@@ -4,52 +4,65 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I$J {
-    run$I get $outer$default$run$I;
-    $dart$core.String get fooIJ;
-    static $dart$core.String $get$fooIJ([final run$I$J $this]) => $this.$outer$default$run$I.fooI;
+  run$I get $outer$default$run$I;
+  $dart$core.String get fooIJ;
+  static $dart$core.String $get$fooIJ([final run$I$J $this]) => $this.$outer$default$run$I.fooI;
 }
 abstract class run$I {
-    $dart$core.String get fooI;
-    static $dart$core.String $get$fooI([final run$I $this]) => "fooI";
+  $dart$core.String get fooI;
+  static $dart$core.String $get$fooI([final run$I $this]) => "fooI";
 }
 class run$C$Middle$D implements $ceylon$language.dart$$Basic, run$I$J {
-    run$C$Middle $outer$default$run$C$Middle;
-    run$I get $outer$default$run$I => $outer$default$run$C$Middle;
-    run$C$Middle$D([run$C$Middle $outer$default$run$C$Middle]) {
-        this.$outer$default$run$C$Middle = $outer$default$run$C$Middle;
-    }
-    $dart$core.String get fooIJ => run$I$J.$get$fooIJ(this);
+  run$C$Middle $outer$default$run$C$Middle;
+  run$I get $outer$default$run$I => $outer$default$run$C$Middle;
+  run$C$Middle$D([run$C$Middle $outer$default$run$C$Middle]) {
+    this.$outer$default$run$C$Middle = $outer$default$run$C$Middle;
+  }
+  $dart$core.String get fooIJ => run$I$J.$get$fooIJ(this);
 }
 class run$C$Middle implements $ceylon$language.dart$$Basic, run$I {
-    run$C $outer$default$run$C;
-    run$C$Middle([run$C $outer$default$run$C]) {
-        this.$outer$default$run$C = $outer$default$run$C;
-    }
-    run$C$Middle$D $new$run$C$Middle$D() => new run$C$Middle$D(this);
-    $dart$core.String get fooI => run$I.$get$fooI(this);
+  run$C $outer$default$run$C;
+  run$C$Middle([run$C $outer$default$run$C]) {
+    this.$outer$default$run$C = $outer$default$run$C;
+  }
+  run$C$Middle$D $new$run$C$Middle$D() => new run$C$Middle$D(this);
+  $dart$core.String get fooI => run$I.$get$fooI(this);
 }
 class run$C implements $ceylon$language.dart$$Basic, run$I {
-    run$C() {}
-    $dart$core.String get fooI => "fooI from C";
-    run$C$Middle $new$run$C$Middle() => new run$C$Middle(this);
+  run$C() {}
+  $dart$core.String get fooI => "fooI from C";
+  run$C$Middle $new$run$C$Middle() => new run$C$Middle(this);
 }
 void $package$run() {
-    if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().fooIJ == "fooI")) {
-        throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
-    }
-    $ceylon$language.print($ceylon$language.$ceylonString("done."));
+  if (!((new run$C()).$new$run$C$Middle().$new$run$C$Middle$D().fooIJ == "fooI")) {
+    throw new $ceylon$language.AssertionError("Violated: C().Middle().D().fooIJ == \"fooI\"");
+  }
+  $ceylon$language.print($ceylon$language.$ceylonString("done."));
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

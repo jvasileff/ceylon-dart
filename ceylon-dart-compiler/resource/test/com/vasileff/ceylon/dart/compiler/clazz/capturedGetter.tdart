@@ -4,55 +4,68 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I {
-    $dart$core.String get accessVal;
-    static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val$get();
-    $dart$core.Function $capture$run$val$get;
+  $dart$core.String get accessVal;
+  static $dart$core.String $get$accessVal([final run$I $this]) => $this.$capture$run$val$get();
+  $dart$core.Function $capture$run$val$get;
 }
 class run$C implements $ceylon$language.dart$$Basic, run$I {
-    $dart$core.Function $capture$run$val$get;
-    run$C([$dart$core.Function $capture$run$val$get]) {
-        this.$capture$run$val$get = $capture$run$val$get;
-    }
-    $dart$core.String get accessVal => $capture$run$val$get();
+  $dart$core.Function $capture$run$val$get;
+  run$C([$dart$core.Function $capture$run$val$get]) {
+    this.$capture$run$val$get = $capture$run$val$get;
+  }
+  $dart$core.String get accessVal => $capture$run$val$get();
 }
 class run$D implements $ceylon$language.dart$$Basic, run$I {
-    $dart$core.Function $capture$run$val$get;
-    void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
-        if (0 != ($bitmap & 2)) {
-            this.$capture$run$val$get = $capture$run$val$get;
-        }
-        if (0 != ($bitmap & 1)) {
-            this.$capture$run$val$get = $capture$run$val$get;
-        }
+  $dart$core.Function $capture$run$val$get;
+  void _$init$run$run$D([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+    if (0 != ($bitmap & 2)) {
+      this.$capture$run$val$get = $capture$run$val$get;
     }
-    run$D([$dart$core.Function $capture$run$val$get]) : this.$d(2, $capture$run$val$get);
-    run$D.$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
-        _$init$run$run$D($bitmap | 2, $capture$run$val$get);
+    if (0 != ($bitmap & 1)) {
+      this.$capture$run$val$get = $capture$run$val$get;
     }
-    run$D.create([$dart$core.Function $capture$run$val$get]) : this.create$d(1, $capture$run$val$get);
-    run$D.create$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
-        _$init$run$run$D($bitmap | 1, $capture$run$val$get);
-    }
-    $dart$core.String get accessVal => $capture$run$val$get();
+  }
+  run$D([$dart$core.Function $capture$run$val$get]) : this.$d(2, $capture$run$val$get);
+  run$D.$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+    _$init$run$run$D($bitmap | 2, $capture$run$val$get);
+  }
+  run$D.create([$dart$core.Function $capture$run$val$get]) : this.create$d(1, $capture$run$val$get);
+  run$D.create$d([$dart$core.int $bitmap, $dart$core.Function $capture$run$val$get]) {
+    _$init$run$run$D($bitmap | 1, $capture$run$val$get);
+  }
+  $dart$core.String get accessVal => $capture$run$val$get();
 }
 void $package$run() {
-    $dart$core.String val$get() => "hello";
+  $dart$core.String val$get() => "hello";
 
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$C(val$get)).accessVal));
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$D(val$get)).accessVal));
-    $ceylon$language.print($ceylon$language.$ceylonString((new run$D.create(val$get)).accessVal));
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$C(val$get)).accessVal));
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$D(val$get)).accessVal));
+  $ceylon$language.print($ceylon$language.$ceylonString((new run$D.create(val$get)).accessVal));
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

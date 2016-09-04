@@ -56,37 +56,45 @@ $dart$core.Object $package$booleanObject = $ceylon$language.$true;
 $dart$core.Object get booleanObject => $package$booleanObject;
 
 void $package$callFunctions() {
-    $package$f1($package$booleanBoolean);
-    $package$f2($package$booleanBoolean);
-    $package$f2(null);
-    $package$f3($ceylon$language.$ceylonBoolean($package$booleanBoolean));
-    $package$f3($package$booleanObject);
-    $package$f4($ceylon$language.$ceylonBoolean($package$booleanBoolean));
-    $package$f4($package$booleanObject);
-    $package$f4(null);
-    $package$f5(true);
-    $package$f6(true);
-    $package$f6(null);
-    $package$f7(false);
-    $package$f8(false);
-    $package$f8(null);
-    $package$f9(true);
-    $package$f10($package$booleanBoolean);
-    $package$f10($package$booleanBoolean);
-    $package$f11($package$booleanBoolean);
-    $package$f11($package$booleanBoolean);
+  $package$f1($package$booleanBoolean);
+  $package$f2($package$booleanBoolean);
+  $package$f2(null);
+  $package$f3($ceylon$language.$ceylonBoolean($package$booleanBoolean));
+  $package$f3($package$booleanObject);
+  $package$f4($ceylon$language.$ceylonBoolean($package$booleanBoolean));
+  $package$f4($package$booleanObject);
+  $package$f4(null);
+  $package$f5(true);
+  $package$f6(true);
+  $package$f6(null);
+  $package$f7(false);
+  $package$f8(false);
+  $package$f8(null);
+  $package$f9(true);
+  $package$f10($package$booleanBoolean);
+  $package$f10($package$booleanBoolean);
+  $package$f11($package$booleanBoolean);
+  $package$f11($package$booleanBoolean);
 }
 
 void callFunctions() => $package$callFunctions();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

@@ -4,118 +4,131 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-    $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
-        $dart$core.bool step$0$expired$0 = false;
-        $dart$core.bool step$0$1() {
-            if (step$0$expired$0) {
-                return false;
-            }
-            step$0$expired$0 = true;
-            return true;
-        }
+  $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
+    $dart$core.bool step$0$expired$0 = false;
+    $dart$core.bool step$0$1() {
+      if (step$0$expired$0) {
+        return false;
+      }
+      step$0$expired$0 = true;
+      return true;
+    }
 
-        $ceylon$language.Iterator iterator_1$2;
-        $dart$core.bool step$1$Init$5() {
-            if (iterator_1$2 != null) {
-                return true;
-            }
-            if (!step$0$1()) {
-                return false;
-            }
-            iterator_1$2 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
-            return true;
-        }
+    $ceylon$language.Iterator iterator_1$2;
+    $dart$core.bool step$1$Init$5() {
+      if (iterator_1$2 != null) {
+        return true;
+      }
+      if (!step$0$1()) {
+        return false;
+      }
+      iterator_1$2 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
+      return true;
+    }
 
-        $ceylon$language.Integer i$4;
-        $dart$core.bool step$1$6() {
-            while (step$1$Init$5()) {
-                $dart$core.Object next$3;
-                if ((next$3 = iterator_1$2.next()) is !$ceylon$language.Finished) {
-                    $ceylon$language.Integer i;
-                    {
-                        i = next$3 as $ceylon$language.Integer;
-                    }
-                    i$4 = i;
-                    return true;
-                }
-                iterator_1$2 = null;
-            }
-            return false;
+    $ceylon$language.Integer i$4;
+    $dart$core.bool step$1$6() {
+      while (step$1$Init$5()) {
+        $dart$core.Object next$3;
+        if ((next$3 = iterator_1$2.next()) is !$ceylon$language.Finished) {
+          $ceylon$language.Integer i;
+          {
+            i = next$3 as $ceylon$language.Integer;
+          }
+          i$4 = i;
+          return true;
         }
+        iterator_1$2 = null;
+      }
+      return false;
+    }
 
-        $dart$core.Object step$2$7() {
-            if (!step$1$6()) {
-                return $ceylon$language.finished;
-            }
-            $ceylon$language.Integer i = i$4;
-            return i;
+    $dart$core.Object step$2$7() {
+      if (!step$1$6()) {
+        return $ceylon$language.finished;
+      }
+      $ceylon$language.Integer i = i$4;
+      return i;
+    }
+
+    return new $ceylon$language.dart$Callable(step$2$7);
+  }));
+  $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
+    $dart$core.bool step$0$expired$8 = false;
+    $dart$core.bool step$0$9() {
+      if (step$0$expired$8) {
+        return false;
+      }
+      step$0$expired$8 = true;
+      return true;
+    }
+
+    $ceylon$language.Iterator iterator_1$10;
+    $dart$core.bool step$1$Init$13() {
+      if (iterator_1$10 != null) {
+        return true;
+      }
+      if (!step$0$9()) {
+        return false;
+      }
+      iterator_1$10 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
+      return true;
+    }
+
+    $ceylon$language.Integer i$12;
+    $dart$core.bool step$1$14() {
+      while (step$1$Init$13()) {
+        $dart$core.Object next$11;
+        if ((next$11 = iterator_1$10.next()) is !$ceylon$language.Finished) {
+          $ceylon$language.Integer i;
+          {
+            i = next$11 as $ceylon$language.Integer;
+          }
+          i$12 = i;
+          return true;
         }
+        iterator_1$10 = null;
+      }
+      return false;
+    }
 
-        return new $ceylon$language.dart$Callable(step$2$7);
-    }));
-    $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
-        $dart$core.bool step$0$expired$8 = false;
-        $dart$core.bool step$0$9() {
-            if (step$0$expired$8) {
-                return false;
-            }
-            step$0$expired$8 = true;
-            return true;
-        }
+    $dart$core.Object step$2$15() {
+      if (!step$1$14()) {
+        return $ceylon$language.finished;
+      }
+      $ceylon$language.Integer i = i$12;
+      return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.$ceylonString("nope");
+    }
 
-        $ceylon$language.Iterator iterator_1$10;
-        $dart$core.bool step$1$Init$13() {
-            if (iterator_1$10 != null) {
-                return true;
-            }
-            if (!step$0$9()) {
-                return false;
-            }
-            iterator_1$10 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
-            return true;
-        }
-
-        $ceylon$language.Integer i$12;
-        $dart$core.bool step$1$14() {
-            while (step$1$Init$13()) {
-                $dart$core.Object next$11;
-                if ((next$11 = iterator_1$10.next()) is !$ceylon$language.Finished) {
-                    $ceylon$language.Integer i;
-                    {
-                        i = next$11 as $ceylon$language.Integer;
-                    }
-                    i$12 = i;
-                    return true;
-                }
-                iterator_1$10 = null;
-            }
-            return false;
-        }
-
-        $dart$core.Object step$2$15() {
-            if (!step$1$14()) {
-                return $ceylon$language.finished;
-            }
-            $ceylon$language.Integer i = i$12;
-            return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.$ceylonString("nope");
-        }
-
-        return new $ceylon$language.dart$Callable(step$2$15);
-    }));
-    $ceylon$language.printAll(iter0);
-    $ceylon$language.printAll(iter1);
+    return new $ceylon$language.dart$Callable(step$2$15);
+  }));
+  $ceylon$language.printAll(iter0);
+  $ceylon$language.printAll(iter1);
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

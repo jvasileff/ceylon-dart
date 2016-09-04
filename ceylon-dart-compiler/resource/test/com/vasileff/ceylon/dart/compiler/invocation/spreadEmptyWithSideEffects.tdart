@@ -10,8 +10,8 @@ $dart$core.int get i => $package$i;
 set i($dart$core.int value) => $package$i = value;
 
 $ceylon$language.Empty get $package$emptyIncrementI {
-    $package$i = $package$i + 1;
-    return $ceylon$language.empty;
+  $package$i = $package$i + 1;
+  return $ceylon$language.empty;
 }
 
 $ceylon$language.Empty get emptyIncrementI => $package$emptyIncrementI;
@@ -21,45 +21,58 @@ void $package$fa() {}
 void fa() => $package$fa();
 
 $dart$core.int $package$fb([$dart$core.int i]) {
-    return i;
+  return i;
 }
 
 $dart$core.int fb([$dart$core.int i]) => $package$fb(i);
 
 void $package$run() {
-    $package$i = 0;
-    (() {
-        $package$emptyIncrementI;
-        return $package$fa();
-    })();
-    if (!($package$i == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: i == 1");
-    }
-    $package$i = 0;
-    $dart$core.int result = $package$fb((() {
-        $dart$core.int tmp$0 = $package$i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger($package$i).successor);
-        $package$emptyIncrementI;
-        return tmp$0;
-    })());
-    if (!(result == 1)) {
-        throw new $ceylon$language.AssertionError("Violated: result == 1");
-    }
-    if (!($package$i == 2)) {
-        throw new $ceylon$language.AssertionError("Violated: i == 2");
-    }
-    $ceylon$language.print($ceylon$language.$ceylonString("done"));
+  $package$i = 0;
+  (() {
+    $package$emptyIncrementI;
+    return $package$fa();
+  })();
+  if (!($package$i == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: i == 1");
+  }
+  $package$i = 0;
+  $dart$core.int result = $package$fb((() {
+    $dart$core.int tmp$0 = $package$i = $ceylon$language.$dartInt($ceylon$language.$ceylonInteger($package$i).successor);
+    $package$emptyIncrementI;
+    return tmp$0;
+  })());
+  if (!(result == 1)) {
+    throw new $ceylon$language.AssertionError("Violated: result == 1");
+  }
+  if (!($package$i == 2)) {
+    throw new $ceylon$language.AssertionError("Violated: i == 2");
+  }
+  $ceylon$language.print($ceylon$language.$ceylonString("done"));
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

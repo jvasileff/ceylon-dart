@@ -4,90 +4,98 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C implements $ceylon$language.dart$$Basic {
-    C() {
-        __v1$f = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        if (!((_v1.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-            throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
-        }
-        _v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        if (!((_v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-            throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
-        }
-        __v3$f = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        if (!((_v3.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-            throw new $ceylon$language.AssertionError("Violated: v3(\"hello\").size == 5");
-        }
-        _f1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        if (!($ceylon$language.$ceylonString(_f1("hello")).size == 5)) {
-            throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
-        }
-        _f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        if (!($ceylon$language.$ceylonString(_f2("hello")).size == 5)) {
-            throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
-        }
-        $ceylon$language.print($ceylon$language.$ceylonString("done!"));
+  C() {
+    __v1$f = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    if (!((_v1.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+      throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
     }
-    $dart$core.Function __v1$f;
-    $ceylon$language.Callable get _v1 => __v1$f();
-    $ceylon$language.Callable _v2;
-    $dart$core.Function __v3$f;
-    $ceylon$language.Callable get _v3 => __v3$f();
-    $ceylon$language.Callable _f1$c;
-    $dart$core.String _f1([$dart$core.String s]) {
-        return $ceylon$language.$dartString(_f1$c.f($ceylon$language.$ceylonString(s)));
+    _v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    if (!((_v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+      throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
     }
-    $ceylon$language.Callable _f2$c;
-    $dart$core.String _f2([$dart$core.String s]) {
-        return $ceylon$language.$dartString(_f2$c.f($ceylon$language.$ceylonString(s)));
+    __v3$f = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    if (!((_v3.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+      throw new $ceylon$language.AssertionError("Violated: v3(\"hello\").size == 5");
     }
-}
-void $package$run() {
-    $dart$core.Function v1$get;
-    v1$get = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-    if (!((v1$get().f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
+    _f1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    if (!($ceylon$language.$ceylonString(_f1("hello")).size == 5)) {
+      throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
     }
-    $ceylon$language.Callable v2;
-    v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-    if (!((v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
-    }
-    $dart$core.Function v3$get;
-    v3$get = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-    if (!((v3$get().f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: v3(\"hello\").size == 5");
-    }
-    $ceylon$language.Callable f1$c;
-    $dart$core.String f1([$dart$core.String s]) {
-        return $ceylon$language.$dartString(f1$c.f($ceylon$language.$ceylonString(s)));
-    }
-
-    f1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-    if (!($ceylon$language.$ceylonString(f1("hello")).size == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
-    }
-    $ceylon$language.Callable f2$c;
-    $dart$core.String f2([$dart$core.String s]) {
-        return $ceylon$language.$dartString(f2$c.f($ceylon$language.$ceylonString(s)));
-    }
-
-    f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-    if (!($ceylon$language.$ceylonString(f2("hello")).size == 5)) {
-        throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
+    _f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    if (!($ceylon$language.$ceylonString(_f2("hello")).size == 5)) {
+      throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
     }
     $ceylon$language.print($ceylon$language.$ceylonString("done!"));
+  }
+  $dart$core.Function __v1$f;
+  $ceylon$language.Callable get _v1 => __v1$f();
+  $ceylon$language.Callable _v2;
+  $dart$core.Function __v3$f;
+  $ceylon$language.Callable get _v3 => __v3$f();
+  $ceylon$language.Callable _f1$c;
+  $dart$core.String _f1([$dart$core.String s]) {
+    return $ceylon$language.$dartString(_f1$c.f($ceylon$language.$ceylonString(s)));
+  }
+  $ceylon$language.Callable _f2$c;
+  $dart$core.String _f2([$dart$core.String s]) {
+    return $ceylon$language.$dartString(_f2$c.f($ceylon$language.$ceylonString(s)));
+  }
+}
+void $package$run() {
+  $dart$core.Function v1$get;
+  v1$get = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  if (!((v1$get().f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
+  }
+  $ceylon$language.Callable v2;
+  v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  if (!((v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
+  }
+  $dart$core.Function v3$get;
+  v3$get = () => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  if (!((v3$get().f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: v3(\"hello\").size == 5");
+  }
+  $ceylon$language.Callable f1$c;
+  $dart$core.String f1([$dart$core.String s]) {
+    return $ceylon$language.$dartString(f1$c.f($ceylon$language.$ceylonString(s)));
+  }
+
+  f1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  if (!($ceylon$language.$ceylonString(f1("hello")).size == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
+  }
+  $ceylon$language.Callable f2$c;
+  $dart$core.String f2([$dart$core.String s]) {
+    return $ceylon$language.$dartString(f2$c.f($ceylon$language.$ceylonString(s)));
+  }
+
+  f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  if (!($ceylon$language.$ceylonString(f2("hello")).size == 5)) {
+    throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
+  }
+  $ceylon$language.print($ceylon$language.$ceylonString("done!"));
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

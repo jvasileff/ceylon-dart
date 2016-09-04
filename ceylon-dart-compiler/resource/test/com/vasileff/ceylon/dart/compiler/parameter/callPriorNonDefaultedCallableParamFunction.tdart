@@ -4,30 +4,43 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$callPriorNonDefaultedCallableParamFunction() {
-    void fun([$ceylon$language.Callable a, $ceylon$language.Callable b]) {
-        if (!($ceylon$language.$dartInt(a.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: a(1) == 1");
-        }
-        if (!($ceylon$language.$dartInt(b.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
-            throw new $ceylon$language.AssertionError("Violated: b(1) == 1");
-        }
+  void fun([$ceylon$language.Callable a, $ceylon$language.Callable b]) {
+    if (!($ceylon$language.$dartInt(a.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: a(1) == 1");
     }
+    if (!($ceylon$language.$dartInt(b.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
+      throw new $ceylon$language.AssertionError("Violated: b(1) == 1");
+    }
+  }
 
-    $dart$core.int id([$dart$core.int i]) => i;
+  $dart$core.int id([$dart$core.int i]) => i;
 
-    fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
+  fun(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
 }
 
 void callPriorNonDefaultedCallableParamFunction() => $package$callPriorNonDefaultedCallableParamFunction();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "callPriorNonDefaultedCallableParamFunction" :
+    $package$callPriorNonDefaultedCallableParamFunction();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

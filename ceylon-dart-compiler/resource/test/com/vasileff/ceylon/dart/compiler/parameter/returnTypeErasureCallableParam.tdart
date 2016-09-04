@@ -4,52 +4,65 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class returnTypeErasureCallableParam$I {
-    $dart$core.Object echoObj([$dart$core.Object t]);
-    $dart$core.String echoStr([$dart$core.String t]);
+  $dart$core.Object echoObj([$dart$core.Object t]);
+  $dart$core.String echoStr([$dart$core.String t]);
 }
 class returnTypeErasureCallableParam$C implements $ceylon$language.dart$$Basic, returnTypeErasureCallableParam$I {
-    returnTypeErasureCallableParam$C([$dart$core.Object echoObj = $ceylon$language.dart$default, $dart$core.Object echoStr = $ceylon$language.dart$default]) : this.$s((() {
-        if ($dart$core.identical(echoObj, $ceylon$language.dart$default)) {
-            echoObj = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        }
-        if ($dart$core.identical(echoStr, $ceylon$language.dart$default)) {
-            echoStr = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
-        }
-        return [echoObj, echoStr];
-    })());
-    returnTypeErasureCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
-    returnTypeErasureCallableParam$C.$w([$ceylon$language.Callable echoObj, $ceylon$language.Callable echoStr]) {
-        this._echoObj$c = echoObj;
-        this._echoStr$c = echoStr;
+  returnTypeErasureCallableParam$C([$dart$core.Object echoObj = $ceylon$language.dart$default, $dart$core.Object echoStr = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(echoObj, $ceylon$language.dart$default)) {
+      echoObj = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
     }
-    $ceylon$language.Callable _echoObj$c;
-    $ceylon$language.Callable _echoStr$c;
-    $ceylon$language.String echoObj([$ceylon$language.String s]) {
-        return _echoObj$c.f(s);
+    if ($dart$core.identical(echoStr, $ceylon$language.dart$default)) {
+      echoStr = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
     }
-    $dart$core.String echoStr([$dart$core.String s]) {
-        return $ceylon$language.$dartString(_echoStr$c.f($ceylon$language.$ceylonString(s)));
-    }
+    return [echoObj, echoStr];
+  })());
+  returnTypeErasureCallableParam$C.$s([$dart$core.List a]) : this.$w(a[0], a[1]);
+  returnTypeErasureCallableParam$C.$w([$ceylon$language.Callable echoObj, $ceylon$language.Callable echoStr]) {
+    this._echoObj$c = echoObj;
+    this._echoStr$c = echoStr;
+  }
+  $ceylon$language.Callable _echoObj$c;
+  $ceylon$language.Callable _echoStr$c;
+  $ceylon$language.String echoObj([$ceylon$language.String s]) {
+    return _echoObj$c.f(s);
+  }
+  $dart$core.String echoStr([$dart$core.String s]) {
+    return $ceylon$language.$dartString(_echoStr$c.f($ceylon$language.$ceylonString(s)));
+  }
 }
 void $package$returnTypeErasureCallableParam() {
-    if (!(($ceylon$language.$dartString((new returnTypeErasureCallableParam$C()).echoObj($ceylon$language.$ceylonString("a"))) + "b") == "ab")) {
-        throw new $ceylon$language.AssertionError("Violated: C().echoObj(\"a\") + \"b\" == \"ab\"");
-    }
-    if (!(((new returnTypeErasureCallableParam$C()).echoStr("a") + "b") == "ab")) {
-        throw new $ceylon$language.AssertionError("Violated: C().echoStr(\"a\") + \"b\" == \"ab\"");
-    }
+  if (!(($ceylon$language.$dartString((new returnTypeErasureCallableParam$C()).echoObj($ceylon$language.$ceylonString("a"))) + "b") == "ab")) {
+    throw new $ceylon$language.AssertionError("Violated: C().echoObj(\"a\") + \"b\" == \"ab\"");
+  }
+  if (!(((new returnTypeErasureCallableParam$C()).echoStr("a") + "b") == "ab")) {
+    throw new $ceylon$language.AssertionError("Violated: C().echoStr(\"a\") + \"b\" == \"ab\"");
+  }
 }
 
 void returnTypeErasureCallableParam() => $package$returnTypeErasureCallableParam();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "returnTypeErasureCallableParam" :
+    $package$returnTypeErasureCallableParam();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

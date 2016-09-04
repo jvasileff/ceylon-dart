@@ -4,49 +4,62 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class A$B$C implements $ceylon$language.dart$$Basic {
-    A$B $outer$default$A$B;
-    void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
-        if (0 != ($bitmap & 1)) {
-            this.$outer$default$A$B = $outer$default$A$B;
-            this.string = "instance";
-        }
+  A$B $outer$default$A$B;
+  void _$init$A$A$B$A$B$C([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
+    if (0 != ($bitmap & 1)) {
+      this.$outer$default$A$B = $outer$default$A$B;
+      this.string = "instance";
     }
-    A$B$C.instance([A$B $outer$default$A$B]) : this.instance$d(1, $outer$default$A$B);
-    A$B$C.instance$d([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
-        _$init$A$A$B$A$B$C($bitmap | 1, $outer$default$A$B);
-    }
-    $dart$core.String string;
-    $dart$core.String toString() => string;
+  }
+  A$B$C.instance([A$B $outer$default$A$B]) : this.instance$d(1, $outer$default$A$B);
+  A$B$C.instance$d([$dart$core.int $bitmap, A$B $outer$default$A$B]) {
+    _$init$A$A$B$A$B$C($bitmap | 1, $outer$default$A$B);
+  }
+  $dart$core.String string;
+  $dart$core.String toString() => string;
 }
 class A$B implements $ceylon$language.dart$$Basic {
-    A $outer$default$A;
-    A$B([A $outer$default$A]) {
-        this.$outer$default$A = $outer$default$A;
-    }
-    A$B$C _$s$A$A$B$A$B$C$instance;
-    A$B$C get $new$A$B$C$instance => _$s$A$A$B$A$B$C$instance != null ? _$s$A$A$B$A$B$C$instance : _$s$A$A$B$A$B$C$instance = new A$B$C.instance(this);
+  A $outer$default$A;
+  A$B([A $outer$default$A]) {
+    this.$outer$default$A = $outer$default$A;
+  }
+  A$B$C _$s$A$A$B$A$B$C$instance;
+  A$B$C get $new$A$B$C$instance => _$s$A$A$B$A$B$C$instance != null ? _$s$A$A$B$A$B$C$instance : _$s$A$A$B$A$B$C$instance = new A$B$C.instance(this);
 }
 class A implements $ceylon$language.dart$$Basic {
-    A() {}
-    A$B $new$A$B() => new A$B(this);
+  A() {}
+  A$B $new$A$B() => new A$B(this);
 }
 void $package$run() {
-    $ceylon$language.Callable iFactory = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as A$B).$new$A$B$C$instance);
-    if (!((iFactory.f((new A()).$new$A$B()) as A$B$C).toString() == "instance")) {
-        throw new $ceylon$language.AssertionError("Violated: iFactory(A().B()).string == \"instance\"");
-    }
+  $ceylon$language.Callable iFactory = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as A$B).$new$A$B$C$instance);
+  if (!((iFactory.f((new A()).$new$A$B()) as A$B$C).toString() == "instance")) {
+    throw new $ceylon$language.AssertionError("Violated: iFactory(A().B()).string == \"instance\"");
+  }
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }

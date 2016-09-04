@@ -4,49 +4,62 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 class C$D implements $ceylon$language.dart$$Basic {
-    C $outer$default$C;
-    void _$init$C$C$D([$dart$core.int $bitmap, C $outer$default$C]) {
-        if (0 != ($bitmap & 1)) {
-            this.$outer$default$C = $outer$default$C;
-        }
+  C $outer$default$C;
+  void _$init$C$C$D([$dart$core.int $bitmap, C $outer$default$C]) {
+    if (0 != ($bitmap & 1)) {
+      this.$outer$default$C = $outer$default$C;
     }
-    C$D.create([C $outer$default$C]) : this.create$d(1, $outer$default$C);
-    C$D.create$d([$dart$core.int $bitmap, C $outer$default$C]) {
-        _$init$C$C$D($bitmap | 1, $outer$default$C);
-    }
+  }
+  C$D.create([C $outer$default$C]) : this.create$d(1, $outer$default$C);
+  C$D.create$d([$dart$core.int $bitmap, C $outer$default$C]) {
+    _$init$C$C$D($bitmap | 1, $outer$default$C);
+  }
 }
 class C$E implements $ceylon$language.dart$$Basic {
-    C $outer$default$C;
-    C$E([C $outer$default$C]) {
-        this.$outer$default$C = $outer$default$C;
-    }
+  C $outer$default$C;
+  C$E([C $outer$default$C]) {
+    this.$outer$default$C = $outer$default$C;
+  }
 }
 class C implements $ceylon$language.dart$$Basic {
-    C() {}
-    C$D $new$C$D$create() => new C$D.create(this);
-    C$E $new$C$E() => new C$E(this);
+  C() {}
+  C$D $new$C$D$create() => new C$D.create(this);
+  C$E $new$C$E() => new C$E(this);
 }
 void $package$run() {
-    $ceylon$language.Callable f = (() {
-        C $r = new C();
-        return new $ceylon$language.dart$Callable(() => $r.$new$C$D$create());
-    })();
-    $ceylon$language.Callable g = (() {
-        C $r = new C();
-        return new $ceylon$language.dart$Callable(() => $r.$new$C$E());
-    })();
+  $ceylon$language.Callable f = (() {
+    C $r = new C();
+    return new $ceylon$language.dart$Callable(() => $r.$new$C$D$create());
+  })();
+  $ceylon$language.Callable g = (() {
+    C $r = new C();
+    return new $ceylon$language.dart$Callable(() => $r.$new$C$E());
+  })();
 }
 
 void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
 
 const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"D":const{"mt":"c","nm":"D","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"E":const{"mt":"c","nm":"E","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}}}};
 
 var _$module = null;
 
 get $module {
-    if (_$module == null) {
-        _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel));
-        _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
-    }
-    return _$module;
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
 }
