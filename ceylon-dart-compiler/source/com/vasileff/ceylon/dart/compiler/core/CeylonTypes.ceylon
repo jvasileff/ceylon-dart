@@ -361,6 +361,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.exponentiableDeclaration;
 
     shared
+    Value falseValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("false"));
+
+    shared
     Class finishedDeclaration
         =>  assertClass(getLanguageModuleDeclaration("Finished"));
 
@@ -435,6 +439,10 @@ class CeylonTypes(Unit unit) {
     shared
     Interface numericDeclaration
         =>  unit.numericDeclaration;
+
+    shared
+    Value trueValueDeclaration
+        =>  assertValue(getLanguageModuleDeclaration("true"));
 
     shared
     Class tupleDeclaration

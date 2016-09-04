@@ -13,12 +13,37 @@ import ceylon.dart.runtime.model {
 shared
 class LazyJsonModule(
         JsonObject json,
+        "Returns `false` if the toplevel was not found."
+        shared Boolean runToplevel(String toplevelDeclaration),
         [String+] name = jsonModelUtil.parseModuleName(json),
         String? version = jsonModelUtil.parseModuleVersion(json),
         Unit(Package)? unitLG = null)
         extends Module(name, version, unitLG) {
 
     variable Boolean allLoaded = false;
+
+    shared Boolean runApplication(String qualifiedToplevel) {
+        String packageName;
+        String toplevelName;
+        if (exists idx = qualifiedToplevel.firstInclusion("::")) {
+            packageName = qualifiedToplevel[0:idx];
+            toplevelName = qualifiedToplevel[idx+2...];
+        }
+        else if (exists idx = qualifiedToplevel.lastOccurrence('.')) {
+            packageName = qualifiedToplevel[0:idx];
+            toplevelName = qualifiedToplevel[idx+1...];
+        }
+        else {
+            packageName = "";
+            toplevelName = qualifiedToplevel;
+        }
+        value pkg = findPackage(packageName);
+        if (!exists pkg) {
+            return false;
+        }
+        assert (is LazyJsonModule mod = pkg.mod);
+        return mod.runToplevel(toplevelName);
+    }
 
     shared actual
     MutableSet<Package> packages {

@@ -7,8 +7,11 @@ import ceylon.language.meta {
 
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
-    Package,
-    ModuleImport
+    ModuleImport,
+    ClassModel=Class,
+    FunctionModel=Function,
+    ParameterModel=Parameter,
+    PackageModel=Package
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -36,7 +39,13 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartMapLiteral,
     createAssignmentStatement,
     createMethodInvocationStatement,
-    DartExpression
+    DartExpression,
+    DartFormalParameterList,
+    DartSwitchStatement,
+    DartSwitchCase,
+    DartSimpleFormalParameter,
+    DartExpressionStatement,
+    DartMethodInvocation
 }
 import com.vasileff.ceylon.dart.compiler.loader {
     JsonModule
@@ -47,10 +56,171 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
 
     // FIXME use $package prefix for toplevel $module value
 
+    function runnableFunction(FunctionModel d)
+        =>  d.shared
+            && !d.nativeImplementation
+            && d.typeParameters.empty
+            && d.parameterLists.size() == 1
+            && CeylonIterable(d.firstParameterList.parameters)
+                    .every(ParameterModel.defaulted);
+
+    function runnableClass(ClassModel d) {
+        if (!d.shared
+                || d.abstract
+                || d.nativeImplementation
+                || !d.typeParameters.empty) {
+            return false;
+        }
+
+        value parameterList
+            =   if (d.hasConstructors() || d.hasEnumerated())
+                then d.defaultConstructor?.parameterList
+                else d.parameterList;
+
+        if (!exists parameterList) {
+            return false;
+        }
+
+        return CeylonIterable(parameterList.parameters)
+            .every(ParameterModel.defaulted);
+    }
+
+    function generateToplevelRunner(ModuleModel mod, PackageModel pkg) {
+        function shortName(FunctionModel | ClassModel declaration) {
+            value modulePartSize
+                =   let (s = mod.nameAsString.size)
+                    if (s == 0) then 0 else s + 1;
+
+            value packagePart
+                =   getPackage(declaration).nameAsString[modulePartSize...];
+
+            value dot
+                =   packagePart.empty then "" else ".";
+
+            return packagePart + dot + declaration.name;
+        }
+
+        function runnables(PackageModel pkg)
+            =>  {
+                    for (declaration in pkg.members)
+                    if (is FunctionModel declaration, runnableFunction(declaration))
+                    declaration
+                }.chain {
+                    for (declaration in pkg.members)
+                    if (is ClassModel declaration, runnableClass(declaration))
+                    declaration
+                };
+
+        value scope
+            =   errorThrowingDScope(pkg);
+
+        value allRunnables
+            =   CeylonIterable(mod.packages).flatMap(runnables).sequence();
+
+        value toplevelIdentifier
+            =   DartSimpleIdentifier("toplevel");
+
+        value runToplevelIdentifier
+            =   DartSimpleIdentifier("_$runToplevel");
+
+        value runnerFunctionExpression = DartFunctionExpression {
+            DartFormalParameterList {
+                false; false;
+                [DartSimpleFormalParameter {
+                    false; false;
+                    // use boxed type...
+                    dartTypes.dartTypeName {
+                        scope;
+                        ceylonTypes.stringType;
+                        false;
+                        false;
+                    };
+                    toplevelIdentifier;
+                }];
+            };
+            DartBlockFunctionBody {
+                null; false;
+                DartBlock {
+                    {
+                        if (nonempty allRunnables)
+                        then DartSwitchStatement {
+                            // It's a Ceylon string, unbox with toString()
+                            DartMethodInvocation {
+                                toplevelIdentifier;
+                                DartSimpleIdentifier("toString");
+                                DartArgumentList();
+                            };
+                            [for (runnable in allRunnables)
+                                DartSwitchCase {
+                                    [];
+                                    DartSimpleStringLiteral {
+                                        shortName(runnable);
+                                    };
+                                    [DartExpressionStatement {
+                                        withLhsNoType {
+                                            () => ctx.dartTypes
+                                                    .invocableForBaseExpression {
+                                                scope;
+                                                runnable;
+                                            }.expressionForInvocation {
+                                                [];
+                                                false;
+                                            };
+                                        };
+                                    },
+                                    DartReturnStatement {
+                                        // boxed true
+                                        dartTypes.identifierForToplevel {
+                                            scope;
+                                            ceylonTypes.trueValueDeclaration;
+                                        };
+                                    }];
+                                }
+                            ];
+                        } else null,
+                        DartReturnStatement {
+                            // boxed false
+                            dartTypes.identifierForToplevel {
+                                scope;
+                                ceylonTypes.falseValueDeclaration;
+                            };
+                        }
+                    }.coalesced.sequence();
+                };
+            };
+        };
+
+        // declare _$runToplevel Callable
+        return DartTopLevelVariableDeclaration {
+            DartVariableDeclarationList {
+                null;
+                dartTypes.dartTypeNameForDartModel {
+                    scope;
+                    dartTypes.dartCallableModel;
+                };
+                [DartVariableDeclaration {
+                    runToplevelIdentifier;
+                    DartInstanceCreationExpression {
+                        false;
+                        DartConstructorName {
+                            dartTypes.dartTypeNameForDartModel {
+                                scope;
+                                dartTypes.dartCallableModel;
+                            };
+                            null;
+                        };
+                        DartArgumentList([runnerFunctionExpression]);
+                    };
+                }];
+            };
+        };
+    }
+
     shared
-    [DartCompilationUnitMember*] generateRuntimeModel(ModuleModel mod, Package pkg)
+    [DartCompilationUnitMember*] generateRuntimeModel(ModuleModel mod, PackageModel pkg)
         =>  let (scope = errorThrowingDScope(pkg))
-            [DartTopLevelVariableDeclaration {
+            [generateToplevelRunner(mod, pkg),
+            DartTopLevelVariableDeclaration {
                 DartVariableDeclarationList {
                     "const";
                     null;
@@ -116,6 +286,9 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                                     ceylonTypes.jsonObjectDeclaration;
                                                 }.expressionForInvocation {
                                                     [DartSimpleIdentifier("_$jsonModel")];
+                                                },
+                                                DartSimpleIdentifier {
+                                                    "_$runToplevel";
                                                 }];
                                             };
                                         };

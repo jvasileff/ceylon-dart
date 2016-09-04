@@ -129,14 +129,6 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                     null, null, null, null,
                     if (compile.empty) then "check" else compile) else "";
 
-        if (exists d = runDeclaration,
-                d != "``moduleName``::run",
-                d != "``moduleName``.run") {
-            throw ReportableException(
-                "Invalid --run option '``d``'. Currently, only the toplevel run() \
-                 function in a module's root package is supported.");
-        }
-
         value dependencies
             =   gatherDependencies(repositoryManager, moduleName, moduleVersion,
                     if (web) then "web" else "standard");
@@ -153,11 +145,14 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
         value p
             =   createProcess {
                     command = dartPath.name;
-                    arguments = [
+                    arguments = {
                         "--package-root=" + packageRootPath.string,
                         programModuleSymlink,
+                        if (exists rd = runDeclaration)
+                            then "$ceylon$run=``rd``"
+                            else null,
                         *CeylonList(args).map(Object.string)
-                    ];
+                    }.coalesced;
                     path = dartPath.directory.path;
                     input = currentInput;
                     output = currentOutput;

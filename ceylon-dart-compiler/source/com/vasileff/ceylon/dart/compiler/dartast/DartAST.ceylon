@@ -113,9 +113,11 @@ class DartSwitchCase(labels, expression, statements)
         writer.write("case ");
         expression.write(writer);
         writer.write(" :");
+        writer.indentPlus();
         for (statement in statements) {
             statement.write(writer);
         }
+        writer.indentMinus();
     }
 }
 

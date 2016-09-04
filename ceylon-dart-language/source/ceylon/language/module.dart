@@ -2,6 +2,7 @@ library ceylon.language;
 
 import 'dart:core' as $dart$core;
 import 'dart:math' as $dart$math;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import '../../../ceylon.language.dart';
 
 /////////////////////////////////////////////////
@@ -358,17 +359,42 @@ void printStackTrace([Throwable exception, $dart$core.Object write = dart$defaul
 
 /////////////////////////////////////////////////
 //
-// ceylon.language::process
+// ceylon.language::$run
 //
 /////////////////////////////////////////////////
 
-initializeProcess($dart$core.List<$dart$core.String> arguments) {
+$run(
+    $dart$core.List<$dart$core.String> arguments,
+    $ceylon$dart$runtime$model.json$LazyJsonModule mod) {
+
+  // initialize processArguments and run the program
+
+  var runDeclaration;
   if (arguments.isEmpty) {
+    runDeclaration = mod.nameAsString == "default"
+        ? "::run" : mod.nameAsString + "::run";
     processArguments = $package$empty;
   }
+  else if (arguments[0].startsWith("\$ceylon\$run=")) {
+    runDeclaration = arguments[0].substring(12);
+    if (arguments.length == 1) {
+        processArguments = $package$empty;
+    }
+    else {
+        processArguments = new ArraySequence(new Array.withList(
+            arguments.skip(1).map((s) => $ceylonString(s)).toList(growable: false)));
+    }
+  }
   else {
+    runDeclaration = mod.nameAsString == "default"
+        ? "::run" : mod.nameAsString + "::run";
     processArguments = new ArraySequence(new Array.withList(
         arguments.map((s) => $ceylonString(s)).toList(growable: false)));
+  }
+  value success = mod.runApplication(runDeclaration);
+  if (!success) {
+    $dart$core.print("Could not find toplevel function '$runDeclaration'.");
+    process.exit(1);
   }
 }
 

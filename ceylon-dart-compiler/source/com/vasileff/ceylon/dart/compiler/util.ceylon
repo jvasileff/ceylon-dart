@@ -1,3 +1,7 @@
+import ceylon.collection {
+    linked,
+    HashMap
+}
 import ceylon.file {
     File,
     parsePath,
@@ -6,10 +10,8 @@ import ceylon.file {
     Path,
     ExistingResource
 }
-
-import com.redhat.ceylon.model.typechecker.model {
-    FunctionModel=Function,
-    ModuleModel=Module
+import ceylon.interop.java {
+    JavaList
 }
 
 import java.io {
@@ -26,13 +28,6 @@ import java.nio.file {
 }
 import java.util {
     JList=List
-}
-import ceylon.interop.java {
-    JavaList
-}
-import ceylon.collection {
-    linked,
-    HashMap
 }
 
 shared
@@ -84,15 +79,6 @@ ExistingResource createSymbolicLink(Nil nil, Path linkedPath) {
     assert (is ExistingResource link = nil.path.resource); // fails
     return link;
 }
-
-Boolean hasRunFunction(ModuleModel m)
-    =>  if (is FunctionModel runFunction
-                =   m.rootPackage.getDirectMemberForBackend("run", dartBackend.asSet()),
-            runFunction.shared,
-            runFunction.parameterLists.size() == 1,
-            runFunction.parameterLists.get(0).parameters.size() == 0)
-        then true
-        else false;
 
 shared
 JList<Element> javaList<Element>({Element*} elements)

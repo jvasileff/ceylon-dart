@@ -81,7 +81,6 @@ shared
         verboseCode = false;
         verboseProfile = verboseProfile;
         baselinePerfTest = baselinePerfTest;
-        suppressMainFunction = true;
         suppressWarning
             =   if (suppressAllWarnings)
                 then allWarnings
@@ -207,7 +206,6 @@ shared
         verboseAst = verbose;
         verboseRhAst = verbose;
         verboseCode = false;
-        suppressMainFunction = true;
         suppressWarning
             =   if (suppressAllWarnings)
                 then allWarnings

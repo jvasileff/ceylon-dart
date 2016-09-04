@@ -679,6 +679,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
 
     shared
+    DartTypeModel dartRunHelper
+        =>  DartTypeModel("$ceylon$language", "$run");
+
+    shared
     DartTypeModel dartLazyIterable
         =>  DartTypeModel("$ceylon$language", "LazyIterable");
 

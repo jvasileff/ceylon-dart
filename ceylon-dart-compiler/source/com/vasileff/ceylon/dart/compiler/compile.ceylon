@@ -89,7 +89,9 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeClassCaptures,
     isForDartBackend,
     moduleImportPrefix,
-    ModelGenerator
+    ModelGenerator,
+    generateMain,
+    errorThrowingDScope
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -97,19 +99,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleIdentifier,
     DartImportDirective,
     DartSimpleStringLiteral,
-    DartTypeName,
-    DartMethodInvocation,
-    DartFunctionExpression,
-    DartFunctionDeclaration,
-    DartArgumentList,
-    CodeWriter,
-    DartFormalParameterList,
-    DartSimpleFormalParameter,
-    DartBlockFunctionBody,
-    DartBlock,
-    DartExpressionStatement,
-    DartPropertyAccess,
-    DartFunctionExpressionInvocation
+    CodeWriter
 }
 import com.vasileff.ceylon.dart.compiler.loader {
     DartModuleManagerFactory,
@@ -154,7 +144,6 @@ shared
         generateSourceArtifact = false,
         suppressWarning = [],
         doWithoutCaching = false,
-        suppressMainFunction = false,
         verboseAst = false,
         verboseRhAst = false,
         verboseCode = false,
@@ -182,8 +171,6 @@ shared
 
     Boolean doWithoutCaching;
 
-    Boolean suppressMainFunction;
-
     Boolean verboseAst;
     Boolean verboseRhAst;
     Boolean verboseCode;
@@ -210,90 +197,6 @@ shared
             logError(message);
         }
     }
-
-    value mainFunctionHack
-        =   DartFunctionDeclaration {
-                false;
-                DartTypeName {
-                    DartSimpleIdentifier("void");
-                };
-                null;
-                DartSimpleIdentifier("main");
-                DartFunctionExpression {
-                    DartFormalParameterList {
-                        false; false;
-                        [DartSimpleFormalParameter {
-                            false;
-                            true;
-                            null;
-                            DartSimpleIdentifier("arguments");
-                        }];
-                    };
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartExpressionStatement {
-                                DartFunctionExpressionInvocation {
-                                    DartPropertyAccess {
-                                        DartSimpleIdentifier("$ceylon$language");
-                                        DartSimpleIdentifier("initializeProcess");
-                                    };
-                                    DartArgumentList {
-                                        [DartSimpleIdentifier("arguments")];
-                                    };
-                                };
-                            },
-                            DartExpressionStatement {
-                                DartMethodInvocation {
-                                    null;
-                                    DartSimpleIdentifier("run");
-                                    DartArgumentList([]);
-                                };
-                            }];
-                        };
-                    };
-                };
-            };
-
-    value mainFunctionHackNoRun
-        =   DartFunctionDeclaration {
-                false;
-                DartTypeName {
-                    DartSimpleIdentifier("void");
-                };
-                null;
-                DartSimpleIdentifier("main");
-                DartFunctionExpression {
-                    DartFormalParameterList {
-                        false; false;
-                        [DartSimpleFormalParameter {
-                            false;
-                            true;
-                            null;
-                            DartSimpleIdentifier("arguments");
-                        }];
-                    };
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            [DartExpressionStatement {
-                                DartFunctionExpressionInvocation {
-                                    DartPropertyAccess {
-                                        DartSimpleIdentifier("$dart$core");
-                                        DartSimpleIdentifier("print");
-                                    };
-                                    DartArgumentList {
-                                        [DartSimpleStringLiteral {
-                                            "A shared toplevel run() function \
-                                             was not found.";
-                                        }];
-                                    };
-                                };
-                            }];
-                        };
-                    };
-                };
-            };
 
     function nativeCode(Directory directory) {
         // Concatinate *.dart files. Filter import and library directives. Return.
@@ -566,7 +469,7 @@ shared
         }
     }
 
-    // add runtime model info
+    // add runtime model info & main function
     for (mod -> members in moduleMembers) {
         // jump through hoops to support default modules
         value unit
@@ -582,7 +485,11 @@ shared
         value ctx
             =   CompilationContext(unit, []);
 
+        // add model info
         members.addAll(ModelGenerator(ctx).generateRuntimeModel(mod, pkg));
+
+        // add main function
+        members.add(generateMain(ctx, errorThrowingDScope(pkg)));
     }
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
@@ -595,15 +502,6 @@ shared
     variable value createdModules = [] of {String*};
 
     for (m -> ds in moduleMembers) {
-        if (!suppressMainFunction) {
-            if (hasRunFunction(m)) {
-                ds.add(mainFunctionHack);
-            }
-            else {
-                ds.add(mainFunctionHackNoRun);
-            }
-        }
-
         function dartPackageLocationForModule(ModuleModel m)
             =>  "package:" + CeylonIterable(m.name)
                     .map(Object.string)
