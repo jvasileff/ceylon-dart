@@ -2,10 +2,10 @@ shared
 class CodeWriter(
         Anything(String) append,
         shared variable Integer indentLevel = 0,
-        shared variable Integer indentAmount = 4) {
+        shared variable Integer indentAmount = 2) {
 
-    variable
-    Boolean lastWasEndStatement = false;
+    variable Boolean lastWasEndStatement = false;
+    variable Boolean topOfFile = true;
 
     shared
     CodeWriter indentPlus() {
@@ -24,7 +24,6 @@ class CodeWriter(
         write(" ".repeat(
                 indentLevel *
                 indentAmount));
-        lastWasEndStatement = false;
         return this;
     }
 
@@ -32,14 +31,16 @@ class CodeWriter(
     CodeWriter write(String s) {
         append(s);
         lastWasEndStatement = false;
+        topOfFile = false;
         return this;
     }
 
     shared
     CodeWriter writeLine(String s = "") {
-        write(s);
-        write("\n");
-        lastWasEndStatement = false;
+        if (!topOfFile) {
+            write(s);
+            write("\n");
+        }
         return this;
     }
 
@@ -58,7 +59,6 @@ class CodeWriter(
         }
         write("{");
         indentPlus();
-        lastWasEndStatement = false;
         return this;
     }
 
