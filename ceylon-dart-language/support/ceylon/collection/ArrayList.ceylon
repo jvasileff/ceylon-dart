@@ -14,7 +14,7 @@
  capacity is the product of the current capacity and the
  given [[growthFactor]]."
 by ("Gavin King")
-shared class ArrayList<Element>
+shared serializable class ArrayList<Element>
         satisfies MutableList<Element> &
                   SearchableList<Element> &
                   Stack<Element> & Queue<Element> {
@@ -89,7 +89,7 @@ shared class ArrayList<Element>
     "growth factor must be at least 1.0"
     assert (growthFactor >= 1.0);
 
-    Array<Element?> store(Integer capacity)
+    function store(Integer capacity)
             => Array<Element?>.ofSize(capacity, null);
 
     size => length;
@@ -370,7 +370,7 @@ shared class ArrayList<Element>
     
     
     shared actual 
-    void prune() {
+    Integer prune() {
         variable value i=0;
         variable value j=0;
         while (i<length) {
@@ -378,10 +378,12 @@ shared class ArrayList<Element>
                 array[j++] = element;
             }
         }
+        value removed = i - j;
         length=j;
         while (j<i) {
             array[j++] = null;
         }
+        return removed;
     }
 
     shared actual 
@@ -566,11 +568,17 @@ shared class ArrayList<Element>
     back => last;
 
     front => first;
-    
-    shared actual 
+
+    shared actual
     ArrayList<Element> clone() => ArrayList.copy(this);
-    
-    "Sorts the elements in this list according to the 
+
+    find(Boolean selecting(Element&Object element))
+            => array.find(selecting);
+
+    findLast(Boolean selecting(Element&Object element))
+            => array.findLast(selecting);
+
+    "Sorts the elements in this list according to the
      order induced by the given 
      [[comparison function|comparing]]. Null elements are 
      sorted to the end of the list. This operation modifies 
@@ -649,23 +657,15 @@ shared class ArrayList<Element>
             });
         }
     }
-    
+
     shared actual
-    Element? find(Boolean selecting(Element&Object element)) 
-            => array.find(selecting);
-    
-    shared actual
-    Element? findLast(Boolean selecting(Element&Object element)) 
-            => array.findLast(selecting);
-    
-    shared actual 
     Result|Element|Null reduce<Result>(
         Result accumulating(Result|Element partial, 
                             Element element)) {
         if (is Element null) {
             return array.take(length)
-                    .reduce<Result>((partial, element) 
-                    => accumulating(partial else null, 
+                    .reduce<Result>((partial, element)
+                    => accumulating(partial else null,
                                     element else null));
         }
         else {
@@ -696,7 +696,7 @@ shared class ArrayList<Element>
     
     lastOccurrence(Element element, Integer from, Integer length) 
             => if (exists result 
-                    = array.lastOccurrence{
+                    = array.lastOccurrence {
                         element = element;
                         from = largest(from, array.size-size);
                         length = length;

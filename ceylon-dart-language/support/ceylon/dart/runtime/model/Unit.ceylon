@@ -94,7 +94,7 @@ class Unit(pkg) {
             =>  delegate.lastIndex;
 
         shared actual
-        void prune() {}
+        Integer prune() => 0;
 
         shared actual
         Integer remove(Declaration element) {
