@@ -65,12 +65,15 @@ interface SequentialMutableList<Node, Element>
     }
 
     shared actual
-    void prune() {
+    Integer prune() {
+        variable value pruned = 0;
         for (node in nodeIterable()) {
             if (getElement(node) is Null) {
+                pruned++;
                 removeNode(node);
             }
         }
+        return pruned;
     }
 
     shared actual

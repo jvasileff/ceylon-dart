@@ -33,9 +33,7 @@ interface MutableListMultimap<Key, Item>
             if (exists item) {
                 return list.remove(item) != 0;
             }
-            value oldSize = list.size;
-            list.prune();
-            return oldSize != list.size;
+            return list.prune() != 0;
         }
         return false;
     }

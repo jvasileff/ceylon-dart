@@ -245,10 +245,11 @@ class ArrayListMultimap<Key, Item>
         }
 
         shared actual
-        void prune() {
+        Integer prune() {
             value oldSize = beforeMutation();
-            delegate.prune();
+            value pruned = delegate.prune();
             afterMutation(oldSize);
+            return pruned;
         }
 
         shared actual
