@@ -73,10 +73,11 @@ project('ceylon-dart-compiler') {
         group "Deployment"
         description "Copy the compiled modules to the user's repository"
 
-        dependsOn "ceylonDoc"
+        // ceylonDoc is too slow, disabling
+        //dependsOn "ceylonDoc"
         dependsOn "compileCeylon"
 
-        from ceylonDoc.destinationDir
+        //from ceylonDoc.destinationDir
         from compileCeylon.destinationDir
 
         into ceylonRepoDir
@@ -335,10 +336,11 @@ project('ceylon-dart-cli') {
         description "Copy the compiled modules to the user's repository"
 
         dependsOn "compileCeylon"
-        dependsOn "ceylonDoc"
+        // ceylonDoc is too slow, disabling
+        //dependsOn "ceylonDoc"
         dependsOn "ceylonPluginPack"
 
-        from ceylonDoc.destinationDir
+        //from ceylonDoc.destinationDir
         from compileCeylon.destinationDir
         from ceylonPluginPack.destinationDir
 
