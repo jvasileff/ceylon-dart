@@ -6,5 +6,5 @@
    integers."
 module ceylon.numeric "1.3.0" {
     native("jvm") import java.base "7";
-    native("dart") import "dart.math" "1.2.3";
+    native("dart") import "dart.math" "1.3.0";
 }

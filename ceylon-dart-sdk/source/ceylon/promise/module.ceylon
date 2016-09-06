@@ -185,5 +185,5 @@ by("Julien Viet")
 license("Apache Software License")
 module ceylon.promise "1.3.0" {
   native("jvm") import java.base "7";
-  native("dart") import "dart.async" "1.2.3";
+  native("dart") import "dart.async" "1.3.0";
 }

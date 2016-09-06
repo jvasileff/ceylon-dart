@@ -1,3 +1,3 @@
-module ceylon.meta "1.2.3-DP3-SNAPSHOT" {
-    import ceylon.dart.runtime.model "1.2.3";
+module ceylon.meta "1.3.0-DP3" {
+    import ceylon.dart.runtime.model "1.3.0";
 }

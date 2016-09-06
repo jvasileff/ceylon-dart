@@ -1,3 +1,3 @@
-module ceylon.dart.runtime.model "1.2.3" {
-    shared import ceylon.dart.runtime.structures "1.2.3";
+module ceylon.dart.runtime.model "1.3.0" {
+    shared import ceylon.dart.runtime.structures "1.3.0";
 }
