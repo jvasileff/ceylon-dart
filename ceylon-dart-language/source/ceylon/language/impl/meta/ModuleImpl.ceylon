@@ -83,6 +83,10 @@ class ModuleImpl(ModuleModel delegate) satisfies Module {
     shared actual
     String string
         =>  "module ``name``/``version``";
+
+    shared actual
+    {Service*} findServiceProviders<Service>(ClassOrInterface<Service> service)
+        =>  [];
 }
 
 shared

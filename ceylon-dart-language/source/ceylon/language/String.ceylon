@@ -548,7 +548,7 @@ shared native final class String(characters)
      [[prefix]] from the start of this string, if this 
      string [[starts with|startsWith]] the given `prefix`, 
      or this string otherwise."
-    since("1.2.3")
+    since("1.3.0")
     shared native String removeInitial(String prefix) 
             => startsWith(prefix) 
             then spanFrom(prefix.size)
@@ -558,7 +558,7 @@ shared native final class String(characters)
      [[postfix]] from the end of this string, if this 
      string [[ends with|endsWith]] the given `postfix`, or 
      this string otherwise."
-    since("1.2.3")
+    since("1.3.0")
     shared native String removeTerminal(String postfix) 
             => endsWith(postfix) 
             then spanTo(size-postfix.size)
@@ -798,7 +798,7 @@ shared native final class String(characters)
      code written in other languages. It is more idiomatic 
      to use [[measure]] or [[span]] where reasonable._"
     see (`function measure`, `function span`)
-    since("1.2.3")
+    since("1.3.0")
     shared native String substring(
         "The inclusive start index"
         Integer from = 0,
@@ -821,7 +821,7 @@ shared native final class String(characters)
      code written in other languages. It is more idiomatic 
      to use [[firstInclusion]] where reasonable._"
     see (`function firstInclusion`)
-    since("1.2.3")
+    since("1.3.0")
     shared native Integer indexOf(
         "The substring to find within this string"
         String string,
@@ -844,7 +844,7 @@ shared native final class String(characters)
      code written in other languages. It is more idiomatic 
      to use [[lastInclusion]] where reasonable._"
     see (`function lastInclusion`)
-    since("1.2.3")
+    since("1.3.0")
     shared native Integer lastIndexOf(
         "The substring to find within this string"
         String string,
