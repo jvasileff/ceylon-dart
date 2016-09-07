@@ -1,12 +1,6 @@
 import ceylon.interop.java {
     CeylonList
 }
-import ceylon.process {
-    createProcess,
-    currentOutput,
-    currentError,
-    currentInput
-}
 
 import com.redhat.ceylon.cmr.api {
     ModuleQuery
@@ -96,70 +90,32 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
     suppressWarnings("expressionTypeNothing")
     void run() {
         try {
-            value exitCode = doRun();
+            value moduleName
+                =   ModuleUtil.moduleName(moduleString);
+
+            value moduleVersion
+                =   checkModuleVersionsOrShowSuggestions(
+                        repositoryManager,
+                        moduleName,
+                        ModuleUtil.moduleVersion(moduleString),
+                        ModuleQuery.Type.\iDART,
+                        null, null, null, null,
+                        if (compile.empty) then "check" else compile) else "";
+
+            value exitCode
+                =   runDartToplevel {
+                        moduleAndVersion = "``moduleName``/``moduleVersion``";
+                        arguments = CeylonList(args).map(JString.string);
+                        toplevel = runDeclaration;
+                        web = web;
+                        disableCompatibilityCheck =  disableCompatibilityCheck;
+                        repositoryManager = repositoryManager;
+                    };
+
             process.exit(exitCode);
         }
         catch (ReportableException e) {
             throw object extends ToolError(e.message, e.cause) {};
         }
-    }
-
-    Integer doRun() {
-        if (!disableCompatibilityCheck) {
-            checkCeylonVersion();
-            // Make sure the language module has been installed
-            // Although, the program may actually import some other version...
-            verifyLanguageModuleAvailability(repositoryManager);
-        }
-
-        value dartPath = findExecutableInPath("dart");
-        if (!exists dartPath) {
-            throw ReportableException("Cannot find dart executable in path.");
-        }
-
-        value moduleName
-            =   ModuleUtil.moduleName(moduleString);
-
-        value moduleVersion
-            =   checkModuleVersionsOrShowSuggestions(
-                    repositoryManager,
-                    moduleName,
-                    ModuleUtil.moduleVersion(moduleString),
-                    ModuleQuery.Type.\iDART,
-                    null, null, null, null,
-                    if (compile.empty) then "check" else compile) else "";
-
-        value dependencies
-            =   gatherDependencies(repositoryManager, moduleName, moduleVersion,
-                    if (web) then "web" else "standard");
-
-        value dependencyFiles
-            =   mapToDependencyFiles(dependencies, repositoryManager);
-
-        value [packageRootPath, moduleMap]
-            =   createTemporaryPackageRoot(dependencyFiles);
-
-        assert (exists programModuleSymlink
-            =   moduleMap[moduleName]?.string);
-
-        value p
-            =   createProcess {
-                    command = dartPath.name;
-                    arguments = {
-                        "--package-root=" + packageRootPath.string,
-                        programModuleSymlink,
-                        if (exists rd = runDeclaration)
-                            then "$ceylon$run=``rd``"
-                            else null,
-                        *CeylonList(args).map(Object.string)
-                    }.coalesced;
-                    path = dartPath.directory.path;
-                    input = currentInput;
-                    output = currentOutput;
-                    error = currentError;
-                };
-
-        p.waitForExit();
-        return p.exitCode else 0;
     }
 }

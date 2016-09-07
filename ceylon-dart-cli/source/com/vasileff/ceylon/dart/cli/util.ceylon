@@ -34,6 +34,13 @@ import com.vasileff.ceylon.dart.compiler {
 import java.io {
     JFile=File
 }
+import ceylon.interop.java {
+    javaString,
+    JavaList
+}
+import com.redhat.ceylon.cmr.ceylon {
+    CeylonUtils
+}
 
 void verifyLanguageModuleAvailability(RepositoryManager repositoryManager) {
     value version = `module`.version;
@@ -259,6 +266,22 @@ File overwriteFile(Path path, String contents) {
 
     return file;
 }
+
+RepositoryManager repositoryManager(
+        [String*] repositories = [],
+        String? systemRepository = null,
+        String? cacheRepository = null,
+        String? cwd = null,
+        Boolean noDefaultRepositories = false,
+        Boolean offline = false)
+    =>  CeylonUtils.repoManager()
+            .userRepos(JavaList(repositories.collect(javaString)))
+            .systemRepo(systemRepository)
+            .cacheRepo(cacheRepository)
+            .cwd(cwd)
+            .noDefaultRepos(noDefaultRepositories)
+            .offline(offline)
+            .buildManager();
 
 void setExecutable(File file) {
     javaFile(file).setExecutable(true);
