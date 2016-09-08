@@ -180,23 +180,100 @@ shared
 
     "Include 'count nodes' visitors to determine baseline performance."
     Boolean baselinePerfTest;
-
-    suppressWarnings("unusedDeclaration")
-    void logOut(Object message = "") {
-        standardOutWriter.println(message);
+    void logOut(Object message) {
+        standardOutWriter.print(message);
         standardOutWriter.flush();
     }
 
     void logError(Object message = "") {
-        standardErrorWriter.println(message);
+        standardErrorWriter.print(message);
         standardErrorWriter.flush();
     }
+
+    return compileDartSP {
+        virtualFiles;
+        sourceDirectories;
+        sourceFiles;
+        moduleFilters;
+        repositoryManager;
+        outputRepositoryManager;
+        logOut;
+        logError;
+        generateSourceArtifact;
+        suppressWarning;
+        doWithoutCaching;
+        verboseAst;
+        verboseRhAst;
+        verboseCode;
+        verboseProfile;
+        verboseFiles;
+        quiet;
+        baselinePerfTest;
+    };
+}
+
+shared
+[[DartCompilationUnit*], CompilationStatus, [Message*]] compileDartSP(
+        virtualFiles = [],
+        sourceDirectories = [],
+        sourceFiles = [],
+        moduleFilters = [],
+        repositoryManager = null,
+        outputRepositoryManager = null,
+        logOut = noop,
+        logError = noop,
+        generateSourceArtifact = false,
+        suppressWarning = [],
+        doWithoutCaching = false,
+        verboseAst = false,
+        verboseRhAst = false,
+        verboseCode = false,
+        verboseProfile = false,
+        verboseFiles = false,
+        quiet = true,
+        baselinePerfTest = false) {
+
+    {VirtualFile*} virtualFiles;
+    {JFile*} sourceFiles; // for typechecker
+    {JFile*} sourceDirectories; // for typechecker
+
+    "A list of modules to compile, or the empty list to compile all modules."
+    {String*} moduleFilters;
+
+    RepositoryManager? repositoryManager;
+    RepositoryManager? outputRepositoryManager;
+
+    Boolean generateSourceArtifact;
+
+    {Warning*} suppressWarning;
+
+    Boolean doWithoutCaching;
+
+    Boolean verboseAst;
+    Boolean verboseRhAst;
+    Boolean verboseCode;
+    Boolean verboseProfile;
+    Boolean verboseFiles;
+    Boolean quiet;
+
+    "Include 'count nodes' visitors to determine baseline performance."
+    Boolean baselinePerfTest;
+
+    void logOut(Object message);
+
+    void logError(Object message);
 
     void logInfo(String message) {
         if (!quiet) {
             logError(message);
         }
     }
+
+    void logErrorLine(Object message)
+        =>  logError(message.string + "\n");
+
+    void logInfoLine(Object message)
+        =>  logInfo(message.string + "\n");
 
     function nativeCode(Directory directory) {
         // Concatinate *.dart files. Filter import and library directives. Return.
@@ -267,7 +344,7 @@ shared
                 if (t is ReportableException | ToolError) {
                     throw t;
                 }
-                logError(
+                logErrorLine(
                    "------------------------------------------------------------
                                         ** Compiler bug! **
                     ------------------------------------------------------------
@@ -301,12 +378,11 @@ shared
                 .sequence();
         if (dependencyErrors nonempty) {
             printErrors {
-                (String s) => standardErrorWriter.print(s);
+                logError;
                 true; true;
                 dependencyErrors;
                 typeChecker;
             };
-            standardErrorWriter.flush();
         }
         else {
             // otherwise, print all the errors
@@ -314,12 +390,11 @@ shared
                 =>  cu.visit(warningSuppressionVisitor));
 
             printErrors {
-                (String s) => standardErrorWriter.print(s);
+                logError;
                 true; true;
                 errorVisitor.positionedMessages;
                 typeChecker;
             };
-            standardErrorWriter.flush();
         }
         return [[],
             CompilationStatus.errorTypeChecker,
@@ -352,12 +427,12 @@ shared
         moduleSources.put(phasedUnit.\ipackage.\imodule, JFile(phasedUnit.unit.fullPath));
 
         if (verboseFiles) {
-            logError("-- begin " + path);
+            logErrorLine("-- begin " + path);
         }
 
         if (verboseRhAst) {
-            logError("-- Redhat AST " + path);
-            logError(phasedUnit.compilationUnit);
+            logErrorLine("-- Redhat AST " + path);
+            logErrorLine(phasedUnit.compilationUnit);
         }
 
         Integer start = system.nanoseconds;
@@ -378,8 +453,8 @@ shared
             }
 
             if (verboseAst) {
-                logError("-- Ceylon AST " + path);
-                logError(unit);
+                logErrorLine("-- Ceylon AST " + path);
+                logErrorLine(unit);
             }
 
             if (is CompilationUnit unit) {
@@ -444,7 +519,7 @@ shared
             }
         }
         catch (Throwable t) {
-            logError(
+            logErrorLine(
                "------------------------------------------------------------
                                     ** Compiler bug! **
                 ------------------------------------------------------------
@@ -464,7 +539,7 @@ shared
         // verboseFiles output
         if (verboseFiles) {
             Integer end = system.nanoseconds;
-            logError("-- end   " + path
+            logErrorLine("-- end   " + path
                 + " (``((end-start)/10^6).string``ms)");
         }
     }
@@ -703,17 +778,14 @@ shared
 
     // print errors last, to make them easy to find
     printErrors {
-        (String s) => standardErrorWriter.print(s);
+        logError;
         true; true;
         errorVisitor.positionedMessages;
         typeChecker;
     };
 
-    standardOutWriter.flush();
-    standardErrorWriter.flush();
-
     createdModules.sequence().reversed.each {
-        (moduleName) => logInfo("Note: Created module ``moduleName``");
+        (moduleName) => logInfoLine("Note: Created module ``moduleName``");
     };
 
     return [
