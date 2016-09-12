@@ -106,16 +106,32 @@ class ErrorCollectingVisitor() extends Visitor() {
         addErrors(that);
     }
 
+    function annotationList
+            (Tree.Declaration | Tree.ModuleDescriptor | Tree.ImportModule node)
+        =>  if (is Tree.Declaration node)
+                then (node.annotationList else null)
+            else if (is Tree.ModuleDescriptor node)
+                then (node.annotationList else null)
+            else (node.annotationList else null);
+
+    function forDart
+            (Tree.Declaration | Tree.ModuleDescriptor | Tree.ImportModule node)
+            // At least in the presence of a bad annotation like 'native(")'
+            // in module.ceylon, that.unit may be null!
+        =>  if (exists unit = node.unit)
+            then isForDart(annotationList(node), node.unit)
+            else true;
+
     shared actual
     void visit(Tree.Declaration that) {
-        if (isForDart(that.annotationList, that.unit)) {
+        if (forDart(that)) {
             super.visit(that);
         }
     }
 
     shared actual
     void visit(Tree.ModuleDescriptor that) {
-        if (isForDart(that.annotationList, that.unit)) {
+        if (forDart(that)) {
             super.visit(that);
         }
         else {
@@ -125,7 +141,7 @@ class ErrorCollectingVisitor() extends Visitor() {
 
     shared actual
     void visit(Tree.ImportModule that) {
-        if (isForDart(that.annotationList, that.unit)) {
+        if (forDart(that)) {
             super.visit(that);
         }
     }
