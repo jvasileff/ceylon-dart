@@ -273,7 +273,7 @@ compileDartSP(
 
      Keys are of the form `module.name/version`.
 
-     Note: all [[Module]]s must be [[JsonModule]]s!"
+     Note: all `Module`s must be `JsonModule`s!"
     Map<String, ModuleModel> moduleCache;
 
     void logOut(Object message);
