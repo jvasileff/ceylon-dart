@@ -10,13 +10,25 @@ import com.redhat.ceylon.compiler.typechecker.util {
 import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
+import com.redhat.ceylon.model.typechecker.model {
+    Module
+}
 
 shared
-class DartModuleManagerFactory() satisfies ModuleManagerFactory {
+class DartModuleManagerFactory(
+        "The immutable module cache to be used for all `ModuleSourceMapper`s created
+         by this factory.
+
+            - The cached *must not* contain entries for modules to be compile.
+            - If there is an entry for the default module, it will be ignored.
+
+         Keys are of the form `module.name/version`."
+        Map<String, Module> moduleCache = emptyMap)
+        satisfies ModuleManagerFactory {
 
     shared actual
     ModuleManager createModuleManager(Context? context)
-        =>  DartModuleManager();
+        =>  DartModuleManager(moduleCache);
 
     shared actual
     ModuleSourceMapper createModuleManagerUtil

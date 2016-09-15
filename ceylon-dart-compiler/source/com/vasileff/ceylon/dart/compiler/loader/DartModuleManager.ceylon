@@ -1,5 +1,6 @@
 import ceylon.interop.java {
-    javaString
+    javaString,
+    JavaCollection
 }
 
 import com.redhat.ceylon.common {
@@ -14,6 +15,10 @@ import com.redhat.ceylon.model.typechecker.model {
 import com.redhat.ceylon.model.typechecker.util {
     ModuleManager
 }
+import com.vasileff.ceylon.dart.compiler {
+    dartBackend,
+    javaList
+}
 
 import java.lang {
     JString=String,
@@ -25,12 +30,8 @@ import java.util {
     JList=List
 }
 
-import com.vasileff.ceylon.dart.compiler {
-    dartBackend,
-    javaList
-}
-
-class DartModuleManager() extends ModuleManager() {
+class DartModuleManager(Map<String, Module> moduleCache = emptyMap)
+        extends ModuleManager() {
 
     shared actual
     Iterable<JString> searchedArtifactExtensions
@@ -43,12 +44,16 @@ class DartModuleManager() extends ModuleManager() {
 
     shared actual
     void initCoreModules(variable Modules initialModules) {
-        // This method is the same as super(), but using a different, slighly less
-        // hard coded language module version.
+        // This method is similar same as super(), but using a different, slightly less
+        // hard coded language module version, and preloading modules from moduleCache.
 
         // Use *our* version as the language module version!
         value languageModuleVersion = `module`.version;
 
+        // preload modules from the cache, if any
+        initialModules.listOfModules.addAll(JavaCollection(moduleCache.items));
+
+        // start with the cache + the passed in set of modules (which should be empty???)
         setModules(initialModules);
 
         if (!modules.languageModule exists) {
@@ -57,13 +62,21 @@ class DartModuleManager() extends ModuleManager() {
 
             // create language module and add it as a dependency of defaultModule
             // since packages outside a module cannot declare dependencies
-            value languageName = Arrays.asList(
-                    javaString("ceylon"), javaString("language"));
-            value languageModule = createModule(languageName, languageModuleVersion);
-            languageModule.languageModule = languageModule;
-            languageModule.available = false;
-            modules.languageModule = languageModule;
-            modules.listOfModules.add(languageModule);
+            Module languageModule;
+            if (exists m = moduleCache["ceylon.language/``languageModuleVersion``"]) {
+                // we just added it to initialModules, so just wrap up the config
+                languageModule = m;
+                modules.languageModule = m;
+            }
+            else {
+                value languageName = Arrays.asList(
+                        javaString("ceylon"), javaString("language"));
+                languageModule = createModule(languageName, languageModuleVersion);
+                languageModule.languageModule = languageModule;
+                languageModule.available = false;
+                modules.languageModule = languageModule;
+                modules.listOfModules.add(languageModule);
+            }
 
             // build default module (module in which packages belong to when not
             // explicitly under a module)
@@ -79,6 +92,7 @@ class DartModuleManager() extends ModuleManager() {
 
     shared actual
     JsonModule createModule(JList<JString> moduleName, String version) {
+        // create a new one
         JsonModule m = JsonModule();
         m.name = moduleName;
         m.version = version;

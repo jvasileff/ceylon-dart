@@ -82,6 +82,9 @@ import com.redhat.ceylon.model.typechecker.context {
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module
 }
+import com.redhat.ceylon.model.typechecker.util {
+    ModuleManager
+}
 import com.vasileff.ceylon.dart.compiler.core {
     CompilationContext,
     augmentNode,
@@ -190,7 +193,7 @@ shared
         standardErrorWriter.flush();
     }
 
-    return compileDartSP {
+    value [a,b,c,d] = compileDartSP {
         virtualFiles;
         sourceDirectories;
         sourceFiles;
@@ -210,10 +213,13 @@ shared
         quiet;
         baselinePerfTest;
     };
+
+    return [a, b, c.collect(Entry.item)];
 }
 
 shared
-[[DartCompilationUnit*], CompilationStatus, [Message*]] compileDartSP(
+[[DartCompilationUnit*], CompilationStatus, [<TreeNode->Message>*], ModuleManager]
+compileDartSP(
         virtualFiles = [],
         sourceDirectories = [],
         sourceFiles = [],
@@ -231,7 +237,8 @@ shared
         verboseProfile = false,
         verboseFiles = false,
         quiet = true,
-        baselinePerfTest = false) {
+        baselinePerfTest = false,
+        moduleCache = emptyMap) {
 
     {VirtualFile*} virtualFiles;
     {JFile*} sourceFiles; // for typechecker
@@ -258,6 +265,16 @@ shared
 
     "Include 'count nodes' visitors to determine baseline performance."
     Boolean baselinePerfTest;
+
+    "The immutable module cache to be used for this compile.
+
+        - The cached *must not* contain entries for modules to be compile.
+        - If there is an entry for the default module, it will be ignored.
+
+     Keys are of the form `module.name/version`.
+
+     Note: all [[Module]]s must be [[JsonModule]]s!"
+    Map<String, ModuleModel> moduleCache;
 
     void logOut(Object message);
 
@@ -322,7 +339,7 @@ shared
         builder.setModuleFilters(javaList(moduleFilters.map(javaString)));
     }
     builder.setRepositoryManager(repositoryManager);
-    builder.moduleManagerFactory(DartModuleManagerFactory());
+    builder.moduleManagerFactory(DartModuleManagerFactory(moduleCache));
 
     // Typecheck, silently.
     value typeChecker = builder.typeChecker;
@@ -396,9 +413,11 @@ shared
                 typeChecker;
             };
         }
+
         return [[],
             CompilationStatus.errorTypeChecker,
-            errorVisitor.positionedMessages.collect(PositionedMessage.message)];
+            errorVisitor.positionedMessages.collect((m) => m.node->m.message),
+            typeChecker.phasedUnits.moduleManager];
     }
     errorVisitor.clear();
 
@@ -793,7 +812,8 @@ shared
         if (errorVisitor.errorCount > 0)
             then CompilationStatus.errorTypeChecker
             else CompilationStatus.success,
-        errorVisitor.positionedMessages.collect(PositionedMessage.message)];
+        errorVisitor.positionedMessages.collect((m) => m.node->m.message),
+        typeChecker.phasedUnits.moduleManager];
 }
 
 shared
