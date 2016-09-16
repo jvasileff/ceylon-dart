@@ -1,5 +1,6 @@
 [compiler]
 source=./support
+source=./source
 suppresswarning=ceylonNamespace
 
 [defaults]
