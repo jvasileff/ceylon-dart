@@ -306,6 +306,7 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `compilerAnnotation`,
      `doclink`,
      `expressionTypeNothing`,
+     `expressionTypeCallable`,
      `unusedDeclaration`,
      `unusedImport`,
      `ceylonNamespace`,
@@ -349,9 +350,9 @@ shared final annotation class SmallAnnotation()
         satisfies OptionalAnnotation<SmallAnnotation,ValueDeclaration|FunctionDeclaration> {
 }
 
-"Annotation to hint to the compiler that an `Integer` or `Float` 
- typed value or function can be represented using a 32-bit signed integer or 
- 32-bit IEEE float."
+"Annotation to hint to the compiler that an `Integer` or 
+ `Float` typed value or function should be represented using 
+ a 32-bit signed integer or 32-bit IEEE float if possible."
 since("1.3.0")
 shared annotation SmallAnnotation small() 
         => SmallAnnotation();

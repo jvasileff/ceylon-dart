@@ -23,7 +23,7 @@ import ceylon.language.impl {
  new value.
  
      value array = Array { \"hello\", \"world\" };
-     array.set(0, \"goodbye\");
+     array[0] = \"goodbye\";
  
  Arrays are lists and support all operations inherited from 
  [[List]], along with certain additional operations for 
