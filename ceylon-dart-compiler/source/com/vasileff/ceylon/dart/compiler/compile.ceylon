@@ -569,7 +569,13 @@ compileDartSP(
         value unit
             =   if (mod.defaultModule)
                 then mod.packages.get(0).units.iterator().next()
-                else mod.unit;
+                else (mod.unit else null);
+
+        if (!exists unit) {
+            // this can occur with a module.ceylon file that is empty
+            // or has nothing but whitespace
+            continue;
+        }
 
         value pkg
             =   if (mod.defaultModule)
@@ -972,6 +978,12 @@ Map<ModuleModel, String> gatherCompileDependencies(
                  with ``ModuleUtil.makeModuleName(
                         moduleModel.nameAsString, previousVersion)``");
         }
+        return dependencies;
+    }
+
+    if (!moduleModel.version exists) {
+        // this can occur with a module.ceylon file that is empty
+        // or has nothing but whitespace
         return dependencies;
     }
 
