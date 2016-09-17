@@ -7,7 +7,8 @@ import ceylon.interop.java {
 }
 
 import com.redhat.ceylon.common.config {
-    DefaultToolOptions
+    DefaultToolOptions,
+    CeylonConfig
 }
 import com.redhat.ceylon.common.tool {
     AnnotatedToolModel,
@@ -39,7 +40,9 @@ import java.io {
     JFile=File
 }
 import java.lang {
-    JString=String
+    JString=String,
+    Class,
+    Enum
 }
 import java.util {
     JList=List,
@@ -97,8 +100,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `expressionTypeCallable`, `uncheckedType`,
          `unsupported`";
     }
-    EnumSet<Warning> suppressWarning = EnumUtil.enumsFromStrings(javaClass<Warning>(),
-            DefaultToolOptions.compilerSuppressWarnings);
+    EnumSet<Warning> suppressWarning = (() {
+        // compiler.suppresswarning option
+        value result = EnumUtil.enumsFromStrings(javaClass<Warning>(),
+                DefaultToolOptions.compilerSuppressWarnings)
+                else EnumSet.noneOf(javaClass<Warning>());
+        // compiler.dartsuppresswarning option
+        result.addAll(enumsFromStrings(javaClass<Warning>(),
+                getCompilerDartSuppressWarnings()));
+        return result;
+    })();
 
     shared actual variable
     option { shortName = 'd'; }
@@ -244,4 +255,26 @@ void runCompileDartTool() {
     toolModel.toolClass = javaClass<CeylonCompileDartTool>();
     toolFactory.bindArguments(toolModel, tool, CeylonTool(), args);
     tool.run();
+}
+
+[String*] getCompilerDartSuppressWarnings()
+    =>  if (exists warnings
+            =   CeylonConfig.get().getOptionValues("compiler.dartsuppresswarning"))
+        then warnings.iterable.coalesced.map(Object.string).sequence()
+        else [];
+
+EnumSet<EnumType> enumsFromStrings<EnumType>(
+        Class<EnumType> enumClass, [String*] elements)
+        given EnumType satisfies Enum<EnumType> {
+    value result = EnumSet<EnumType>.noneOf(enumClass);
+    value allValues = EnumSet.allOf(enumClass);
+    for (element in elements.map(String.trimmed)
+                            .map((String s) => s.replace("-", "_"))) {
+        for (e in allValues) {
+            if (e.name().equalsIgnoringCase(element)) {
+                result.add(e);
+            }
+        }
+    }
+    return result;
 }
