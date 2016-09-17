@@ -2922,9 +2922,9 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformMeta(Meta that) {
         value info = expressionInfo(that);
 
-        // TODO unsupported feature warning type
-        addWarning(info, Warning.unknownWarning,
-            "**unsupported feature** metamodel expressions are not yet supported");
+        addWarning(info, Warning.unsupported,
+            "unsupported feature: metamodel expressions are not yet supported on the
+             Dart backend");
 
         return DartThrowExpression {
             DartInstanceCreationExpression {
@@ -2968,9 +2968,9 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual DartExpression transformDec(Dec that) {
         value info = expressionInfo(that);
 
-        // TODO unsupported feature warning type
-        addWarning(info, Warning.unknownWarning,
-            "**unsupported feature** metamodel expressions are not yet supported");
+        addWarning(info, Warning.unsupported,
+            "unsupported feature: metamodel expressions are not yet supported on the
+             Dart backend");
 
         return DartThrowExpression {
             DartInstanceCreationExpression {
