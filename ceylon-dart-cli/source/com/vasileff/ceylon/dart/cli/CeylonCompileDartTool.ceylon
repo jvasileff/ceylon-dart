@@ -98,7 +98,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `redundantNarrowing`, `redundantIteration`,
          `missingImportPrefix`, `uncheckedTypeArguments`,
          `expressionTypeCallable`, `uncheckedType`,
-         `unsupported`, `uncomparableTypes`";
+         `unsupported`, `undefinedEquality`";
     }
     EnumSet<Warning> suppressWarning = (() {
         // compiler.suppresswarning option

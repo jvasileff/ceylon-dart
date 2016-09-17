@@ -1602,7 +1602,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     || rhsType.isSubtypeOf(lhsType)))
             && !(lhsType.\iobject || rhsType.\iobject)
             && (eqContainer in [unit.identifiableDeclaration, unit.objectDeclaration])) {
-            addWarning(info, Warning.uncomparableTypes,
+            addWarning(info, Warning.undefinedEquality,
                 "tests equality for uncomparable operands: equality is not defined for \
                  the types '``lhsType``\' and \'``rhsType``\'");
         }
