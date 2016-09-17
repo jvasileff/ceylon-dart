@@ -91,8 +91,11 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `unknownWarning`, `ambiguousAnnotation`,
          `similarModule`, `importsOtherJdk`,
          `javaAnnotationElement`, `syntaxDeprecation`,
-         `literalNotSmall`, `redundantNarrowing`,
-         `redundantIteration`, `unsoundTypeTest`";
+         `smallIgnored`, `literalNotSmall`,
+         `redundantNarrowing`, `redundantIteration`,
+         `missingImportPrefix`, `uncheckedTypeArguments`,
+         `expressionTypeCallable`, `uncheckedType`,
+         `unsupported`";
     }
     EnumSet<Warning> suppressWarning = EnumUtil.enumsFromStrings(javaClass<Warning>(),
             DefaultToolOptions.compilerSuppressWarnings);
