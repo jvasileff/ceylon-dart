@@ -32,8 +32,7 @@ import com.vasileff.ceylon.dart.compiler {
     compileDart,
     CompilationStatus,
     ReportableException,
-    Warning,
-    javaList
+    Warning
 }
 
 import java.io {
@@ -55,7 +54,7 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
         argumentName = "moduleOrFile";
         multiplicity = "*";
     }
-    JList<JString> moduleOrFile = javaList<JString>{javaString("*")};
+    JList<JString> moduleOrFile = DefaultToolOptions.getCompilerModules(dartBackend);
 
     shared variable option
     description("Wrap typeChecker.process() in TypeCache.doWithoutCaching \
