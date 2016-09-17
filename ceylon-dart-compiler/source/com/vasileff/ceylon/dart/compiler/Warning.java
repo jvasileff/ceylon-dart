@@ -25,5 +25,8 @@ public enum Warning {
     literalNotSmall,
     redundantNarrowing,
     redundantIteration,
+    missingImportPrefix,
+    uncheckedTypeArguments,
+    expressionTypeCallable,
     unsoundTypeTest
 }
