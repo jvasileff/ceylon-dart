@@ -18,7 +18,8 @@ import com.redhat.ceylon.common.tool {
     optionArgument=optionArgument__SETTER,
     ToolError,
     parsedBy=parsedBy__SETTER,
-    StandardArgumentParsers
+    StandardArgumentParsers,
+    EnumUtil
 }
 import com.redhat.ceylon.common.tools {
     CeylonTool,
@@ -94,7 +95,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
          `literalNotSmall`, `redundantNarrowing`,
          `redundantIteration`, `unsoundTypeTest`";
     }
-    EnumSet<Warning> suppressWarning = EnumSet.noneOf(javaClass<Warning>());
+    EnumSet<Warning> suppressWarning = EnumUtil.enumsFromStrings(javaClass<Warning>(),
+            DefaultToolOptions.compilerSuppressWarnings);
 
     shared actual variable
     option { shortName = 'd'; }
