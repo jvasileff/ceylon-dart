@@ -28,5 +28,5 @@ public enum Warning {
     missingImportPrefix,
     uncheckedTypeArguments,
     expressionTypeCallable,
-    unsoundTypeTest
+    uncheckedType
 }

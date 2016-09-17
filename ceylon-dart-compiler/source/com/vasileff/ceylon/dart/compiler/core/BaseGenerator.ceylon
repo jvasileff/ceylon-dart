@@ -2371,11 +2371,10 @@ class BaseGenerator(CompilationContext ctx)
             =   ceylonTypes.intersectionType(typeModelToCheck, rawType(resolvedIsType));
 
         if (!actualResultType.isSubtypeOf(desiredResultType)) {
-            addWarning(scope, Warning.unsoundTypeTest,
-                "**unsound type test** reified generics not yet implemented; 'is' test \
-                 may produce incorrect results; the expected result type \
-                 '``desiredResultType.asString()``' is a subtype of the effective result \
-                 type '``actualResultType.asString()``'.");
+            addWarning(scope, Warning.uncheckedType,
+                "type condition cannot be fully checked at runtime: the \
+                 expected type '``desiredResultType.asString()``' is a subtype of the
+                 guaranteed type '``actualResultType.asString()``'");
         }
 
         return generateExpression(resolvedIsType);
