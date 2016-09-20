@@ -122,7 +122,7 @@ class DartModuleManager(Map<String, Module> moduleCache = emptyMap)
     shared actual
     JsonPackage createPackage(String packageName, Module? m) {
         if (exists m) {
-            if (exists p = m.getPackage(packageName)) {
+            if (exists p = m.getDirectPackage(packageName)) {
                 "The package should be a JsonPackage, right?"
                 assert (is JsonPackage p);
                 return p;
