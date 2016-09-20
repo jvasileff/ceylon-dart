@@ -104,7 +104,7 @@ class DartModuleManager(Map<String, Module> moduleCache = emptyMap)
                     else modules.languageModule;
 
             value moduleImport
-                =   ModuleImport(null, languageModule, false, false);
+                =   ModuleImport(null, languageModule, false, true);
 
             m.addImport(moduleImport);
             m.languageModule = languageModule;
