@@ -27,7 +27,8 @@ import ceylon.interop.java {
     javaClass,
     JavaIterable,
     javaString,
-    CeylonList
+    CeylonList,
+    createJavaObjectArray
 }
 import ceylon.json {
     JsonObject=Object,
@@ -62,7 +63,8 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
 import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit
+    PhasedUnit,
+    TypecheckerUnit
 }
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
@@ -81,9 +83,6 @@ import com.redhat.ceylon.model.typechecker.context {
 }
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module
-}
-import com.redhat.ceylon.model.typechecker.util {
-    ModuleManager
 }
 import com.vasileff.ceylon.dart.compiler.core {
     CompilationContext,
@@ -105,8 +104,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     CodeWriter
 }
 import com.vasileff.ceylon.dart.compiler.loader {
-    DartModuleManagerFactory,
-    MetamodelVisitor
+    MetamodelVisitor,
+    DartModuleManagerFactory
 }
 import com.vasileff.ceylon.structures {
     LinkedListMultimap
@@ -124,7 +123,12 @@ import java.lang {
     JFloat=Float,
     JDouble=Double,
     JInteger=Integer,
-    JLong=Long
+    JLong=Long,
+    NoSuchFieldException
+}
+import java.lang.reflect {
+    Field,
+    AccessibleObject
 }
 import java.util {
     EnumSet,
@@ -218,7 +222,7 @@ shared
 }
 
 shared
-[[DartCompilationUnit*], CompilationStatus, [<TreeNode->Message>*], ModuleManager]
+[[DartCompilationUnit*], CompilationStatus, [<TreeNode->Message>*], [ModuleModel*]]
 compileDartSP(
         virtualFiles = [],
         sourceDirectories = [],
@@ -377,6 +381,12 @@ compileDartSP(
 
     value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits);
 
+    for (phasedUnit in phasedUnits) {
+        // workaround memory leak in
+        // https://github.com/ceylon/ceylon/pull/6525
+        moduleSourceMapperField?.set(phasedUnit.unit, null);
+    }
+
     // suppress warnings
     value suppressedWarnings = EnumSet.noneOf(javaClass<Warning>());
     suppressedWarnings.addAll(javaList(suppressWarning));
@@ -417,7 +427,9 @@ compileDartSP(
         return [[],
             CompilationStatus.errorTypeChecker,
             errorVisitor.positionedMessages.collect((m) => m.node->m.message),
-            typeChecker.phasedUnits.moduleManager];
+            CeylonIterable {
+                typeChecker.phasedUnits.moduleManager.modules.listOfModules;
+            }.sequence()];
     }
     errorVisitor.clear();
 
@@ -819,7 +831,9 @@ compileDartSP(
             then CompilationStatus.errorTypeChecker
             else CompilationStatus.success,
         errorVisitor.positionedMessages.collect((m) => m.node->m.message),
-        typeChecker.phasedUnits.moduleManager];
+        CeylonIterable {
+            typeChecker.phasedUnits.moduleManager.modules.listOfModules;
+        }.sequence()];
 }
 
 shared
@@ -1002,3 +1016,18 @@ Map<ModuleModel, String> gatherCompileDependencies(
 
     return dependencies;
 }
+
+Field? moduleSourceMapperField = (() {
+    try {
+        value field
+            =   javaClass<TypecheckerUnit>()
+                    .getDeclaredField("moduleSourceMapper");
+        // workaround https://github.com/ceylon/ceylon/issues/6526
+        AccessibleObject.setAccessible(
+            createJavaObjectArray { field }, true);
+        return field;
+    }
+    catch (NoSuchFieldException e) {
+        return null;
+    }
+})();
