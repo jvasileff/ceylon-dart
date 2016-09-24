@@ -17,5 +17,5 @@
    `Correspondence` from `Key` to `MutableSet<Item>` that does not store duplicate
    `key->item` entries."
 module ceylon.dart.runtime.structures "1.3.0" {
-    shared import ceylon.collection "1.3.0";
+    shared import ceylon.dart.runtime.nativecollection "1.3.0";
 }

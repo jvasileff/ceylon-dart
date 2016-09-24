@@ -1,4 +1,4 @@
-import ceylon.collection {
+import ceylon.dart.runtime.nativecollection {
     HashMap,
     HashSet,
     MutableSet,
