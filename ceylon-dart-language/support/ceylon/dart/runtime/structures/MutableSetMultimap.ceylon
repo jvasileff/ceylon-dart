@@ -35,5 +35,5 @@ interface MutableSetMultimap<Key, Item>
 
     shared actual default
     Boolean remove(Key key, Item item)
-        =>  defines(key) && get(key).remove(item) != 0;
+        =>  defines(key) && get(key).remove(item);
 }
