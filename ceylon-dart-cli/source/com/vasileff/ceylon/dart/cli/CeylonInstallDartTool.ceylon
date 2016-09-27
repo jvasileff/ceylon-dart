@@ -101,6 +101,9 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         unzip("/com/vasileff/ceylon/dart/cli/ceylon-language.zip");
         unzip("/com/vasileff/ceylon/dart/cli/ceylon-sdk.zip");
 
+        // use only the temp repo holding the artifacts to copy
+        setNoDefRepos(true);
+
         // configure this OutputRepoUsingTool with the temporary input repository
         repositoryAsStrings
             =   javaList { javaString(unzipRootPath.resolve("repository").string) };
