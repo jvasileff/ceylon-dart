@@ -36,7 +36,7 @@ be easily installed on any OS X or Linux system.
 
 **Step 1: Install Ceylon**
 
-To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.2.2 is required.
+To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.3.0 is required.
 
 **Step 2: Install Dart**
 
@@ -90,7 +90,7 @@ There are three main types of applications that can be written today:
 - server side applications using `dart.io`
 
 Support for pure-Ceylon CLI applications is quite advanced and supports nearly
-all valid Ceylon 1.2.2 programs. Modules can be compiled, run, and even
+all valid Ceylon 1.3.0 programs. Modules can be compiled, run, and even
 imported using standard Ceylon tools and conventions. See the "Hello, World"
 walkthrough below to get started.
 
@@ -156,7 +156,7 @@ copy the examples locally, and try them out on the Dart backend!
 #### About the `ceylon new` Command
 
 Note that the `ceylon new` command is not Dart specific; it is a standard
-command available with Ceylon 1.2.2. For help using the command, use `ceylon
+command available with Ceylon 1.3.0. For help using the command, use `ceylon
 help new`.
 
 You may notice options to create Eclipse and Ant configuration files. While
@@ -165,7 +165,7 @@ options may still be useful, as you might use Eclipse to develop a module using
 the Java or JavaScript backend, and then drop to the CLI to compile for Dart.
 
 Also note that the first argument to `ceylon new` must be the name of a
-template. Of the three templates available as part of Ceylon 1.2.2,
+template. Of the three templates available as part of Ceylon 1.3.0,
 `hello-world` and `simple` can be used for Dart projects. For example, to get
 started with a blank project, you might use:
 
