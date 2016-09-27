@@ -1,5 +1,14 @@
 # Dart backend for Ceylon
 
+## Update (9/27/2016)
+
+**Developer preview release 3 (DP3) of the Dart backend for Ceylon is now
+available**
+
+This release is compatable with Ceylon 1.3.0 and contains [several bug fixes
+and enhancements](https://github.com/jvasileff/ceylon-dart/milestone/1?closed=1)
+over DP2.
+
 ## Update (7/13/2016)
 
 **Developer preview release 2 (DP2) of the Dart backend for Ceylon is now
@@ -44,7 +53,7 @@ from <https://www.dartlang.org/downloads/>.
 
 The commandline interface can be installed with:
 
-    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.2.2-DP2
+    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.3.0-DP3
 
 Upon using `ceylon compile-dart` or `ceylon run-dart` for the first time, you
 will be prompted to complete the installation by running:
