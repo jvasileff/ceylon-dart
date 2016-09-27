@@ -197,7 +197,7 @@ shared
         standardErrorWriter.flush();
     }
 
-    value [a,b,c,d] = compileDartSP {
+    value [a,b,c,d,e] = compileDartSP {
         virtualFiles;
         sourceDirectories;
         sourceFiles;
@@ -222,7 +222,8 @@ shared
 }
 
 shared
-[[DartCompilationUnit*], CompilationStatus, [<TreeNode->Message>*], [ModuleModel*]]
+[[DartCompilationUnit*], CompilationStatus, [<TreeNode->Message>*], [ModuleModel*],
+ [PhasedUnit*]]
 compileDartSP(
         virtualFiles = [],
         sourceDirectories = [],
@@ -379,7 +380,7 @@ compileDartSP(
 
     value swDartCompilerCreation = timerStages.Measurement("Dart compiler creation");
 
-    value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits);
+    value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits).sequence();
 
     for (phasedUnit in phasedUnits) {
         // workaround memory leak in
@@ -429,7 +430,8 @@ compileDartSP(
             errorVisitor.positionedMessages.collect((m) => m.node->m.message),
             CeylonIterable {
                 typeChecker.phasedUnits.moduleManager.modules.listOfModules;
-            }.sequence()];
+            }.sequence(),
+            phasedUnits];
     }
     errorVisitor.clear();
 
@@ -833,7 +835,8 @@ compileDartSP(
         errorVisitor.positionedMessages.collect((m) => m.node->m.message),
         CeylonIterable {
             typeChecker.phasedUnits.moduleManager.modules.listOfModules;
-        }.sequence()];
+        }.sequence(),
+        phasedUnits];
 }
 
 shared
