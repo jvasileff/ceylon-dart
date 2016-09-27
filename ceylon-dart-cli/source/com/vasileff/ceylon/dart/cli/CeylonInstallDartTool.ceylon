@@ -119,7 +119,7 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
                 =   moduleVersion(name);
 
             value ac
-                =   ArtifactContext(name, version,
+                =   ArtifactContext(null, name, version,
                         ArtifactContext.\iDART_MODEL, ArtifactContext.\iDART);
 
             ac.forceOperation = true;
