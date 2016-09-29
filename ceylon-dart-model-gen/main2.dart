@@ -132,7 +132,8 @@ main() {
   moduleToMap(
     currentMirrorSystem().findLibrary(#dart.dom.html),
     [currentMirrorSystem().findLibrary(#dart.core),
-     currentMirrorSystem().findLibrary(#dart.async)]);
+     currentMirrorSystem().findLibrary(#dart.async),
+     currentMirrorSystem().findLibrary(#dart.collection)]);
 
   // // dart.indexed_db
   // moduleToMap(
