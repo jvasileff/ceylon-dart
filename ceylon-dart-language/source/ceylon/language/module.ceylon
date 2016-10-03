@@ -29,12 +29,12 @@
 by ("Gavin King", "Tom Bentley", "Tako Schotanus",
    "Stephane Epardaud", "Enrique Zamudio")
 license ("http://www.apache.org/licenses/LICENSE-2.0.html")
-module ceylon.language "1.3.0-DP3" {
+module ceylon.language "1.3.1-DP5-SNAPSHOT" {
     native("jvm") import java.base "7";
-    native("dart") import dart.core "1.3.0";
-    native("dart") import dart.math "1.3.0";
-    native("dart") import ceylon.interop.dart "1.3.0";
-    native("dart") import ceylon.dart.runtime.core "1.3.0";
+    native("dart") import dart.core "1.3.1";
+    native("dart") import dart.math "1.3.1";
+    native("dart") import ceylon.interop.dart "1.3.1";
+    native("dart") import ceylon.dart.runtime.core "1.3.1";
     // can't be native("dart") unless we un-share the c.l.meta impls
-    import ceylon.dart.runtime.model "1.3.0";
+    import ceylon.dart.runtime.model "1.3.1";
 }

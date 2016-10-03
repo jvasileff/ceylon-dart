@@ -1,3 +1,3 @@
 summary=Compiles Ceylon source code to Dart and directly produces module and source archives in a module repository.
-module=com.vasileff.ceylon.dart.cli/1.3.0-DP3
+module=com.vasileff.ceylon.dart.cli/1.3.1-DP5-SNAPSHOT
 class=com.vasileff.ceylon.dart.cli.CeylonCompileDartTool
