@@ -71,7 +71,8 @@ public class MetamodelGenerator {
     // backend specific keys
     public static final String KEY_JS_NEW       = "$new"; // should be instantiated with new; TypeScript interop
 
-    public static final String KEY_NATIVE_DART	= "$mod-native-dart";
+    public static final String KEY_NAMED        = "nam";
+    public static final String KEY_NATIVE_DART  = "$mod-native-dart";
 
     public static final String METATYPE_CLASS           = "c";
     public static final String METATYPE_INTERFACE       = "i";

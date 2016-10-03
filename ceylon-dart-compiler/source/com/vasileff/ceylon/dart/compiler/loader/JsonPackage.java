@@ -16,6 +16,7 @@ import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_ME
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_METHODS;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_MODULE;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_NAME;
+import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_NAMED;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_OBJECTS;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_PACKAGE;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_PACKED_ANNS;
@@ -523,12 +524,13 @@ public class JsonPackage extends LazyPackage {
         ParameterList plist = new ParameterList();
         if (params != null) {
             for (Map<String,Object> p : params) {
-                Parameter param = new Parameter();
+                JsonParameter param = new JsonParameter();
                 final String paramtype = (String)p.get("$pt");
                 param.setHidden(p.containsKey("$hdn"));
                 param.setName((String)p.get(KEY_NAME));
                 param.setDeclaration(owner);
                 param.setDefaulted(p.containsKey(KEY_DEFAULT));
+                param.setNamed(p.containsKey(KEY_NAMED));
                 param.setSequenced(p.containsKey("seq"));
                 param.setAtLeastOne(p.containsKey("$min1"));
                 if (paramtype == null || "v".equals(paramtype)) {
