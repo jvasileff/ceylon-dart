@@ -183,7 +183,7 @@
    would require a language with dynamic typing."
 by("Julien Viet")
 license("Apache Software License")
-module ceylon.promise "1.3.0" {
+module ceylon.promise "1.3.1" {
   native("jvm") import java.base "7";
   native("dart") import "dart.async" "1.3.0";
 }
