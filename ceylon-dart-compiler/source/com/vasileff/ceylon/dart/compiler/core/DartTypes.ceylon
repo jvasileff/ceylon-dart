@@ -1687,7 +1687,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 let (sInfo = superInfo(primary))
                 sInfo.typeModel.getSupertype(sInfo.declarationModel)
             else if (is GroupedExpression primary,
-                     is OfOperation ofOp = primary.innerExpression,
+                     is OfOperation ofOp = ungroup(primary),
                      is Super s = ofOp.operand) then
                 let (sInfo = superInfo(s))
                 sInfo.typeModel.getSupertype(sInfo.declarationModel)

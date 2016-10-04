@@ -6,7 +6,11 @@ import ceylon.ast.core {
     Expression,
     Outer,
     Primary,
-    QualifiedExpression
+    QualifiedExpression,
+    SelfReference,
+    GroupedExpression,
+    OfOperation,
+    Super
 }
 import ceylon.collection {
     HashMap
@@ -484,6 +488,25 @@ Boolean isForDartBackend(Declaration | DeclarationInfo | DeclarationModel
             | ModuleModel | ModuleImportModel that)
     =>  let (backends = getNativeBackends(that))
         backends.none() || backends.supports(dartBackend);
+
+shared
+Boolean isSelfReference(Expression primary)
+    =>  if (is SelfReference primary)
+            then true
+        else if (is GroupedExpression primary,
+                 ungroup(primary) is SelfReference)
+            then true
+        else if (is GroupedExpression primary,
+                 is OfOperation ofOp = ungroup(primary),
+                 is Super s = ofOp.operand)
+            then true
+        else false;
+
+shared
+Expression ungroup(GroupedExpression primary)
+    =>  if (is GroupedExpression ge = primary.innerExpression)
+        then ungroup(ge)
+        else primary.innerExpression;
 
 shared
 SetterModel | FunctionModel | ValueModel | ClassModel? mostRefined
