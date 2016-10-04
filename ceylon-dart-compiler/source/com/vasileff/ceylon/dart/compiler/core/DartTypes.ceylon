@@ -1438,7 +1438,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
 
             value ancestoryToReceiver
-                =   if (exists scopeContainer)
+                =   if (!originalDeclaration.static, exists scopeContainer)
                     then ancestorClassOrInterfacesToInheritingDeclaration {
                         scopeContainer;
                         declarationContainer;
@@ -1472,8 +1472,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                                 ancestoryToReceiver;
                             };
             }
-            else if (!replaceConstructorWithClass(originalDeclaration)
-                        .static) {
+            else if (!replaceConstructorWithClass(originalDeclaration).static) {
                 // the reciever is a toplevel object w/an import alias
                 receiver = expressionForReceiverOfImportAlias(scope, originalDeclaration);
 
