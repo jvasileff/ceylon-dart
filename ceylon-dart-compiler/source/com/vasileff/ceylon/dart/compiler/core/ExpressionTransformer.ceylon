@@ -830,7 +830,8 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
             // QualifiedExpression with a `super` receiver
-            if (is QualifiedExpression invoked,
+            if (!invokedDeclaration.static,
+                is QualifiedExpression invoked,
                 exists superType = dartTypes.denotableSuperType(
                                         invoked.receiverExpression)) {
 
