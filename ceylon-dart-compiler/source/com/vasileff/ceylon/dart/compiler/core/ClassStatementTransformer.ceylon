@@ -75,9 +75,10 @@ class ClassStatementTransformer(CompilationContext ctx)
     "The value may be a class member. So:
 
      1. If this is a getter (has a LazySpecifier), ignore
-     2. Otherwise, assign the value to the member (but don't declare a new variable)
+     2. If this is a static value, ignore
+     3. Otherwise, assign the value to the member (but don't declare a new variable)
 
-     Note: for item 2, we need to assign to a synthetic field if the declaration is
+     Note: for item 3, we need to assign to a synthetic field if the declaration is
      overridable (not `default`)."
     shared actual
     DartStatement[] transformValueDefinition(ValueDefinition that) {
@@ -88,6 +89,11 @@ class ClassStatementTransformer(CompilationContext ctx)
             return [];
         }
         case (is Specifier) {
+            // ignore static values; they are initialized when declared
+            if (info.declarationModel.static) {
+                return [];
+            }
+
             // Similar to StatementTransformer.transformAssignmentStatement(), but we
             // can get away with using getName() and DartAssignmentExpression here since
             // we'll never be dealing with a capture, something that needs 'this.', etc.

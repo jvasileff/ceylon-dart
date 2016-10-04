@@ -43,7 +43,8 @@ import ceylon.ast.core {
     EntryPattern,
     MemberOperator,
     ClassDefinition,
-    ValueConstructorDefinition
+    ValueConstructorDefinition,
+    Package
 }
 import ceylon.collection {
     LinkedList
@@ -5296,6 +5297,7 @@ class BaseGenerator(CompilationContext ctx)
         TypeModel valueType;
         ValueModel valueDeclaration;
         DartQualifiedInvocable invocable;
+        DartStatement? statementForSideEffects;
 
         switch (target)
         case (is BaseExpression) {
@@ -5303,8 +5305,10 @@ class BaseGenerator(CompilationContext ctx)
             assert (is ValueModel d = info.declaration);
             valueDeclaration = d;
             valueType = info.typeModel;
+            statementForSideEffects = null;
 
             if (!valueDeclaration.shared,
+                !valueDeclaration.static,
                 is InterfaceModel targetContainer = valueDeclaration.container) {
                 // Special case: invoking private interface member using a BaseExpression.
 
@@ -5357,10 +5361,48 @@ class BaseGenerator(CompilationContext ctx)
             assert (is ClassOrInterfaceModel targetContainer
                 =   valueDeclaration.container);
 
-            if (exists superType = dartTypes.denotableSuperType(
+            if (valueDeclaration.static) {
+                invocable
+                    =   dartTypes.invocableForBaseExpression {
+                            scope;
+                            valueDeclaration;
+                            true;
+                        };
+
+                if (!target.receiverExpression is Package,
+                        !isSelfReference(target.receiverExpression),
+                        !isStaticMethodReferencePrimary(
+                                expressionInfo(target.receiverExpression))) {
+                    // A static member qualified by an expression for a value. We must
+                    // evaluate the expression for side effects.
+                    statementForSideEffects
+                        // noop() would be better
+                        =   createVariableDeclaration {
+                                dartTypeName
+                                    =   dartTypes.dartObject;
+                                identifier
+                                    =   DartSimpleIdentifier {
+                                            dartTypes.createTempNameCustom();
+                                        };
+                                initializer
+                                    =   withLhsNoType {
+                                            () => target.receiverExpression
+                                                        .transform(expressionTransformer);
+                                        };
+                            };
+                    //setup = [dummy, *argsSetup];
+                }
+                else {
+                    statementForSideEffects = null;
+                }
+
+            }
+            else if (exists superType = dartTypes.denotableSuperType(
                     target.receiverExpression)) {
 
                 // super receiver
+
+                statementForSideEffects = null;
 
                 if (superType.declaration is ClassModel) {
                     // super refers to the superclass
@@ -5411,6 +5453,8 @@ class BaseGenerator(CompilationContext ctx)
             }
             else {
                 // receiver is not super, evaluate expression for receiver
+
+                statementForSideEffects = null;
 
                 invocable
                     =   DartQualifiedInvocable {
@@ -5475,12 +5519,15 @@ class BaseGenerator(CompilationContext ctx)
                         scope;
                         valueType;
                         valueDeclaration;
-                        invocable.expressionForInvocation {
-                            [withLhs {
-                                valueType;
-                                valueDeclaration;
-                                rhsExpression;
-                            }];
+                        createExpressionEvaluationWithSetup {
+                            emptyOrSingleton(statementForSideEffects);
+                            invocable.expressionForInvocation {
+                                [withLhs {
+                                    valueType;
+                                    valueDeclaration;
+                                    rhsExpression;
+                                }];
+                            };
                         };
                     };
                 };
@@ -5491,12 +5538,15 @@ class BaseGenerator(CompilationContext ctx)
             scope;
             valueType;
             valueDeclaration;
-            invocable.expressionForInvocation {
-                [withLhs {
-                    valueType;
-                    valueDeclaration;
-                    rhsExpression;
-                }];
+            createExpressionEvaluationWithSetup {
+                emptyOrSingleton(statementForSideEffects);
+                invocable.expressionForInvocation {
+                    [withLhs {
+                        valueType;
+                        valueDeclaration;
+                        rhsExpression;
+                    }];
+                };
             };
         };
     }
@@ -5572,7 +5622,7 @@ class BaseGenerator(CompilationContext ctx)
             FunctionOrValueModel functionOrValueModel,
             DartExpression? initializer = null)
         =>  DartFieldDeclaration {
-                false;
+                functionOrValueModel.static;
                 DartVariableDeclarationList {
                     null;
                     dartTypes.dartTypeNameForDeclaration {

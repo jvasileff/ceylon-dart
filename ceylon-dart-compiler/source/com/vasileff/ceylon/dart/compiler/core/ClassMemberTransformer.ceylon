@@ -29,7 +29,8 @@ import ceylon.ast.core {
     DefaultedCallableParameter,
     AnyClass,
     Parameters,
-    ClassDefinition
+    ClassDefinition,
+    LazySpecifier
 }
 import ceylon.interop.java {
     CeylonList,
@@ -389,8 +390,16 @@ class ClassMemberTransformer(CompilationContext ctx)
         }
 
         // Eager values and variables are declared here and initialized in a class
-        // body or constructor.
-        if (that.definition is Specifier) {
+        // body or constructor. Static values are initialized here.
+
+        value definition = that.definition;
+
+        if (is LazySpecifier definition) {
+            // NOTE getters cannot be variable, so not worrying about setter declarations
+            //      for interfaces which are handled by ValueSetterDefinition
+            return generateForMethodGetterOrSetterDefinition(that);
+        }
+        else if (!info.declarationModel.static) { // is Specifier
             // Similar to BaseGenerator.generateForValueDeclarationRaw()
 
             "Bridge to a synthetic field for this value if one exists, and one will
@@ -420,10 +429,18 @@ class ClassMemberTransformer(CompilationContext ctx)
                 *bridgesToSyntheticField
             ].coalesced.sequence();
         }
-
-        // NOTE getters cannot be variable, so not worrying about setter declarations
-        //      for interfaces which are handled by ValueSetterDefinition
-        return generateForMethodGetterOrSetterDefinition(that);
+        else { // is Specifier && info.declarationModel.static
+            return
+            [generateFieldDeclaration {
+                info;
+                info.declarationModel;
+                withLhs {
+                    null;
+                    info.declarationModel;
+                    () => definition.expression.transform(expressionTransformer);
+                };
+            }];
+        }
     }
 
     shared actual
