@@ -428,14 +428,14 @@ class ExpressionTransformer(CompilationContext ctx)
             value isConstructorOfStaticClass {
                 if (is ConstructorModel memberDeclaration) {
                     assert (is ClassModel container = memberDeclaration.container);
-                    return container.staticallyImportable;
+                    return container.static;
                 }
                 return false;
             }
 
             // Static members (and constructors of static classes) for interop are more
             // like base expressions to toplevels
-            if (memberDeclaration.staticallyImportable || isConstructorOfStaticClass) {
+            if (memberDeclaration.static || isConstructorOfStaticClass) {
                 return
                 generateForBaseExpression {
                     that;
@@ -787,7 +787,7 @@ class ExpressionTransformer(CompilationContext ctx)
             // static methods; they are more like BaseExpressions
             else if (is QualifiedExpression invoked,
                     !invoked.receiverExpression is Package,
-                    !invokedDeclaration.staticallyImportable) {
+                    !invokedDeclaration.static) {
 
                 assert (is QualifiedExpressionInfo invokedInfo);
 
@@ -958,7 +958,7 @@ class ExpressionTransformer(CompilationContext ctx)
             value invokedQEInfo = qualifiedExpressionInfo(classInvoked);
 
             if (invokedQEInfo.staticMethodReference) {
-                if (invokedQEInfo.declaration.staticallyImportable) {
+                if (invokedQEInfo.declaration.static) {
                     // if the class is statically importable (static member class), we
                     // are invoking the constructor, not creating a callable for the
                     // constructor. 'classInvoked' acts more like a bse expression.

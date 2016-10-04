@@ -529,7 +529,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration);
         }
         case (is ClassModel | InterfaceModel) {
-            if (declaration.staticallyImportable) {
+            if (declaration.static) {
                 // This is a fake static member class ".Class" for Dart interop. Erase
                 // to its container.
                 assert (is InterfaceModel realDeclaration = declaration.container);
@@ -1473,7 +1473,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             };
             }
             else if (!replaceConstructorWithClass(originalDeclaration)
-                        .staticallyImportable) {
+                        .static) {
                 // the reciever is a toplevel object w/an import alias
                 receiver = expressionForReceiverOfImportAlias(scope, originalDeclaration);
 
@@ -1783,7 +1783,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
         case (is ClassOrInterfaceModel) {
             // Static function or value for interop
-            if (validDeclaration.staticallyImportable, !is ClassModel validDeclaration) {
+            if (validDeclaration.static, !is ClassModel validDeclaration) {
                 "Constructors are never flagged as staticallyImportable"
                 assert (!is ConstructorModel validDeclaration);
 
@@ -1805,7 +1805,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             if (is ClassModel | ConstructorModel validDeclaration,
                     !validDeclaration.shared
                     || !getClassOfConstructor(validDeclaration).shared
-                    || getClassOfConstructor(validDeclaration).staticallyImportable) {
+                    || getClassOfConstructor(validDeclaration).static) {
 
                 return DartInvocable {
                     dartConstructorName {

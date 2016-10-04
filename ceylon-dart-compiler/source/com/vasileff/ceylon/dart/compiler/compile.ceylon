@@ -795,7 +795,7 @@ compileDartSP(
     if (verboseProfile) {
         void printTiming(String key, Integer nanos) {
             process.writeErrorLine(key.plus(":").padTrailing(30)
-                + formatFloat(nanos.float/1M, 2, 2).padLeading(10) + "ms");
+                + Float.format(nanos.float/1M, 2, 2).padLeading(10) + "ms");
         }
 
         process.writeErrorLine("");

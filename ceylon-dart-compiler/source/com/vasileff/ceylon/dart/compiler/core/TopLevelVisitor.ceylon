@@ -773,7 +773,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             else null)
                     .coalesced
                     .filter(DeclarationModel.shared)
-                    .filter(not(DeclarationModel.staticallyImportable))
+                    .filter(not(DeclarationModel.static))
                     .map(curry(mostRefined)(classModel))
                     .distinct
                     .map((m) {

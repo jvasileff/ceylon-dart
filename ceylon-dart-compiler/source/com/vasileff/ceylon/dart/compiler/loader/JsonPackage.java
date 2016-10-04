@@ -209,7 +209,7 @@ public class JsonPackage extends LazyPackage {
         }
         if (m.containsKey(MetamodelGenerator.KEY_STATIC)) {
             boolean st = (boolean)m.remove((MetamodelGenerator.KEY_STATIC));
-            cls.setStaticallyImportable(st);
+            cls.setStatic(st);
         }
         //Type parameters are about the first thing we need to load
         final List<TypeParameter> tparms = parseTypeParameters(
@@ -554,7 +554,7 @@ public class JsonPackage extends LazyPackage {
         }
         if (m.containsKey(MetamodelGenerator.KEY_STATIC)) {
             boolean st = (boolean)m.remove((MetamodelGenerator.KEY_STATIC));
-            md.setStaticallyImportable(st);
+            md.setStatic(st);
         }
         final List<TypeParameter> tparms = parseTypeParameters(
                 (List<Map<String,Object>>)m.get(MetamodelGenerator.KEY_TYPE_PARAMS), md, existing);
@@ -621,7 +621,7 @@ public class JsonPackage extends LazyPackage {
         }
         if (m.containsKey(MetamodelGenerator.KEY_STATIC)) {
             boolean st = (boolean)m.remove((MetamodelGenerator.KEY_STATIC));
-            d.setStaticallyImportable(st);
+            d.setStatic(st);
         }
         return d;
     }
