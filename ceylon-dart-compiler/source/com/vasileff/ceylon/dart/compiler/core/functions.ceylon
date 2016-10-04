@@ -391,6 +391,11 @@ Boolean isClassOrInterfaceMember(DeclarationModel scope)
 Boolean isToplevel(DeclarationModel scope)
     =>  scope.container is PackageModel;
 
+Boolean isDartNative(DeclarationModel model)
+    =>  if (is JsonModule m = getModule(model))
+        then m.dartNative
+        else false;
+
 "Is the declaration an anonymous function, or a parameter of an anonymous function?"
 Boolean isAnonymousFunctionOrParamOf(FunctionOrValueModel declaration)
     =>  if (is FunctionModel declaration, declaration.anonymous) then
