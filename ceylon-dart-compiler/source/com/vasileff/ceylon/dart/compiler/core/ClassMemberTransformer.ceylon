@@ -525,7 +525,8 @@ class ClassMemberTransformer(CompilationContext ctx)
             if (!isForDartBackend(that)) then
                 [] // skip native declarations entirely, for now
             else if (info.declarationModel.container is InterfaceModel
-                    && info.declarationModel.shared) then
+                    && info.declarationModel.shared
+                    && !info.declarationModel.static) then
                 [generateMethodGetterOrSetterDeclaration(that),
                  generateMethodDefinition(that),
                  *generateDefaultValueStaticMethods(info)]
@@ -842,8 +843,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         // For interfaces, the implementation is always a static method.
         // For classes, the implementation may be a function or getter.
 
-        switch (container)
-        case (is InterfaceModel) {
+        if (container is InterfaceModel && !declarationModel.static) {
             // a static method definition for the actual implementation
             return
             DartMethodDeclaration {
@@ -873,7 +873,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 functionExpression.body;
             };
         }
-        case (is ClassModel) {
+        else {
             value [dartIdentifier, dartElementType]
                 =   dartTypes.dartInvocable {
                         scope;
@@ -883,7 +883,7 @@ class ClassMemberTransformer(CompilationContext ctx)
             return
             DartMethodDeclaration {
                 false;
-                null;
+                declarationModel.static then "static";
                 generateFunctionReturnType(scope, declarationModel);
                 dartElementType == dartValue then (
                     if (declarationModel is SetterModel)
