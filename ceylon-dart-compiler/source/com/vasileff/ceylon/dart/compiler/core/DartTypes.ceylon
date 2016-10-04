@@ -529,7 +529,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration);
         }
         case (is ClassModel | InterfaceModel) {
-            if (declaration.static) {
+            if (declaration.static && isDartNative(declaration)) {
                 // This is a fake static member class ".Class" for Dart interop. Erase
                 // to its container.
                 assert (is InterfaceModel realDeclaration = declaration.container);
