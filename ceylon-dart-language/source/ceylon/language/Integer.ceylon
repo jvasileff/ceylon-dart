@@ -94,7 +94,7 @@ shared native final class Integer
     see (`function format`, `function Float.parse`)
     tagged("Numbers", "Basic types")
     since("1.3.1")
-    shared static Integer|ParseException parse(
+    shared native static Integer|ParseException parse(
         "The string representation to parse."
         String string,
         "The base, between [[minRadix]] and [[maxRadix]] 
@@ -123,7 +123,7 @@ shared native final class Integer
     see (`function parse`, `function Float.format`)
     tagged("Numbers")
     since("1.3.1")
-    shared static String format(
+    shared native static String format(
         "The integer value to format."
         Integer integer,
         "The base, between [[minRadix]] and [[maxRadix]] 
@@ -142,7 +142,7 @@ shared native final class Integer
             => package.formatInteger(integer, radix, 
                     groupingSeparator);
     
-    shared new (Integer integer) extends Object() {}
+    shared native new (Integer integer) extends Object() {}
     
     "The UTF-32 character with this UCS code point."
     throws (`class OverflowException`,
@@ -433,12 +433,29 @@ native Integer intXor(Integer integer, Integer other);
 native Integer intPow(Integer integer, Integer other);
 
 shared final native("dart")
-class Integer(Integer integer)
-        extends Object()
+class Integer
+        extends Object
         satisfies Integral<Integer> &
                   Binary<Integer> &
                   Exponentiable<Integer,Integer> {
 
+    shared native("dart") static Integer|ParseException parse(
+        String string,
+        Integer radix = 10)
+            => package.parseInteger(string, radix)
+            else ParseException("illegal format for Integer");
+
+    shared native("dart") static String format(
+        Integer integer,
+        Integer radix = 10,
+        Character? groupingSeparator = null)
+            => package.formatInteger(integer, radix,
+                    groupingSeparator);
+
+    Integer integer;
+    shared native("dart") new (Integer integer) extends Object() {
+        this.integer = integer;
+    }
     shared native("dart") Character character => characterFromInteger(this);
     shared actual native("dart") Boolean divides(Integer other) => other % this == 0;
     shared actual native("dart") Integer plus(Integer other) => this + other;

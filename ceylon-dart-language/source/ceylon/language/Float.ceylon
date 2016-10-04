@@ -83,7 +83,7 @@ shared native final class Float
     see (`function format`, `function Integer.parse`)
     tagged("Numbers", "Basic types")
     since("1.3.1")
-    shared static Float|ParseException parse(String string)
+    shared native static Float|ParseException parse(String string)
             => package.parseFloat(string)
             else ParseException("illegal format for Float");
     
@@ -129,7 +129,7 @@ shared native final class Float
     tagged("Numbers")
     see (`function parse`, `function Integer.format`)
     since("1.3.1")
-    shared static String format(
+    shared native static String format(
         "The floating point value to format."
         Float float,
         "The minimum number of allowed decimal places.
@@ -159,7 +159,7 @@ shared native final class Float
                 minDecimalPlaces, maxDecimalPlaces, 
                 decimalSeparator, thousandsSeparator);
     
-    shared new(Float float) extends Object() {}
+    shared native new(Float float) extends Object() {}
     
     "Determines whether this value is undefined. The IEEE
      standard denotes undefined values [NaN][] (an 
@@ -391,9 +391,27 @@ shared native final class Float
 }
 
 shared final native("dart")
-class Float(Float float) extends Object()
+class Float extends Object
         satisfies Number<Float> & Exponentiable<Float,Float> {
 
+    shared native("dart") static Float|ParseException parse(String string)
+            => package.parseFloat(string)
+            else ParseException("illegal format for Float");
+
+    shared native("dart") static String format(
+        Float float,
+        variable Integer minDecimalPlaces=1,
+        variable Integer maxDecimalPlaces=9,
+        Character decimalSeparator = '.',
+        Character? thousandsSeparator = null)
+            => package.formatFloat(float,
+                minDecimalPlaces, maxDecimalPlaces,
+                decimalSeparator, thousandsSeparator);
+
+    Float float;
+    shared native("dart") new (Float float) extends Object() {
+        this.float = float;
+    }
     shared native("dart") Boolean undefined => dartDouble(this).isNaN;
     shared native("dart") Boolean infinite => dartDouble(this).isInfinite;
     shared native("dart") Boolean finite  => dartDouble(this).isFinite;

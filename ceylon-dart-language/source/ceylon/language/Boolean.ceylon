@@ -13,11 +13,11 @@ shared native abstract class Boolean
      `\"true\"` and `\"false\"`."
     tagged("Basic types")
     since("1.3.1")
-    shared static Boolean|ParseException parse(String string)
+    shared native static Boolean|ParseException parse(String string)
             => package.parseBoolean(string) 
             else ParseException("illegal format for Boolean");
     
-    shared new () {}
+    shared native new () {}
 }
 
 "A value representing truth in Boolean logic."
@@ -37,7 +37,13 @@ shared native object false
 }
 
 shared abstract native("dart")
-class Boolean() of true | false {}
+class Boolean of true | false {
+    shared native("dart") static Boolean|ParseException parse(String string)
+            => package.parseBoolean(string)
+            else ParseException("illegal format for Boolean");
+
+    shared native("dart") new () {}
+}
 
 shared native("dart")
 object true extends Boolean() {
