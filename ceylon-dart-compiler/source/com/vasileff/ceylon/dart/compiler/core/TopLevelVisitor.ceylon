@@ -322,9 +322,11 @@ class TopLevelVisitor(CompilationContext ctx)
                     }.coalesced;
                 };
 
-        "The containing class or interface, if one exists."
+        "The containing class or interface if one exists and the interface is not static"
         value outerDeclaration
-            =   getContainingClassOrInterface(info.scope.container);
+            =   if (!info.declarationModel.static)
+                then getContainingClassOrInterface(info.scope.container)
+                else null;
 
         "An $outer getter declaration, if there is an outer class or interface."
         value outerField

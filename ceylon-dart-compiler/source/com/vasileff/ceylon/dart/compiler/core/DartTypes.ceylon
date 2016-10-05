@@ -1162,6 +1162,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     {ClassOrInterfaceModel*} outerDeclarationsForClass
             (ClassOrInterfaceModel declaration)
         =>  supertypeDeclarations(declaration)
+                .filter(not(ClassOrInterfaceModel.static))
                 .map((d) => getContainingClassOrInterface(d.container))
                 .coalesced
                 .distinct;
