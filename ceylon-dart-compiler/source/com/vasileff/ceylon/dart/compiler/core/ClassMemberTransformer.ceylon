@@ -29,7 +29,8 @@ import ceylon.ast.core {
     AnyClass,
     Parameters,
     ClassDefinition,
-    LazySpecifier
+    LazySpecifier,
+    InterfaceAliasDefinition
 }
 import ceylon.interop.java {
     CeylonList,
@@ -1117,6 +1118,10 @@ class ClassMemberTransformer(CompilationContext ctx)
         that.visit(topLevelVisitor);
         return [];
     }
+
+    shared actual
+    [] transformInterfaceAliasDefinition(InterfaceAliasDefinition that)
+        =>  [];
 
     shared actual
     [DartClassMember*] transformObjectDefinition(ObjectDefinition that) {
