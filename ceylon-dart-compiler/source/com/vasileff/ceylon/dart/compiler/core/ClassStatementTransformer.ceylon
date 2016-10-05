@@ -34,7 +34,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     valueDefinitionInfo,
-    lazySpecificationInfo
+    lazySpecificationInfo,
+    objectDefinitionInfo
 }
 
 "Similar to [[StatementTransformer]], but for translating children of class bodies where
@@ -165,6 +166,14 @@ class ClassStatementTransformer(CompilationContext ctx)
      [[ClassMemberTransformer.transformObjectDefinition]]."
     shared actual
     DartStatement[] transformObjectDefinition(ObjectDefinition that) {
+        value info = objectDefinitionInfo(that);
+
+        if (info.declarationModel.static) {
+            // Not an instance field; the class's static field is initialized when
+            // declared.
+            return [];
+        }
+
         value dartVariableDeclaration
             =   generateForObjectDefinition(that).variables.first;
 

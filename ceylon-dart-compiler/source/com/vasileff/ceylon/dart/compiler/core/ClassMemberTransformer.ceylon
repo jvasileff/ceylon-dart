@@ -1129,24 +1129,34 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value info = objectDefinitionInfo(that);
 
-        // Declare the member field that will be initialized in a Dart constructor.
-        return [
-        DartFieldDeclaration {
-            false;
-            DartVariableDeclarationList {
-                null;
-                dartTypes.dartTypeNameForDeclaration {
-                    info;
-                    info.declarationModel;
-                };
-                [DartVariableDeclaration {
-                    DartSimpleIdentifier {
-                        dartTypes.getName(info.declarationModel);
-                    };
+        if (info.declarationModel.static) {
+            // Declare and initialize the static field
+            return [
+            DartFieldDeclaration {
+                true;
+                generateForObjectDefinition(that);
+            }];
+        }
+        else {
+            // Declare the member field that will be initialized in a Dart constructor.
+            return [
+            DartFieldDeclaration {
+                false;
+                DartVariableDeclarationList {
                     null;
-                }];
-            };
-        }];
+                    dartTypes.dartTypeNameForDeclaration {
+                        info;
+                        info.declarationModel;
+                    };
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier {
+                            dartTypes.getName(info.declarationModel);
+                        };
+                        null;
+                    }];
+                };
+            }];
+        }
     }
 
     shared actual
