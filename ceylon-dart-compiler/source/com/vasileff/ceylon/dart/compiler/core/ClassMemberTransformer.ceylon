@@ -14,7 +14,6 @@ import ceylon.ast.core {
     ValueSetterDefinition,
     TypedDeclaration,
     ObjectDefinition,
-    Specifier,
     LazySpecification,
     Assertion,
     ExistsOrNonemptyCondition,
@@ -968,8 +967,8 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value info = anyClassInfo(that);
 
-        // Don't generate factory methods for non-shared member classes
-        if (!info.declarationModel.shared) {
+        // Don't generate factory methods for non-shared member classes and static classes
+        if (!info.declarationModel.shared || info.declarationModel.static) {
             return [];
         }
 

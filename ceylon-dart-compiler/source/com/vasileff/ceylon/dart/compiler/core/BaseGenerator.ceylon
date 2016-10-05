@@ -3736,7 +3736,8 @@ class BaseGenerator(CompilationContext ctx)
             (DScope scope, ClassModel | ConstructorModel declaration)
         =>  let (resolved = resolveClassAliases(declaration))
             let (classModel = getClassOfConstructor(resolved))
-            if (exists outerCI = getContainingClassOrInterface(classModel.container))
+            if (exists outerCI = getContainingClassOrInterface(classModel.container),
+                    !classModel.static)
                 then [dartTypes.expressionToOuter(scope, outerCI)]
                 else []; // No outer if no containing class or interface.
 
