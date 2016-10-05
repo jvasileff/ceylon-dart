@@ -1114,6 +1114,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         f.type = container.type;
         f.refinedDeclaration = f;
         f.unit = constructorModel.unit;
+        // synthetic values for value constructors of static classes will be static
+        // members of the static class's container
+        f.static = container.static;
 
         return f;
     }

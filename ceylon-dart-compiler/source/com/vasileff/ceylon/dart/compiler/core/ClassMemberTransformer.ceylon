@@ -967,8 +967,9 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value info = anyClassInfo(that);
 
-        // Don't generate factory methods for non-shared member classes and static classes
-        if (!info.declarationModel.shared || info.declarationModel.static) {
+        // FIXME we do need value constructors for non-shared member classes
+        // Don't generate factory methods for non-shared member classes
+        if (!info.declarationModel.shared) {
             return [];
         }
 
@@ -1059,12 +1060,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                         generateForValueConstructors(that).map { (pair) =>
                             let ([memoVariable, factoryDeclaration] = pair)
                             [DartFieldDeclaration {
-                                false;
+                                info.declarationModel.static;
                                 memoVariable;
                             },
                             DartMethodDeclaration {
                                 false;
-                                null;
+                                info.declarationModel.static then "static";
                                 factoryDeclaration.returnType;
                                 factoryDeclaration.propertyKeyword;
                                 false;
@@ -1093,14 +1094,22 @@ class ClassMemberTransformer(CompilationContext ctx)
             }
         }
 
-        return concatenate {
-            replaceClassWithSharedConstructors(info.declarationModel)
-                .filter((c) => if (is ConstructorModel c)
-                               then !c.valueConstructor
-                               else true)
-                .flatMap(generateFactories),
-            valueConstructorFieldsAndFactories
-        };
+        if (info.declarationModel.static) {
+            // No need for polymorphic constructor factory methods for constructors of
+            // static (non-member) classes, but do keep references to values for value
+            // constructors in static fields.
+            return valueConstructorFieldsAndFactories;
+        }
+        else {
+            return concatenate {
+                replaceClassWithSharedConstructors(info.declarationModel)
+                    .filter((c) => if (is ConstructorModel c)
+                                   then !c.valueConstructor
+                                   else true)
+                    .flatMap(generateFactories),
+                valueConstructorFieldsAndFactories
+            };
+        }
     }
 
     shared actual
