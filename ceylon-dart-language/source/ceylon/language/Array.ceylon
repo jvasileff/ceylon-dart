@@ -396,16 +396,13 @@ final serializable class Array<Element>
                 size - sourcePosition,
                 destination.size - destinationPosition)) {
 
-        value source
-            =   if (identical(this, destination))
-                then this.clone()
-                else this;
-
-        // TODO validate indexes?
-        variable value i = destinationPosition;
-        for (c in source.sublistFrom(sourcePosition).take(length)) {
-            destination.set(i++, c);
-        }
+        // TODO validate indexes
+        destination.list.setRange {
+            start = destinationPosition;
+            end = destinationPosition + length;
+            iterable = list;
+            skipCount = sourcePosition;
+        };
     }
 
     // TODO optimize
