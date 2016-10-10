@@ -38,7 +38,6 @@ const keyFlags         = "\$ff";
 const keyDefault       = "def";
 const keyNamed         = "nam";
 const keyDynamic       = "dyn";
-const keyStatic        = "sta";
 
 const keyNativeDart   = "\$mod-native-dart";
 
@@ -65,7 +64,8 @@ Map<String, int> annotationBits = {
   "abstract" : 1 << 8,
   "annotation" : 1 << 9,
   "variable" : 1 << 10,
-  "serializable" : 1 << 11
+  "serializable" : 1 << 11,
+  "static" : 1 << 12
 };
 
 TypeMirror voidType = currentMirrorSystem().voidType;
@@ -280,7 +280,7 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
   // Also add the class as a static member class named ".Class"
   var classMap = classToClassMap(cm, from);
   classMap[keyName] = "Class";
-  classMap[keyStatic] = true;
+  classMap[keyPackedAnns] |= annotationBits["static"];
   map[keyClasses] = { "Class" : classMap };
 
   return map;
@@ -469,7 +469,7 @@ Map<String, Object> variableToMap(VariableMirror mm, DeclarationMirror from,
   }
 
   if (mm.isStatic) {
-    map[keyStatic] = true;
+    map[keyPackedAnns] |= annotationBits["static"];
   }
   return map;
 }
@@ -513,7 +513,7 @@ Map<String, Object> methodToMap(MethodMirror mm, DeclarationMirror from,
   }
 
   if (mm.isStatic) {
-    map[keyStatic] = true;
+    map[keyPackedAnns] |= annotationBits["static"];
   }
   return map;
 }
