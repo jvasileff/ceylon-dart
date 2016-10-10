@@ -64,7 +64,6 @@ public class MetamodelGenerator {
 
     public static final String KEY_DEFAULT      = "def";
     public static final String KEY_DYNAMIC      = "dyn";
-    public static final String KEY_STATIC       = "sta";
 
     // backend specific keys
     public static final String KEY_JS_NEW       = "$new"; // should be instantiated with new; TypeScript interop

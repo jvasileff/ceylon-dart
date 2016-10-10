@@ -21,7 +21,6 @@ import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_PA
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_PARAMS;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_SATISFIES;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_SELF_TYPE;
-import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_STATIC;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_TYPE;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_TYPES;
 import static com.vasileff.ceylon.dart.compiler.loader.MetamodelGenerator.KEY_TYPE_ARGS;
@@ -239,10 +238,6 @@ public class JsonPackage extends LazyPackage {
             m.put(KEY_METATYPE, cls);
             setAnnotations(cls, (Integer)m.remove(KEY_PACKED_ANNS),
                     (Map<String,Object>)m.remove(KEY_ANNOTATIONS));
-        }
-        if (m.containsKey(KEY_STATIC)) {
-            boolean st = (boolean)m.remove((KEY_STATIC));
-            cls.setStatic(st);
         }
         //Type parameters are about the first thing we need to load
         final List<TypeParameter> tparms = parseTypeParameters(
@@ -593,10 +588,6 @@ public class JsonPackage extends LazyPackage {
             md.setDeclaredVoid((flags & 1) > 0);
             md.setDeferred((flags & 2) > 0);
         }
-        if (m.containsKey(KEY_STATIC)) {
-            boolean st = (boolean)m.remove((KEY_STATIC));
-            md.setStatic(st);
-        }
         md.setDynamic(m.remove(KEY_DYNAMIC) != null);
         final List<TypeParameter> tparms = parseTypeParameters(
                 (List<Map<String,Object>>)m.get(KEY_TYPE_PARAMS), md, existing);
@@ -661,10 +652,6 @@ public class JsonPackage extends LazyPackage {
             final Map<String,Object> sanns = (Map<String,Object>)smap.remove(KEY_ANNOTATIONS);
             setAnnotations(s, (Integer)smap.remove(KEY_PACKED_ANNS), sanns);
             s.setType(d.getType());
-        }
-        if (m.containsKey(KEY_STATIC)) {
-            boolean st = (boolean)m.remove((KEY_STATIC));
-            d.setStatic(st);
         }
         return d;
     }
