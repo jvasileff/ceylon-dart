@@ -76,12 +76,10 @@ public class JsonModule extends Module {
         if (model != null) {
             if (!loaded) {
                 loaded=true;
-                ArrayList<JsonPackage> pks = new ArrayList<>(model.size());
                 for (Map.Entry<String, Object> e : model.entrySet()) {
                     if (!e.getKey().startsWith("$mod-")) {
                         JsonPackage p = new JsonPackage(e.getKey());
                         p.setModule(this);
-                        pks.add(p);
                         getPackages().add(p);
                     }
                 }
@@ -99,7 +97,6 @@ public class JsonModule extends Module {
         if ("default".equals(name)) {
             name = "";
         }
-
         // search direct packages
         Package p = getDirectPackage(name);
         if (p != null) {

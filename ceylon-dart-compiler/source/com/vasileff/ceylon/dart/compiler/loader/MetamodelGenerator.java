@@ -1,5 +1,7 @@
 package com.vasileff.ceylon.dart.compiler.loader;
 
+import static com.redhat.ceylon.model.typechecker.model.Module.LANGUAGE_MODULE_NAME;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +33,7 @@ import com.redhat.ceylon.model.typechecker.model.Value;
 
 /** Generates the metamodel for all objects in a module.
  * This is used by the MetamodelVisitor.
- *
+ * 
  * @author Enrique Zamudio
  */
 public class MetamodelGenerator {
@@ -63,6 +65,9 @@ public class MetamodelGenerator {
     public static final String KEY_DEFAULT      = "def";
     public static final String KEY_DYNAMIC      = "dyn";
     public static final String KEY_STATIC       = "sta";
+
+    // backend specific keys
+    public static final String KEY_JS_NEW       = "$new"; // should be instantiated with new; TypeScript interop
 
     public static final String KEY_NATIVE_DART	= "$mod-native-dart";
 
@@ -111,6 +116,9 @@ public class MetamodelGenerator {
                     continue;
                 }
                 String impath = String.format("%s/%s", mi.getModule().getNameAsString(), mi.getModule().getVersion());
+                if (mi.getNamespace() != null) {
+                    impath = mi.getNamespace() + ":" + impath;
+                }
                 if (mi.isOptional() || mi.isExport() || mi.isNative()) {
                     Map<String,Object> optimp = new HashMap<>(3);
                     optimp.put("path",impath);
@@ -145,6 +153,8 @@ public class MetamodelGenerator {
     /** Returns the in-memory model as a collection of maps.
      * The top-level map represents the module. */
     public Map<String, Object> getModel() {
+        // don't wrap in Collections.unmodifiableMap() since the Dart backend's
+        // compile() function modifies the map
         return model;
     }
 
@@ -238,6 +248,7 @@ public class MetamodelGenerator {
             //For types that reference type parameters, we're done
             return m;
         }
+        // TODO submit patch to upstream (commit 3e57b833)
         com.redhat.ceylon.model.typechecker.model.Package pkg;
         if (d instanceof NothingType) {
             pkg = (com.redhat.ceylon.model.typechecker.model.Package) d.getContainer();
@@ -251,8 +262,8 @@ public class MetamodelGenerator {
             addPackage(m, pkg.getNameAsString());
         }
         if (pkg != null && !pkg.getModule().equals(module)) {
-            final String modname = pkg.getModule().getNameAsString();
-            m.put(KEY_MODULE, Module.LANGUAGE_MODULE_NAME.equals(modname)?"$":modname);
+            final Module mod = pkg.getModule();
+            m.put(KEY_MODULE, mod.isLanguageModule()?"$":mod.getNameAsString());
         }
         putTypeArguments(m, pt, from);
         return m;
@@ -398,6 +409,9 @@ public class MetamodelGenerator {
         final Map<String, Object> m = new HashMap<>();
         m.put(KEY_METATYPE, METATYPE_METHOD);
         m.put(KEY_NAME, d.getName());
+        if (d.isDynamic()) {
+            m.put(KEY_DYNAMIC, 1);
+        }
         List<Map<String, Object>> tpl = typeParameters(d.getTypeParameters(), d);
         if (tpl != null) {
             m.put(KEY_TYPE_PARAMS, tpl);
@@ -612,6 +626,9 @@ public class MetamodelGenerator {
         m.put(KEY_NAME, d.getName());
         m.put(KEY_METATYPE, (d instanceof Value && ((Value)d).isTransient()) ? METATYPE_GETTER : METATYPE_ATTRIBUTE);
         m.put(KEY_TYPE, typeMap(d.getType(), d));
+        if (d.isDynamic()) {
+            m.put(KEY_DYNAMIC, 1);
+        }
         parent.put(mname, m);
         encodeAnnotations(d.getAnnotations(), d, m);
         if (d instanceof Value && ((Value) d).getSetter() != null) {
@@ -715,7 +732,7 @@ public class MetamodelGenerator {
     }
 
     private void addPackage(final Map<String,Object> map, final String pkgName) {
-        if (pkgName.equals(Module.LANGUAGE_MODULE_NAME)) {
+        if (pkgName.equals(LANGUAGE_MODULE_NAME)) {
             map.put(KEY_PACKAGE, "$");
         } else {
             map.put(KEY_PACKAGE, pkgName);
