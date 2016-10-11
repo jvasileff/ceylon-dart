@@ -365,6 +365,7 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `doclink`,
      `expressionTypeNothing`,
      `expressionTypeCallable`,
+     `expressionTypeIterable`,
      `unusedDeclaration`,
      `unusedImport`,
      `ceylonNamespace`,
@@ -382,7 +383,8 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `redundantNarrowing`,
      `redundantIteration`,
      `missingImportPrefix`,
-     `uncheckedTypeArguments`."
+     `uncheckedTypeArguments`,
+     `inferredNotNull`."
     String* warnings) 
         => SuppressWarningsAnnotation(*warnings);
 
