@@ -30,5 +30,6 @@ public enum Warning {
     expressionTypeCallable,
     uncheckedType,
     unsupported,
-    undefinedEquality
+    undefinedEquality,
+    inferredNotNull
 }
