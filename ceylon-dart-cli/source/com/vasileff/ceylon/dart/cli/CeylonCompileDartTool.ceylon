@@ -236,7 +236,13 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                     baselinePerfTest = baselinePerfTest;
                 }[1];
 
-        for (_ in 0:(parseInteger(repeat?.string else "0") else 0)) {
+        value repeatIterations
+            =   if (exists r = repeat,
+                    is Integer i = Integer.parse(r.string))
+                then i
+                else 0;
+
+        for (_ in 0:repeatIterations) {
             doCompileDart();
         }
         return doCompileDart();
