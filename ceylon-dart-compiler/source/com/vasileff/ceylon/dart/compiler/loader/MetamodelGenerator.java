@@ -12,6 +12,7 @@ import java.util.Map;
 import com.redhat.ceylon.common.Backend;
 import com.redhat.ceylon.common.Versions;
 import com.redhat.ceylon.model.typechecker.model.Annotation;
+import com.redhat.ceylon.model.typechecker.model.ClassAlias;
 import com.redhat.ceylon.model.typechecker.model.Constructor;
 import com.redhat.ceylon.model.typechecker.model.Declaration;
 import com.redhat.ceylon.model.typechecker.model.DeclarationKind;
@@ -59,6 +60,7 @@ public class MetamodelGenerator {
     public static final String KEY_SATISFIES    = "sts";
     public static final String KEY_DS_VARIANCE  = "dv"; //declaration-site variance
     public static final String KEY_US_VARIANCE  = "uv"; //use-site variance
+    public static final String KEY_CONSTRUCTOR  = "co";
     public static final String KEY_CONSTRUCTORS = "$cn";
     public static final String KEY_FLAGS        = "$ff";
 
@@ -494,6 +496,11 @@ public class MetamodelGenerator {
         }
         if (d.isAlias()) {
             m.put("$alias", 1);
+            TypeDeclaration constructor = ((ClassAlias)d).getConstructor();
+            if (constructor instanceof Constructor) {
+                m.put(KEY_CONSTRUCTOR, ((Constructor)constructor).getName());
+            }
+            // else, it's the default "constructor", and will be the (Class) d.getExtendedType().getDeclaration()
         }
         Map<String, Object> parent = findParent(d);
         if (parent != null) {
