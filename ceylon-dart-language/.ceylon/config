@@ -1,6 +1,7 @@
 [compiler]
 source=./support
 source=./source
+suppresswarning=inferredNotNull
 suppresswarning=ceylonNamespace
 
 [defaults]
