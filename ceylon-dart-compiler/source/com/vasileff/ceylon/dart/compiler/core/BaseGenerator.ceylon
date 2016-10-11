@@ -43,8 +43,7 @@ import ceylon.ast.core {
     EntryPattern,
     MemberOperator,
     ClassDefinition,
-    ValueConstructorDefinition,
-    Package
+    ValueConstructorDefinition
 }
 import ceylon.collection {
     LinkedList
