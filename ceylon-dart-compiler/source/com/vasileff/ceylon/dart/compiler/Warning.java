@@ -29,6 +29,5 @@ public enum Warning {
     uncheckedTypeArguments,
     expressionTypeCallable,
     uncheckedType,
-    unsupported,
-    undefinedEquality
+    unsupported
 }

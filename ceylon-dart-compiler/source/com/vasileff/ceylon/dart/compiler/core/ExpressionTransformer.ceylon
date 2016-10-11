@@ -127,15 +127,12 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
-    IntersectionModel=IntersectionType,
-    ConstructorModel=Constructor,
     InterfaceModel=Interface,
-    ModelUtil
+    ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
-    Warning,
-    javaList
+    Warning
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartVariableDeclarationStatement,
@@ -1566,49 +1563,8 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  generateInvocationForBinaryOperation(that, "compare");
 
     shared actual
-    DartExpression transformEqualOperation(EqualOperation that) {
-        value info = nodeInfo(that);
-        value unit = nodeInfo(that).tcNode.unit;
-        value lhsType = expressionInfo(that.leftOperand).typeModel;
-        value rhsType = expressionInfo(that.rightOperand).typeModel;
-
-        function isTP(TypeModel t) {
-            if (is IntersectionModel d = t.declaration) {
-                value sts = d.satisfiedTypes;
-                if (sts.size() == 2) {
-                    return sts.get(0).\iobject && sts.get(1).typeParameter
-                        || sts.get(1).\iobject && sts.get(0).typeParameter;
-                }
-            }
-            return t.typeParameter;
-        }
-
-        value union = ModelUtil.union(javaList{ lhsType, rhsType }, unit);
-        value equalsMethod = union.declaration.getMember("equals", unit, null, false);
-        value eqContainer = equalsMethod.container;
-
-        value lhsEqContainer
-            =   lhsType.declaration.getMember("equals", unit, null, false).container;
-
-        value rhsEqContainer
-            =   rhsType.declaration.getMember("equals", unit, null, false).container;
-
-        if (!(isTP(lhsType) || isTP(rhsType))
-            && !(lhsEqContainer in [unit.identifiableDeclaration, unit.objectDeclaration]
-                && rhsEqContainer in [unit.identifiableDeclaration, unit.objectDeclaration]
-                && (lhsEqContainer == unit.identifiableDeclaration
-                    || rhsEqContainer == unit.identifiableDeclaration)
-                && (lhsType.isSubtypeOf(rhsType)
-                    || rhsType.isSubtypeOf(lhsType)))
-            && !(lhsType.\iobject || rhsType.\iobject)
-            && (eqContainer in [unit.identifiableDeclaration, unit.objectDeclaration])) {
-            addWarning(info, Warning.undefinedEquality,
-                "tests equality for uncomparable operands: equality is not defined for \
-                 the types '``lhsType``\' and \'``rhsType``\'");
-        }
-
-        return generateInvocationForBinaryOperation(that, "equals");
-    }
+    DartExpression transformEqualOperation(EqualOperation that)
+        =>  generateInvocationForBinaryOperation(that, "equals");
 
     shared actual
     DartExpression transformNotEqualOperation(NotEqualOperation that)
