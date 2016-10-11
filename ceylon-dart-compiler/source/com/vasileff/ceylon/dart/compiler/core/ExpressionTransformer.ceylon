@@ -474,42 +474,7 @@ class ExpressionTransformer(CompilationContext ctx)
         switch (memberDeclaration)
         case (is ValueModel) {
             // Return an expression that will yield the value.
-
-            if (memberDeclaration.static) {
-                // Invoking a static member despite being qualified by an instance.
-                // We must evaluate the "receiver" for side effects.
-                value dummy
-                    // noop() would be better
-                    =   !isSelfReference(receiverInfo.node) then
-                        createVariableDeclaration {
-                            dartTypeName
-                                =   dartTypes.dartObject;
-                            identifier
-                                =   DartSimpleIdentifier {
-                                        dartTypes.createTempNameCustom();
-                                    };
-                            initializer
-                                // 'package' and isStaticMethodReferencePrimary
-                                // receivers were handled above, so receiverInfo.node
-                                // should be fine to evaluate.
-                                =   withLhsNoType {
-                                        () => receiverInfo.node.transform(this);
-                                    };
-                        };
-
-                return
-                createExpressionEvaluationWithSetup {
-                    emptyOrSingleton(dummy);
-                    generateForBaseExpression {
-                        that;
-                        that.nameAndArgs;
-                        info.declaration;
-                    };
-                };
-            }
-            else if (exists superType
-                    =   dartTypes.denotableSuperType(receiverInfo.node)) {
-
+            if (exists superType = dartTypes.denotableSuperType(receiverInfo.node)) {
                 // QualifiedExpression with a `super` receiver
                 return generateInvocation {
                     info;
@@ -535,39 +500,6 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
         case (is FunctionModel | ClassModel | ConstructorModel) {
-            if (memberDeclaration.static) {
-                // Taking a reference to a static member despite being qualified by an
-                // instance. We must evaluate the "receiver" for side effects.
-                value dummy
-                    // noop() would be better
-                    =   !isSelfReference(receiverInfo.node) then
-                        createVariableDeclaration {
-                            dartTypeName
-                                =   dartTypes.dartObject;
-                            identifier
-                                =   DartSimpleIdentifier {
-                                        dartTypes.createTempNameCustom();
-                                    };
-                            initializer
-                                // 'package' and isStaticMethodReferencePrimary
-                                // receivers were handled above, so receiverInfo.node
-                                // should be fine to evaluate.
-                                =   withLhsNoType {
-                                        () => receiverInfo.node.transform(this);
-                                    };
-                        };
-
-                return
-                createExpressionEvaluationWithSetup {
-                    emptyOrSingleton(dummy);
-                    generateForBaseExpression {
-                        that;
-                        that.nameAndArgs;
-                        info.declaration;
-                    };
-                };
-            }
-
             if (is ConstructorModel memberDeclaration,
                     memberDeclaration.valueConstructor) {
 
@@ -830,8 +762,7 @@ class ExpressionTransformer(CompilationContext ctx)
             assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
 
             // QualifiedExpression with a `super` receiver
-            if (!invokedDeclaration.static,
-                is QualifiedExpression invoked,
+            if (is QualifiedExpression invoked,
                 exists superType = dartTypes.denotableSuperType(
                                         invoked.receiverExpression)) {
 
@@ -915,38 +846,9 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 }
 
-                DartStatement[] setup;
-                if (is QualifiedExpression invoked,
-                        !invoked.receiverExpression is Package,
-                        !isSelfReference(invoked.receiverExpression),
-                        !isStaticMethodReferencePrimary(
-                                expressionInfo(invoked.receiverExpression))) {
-                    // A static member qualified by an expression for a value. We must
-                    // evaluate the expression for side effects.
-                    value dummy
-                        // noop() would be better
-                        =   createVariableDeclaration {
-                                dartTypeName
-                                    =   dartTypes.dartObject;
-                                identifier
-                                    =   DartSimpleIdentifier {
-                                            dartTypes.createTempNameCustom();
-                                        };
-                                initializer
-                                    =   withLhsNoType {
-                                            () => invoked.receiverExpression
-                                                        .transform(this);
-                                        };
-                            };
-                    setup = [dummy, *argsSetup];
-                }
-                else {
-                    setup = argsSetup;
-                }
-
                 return
                 createExpressionEvaluationWithSetup {
-                    setup;
+                    argsSetup;
                     withBoxing {
                         info;
                         info.typeModel;
