@@ -125,6 +125,9 @@ class Type() extends Reference() {
     Boolean isContravariant(TypeParameter typeParameter)
         =>  variance(typeParameter) == contravariant;
 
+    // TODO remove workaround for https://github.com/ceylon/ceylon/issues/6565
+    Type(Type) resolvedAliasesRef => Type.resolvedAliases;
+
     shared Type resolvedAliases {
         function compute() {
             value declaration = this.declaration;
@@ -140,16 +143,16 @@ class Type() extends Reference() {
             }
 
             if (is UnionType declaration) {
-                return unionDeduped(caseTypes.map(Type.resolvedAliases), unit);
+                return unionDeduped(caseTypes.map(resolvedAliasesRef), unit);
             }
 
             if (is IntersectionType declaration) {
                 return intersectionDedupedCanonical(
-                    satisfiedTypes.map(Type.resolvedAliases), unit);
+                    satisfiedTypes.map(resolvedAliasesRef), unit);
             }
 
             value aliasedQualifyingType = qualifyingType?.resolvedAliases;
-            value aliasedTypeArguments = typeArgumentList.collect(Type.resolvedAliases);
+            value aliasedTypeArguments = typeArgumentList.collect(resolvedAliasesRef);
 
             if (is Alias declaration) {
                 "extendedType is not optional for [[Alias]]es"
@@ -1195,12 +1198,15 @@ class Type() extends Reference() {
             =>  false;
     }
 
+    // TODO remove workaround for https://github.com/ceylon/ceylon/issues/6565
+    Boolean(Type) involvesTypeParametersRef => Type.involvesTypeParameters;
+
     shared
     Boolean involvesTypeParameters
         =>  isTypeParameter
-                || isUnion && caseTypes.any(Type.involvesTypeParameters)
-                || isIntersection && satisfiedTypes.any(Type.involvesTypeParameters)
-                || typeArgumentList.any(Type.involvesTypeParameters)
+                || isUnion && caseTypes.any(involvesTypeParametersRef)
+                || isIntersection && satisfiedTypes.any(involvesTypeParametersRef)
+                || typeArgumentList.any(involvesTypeParametersRef)
                 || (qualifyingType?.involvesTypeParameters else false);
 
     shared
@@ -1235,14 +1241,17 @@ class Type() extends Reference() {
                     Type.qualifiedNameWithTypeArguments))``>"
             else "";
 
+    // TODO remove workaround for https://github.com/ceylon/ceylon/issues/6565
+    String(Type) qualifiedNameWithTypeArgumentsRef => Type.qualifiedNameWithTypeArguments;
+
     shared
     String qualifiedNameWithTypeArguments {
         if (isUnion) {
-            return "|".join(caseTypes.map(Type.qualifiedNameWithTypeArguments));
+            return "|".join(caseTypes.map(qualifiedNameWithTypeArgumentsRef));
         }
 
         if (isIntersection) {
-            return "&".join(satisfiedTypes.map(Type.qualifiedNameWithTypeArguments));
+            return "&".join(satisfiedTypes.map(qualifiedNameWithTypeArgumentsRef));
         }
 
         if (isTypeConstructor) {
