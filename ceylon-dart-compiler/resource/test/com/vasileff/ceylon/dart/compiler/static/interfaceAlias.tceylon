@@ -1,0 +1,18 @@
+interface A {
+    shared String foo() => "foo";
+    shared String bar => "bar";
+}
+class C {
+    shared interface AAlias => A;
+    shared new () {}
+    shared class CMember() satisfies AAlias {}
+}
+class D() satisfies C.AAlias {}
+shared void run() {
+    C.AAlias cMember = C().CMember();
+    assert (cMember.foo() == "foo");
+    C.AAlias d = D();
+    assert (d.foo() == "foo");
+    print("done");
+}
+

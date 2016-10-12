@@ -1,0 +1,28 @@
+class C {
+    shared static interface IStatic {
+        shared String foo() => "foo";
+        shared String bar => "bar";
+    }
+    shared class CMember() satisfies IStatic {}
+    shared new () {}
+}
+class D() satisfies C.IStatic {
+}
+class E satisfies C.IStatic {
+    shared new () {}
+}
+interface J satisfies C.IStatic {}
+class F() satisfies J {}
+shared void run() {
+    assert (D().foo() == "foo");
+    assert (C().CMember().foo() == "foo");
+    C.IStatic i = E();
+    assert (i.foo() == "foo");
+    J j = F();
+    assert (j.foo() == "foo");
+    value fooRef = C.IStatic.foo;
+    value barRef = C.IStatic.bar;
+    assert (fooRef(D())() == "foo");
+    assert (barRef(D()) == "bar");
+}
+

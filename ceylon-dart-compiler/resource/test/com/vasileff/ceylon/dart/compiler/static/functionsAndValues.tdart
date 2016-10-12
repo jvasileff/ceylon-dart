@@ -1,0 +1,87 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C implements $ceylon$language.dart$$Basic {
+  void _$init$C([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  C() : this.$d(1);
+  C.$d([$dart$core.int $bitmap]) {
+    _$init$C($bitmap | 1);
+  }
+  static $dart$core.int fun([$dart$core.Object x = $ceylon$language.dart$default]) {
+    if ($dart$core.identical(x, $ceylon$language.dart$default)) {
+      x = 10;
+    }
+    return x as $dart$core.int;
+  }
+  static $dart$core.int get val => 10;
+  static $dart$core.int get val2 => C.val;
+  static $dart$core.int get val3 => C.val;
+}
+class D  extends C {
+  D() {}
+}
+void $package$run() {
+  if (!(C.fun() == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: C.fun() == 10");
+  }
+  if (!(C.fun(11) == 11)) {
+    throw new $ceylon$language.AssertionError("Violated: C.fun(11) == 11");
+  }
+  if (!(C.val == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: C.val == 10");
+  }
+  $ceylon$language.Callable funRef = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0 = $ceylon$language.dart$default]) => $ceylon$language.$ceylonInteger(C.fun($dart$core.identical($0, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.$dartInt($0))));
+  if (!($ceylon$language.$dartInt(funRef.f() as $ceylon$language.Integer) == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: funRef() == 10");
+  }
+  if (!($ceylon$language.$dartInt(funRef.f($ceylon$language.$ceylonInteger(11)) as $ceylon$language.Integer) == 11)) {
+    throw new $ceylon$language.AssertionError("Violated: funRef(11) == 11");
+  }
+  if (!(C.fun() == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: D.fun() == 10");
+  }
+  if (!(C.fun(11) == 11)) {
+    throw new $ceylon$language.AssertionError("Violated: D.fun(11) == 11");
+  }
+  if (!(C.val == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: D.val == 10");
+  }
+  $ceylon$language.Callable funRef2 = new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0 = $ceylon$language.dart$default]) => $ceylon$language.$ceylonInteger(C.fun($dart$core.identical($0, $ceylon$language.dart$default) ? $ceylon$language.dart$default : $ceylon$language.$dartInt($0))));
+  if (!($ceylon$language.$dartInt(funRef2.f() as $ceylon$language.Integer) == 10)) {
+    throw new $ceylon$language.AssertionError("Violated: funRef2() == 10");
+  }
+  if (!($ceylon$language.$dartInt(funRef2.f($ceylon$language.$ceylonInteger(11)) as $ceylon$language.Integer) == 11)) {
+    throw new $ceylon$language.AssertionError("Violated: funRef2(11) == 11");
+  }
+}
+
+void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"D":const{"mt":"c","nm":"D","super":const{"nm":"C","pk":"."},"sts":const[]}}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}

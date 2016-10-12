@@ -1,0 +1,101 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C$CStatic implements $ceylon$language.dart$$Basic {
+  C$CStatic([$dart$core.Object name = $ceylon$language.dart$default]) : this.$s((() {
+    if ($dart$core.identical(name, $ceylon$language.dart$default)) {
+      name = "CStatic";
+    }
+    return [name];
+  })());
+  C$CStatic.$s([$dart$core.List a]) : this.$w(a[0]);
+  C$CStatic.$w([$dart$core.String name]) {
+    this.name = name;
+  }
+  $dart$core.String name;
+  $dart$core.String foo() => "foo";
+  $dart$core.String get bar => "bar";
+}
+class C$CMember  extends C$CStatic {
+  C $outer$default$C;
+  C$CMember([C $outer$default$C]) : super("cMember") {
+    this.$outer$default$C = $outer$default$C;
+  }
+}
+class C implements $ceylon$language.dart$$Basic {
+  void _$init$C([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  C() : this.$d(1);
+  C.$d([$dart$core.int $bitmap]) {
+    _$init$C($bitmap | 1);
+  }
+  C$CMember $new$C$CMember() => new C$CMember(this);
+}
+class D  extends C$CStatic {
+  D() : super("D") {}
+}
+class E  extends C$CStatic {
+  void _$init$E([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  E() : this.$d(1);
+  E.$d([$dart$core.int $bitmap]) : super("E") {
+    _$init$E($bitmap | 1);
+  }
+}
+class F  extends E {
+  F() {}
+}
+void $package$run() {
+  if (!((new C$CStatic()).name == "CStatic")) {
+    throw new $ceylon$language.AssertionError("Violated: C.CStatic().name == \"CStatic\"");
+  }
+  if (!((new D()).foo() == "foo")) {
+    throw new $ceylon$language.AssertionError("Violated: D().foo() == \"foo\"");
+  }
+  if (!((new C()).$new$C$CMember().foo() == "foo")) {
+    throw new $ceylon$language.AssertionError("Violated: C().CMember().foo() == \"foo\"");
+  }
+  C$CStatic c = new E();
+  if (!(c.foo() == "foo")) {
+    throw new $ceylon$language.AssertionError("Violated: c.foo() == \"foo\"");
+  }
+  $ceylon$language.Callable fooRef = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(($r as C$CStatic).foo())));
+  $ceylon$language.Callable barRef = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => $ceylon$language.$ceylonString(($r as C$CStatic).bar));
+  if (!($ceylon$language.$dartString((fooRef.f(new D()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
+    throw new $ceylon$language.AssertionError("Violated: fooRef(D())() == \"foo\"");
+  }
+  if (!($ceylon$language.$dartString(barRef.f(new D()) as $ceylon$language.String) == "bar")) {
+    throw new $ceylon$language.AssertionError("Violated: barRef(D()) == \"bar\"");
+  }
+}
+
+void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CStatic":const{"mt":"c","nm":"CStatic","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"CStatic","pk":"."},"sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"CStatic","pk":"."},"sts":const[]},"E":const{"mt":"c","nm":"E","super":const{"nm":"CStatic","pk":"."},"sts":const[]},"F":const{"mt":"c","nm":"F","super":const{"nm":"E","pk":"."},"sts":const[]}}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}

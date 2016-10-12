@@ -1,0 +1,11 @@
+class C {
+    shared static alias CString => String;
+    shared new () {}
+}
+shared void run() {
+    C.CString x = "x";
+    String xx = x;
+    assert (xx == "x");
+    print("done");
+}
+

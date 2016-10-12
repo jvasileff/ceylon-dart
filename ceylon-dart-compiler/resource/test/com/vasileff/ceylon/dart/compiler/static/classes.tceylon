@@ -1,0 +1,26 @@
+class C {
+   shared static class CStatic(shared String name = "CStatic") {
+       shared String foo() => "foo";
+       shared String bar => "bar";
+   }
+   shared class CMember() extends CStatic("cMember") {}
+   shared new () {}
+}
+class D() extends C.CStatic("D") {
+}
+class E extends C.CStatic {
+   shared new () extends C.CStatic("E") {}
+}
+class F() extends E() {}
+shared void run() {
+   assert (C.CStatic().name == "CStatic");
+   assert (D().foo() == "foo");
+   assert (C().CMember().foo() == "foo");
+   C.CStatic c = E();
+   assert (c.foo() == "foo");
+   value fooRef = C.CStatic.foo;
+   value barRef = C.CStatic.bar;
+   assert (fooRef(D())() == "foo");
+   assert (barRef(D()) == "bar");
+}
+

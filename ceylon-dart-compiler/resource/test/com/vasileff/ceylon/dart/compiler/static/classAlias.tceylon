@@ -1,0 +1,19 @@
+class A {
+    shared static String staticString => "staticString";
+    shared String foo() => "foo";
+    shared String bar => "bar";
+    shared String name;
+    shared new (String name = "A") {
+        this.name = name;
+    }
+}
+class C {
+    shared static class CAlias(String name) => A(name);
+    shared new () {}
+}
+shared void run() {
+    C.CAlias cAlias = C.CAlias("CAlias");
+    assert (cAlias.foo() == "foo");
+    assert (C.CAlias.staticString == "staticString");
+}
+

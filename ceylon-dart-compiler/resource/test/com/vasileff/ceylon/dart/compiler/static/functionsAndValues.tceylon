@@ -1,0 +1,29 @@
+class C {
+    shared static Integer fun(Integer x = 10) => x;
+    shared static Integer val => 10;
+    shared static Integer val2 => val;
+    shared static Integer val3 => C.val;
+    shared new () {}
+}
+
+class D() extends C() {}
+
+shared void run() {
+    // direct
+    assert (C.fun() == 10);
+    assert (C.fun(11) == 11);
+    assert (C.val == 10);
+    // ref
+    value funRef = C.fun;
+    assert (funRef() == 10);
+    assert (funRef(11) == 11);
+    // direct subclass
+    assert (D.fun() == 10);
+    assert (D.fun(11) == 11);
+    assert (D.val == 10);
+    // ref subclass
+    value funRef2 = D.fun;
+    assert (funRef2() == 10);
+    assert (funRef2(11) == 11);
+}
+

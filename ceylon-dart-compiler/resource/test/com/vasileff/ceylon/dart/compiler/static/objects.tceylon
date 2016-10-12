@@ -1,0 +1,16 @@
+class C {
+    shared static object obj {
+        shared String foo() => "foo";
+        shared String bar => "bar";
+    }
+    shared new () {}
+}
+shared void run() {
+    C.\Iobj obj = C.obj;
+    assert (obj.foo() == "foo");
+    assert (C.obj.bar == "bar");
+    value f = C.obj.foo;
+    assert (f() == "foo");
+    print("done");
+}
+

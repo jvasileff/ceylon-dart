@@ -1,0 +1,124 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+class C$CStatic implements $ceylon$language.dart$$Basic {
+  void _$init$C$C$CStatic([$dart$core.int $bitmap, $dart$core.Object $create$name, $dart$core.Object $$name]) {
+    if (0 != ($bitmap & 4)) {
+      this.name = $$name as $dart$core.String;
+    }
+    if (0 != ($bitmap & 2)) {}
+    if (0 != ($bitmap & 1)) {
+      this.name = $create$name as $dart$core.String;
+    }
+  }
+  C$CStatic([$dart$core.Object name = $ceylon$language.dart$default]) : this.$d(4, null, name);
+  C$CStatic.$d([$dart$core.int $bitmap, $dart$core.Object $create$name, $dart$core.Object $$name = $ceylon$language.dart$default]) : this.$s($bitmap | 4, $create$name, (() {
+    if ($dart$core.identical($$name, $ceylon$language.dart$default)) {
+      $$name = "CStatic";
+    }
+    return [$$name];
+  })());
+  C$CStatic.$s([$dart$core.int $bitmap, $dart$core.Object $create$name, $dart$core.List a]) : this.$w($bitmap, $create$name, a[0]);
+  C$CStatic.$w([$dart$core.int $bitmap, $dart$core.Object $create$name, $dart$core.Object $$name]) {
+    _$init$C$C$CStatic($bitmap | 4, $create$name, $$name);
+  }
+  C$CStatic.instance() : this.instance$d(2, null);
+  C$CStatic.instance$d([$dart$core.int $bitmap, $dart$core.Object $create$name]) : this.$d($bitmap | 2, $create$name, "instance");
+  C$CStatic.create([$dart$core.Object name = $ceylon$language.dart$default]) : this.create$d(1, name);
+  C$CStatic.create$d([$dart$core.int $bitmap, $dart$core.Object $create$name = $ceylon$language.dart$default]) : this.create$s($bitmap | 1, (() {
+    if ($dart$core.identical($create$name, $ceylon$language.dart$default)) {
+      $create$name = "create";
+    }
+    return [$create$name];
+  })());
+  C$CStatic.create$s([$dart$core.int $bitmap, $dart$core.List a]) : this.create$w($bitmap, a[0]);
+  C$CStatic.create$w([$dart$core.int $bitmap, $dart$core.Object $create$name]) {
+    _$init$C$C$CStatic($bitmap | 1, $create$name);
+  }
+  $dart$core.String name;
+  $dart$core.String foo() => "foo";
+  $dart$core.String get bar => "bar";
+}
+class C$CMember  extends C$CStatic {
+  C $outer$default$C;
+  void _$init$C$C$CMember([$dart$core.int $bitmap, C $outer$default$C]) {
+    if (0 != ($bitmap & 2)) {
+      this.$outer$default$C = $outer$default$C;
+    }
+    if (0 != ($bitmap & 1)) {
+      this.$outer$default$C = $outer$default$C;
+    }
+  }
+  C$CMember([C $outer$default$C]) : this.$d(2, $outer$default$C);
+  C$CMember.$d([$dart$core.int $bitmap, C $outer$default$C]) : super("cMember") {
+    _$init$C$C$CMember($bitmap | 2, $outer$default$C);
+  }
+  C$CMember.cMemberInstance([C $outer$default$C]) : this.cMemberInstance$d(1, $outer$default$C);
+  C$CMember.cMemberInstance$d([$dart$core.int $bitmap, C $outer$default$C]) : super("cMemberInstance") {
+    _$init$C$C$CMember($bitmap | 1, $outer$default$C);
+  }
+}
+class C implements $ceylon$language.dart$$Basic {
+  void _$init$C([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 2)) {}
+    if (0 != ($bitmap & 1)) {}
+  }
+  C() : this.$d(2);
+  C.$d([$dart$core.int $bitmap]) {
+    _$init$C($bitmap | 2);
+  }
+  C.cInstance() : this.cInstance$d(1);
+  C.cInstance$d([$dart$core.int $bitmap]) {
+    _$init$C($bitmap | 1);
+  }
+  static C$CStatic _$s$C$C$CStatic$instance;
+  static C$CStatic get $new$C$CStatic$instance => _$s$C$C$CStatic$instance != null ? _$s$C$C$CStatic$instance : _$s$C$C$CStatic$instance = new C$CStatic.instance();
+  C$CMember $new$C$CMember() => new C$CMember(this);
+  C$CMember _$s$C$C$CMember$cMemberInstance;
+  C$CMember get $new$C$CMember$cMemberInstance => _$s$C$C$CMember$cMemberInstance != null ? _$s$C$C$CMember$cMemberInstance : _$s$C$C$CMember$cMemberInstance = new C$CMember.cMemberInstance(this);
+}
+C _$s$C$cInstance;
+
+C get $package$$new$C$cInstance => _$s$C$cInstance != null ? _$s$C$cInstance : _$s$C$cInstance = new C.cInstance();
+
+C get $new$C$cInstance => $package$$new$C$cInstance;
+
+void $package$run() {
+  C$CStatic instance = C.$new$C$CStatic$instance;
+  C$CStatic cStatic = new C$CStatic.create("cStatic create");
+  if (!(instance.bar == "bar")) {
+    throw new $ceylon$language.AssertionError("Violated: instance.bar == \"bar\"");
+  }
+  if (!(cStatic.bar == "bar")) {
+    throw new $ceylon$language.AssertionError("Violated: cStatic.bar == \"bar\"");
+  }
+}
+
+void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CStatic":const{"mt":"c","nm":"CStatic","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"CStatic","pk":"."},"sts":const[]}}}}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}

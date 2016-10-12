@@ -1,0 +1,56 @@
+// file:moda/module.ceylon
+module moda "1.0.0" {}
+
+// file:moda/package.ceylon
+shared package moda;
+
+// file:moda/run.ceylon
+shared class StaticStuff {
+    shared static interface StaticInterface {
+        shared formal String staticInterfaceFoo;
+    }
+    shared static interface StaticInterfaceAlias => StaticInterface;
+
+    shared static class StaticClass satisfies StaticInterfaceAlias {
+        shared actual String staticInterfaceFoo => "staticInterfaceFoo";
+        shared new () {}
+    }
+    shared static class StaticClassAlias() => StaticClass();
+
+    shared static String foo => "foo";
+    shared static String bar() => "bar";
+
+    shared static object staticObject {
+        shared String name => "staticObject";
+    }
+
+    shared static alias StringAlias => String;
+
+    shared new () {}
+}
+
+shared class C() satisfies StaticStuff.StaticInterface {
+    shared actual String staticInterfaceFoo => "C-staticInterfaceFoo";
+}
+
+// file:modb/module.ceylon
+module modb "1.0.0" {
+    import moda "1.0.0";
+}
+
+// file:modb/package.ceylon
+shared package modb;
+
+// file:modb/run.ceylon
+import moda { ... }
+
+shared void run() {    
+    StaticStuff.StaticInterface si1 = StaticStuff.StaticClass();
+    StaticStuff.StaticInterfaceAlias si2 = StaticStuff.StaticClassAlias();
+    assert (StaticStuff.foo == "foo");
+    assert (StaticStuff.bar() == "bar");
+    StaticStuff.\IstaticObject so = StaticStuff.staticObject;
+    assert (so.name == "staticObject");
+    StaticStuff.StringAlias s = "";
+}
+

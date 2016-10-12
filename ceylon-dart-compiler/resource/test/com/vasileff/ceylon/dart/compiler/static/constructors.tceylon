@@ -1,0 +1,27 @@
+class C {
+    shared static class CStatic {
+        shared String name;
+        shared new (String name = "CStatic") {
+            this.name = name;
+        }
+        shared new instance extends CStatic("instance") {}
+        shared new create(String name = "create") {
+            this.name = name;
+        }
+        shared String foo() => "foo";
+        shared String bar => "bar";
+    }
+    shared class CMember extends CStatic {
+        shared new () extends CStatic("cMember") {}
+        shared new cMemberInstance extends CStatic("cMemberInstance") {}
+    }
+    shared new () {}
+    shared new cInstance {}
+}
+shared void run() {
+    C.CStatic instance = C.CStatic.instance;
+    C.CStatic cStatic = C.CStatic.create("cStatic create");
+    assert (instance.bar == "bar");
+    assert (cStatic.bar == "bar");
+}
+

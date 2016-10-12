@@ -1,0 +1,18 @@
+class C {
+    shared static variable Integer var = 0;
+    shared static Integer attr => var;
+    assign attr {
+        var = attr;
+    }
+    shared new () {}
+}
+shared void run() {
+    assert (C.var == 0);
+    assert ((C.var = 1) == 1);
+    assert (C.var == 1);
+    assert (C.attr == 1);
+    assert ((C.attr = 2) == 2);
+    assert (C.attr == 2);
+    assert (C.var == 2);
+}
+

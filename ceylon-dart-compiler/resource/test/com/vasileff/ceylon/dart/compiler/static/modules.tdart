@@ -1,0 +1,116 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+abstract class StaticStuff$StaticInterface {
+  $dart$core.String get staticInterfaceFoo;
+}
+class StaticStuff$StaticClass implements $ceylon$language.dart$$Basic, StaticStuff$StaticInterface {
+  void _$init$StaticStuff$StaticStuff$StaticClass([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  StaticStuff$StaticClass() : this.$d(1);
+  StaticStuff$StaticClass.$d([$dart$core.int $bitmap]) {
+    _$init$StaticStuff$StaticStuff$StaticClass($bitmap | 1);
+  }
+  $dart$core.String get staticInterfaceFoo => "staticInterfaceFoo";
+}
+class StaticStuff$staticObject_ implements $ceylon$language.dart$$Basic {
+  StaticStuff$staticObject_() {}
+  $dart$core.String get name => "staticObject";
+}
+class StaticStuff implements $ceylon$language.dart$$Basic {
+  void _$init$StaticStuff([$dart$core.int $bitmap]) {
+    if (0 != ($bitmap & 1)) {}
+  }
+  StaticStuff() : this.$d(1);
+  StaticStuff.$d([$dart$core.int $bitmap]) {
+    _$init$StaticStuff($bitmap | 1);
+  }
+  static $dart$core.String get foo => "foo";
+  static $dart$core.String bar() => "bar";
+  static final StaticStuff$staticObject_ staticObject = new StaticStuff$staticObject_();
+}
+class C implements $ceylon$language.dart$$Basic, StaticStuff$StaticInterface {
+  C() {}
+  $dart$core.String get staticInterfaceFoo => "C-staticInterfaceFoo";
+}
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "StaticStuff" :
+    new StaticStuff();
+    return $ceylon$language.$true;
+  case "C" :
+    new C();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"moda","\$mod-version":"1.0.0","moda":const{"StaticStuff":const{"mt":"c","nm":"StaticStuff","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"StaticClass":const{"mt":"c","nm":"StaticClass","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"StaticInterfaceAlias","pk":"."}]},"StaticClassAlias":const{"mt":"c","nm":"StaticClassAlias","super":const{"nm":"StaticClass","pk":"."},"sts":const[]},"staticObject":const{"mt":"c","nm":"staticObject","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}},"\$i":const{"StaticInterfaceAlias":const{"mt":"i","nm":"StaticInterfaceAlias","sts":const[]},"StaticInterface":const{"mt":"i","nm":"StaticInterface","sts":const[]}}},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"StaticInterface","pk":"."}]}}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}
+
+//////////////////////////////////////////////////////////////////////
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+import "package:moda/moda.dart" as $moda;
+
+void $package$run() {
+  $moda.StaticStuff$StaticInterface si1 = new $moda.StaticStuff$StaticClass();
+  $moda.StaticStuff$StaticInterface si2 = new $moda.StaticStuff$StaticClass();
+  if (!($moda.StaticStuff.foo == "foo")) {
+    throw new $ceylon$language.AssertionError("Violated: StaticStuff.foo == \"foo\"");
+  }
+  if (!($moda.StaticStuff.bar() == "bar")) {
+    throw new $ceylon$language.AssertionError("Violated: StaticStuff.bar() == \"bar\"");
+  }
+  $moda.StaticStuff$staticObject_ so = $moda.StaticStuff.staticObject;
+  if (!(so.name == "staticObject")) {
+    throw new $ceylon$language.AssertionError("Violated: so.name == \"staticObject\"");
+  }
+  $dart$core.String s = "";
+}
+
+void run() => $package$run();
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"modb","\$mod-version":"1.0.0","modb":const{}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module, $moda.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}
+
