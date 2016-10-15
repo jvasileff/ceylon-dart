@@ -537,12 +537,12 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
       map[keyType] = typeToMap(pm.type, from);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
-      if (pm.isNamed) {
-        map[keyNamed] = true;
-      }
     }
     if (pm.isOptional) {
       map[keyDefault] = true;
+    }
+    if (pm.isNamed) {
+      map[keyNamed] = true;
     }
 
     // TODO defaulted, named
