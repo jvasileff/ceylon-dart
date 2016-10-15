@@ -1233,14 +1233,14 @@ class TopLevelVisitor(CompilationContext ctx)
                 assert (exists extendedType = constructor.extendedType?.target);
                 value ecInfo = extensionOrConstructionInfo(extendedType);
                 assert (exists callableType = ecInfo.typeModel);
-                return generateArgumentListFromArguments {
+                return generateArgumentsFromArguments {
                     scope;
                     argumentList;
                     CeylonList {
                         ctx.unit.getCallableArgumentTypes(callableType.fullType);
                     };
                     delegateConstructor;
-                }[1].arguments;
+                }[1];
             }
             return [];
         }
@@ -1733,12 +1733,12 @@ class TopLevelVisitor(CompilationContext ctx)
                 dartArguments
                     =   withInConstructorSignature {
                             classModel;
-                            () => generateArgumentListFromArguments {
+                            () => generateArgumentsFromArguments {
                                 ecInfo;
                                 arguments;
                                 signature;
                                 extendedDeclaration;
-                            }[1].arguments;
+                            }[1];
                         };
             }
             else {

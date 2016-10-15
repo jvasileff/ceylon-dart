@@ -528,14 +528,13 @@ class BaseGenerator(CompilationContext ctx)
             [DartExpression()*] | [Expression*] | Arguments arguments) {
 
         if (is PositionalArguments | NamedArguments arguments) {
-            value [a, b, c]
-                =   generateArgumentListFromArguments {
-                        scope;
-                        arguments;
-                        signature;
-                        declarationModel;
-                    };
-            return [a, b.arguments, c];
+            return
+            generateArgumentsFromArguments {
+                scope;
+                arguments;
+                signature;
+                declarationModel;
+            };
         }
 
         [DartStatement*] argsSetup;
@@ -4918,14 +4917,14 @@ class BaseGenerator(CompilationContext ctx)
 
     "Returns a tuple containing:
         - Statements required to pre-calculate argument expressions
-        - The [[DartArgumentList]]
+        - The Dart arguments as [DartExpression*]
         - The boolean value `true` if the final argument in the returned argument list
           is a sequenced argument and the invoked declaration is a Function that is
           implemented as a Callable value, or false otherwise. This is used when invoking
           [[Callable]]s, for which the `.s()` method must be used to spread sequenced
           arguments (rather than the `.f()` method)."
     shared
-    [[DartStatement*], DartArgumentList, Boolean] generateArgumentListFromArguments(
+    [[DartStatement*], [DartExpression*], Boolean] generateArgumentsFromArguments(
             DScope scope,
             Arguments arguments,
             // TODO accept {TypeModel*} signature instead
@@ -4938,18 +4937,16 @@ class BaseGenerator(CompilationContext ctx)
          returned boolean will be true."
         function generateArgumentListForIndirectInvocation(ArgumentList argumentList)
             =>  [[],
-                DartArgumentList {
-                    argumentList.children.collect {
-                            (argument)
-                        =>  withLhsNonNative {
-                                ceylonTypes.anythingType;
-                                () => switch (argument)
-                                case (is Expression)
-                                    argument.transform(expressionTransformer)
-                                case (is SpreadArgument|Comprehension)
-                                    generateSequentialFromArgument(argument);
-                            };
-                    };
+                argumentList.children.collect {
+                        (argument)
+                    =>  withLhsNonNative {
+                            ceylonTypes.anythingType;
+                            () => switch (argument)
+                            case (is Expression)
+                                argument.transform(expressionTransformer)
+                            case (is SpreadArgument|Comprehension)
+                                generateSequentialFromArgument(argument);
+                        };
                 },
                 argumentList.sequenceArgument exists];
 
@@ -4981,7 +4978,7 @@ class BaseGenerator(CompilationContext ctx)
                         pList(declarationModel);
                     };
 
-            return [argsSetup, DartArgumentList(argExpressions),
+            return [argsSetup, argExpressions,
                     arguments.argumentList.sequenceArgument exists];
         }
         case (is NamedArguments) {
@@ -4996,7 +4993,7 @@ class BaseGenerator(CompilationContext ctx)
                         pList(declarationModel);
                     };
 
-            return [argsSetup, DartArgumentList(argExpressions), false];
+            return [argsSetup, argExpressions, false];
         }
     }
 

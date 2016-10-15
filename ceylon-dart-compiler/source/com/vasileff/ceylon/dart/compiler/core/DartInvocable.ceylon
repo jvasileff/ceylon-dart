@@ -82,25 +82,15 @@ class DartInvocable(
                 reference, elementType, setter, callableParameter, callableCast,
                 capturedReferenceValue);
 
-    function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
-        =>  if (is DartArgumentList arguments)
-            then arguments
-            else DartArgumentList(arguments);
-
-    function dartArgumentSequence(DartArgumentList|[DartExpression*] arguments)
-        =>  if (is DartArgumentList arguments)
-            then arguments.arguments
-            else arguments;
-
     function prependedArgumentList(
             DartExpression? initial,
-            DartArgumentList | [DartExpression*] arguments)
+            [DartExpression*] arguments)
         =>  if (exists initial) then
                 DartArgumentList {
-                    dartArgumentSequence(arguments).withLeading(initial);
+                    arguments.withLeading(initial);
                 }
             else
-                dartArgumentList {
+                DartArgumentList {
                     arguments;
                 };
 
@@ -146,7 +136,7 @@ class DartInvocable(
     shared
     DartExpression expressionForInvocation(
             DartExpression? receiver = null,
-            DartArgumentList|[DartExpression*] arguments = [],
+            [DartExpression*] arguments = [],
             "Is the last argument a spread argument?"
             Boolean hasSpread = false) {
 
@@ -161,7 +151,7 @@ class DartInvocable(
                         receiver;
                         reference;
                     };
-                    dartArgumentList {
+                    DartArgumentList {
                         arguments;
                     };
                 };
@@ -220,14 +210,14 @@ class DartInvocable(
                             if (hasSpread) then "s" else "f";
                         };
                     };
-                    dartArgumentList {
+                    DartArgumentList {
                         arguments;
                     };
                 };
             }
             else if (!setter) {
                 "Arguments must be empty when accessing values"
-                assert (dartArgumentSequence(arguments).empty);
+                assert (arguments.empty);
 
                 return if (capturedReferenceValue)
                 then DartPropertyAccess(target, DartSimpleIdentifier("v"))
@@ -235,10 +225,10 @@ class DartInvocable(
             }
             else {
                 "Assignment operations must have an argument."
-                assert (exists val = dartArgumentSequence(arguments)[0]);
+                assert (exists val = arguments[0]);
 
                 "Assignment operations must have only one argument"
-                assert (dartArgumentSequence(arguments).size == 1);
+                assert (arguments.size == 1);
 
                 return DartAssignmentExpression {
                     if (capturedReferenceValue)
@@ -263,10 +253,10 @@ class DartInvocable(
             assert (exists receiver);
 
             "Binary operators must have an argument for the right operand"
-            assert (exists rightOperand = dartArgumentSequence(arguments)[0]);
+            assert (exists rightOperand = arguments[0]);
 
             "Binary operators must have only one argument"
-            assert (dartArgumentSequence(arguments).size == 1);
+            assert (arguments.size == 1);
 
             return
             DartBinaryExpression {
@@ -289,10 +279,10 @@ class DartInvocable(
             assert (exists receiver);
 
             "Index expressions must have an argument for the index"
-            assert (exists index = dartArgumentSequence(arguments)[0]);
+            assert (exists index = arguments[0]);
 
             "Index expressions must have only one argument"
-            assert (dartArgumentSequence(arguments).size == 1);
+            assert (arguments.size == 1);
 
             return
             DartIndexExpression {
@@ -314,13 +304,13 @@ class DartInvocable(
             assert (exists receiver);
 
             "Index assignment expressions must have an argument for the index"
-            assert (exists index = dartArgumentSequence(arguments)[0]);
+            assert (exists index = arguments[0]);
 
             "Index assignment expressions must have an argument for assigned value"
-            assert (exists val = dartArgumentSequence(arguments)[1]);
+            assert (exists val = arguments[1]);
 
             "Index expressions must have exactly two arguments"
-            assert (dartArgumentSequence(arguments).size == 2);
+            assert (arguments.size == 2);
 
             return
             DartAssignmentExpression {
@@ -346,7 +336,7 @@ class DartInvocable(
             assert (exists receiver);
 
             "Dart Prefix operations cannot have arguments"
-            assert (dartArgumentSequence(arguments).empty);
+            assert (arguments.empty);
 
             return
             DartPrefixExpression {
