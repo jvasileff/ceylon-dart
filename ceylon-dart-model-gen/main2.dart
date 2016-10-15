@@ -208,7 +208,6 @@ Map<String, Object> moduleToMap(LibraryMirror libraryMirror,
     else if (m is ClassMirror) {
       // print("-- Class: " + MirrorSystem.getName(k).toString() + " --");
       declarationMap[MirrorSystem.getName(k)] = classToInterfaceMap(m, m);
-      declarationMap[MirrorSystem.getName(k) + "_C"] = classToClassMap(m, m);
     }
   });
 
@@ -281,7 +280,6 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
 
   // Also add the class as a static member class named ".Class"
   var classMap = classToClassMap(cm, from);
-  classMap[keyName] = "Class";
   classMap[keyPackedAnns] |= annotationBits["static"];
   map[keyClasses] = { "Class" : classMap };
 
@@ -303,7 +301,7 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   }
 
   map[keyMetatype] = metatypeClass;
-  map[keyName] = MirrorSystem.getName(cm.simpleName) + "_C";
+  map[keyName] = MirrorSystem.getName(cm.simpleName) + "Class";
 
   // TODO better annotations. 'abstract', other?
   map[keyPackedAnns] = 1;
@@ -640,7 +638,8 @@ Map<String, Object> typeToMap(
   }
   else if (tm is ClassMirror) {
     if (isClass) {
-      map[keyName] = MirrorSystem.getName(tm.simpleName) + "_C";
+      // TODO Changed from _C to .Class, but not tested.
+      map[keyName] = MirrorSystem.getName(tm.simpleName) + ".Class";
     }
     else {
       map[keyName] = MirrorSystem.getName(tm.simpleName);
