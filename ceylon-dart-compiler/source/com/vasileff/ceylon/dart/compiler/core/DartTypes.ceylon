@@ -17,7 +17,9 @@ import com.redhat.ceylon.model.loader {
     JvmBackendUtil
 }
 import com.redhat.ceylon.model.typechecker.model {
+    FunctionalModel=Functional,
     DeclarationModel=Declaration,
+    ParameterListModel=ParameterList,
     TypeDeclarationModel=TypeDeclaration,
     TypedDeclarationModel=TypedDeclaration,
     FunctionModel=Function,
@@ -60,6 +62,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     parametersInfo,
     ParametersInfo,
     expressionInfo
+}
+import com.vasileff.ceylon.dart.compiler.loader {
+    JsonParameter
 }
 
 shared
@@ -1726,6 +1731,28 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             FunctionOrValueModel | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
+        function hasInteropNamedParams(ParameterListModel parameterList)
+            =>  CeylonIterable(parameterList.parameters).any((parameter)
+                =>  if (is JsonParameter parameter, parameter.named)
+                    then true
+                    else false);
+
+        // if declaration is a native dart declaration (interop) and has named parameters,
+        // collect the parameter names
+        [String?*] interopNamedParameters;
+        if (is FunctionalModel declaration, nativeDart(declaration),
+                hasInteropNamedParams(declaration.firstParameterList)) {
+            interopNamedParameters
+                =   CeylonIterable(declaration.firstParameterList.parameters).collect(
+                        (parameter)
+                    =>  if (is JsonParameter parameter, parameter.named)
+                        then parameter.name
+                        else null);
+        }
+        else {
+            interopNamedParameters = [];
+        }
+
         "The delcaration to use. The typechecker always gives us a ValueModel for
          ValueSpecifications, but we need the SetterModel, if available."
         value validDeclaration
@@ -1766,6 +1793,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     package.dartFunction; // Constructor, really
                     false;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1779,6 +1807,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     then package.dartFunction
                     else dartValue;
                 setter;
+                interopNamedParameters = interopNamedParameters;
             };
         }
         case (is ClassOrInterfaceModel) {
@@ -1796,6 +1825,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     then package.dartFunction
                     else dartValue;
                     setter;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1814,6 +1844,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     package.dartFunction; // Constructor, really
                     false;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1834,6 +1865,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     package.dartFunction; // Constructor, really
                     false;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1886,6 +1918,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 setter;
                 callableValue;
                 callableCast;
+                interopNamedParameters = interopNamedParameters;
             };
         }
         case (is FunctionOrValueModel
@@ -1903,6 +1936,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     };
                     package.dartFunction; // Constructor, really
                     false;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1918,6 +1952,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     package.dartValue;
                     setter;
                     capturedReferenceValue = true;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1930,6 +1965,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     identifier;
                     package.dartFunction;
                     setter;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1942,6 +1978,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     setter;
                     callableValue;
                     callableCast;
+                    interopNamedParameters = interopNamedParameters;
                 };
             }
 
@@ -1952,6 +1989,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     then package.dartFunction
                     else dartValue;
                 setter;
+                interopNamedParameters = interopNamedParameters;
             };
         }
         else {
@@ -1961,6 +1999,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 DartSimpleIdentifier("");
                 package.dartFunction;
                 false;
+                interopNamedParameters = interopNamedParameters;
             };
         }
     }

@@ -19,7 +19,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess,
     DartPrefixedIdentifier,
     DartTypeName,
-    DartAsExpression
+    DartAsExpression,
+    DartLabel,
+    DartNamedExpression
 }
 
 shared
@@ -35,7 +37,12 @@ class DartInvocable(
          [[callableParameter]] is `true`, and the Dart variable holding the `Callable`
          is of type `dart.core.Object`, which happens for defaulted callable parameters."
         shared DartTypeName? callableCast = null,
-        shared Boolean capturedReferenceValue = false) {
+        shared Boolean capturedReferenceValue = false,
+        "If this is an invocable for an interop function, and the function has named
+         parameters, a sequence holding all parameter names, with leading `null`s for
+         non-named parameter. The size of the sequence must be equal to the total number
+         of parameter for the function."
+        shared [String?*] interopNamedParameters = []) {
 
     "Cannot be both a capturedReferenceValue and a callableParameter."
     assert (!(capturedReferenceValue && callableParameter));
@@ -77,10 +84,11 @@ class DartInvocable(
             Boolean setter = this.setter,
             Boolean callableParameter = this.callableParameter,
             DartTypeName? callableCast = this.callableCast,
-            Boolean capturedReferenceValue = this.capturedReferenceValue)
+            Boolean capturedReferenceValue = this.capturedReferenceValue,
+            [String?*] interopNamedArguments = this.interopNamedParameters)
         =>  DartInvocable(
                 reference, elementType, setter, callableParameter, callableCast,
-                capturedReferenceValue);
+                capturedReferenceValue, interopNamedArguments);
 
     function prependedArgumentList(
             DartExpression? initial,
@@ -93,6 +101,32 @@ class DartInvocable(
                 DartArgumentList {
                     arguments;
                 };
+
+    function interopArguments([DartExpression*] arguments)
+        =>  if (interopNamedParameters.empty)
+            then arguments
+            else zipPairs(interopNamedParameters, arguments)
+                    .map(([argumentName, expression]) {
+                if (!exists argumentName) {
+                    return expression;
+                }
+                // hack: if the expression's value is dartDefault, ignore it. Better would be
+                // for arguments to have a type like [DartExpression|DartDefault*]
+                // FIXME bad test; only valid inside language module
+                if (is DartSimpleIdentifier expression,
+                        expression.identifier == "$package$dart$default") {
+                    return null;
+                }
+                if (is DartPrefixedIdentifier expression,
+                        expression.prefix.identifier == "$ceylon$language",
+                        expression.identifier.identifier == "dart$default") {
+                    return null;
+                }
+                return DartNamedExpression {
+                    DartLabel(DartSimpleIdentifier(argumentName));
+                    expression;
+                };
+            }).coalesced.sequence();
 
     shared
     DartSimpleIdentifier assertedSimpleIdentifier {
@@ -152,7 +186,7 @@ class DartInvocable(
                         reference;
                     };
                     DartArgumentList {
-                        arguments;
+                        interopArguments(arguments);
                     };
                 };
             }
@@ -163,7 +197,7 @@ class DartInvocable(
                     reference;
                     prependedArgumentList {
                         receiver;
-                        arguments;
+                        interopArguments(arguments);
                     };
                 };
             }
@@ -175,7 +209,7 @@ class DartInvocable(
                     reference;
                     prependedArgumentList {
                         receiver;
-                        arguments;
+                        interopArguments(arguments);
                     };
                 };
             }
