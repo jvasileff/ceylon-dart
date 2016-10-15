@@ -18,6 +18,32 @@ class DartNode() {
 shared abstract
 class DartExpression() extends DartNode() {}
 
+"An expression that has a name associated with it. They are used in method invocations
+ when there are named parameters."
+shared
+class DartNamedExpression(name, expression) extends DartExpression() {
+    DartLabel name;
+    DartExpression expression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        name.write(writer);
+        expression.write(writer);
+    }
+}
+
+"A label on either a LabeledStatement or a NamedExpression."
+shared
+class DartLabel(label) extends DartNode() {
+    DartSimpleIdentifier label;
+
+    shared actual
+    void write(CodeWriter writer) {
+        label.write(writer);
+        writer.write(": ");
+    }
+}
+
 "A node that represents a statement."
 shared abstract
 class DartStatement() extends DartNode() {}
