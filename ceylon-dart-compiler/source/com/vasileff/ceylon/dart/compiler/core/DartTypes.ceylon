@@ -396,7 +396,10 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             =>  if (isToplevel(declaration))
                 then (
                     CeylonIterable(getPackage(declaration).name)
-                        .skip(getModule(declaration).name.size())
+                        .skip {
+                            getModule(declaration).defaultModule then 0
+                            else getModule(declaration).name.size();
+                        }
                         .map(Object.string)
                         .interpose("$")
                         .reduce(plus)
