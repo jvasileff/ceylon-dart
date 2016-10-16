@@ -1,0 +1,11 @@
+late String late1;
+late variable String late2;
+
+shared void run() {
+    late1 = "late1";
+    late2 = "late2";
+    assert (late1 == "late1");
+    assert (late2 == "late2");
+    late2 = "late2b";
+    assert (late2 == "late2b");
+}
