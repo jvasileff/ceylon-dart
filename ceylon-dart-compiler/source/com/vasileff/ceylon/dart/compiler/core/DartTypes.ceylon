@@ -1787,26 +1787,27 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // Toplevel class or constructor. Easy.
             if (is ClassModel | ConstructorModel validDeclaration) {
                 return DartInvocable {
-                    dartConstructorName {
+                    reference = dartConstructorName {
                         scope;
                         validDeclaration;
                     };
-                    package.dartFunction; // Constructor, really
-                    false;
+                    elementType = package.dartFunction; // Constructor, really
+                    setter = false;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
 
             // Toplevel function or value. Also easy.
             return DartInvocable {
-                identifierForToplevel {
+                reference = identifierForToplevel {
                     scope;
                     validDeclaration;
                 };
-                if (validDeclaration is FunctionModel)
-                    then package.dartFunction
-                    else dartValue;
-                setter;
+                elementType
+                    =   if (validDeclaration is FunctionModel)
+                        then package.dartFunction
+                        else dartValue;
+                setter = setter;
                 interopNamedParameters = interopNamedParameters;
             };
         }
@@ -1817,14 +1818,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 assert (!is ConstructorModel validDeclaration);
 
                 return DartInvocable {
-                    DartPropertyAccess {
+                    reference = DartPropertyAccess {
                         dartIdentifierForClassOrInterface(scope, container);
                         DartSimpleIdentifier(getPackagePrefixedName(validDeclaration));
                     };
-                    if (validDeclaration is FunctionModel)
-                    then package.dartFunction
-                    else dartValue;
-                    setter;
+                    elementType
+                        =   if (validDeclaration is FunctionModel)
+                            then package.dartFunction
+                            else dartValue;
+                    setter = setter;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
@@ -1838,12 +1840,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     || getClassOfConstructor(validDeclaration).staticallyImportable) {
 
                 return DartInvocable {
-                    dartConstructorName {
+                    reference = dartConstructorName {
                         scope;
                         validDeclaration;
                     };
-                    package.dartFunction; // Constructor, really
-                    false;
+                    elementType = package.dartFunction; // Constructor, really
+                    setter = false;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
@@ -1854,7 +1856,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     !validDeclaration.shared) {
 
                 return DartInvocable {
-                    DartPropertyAccess {
+                    reference = DartPropertyAccess {
                         dartIdentifierForClassOrInterface {
                             scope;
                             container;
@@ -1863,8 +1865,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                             getStaticInterfaceMethodName(validDeclaration);
                         };
                     };
-                    package.dartFunction; // Constructor, really
-                    false;
+                    elementType = package.dartFunction; // Constructor, really
+                    setter = false;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
@@ -1913,11 +1915,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     ];
 
             return DartInvocable {
-                memberIdentifier;
-                dartElementType;
-                setter;
-                callableValue;
-                callableCast;
+                reference = memberIdentifier;
+                elementType = dartElementType;
+                setter = setter;
+                callableParameter = callableValue;
+                callableCast = callableCast;
                 interopNamedParameters = interopNamedParameters;
             };
         }
@@ -1930,12 +1932,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // to provide outer & captures as arguments.
             if (is ClassModel | ConstructorModel validDeclaration) {
                 return DartInvocable {
-                    dartConstructorName {
+                    reference = dartConstructorName {
                         scope;
                         validDeclaration;
                     };
-                    package.dartFunction; // Constructor, really
-                    false;
+                    elementType = package.dartFunction; // Constructor, really
+                    setter = false;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
@@ -1948,9 +1950,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     capturedReferenceValue(validDeclaration)) {
 
                 return DartInvocable {
-                    identifier;
-                    package.dartValue;
-                    setter;
+                    reference = identifier;
+                    elementType = package.dartValue;
+                    setter = setter;
                     capturedReferenceValue = true;
                     interopNamedParameters = interopNamedParameters;
                 };
@@ -1962,9 +1964,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     useGetterSetterMethods(validDeclaration)) {
 
                 return DartInvocable {
-                    identifier;
-                    package.dartFunction;
-                    setter;
+                    reference = identifier;
+                    elementType = package.dartFunction;
+                    setter = setter;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
@@ -1973,22 +1975,23 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // as a Callable
             if (callableValue) {
                 return DartInvocable {
-                    identifier;
-                    dartValue;
-                    setter;
-                    callableValue;
-                    callableCast;
+                    reference = identifier;
+                    elementType = dartValue;
+                    setter = setter;
+                    callableParameter = callableValue;
+                    callableCast = callableCast;
                     interopNamedParameters = interopNamedParameters;
                 };
             }
 
             // Else, a regular non-member function, value, or setter.
             return DartInvocable {
-                identifier;
-                if (validDeclaration is FunctionModel)
-                    then package.dartFunction
-                    else dartValue;
-                setter;
+                reference = identifier;
+                elementType
+                    =   if (validDeclaration is FunctionModel)
+                        then package.dartFunction
+                        else dartValue;
+                setter = setter;
                 interopNamedParameters = interopNamedParameters;
             };
         }
@@ -1996,9 +1999,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             addError(scope, "Unexpected container.");
             return
             DartInvocable {
-                DartSimpleIdentifier("");
-                package.dartFunction;
-                false;
+                reference = DartSimpleIdentifier("");
+                elementType = package.dartFunction;
+                setter = false;
                 interopNamedParameters = interopNamedParameters;
             };
         }
