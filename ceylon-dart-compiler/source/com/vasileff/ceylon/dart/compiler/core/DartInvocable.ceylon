@@ -21,7 +21,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartTypeName,
     DartAsExpression,
     DartLabel,
-    DartNamedExpression
+    DartNamedExpression,
+    DartIdentifier
 }
 
 shared
@@ -110,16 +111,8 @@ class DartInvocable(
                 if (!exists argumentName) {
                     return expression;
                 }
-                // hack: if the expression's value is dartDefault, ignore it. Better would be
-                // for arguments to have a type like [DartExpression|DartDefault*]
-                // FIXME bad test; only valid inside language module
-                if (is DartSimpleIdentifier expression,
-                        expression.identifier == "$package$dart$default") {
-                    return null;
-                }
-                if (is DartPrefixedIdentifier expression,
-                        expression.prefix.identifier == "$ceylon$language",
-                        expression.identifier.identifier == "dart$default") {
+                // if the expression's value is dartDefault, ignore the argument
+                if (is DartIdentifier expression, expression.isDefaultIndicatorValue) {
                     return null;
                 }
                 return DartNamedExpression {

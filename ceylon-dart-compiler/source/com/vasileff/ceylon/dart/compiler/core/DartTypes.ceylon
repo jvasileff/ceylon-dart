@@ -676,11 +676,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartIdentifier dartDefault(DScope scope)
         =>  if (getModule(scope).nameAsString == "ceylon.language") then
-                DartSimpleIdentifier("$package$dart$default")
+                DartSimpleIdentifier("$package$dart$default", true)
             else
                 DartPrefixedIdentifier {
                     DartSimpleIdentifier("$ceylon$language");
                     DartSimpleIdentifier("dart$default");
+                    true;
                 };
 
     shared
