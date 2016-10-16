@@ -19,7 +19,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartPropertyAccess,
     DartPrefixedIdentifier,
     DartTypeName,
-    DartAsExpression
+    DartAsExpression,
+    DartLabel,
+    DartNamedExpression,
+    DartIdentifier
 }
 
 shared
@@ -35,7 +38,12 @@ class DartInvocable(
          [[callableParameter]] is `true`, and the Dart variable holding the `Callable`
          is of type `dart.core.Object`, which happens for defaulted callable parameters."
         shared DartTypeName? callableCast = null,
-        shared Boolean capturedReferenceValue = false) {
+        shared Boolean capturedReferenceValue = false,
+        "If this is an invocable for an interop function, and the function has named
+         parameters, a sequence holding all parameter names, with leading `null`s for
+         non-named parameter. The size of the sequence must be equal to the total number
+         of parameter for the function."
+        shared [String?*] interopNamedParameters = []) {
 
     "Cannot be both a capturedReferenceValue and a callableParameter."
     assert (!(capturedReferenceValue && callableParameter));
@@ -77,32 +85,41 @@ class DartInvocable(
             Boolean setter = this.setter,
             Boolean callableParameter = this.callableParameter,
             DartTypeName? callableCast = this.callableCast,
-            Boolean capturedReferenceValue = this.capturedReferenceValue)
+            Boolean capturedReferenceValue = this.capturedReferenceValue,
+            [String?*] interopNamedArguments = this.interopNamedParameters)
         =>  DartInvocable(
                 reference, elementType, setter, callableParameter, callableCast,
-                capturedReferenceValue);
-
-    function dartArgumentList(DartArgumentList|[DartExpression*] arguments)
-        =>  if (is DartArgumentList arguments)
-            then arguments
-            else DartArgumentList(arguments);
-
-    function dartArgumentSequence(DartArgumentList|[DartExpression*] arguments)
-        =>  if (is DartArgumentList arguments)
-            then arguments.arguments
-            else arguments;
+                capturedReferenceValue, interopNamedArguments);
 
     function prependedArgumentList(
             DartExpression? initial,
-            DartArgumentList | [DartExpression*] arguments)
+            [DartExpression*] arguments)
         =>  if (exists initial) then
                 DartArgumentList {
-                    dartArgumentSequence(arguments).withLeading(initial);
+                    arguments.withLeading(initial);
                 }
             else
-                dartArgumentList {
+                DartArgumentList {
                     arguments;
                 };
+
+    function interopArguments([DartExpression*] arguments)
+        =>  if (interopNamedParameters.empty)
+            then arguments
+            else zipPairs(interopNamedParameters, arguments)
+                    .map(([argumentName, expression]) {
+                if (!exists argumentName) {
+                    return expression;
+                }
+                // if the expression's value is dartDefault, ignore the argument
+                if (is DartIdentifier expression, expression.isDefaultIndicatorValue) {
+                    return null;
+                }
+                return DartNamedExpression {
+                    DartLabel(DartSimpleIdentifier(argumentName));
+                    expression;
+                };
+            }).coalesced.sequence();
 
     shared
     DartSimpleIdentifier assertedSimpleIdentifier {
@@ -146,7 +163,7 @@ class DartInvocable(
     shared
     DartExpression expressionForInvocation(
             DartExpression? receiver = null,
-            DartArgumentList|[DartExpression*] arguments = [],
+            [DartExpression*] arguments = [],
             "Is the last argument a spread argument?"
             Boolean hasSpread = false) {
 
@@ -161,8 +178,8 @@ class DartInvocable(
                         receiver;
                         reference;
                     };
-                    dartArgumentList {
-                        arguments;
+                    DartArgumentList {
+                        interopArguments(arguments);
                     };
                 };
             }
@@ -173,7 +190,7 @@ class DartInvocable(
                     reference;
                     prependedArgumentList {
                         receiver;
-                        arguments;
+                        interopArguments(arguments);
                     };
                 };
             }
@@ -185,7 +202,7 @@ class DartInvocable(
                     reference;
                     prependedArgumentList {
                         receiver;
-                        arguments;
+                        interopArguments(arguments);
                     };
                 };
             }
@@ -220,14 +237,14 @@ class DartInvocable(
                             if (hasSpread) then "s" else "f";
                         };
                     };
-                    dartArgumentList {
+                    DartArgumentList {
                         arguments;
                     };
                 };
             }
             else if (!setter) {
                 "Arguments must be empty when accessing values"
-                assert (dartArgumentSequence(arguments).empty);
+                assert (arguments.empty);
 
                 return if (capturedReferenceValue)
                 then DartPropertyAccess(target, DartSimpleIdentifier("v"))
@@ -235,10 +252,10 @@ class DartInvocable(
             }
             else {
                 "Assignment operations must have an argument."
-                assert (exists val = dartArgumentSequence(arguments)[0]);
+                assert (exists val = arguments[0]);
 
                 "Assignment operations must have only one argument"
-                assert (dartArgumentSequence(arguments).size == 1);
+                assert (arguments.size == 1);
 
                 return DartAssignmentExpression {
                     if (capturedReferenceValue)
@@ -263,10 +280,10 @@ class DartInvocable(
             assert (exists receiver);
 
             "Binary operators must have an argument for the right operand"
-            assert (exists rightOperand = dartArgumentSequence(arguments)[0]);
+            assert (exists rightOperand = arguments[0]);
 
             "Binary operators must have only one argument"
-            assert (dartArgumentSequence(arguments).size == 1);
+            assert (arguments.size == 1);
 
             return
             DartBinaryExpression {
@@ -289,10 +306,10 @@ class DartInvocable(
             assert (exists receiver);
 
             "Index expressions must have an argument for the index"
-            assert (exists index = dartArgumentSequence(arguments)[0]);
+            assert (exists index = arguments[0]);
 
             "Index expressions must have only one argument"
-            assert (dartArgumentSequence(arguments).size == 1);
+            assert (arguments.size == 1);
 
             return
             DartIndexExpression {
@@ -314,13 +331,13 @@ class DartInvocable(
             assert (exists receiver);
 
             "Index assignment expressions must have an argument for the index"
-            assert (exists index = dartArgumentSequence(arguments)[0]);
+            assert (exists index = arguments[0]);
 
             "Index assignment expressions must have an argument for assigned value"
-            assert (exists val = dartArgumentSequence(arguments)[1]);
+            assert (exists val = arguments[1]);
 
             "Index expressions must have exactly two arguments"
-            assert (dartArgumentSequence(arguments).size == 2);
+            assert (arguments.size == 2);
 
             return
             DartAssignmentExpression {
@@ -346,7 +363,7 @@ class DartInvocable(
             assert (exists receiver);
 
             "Dart Prefix operations cannot have arguments"
-            assert (dartArgumentSequence(arguments).empty);
+            assert (arguments.empty);
 
             return
             DartPrefixExpression {

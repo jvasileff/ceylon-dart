@@ -701,8 +701,8 @@ class ExpressionTransformer(CompilationContext ctx)
                         ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
                     };
 
-            value [argsSetup, argumentList, hasSpread]
-                =   generateArgumentListFromArguments {
+            value [argsSetup, arguments, hasSpread]
+                =   generateArgumentsFromArguments {
                         info;
                         that.arguments;
                         signature;
@@ -731,7 +731,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 if (hasSpread) then "s" else "f";
                             };
                         };
-                        argumentList;
+                        DartArgumentList(arguments);
                     };
                 };
             };
@@ -816,8 +816,8 @@ class ExpressionTransformer(CompilationContext ctx)
             // BaseExpression, QualifiedExpression w/Package "receiver", or
             // QualifiedExpression to static method
             else {
-                value [argsSetup, argumentList, hasSpread]
-                    =   generateArgumentListFromArguments {
+                value [argsSetup, arguments, hasSpread]
+                    =   generateArgumentsFromArguments {
                             info;
                             that.arguments;
                             signature;
@@ -827,7 +827,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 if (ceylonTypes.isAwaitDeclaration(invokedDeclaration)) {
                     // fake await() function used to create an await expression
 
-                    assert (exists expression = argumentList.arguments[0]);
+                    assert (exists expression = arguments[0]);
 
                     return
                     createExpressionEvaluationWithSetup {
@@ -858,7 +858,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             info;
                             invokedDeclaration;
                         }.expressionForInvocation {
-                            argumentList;
+                            arguments;
                             hasSpread;
                         };
                     };
@@ -896,8 +896,8 @@ class ExpressionTransformer(CompilationContext ctx)
              where the classInvoked is a static member class (for Dart, this is always
              the fictional `.Class` static member class for interop)"
             function expressionForNonQualifiedClass() {
-                value [argsSetup, argumentList, _]
-                    =   generateArgumentListFromArguments {
+                value [argsSetup, arguments, _]
+                    =   generateArgumentsFromArguments {
                             info;
                             that.arguments;
                             signature;
@@ -914,17 +914,15 @@ class ExpressionTransformer(CompilationContext ctx)
                             info;
                             invokedDeclaration;
                         }.expressionForInvocation {
-                            DartArgumentList {
-                                concatenate {
-                                    // only capture for non-toplevel non-members or
-                                    // members that are not shared. For members, we call
-                                    // a factory that handles captures.
-                                    if (!classModel.shared
-                                            || !getClassOfConstructor(classModel).shared)
-                                    then generateArgumentsForCaptures(info, classModel)
-                                    else [],
-                                    argumentList.arguments
-                                };
+                            concatenate {
+                                // only capture for non-toplevel non-members or
+                                // members that are not shared. For members, we call
+                                // a factory that handles captures.
+                                if (!classModel.shared
+                                        || !getClassOfConstructor(classModel).shared)
+                                then generateArgumentsForCaptures(info, classModel)
+                                else [],
+                                arguments
                             };
                         };
                     };

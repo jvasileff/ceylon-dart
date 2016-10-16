@@ -18,6 +18,32 @@ class DartNode() {
 shared abstract
 class DartExpression() extends DartNode() {}
 
+"An expression that has a name associated with it. They are used in method invocations
+ when there are named parameters."
+shared
+class DartNamedExpression(name, expression) extends DartExpression() {
+    DartLabel name;
+    DartExpression expression;
+
+    shared actual
+    void write(CodeWriter writer) {
+        name.write(writer);
+        expression.write(writer);
+    }
+}
+
+"A label on either a LabeledStatement or a NamedExpression."
+shared
+class DartLabel(label) extends DartNode() {
+    DartSimpleIdentifier label;
+
+    shared actual
+    void write(CodeWriter writer) {
+        label.write(writer);
+        writer.write(": ");
+    }
+}
+
 "A node that represents a statement."
 shared abstract
 class DartStatement() extends DartNode() {}
@@ -554,7 +580,11 @@ class DartPropertyAccess
 "A node that represents an identifier."
 shared abstract
 class DartIdentifier()
-        extends DartExpression() {}
+        extends DartExpression() {
+
+    "`true` if this is identifier represents the value `ceylon.language::dartDefault`"
+    shared formal Boolean isDefaultIndicatorValue;
+}
 
 shared
 class DartIndexExpression(target, index)
@@ -601,11 +631,12 @@ class DartArgumentList(arguments = [])
 "An identifier that is prefixed or an access to an object property
  where the target of the property access is a simple identifier."
 shared
-class DartPrefixedIdentifier(prefix, identifier)
+class DartPrefixedIdentifier(prefix, identifier, isDefaultIndicatorValue = false)
         extends DartIdentifier() {
 
     shared DartSimpleIdentifier prefix;
     shared DartSimpleIdentifier identifier;
+    shared actual Boolean isDefaultIndicatorValue;
 
     shared actual
     void write(CodeWriter writer) {
@@ -617,10 +648,11 @@ class DartPrefixedIdentifier(prefix, identifier)
 
 "A simple identifier."
 shared
-class DartSimpleIdentifier(identifier)
+class DartSimpleIdentifier(identifier, isDefaultIndicatorValue = false)
         extends DartIdentifier() {
 
     shared String identifier;
+    shared actual Boolean isDefaultIndicatorValue;
 
     shared actual
     void write(CodeWriter writer) {

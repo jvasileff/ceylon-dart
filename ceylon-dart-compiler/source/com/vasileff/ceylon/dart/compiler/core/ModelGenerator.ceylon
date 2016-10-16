@@ -88,8 +88,9 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
     function generateToplevelRunner(ModuleModel mod, PackageModel pkg) {
         function shortName(FunctionModel | ClassModel declaration) {
             value modulePartSize
-                =   let (s = mod.nameAsString.size)
-                    if (s == 0) then 0 else s + 1;
+                =   if (mod.defaultModule) then 0
+                    else let (s = mod.nameAsString.size)
+                         if (s == 0) then 0 else s + 1;
 
             value packagePart
                 =   getPackage(declaration).nameAsString[modulePartSize...];

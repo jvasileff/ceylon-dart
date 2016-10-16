@@ -42,7 +42,16 @@ class LazyJsonModule(
             return false;
         }
         assert (is LazyJsonModule mod = pkg.mod);
-        return mod.runToplevel(toplevelName);
+        return mod.runToplevel(
+            if (packageName.empty) then
+                toplevelName
+            else if (mod.nameAsString == "default") then
+                packageName + "." + toplevelName
+            else if (mod.nameAsString == packageName) then
+                toplevelName
+            else
+                packageName[mod.nameAsString.size+1...] + "." + toplevelName
+        );
     }
 
     shared actual

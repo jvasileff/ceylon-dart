@@ -1,6 +1,5 @@
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpression,
-    DartArgumentList,
     DartSimpleIdentifier
 }
 
@@ -21,7 +20,7 @@ class DartQualifiedInvocable(
 
     shared
     DartExpression expressionForInvocation(
-            DartArgumentList|[DartExpression*] arguments = [],
+            [DartExpression*] arguments = [],
             Boolean hasSpread = false)
         =>  invocable.expressionForInvocation(receiver, arguments, hasSpread);
 
