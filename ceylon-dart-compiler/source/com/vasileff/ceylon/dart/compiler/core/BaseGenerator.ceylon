@@ -43,7 +43,8 @@ import ceylon.ast.core {
     EntryPattern,
     MemberOperator,
     ClassDefinition,
-    ValueConstructorDefinition
+    ValueConstructorDefinition,
+    Tuple
 }
 import ceylon.collection {
     LinkedList
@@ -3784,6 +3785,17 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     }
 
+                    if (ceylonTypes.isCeylonEmpty(expressionType)) {
+                        // for empty tuple expression: case([])
+                        return generateIsExpression {
+                            scope;
+                            switchedType;
+                            null;
+                            switchedVariable;
+                            expressionType;
+                        };
+                    }
+
                     value isNonBooleanObjectOrValueConstructor
                         =   if (is ClassModel d = expressionType.declaration)
                             then d.\iobjectClass
@@ -3828,7 +3840,22 @@ class BaseGenerator(CompilationContext ctx)
                                 [expression];
                             };
 
-                    if (optionalType) {
+                    if (expression is Tuple) {
+                        // test type for `Tuple` first to avoid matching other types
+                        // of lists
+                        return DartBinaryExpression {
+                            generateIsExpression {
+                                scope;
+                                switchedType;
+                                null;
+                                switchedVariable;
+                                ceylonTypes.tupleAnythingType;
+                            };
+                            "&&";
+                            equalsTest;
+                        };
+                    }
+                    else if (optionalType) {
                         // possibly null; test for !null first
                         return DartBinaryExpression {
                             generateExistsExpression {
