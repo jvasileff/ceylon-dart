@@ -40,4 +40,8 @@ object switchCase {
     shared test
     void switchVariableShadowing()
         =>  compileAndCompare("switchCase/switchVariableShadowing");
+
+    shared test
+    void matchTupleValue()
+        =>  compileAndCompare("switchCase/matchTupleValue");
 }
