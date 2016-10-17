@@ -708,7 +708,7 @@ class ClassMemberTransformer(CompilationContext ctx)
         return
         DartMethodDeclaration {
             false;
-            null;
+            declarationModel.static then "static";
             generateFunctionReturnType(info, declarationModel);
             if (dartElementType != dartValue) then
                 null
