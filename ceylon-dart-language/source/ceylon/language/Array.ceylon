@@ -290,7 +290,23 @@ final serializable class Array<Element>
 
     shared native("dart")
     new ({Element*} elements) {
-        list = DList.Class.from(DartIterable(elements));
+        if (is List<Anything> elements) {
+            list = DList.Class(elements.size);
+            value iterator = elements.iterator();
+            for (i in 0:elements.size) {
+                value element = iterator.next();
+                if (is Finished element) {
+                    assert (is Element finished);
+                    list.set_(i, finished);
+                }
+                else {
+                    list.set_(i, element);
+                }
+            }
+        }
+        else {
+            list = DList.Class.from(DartIterable(elements));
+        }
     }
 
     shared native("dart")
