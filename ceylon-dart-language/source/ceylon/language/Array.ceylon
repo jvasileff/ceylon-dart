@@ -421,6 +421,26 @@ final serializable class Array<Element>
         };
     }
 
+    shared actual native("dart")
+    Boolean any(Boolean selecting(Element element)) {
+        for (i in 0:size) {
+            if (selecting(list.get_(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    shared actual native("dart")
+    Boolean every(Boolean selecting(Element element)) {
+        for (i in 0:size) {
+            if (!selecting(list.get_(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // TODO optimize
     shared actual native("dart")
     Array<Element> span(Integer from, Integer to)
