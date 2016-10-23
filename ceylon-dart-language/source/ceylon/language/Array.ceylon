@@ -409,25 +409,54 @@ final serializable class Array<Element>
         };
     }
 
-    // TODO optimize
     shared actual native("dart")
-    Array<Element> span(Integer from, Integer to)
-        =>  Array((super of List<Element>).span(from, to));
+    Array<Element> span(variable Integer from, variable Integer to) {
+        if (from <= to) {
+            if (to < 0 || from >= list.length) {
+                return Array<Element>.withList(DList.Class<Element>(0));
+            }
+            if (from <= 0 && to >= list.length - 1) {
+                return clone();
+            }
+            if (from < 0) {
+                from = 0;
+            }
+            if (to >= list.length) {
+                to = list.length - 1;
+            }
+            return Array<Element>.withList(list.sublist(from, to + 1));
+        }
+        else {
+            if (from < 0 || to >= list.length) {
+                return Array<Element>.withList(DList.Class<Element>(0));
+            }
+            if (to < 0) {
+                to = 0;
+            }
+            if (from >= list.length) {
+                from = list.length - 1;
+            }
+            value newList = DList.Class<Element>(from - to + 1);
+            for (i in 0:from - to + 1) {
+                newList.set_(i, list.get_(from - i));
+            }
+            return Array<Element>.withList(newList);
+        }
+    }
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> spanFrom(Integer from)
-        =>  Array((super of List<Element>).spanFrom(from));
+        =>  span(from, list.length);
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> spanTo(Integer to)
-        =>  Array((super of List<Element>).spanTo(to));
+        =>  span(-1, to);
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> measure(Integer from, Integer length)
-        =>  Array((super of List<Element>).measure(from, length));
+        =>  if (length <= 0)
+            then Array<Element>.withList(DList.Class<Element>(0))
+            else span(from, from + length - 1);
 
     shared actual native("dart")
     {Element*} skip(Integer skipping)
