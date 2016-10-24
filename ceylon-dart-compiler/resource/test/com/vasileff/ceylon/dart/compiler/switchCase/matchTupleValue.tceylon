@@ -1,0 +1,13 @@
+shared void run() {
+    function f([String*] strings)
+        =>  switch(strings)
+            case ([])   "empty"
+            case (["a", "b"]) "ab"
+            case (["b", "c"]) "bc"
+            else "other";
+
+    assert (f([]) == "empty");
+    assert (f(["a", "b"]) == "ab");
+    assert (f(["b", "c"]) == "bc");
+    assert (f(["c", "d"]) == "other");
+}
