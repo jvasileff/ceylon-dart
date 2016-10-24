@@ -290,7 +290,23 @@ final serializable class Array<Element>
 
     shared native("dart")
     new ({Element*} elements) {
-        list = DList.Class.from(DartIterable(elements));
+        if (is List<Anything> elements) {
+            list = DList.Class(elements.size);
+            value iterator = elements.iterator();
+            for (i in 0:elements.size) {
+                value element = iterator.next();
+                if (is Finished element) {
+                    assert (is Element finished);
+                    list.set_(i, finished);
+                }
+                else {
+                    list.set_(i, element);
+                }
+            }
+        }
+        else {
+            list = DList.Class.from(DartIterable(elements));
+        }
     }
 
     shared native("dart")
@@ -306,8 +322,12 @@ final serializable class Array<Element>
     }
 
     shared actual native("dart")
+    Element? getFromLast(Integer index)
+        =>  this[list.length - index - 1];
+
+    shared actual native("dart")
     Element? getFromFirst(Integer index)
-        =>  if (0 <= index < size)
+        =>  if (0 <= index < list.length)
             then list.get_(index)
             else null;
 
@@ -316,12 +336,44 @@ final serializable class Array<Element>
         =>  !list.isEmpty then list.length - 1;
 
     shared actual native("dart")
+    Element? first
+        =>  if (!list.isEmpty)
+            then list.get_(0)
+            else null;
+
+    shared actual native("dart")
+    Element? last
+        =>  if (!list.isEmpty)
+            then list.get_(list.length - 1)
+            else null;
+
+    shared actual native("dart")
     Integer size
         =>  list.length;
 
     shared actual native("dart")
     Boolean empty
         =>  list.isEmpty;
+
+    shared actual native("dart")
+    Boolean defines(Integer index)
+        =>  0 <= index < list.length;
+
+    shared actual native("dart")
+    Iterator<Element> iterator()
+        =>  super.iterator();
+
+    shared actual native("dart")
+    Boolean contains(Object element)
+        =>  super.contains(element);
+
+    shared actual native("dart")
+    Element[] sequence()
+        =>  super.sequence();
+
+    shared actual native("dart")
+    {Element&Object*} coalesced
+        =>  super.coalesced;
 
     shared actual native("dart")
     Array<Element> clone()
@@ -336,59 +388,6 @@ final serializable class Array<Element>
     }
 
     shared native("dart")
-    void swap(Integer i, Integer j) {
-        if (i < 0 || j < 0) {
-          throw AssertionError("array index may not be negative");
-        }
-        if (i >= size || j >= size) {
-          throw AssertionError(
-              "array index must be less than size of array ``size.string``");
-        }
-        value oldI = list.get_(i);
-        list.set_(i, list.get_(j));
-        list.set_(j, oldI);
-    }
-
-    shared native("dart")
-    void reverseInPlace() {
-        for (index in 0:size/2) {
-            value otherIndex = size - index - 1;
-            value x = list.get_(index);
-            list.set_(index, list.get_(otherIndex));
-            list.set_(otherIndex, x);
-        }
-    }
-
-    shared native("dart")
-    void move(Integer from, Integer to) {
-        if (from < 0 || to < 0) {
-            throw AssertionError("array index may not be negative");
-        }
-        if (from >= size || to >= size) {
-            throw AssertionError("array index must be less than size of array ``size``");
-        }
-        if (from == to) {
-            return;
-        }
-        Integer len;
-        Integer srcPos;
-        Integer destPos;
-        if (from > to) {
-          len = from - to;
-          srcPos = to;
-          destPos = to + 1;
-        }
-        else {
-          len = to - from;
-          srcPos = from + 1;
-          destPos = from;
-        }
-        value x = list.get_(from);
-        list.setRange(destPos,  destPos + len, list, srcPos);
-        list.set_(to, x);
-    }
-
-    shared native("dart")
     void copyTo(Array<in Element> destination,
             Integer sourcePosition = 0,
             Integer destinationPosition = 0,
@@ -396,7 +395,12 @@ final serializable class Array<Element>
                 size - sourcePosition,
                 destination.size - destinationPosition)) {
 
-        // TODO validate indexes
+        "illegal starting position in source list"
+        assert (0 <= sourcePosition <= size - length);
+
+        "illegal starting position in destination list"
+        assert (0 <= destinationPosition <= destination.size - length);
+
         destination.list.setRange {
             start = destinationPosition;
             end = destinationPosition + length;
@@ -405,25 +409,54 @@ final serializable class Array<Element>
         };
     }
 
-    // TODO optimize
     shared actual native("dart")
-    Array<Element> span(Integer from, Integer to)
-        =>  Array((super of List<Element>).span(from, to));
+    Array<Element> span(variable Integer from, variable Integer to) {
+        if (from <= to) {
+            if (to < 0 || from >= list.length) {
+                return Array<Element>.withList(DList.Class<Element>(0));
+            }
+            if (from <= 0 && to >= list.length - 1) {
+                return clone();
+            }
+            if (from < 0) {
+                from = 0;
+            }
+            if (to >= list.length) {
+                to = list.length - 1;
+            }
+            return Array<Element>.withList(list.sublist(from, to + 1));
+        }
+        else {
+            if (from < 0 || to >= list.length) {
+                return Array<Element>.withList(DList.Class<Element>(0));
+            }
+            if (to < 0) {
+                to = 0;
+            }
+            if (from >= list.length) {
+                from = list.length - 1;
+            }
+            value newList = DList.Class<Element>(from - to + 1);
+            for (i in 0:from - to + 1) {
+                newList.set_(i, list.get_(from - i));
+            }
+            return Array<Element>.withList(newList);
+        }
+    }
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> spanFrom(Integer from)
-        =>  Array((super of List<Element>).spanFrom(from));
+        =>  span(from, list.length);
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> spanTo(Integer to)
-        =>  Array((super of List<Element>).spanTo(to));
+        =>  span(-1, to);
 
-    // TODO optimize
     shared actual native("dart")
     Array<Element> measure(Integer from, Integer length)
-        =>  Array((super of List<Element>).measure(from, length));
+        =>  if (length <= 0)
+            then Array<Element>.withList(DList.Class<Element>(0))
+            else span(from, from + length - 1);
 
     shared actual native("dart")
     {Element*} skip(Integer skipping)
@@ -447,15 +480,238 @@ final serializable class Array<Element>
             };
 
     shared actual native("dart")
-    Sequential<Element> sort(Comparison comparing(Element x, Element y)) {
-        value result = list.toList();
-        result.sort(dartComparator(comparing));
-        return ArraySequence<Element>(Array.withList(result));
+    Integer count(Boolean selecting(Element element))
+        =>  super.count(selecting);
+
+    shared actual native("dart")
+    void each(void step(Element element)) {
+        for (i in 0:size) {
+            step(list.get_(i));
+        }
+    }
+
+    shared actual native("dart")
+    Boolean any(Boolean selecting(Element element)) {
+        for (i in 0:size) {
+            if (selecting(list.get_(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    shared actual native("dart")
+    Boolean every(Boolean selecting(Element element)) {
+        for (i in 0:size) {
+            if (!selecting(list.get_(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    shared actual native("dart")
+    {Element*} filter(Boolean selecting(Element element))
+        =>  super.filter(selecting);
+
+    shared actual native("dart")
+    Element? find(Boolean selecting(Element&Object element))
+        =>  if (exists i = firstIndexWhere(selecting))
+            then list.get_(i)
+            else null;
+
+    shared actual native("dart")
+    Element? findLast(Boolean selecting(Element&Object element))
+        =>  if (exists i = lastIndexWhere(selecting))
+            then list.get_(i)
+            else null;
+
+    shared actual native("dart")
+    Integer? firstIndexWhere(Boolean selecting(Element&Object element)) {
+        for (i in 0:size) {
+            if (exists element = list.get_(i), selecting(element)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    shared actual native("dart")
+    Integer? lastIndexWhere(Boolean selecting(Element&Object element)) {
+        if (empty) {
+            return null;
+        }
+        for (i in size - 1..0) {
+            if (exists element = list.get_(i), selecting(element)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    shared actual native("dart")
+    {Integer*} indexesWhere(Boolean selecting(Element&Object element))
+        =>  super.indexesWhere(selecting);
+
+    shared actual native("dart")
+    <Integer->Element&Object>? locate(Boolean selecting(Element&Object element)) {
+        for (i in 0:size) {
+            if (exists element = list.get_(i), selecting(element)) {
+                return i -> element;
+            }
+        }
+        return null;
+    }
+
+    shared actual native("dart")
+    <Integer->Element&Object>? locateLast(Boolean selecting(Element&Object element)) {
+        if (empty) {
+            return null;
+        }
+        for (i in size - 1..0) {
+            if (exists element = list.get_(i), selecting(element)) {
+                return i -> element;
+            }
+        }
+        return null;
+    }
+
+    shared actual native("dart")
+    {<Integer->Element&Object>*} locations(Boolean selecting(Element&Object element))
+        =>  super.locations(selecting);
+
+    shared actual native("dart")
+    Result|Element|Null reduce<Result>
+            (Result accumulating(Result|Element partial, Element element))
+        =>  super.reduce(accumulating);
+
+    shared actual native("dart")
+    Boolean occursAt(Integer index, Element element)
+        =>  if (!0 <= index < list.length) then false
+            else let (e = list.get_(index))
+                if (exists element, exists e) then e == element
+                else !element exists && !e exists;
+        // =>  let (e = this[index])
+        //     if (exists element, exists e)
+        //         then e == element
+        //     else (0 <= index < size)
+        //         && !element exists && !e exists;
+
+    shared actual native("dart")
+    Integer? firstOccurrence(
+            Element element,
+            variable Integer from,
+            variable Integer length) {
+        if (from < 0) {
+            length += from;
+            from = 0;
+        }
+        if (length > size - from) {
+            length = size - from;
+        }
+        for (index in from:length) {
+            if (occursAt(index, element)) {
+                return index;
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    shared actual native("dart")
+    Integer? lastOccurrence(
+            Element element,
+            variable Integer from,
+            variable Integer length) {
+        if (from < 0) {
+            length += from;
+            from = 0;
+        }
+        if (length > size - from) {
+            length = size - from;
+        }
+        for (index in (size-length-from:length).reversed) {
+            if (occursAt(index,element)) {
+                return index;
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    shared actual native("dart")
+    Boolean occurs(Element element, Integer from, Integer length)
+        =>  firstOccurrence(element, from, length) exists;
+
+    shared actual native("dart")
+    {Integer*} occurrences(Element element, Integer from, Integer length)
+        =>  super.occurrences(element, from, length);
+
+    shared native("dart")
+    void swap(Integer i, Integer j) {
+        if (i < 0 || j < 0) {
+          throw AssertionError("array index may not be negative");
+        }
+        if (i >= size || j >= size) {
+          throw AssertionError(
+              "array index must be less than size of array ``size.string``");
+        }
+        value oldI = list.get_(i);
+        list.set_(i, list.get_(j));
+        list.set_(j, oldI);
+    }
+
+    shared native("dart")
+    void move(Integer from, Integer to) {
+        if (from < 0 || to < 0) {
+            throw AssertionError("array index may not be negative");
+        }
+        if (from >= size || to >= size) {
+            throw AssertionError("array index must be less than size of array ``size``");
+        }
+        if (from == to) {
+            return;
+        }
+        Integer len;
+        Integer srcPos;
+        Integer destPos;
+        if (from > to) {
+            len = from - to;
+            srcPos = to;
+            destPos = to + 1;
+        }
+        else {
+            len = to - from;
+            srcPos = from + 1;
+            destPos = from;
+        }
+        value x = list.get_(from);
+        list.setRange(destPos,  destPos + len, list, srcPos);
+        list.set_(to, x);
+    }
+
+    shared native("dart")
+    void reverseInPlace() {
+        for (index in 0:size/2) {
+            value otherIndex = size - index - 1;
+            value x = list.get_(index);
+            list.set_(index, list.get_(otherIndex));
+            list.set_(otherIndex, x);
+        }
     }
 
     shared native("dart")
     void sortInPlace(Comparison comparing(Element x, Element y)) {
         list.sort(dartComparator(comparing));
+    }
+
+    shared actual native("dart")
+    Sequential<Element> sort(Comparison comparing(Element x, Element y)) {
+        value result = list.toList();
+        result.sort(dartComparator(comparing));
+        return ArraySequence<Element>(Array.withList(result));
     }
 
     shared actual native("dart")

@@ -110,7 +110,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectDefinitionInfo,
     valueDefinitionInfo,
     valueGetterDefinitionInfo,
-    callableParameterInfo
+    callableParameterInfo,
+    valueDeclarationInfo
 }
 
 "For Dart TopLevel declarations."
@@ -132,7 +133,17 @@ class TopLevelVisitor(CompilationContext ctx)
             return;
         }
 
-        super.visitValueDeclaration(that);
+        value info = valueDeclarationInfo(that);
+
+        "toplevel ValueDeclarations are always late and never transient."
+        assert (!info.declarationModel.transient);
+
+        addAll {
+            DartTopLevelVariableDeclaration {
+                generateForValueDeclarationRaw(info, info.declarationModel);
+            },
+            *generateForwardingGetterSetter(that)
+        };
     }
 
     shared actual
@@ -1790,8 +1801,9 @@ class TopLevelVisitor(CompilationContext ctx)
         // toplevel interface aliases are not reified
     }
 
-    [DartFunctionDeclaration*] generateForwardingGetterSetter
-            (ValueDefinition | ValueGetterDefinition | ObjectDefinition that) {
+    [DartFunctionDeclaration*] generateForwardingGetterSetter(
+            ValueDeclaration | ValueDefinition | ValueGetterDefinition |
+                    ObjectDefinition that) {
 
         value info = nodeInfo(that);
 
@@ -1799,6 +1811,8 @@ class TopLevelVisitor(CompilationContext ctx)
             switch (that)
             case (is ValueDefinition)
                 valueDefinitionInfo(that).declarationModel
+            case (is ValueDeclaration)
+                valueDeclarationInfo(that).declarationModel
             case (is ValueGetterDefinition)
                 valueGetterDefinitionInfo(that).declarationModel
             case (is ObjectDefinition)

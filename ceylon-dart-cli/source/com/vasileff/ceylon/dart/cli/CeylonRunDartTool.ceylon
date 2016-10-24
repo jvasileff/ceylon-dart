@@ -94,13 +94,15 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                 =   ModuleUtil.moduleName(moduleString);
 
             value moduleVersion
-                =   checkModuleVersionsOrShowSuggestions(
+                =   if (moduleName == "default")
+                    then "unversioned"
+                    else (checkModuleVersionsOrShowSuggestions(
                         repositoryManager,
                         moduleName,
                         ModuleUtil.moduleVersion(moduleString),
                         ModuleQuery.Type.\iDART,
                         null, null, null, null,
-                        if (compile.empty) then "check" else compile) else "";
+                        if (compile.empty) then "check" else compile) else "");
 
             value exitCode
                 =   runDartToplevel {
