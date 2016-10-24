@@ -4,9 +4,7 @@ import dart.core {
     }
 }
 import dart.collection {
-    DIterableBase = IterableBase {
-        DIterableBaseClass = Class
-    }
+    DIterableBase = IterableBase
 }
 
 shared
