@@ -11,10 +11,10 @@ import dart.collection {
 
 shared
 class DartIterable<Element>({Element*} elements)
-        extends DIterableBaseClass<Element>() {
+        extends DIterableBase<Element>.Class() {
 
     shared actual
-    DIterator<Element> iterator => object extends DIteratorClass<Element>() {
+    DIterator<Element> iterator => object extends DIterator<Element>.Class() {
         Iterator<Element> iterator = elements.iterator();
 
         variable Element? currentElement = null;

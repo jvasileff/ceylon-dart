@@ -218,7 +218,7 @@ native("js") class NativeMap<Key,Element>() {
 
 native("dart") class NativeMap<Key,Element>() {
 
-    native("dart") value m = DMap.Class<Key, Element>();
+    native("dart") value m = DMap<Key, Element>.Class();
 
     shared native("dart") void put(Key id, Element instanceOrPartial)
         =>  m.set_(id, instanceOrPartial);

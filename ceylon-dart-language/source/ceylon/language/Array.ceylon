@@ -314,7 +314,7 @@ final serializable class Array<Element>
         if (size > runtime.maxArraySize) {
             throw AssertionError("array size must be no larger than ``runtime.maxArraySize``");
         }
-        list = DList.Class<Element>.filled(largest(size, 0), element);
+        list = DList<Element>.Class.filled(largest(size, 0), element);
     }
 
     new withList(DList<Element> list) {
@@ -413,7 +413,7 @@ final serializable class Array<Element>
     Array<Element> span(variable Integer from, variable Integer to) {
         if (from <= to) {
             if (to < 0 || from >= list.length) {
-                return Array<Element>.withList(DList.Class<Element>(0));
+                return Array<Element>.withList(DList<Element>.Class(0));
             }
             if (from <= 0 && to >= list.length - 1) {
                 return clone();
@@ -428,7 +428,7 @@ final serializable class Array<Element>
         }
         else {
             if (from < 0 || to >= list.length) {
-                return Array<Element>.withList(DList.Class<Element>(0));
+                return Array<Element>.withList(DList<Element>.Class(0));
             }
             if (to < 0) {
                 to = 0;
@@ -436,7 +436,7 @@ final serializable class Array<Element>
             if (from >= list.length) {
                 from = list.length - 1;
             }
-            value newList = DList.Class<Element>(from - to + 1);
+            value newList = DList<Element>.Class(from - to + 1);
             for (i in 0:from - to + 1) {
                 newList.set_(i, list.get_(from - i));
             }
@@ -455,7 +455,7 @@ final serializable class Array<Element>
     shared actual native("dart")
     Array<Element> measure(Integer from, Integer length)
         =>  if (length <= 0)
-            then Array<Element>.withList(DList.Class<Element>(0))
+            then Array<Element>.withList(DList<Element>.Class(0))
             else span(from, from + length - 1);
 
     shared actual native("dart")

@@ -306,11 +306,6 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
   // TODO better annotations. 'abstract', other?
   map[keyPackedAnns] = 1;
 
-  var typeParameters = typeParameterList(cm.declarations.values, from);
-  if (!typeParameters.isEmpty) {
-    map[keyTypeParams] = typeParameters;
-  }
-
   // Ignoring the superclass. It shouldn't be necessary since the class's
   // corresponding interface should satisfy the superclass's corresponding
   // interface, and, if the superclass is a mixin, things get screwed up

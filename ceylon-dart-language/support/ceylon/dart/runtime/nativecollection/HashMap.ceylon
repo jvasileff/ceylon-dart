@@ -22,8 +22,8 @@ shared class HashMap<Key, Item>
 
         this.delegate
             =   switch (stability)
-                case (linked) DLinkedHashMap.Class<Key, Item>()
-                case (unlinked) DHashMap.Class<Key, Item>();
+                case (linked) DLinkedHashMap<Key, Item>.Class()
+                case (unlinked) DHashMap<Key, Item>.Class();
 
         for (entry in entries) {
             delegate.set_(entry.key, entry.item);

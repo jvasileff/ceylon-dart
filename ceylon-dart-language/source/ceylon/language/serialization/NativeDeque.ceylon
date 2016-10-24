@@ -77,7 +77,7 @@ native("js") class NativeDeque() {
 }
 
 native("dart") class NativeDeque() {
-    value deque = DoubleLinkedQueue.Class<Anything>();
+    value deque = DoubleLinkedQueue<Anything>.Class();
 
     shared native("dart") void pushFront(Anything element)
         =>  deque.addFirst(element);
