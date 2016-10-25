@@ -14,7 +14,7 @@ shared
 class LazyJsonModule(
         JsonObject json,
         "Returns `false` if the toplevel was not found."
-        shared Boolean runToplevel(String toplevelDeclaration),
+        shared Boolean runToplevel(String toplevelDeclaration) => false,
         [String+] name = jsonModelUtil.parseModuleName(json),
         String? version = jsonModelUtil.parseModuleVersion(json),
         Unit(Package)? unitLG = null)

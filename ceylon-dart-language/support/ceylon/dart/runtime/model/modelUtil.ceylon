@@ -129,7 +129,7 @@ void addToIntersection(MutableSet<Type> types, Type that, Unit unit) {
             }
             if (disjoint(that, existing, unit)) {
                 types.clear();
-                types.add(that);
+                types.add(unit.nothingDeclaration.type);
                 return;
             }
             if ((that.declaration is ClassOrInterface | TypeParameter)

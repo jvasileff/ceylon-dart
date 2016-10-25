@@ -352,8 +352,8 @@ Type parseType(String input, Scope scope, {Type*} substitutions = []) {
                     };
                     if (defaulted-- > 0) {
                         result = unionType {
-                            result;
                             scope.unit.emptyDeclaration.type;
+                            result;
                             scope.unit;
                         };
                     }
