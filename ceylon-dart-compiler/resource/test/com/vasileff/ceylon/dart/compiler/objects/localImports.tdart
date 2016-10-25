@@ -1,0 +1,47 @@
+import "dart:core" as $dart$core;
+import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
+import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
+import "package:ceylon/language/language.dart" as $ceylon$language;
+
+void $package$run() {
+  $ceylon$language.print($ceylon$language.$ceylonString($package$obj.xval));
+}
+
+void run() => $package$run();
+
+abstract class X {
+  $dart$core.String get xval;
+  static $dart$core.String $get$xval([final X $this]) => "x";
+}
+class obj_ implements $ceylon$language.dart$$Basic, X {
+  obj_() {}
+  $dart$core.String get xval => X.$get$xval(this);
+}
+final obj_ $package$obj = new obj_();
+
+obj_ get obj => $package$obj;
+
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+  switch (toplevel.toString()) {
+  case "run" :
+    $package$run();
+    return $ceylon$language.$true;
+  }
+  return $ceylon$language.$false;
+});
+
+const _$jsonModel = const{"\$mod-name":"simple","\$mod-version":"1.0.0","simple":const{"X":const{"mt":"i","nm":"X","sts":const[]},"obj":const{"mt":"c","nm":"obj","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"X","pk":"."}]}}};
+
+var _$module = null;
+
+get $module {
+  if (_$module == null) {
+    _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+  }
+  return _$module;
+}
+
+void main($dart$core.List arguments) {
+  $ceylon$language.$run(arguments, $module);
+}

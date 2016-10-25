@@ -40,7 +40,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ConstructorModel=Constructor,
     SpecificationModel=Specification,
     NamedArgumentListModel=NamedArgumentList,
-    ClassAliasModel=ClassAlias
+    ClassAliasModel=ClassAlias,
+    ImportScope
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -1352,8 +1353,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             container = declarationContainer;
         }
         else {
-            // search imports
-            value imports = CeylonIterable(getUnit(scope.scope).imports);
+            // search all local and unit imports
+            value imports = ancestorScopes(scope.scope)
+                .narrow<ImportScope>()
+                .flatMap((s)
+                    =>  if (exists imports = s.imports)
+                        then CeylonIterable(s.imports)
+                        else [])
+                .chain(CeylonIterable(getUnit(scope.scope).imports));
+
             container = imports.find {
                 (i) => !i.ambiguous && eq(declaration, i.declaration);
             }?.typeDeclaration;
@@ -1622,6 +1630,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)
             =>  if (is DeclarationModel|ControlBlockModel result = d.container)
                 then result
+                else finished);
+
+    "A stream containing the given [[scope]] followed by all ancestor scopes, including
+     the containing package scope. Note that the reutrned stream may include 'fake'
+     `ConditionScopeModel` scopes."
+    {ScopeModel+} ancestorScopes
+            (ScopeModel scope)
+        =>  loop<ScopeModel>(scope)((s)
+            =>  if (exists scope = s.scope)
+                then scope
                 else finished);
 
     """

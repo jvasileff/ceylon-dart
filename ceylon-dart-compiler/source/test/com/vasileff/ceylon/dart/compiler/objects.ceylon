@@ -45,4 +45,8 @@ object objects {
     shared test
     void imports()
         =>  compileAndCompare("objects/imports");
+
+    shared test
+    void localImports()
+        =>  compileAndCompare("objects/localImports");
 }

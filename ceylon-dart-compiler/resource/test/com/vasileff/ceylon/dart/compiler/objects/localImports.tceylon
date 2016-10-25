@@ -1,0 +1,15 @@
+// file:simple/module.ceylon
+module simple "1.0.0" {}
+
+// file:simple/run.ceylon
+shared void run() {
+    import simple {
+        obj { xval = xval }
+    }
+    print(xval);
+}
+
+interface X {
+    shared default String xval => "x";
+}
+object obj satisfies X {}
