@@ -393,7 +393,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     identifierPackagePrefix
         =   memoize((DeclarationModel declaration)
-            =>  if (isToplevel(declaration))
+            =>  if (isToplevel(declaration)
+                    && !getPackage(declaration).nameAsString.empty)
                 then (
                     CeylonIterable(getPackage(declaration).name)
                         .skip {
