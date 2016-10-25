@@ -350,7 +350,9 @@ Map<String, Object> classToClassMap(ClassMirror cm, TypeMirror from) {
     if (d is MethodMirror && d.isConstructor) {
       var name = MirrorSystem.getName(d.constructorName);
       var key = name.isNotEmpty ? name : "\$def";
-      constructors[key] = constructorToMap(d, from);
+      if (name != "internal_") { // Internal without this 'if'
+        constructors[key] = constructorToMap(d, from);
+      }
     }
   }
   map[keyConstructors] =  constructors;
