@@ -38,7 +38,7 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
 
     shared actual ClassModel<>? extendedType
         =>  if (exists et = modelType.declaration.extendedType)
-            then newClassImpl(et)
+            then newClass(et)
             else null;
 
     shared actual InterfaceModel<>[] satisfiedTypes => nothing;
@@ -176,10 +176,8 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
 
     shared actual Map<TypeParameter, AppliedType<>> typeArguments => nothing;
 
-    shared actual AppliedType<>[] typeArgumentList {
-        // FIXME account for types other than Class
-        return modelType.typeArguments.map(Entry.item).collect(newClassImpl);
-    }
+    shared actual AppliedType<>[] typeArgumentList
+        =>  modelType.typeArguments.map(Entry.item).collect(newType);
 
     shared actual Map<TypeParameter, TypeArgument> typeArgumentWithVariances => nothing;
 
@@ -194,8 +192,7 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
     // FROM Model
 
     shared actual AppliedType<>? container
-        =>  if (exists qt = modelType.qualifyingType,
-                is ModelClass qtDeclaration = qt.declaration)
-            then newClassImpl(qt)
-            else nothing; // TODO other types of Types
+        =>  if (exists qt = modelType.qualifyingType)
+            then newType(qt)
+            else null;
 }
