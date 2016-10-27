@@ -111,7 +111,8 @@ import ceylon.ast.core {
     DynamicValue,
     MemberOperator,
     Dec,
-    ModuleDec
+    ModuleDec,
+    TypeMeta
 }
 import ceylon.collection {
     LinkedList
@@ -130,6 +131,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     InterfaceModel=Interface,
     ConstructorModel=Constructor,
+    TypeParameterModel=TypeParameter,
     TypedReference
 }
 import com.vasileff.ceylon.dart.compiler {
@@ -197,7 +199,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     functionExpressionInfo,
     isCaseInfo,
     ifElseExpressionInfo,
-    moduleDecInfo
+    moduleDecInfo,
+    BaseTypeInfo
 }
 
 shared
@@ -2960,6 +2963,37 @@ class ExpressionTransformer(CompilationContext ctx)
                     }];
                 };
             };
+        };
+    }
+
+    shared actual DartExpression transformTypeMeta(TypeMeta that) {
+        // for now, only type parameters of toplevel functions
+        value tInfo = typeInfo(that.type);
+        if (!is BaseTypeInfo tInfo) {
+            return super.transformTypeMeta(that);
+        }
+        value declaration = tInfo.declarationModel;
+        if (!is TypeParameterModel declaration) {
+            return super.transformTypeMeta(that);
+        }
+        value container = declaration.container;
+        if (!is FunctionModel container) {
+            return super.transformTypeMeta(that);
+        }
+        if (!container.toplevel || isDartNative(container)) {
+            return super.transformTypeMeta(that);
+        }
+
+        // use 'newType(TypeDescriptor)' to obtain the meta::Type
+        return
+        dartTypes.dartInvocable {
+            scope = expressionInfo(that);
+            ceylonTypes.newTypeImplDeclaration;
+        }.expressionForInvocation {
+            null;
+            // FIXME no boxing and overly simplistic expression that prob. won't work
+            //       for captures, etc. Use synthetic ValueModels for type parameters?
+            [DartSimpleIdentifier(dartTypes.getName(declaration))];
         };
     }
 

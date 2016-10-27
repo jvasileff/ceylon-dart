@@ -172,6 +172,10 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(implMetaPackage.getDirectMember("ModuleImpl", null, false));
 
     shared
+    Function newTypeImplDeclaration
+        =>  assertFunction(implMetaPackage.getDirectMember("newClass", null, false));
+
+    shared
     Boolean isAwaitDeclaration(Function declaration)
         =>  declaration == awaitDeclaration;
 
