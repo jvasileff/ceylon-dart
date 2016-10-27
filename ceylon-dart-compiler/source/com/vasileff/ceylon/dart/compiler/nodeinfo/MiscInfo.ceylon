@@ -542,7 +542,7 @@ class SpreadArgumentInfo(shared actual SpreadArgument node)
 
 shared abstract
 class TypeIshInfo()
-        of NameWithTypeArgumentsInfo | TypeArgumentInfo | DefaultTypeInfo | DefaultTypeIshInfo
+        of NameWithTypeArgumentsInfo | TypeArgumentInfo | TypeInfo | DefaultTypeIshInfo
         extends NodeInfo() {}
 
 shared
@@ -583,9 +583,17 @@ class TypeArgumentInfo(shared actual TypeArgument node)
     shared TypeModel typeModel => tcNode.typeModel;
 }
 
+shared abstract
+class TypeInfo()
+        of DefaultTypeInfo | BaseTypeInfo
+        extends TypeIshInfo() {
+
+    shared formal TypeModel typeModel;
+}
+
 shared
 class DefaultTypeInfo(shared actual Type node)
-        extends TypeIshInfo() {
+        extends TypeInfo() {
 
     shared alias TcNodeType => Tree.Type;
     value lazyTcNode {
@@ -594,12 +602,29 @@ class DefaultTypeInfo(shared actual Type node)
     }
     shared actual TcNodeType tcNode = lazyTcNode;
 
-    shared TypeModel typeModel => tcNode.typeModel;
+    shared actual TypeModel typeModel => tcNode.typeModel;
 }
 
-shared class TypeInfo(Type that) => DefaultTypeInfo(that);
-shared class EntryTypeInfo(EntryType that) => TypeInfo(that);
-shared class MainTypeInfo(MainType that) => TypeInfo(that);
+//shared class BaseTypeInfo(BaseType that) => SimpleTypeInfo(that);
+
+shared
+class BaseTypeInfo(shared actual BaseType node)
+        extends TypeInfo() {
+
+    shared alias TcNodeType => Tree.BaseType;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual TypeModel typeModel => tcNode.typeModel;
+
+    shared TypeDeclarationModel declarationModel => tcNode.declarationModel;
+}
+
+shared class EntryTypeInfo(EntryType that) => DefaultTypeInfo(that);
+shared class MainTypeInfo(MainType that) => DefaultTypeInfo(that);
 shared class UnionTypeInfo(UnionType that) => MainTypeInfo(that);
 shared class UnionableTypeInfo(UnionableType that) => MainTypeInfo(that);
 shared class IntersectionTypeInfo(IntersectionType that) => UnionableTypeInfo(that);
@@ -610,7 +635,6 @@ shared class IterableTypeInfo(IterableType that) => PrimaryTypeInfo(that);
 shared class OptionalTypeInfo(OptionalType that) => PrimaryTypeInfo(that);
 shared class SequentialTypeInfo(SequentialType that) => PrimaryTypeInfo(that);
 shared class SimpleTypeInfo(SimpleType that) => PrimaryTypeInfo(that);
-shared class BaseTypeInfo(BaseType that) => SimpleTypeInfo(that);
 shared class QualifiedTypeInfo(QualifiedType that) => SimpleTypeInfo(that);
 shared class TupleTypeInfo(TupleType that) => PrimaryTypeInfo(that);
 
