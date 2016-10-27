@@ -127,6 +127,11 @@ class CeylonTypes(Unit unit) {
         // find it.
         =>  unit.\ipackage.\imodule.languageModule.getPackage("ceylon.interop.dart");
 
+    Package modelRuntimePackage
+        // use the language module to find the package; see interopPackage notes
+        =>  unit.\ipackage.\imodule.languageModule.getPackage(
+                "ceylon.dart.runtime.model.runtime");
+
     Package implMetaPackage
         =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta");
 
@@ -169,6 +174,14 @@ class CeylonTypes(Unit unit) {
     shared
     Boolean isAwaitDeclaration(Function declaration)
         =>  declaration == awaitDeclaration;
+
+    shared
+    Class typeDescriptorDeclaration {
+        assert (is Class c
+            =   modelRuntimePackage
+                .getDirectMember("TypeDescriptor", null, false));
+        return c;
+    }
 
     /////////////////////////////////////////////
     // Boolean isCeylonX(type)

@@ -18,6 +18,7 @@ import com.redhat.ceylon.model.loader {
 }
 import com.redhat.ceylon.model.typechecker.model {
     FunctionalModel=Functional,
+    TypeParameterModel=TypeParameter,
     DeclarationModel=Declaration,
     ParameterListModel=ParameterList,
     TypeDeclarationModel=TypeDeclaration,
@@ -287,8 +288,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                else originalDeclaration.name;
     }
 
-    String getUnprefixedName(DeclarationModel|ParameterModel declaration) {
-        String usableShortName(ClassModel | FunctionModel | ValueModel declaration)
+    String getUnprefixedName(
+            DeclarationModel | ParameterModel | TypeParameterModel declaration) {
+
+        String usableShortName
+                (ClassModel | FunctionModel | ValueModel | TypeParameterModel declaration)
             =>  if (declaration.anonymous) then
                     // *all* objects are anonymous classes, not just expressions that
                     // get the "anonymous#" names. Non-expression objects are named
@@ -341,7 +345,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             originalDeclaration = declaration;
         }
 
-        function makePrivate(TypedDeclarationModel declaration, String baseName) {
+        function makePrivate(
+                TypedDeclarationModel | TypeParameterModel declaration,
+                String baseName) {
             // For now, not prefixing toplevels. We *can't* make `$package$element`
             // identifiers private, since in dev our files aren't always in proper
             // Dart packages. And for convenience, leaving the non `$package$` qualified
@@ -354,7 +360,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
 
         switch (originalDeclaration)
-        case (is ValueModel | FunctionModel) {
+        case (is ValueModel | FunctionModel | TypeParameterModel) {
             return mangleName {
                 originalDeclaration;
                 makePrivate {
@@ -550,6 +556,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + classOrInterfacePrefix(declaration)
                     + getUnprefixedName(declaration)
                     + classOrInterfaceSuffix(declaration);
+        }
+        case (is TypeParameterModel) {
+            // TODO special rules for captures, etc.
+            return identifierPackagePrefix(declaration)
+                        + getUnprefixedName(declaration);
+
         }
         else {
             // TODO let's encode this is the method signature

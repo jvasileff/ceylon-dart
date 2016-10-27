@@ -121,7 +121,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartMethodDeclaration,
     DartClassMember,
     createVariableDeclaration,
-    DartPrefixedIdentifier
+    DartPrefixedIdentifier,
+    DartFormalParameter
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
@@ -3426,6 +3427,21 @@ class BaseGenerator(CompilationContext ctx)
         variable DartExpression? result = null;
         value isVoid = functionModel.declaredVoid;
 
+        value typeParameters
+            =   if (functionModel.toplevel && !isDartNative(functionModel))
+                then [
+                    for (tp in functionModel.typeParameters)
+                        DartSimpleFormalParameter {
+                            true; false;
+                            dartTypes.dartTypeName {
+                                scope;
+                                ceylonTypes.typeDescriptorDeclaration.type;
+                            };
+                            DartSimpleIdentifier(dartTypes.getName(tp));
+                        }
+                    ]
+                else [];
+
         for (i -> list in parameterLists.indexed.sequence().reversed) {
             if (i < parameterLists.size - 1) {
                 // wrap nested function in a callable
@@ -3649,7 +3665,12 @@ class BaseGenerator(CompilationContext ctx)
                 };
             }
             result = DartFunctionExpression {
-                generateFormalParameterList(true, false, scope, list);
+                generateFormalParameterList {
+                    true; false;
+                    scope;
+                    parameters = list;
+                    prependParameters = typeParameters;
+                };
                 body;
             };
         }
@@ -3665,7 +3686,8 @@ class BaseGenerator(CompilationContext ctx)
             Parameters|{Parameter*}|{ParameterModel*} parameters,
             "For parameters, disregard parameterModel.defaulted when determining if the
              type should be erased-to-object."
-            Boolean noDefaults=false) {
+            Boolean noDefaults=false,
+            [DartFormalParameter*] prependParameters = []) {
 
         // FIXME noDefaults pretty much works as required, but not as advertised.
         //       dartTypes.dartTypeNameForDeclaration erases to Object for defaulted
@@ -3682,7 +3704,7 @@ class BaseGenerator(CompilationContext ctx)
                 else parameters;
 
         if (parameterList.empty) {
-            return DartFormalParameterList();
+            return DartFormalParameterList(positional, named, prependParameters);
         }
 
         value dartParameters = parameterList.collect((parameterModel) {
@@ -3718,7 +3740,7 @@ class BaseGenerator(CompilationContext ctx)
         });
         return DartFormalParameterList {
             positional; named;
-            parameters = dartParameters;
+            parameters = prependParameters.append(dartParameters);
         };
     }
 

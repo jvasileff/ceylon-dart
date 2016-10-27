@@ -1921,7 +1921,22 @@ class TopLevelVisitor(CompilationContext ctx)
         =>  let (functionName = dartTypes.getName(declarationModel),
                 functionPPName = dartTypes.getPackagePrefixedName(declarationModel),
                 parameterModels = CeylonList(
-                        declarationModel.firstParameterList.parameters))
+                        declarationModel.firstParameterList.parameters),
+                typeParameters
+                    // TODO exact same code is in generateFunctionExpressionRaw
+                    =   if (declarationModel.toplevel && !isDartNative(declarationModel))
+                        then [
+                            for (tp in declarationModel.typeParameters)
+                                DartSimpleFormalParameter {
+                                    true; false;
+                                    dartTypes.dartTypeName {
+                                        scope;
+                                        ceylonTypes.typeDescriptorDeclaration.type;
+                                    };
+                                    DartSimpleIdentifier(dartTypes.getName(tp));
+                                }
+                            ]
+                        else [])
             DartFunctionDeclaration {
                 external = false;
                 generateFunctionReturnType(scope, declarationModel);
@@ -1932,6 +1947,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         true; false;
                         scope;
                         parameterModels;
+                        prependParameters = typeParameters;
                     };
                     DartExpressionFunctionBody {
                         async = false;
@@ -1939,9 +1955,13 @@ class TopLevelVisitor(CompilationContext ctx)
                             target = null;
                             DartSimpleIdentifier(functionPPName);
                             DartArgumentList {
-                                parameterModels.collect { (parameterModel) =>
-                                    DartSimpleIdentifier {
-                                        dartTypes.getName(parameterModel);
+                                typeParameters.collect { (tp) =>
+                                    tp.identifier;
+                                }.append {
+                                    parameterModels.collect { (parameterModel) =>
+                                        DartSimpleIdentifier {
+                                            dartTypes.getName(parameterModel);
+                                        };
                                     };
                                 };
                             };

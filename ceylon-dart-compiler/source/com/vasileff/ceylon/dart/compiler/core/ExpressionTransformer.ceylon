@@ -117,7 +117,8 @@ import ceylon.collection {
     LinkedList
 }
 import ceylon.interop.java {
-    CeylonList
+    CeylonList,
+    CeylonIterable
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -128,7 +129,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
-    ConstructorModel=Constructor
+    ConstructorModel=Constructor,
+    TypedReference
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -843,6 +845,27 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 }
 
+                assert (is BaseExpressionInfo | QualifiedExpressionInfo invokedInfo);
+
+                assert (is TypedReference typedReference
+                    =   targetForExpressionInfo(invokedInfo));
+
+                value typeArguments
+                    =   if (isDartNative(invokedDeclaration))
+                        then []
+                        else CeylonIterable(invokedDeclaration.typeParameters)
+                                .map<TypeModel>(typedReference.typeArguments.get)
+                                .collect((typeModel)
+                            =>  dartTypes.invocableForBaseExpression {
+                                    info;
+                                    ceylonTypes.typeDescriptorDeclaration;
+                                }.expressionForInvocation([
+                                    DartSimpleIdentifier("$module"),
+                                    // TODO proper type printing
+                                    DartSimpleStringLiteral(typeModel.asQualifiedString())
+                                    // TODO args for dynamic type args
+                                ]));
+
                 return
                 createExpressionEvaluationWithSetup {
                     argsSetup;
@@ -858,7 +881,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             info;
                             invokedDeclaration;
                         }.expressionForInvocation {
-                            arguments;
+                            typeArguments.append(arguments);
                             hasSpread;
                         };
                     };
