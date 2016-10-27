@@ -6,10 +6,19 @@ import ceylon.language.meta.model {
 import ceylon.language.meta.declaration {
     ClassDeclaration, TypeParameter
 }
+import ceylon.dart.runtime.model {
+    ModelType = Type,
+    ModelClass = Class
+}
 
-shared class ClassImpl<out Type=Anything, in Arguments=Nothing>()
+shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
         satisfies Class<Type, Arguments>
         given Arguments satisfies Anything[] {
+
+    ModelType modelType;
+
+    "The declaration for a Class Type must be a Class"
+    assert (modelType.declaration is ModelClass);
 
     // FROM Type
 
@@ -27,7 +36,11 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>()
 
     // shared actual ClassOrInterfaceDeclaration declaration => nothing;
 
-    shared actual ClassModel<>? extendedType => nothing;
+    shared actual ClassModel<>? extendedType
+        // FIXME we can't instantiate ClassImpl this way; need correct type args
+        =>  if (exists et = modelType.declaration.extendedType)
+            then ClassImpl(et)
+            else null;
 
     shared actual InterfaceModel<>[] satisfiedTypes => nothing;
 
@@ -117,7 +130,11 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>()
 
     // FROM ClassModel
 
-    shared actual ClassDeclaration declaration => nothing;
+    shared actual ClassDeclaration declaration {
+        assert (is ModelClass modelDeclaration = modelType.declaration);
+        // FIXME could be ClassWithInitializerDeclaration
+        return ClassWithConstructorsDeclarationImpl(modelDeclaration);
+    }
 
     // shared actual FunctionModel<Type, Arguments>? defaultConstructor => nothing;
 
@@ -160,7 +177,11 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>()
 
     shared actual Map<TypeParameter, AppliedType<>> typeArguments => nothing;
 
-    shared actual AppliedType<>[] typeArgumentList => nothing;
+    shared actual AppliedType<>[] typeArgumentList {
+        // FIXME account for types other than Class
+        // FIXME we can't instantiate ClassImpl this way; need correct type args
+        return modelType.typeArguments.collect((ta) => ClassImpl(ta.item));
+    }
 
     shared actual Map<TypeParameter, TypeArgument> typeArgumentWithVariances => nothing;
 
@@ -174,5 +195,10 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>()
 
     // FROM Model
 
-    shared actual AppliedType<>? container => nothing;
+    shared actual AppliedType<>? container
+        // FIXME we can't instantiate ClassImpl this way; need correct type args
+        =>  if (exists qt = modelType.qualifyingType,
+                is ModelClass qtDeclaration = qt.declaration)
+            then ClassImpl<Nothing, Nothing>(qt)
+            else nothing; // TODO other types of Types
 }
