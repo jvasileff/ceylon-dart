@@ -122,7 +122,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartClassMember,
     createVariableDeclaration,
     DartPrefixedIdentifier,
-    DartFormalParameter
+    DartFormalParameter,
+    DartSimpleStringLiteral
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
@@ -464,7 +465,9 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel resultType,
             FunctionOrValueModel memberDeclaration,
             [List<TypeModel>, [Expression*] | PositionalArguments]?
-                    signatureAndArguments = null) {
+                    signatureAndArguments = null,
+            // TODO is this the API we want for type args?
+            [TypeModel*] typeArguments = []) {
 
         "Only toplevels are supported; declaration's container must be a package."
         assert (memberDeclaration.container is PackageModel);
@@ -511,6 +514,17 @@ class BaseGenerator(CompilationContext ctx)
             dartArguments = [];
         }
 
+        value dartTypeArguments
+            // FIXME this is just copy & paste of bad code from transformInvocation()
+            =   typeArguments.collect((typeModel)
+                    =>  dartTypes.invocableForBaseExpression {
+                            scope;
+                            ceylonTypes.typeDescriptorDeclaration;
+                        }.expressionForInvocation([
+                            DartSimpleIdentifier("$module"),
+                            DartSimpleStringLiteral(typeModel.asQualifiedString())
+                        ]));
+
         return
         withBoxing {
             scope;
@@ -518,7 +532,7 @@ class BaseGenerator(CompilationContext ctx)
             memberDeclaration;
             dartFunctionOrValue.expressionForInvocation {
                 null;
-                dartArguments;
+                dartTypeArguments.append(dartArguments);
             };
         };
     }
