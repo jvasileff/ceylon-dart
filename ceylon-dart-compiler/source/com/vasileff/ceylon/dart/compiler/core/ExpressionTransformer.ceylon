@@ -235,7 +235,8 @@ class ExpressionTransformer(CompilationContext ctx)
             NameWithTypeArguments? nameAndArgs,
             DeclarationModel targetDeclaration) {
 
-        value info = expressionInfo(that);
+        assert (is QualifiedExpressionInfo | BaseExpressionInfo info
+            =   expressionInfo(that));
 
         switch (nameAndArgs)
         case (is MemberNameWithTypeArguments?) {
@@ -333,6 +334,18 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 }
                 else {
+                    // TODO support type constructors if info.typeModel.typeConstructor
+
+                    assert (is TypedReference typedReference
+                        =   targetForExpressionInfo(info));
+
+                    value typeArguments
+                        =   if (isDartNative(targetDeclaration)
+                                || !targetDeclaration.toplevel
+                                && !targetDeclaration.static)
+                            then []
+                            else [*typedReference.typeArgumentList];
+
                     // A newly created Callable, which is not erased
                     return withBoxingNonNative {
                         info;
@@ -340,6 +353,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         generateCallableForBE {
                             info;
                             targetDeclaration;
+                            typeArguments = typeArguments;
                         };
                     };
                 }

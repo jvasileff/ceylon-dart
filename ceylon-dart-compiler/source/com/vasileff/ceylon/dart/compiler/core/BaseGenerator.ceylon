@@ -4339,7 +4339,10 @@ class BaseGenerator(CompilationContext ctx)
              functionModel possibly indicating erased-to-native? This is useful when
              generating callables for forward declared functions, to avoid unnecessary
              boxing."
-            Boolean hasForcedNonNativeReturn = false) {
+            Boolean hasForcedNonNativeReturn = false,
+            "The type arguments. For type constructors, (for now), include an 'unknown'
+             type for each required parameter."
+            [TypeModel*] typeArguments = []) {
 
         // TODO take the Callable's TypeModel as an argument in order to have
         //      correct (non-erased-to-Object) parameter and return types for
@@ -4368,6 +4371,19 @@ class BaseGenerator(CompilationContext ctx)
 
         value parameters = CeylonList(parameterList.parameters);
 
+        value dartTypeArguments
+            // TODO don't use this poorly written copy & paste code
+            =   typeArguments.collect((typeModel)
+                =>  dartTypes.invocableForBaseExpression {
+                        scope;
+                        ceylonTypes.typeDescriptorDeclaration;
+                    }.expressionForInvocation([
+                        DartSimpleIdentifier("$module"),
+                        // TODO proper type printing
+                        DartSimpleStringLiteral(typeModel.asQualifiedString())
+                        // TODO args for dynamic type args
+                    ]));
+
         // TODO now that we have factory methods for member classes, we can probably
         //      optimize away wrappers for most shared classes and constructors.
 
@@ -4383,6 +4399,7 @@ class BaseGenerator(CompilationContext ctx)
          created to handle boxing and null safety."
         value needsWrapperFunction =
                 functionModel is ClassModel | ConstructorModel
+                || !dartTypeArguments.empty
                 || (!returnsCallable
                     && !hasForcedNonNativeReturn
                     && dartTypes.erasedToNative(functionModel))
@@ -4489,7 +4506,7 @@ class BaseGenerator(CompilationContext ctx)
                             DartFunctionExpressionInvocation {
                                 delegateFunction;
                                 DartArgumentList {
-                                    innerArguments;
+                                    dartTypeArguments.append(innerArguments);
                                 };
                             }
                         else
@@ -4497,7 +4514,7 @@ class BaseGenerator(CompilationContext ctx)
                                 scope;
                                 functionModel;
                             }.expressionForInvocation {
-                                innerArguments;
+                                dartTypeArguments.append(innerArguments);
                             };
 
             }
