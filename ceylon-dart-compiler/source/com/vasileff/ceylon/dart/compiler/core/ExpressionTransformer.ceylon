@@ -854,7 +854,9 @@ class ExpressionTransformer(CompilationContext ctx)
                     =   targetForExpressionInfo(invokedInfo));
 
                 value typeArguments
-                    =   if (isDartNative(invokedDeclaration))
+                    =   if (isDartNative(invokedDeclaration)
+                            ||     !invokedDeclaration.toplevel
+                                && !invokedDeclaration.staticallyImportable)
                         then []
                         else CeylonIterable(invokedDeclaration.typeParameters)
                                 .map<TypeModel>(typedReference.typeArguments.get)
