@@ -79,11 +79,16 @@ class IntersectionType(satisfiedTypes, unit) extends TypeDeclaration() {
                 addToUnion(unionSet, it);
             }
 
-            assert (nonempty unionTypes = unionSet.sequence());
-            return UnionType {
-                unionTypes;
-                unit;
-            };
+            if (nonempty unionTypes = unionSet.sequence()) {
+                return UnionType {
+                    unionTypes;
+                    unit;
+                };
+            }
+            else {
+                // empty union is Nothing
+                return unit.nothingDeclaration;
+            }
         }
         return this;
     }

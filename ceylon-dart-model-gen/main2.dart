@@ -271,9 +271,9 @@ Map<String, Object> classToInterfaceMap(ClassMirror cm, TypeMirror from) {
         && MirrorSystem.getName(t.owner.qualifiedName) != "dart._internal";
     })
     // - don't erase in typeToMap...
-    // - contravariant (i.e. dynamic=Nothing) type arguments for satisfied
-    //   types! The assumption is that most type parameters are covariant,
-    //   i.e. producers, and we use Nothing for return types.
+    // - contravariant type arguments for satisfied types. The assumption is that most
+    //   type parameters are covariant, and satisfied types are like return types, for
+    //   which contravariant is used.
     .map((m) => typeToMap(m, from, false, false, false)).toList();
 
   // print("satisfies (i): " + map[keySatisfies].toString());
@@ -475,7 +475,7 @@ Map<String, Object> methodToMap(MethodMirror mm, DeclarationMirror from,
     bool forceAbstract) {
 
   var map = new Map();
-  // contraviarant return (i.e. dynamic=Nothing)
+  // contraviarant for returns
   map[keyType] = typeToMap(mm.returnType, from, false, true, false);
 
   if (mm.isGetter) {
@@ -534,7 +534,8 @@ List<Map<String, Object>> parametersToList(List<ParameterMirror> parameters,
       map[keyType] = typeToMap(pt.returnType, from, false, false, true);
       map[keyMetatype] = metatypeParameter;
       map[keyName] = MirrorSystem.getName(pm.simpleName);
-      // TODO these param types should be contravariant (i.e. Nothing)...
+      // TODO these param types should be contravariant (i.e. Nothing, if we were
+      //      still doing that)...
       List plist = parametersToList(pt.parameters, from);
       if (plist.isNotEmpty) {
         map[keyParams] = [plist];
@@ -671,7 +672,9 @@ Map<String, Object> typeToMap(
   else {
     // it must be dynamic
     map[keyModule] = "\$";
-    map[keyName] = isCovariant ? "Anything" : "Nothing";
+    // Use "Anything" for both returns and parameters. The other idea was to use
+    // "Nothing" for returns, which would be indicated by !isCovariant
+    map[keyName] = isCovariant ? "Anything" : "Anything";
     map[keyPackage] = "\$";
   }
   return map;

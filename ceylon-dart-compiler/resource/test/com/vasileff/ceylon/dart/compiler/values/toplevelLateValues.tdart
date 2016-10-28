@@ -3,37 +3,37 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-$dart$core.String $package$$late1;
+$dart$core.String $package$late1;
 
-$dart$core.String get $late1 => $package$$late1;
+$dart$core.String get late1 => $package$late1;
 
-$dart$core.String $package$$late2;
+$dart$core.String $package$late2;
 
-$dart$core.String get $late2 => $package$$late2;
+$dart$core.String get late2 => $package$late2;
 
-set $late2($dart$core.String value) => $package$$late2 = value;
+set late2($dart$core.String value) => $package$late2 = value;
 
-void $package$$run() {
-  $package$$late1 = "late1";
-  $package$$late2 = "late2";
-  if (!($package$$late1 == "late1")) {
+void $package$run() {
+  $package$late1 = "late1";
+  $package$late2 = "late2";
+  if (!($package$late1 == "late1")) {
     throw new $ceylon$language.AssertionError("Violated: late1 == \"late1\"");
   }
-  if (!($package$$late2 == "late2")) {
+  if (!($package$late2 == "late2")) {
     throw new $ceylon$language.AssertionError("Violated: late2 == \"late2\"");
   }
-  $package$$late2 = "late2b";
-  if (!($package$$late2 == "late2b")) {
+  $package$late2 = "late2b";
+  if (!($package$late2 == "late2b")) {
     throw new $ceylon$language.AssertionError("Violated: late2 == \"late2b\"");
   }
 }
 
-void $run() => $package$$run();
+void run() => $package$run();
 
 $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
-    $package$$run();
+    $package$run();
     return $ceylon$language.$true;
   }
   return $ceylon$language.$false;

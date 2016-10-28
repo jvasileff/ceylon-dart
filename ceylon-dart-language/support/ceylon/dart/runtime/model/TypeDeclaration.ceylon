@@ -226,8 +226,16 @@ class TypeDeclaration()
         =>  eq(qualifiedName, "ceylon.language::Anything");
 
     shared
+    Boolean isEmpty
+        =>  eq(qualifiedName, "ceylon.language::Empty");
+
+    shared
     Boolean isEntry
         =>  eq(qualifiedName, "ceylon.language::Entry");
+
+    shared
+    Boolean isIterable
+        =>  eq(qualifiedName, "ceylon.language::Iterable");
 
     shared
     Boolean isNothing
@@ -244,6 +252,14 @@ class TypeDeclaration()
     shared
     Boolean isObject
         =>  eq(qualifiedName, "ceylon.language::Object");
+
+    shared
+    Boolean isSequence
+        =>  eq(qualifiedName, "ceylon.language::Sequence");
+
+    shared
+    Boolean isSequential
+        =>  eq(qualifiedName, "ceylon.language::Sequential");
 
     // TODO Look at model's isTupleType and isTuple, and all refinements.
     //      Make sure we're using the right methods everywhere.

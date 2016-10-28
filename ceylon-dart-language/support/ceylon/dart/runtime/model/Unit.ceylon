@@ -94,7 +94,8 @@ class Unit(pkg) {
             =>  delegate.lastIndex;
 
         shared actual
-        Integer prune() => 0;
+        Integer prune()
+            =>  0;
 
         shared actual
         Integer remove(Declaration element) {
@@ -257,6 +258,20 @@ class Unit(pkg) {
         =>  assertedClass(ceylonLanguagePackage.getMember("Tuple"));
 
     shared
+    Type sequentialAnythingType
+        =>  sequentialDeclaration.appliedType {
+                null;
+                [anythingDeclaration.type];
+            };
+
+    shared
+    Type sequenceAnythingType
+        =>  sequenceDeclaration.appliedType {
+                null;
+                [anythingDeclaration.type];
+            };
+
+    shared
     Type unknownType
         =>  UnknownType(this).type;
 
@@ -280,6 +295,31 @@ class Unit(pkg) {
     Type getSequenceType(Type elementType)
         =>  sequenceDeclaration.appliedType(null, [elementType]);
 
+    "Returns the intersection of [[type]] and `Object`."
+    shared
+    Type getDefiniteType(Type type)
+        =>  intersectionDedupedCanonical {
+                unit = this;
+                objectDeclaration.type,
+                type
+            };
+
+    "Returns, in order:
+     - `null` if [[type]] is not a subtype of [[Sequential]], or
+     - `type` if `type` is not a supertype of [[Empty]], or
+     - the intersection of the type and a [[Sequence]] of the type's element type.
+
+     If [[type]] is a subtype of [[Empty]], the result will be [[Nothing]]."
+    shared
+    Type? getNonemptyType(Type type)
+        =>  if (!type.isSubtypeOf(sequentialAnythingType)) then null
+            else if (!emptyDeclaration.type.isSubtypeOf(type)) then type
+            else intersectionDedupedCanonical {
+                unit = this;
+                type,
+                sequenceAnythingType
+            };
+
     shared
     Type? getSequentialElementType(Type type) {
         if (exists st = type.getSupertype(sequentialDeclaration)) {
@@ -292,5 +332,159 @@ class Unit(pkg) {
             return elementType;
         }
         return null;
+    }
+
+    shared
+    Type? getIteratedType(Type type) {
+        if (exists st = type.getSupertype(iterableDeclaration)) {
+            assert (exists elementType = st.typeArgumentList.first);
+            return elementType;
+        }
+        return null;
+    }
+
+    shared
+    [Type, Type]? getEntryKeyItemTypes(Type type) {
+        if (exists st = type.getSupertype(entryDeclaration)) {
+            value args = st.typeArgumentList.sequence();
+            assert (exists keyType = args[0]);
+            assert (exists itemType = args[1]);
+            return [keyType, itemType];
+        }
+        return null;
+    }
+
+    "Returns [] if `type` is a subtype of [[Empty]]. Returns `null` if `type` is not a
+     sequential."
+    shared
+    [Type*]? getTupleElementTypes(Type type) {
+        value restStream {
+            value sequence = getNonemptyType(type);
+            if (!exists sequence) {
+                // !type is Sequential
+                return null;
+            }
+
+            if (sequence.isNothing) {
+                // type is Empty
+                return [];
+            }
+
+            value tuple = sequence.getSupertype(tupleDeclaration);
+
+            if (!exists tuple) {
+                // some non-Empty, non-Tuple rest
+                return [type];
+            }
+
+            return loop(tuple)((type) {
+
+                // type is a Sequential, possibly a Tuple
+                if (type.isTuple) {
+                    assert (exists rest = type.typeArgumentList.last);
+                    value sequence = getNonemptyType(rest);
+
+                    if (!exists sequence) {
+                        // An invalid Rest that doesn't satisfy its upper bound
+                        // constraint. This is allowed, although no instance like this
+                        // will actually exist.
+                        return rest;
+                    }
+                    if (sequence.isNothing) {
+                        // rest is Empty
+                        return finished;
+                    }
+                    value tuple = sequence.getSupertype(tupleDeclaration);
+                    if (!exists tuple) {
+                        // some non-tuple Rest sequential
+                        return rest;
+                    }
+                    return tuple;
+                }
+                // previous (which is type) was a non-Empty, non-Tuple rest
+                return finished;
+            });
+        }
+
+        return restStream?.collect((seq) {
+            if (!seq.isTuple) {
+                // Copied note: this is pretty weird: return the whole tail type as the
+                // element of the list!
+                return seq;
+            }
+            assert (exists elementType = seq.typeArgumentList.getFromFirst(1));
+            return elementType;
+        });
+    }
+
+    shared
+    Boolean isTupleLengthUnbounded(variable Type type) {
+        value sequence = getNonemptyType(type);
+
+        if (!exists sequence) {
+            // !type is Sequential
+            return false;
+        }
+
+        if (sequence.isNothing) {
+            // type is Empty
+            return false;
+        }
+
+        if (exists st = sequence.getSupertype(tupleDeclaration)) {
+            type = st;
+        }
+        else {
+            return true;
+        }
+
+        while (true) {
+            assert (exists rest = type.typeArgumentList.getFromFirst(2));
+            if (rest.isSubtypeOf(emptyDeclaration.type)) {
+                return false;
+            }
+            else if (exists tupleRest =
+                    getNonemptyType(rest)?.getSupertype(tupleDeclaration)) {
+                // rest may have been a union with [], for an optional element
+                type = tupleRest;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+
+    shared
+    Integer? getHomogeneousTupleLength(variable Type type) {
+        if (exists st = type.getSupertype(tupleDeclaration)) {
+            type = st;
+        }
+        else {
+            return null;
+        }
+
+        variable value size = 0;
+        assert (exists elementType = type.typeArgumentList.getFromFirst(1));
+
+        while (true) {
+            size++;
+            value typeArguments = type.typeArgumentList.sequence();
+            assert (exists firstType = typeArguments[1]);
+            assert (exists restType = typeArguments[2]);
+
+            // TODO ceylon.model doesn't bother with
+            //      tupleRestType = restType.getSupertype(tupleDeclaration),
+            //      but should we?
+
+            if (restType.isEmpty) {
+                return size;
+            }
+
+            if (!firstType.isExactly(elementType) || !restType.isTuple) {
+                return null;
+            }
+
+            type = restType;
+        }
     }
 }
