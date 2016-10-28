@@ -1531,7 +1531,8 @@ class ExpressionTransformer(CompilationContext ctx)
             info;
             info.typeModel;
             ceylonTypes.measureFunctionDeclaration;
-            [signature, [that.first, that.size]];
+            signatureAndArguments = [signature, [that.first, that.size]];
+            typeArguments = [elementType];
         };
     }
 
