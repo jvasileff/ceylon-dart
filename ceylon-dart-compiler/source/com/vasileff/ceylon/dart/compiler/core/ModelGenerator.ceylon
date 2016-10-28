@@ -45,7 +45,10 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSwitchCase,
     DartSimpleFormalParameter,
     DartExpressionStatement,
-    DartMethodInvocation
+    DartMethodInvocation,
+    DartUriBasedDirective,
+    DartPrefixExpression,
+    DartBooleanLiteral
 }
 import com.vasileff.ceylon.dart.compiler.loader {
     JsonModule
@@ -241,6 +244,21 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                     }];
                 };
             },
+            // FIXME figure out something better than returning 'null' when
+            //       _$moduleInitializing. The problem is that LazyJsonModule is written
+            //       in Ceylon, instantiating LazyJsonModule() involves generics, and
+            //       $module is needed to create TypeDescriptors. This results in a
+            //       stack overflow, requiring $module in order to initialize $module.
+            DartTopLevelVariableDeclaration {
+                DartVariableDeclarationList {
+                    "var";
+                    null;
+                    [DartVariableDeclaration {
+                        DartSimpleIdentifier("_$moduleInitializing");
+                        DartNullLiteral();
+                    }];
+                };
+            },
             DartFunctionDeclaration {
                 false;
                 null;
@@ -254,14 +272,28 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                             // may return a partially initialized if there is a circular
                             // dependency, which is ok.
                             [DartIfStatement {
-                                condition = DartBinaryExpression {
-                                    DartSimpleIdentifier("_$module");
-                                    "==";
-                                    DartNullLiteral();
-                                };
+                                condition
+                                    =   DartBinaryExpression {
+                                            DartBinaryExpression {
+                                                DartSimpleIdentifier("_$module");
+                                                "==";
+                                                DartNullLiteral();
+                                            };
+                                            "&&";
+                                            DartPrefixExpression {
+                                                "!";
+                                                DartSimpleIdentifier(
+                                                        "_$moduleInitializing");
+                                            };
+                                        };
                                 thenStatement = DartBlock {
                                     // create the model, assign to _$module
                                     [createAssignmentStatement {
+                                        DartSimpleIdentifier("_$moduleInitializing");
+                                        DartAssignmentOperator.equal;
+                                        DartBooleanLiteral(true);
+                                    },
+                                    createAssignmentStatement {
                                         DartSimpleIdentifier("_$module");
                                         DartAssignmentOperator.equal;
                                         DartInstanceCreationExpression {
@@ -293,6 +325,11 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                                 }];
                                             };
                                         };
+                                    },
+                                    createAssignmentStatement {
+                                        DartSimpleIdentifier("_$moduleInitializing");
+                                        DartAssignmentOperator.equal;
+                                        DartBooleanLiteral(false);
                                     },
                                     // initialize imports
                                     createMethodInvocationStatement {
