@@ -3,7 +3,7 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-void $package$$run() {
+void $package$run() {
   $dart$core.String f([$ceylon$language.Sequential strings]) => (() {
     $ceylon$language.Sequential switch$0 = strings;
     if (switch$0 is $ceylon$language.Empty) {
@@ -31,12 +31,12 @@ void $package$$run() {
   }
 }
 
-void $run() => $package$$run();
+void run() => $package$run();
 
 $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
-    $package$$run();
+    $package$run();
     return $ceylon$language.$true;
   }
   return $ceylon$language.$false;

@@ -113,4 +113,3 @@ get $module {
 void main($dart$core.List arguments) {
   $ceylon$language.$run(arguments, $module);
 }
-
