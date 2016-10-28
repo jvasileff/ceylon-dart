@@ -46,7 +46,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleFormalParameter,
     DartExpressionStatement,
     DartMethodInvocation,
-    DartUriBasedDirective,
     DartPrefixExpression,
     DartBooleanLiteral
 }
