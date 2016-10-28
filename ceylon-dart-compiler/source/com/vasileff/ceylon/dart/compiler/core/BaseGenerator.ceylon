@@ -1367,7 +1367,8 @@ class BaseGenerator(CompilationContext ctx)
                 // regular function. Unfortunately, this causes some wasteful box-unbox
                 // combos. Better would be to teach generateCallableForBE that our return
                 // values are never erased-to-native.
-                result = generateCallableForBE(scope, functionModel, inner, i+1);
+                // TODO type arguments
+                result = generateCallableForBE(scope, functionModel, [], inner, i+1);
             }
 
             value delegateIdentifier
@@ -2652,9 +2653,11 @@ class BaseGenerator(CompilationContext ctx)
                                 null;
                                 parameterModelModel;
                                 () => if (is DefaultedCallableParameter param)
+                                    // TODO type arguments, or... type constructor?
                                     then generateCallableForBE {
                                         scope;
                                         parameterModelModel;
+                                        [];
                                         generateFunctionExpression {
                                             param;
                                             suppressDefaultArgumentAssigment = true;
@@ -3465,6 +3468,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   generateCallableForBE {
                             scope;
                             functionModel;
+                            []; // no type arguments
                             previous;
                             i+1;
                             parameterList = parametersInfo(previousPList).model;
@@ -4328,6 +4332,9 @@ class BaseGenerator(CompilationContext ctx)
     DartInstanceCreationExpression generateCallableForBE(
             DScope scope,
             FunctionModel | ClassModel | ConstructorModel functionModel,
+            "The type arguments. For type constructors, (for now), include an 'unknown'
+             type for each required parameter."
+            [TypeModel*] typeArguments,
             DartExpression? delegateFunction = null,
             Integer parameterListNumber = 0,
             "The parameterList, which may be different than the one indicated by the
@@ -4339,10 +4346,7 @@ class BaseGenerator(CompilationContext ctx)
              functionModel possibly indicating erased-to-native? This is useful when
              generating callables for forward declared functions, to avoid unnecessary
              boxing."
-            Boolean hasForcedNonNativeReturn = false,
-            "The type arguments. For type constructors, (for now), include an 'unknown'
-             type for each required parameter."
-            [TypeModel*] typeArguments = []) {
+            Boolean hasForcedNonNativeReturn = false) {
 
         // TODO take the Callable's TypeModel as an argument in order to have
         //      correct (non-erased-to-Object) parameter and return types for
@@ -5151,6 +5155,9 @@ class BaseGenerator(CompilationContext ctx)
                             assert (is FunctionModel declarationModel
                                 =   lsInfo.declaration);
 
+                            // TODO type arguments, or type constructor
+                            // void gcp(T t<T>(T t) => t) {}
+                            // gcp { t => <T> (T t) => t; };
                             dartExpression
                                 =   withLhs {
                                         typeModel;
@@ -5158,6 +5165,7 @@ class BaseGenerator(CompilationContext ctx)
                                         () => generateCallableForBE {
                                             argumentInfo;
                                             declarationModel;
+                                            [];
                                             generateFunctionExpressionRaw {
                                                 lsInfo;
                                                 declarationModel;
@@ -5219,6 +5227,9 @@ class BaseGenerator(CompilationContext ctx)
                                     };
                     }
                     case (is FunctionArgumentInfo) {
+                        // TODO type arguments, or type constructor
+                        // void gcp(T t<T>(T t) => t) {}
+                        // gcp { T t<T>(T t) => t; };
                         dartExpression
                             =   withLhs {
                                     typeModel;
@@ -5226,6 +5237,7 @@ class BaseGenerator(CompilationContext ctx)
                                     () => generateCallableForBE {
                                         argumentInfo;
                                         argumentInfo.declarationModel;
+                                        [];
                                         generateFunctionExpression(argumentInfo.node);
                                     };
                                     lhsIsParameter = true;

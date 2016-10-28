@@ -183,6 +183,10 @@ class ClassMemberTransformer(CompilationContext ctx)
                             generateCallableForBE {
                                 info;
                                 functionModel;
+                                // no type arguments, and not a type constructor
+                                // (specification statements with type parameters not
+                                // allowed)
+                                [];
                                 generateFunctionExpressionRaw {
                                     info;
                                     functionModel;
@@ -646,9 +650,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                             DartAssignmentExpression {
                                 identifier;
                                 DartAssignmentOperator.equal;
+                                // TODO type arguments, or... type constructor?
+                                // see also BaseGenerator.generateDefaultValueAssignments
                                 generateCallableForBE {
                                     info;
                                     model;
+                                    [];
                                     generateFunctionExpression(that);
                                 };
                             };

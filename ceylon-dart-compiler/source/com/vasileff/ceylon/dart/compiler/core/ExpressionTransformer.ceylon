@@ -261,6 +261,8 @@ class ExpressionTransformer(CompilationContext ctx)
                     return generateCallableForBE {
                         info;
                         constructorModel;
+                        // TODO type arguments
+                        [];
                     };
                 }
                 case (is ValueModel) {
@@ -373,6 +375,8 @@ class ExpressionTransformer(CompilationContext ctx)
             return generateCallableForBE {
                 info;
                 declaration;
+                // TODO type arguments
+                [];
             };
         }
     }
@@ -1181,9 +1185,11 @@ class ExpressionTransformer(CompilationContext ctx)
             withBoxingNonNative {
                 info;
                 info.typeModel;
+                // TODO type arguments, or type constructor
                 generateCallableForBE {
                     info;
                     info.declarationModel;
+                    [];
                     generateFunctionExpression(that);
                 };
             };

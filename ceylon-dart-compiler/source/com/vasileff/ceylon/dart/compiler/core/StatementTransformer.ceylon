@@ -569,6 +569,10 @@ class StatementTransformer(CompilationContext ctx)
             return generateCallableForBE {
                 info;
                 declarationModel;
+                // no type arguments, and not a type constructor
+                // (specification statements with type parameters not
+                // allowed)
+                [];
                 generateFunctionExpressionRaw {
                     info;
                     declarationModel;
