@@ -2614,13 +2614,14 @@ class ExpressionTransformer(CompilationContext ctx)
             }
         }
 
-        "The type of the Iterable we are creating and the return type of
-         `dartFunctionIterableFactory`.
 
-         Note: when we reify, we'll need to make sure the `Absent` type parameter is
-         correct. It would also be better to have dartFunctionIterableFactory model
-         information, and calculate the return type using a `FunctionModel`."
-        value resultType = iterableComprehensionType(that);
+        // The type of the Iterable we are creating and the return type of
+        // `dartFunctionIterableFactory`.
+        //
+        // Note: when we reify, we'll need to make sure the `Absent` type parameter is
+        // correct. It would also be better to have dartFunctionIterableFactory model
+        // information, and calculate the return type using a `FunctionModel`.
+        value [elementType, resultType] = elementAndIterableComprehensionType(that);
 
         // Return a new Iterable based on a function that returns a
         // function that returns the elements of the comprehension.
@@ -2636,7 +2637,15 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
                 DartArgumentList {
                     // Easy. Until we reify generics.
-                    [createCallable {
+                    [// FIXME this is just copy & paste of bad code from transformInvocation()
+                     dartTypes.invocableForBaseExpression {
+                        info;
+                        ceylonTypes.typeDescriptorDeclaration;
+                    }.expressionForInvocation([
+                        DartSimpleIdentifier("$module"),
+                        DartSimpleStringLiteral(elementType.asQualifiedString())
+                    ]),
+                    createCallable {
                         info;
                         DartFunctionExpression {
                             dartFormalParameterListEmpty;

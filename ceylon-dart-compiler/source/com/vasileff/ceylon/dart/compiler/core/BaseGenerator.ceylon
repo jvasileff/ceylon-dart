@@ -5778,9 +5778,14 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     TypeModel iterableComprehensionType(Comprehension that)
+        =>  elementAndIterableComprehensionType(that)[1];
+
+    shared
+    TypeModel[2] elementAndIterableComprehensionType(Comprehension that)
         =>  let (firstClauseInfo = comprehensionClauseInfo(that.clause))
+            [firstClauseInfo.typeModel,
             ceylonTypes.iterableDeclaration.appliedType(null, javaList {
                 firstClauseInfo.typeModel,
                 firstClauseInfo.firstTypeModel
-            });
+            })];
 }
