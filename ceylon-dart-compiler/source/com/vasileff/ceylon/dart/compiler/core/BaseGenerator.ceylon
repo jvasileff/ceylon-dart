@@ -5812,16 +5812,26 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateTypeDescriptor(DScope scope, TypeModel typeModel) {
-        return
-        dartTypes.invocableForBaseExpression {
-            scope;
-            ceylonTypes.typeDescriptorDeclaration;
-        }.expressionForInvocation([
-            // TODO should have and use a synthetic ValueModel for $module
-            DartSimpleIdentifier("$module"),
-            // TODO proper type printing
-            DartSimpleStringLiteral(typeModel.asQualifiedString())
-            // TODO args for dynamic type args
-        ]);
+        if (is TypeParameterModel declaration = typeModel.declaration,
+                is FunctionModel container = typeModel.declaration.container,
+                container.toplevel || isDartNative(container)) {
+            // type parameter of toplevel function (excluding others since not impl yet)
+            // FIXME no boxing and overly simplistic expression that prob. won't work
+            //       for captures, etc. Use synthetic ValueModels for type parameters?
+            return DartSimpleIdentifier(dartTypes.getName(declaration));
+        }
+        else {
+            return
+            dartTypes.invocableForBaseExpression {
+                scope;
+                ceylonTypes.typeDescriptorDeclaration;
+            }.expressionForInvocation([
+                // TODO should have and use a synthetic ValueModel for $module
+                DartSimpleIdentifier("$module"),
+                // TODO proper type printing
+                DartSimpleStringLiteral(typeModel.asQualifiedString())
+                // TODO args for dynamic type args
+            ]);
+        }
     }
 }
