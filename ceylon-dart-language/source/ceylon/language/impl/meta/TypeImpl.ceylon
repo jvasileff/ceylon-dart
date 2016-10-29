@@ -39,6 +39,10 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
 
     shared actual AppliedType<Type&Other> intersection<Other>(AppliedType<Other> other) => nothing;
 
+    shared actual String string
+        // TODO use same format as Metamodel.toTypeString
+        =>  modelType.string;
+
     // FROM ClassOrInterface
 
     // shared actual ClassOrInterfaceDeclaration declaration => nothing;
