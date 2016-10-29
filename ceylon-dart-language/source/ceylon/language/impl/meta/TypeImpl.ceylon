@@ -20,13 +20,20 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
     "The declaration for a Class Type must be a Class"
     assert (modelType.declaration is ModelClass);
 
+    function assertedTypeImpl(AppliedType<> type) {
+        assert (is ClassImpl<> type);
+        return type;
+    }
+
     // FROM Type
 
     shared actual Boolean typeOf(Anything instance) => nothing;
 
-    shared actual Boolean supertypeOf(AppliedType<> type) => nothing;
+    shared actual Boolean supertypeOf(AppliedType<> type)
+        =>  modelType.isSupertypeOf(assertedTypeImpl(type).modelType);
 
-    shared actual Boolean exactly(AppliedType<> type) => nothing;
+    shared actual Boolean exactly(AppliedType<> type)
+        =>  modelType.isExactly(assertedTypeImpl(type).modelType);
 
     shared actual AppliedType<Type|Other> union<Other>(AppliedType<Other> other) => nothing;
 
