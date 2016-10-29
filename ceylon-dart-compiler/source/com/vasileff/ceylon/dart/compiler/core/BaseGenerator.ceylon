@@ -3687,7 +3687,10 @@ class BaseGenerator(CompilationContext ctx)
                     true; false;
                     scope;
                     parameters = list;
-                    prependParameters = typeParameters;
+                    prependParameters
+                        =   if (i == 0)
+                            then typeParameters
+                            else [];
                 };
                 body;
             };
