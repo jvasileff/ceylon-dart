@@ -1529,6 +1529,7 @@ class ExpressionTransformer(CompilationContext ctx)
             info.typeModel;
             ceylonTypes.spanFunctionDeclaration;
             [signature, [that.first, that.last]];
+            typeArguments = [elementType];
         };
     }
 
