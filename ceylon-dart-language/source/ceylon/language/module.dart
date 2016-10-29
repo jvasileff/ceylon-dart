@@ -309,23 +309,35 @@ class Throwable extends $dart$core.Error {
 //
 /////////////////////////////////////////////////
 
-Tuple tupleTrailing(Iterable initial, $dart$core.Object element)
+Tuple tupleTrailing(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      Iterable initial, $dart$core.Object element)
   =>  new Tuple.$trailing(initial, element);
 
-Tuple $package$tupleTrailing(Iterable initial, $dart$core.Object element)
-  =>  tupleTrailing(initial, element);
+Tuple $package$tupleTrailing(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      Iterable initial, $dart$core.Object element)
+  =>  tupleTrailing(Element, initial, element);
 
-Tuple tupleOfElements(Iterable rest)
+Tuple tupleOfElements(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      Iterable rest)
   =>  new Tuple.$ofElements(rest);
 
-Tuple $package$tupleOfElements(Iterable rest)
-  =>  tupleOfElements(rest);
+Tuple $package$tupleOfElements(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      Iterable rest)
+  =>  tupleOfElements(Element rest);
 
-Tuple tupleWithList([$dart$core.List list, $dart$core.Object rest = dart$default])
+Tuple tupleWithList([
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $dart$core.List list, $dart$core.Object rest = dart$default])
   =>  new Tuple.$withList(list, rest);
 
-Tuple $package$tupleWithList([$dart$core.List list, $dart$core.Object rest = dart$default])
-  =>  tupleWithList(list, rest);
+Tuple $package$tupleWithList([
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $dart$core.List list, $dart$core.Object rest = dart$default])
+  =>  tupleWithList(Element, list, rest);
 
 class Tuple extends BaseTuple {
 
@@ -553,14 +565,20 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
   }
 }
 
-Callable flatten(Callable tupleFunction) {
+Callable flatten(
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor Args,
+  Callable tupleFunction) {
   if (tupleFunction is dart$UnflatFunction) {
     return tupleFunction.flatFunction;
   }
   return new dart$FlatFunction(tupleFunction);
 }
 
-Callable unflatten(Callable flatFunction) {
+Callable unflatten(
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor Args,
+  Callable flatFunction) {
   if (flatFunction is dart$FlatFunction) {
     return flatFunction.tupleFunction;
   }
@@ -630,9 +648,17 @@ class dart$UnflatFunction implements dart$$Object, $dart$core.Function, dart$Cal
   }
 }
 
-Callable $package$flatten(Callable tupleFunction) => flatten(tupleFunction);
+Callable $package$flatten(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Args,
+      Callable tupleFunction)
+  =>  flatten(Return, Args, tupleFunction);
 
-Callable $package$unflatten(Callable flatFunction) => unflatten(flatFunction);
+Callable $package$unflatten(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Args,
+      Callable flatFunction)
+  =>  unflatten(Return, Args, flatFunction);
 
 /////////////////////////////////////////////////
 //
