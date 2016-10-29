@@ -1918,24 +1918,15 @@ class TopLevelVisitor(CompilationContext ctx)
 
     DartFunctionDeclaration generateForwardingFunction
             (DScope scope, FunctionModel declarationModel)
-        =>  let (functionName = dartTypes.getName(declarationModel),
-                functionPPName = dartTypes.getPackagePrefixedName(declarationModel),
-                parameterModels = CeylonList(
-                        declarationModel.firstParameterList.parameters),
+        =>  let (functionName
+                    =   dartTypes.getName(declarationModel),
+                functionPPName
+                    =   dartTypes.getPackagePrefixedName(declarationModel),
+                parameterModels
+                    =   {*declarationModel.firstParameterList.parameters},
                 typeParameters
-                    // TODO exact same code is in generateFunctionExpressionRaw
                     =   if (declarationModel.toplevel && !isDartNative(declarationModel))
-                        then [
-                            for (tp in declarationModel.typeParameters)
-                                DartSimpleFormalParameter {
-                                    true; false;
-                                    dartTypes.dartTypeName {
-                                        scope;
-                                        ceylonTypes.typeDescriptorDeclaration.type;
-                                    };
-                                    DartSimpleIdentifier(dartTypes.getName(tp));
-                                }
-                            ]
+                        then generateTypeParameters(scope, declarationModel)
                         else [])
             DartFunctionDeclaration {
                 external = false;

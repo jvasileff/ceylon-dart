@@ -69,7 +69,8 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     ParameterListModel=ParameterList,
     TypeParameterModel=TypeParameter,
-    SiteVariance
+    SiteVariance,
+    GenericModel=Generic
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -515,15 +516,8 @@ class BaseGenerator(CompilationContext ctx)
         }
 
         value dartTypeArguments
-            // FIXME this is just copy & paste of bad code from transformInvocation()
             =   typeArguments.collect((typeModel)
-                    =>  dartTypes.invocableForBaseExpression {
-                            scope;
-                            ceylonTypes.typeDescriptorDeclaration;
-                        }.expressionForInvocation([
-                            DartSimpleIdentifier("$module"),
-                            DartSimpleStringLiteral(typeModel.asQualifiedString())
-                        ]));
+                =>  generateTypeDescriptor(scope, typeModel));
 
         return
         withBoxing {
@@ -3446,17 +3440,7 @@ class BaseGenerator(CompilationContext ctx)
 
         value typeParameters
             =   if (functionModel.toplevel && !isDartNative(functionModel))
-                then [
-                    for (tp in functionModel.typeParameters)
-                        DartSimpleFormalParameter {
-                            true; false;
-                            dartTypes.dartTypeName {
-                                scope;
-                                ceylonTypes.typeDescriptorDeclaration.type;
-                            };
-                            DartSimpleIdentifier(dartTypes.getName(tp));
-                        }
-                    ]
+                then generateTypeParameters(scope, functionModel)
                 else [];
 
         for (i -> list in parameterLists.indexed.sequence().reversed) {
@@ -4379,17 +4363,8 @@ class BaseGenerator(CompilationContext ctx)
         value parameters = CeylonList(parameterList.parameters);
 
         value dartTypeArguments
-            // TODO don't use this poorly written copy & paste code
             =   typeArguments.collect((typeModel)
-                =>  dartTypes.invocableForBaseExpression {
-                        scope;
-                        ceylonTypes.typeDescriptorDeclaration;
-                    }.expressionForInvocation([
-                        DartSimpleIdentifier("$module"),
-                        // TODO proper type printing
-                        DartSimpleStringLiteral(typeModel.asQualifiedString())
-                        // TODO args for dynamic type args
-                    ]));
+                =>  generateTypeDescriptor(scope, typeModel));
 
         // TODO now that we have factory methods for member classes, we can probably
         //      optimize away wrappers for most shared classes and constructors.
@@ -5820,4 +5795,33 @@ class BaseGenerator(CompilationContext ctx)
                 firstClauseInfo.typeModel,
                 firstClauseInfo.firstTypeModel
             })];
+
+    shared
+    [DartSimpleFormalParameter*] generateTypeParameters
+            (DScope scope, GenericModel declaration)
+        =>  [for (tp in declaration.typeParameters)
+                DartSimpleFormalParameter {
+                    true; false;
+                    dartTypes.dartTypeName {
+                        scope;
+                        ceylonTypes.typeDescriptorDeclaration.type;
+                    };
+                    DartSimpleIdentifier(dartTypes.getName(tp));
+                }
+            ];
+
+    shared
+    DartExpression generateTypeDescriptor(DScope scope, TypeModel typeModel) {
+        return
+        dartTypes.invocableForBaseExpression {
+            scope;
+            ceylonTypes.typeDescriptorDeclaration;
+        }.expressionForInvocation([
+            // TODO should have and use a synthetic ValueModel for $module
+            DartSimpleIdentifier("$module"),
+            // TODO proper type printing
+            DartSimpleStringLiteral(typeModel.asQualifiedString())
+            // TODO args for dynamic type args
+        ]);
+    }
 }

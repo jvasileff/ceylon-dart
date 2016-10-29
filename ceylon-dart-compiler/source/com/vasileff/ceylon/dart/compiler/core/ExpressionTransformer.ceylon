@@ -118,8 +118,7 @@ import ceylon.collection {
     LinkedList
 }
 import ceylon.interop.java {
-    CeylonList,
-    CeylonIterable
+    CeylonList
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -873,21 +872,13 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 value typeArguments
                     =   if (isDartNative(invokedDeclaration)
-                            ||     !invokedDeclaration.toplevel
-                                && !invokedDeclaration.static)
+                            || !invokedDeclaration.toplevel
+                            && !invokedDeclaration.static)
                         then []
-                        else CeylonIterable(invokedDeclaration.typeParameters)
-                                .map<TypeModel>(typedReference.typeArguments.get)
-                                .collect((typeModel)
-                            =>  dartTypes.invocableForBaseExpression {
-                                    info;
-                                    ceylonTypes.typeDescriptorDeclaration;
-                                }.expressionForInvocation([
-                                    DartSimpleIdentifier("$module"),
-                                    // TODO proper type printing
-                                    DartSimpleStringLiteral(typeModel.asQualifiedString())
-                                    // TODO args for dynamic type args
-                                ]));
+                        else {*invokedDeclaration.typeParameters}
+                            .map(typedReference.typeArguments.get)
+                            .collect((typeModel)
+                                =>  generateTypeDescriptor(info, typeModel));
 
                 return
                 createExpressionEvaluationWithSetup {
@@ -2658,14 +2649,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 };
                 DartArgumentList {
                     // Easy. Until we reify generics.
-                    [// FIXME this is just copy & paste of bad code from transformInvocation()
-                     dartTypes.invocableForBaseExpression {
-                        info;
-                        ceylonTypes.typeDescriptorDeclaration;
-                    }.expressionForInvocation([
-                        DartSimpleIdentifier("$module"),
-                        DartSimpleStringLiteral(elementType.asQualifiedString())
-                    ]),
+                    [generateTypeDescriptor(info, elementType),
                     createCallable {
                         info;
                         DartFunctionExpression {
