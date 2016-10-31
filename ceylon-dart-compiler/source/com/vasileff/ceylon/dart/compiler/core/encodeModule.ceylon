@@ -12,6 +12,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
     PackageModel=Package,
     InterfaceModel=Interface,
+    TypeParameterModel=TypeParameter,
+    TypeDeclarationModel=TypeDeclaration,
     ModelUtil
 }
 
@@ -122,35 +124,88 @@ Map<String, Object> encodeClass(ClassModel declaration) {
     //      JS changes "anonymous#" prefix to "anon$"
 
     value m = HashMap<String, Object>();
-    m.put(keyMetatype, metatypeClass);
-    m.put(keyName, declaration.name);
+    m[keyMetatype] = metatypeClass;
+    m[keyName] = declaration.name;
 
     // type parameters
+    if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {
+        m[keyTypeParams] = tps;
+    }
+
     // self type
+    if (exists selfType = declaration.selfType) {
+        m[keySelfType] = selfType.declaration.name;
+    }
 
     // extended type
     if (exists extendedType = declaration.extendedType) {
-        m.put {
-            keyExtendedType;
-            encodeType(extendedType, declaration);
-        };
+        m[keyExtendedType] = encodeType(extendedType, declaration);
     }
 
     // satisfied types
-    m.put {
-        keySatisfies;
-        CeylonIterable(declaration.satisfiedTypes).collect((st)
-            =>  encodeType(st, declaration));
-    };
+    if (nonempty types
+            =   if (exists ts = declaration.satisfiedTypes)
+                then {*ts}.collect((t) => encodeType(t, declaration))
+                else []) {
+        m[keySatisfies] = types;
+    }
+
+    // case types
+    if (nonempty types
+            =   if (exists ts = declaration.caseTypes)
+                then {*ts}.collect((t) => encodeType(t, declaration))
+                else []) {
+        m[keyCases] = types;
+    }
 
     // initializer parameters (skipping)
-    // case types
     // annotations (only packed annotations)
 
     // members
-    m.putAll(encodeMembers(CeylonIterable(declaration.members)));
+    m.putAll(encodeMembers({*declaration.members}));
 
     return m;
+}
+
+[Map<String, Object>*] encodeTypeParameters(
+        DeclarationModel scope,
+        {TypeParameterModel*} typeParameters) {
+
+    return typeParameters.collect((tp) {
+        value sts
+            =   if (exists ts = tp.satisfiedTypes)
+                then {*ts}.collect((t) => encodeType(t, scope))
+                else [];
+
+        value cts
+            =   if (exists ts = tp.caseTypes)
+                then {*ts}.collect((t) => encodeType(t, scope))
+                else [];
+
+        return map<String, Object> {
+            {
+                keyName -> tp.name,
+                if (tp.covariant)
+                    then keyUsVariance -> "out"
+                    else null,
+                if (tp.contravariant)
+                    then keyUsVariance -> "in"
+                    else null,
+                if (exists selfType = (tp of TypeDeclarationModel).selfType)
+                    then keySelfType -> selfType.declaration.name
+                    else null,
+                if (nonempty sts)
+                    then keySatisfies -> sts
+                    else null,
+                if (nonempty cts)
+                    then keyCases -> cts
+                    else null,
+                if (exists default = tp.defaultTypeArgument)
+                    then keyDefault -> encodeType(default, scope)
+                    else null
+            }.coalesced;
+        };
+    });
 }
 
 {<String -> Map<String, Object>>*} encodeMembers({DeclarationModel*} members) {
@@ -181,24 +236,39 @@ Map<String, Object> encodeInterface(InterfaceModel declaration) {
     // TODO JS model adds a hash to non-toplevel non-shared declarations
 
     value m = HashMap<String, Object>();
-    m.put(keyMetatype, metatypeInterface);
-    m.put(keyName, declaration.name);
+    m[keyMetatype] = metatypeInterface;
+    m[keyName] = declaration.name;
 
     // type parameters
+    if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {
+        m[keyTypeParams] = tps;
+    }
+
     // self type
+    if (exists selfType = declaration.selfType) {
+        m[keySelfType] = selfType.declaration.name;
+    }
 
     // satisfied types
-    m.put {
-        keySatisfies;
-        CeylonIterable(declaration.satisfiedTypes).collect((st)
-            =>  encodeType(st, declaration));
-    };
+    if (nonempty types
+            =   if (exists ts = declaration.satisfiedTypes)
+                then {*ts}.collect((t) => encodeType(t, declaration))
+                else []) {
+        m[keySatisfies] = types;
+    }
 
     // case types
+    if (nonempty types
+            =   if (exists ts = declaration.caseTypes)
+                then {*ts}.collect((t) => encodeType(t, declaration))
+                else []) {
+        m[keyCases] = types;
+    }
+
     // annotations (only packed annotations)
 
     // members
-    m.putAll(encodeMembers(CeylonIterable(declaration.members)));
+    m.putAll(encodeMembers({*declaration.members}));
 
     return m;
 }
@@ -212,21 +282,17 @@ HashMap<String, Object> encodeType(TypeModel type, DeclarationModel scope) {
     if (type.union || type.intersection) {
         value m = HashMap<String, Object>();
 
-        m.put {
-            keyCompositeType;
-            if (type.union)
+        m[keyCompositeType]
+            =   if (type.union)
                 then typeUnion
                 else typeIntersection;
-        };
 
-        m.put {
-            keyTypes;
-            CeylonIterable {
-                if (type.union)
-                then type.caseTypes
-                else type.satisfiedTypes;
-            }.collect((t) => encodeType(t, scope));
-        };
+        m[keyTypes]
+            =   CeylonIterable {
+                    if (type.union)
+                    then type.caseTypes
+                    else type.satisfiedTypes;
+                }.collect((t) => encodeType(t, scope));
 
         return m;
     }
@@ -302,7 +368,11 @@ Map<String, Map<String, Object>>? encodeTypeArguments
                     if (exists override = overrides?.get(param)) {
                         map.put(keyUsVariance, override.ordinal());
                     }
-                    return partiallyQualifiedName(param) -> map;
+                    // for whatever reason, qualifiedNameString for type parameters
+                    // is just the unqualified name. So prepend the qualifiedNameString
+                    // of its container.
+                    return "``partiallyQualifiedName(param.declaration)``.``param.name``"
+                            -> map;
                 });
             }).sequence();
 
