@@ -171,6 +171,9 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 import java.util {
     JList=List
 }
+import com.redhat.ceylon.model.typechecker.util {
+    TypePrinter
+}
 
 shared abstract
 class BaseGenerator(CompilationContext ctx)
@@ -5821,6 +5824,7 @@ class BaseGenerator(CompilationContext ctx)
             return DartSimpleIdentifier(dartTypes.getName(declaration));
         }
         else {
+            value printer = TypePrinter(true, true, false, true, false, true, false);
             return
             dartTypes.invocableForBaseExpression {
                 scope;
@@ -5829,7 +5833,7 @@ class BaseGenerator(CompilationContext ctx)
                 // TODO should have and use a synthetic ValueModel for $module
                 DartSimpleIdentifier("$module"),
                 // TODO proper type printing
-                DartSimpleStringLiteral(typeModel.asQualifiedString())
+                DartSimpleStringLiteral(printer.print(typeModel, null))
                 // TODO args for dynamic type args
             ]);
         }
