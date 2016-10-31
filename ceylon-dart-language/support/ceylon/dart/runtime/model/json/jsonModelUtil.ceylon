@@ -12,7 +12,9 @@ import ceylon.dart.runtime.model {
     invariant,
     InterfaceDefinition,
     Class,
-    Interface
+    Interface,
+    unionDeduped,
+    intersectionDedupedCanonical
 }
 import ceylon.dart.runtime.model.internal {
     assertedTypeDeclaration
@@ -105,29 +107,25 @@ object jsonModelUtil {
         }
         else { // is JsonObject
             value typeParametersToJson
-                =   json.map((nameAndType) {
-                        value name -> jsonType
-                            =   nameAndType;
-
+                =   json.map((name -> jsonType) {
                         value typeParameter
                             =   declaration.findDeclaration(name.split('.'.equals));
 
                         if (!is TypeParameter typeParameter) {
-                            throw Exception("cannot find type parameter for name ``name``");
+                            throw Exception(
+                                "cannot find type parameter for name ``name``");
                         }
                         return typeParameter -> jsonType;
                     });
 
             value typeArgs
-                =   map(typeParametersToJson.map((entry) {
-                        value typeParameter -> jsonType = entry;
+                =   map(typeParametersToJson.map((typeParameter -> jsonType) {
                         assert (is JsonObject jsonType);
                         return typeParameter -> parseType(scope, jsonType);
                     }));
 
             value overrides
-                =   map(typeParametersToJson.map((entry) {
-                        value typeParameter -> jsonTypeArgument = entry;
+                =   map(typeParametersToJson.map((typeParameter -> jsonTypeArgument) {
                         assert (is JsonObject jsonTypeArgument);
                         return useSiteOverrideEntry(typeParameter, jsonTypeArgument);
                     }).coalesced);
@@ -148,9 +146,33 @@ object jsonModelUtil {
         =>  getStringOrNull(json, keyModuleVersion);
 
     shared
-    Type parseType(Scope scope, JsonObject json)
-            // TODO look at JsonPackage.getTypeFromJson. It has a lot more code?
-        =>  if (getString(json, keyName) == "$U")
+    Type parseType(Scope scope, JsonObject json) {
+        if (exists compositeType = getStringOrNull(json, keyComposite)) {
+            switch (compositeType)
+            case ("u") {
+                return unionDeduped {
+                    getArrayOrEmpty(json, keyTypes).collect((j) {
+                        assert (is JsonObject j);
+                        return parseType(scope, j);
+                    });
+                    scope.unit;
+                };
+            }
+            case ("i") {
+                return intersectionDedupedCanonical {
+                    getArrayOrEmpty(json, keyTypes).collect((j) {
+                        assert (is JsonObject j);
+                        return parseType(scope, j);
+                    });
+                    scope.unit;
+                };
+            }
+            else {
+                throw AssertionError("Unexpected composite type ``compositeType``");
+            }
+        }
+
+        return if (getString(json, keyName) == "$U")
             then scope.unit.unknownType
             else let (declaration
                     =   assertedTypeDeclaration {
@@ -164,6 +186,7 @@ object jsonModelUtil {
                             else getObjectOrArrayOrNull(json, keyTypeParams);
                         })
                 declaration.type.substitute(typeArguments, overrides);
+    }
 
     Variance parseDsVariance(JsonObject json) {
         if (is String dv = json[keyDsVariance]) {
@@ -182,13 +205,14 @@ object jsonModelUtil {
     }
 
     shared
-    TypeParameter parseTypeParameter(Scope scope, JsonObject json)
+    TypeParameter parseTypeParameter
+            (Scope scope, JsonObject json, TypeDeclaration? selfTypeDeclaration)
         =>  TypeParameter {
                 container = scope;
                 name = getString(json, keyName);
                 variance = parseDsVariance(json);
                 isTypeConstructor = false; // TODO
-
+                selfTypeDeclaration = selfTypeDeclaration;
                 defaultTypeArgumentLG
                     =   if (exists da = getObjectOrNull(json, keyDefault))
                         then typeFromJsonLG(da)
@@ -234,9 +258,18 @@ object jsonModelUtil {
                     isAnnotation = packedAnnotations.get(annotationBit);
                 };
 
+        value selfType
+            =   getStringOrNull(json, keySelfType);
+
         for (tpJson in getArrayOrEmpty(json, keyTypeParams)) {
             assert (is JsonObject tpJson);
-            declaration.addMember(parseTypeParameter(declaration, tpJson));
+            value name = getString(json, keyName);
+            declaration.addMember(parseTypeParameter {
+                scope = declaration;
+                json = tpJson;
+                selfTypeDeclaration
+                    =   (selfType?.equals(name) else false) then declaration;
+            });
         }
 
         for (classJson in getObjectOrEmpty(json, keyClasses).items) {
@@ -285,9 +318,18 @@ object jsonModelUtil {
                     isAbstract = packedAnnotations.get(abstractBit);
                 };
 
+        value selfType
+            =   getStringOrNull(json, keySelfType);
+
         for (tpJson in getArrayOrEmpty(json, keyTypeParams)) {
             assert (is JsonObject tpJson);
-            declaration.addMember(parseTypeParameter(declaration, tpJson));
+            value name = getString(json, keyName);
+            declaration.addMember(parseTypeParameter {
+                scope = declaration;
+                json = tpJson;
+                selfTypeDeclaration
+                    =   (selfType?.equals(name) else false) then declaration;
+            });
         }
 
         for (classJson in getObjectOrEmpty(json, keyClasses).items) {

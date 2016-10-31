@@ -19,8 +19,13 @@ class TypeParameter(
 
     shared actual
     Type[] satisfiedTypes
+        // using 'container' rather than 'this' for the scope to avoid circularity
+        // for self types. For 'given Other satisfies I<Other>', we want the second
+        // 'Other' to be 'I.Other', not 'I.Other.Other' which would result in a stack
+        // overflow calculating satisfied types of the type parameters 'Other' while
+        // searching for inherited declaration Other.
         =>  satisfiesTypesMemo else (satisfiesTypesMemo
-            =   satisfiedTypesLG.collect(toType(this)));
+            =   satisfiedTypesLG.collect(toType(container)));
 
     shared actual
     Type[] caseTypes

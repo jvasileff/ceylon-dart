@@ -31,6 +31,8 @@ shared String keyNamed         = "nam";
 shared String keyDynamic       = "dyn";
 shared String keyStatic        = "sta";
 
+shared String keyComposite     = "comp";
+
 shared String keyNativeDart   = "$mod-native-dart";
 
 shared String metatypeClass           = "c";
