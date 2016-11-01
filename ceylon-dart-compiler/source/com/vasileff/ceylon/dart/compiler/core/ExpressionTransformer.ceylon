@@ -1173,9 +1173,12 @@ class ExpressionTransformer(CompilationContext ctx)
     shared actual
     DartExpression transformFunctionExpression(FunctionExpression that)
         =>  let (info = functionExpressionInfo(that))
-            withBoxingNonNative {
+            withBoxing {
                 info;
                 info.typeModel;
+                // don't provide the declaration; we're interested in the Callable type
+                // (or the TypeConstructor type), not the Function's return type.
+                null;
                 // TODO type arguments, or type constructor
                 generateCallableForBE {
                     info;
