@@ -1179,12 +1179,12 @@ class ExpressionTransformer(CompilationContext ctx)
         if (!info.declarationModel.typeParameters.empty) {
             // TODO
             if (info.typeModel.typeConstructor) {
-                print("transformFunctionExpression() must return TypeConstructor of \
-                       type: ``info.typeModel``");
+                //print("transformFunctionExpression() must return TypeConstructor of \
+                //       type: ``info.typeModel``");
             }
             else {
-                print("transformFunctionExpression() must apply TypeArguments: \
-                       ``info.typeModel.typeArgumentList``");
+                //print("transformFunctionExpression() must apply TypeArguments: \
+                //       ``info.typeModel.typeArgumentList``");
             }
         }
         else {

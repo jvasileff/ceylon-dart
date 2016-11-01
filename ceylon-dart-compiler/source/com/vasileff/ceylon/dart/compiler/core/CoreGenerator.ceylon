@@ -86,8 +86,8 @@ class CoreGenerator(CompilationContext ctx) {
             // We're referencing a type constructor, but the rhs type is not a type
             // constructor. So, it must be that we need to apply type arguments.
             // TODO
-            print("withBoxing() must apply type arguments ``rhsType.typeArgumentList`` \
-                   for type constructor ``rhsDeclaration.type``");
+            //print("withBoxing() must apply type arguments ``rhsType.typeArgumentList`` \
+            //       for type constructor ``rhsDeclaration.type``");
         }
 
         return switch (rhsDeclaration)
@@ -255,8 +255,8 @@ class CoreGenerator(CompilationContext ctx) {
 
         if (rhsType.typeConstructor && !lhsType.typeConstructor) {
             // TODO
-            print("withBoxingLhsRhs() must apply type arguments \
-                   ``lhsType.typeArgumentList`` for type constructor ``rhsType``");
+            //print("withBoxingLhsRhs() must apply type arguments \
+            //       ``lhsType.typeArgumentList`` for type constructor ``rhsType``");
         }
 
         return  if (ceylonTypes.isCeylonFloat(lhsType)
