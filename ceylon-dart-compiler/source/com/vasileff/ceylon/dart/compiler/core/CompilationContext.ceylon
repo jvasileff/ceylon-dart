@@ -10,7 +10,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue,
-    TypedDeclarationModel=TypedDeclaration
+    TypedDeclarationModel=TypedDeclaration,
+    TypeModel=Type
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -81,6 +82,12 @@ class CompilationContext(unit, tokens) {
     "Boxing should calculate a denotable type. Trumps other `lhs` values."
     shared variable
     ClassOrInterfaceModel? lhsDenotableTop = null;
+
+    "When [[lhsDenotableTop]] is used, what type do we expect the rhs expression to
+     yield? This is used to ensure type arguments are applied to type constructors as
+     necessary."
+    shared variable
+    TypeModel? lhsDenotableRhsExpectedTop = null;
 
     shared variable
     TypeOrNoType? lhsTypeTop = null;

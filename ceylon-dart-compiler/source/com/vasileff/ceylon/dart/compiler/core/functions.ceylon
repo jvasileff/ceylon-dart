@@ -503,10 +503,10 @@ Boolean isSelfReference(Expression primary)
         else false;
 
 shared
-Expression ungroup(GroupedExpression primary)
-    =>  if (is GroupedExpression ge = primary.innerExpression)
-        then ungroup(ge)
-        else primary.innerExpression;
+Expression ungroup(Expression primary)
+    =>  if (is GroupedExpression primary)
+        then ungroup(primary.innerExpression)
+        else primary;
 
 shared
 SetterModel | FunctionModel | ValueModel | ClassModel? mostRefined

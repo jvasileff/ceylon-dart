@@ -741,6 +741,7 @@ class BaseGenerator(CompilationContext ctx)
                                 DartPropertyAccess {
                                     withLhsDenotable {
                                         ceylonTypes.callableDeclaration;
+                                        null;
                                         spreadInvocationGenerator;
                                     };
                                     DartSimpleIdentifier {
@@ -911,6 +912,7 @@ class BaseGenerator(CompilationContext ctx)
             dartReceiver
                 =   withLhsDenotable {
                         memberContainer;
+                        null;
                         generateReceiver;
                     };
 
@@ -945,6 +947,7 @@ class BaseGenerator(CompilationContext ctx)
             dartReceiver
                 =   withLhsDenotable {
                         memberContainer;
+                        null;
                         generateReceiver;
                     };
 
@@ -1619,6 +1622,7 @@ class BaseGenerator(CompilationContext ctx)
                             // Whatever Iterable type we come up with is surely correct.
                             withLhsDenotable {
                                 ceylonTypes.iterableDeclaration;
+                                null;
                                 () => sequenceArgument.transform {
                                     expressionTransformer;
                                 };
@@ -5496,6 +5500,7 @@ class BaseGenerator(CompilationContext ctx)
                     =   DartQualifiedInvocable {
                             withLhsDenotable {
                                 targetContainer;
+                                null;
                                 () => target.receiverExpression.transform {
                                     expressionTransformer;
                                 };

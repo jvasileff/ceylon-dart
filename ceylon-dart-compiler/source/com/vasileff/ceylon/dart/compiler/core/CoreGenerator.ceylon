@@ -78,8 +78,19 @@ class CoreGenerator(CompilationContext ctx) {
              and casting will *not* assume erased to Object (except for non-denotable
              [[rhsType]]s, as always.)"
             FunctionOrValueModel? | ClassModel | ConstructorModel rhsDeclaration,
-            DartExpression dartExpression)
-        =>  switch (rhsDeclaration)
+            DartExpression dartExpression) {
+
+        if (is FunctionOrValueModel rhsDeclaration,
+                rhsDeclaration.type.typeConstructor,
+                !rhsType.typeConstructor) {
+            // We're referencing a type constructor, but the rhs type is not a type
+            // constructor. So, it must be that we need to apply type arguments.
+            // TODO
+            print("withBoxing() must apply type arguments ``rhsType.typeArgumentList`` \
+                   for type constructor ``rhsDeclaration.type``");
+        }
+
+        return switch (rhsDeclaration)
             case (is ClassModel)
                 // Result of a constructor invocation is never native
                 withBoxingNonNative {
@@ -112,6 +123,7 @@ class CoreGenerator(CompilationContext ctx) {
                         else false;
                     dartExpression;
                 };
+    }
 
     DartExpression withBoxingConversion(
             DScope scope,
@@ -182,24 +194,54 @@ class CoreGenerator(CompilationContext ctx) {
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
-            DartExpression dartExpression)
-        =>  let (lhsType =
-                    if (exists denotable = ctx.lhsDenotableTop)
-                    then ceylonTypes.denotableType(rhsType, denotable)
-                    else ctx.assertedLhsTypeTop)
-            if (is NoType lhsType) then
-                dartExpression
-            else
-                withBoxingLhsRhs {
+            DartExpression dartExpression) {
+
+        TypeOrNoType lhsType;
+
+        if (exists denotable = ctx.lhsDenotableTop) {
+            if (exists expected = ctx.lhsDenotableRhsExpectedTop,
+                    !expected.typeConstructor,
+                    rhsType.typeConstructor) {
+                // add seemingly redundant boxing round to apply the type arguments to
+                // the type constructor
+                return
+                withBoxing {
                     scope;
-                    lhsType;
-                    ctx.assertedLhsErasedToNativeTop;
-                    ctx.assertedLhsErasedToObjectTop;
-                    rhsType;
-                    rhsErasedToNative;
-                    rhsErasedToObject;
-                    dartExpression;
+                    expected;
+                    null;
+                    withLhs {
+                        expected;
+                        null;
+                        () => withBoxing {
+                            scope;
+                            rhsType;
+                            null;
+                            dartExpression;
+                        };
+                    };
                 };
+            }
+            else {
+                lhsType = ceylonTypes.denotableType(rhsType, denotable);
+            }
+        }
+        else {
+            lhsType = ctx.assertedLhsTypeTop;
+        }
+
+        return if (is NoType lhsType)
+            then dartExpression
+            else withBoxingLhsRhs {
+                scope;
+                lhsType;
+                ctx.assertedLhsErasedToNativeTop;
+                ctx.assertedLhsErasedToObjectTop;
+                rhsType;
+                rhsErasedToNative;
+                rhsErasedToObject;
+                dartExpression;
+            };
+    }
 
     DartExpression withBoxingLhsRhs(
             DScope scope,
@@ -209,8 +251,15 @@ class CoreGenerator(CompilationContext ctx) {
             TypeModel rhsType,
             Boolean rhsErasedToNative,
             Boolean rhsErasedToObject,
-            DartExpression dartExpression)
-        =>  if (ceylonTypes.isCeylonFloat(lhsType)
+            DartExpression dartExpression) {
+
+        if (rhsType.typeConstructor && !lhsType.typeConstructor) {
+            // TODO
+            print("withBoxingLhsRhs() must apply type arguments \
+                   ``lhsType.typeArgumentList`` for type constructor ``rhsType``");
+        }
+
+        return  if (ceylonTypes.isCeylonFloat(lhsType)
                 && ceylonTypes.isCeylonInteger(rhsType)) then
                 withLhsCustom  {
                     lhsType;
@@ -238,6 +287,7 @@ class CoreGenerator(CompilationContext ctx) {
                             rhsType, rhsErasedToObject,
                             // if the lhsActual is native, so must be the rhsActual
                             lhsErasedToNative, dartExpression);
+    }
 
     DartExpression integerToFloat(
             DScope scope,
@@ -411,8 +461,12 @@ class CoreGenerator(CompilationContext ctx) {
     shared
     Result withLhsDenotable<Result>(
             ClassOrInterfaceModel lhsClassOrInterface,
+            "The expected return type of `fun()`, which must be provided if the eventual
+             rhs type could possibly be a type constructor. The `expectedRhsType` will
+             be used for its type arguments."
+            TypeModel? expectedRhsType,
             Result fun())
-        =>  withLhsValues(null, false, false, fun, lhsClassOrInterface);
+        =>  withLhsValues(null, false, false, fun, lhsClassOrInterface, expectedRhsType);
 
     "Erase to native if possible"
     shared
@@ -448,16 +502,19 @@ class CoreGenerator(CompilationContext ctx) {
             Boolean? lhsErasedToNative,
             Boolean? lhsErasedToObject,
             Result fun(),
-            ClassOrInterfaceModel? lhsDenotable = null) {
+            ClassOrInterfaceModel? lhsDenotable = null,
+            TypeModel? lhsDenotableRhsExpected = null) {
         value saveLhsType = ctx.lhsTypeTop;
         value saveLhsErasedToNative = ctx.lhsErasedToNativeTop;
         value saveLhsErasedToObject = ctx.lhsErasedToObjectTop;
         value saveLhsDenotable = ctx.lhsDenotableTop;
+        value saveLhsDenotableRhsExpected = ctx.lhsDenotableRhsExpectedTop;
         try {
             ctx.lhsTypeTop = lhsType;
             ctx.lhsErasedToNativeTop = lhsErasedToNative;
             ctx.lhsErasedToObjectTop = lhsErasedToObject;
             ctx.lhsDenotableTop = lhsDenotable;
+            ctx.lhsDenotableRhsExpectedTop = lhsDenotableRhsExpected;
             return fun();
         }
         finally {
@@ -465,6 +522,7 @@ class CoreGenerator(CompilationContext ctx) {
             ctx.lhsErasedToNativeTop = saveLhsErasedToNative;
             ctx.lhsErasedToObjectTop = saveLhsErasedToObject;
             ctx.lhsDenotableTop = saveLhsDenotable;
+            ctx.lhsDenotableRhsExpectedTop = saveLhsDenotableRhsExpected;
         }
     }
 

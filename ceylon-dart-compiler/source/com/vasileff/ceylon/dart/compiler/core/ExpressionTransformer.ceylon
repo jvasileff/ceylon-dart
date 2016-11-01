@@ -747,6 +747,8 @@ class ExpressionTransformer(CompilationContext ctx)
                         DartPropertyAccess {
                             withLhsDenotable {
                                 ceylonTypes.callableDeclaration;
+                                // work around ceylon/ceylon#6671
+                                expressionInfo(ungroup(that.invoked)).typeModel;
                                 () => that.invoked.transform(this);
                             };
                             DartSimpleIdentifier {
@@ -1171,22 +1173,39 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    DartExpression transformFunctionExpression(FunctionExpression that)
-        =>  let (info = functionExpressionInfo(that))
-            withBoxing {
+    DartExpression transformFunctionExpression(FunctionExpression that) {
+        value info = functionExpressionInfo(that);
+
+        if (!info.declarationModel.typeParameters.empty) {
+            // TODO
+            if (info.typeModel.typeConstructor) {
+                print("transformFunctionExpression() must return TypeConstructor of \
+                       type: ``info.typeModel``");
+            }
+            else {
+                print("transformFunctionExpression() must apply TypeArguments: \
+                       ``info.typeModel.typeArgumentList``");
+            }
+        }
+        else {
+            assert(!info.typeModel.typeConstructor);
+        }
+
+        return withBoxing {
+            info;
+            info.typeModel;
+            // don't provide the declaration; we're interested in the Callable type
+            // (or the TypeConstructor type), not the Function's return type.
+            null;
+            // TODO type arguments, or type constructor
+            generateCallableForBE {
                 info;
-                info.typeModel;
-                // don't provide the declaration; we're interested in the Callable type
-                // (or the TypeConstructor type), not the Function's return type.
-                null;
-                // TODO type arguments, or type constructor
-                generateCallableForBE {
-                    info;
-                    info.declarationModel;
-                    [];
-                    generateFunctionExpression(that);
-                };
+                info.declarationModel;
+                [];
+                generateFunctionExpression(that);
             };
+        };
+    }
 
     DartExpression generateBooleanExpression(
             DScope scope,
@@ -1629,6 +1648,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 withLhsDenotable {
                     // this withLhs wraps transformations of both operands
                     ceylonTypes.identifiableDeclaration;
+                    null;
                     () => DartFunctionExpressionInvocation {
                         DartPrefixedIdentifier {
                             DartSimpleIdentifier("$dart$core");
