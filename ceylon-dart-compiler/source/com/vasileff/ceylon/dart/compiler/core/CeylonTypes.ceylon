@@ -607,6 +607,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.getCallableReturnType(callableType);
 
     shared
+    Type? getCallableTuple(Type callableType)
+        =>  unit.getCallableTuple(callableType) else null;
+
+    shared
     Boolean equalDeclarations(Declaration first, Declaration second)
         =>  ModelUtil.equal(first, second);
 

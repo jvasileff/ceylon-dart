@@ -305,6 +305,7 @@ class CoreGenerator(CompilationContext ctx) {
                     expression;
                 };
                 memberName = "nearestFloat";
+                typeArguments = [];
                 arguments = [];
             };
 

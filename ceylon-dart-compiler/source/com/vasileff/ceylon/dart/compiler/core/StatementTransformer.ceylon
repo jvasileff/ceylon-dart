@@ -758,6 +758,7 @@ class StatementTransformer(CompilationContext ctx)
                     that.forClause.iterator.iterated;
                     "iterator";
                     [];
+                    [];
                 };
 
         // Simplify iteratorType to a denotable supertype in case it
@@ -784,6 +785,7 @@ class StatementTransformer(CompilationContext ctx)
                         dartIteratorVariable;
                     };
                     "next";
+                    [];
                     [];
                 };
 
@@ -1423,6 +1425,7 @@ class StatementTransformer(CompilationContext ctx)
                                 };
                                 "obtain";
                                 [];
+                                [];
                             };
                         };
                     }].coalesced.sequence();
@@ -1469,6 +1472,7 @@ class StatementTransformer(CompilationContext ctx)
                                 if (isObtainable)
                                     then "release"
                                     else "destroy";
+                                [];
                                 [() => withBoxing {
                                     rInfo;
                                     ceylonTypes.throwableType;
@@ -1513,6 +1517,7 @@ class StatementTransformer(CompilationContext ctx)
                                                     exceptionVariable;
                                                 };
                                                 "addSuppressed";
+                                                [];
                                                 [() => withBoxing {
                                                     rInfo;
                                                     ceylonTypes.throwableType;

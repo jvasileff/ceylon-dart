@@ -51,7 +51,8 @@ import ceylon.collection {
 }
 import ceylon.interop.java {
     CeylonList,
-    CeylonIterable
+    CeylonIterable,
+    JavaList
 }
 
 import com.redhat.ceylon.model.typechecker.model {
@@ -71,6 +72,9 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeParameterModel=TypeParameter,
     SiteVariance,
     GenericModel=Generic
+}
+import com.redhat.ceylon.model.typechecker.util {
+    TypePrinter
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -170,9 +174,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 
 import java.util {
     JList=List
-}
-import com.redhat.ceylon.model.typechecker.util {
-    TypePrinter
 }
 
 shared abstract
@@ -607,6 +608,7 @@ class BaseGenerator(CompilationContext ctx)
              receiver is a `super` reference."
             DartExpression()? generateReceiver,
             FunctionOrValueModel | ClassModel | ConstructorModel memberDeclaration,
+            [TypeModel*] typeArguments = [],
             [List<TypeModel>, [DartExpression()*]
                         | [Expression*]
                         | Arguments]? signatureAndArguments = null,
@@ -655,39 +657,38 @@ class BaseGenerator(CompilationContext ctx)
             value containerType
                 =   ceylonTypes.getIteratedType(receiverType);
 
+            "The member type, which will be used to determine type arguments for `map` or
+             `spread` below, and also used to help generate the static method reference."
+            value memberType
+                =   switch (memberDeclaration)
+                    case (is ClassModel)
+                        memberDeclaration.appliedType(
+                                containerType, JavaList(typeArguments))
+                    case (is FunctionOrValueModel)
+                        memberDeclaration.appliedTypedReference(
+                                containerType, JavaList(typeArguments));
+
             "The Callable for the memberDeclaration, which will be passed to `map` or
              `spread`."
             value callableArgument
                 =   () => generateCallableForStaticMemberReference {
                         scope;
                         containerType = containerType;
-                        // NOTE We are completely cheating by providing "null" for the
-                        //      type arguments of a potentially generic function. Really,
-                        //      generateInvocation() needs to take a list of type
-                        //      arguments when we reifiy. Note: the type arguments are
-                        //      available from
-                        //      qualifiedExpressionInfo.target.typeArguments
-                        memberType
-                            =   switch (memberDeclaration)
-                                case (is ClassModel)
-                                    memberDeclaration.appliedType(
-                                            containerType, null).fullType
-                                case (is FunctionOrValueModel)
-                                    memberDeclaration.appliedTypedReference(
-                                            containerType, null).fullType;
+                        memberType = memberType.fullType;
                         memberDeclaration;
+                        typeArguments = typeArguments;
                     };
 
             switch (memberDeclaration)
             case (is ValueModel) {
                 // spread attribute operator
-
                 value [mapInvocationReturnType, _, mapInvocationGenerator]
                     =   generateInvocationDetailsSynthetic {
                             scope;
                             receiverType;
                             generateReceiver;
                             "map";
+                            [memberType.type];
                             [callableArgument];
                         };
 
@@ -698,10 +699,14 @@ class BaseGenerator(CompilationContext ctx)
                     mapInvocationGenerator;
                     "sequence";
                     [];
+                    [];
                 };
             }
             case (is FunctionModel | ClassModel) {
                 // spread method operator
+
+                assert (exists argsType
+                    =   ceylonTypes.getCallableTuple(memberType.fullType));
 
                 // Invocation details for Iterable.spread()
                 value [spreadInvocationReturnType, __, spreadInvocationGenerator]
@@ -714,13 +719,15 @@ class BaseGenerator(CompilationContext ctx)
                             // something like '$r')
                              generateReceiver;
                             "spread";
+                            [memberType.type, argsType];
                             [callableArgument];
                         };
 
                 // Now, invoke the spread result with the provided arguments, and call
                 // sequence() on that.
 
-                value [argsSetup, argumentList, hasSpread] = standardArgs(true);
+                value [argsSetup, argumentList, hasSpread]
+                    =   standardArgs(true);
 
                 return
                 createExpressionEvaluationWithSetup {
@@ -755,6 +762,7 @@ class BaseGenerator(CompilationContext ctx)
                             };
                         };
                         "sequence";
+                        [];
                         [];
                     };
                 };
@@ -1127,6 +1135,10 @@ class BaseGenerator(CompilationContext ctx)
             }
         }
 
+        value dartTypeArguments
+            =   typeArguments.collect((typeModel)
+                =>  generateTypeDescriptor(scope, typeModel));
+
         value invocation
             =   if (safeMemberOperator) then
                     // We're delaying argsSetup evaluation against the spec. We're also
@@ -1144,7 +1156,10 @@ class BaseGenerator(CompilationContext ctx)
                                     argsSetupAndExpressions[0];
                                     dartFunctionOrValue.expressionForInvocation {
                                         DartSimpleIdentifier("$r");
-                                        argsSetupAndExpressions[1];
+                                        concatenate {
+                                            dartTypeArguments,
+                                            argsSetupAndExpressions[1]
+                                        };
                                         argsSetupAndExpressions[2];
                                     };
                                 };
@@ -1154,7 +1169,10 @@ class BaseGenerator(CompilationContext ctx)
                         argsSetupAndExpressions[0];
                         dartFunctionOrValue.expressionForInvocation {
                             dartReceiver;
-                            argsSetupAndExpressions[1];
+                            concatenate {
+                                dartTypeArguments,
+                                argsSetupAndExpressions[1]
+                            };
                             argsSetupAndExpressions[2];
                         };
                     };
@@ -1180,9 +1198,10 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
+            [TypeModel*] typeArguments,
             [Expression*] | [DartExpression()*] arguments)
         =>  generateInvocationDetailsFromName(
-                scope, receiver, memberName, arguments)[2]();
+                scope, receiver, memberName, typeArguments, arguments)[2]();
 
     """Returns a Tuple holding:
 
@@ -1202,6 +1221,7 @@ class BaseGenerator(CompilationContext ctx)
             DScope scope,
             Expression receiver,
             String memberName,
+            [TypeModel*] typeArguments,
             [Expression*] | [DartExpression()*] arguments) {
 
         return
@@ -1210,6 +1230,7 @@ class BaseGenerator(CompilationContext ctx)
             expressionInfo(receiver).typeModel;
             () => receiver.transform(expressionTransformer);
             memberName;
+            typeArguments;
             arguments;
         };
     }
@@ -1223,12 +1244,14 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
+            [TypeModel*] typeArguments,
             [Expression*] | [DartExpression()*] arguments)
         =>  generateInvocationDetailsSynthetic {
                 scope;
                 receiverType;
                 generateReceiver;
                 memberName;
+                typeArguments;
                 arguments;
             }[2]();
 
@@ -1242,6 +1265,7 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel receiverType,
             DartExpression generateReceiver(),
             String memberName,
+            [TypeModel*] typeArguments,
             [Expression*] | [DartExpression()*] arguments) {
 
         // 1. Get a TypedDeclaration for the member
@@ -1267,21 +1291,27 @@ class BaseGenerator(CompilationContext ctx)
         // since in this case, the realzation of `Ranged.spanFrom()` is `[Element*]`
         // rather than `List<Element>`.
 
-        value resolvedReceiver = receiverType.resolveAliases();
+        value resolvedReceiver
+            =   receiverType.resolveAliases();
 
         assert (is FunctionOrValueModel memberDeclaration
             =   resolvedReceiver.declaration.getMember(memberName, null, false));
 
-        value typedReference = resolvedReceiver.getTypedMember(memberDeclaration, null);
+        // applying type arguments shouldn't be necessary (generic types are erased to
+        // object), so we won't bother.
+        value typedReference
+            =   resolvedReceiver.getTypedMember(memberDeclaration, null);
+            //=   resolvedReceiver.getTypedMember(
+            //        memberDeclaration, JavaList(typeArguments));
 
-        value signature = CeylonList {
-            ctx.unit.getCallableArgumentTypes(typedReference.fullType);
-        };
+        value signature
+            =   [*ctx.unit.getCallableArgumentTypes(typedReference.fullType)];
 
-        value rhsType = typedReference.type;
+        value rhsType
+            =   typedReference.type;
 
-        value rhsDeclaration =
-                if (is FunctionModel memberDeclaration,
+        value rhsDeclaration
+            =   if (is FunctionModel memberDeclaration,
                     memberDeclaration.parameterLists.size() > 1)
                 // The function actually returns a Callable, not the
                 // ultimate return type advertised by the declaration.
@@ -1297,6 +1327,7 @@ class BaseGenerator(CompilationContext ctx)
                 receiverType;
                 generateReceiver;
                 memberDeclaration;
+                typeArguments;
                 (arguments nonempty) then
                     [signature, arguments];
             }
@@ -3119,6 +3150,7 @@ class BaseGenerator(CompilationContext ctx)
                             // we know it's an Entry
                             "key";
                             [];
+                            [];
                         };
                     },
                     // variables for the item
@@ -3139,6 +3171,7 @@ class BaseGenerator(CompilationContext ctx)
                             };
                             // we know it's an Entry
                             "item";
+                            [];
                             [];
                         };
                     }
@@ -3260,6 +3293,7 @@ class BaseGenerator(CompilationContext ctx)
                             };
                             // we know it's at least a Sequential
                             "getFromFirst";
+                            [];
                             [() => withBoxing {
                                 pInfo;
                                 ceylonTypes.integerType;
@@ -3308,6 +3342,7 @@ class BaseGenerator(CompilationContext ctx)
                                             tempVariableIdentifier;
                                         };
                                         "spanFrom";
+                                        [];
                                         [() => withBoxing {
                                             variableInfo;
                                             ceylonTypes.integerType;
@@ -3871,6 +3906,7 @@ class BaseGenerator(CompilationContext ctx)
                                     switchedVariable;
                                 };
                                 "equals";
+                                [];
                                 [expression];
                             };
 
@@ -4023,6 +4059,9 @@ class BaseGenerator(CompilationContext ctx)
              eagerly evaluated to avoid re-evaluation each time the Callable is invoked."
             Boolean eagerlyEvaluateReceiver,
             FunctionModel | ClassModel | ConstructorModel memberDeclaration,
+            "The type arguments. For type constructors, (for now), include an 'unknown'
+             type for each required parameter."
+            [TypeModel*] typeArguments,
             TypeModel callableType,
             AnyMemberOperator? memberOperator = null) {
 
@@ -4172,6 +4211,7 @@ class BaseGenerator(CompilationContext ctx)
                                         };
                                     });
                                 memberDeclaration;
+                                typeArguments;
                                 [signature, innerArguments];
                                 memberOperator;
                             };
@@ -4226,7 +4266,8 @@ class BaseGenerator(CompilationContext ctx)
             TypeModel memberType,
             ValueModel | FunctionModel | ClassModel | ConstructorModel memberDeclaration,
             "The MemberOperator. Null safe and spread are not supported."
-            MemberOperator memberOperator = MemberOperator()) {
+            MemberOperator memberOperator = MemberOperator(),
+            [TypeModel*] typeArguments = []) {
 
         switch (memberDeclaration)
         case (is ValueModel) {
@@ -4293,6 +4334,7 @@ class BaseGenerator(CompilationContext ctx)
                                 };
                         false;
                         memberDeclaration;
+                        typeArguments;
                         memberType;
                         memberOperator;
                     };
@@ -4861,6 +4903,7 @@ class BaseGenerator(CompilationContext ctx)
                                     };
                                     "size";
                                     [];
+                                    [];
                                 };
                             };
                         }];
@@ -4895,6 +4938,7 @@ class BaseGenerator(CompilationContext ctx)
                                 tmpIdentifierSequence;
                             };
                             "spanFrom";
+                            [];
                             [() => withBoxing {
                                 scope;
                                 ceylonTypes.integerType;
@@ -4943,6 +4987,7 @@ class BaseGenerator(CompilationContext ctx)
                                     tmpIdentifierSequence;
                                 };
                                 "getFromFirst";
+                                [];
                                 [() => withBoxing {
                                     scope;
                                     ceylonTypes.integerType;
@@ -5638,6 +5683,7 @@ class BaseGenerator(CompilationContext ctx)
                     that.argument;
                     "sequence";
                     [];
+                    [];
                 };
 
     "Generate a Dart field declaration for the Ceylon function or value member. This
@@ -5788,6 +5834,7 @@ class BaseGenerator(CompilationContext ctx)
                 comprehensionType;
                 () => that.transform(expressionTransformer);
                 "sequence";
+                [];
                 [];
             };
 

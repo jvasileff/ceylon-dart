@@ -342,7 +342,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
                     value typeArguments
                         =   if (!isDartNative(targetDeclaration)
-                                && !targetDeclaration.container is ClassOrInterfaceModel
                                 && !targetDeclaration.anonymous)
                             then [*typedReference.typeArgumentList]
                             else [];
@@ -477,6 +476,16 @@ class ExpressionTransformer(CompilationContext ctx)
                     then dartTypes.syntheticValueForValueConstructor(memberDeclaration)
                     else memberDeclaration;
 
+            // TODO future support for the return type of the callable being a type
+            //      constructor? ceylon/ceylon#6677
+
+            value typeArguments
+                =   if (memberDeclaration is FunctionModel,
+                        !isDartNative(memberDeclaration)
+                        && !memberDeclaration.anonymous)
+                    then [*targetForExpressionInfo(info).typeArgumentList]
+                    else [];
+
             // Return a `Callable` that takes a `containerType` and returns a
             // `Callable` that can be used to invoke the `memberDeclaration`
             return generateCallableForStaticMemberReference {
@@ -485,6 +494,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info.target.fullType;
                 deSugaredTarget;
                 memberOperator;
+                typeArguments = typeArguments;
             };
         }
 
@@ -501,6 +511,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     superType;
                     null;
                     memberDeclaration;
+                    typeArguments = [];
                     null;
                     that.memberOperator;
                 };
@@ -513,6 +524,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     receiverInfo.typeModel;
                     () => receiverInfo.node.transform(this);
                     memberDeclaration;
+                    typeArguments = [];
                     null;
                     that.memberOperator;
                 };
@@ -531,12 +543,18 @@ class ExpressionTransformer(CompilationContext ctx)
                     dartTypes.syntheticValueForValueConstructor {
                         memberDeclaration;
                     };
+                    typeArguments = []; // TODO type arguments for constructors
                     null;
                     that.memberOperator;
                 };
             }
 
-            // Return a new Callable.
+            value typeArguments
+                =   if (memberDeclaration is FunctionModel,
+                        !isDartNative(memberDeclaration)
+                        && !memberDeclaration.anonymous)
+                    then [*targetForExpressionInfo(info).typeArgumentList]
+                    else [];
 
             // QualifiedExpression with a `super` receiver
             if (exists superType
@@ -548,6 +566,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     null;
                     false;
                     memberDeclaration;
+                    typeArguments;
                     info.typeModel;
                     that.memberOperator;
                 };
@@ -560,6 +579,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 () => receiverInfo.node.transform(this);
                 !isConstant(receiverInfo.node);
                 memberDeclaration;
+                typeArguments;
                 info.typeModel;
                 that.memberOperator;
             };
@@ -621,7 +641,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 if (!ceylonTypes.isCeylonNothing(info.typeModel)) {
                     // e could be a primitive that we don't want to box, so don't
                     // use generateInvocationSynthetic() below if we don't have to.
-                    return generateInvocationFromName(info, e, "string", []);
+                    return generateInvocationFromName(info, e, "string", [], []);
                 }
                 else {
                     // Expressions like "``nothing``" are allowed, but Nothing doesn't
@@ -639,6 +659,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             e.transform(this);
                         };
                         "string";
+                        [];
                         [];
                     };
                 }
@@ -780,7 +801,18 @@ class ExpressionTransformer(CompilationContext ctx)
 
             "If the declaration is FunctionModel, the expression must be a base
              expression or a qualified expression"
-            assert (is QualifiedExpression|BaseExpression invoked = that.invoked);
+            assert (is QualifiedExpression | BaseExpression invoked = that.invoked);
+
+            // find type arguments
+            assert (is QualifiedExpressionInfo | BaseExpressionInfo invokedInfo);
+
+            assert (is TypedReference typedReference
+                =   targetForExpressionInfo(invokedInfo));
+
+            value typeArguments
+                =   if (!isDartNative(invokedDeclaration))
+                    then [*typedReference.typeArgumentList]
+                    else [];
 
             // QualifiedExpression with a `super` receiver
             if (is QualifiedExpression invoked,
@@ -793,6 +825,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     superType;
                     null;
                     invokedDeclaration;
+                    typeArguments;
                     signatureAndArguments = [
                         signature,
                         that.arguments
@@ -830,6 +863,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     receiverInfo.typeModel;
                     () => receiverInfo.node.transform(this);
                     invokedDeclaration;
+                    typeArguments;
                     signatureAndArguments = [
                         signature,
                         that.arguments
@@ -867,18 +901,9 @@ class ExpressionTransformer(CompilationContext ctx)
                     };
                 }
 
-                assert (is BaseExpressionInfo | QualifiedExpressionInfo invokedInfo);
-
-                assert (is TypedReference typedReference
-                    =   targetForExpressionInfo(invokedInfo));
-
-                value typeArguments
-                    =   if (!isDartNative(invokedDeclaration)
-                            && !invokedDeclaration.container is ClassOrInterfaceModel
-                            && !invokedDeclaration.anonymous)
-                        then [ for (typeModel in typedReference.typeArgumentList)
-                               generateTypeDescriptor(info, typeModel) ]
-                        else [];
+                value dartTypeArguments
+                    =   typeArguments.collect((typeModel)
+                        =>  generateTypeDescriptor(info, typeModel));
 
                 return
                 createExpressionEvaluationWithSetup {
@@ -895,7 +920,10 @@ class ExpressionTransformer(CompilationContext ctx)
                             info;
                             invokedDeclaration;
                         }.expressionForInvocation {
-                            typeArguments.append(arguments);
+                            concatenate {
+                                dartTypeArguments,
+                                arguments
+                            };
                             hasSpread;
                         };
                     };
@@ -1022,6 +1050,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     () => argument.transform(expressionTransformer);
                     !isConstant(argument);
                     invokedDeclaration;
+                    []; // TODO type arguments for constructors
                     info.typeModel;
                     null;
                 };
@@ -1037,6 +1066,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     superType;
                     null;
                     invokedDeclaration;
+                    typeArguments = []; // TODO type arguments for constructors
                     signatureAndArguments = [
                         signature,
                         that.arguments
@@ -1053,6 +1083,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 receiverInfo.typeModel;
                 () => classInvoked.receiverExpression.transform(expressionTransformer);
                 invokedDeclaration;
+                typeArguments = []; // TODO type arguments for constructors
                 signatureAndArguments = [
                     signature,
                     that.arguments
@@ -1104,6 +1135,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             dScope(that);
                             that.primary;
                             "getFromFirst";
+                            [];
                             [subscript.key];
                         };
                     };
@@ -1115,6 +1147,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     dScope(that);
                     that.primary;
                     "get";
+                    [];
                     [subscript.key];
                 };
             }
@@ -1125,6 +1158,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 dScope(that);
                 that.primary;
                 "span";
+                [];
                 [subscript.from, subscript.to];
             };
         }
@@ -1134,6 +1168,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 dScope(that);
                 that.primary;
                 "measure";
+                [];
                 [subscript.from, subscript.length];
             };
         }
@@ -1143,6 +1178,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 dScope(that);
                 that.primary;
                 "spanFrom";
+                [];
                 [subscript.from];
             };
         }
@@ -1152,6 +1188,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 dScope(that);
                 that.primary;
                 "spanTo";
+                [];
                 [subscript.to];
             };
         }
@@ -1308,6 +1345,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 that.operand;
                 "negated";
                 [];
+                [];
             };
 
     shared actual
@@ -1333,6 +1371,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info;
                 that.operand;
                 method;
+                [];
                 [];
             };
         };
@@ -1363,6 +1402,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     that.operand;
                     method;
+                    [];
                     [];
                 };
             };
@@ -1407,6 +1447,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         that.operand;
                         method;
                         [];
+                        [];
                     };
                 };
             },
@@ -1433,6 +1474,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 nodeInfo(that);
                 that.leftOperand;
                 methodName;
+                [];
                 [that.rightOperand];
             };
 
@@ -1454,6 +1496,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     ceylonTypes.floatType;
                     () => that.leftOperand.transform(expressionTransformer);
                     methodName;
+                    [];
                     [that.rightOperand];
                 }
             else
@@ -1507,6 +1550,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info;
                 that.rightOperand;
                 "scale";
+                [];
                 [() => withBoxingNonNative {
                     leftOperandInfo;
                     leftOperandInfo.typeModel;
@@ -1601,6 +1645,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 // Note: the *right* operand is the receiver
                 that.rightOperand;
                 "contains";
+                [];
                 [that.leftOperand];
             };
 
@@ -1789,6 +1834,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     info;
                     leftOperand.primary;
                     methodName;
+                    [];
                     [subscript.key, that.rightOperand];
                 };
             }
@@ -1821,6 +1867,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 info;
                                 leftOperand.primary;
                                 methodName;
+                                [];
                                 [() => subscript.key.transform(expressionTransformer),
                                  () => withBoxingNonNative {
                                     info;
@@ -1943,6 +1990,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         info;
                         that.operand;
                         lowerMethodName;
+                        [];
                         [that.lowerBound.endpoint];
                     };
                     "&&";
@@ -1950,6 +1998,7 @@ class ExpressionTransformer(CompilationContext ctx)
                         info;
                         that.operand;
                         upperMethodName;
+                        [];
                         [that.upperBound.endpoint];
                     };
                 };
@@ -2159,6 +2208,7 @@ class ExpressionTransformer(CompilationContext ctx)
                             clause.iterator.iterated;
                             "iterator";
                             [];
+                            [];
                         };
 
                 "A denotable supertype of the iterator type in case the iterator type
@@ -2183,6 +2233,7 @@ class ExpressionTransformer(CompilationContext ctx)
                                 iteratorVariable;
                             };
                             "next";
+                            [];
                             [];
                         };
 

@@ -369,7 +369,7 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                 };
 
                         memberName = "sequence";
-
+                        typeArguments = [];
                         arguments = [];
                     };
                 }];
