@@ -341,11 +341,11 @@ class ExpressionTransformer(CompilationContext ctx)
                         =   targetForExpressionInfo(info));
 
                     value typeArguments
-                        =   if (isDartNative(targetDeclaration)
-                                || !targetDeclaration.toplevel
-                                && !targetDeclaration.static)
-                            then []
-                            else [*typedReference.typeArgumentList];
+                        =   if (!isDartNative(targetDeclaration)
+                                && !targetDeclaration.container is ClassOrInterfaceModel
+                                && !targetDeclaration.anonymous)
+                            then [*typedReference.typeArgumentList]
+                            else [];
 
                     // A newly created Callable, which is not erased
                     return withBoxingNonNative {
@@ -873,14 +873,12 @@ class ExpressionTransformer(CompilationContext ctx)
                     =   targetForExpressionInfo(invokedInfo));
 
                 value typeArguments
-                    =   if (isDartNative(invokedDeclaration)
-                            || !invokedDeclaration.toplevel
-                            && !invokedDeclaration.static)
-                        then []
-                        else {*invokedDeclaration.typeParameters}
-                            .map(typedReference.typeArguments.get)
-                            .collect((typeModel)
-                                =>  generateTypeDescriptor(info, typeModel));
+                    =   if (!isDartNative(invokedDeclaration)
+                            && !invokedDeclaration.container is ClassOrInterfaceModel
+                            && !invokedDeclaration.anonymous)
+                        then [ for (typeModel in typedReference.typeArgumentList)
+                               generateTypeDescriptor(info, typeModel) ]
+                        else [];
 
                 return
                 createExpressionEvaluationWithSetup {

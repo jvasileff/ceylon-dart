@@ -3446,7 +3446,8 @@ class BaseGenerator(CompilationContext ctx)
         value isVoid = functionModel.declaredVoid;
 
         value typeParameters
-            =   if (functionModel.toplevel && !isDartNative(functionModel))
+            =   if (!functionModel.container is ClassOrInterfaceModel
+                    && !functionModel.anonymous)
                 then generateTypeParameters(scope, functionModel)
                 else [];
 
