@@ -733,9 +733,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                     generateFormalParameterList {
                         !dartElementType is DartOperator; false;
                         info;
-                        CeylonIterable {
-                            declarationModel.firstParameterList.parameters;
-                        };
+                        parameters
+                            =   CeylonIterable {
+                                    declarationModel.firstParameterList.parameters;
+                                };
+                        prependParameters
+                            =   generateTypeParameters(info, declarationModel);
                     }
                 else if (is SetterModel declarationModel) then
                     DartFormalParameterList {

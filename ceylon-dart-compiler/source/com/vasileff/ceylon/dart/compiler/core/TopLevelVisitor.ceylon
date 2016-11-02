@@ -50,7 +50,8 @@ import com.redhat.ceylon.model.typechecker.model {
     SetterModel=Setter,
     FunctionModel=Function,
     ValueModel=Value,
-    FunctionOrValueModel=FunctionOrValue
+    FunctionOrValueModel=FunctionOrValue,
+    GenericModel=Generic
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -562,7 +563,6 @@ class TopLevelVisitor(CompilationContext ctx)
                 .flatMap((model) => generateBridgesToSyntheticField(scope, model))
                 .sequence();
 
-
         "All shared callable parameters in the class initializer parameter list."
         value sharedCallableParameterInfos
             =   (parameters?.parameters else [])
@@ -802,9 +802,11 @@ class TopLevelVisitor(CompilationContext ctx)
                     .filter(not(nativeDart))
                     .flatMap(replaceClassWithSharedConstructors);
 
-        assert (is ClassModel superClass = classModel.extendedType.declaration);
+        assert (is ClassModel superClass
+            =   classModel.extendedType.declaration);
 
-        value superClassBridged = set(allDeclarationsToBridge(superClass));
+        value superClassBridged
+            =   set(allDeclarationsToBridge(superClass));
 
         value declarationsToBridge
             =   allDeclarationsToBridge(classModel)
@@ -1998,6 +2000,14 @@ class TopLevelVisitor(CompilationContext ctx)
         value isSetter
             =   declaration is SetterModel;
 
+        value dartTypeParameters
+            =   if (is GenericModel declaration)
+                then generateTypeParameters {
+                    scope;
+                    declaration;
+                }
+                else [];
+
         value invocation
             =   DartMethodInvocation {
                     dartTypes.dartIdentifierForClassOrInterface {
@@ -2008,12 +2018,15 @@ class TopLevelVisitor(CompilationContext ctx)
                         declaration;
                     };
                     DartArgumentList {
-                        [DartSimpleIdentifier("this"),
-                         *parameterModels.collect { (parameterModel) =>
-                            DartSimpleIdentifier {
-                                dartTypes.getName(parameterModel);
-                            };
-                        }];
+                        concatenate {
+                            [DartSimpleIdentifier("this")],
+                            dartTypeParameters.map((dtp) => dtp.identifier),
+                            parameterModels.collect { (parameterModel) =>
+                                DartSimpleIdentifier {
+                                    dartTypes.getName(parameterModel);
+                                };
+                            }
+                        };
                     };
                 };
 
@@ -2033,7 +2046,8 @@ class TopLevelVisitor(CompilationContext ctx)
                     !dartElementType is DartOperator && !isSetter;
                     false;
                     scope;
-                    parameterModels;
+                    parameters = parameterModels;
+                    prependParameters = dartTypeParameters;
                 };
             if (isSetter) then
                 // Dart doesn't like expression bodies for void functions with non-void

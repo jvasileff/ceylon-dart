@@ -3446,8 +3446,7 @@ class BaseGenerator(CompilationContext ctx)
         value isVoid = functionModel.declaredVoid;
 
         value typeParameters
-            =   if (!functionModel.container is ClassOrInterfaceModel
-                    && !functionModel.anonymous)
+            =   if (!functionModel.anonymous)
                 then generateTypeParameters(scope, functionModel)
                 else [];
 
