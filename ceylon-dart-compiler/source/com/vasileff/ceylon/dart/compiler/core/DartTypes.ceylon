@@ -141,7 +141,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     "Return true if [[target]] is captured by [[by]] or one of its supertypes."
     Boolean capturedBySelfOrSupertype
-            (FunctionOrValueModel target, ClassOrInterfaceModel by)
+            (FunctionOrValueModel | TypeParameterModel target, ClassOrInterfaceModel by)
         =>  supertypeDeclarations(by).any((d)
             =>  ctx.captures.contains(d->target));
 
@@ -210,7 +210,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     {ClassOrInterfaceModel+} ancestorClassOrInterfacesToCapturerOfDeclaration(
             ClassModel|InterfaceModel scope,
-            FunctionOrValueModel capturedDeclaration)
+            FunctionOrValueModel | TypeParameterModel capturedDeclaration)
         =>  // up to and including the capturer of capturedDeclaration
             takeUntil(ancestorClassOrInterfaces(scope))((c)
             =>  capturedBySelfOrSupertype(capturedDeclaration, c));
@@ -1094,7 +1094,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      factory method of the member's containing class."
     shared
     DartSimpleIdentifier identifierForMember(
-            FunctionOrValueModel | ClassModel | ConstructorModel member)
+            FunctionOrValueModel | TypeParameterModel
+                | ClassModel | ConstructorModel member)
         =>  switch (member)
             case (is ClassModel | ConstructorModel)
                 identifierForMemberFactory(member, false)
@@ -1405,7 +1406,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartQualifiedInvocable invocableForBaseExpression(
             DScope scope,
-            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
+            FunctionOrValueModel | TypeParameterModel
+                    | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
         "The declaration to invoke, taking care to use the SetterModel if a setter is
@@ -1416,7 +1418,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         "Use the correct original declaration, given that we may have ignored some
          replacement declarations."
         value originalDeclaration
-            =   if (is ClassModel | ConstructorModel validDeclaration)
+            =   if (is ClassModel | ConstructorModel | TypeParameterModel
+                        validDeclaration)
                 then validDeclaration
                 else declarationConsideringElidedReplacements(validDeclaration);
 
@@ -1508,6 +1511,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
             else if (!replaceConstructorWithClass(originalDeclaration).static) {
                 // the reciever is a toplevel object w/an import alias
+                "Type parameters cannot be imported"
+                assert (!is TypeParameterModel originalDeclaration);
+
                 receiver = expressionForReceiverOfImportAlias(scope, originalDeclaration);
 
                 "Unable to determine receiver from import aliases"
@@ -1540,9 +1546,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 };
             }
 
-            //"This was just handled, but we don't have guards yet."
-            //assert (!is ClassModel | ConstructorModel originalDeclaration);
-
             // Handle the non-class & constructor cases.
 
             value declarationsClassOrInterface
@@ -1571,7 +1574,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 // The capture must have been made by $this, a supertype of $this,
                 // some $outer, or a supertype of some $outer.
 
-                assert (is FunctionOrValueModel validDeclaration);
+                assert (is FunctionOrValueModel | TypeParameterModel validDeclaration);
 
                 return DartQualifiedInvocable {
                     expressionToThisOrOuterStripThis {
@@ -1665,7 +1668,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
        since declarations in sibling control blocks are not visible to each other.
     """
     shared
-    DartSimpleIdentifier identifierForCapture(FunctionOrValueModel declaration)
+    DartSimpleIdentifier identifierForCapture
+            (FunctionOrValueModel | TypeParameterModel declaration)
         =>  DartSimpleIdentifier {
                 ancestorDeclarations(declaration)
                     .collect((d)
@@ -1739,9 +1743,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 null;
 
     "Swap ValueModel for SetterModel or vice-versa if necessary."
-    FunctionModel | ValueModel | SetterModel | ClassModel | ConstructorModel
+    FunctionModel | ValueModel | SetterModel | TypeParameterModel |
+    ClassModel | ConstructorModel
     correctDeclaration(
-            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
+            FunctionOrValueModel | TypeParameterModel
+                    | ClassModel | ConstructorModel declaration,
             Boolean setter) {
         value result
             =   if (setter, is ValueModel declaration,
@@ -1753,7 +1759,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     declaration;
 
         "By definition."
-        assert (is FunctionModel | ValueModel | SetterModel
+        assert (is FunctionModel | ValueModel | SetterModel | TypeParameterModel
                     | ClassModel | ConstructorModel result);
 
         return result;
@@ -1766,7 +1772,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     shared
     DartInvocable dartInvocable(
             DScope scope,
-            FunctionOrValueModel | ClassModel | ConstructorModel declaration,
+            FunctionOrValueModel | TypeParameterModel
+                | ClassModel | ConstructorModel declaration,
             Boolean setter = declaration is SetterModel) {
 
         function hasInteropNamedParams(ParameterListModel parameterList)
@@ -1822,6 +1829,9 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
         switch (container)
         case (is PackageModel) {
+            "Type parameters are not toplevels"
+            assert (!is TypeParameterModel validDeclaration);
+
             // Toplevel class or constructor. Easy.
             if (is ClassModel | ConstructorModel validDeclaration) {
                 return DartInvocable {
@@ -1858,7 +1868,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                 return DartInvocable {
                     reference = DartPropertyAccess {
                         dartIdentifierForClassOrInterface(scope, container);
-                        DartSimpleIdentifier(getPackagePrefixedName(validDeclaration));
+                        DartSimpleIdentifier(getName(validDeclaration));
                     };
                     elementType
                         =   if (validDeclaration is FunctionModel)
@@ -1946,7 +1956,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                         dartMapped]
                     else [
                         validIdentifier,
-                        if (!is ValueModel | SetterModel validDeclaration,
+                        if (!is ValueModel | SetterModel | TypeParameterModel
+                                validDeclaration,
                             !callableValue)
                         then package.dartFunction
                         else dartValue
@@ -1981,7 +1992,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
 
             value identifier
-                =   DartSimpleIdentifier(getPackagePrefixedName(validDeclaration));
+                =   DartSimpleIdentifier(getName(validDeclaration));
 
             // A variable reference Value that is stored in a capture box
             if (is ValueModel validDeclaration,

@@ -5874,7 +5874,10 @@ class BaseGenerator(CompilationContext ctx)
             // currently works, but TPs are not yet captured, so this is an easy filter.
             // FIXME no boxing and overly simplistic expression, won't work for captures,
             //       etc. Use synthetic ValueModels for type parameters?
-            return DartSimpleIdentifier(dartTypes.getName(declaration));
+            return dartTypes.invocableForBaseExpression {
+                scope;
+                declaration;
+            }.expressionForInvocation();
         }
         else {
             value printer = TypePrinter(true, true, false, true, false, true, false);
