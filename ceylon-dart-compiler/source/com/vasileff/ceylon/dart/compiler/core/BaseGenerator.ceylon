@@ -5869,10 +5869,11 @@ class BaseGenerator(CompilationContext ctx)
     DartExpression generateTypeDescriptor(DScope scope, TypeModel typeModel) {
         if (is TypeParameterModel declaration = typeModel.declaration,
                 is FunctionModel container = typeModel.declaration.container,
-                container.toplevel || isDartNative(container)) {
-            // type parameter of toplevel function (excluding others since not impl yet)
-            // FIXME no boxing and overly simplistic expression that prob. won't work
-            //       for captures, etc. Use synthetic ValueModels for type parameters?
+                getContainingClassOrInterface(scope) is Null) {
+            // Type parameter of function without a class container, for now. More
+            // currently works, but TPs are not yet captured, so this is an easy filter.
+            // FIXME no boxing and overly simplistic expression, won't work for captures,
+            //       etc. Use synthetic ValueModels for type parameters?
             return DartSimpleIdentifier(dartTypes.getName(declaration));
         }
         else {
