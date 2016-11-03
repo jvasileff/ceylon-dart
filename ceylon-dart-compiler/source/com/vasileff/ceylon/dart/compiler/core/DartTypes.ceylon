@@ -901,11 +901,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
      callable parameters that are implemented as values."
     shared
     DartTypeName dartTypeNameForDeclaration(
-            DScope scope, FunctionOrValueModel declaration,
+            DScope scope, FunctionOrValueModel | TypeParameterModel declaration,
             TypeModel | TypeDetails | Null type = null)
         =>  let (dartModel
                 =   if (is FunctionModel declaration, isCallableValue(declaration))
-                    then dartTypeModel(ceylonTypes.callableAnythingType)
+                        then dartTypeModel(ceylonTypes.callableAnythingType)
                     else dartTypeModelForDeclaration(declaration, type))
             dartTypeNameForDartModel(scope, dartModel);
 
