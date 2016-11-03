@@ -1469,12 +1469,12 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  that.innerExpression.transform(this);
 
     DartExpression generateInvocationForBinaryOperation
-            (BinaryOperation that, String methodName)
+            (BinaryOperation that, String methodName, [TypeModel*] typeArguments = [])
         =>  generateInvocationFromName {
                 nodeInfo(that);
                 that.leftOperand;
                 methodName;
-                [];
+                typeArguments;
                 [that.rightOperand];
             };
 
@@ -1503,12 +1503,16 @@ class ExpressionTransformer(CompilationContext ctx)
                 generateInvocationForBinaryOperation(that, methodName);
 
     shared actual
-    DartExpression transformSetOperation(SetOperation that)
-        =>  generateInvocationForBinaryOperation(that,
-                switch(that)
+    DartExpression transformSetOperation(SetOperation that) {
+        return generateInvocationForBinaryOperation {
+            that;
+            switch(that)
                 case (is IntersectionOperation) "intersection"
                 case (is UnionOperation) "union"
-                case (is ComplementOperation) "complement");
+                case (is ComplementOperation) "complement";
+            [ceylonTypes.getSetElementType(expressionInfo(that).typeModel)];
+        };
+    }
 
     shared actual
     // workaround https://github.com/ceylon/ceylon.ast/issues/106

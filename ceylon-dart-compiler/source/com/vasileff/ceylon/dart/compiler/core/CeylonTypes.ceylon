@@ -603,6 +603,10 @@ class CeylonTypes(Unit unit) {
         =>  unit.getIteratedType(iterableType);
 
     shared
+    Type getSetElementType(Type setType)
+        =>  unit.getSetElementType(setType);
+
+    shared
     Type getCallableReturnType(Type callableType)
         =>  unit.getCallableReturnType(callableType);
 
