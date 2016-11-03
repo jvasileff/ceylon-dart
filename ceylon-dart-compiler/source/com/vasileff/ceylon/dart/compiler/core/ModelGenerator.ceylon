@@ -254,7 +254,7 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                     null;
                     [DartVariableDeclaration {
                         DartSimpleIdentifier("_$moduleInitializing");
-                        DartNullLiteral();
+                        DartBooleanLiteral(false);
                     }];
                 };
             },
