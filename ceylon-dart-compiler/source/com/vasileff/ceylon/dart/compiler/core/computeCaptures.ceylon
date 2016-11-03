@@ -11,7 +11,11 @@ import ceylon.ast.core {
     ValueSpecification,
     ClassAliasDefinition,
     ClassDefinition,
-    QualifiedExpression
+    QualifiedExpression,
+    InterfaceDefinition,
+    ObjectDefinition,
+    ObjectExpression,
+    ObjectArgument
 }
 
 import com.redhat.ceylon.compiler.typechecker.tree {
@@ -22,14 +26,21 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ValueModel=Value,
     ClassModel=Class,
-    ConstructorModel=Constructor
+    ConstructorModel=Constructor,
+    FunctionModel=Function,
+    TypeParameterModel=TypeParameter
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
     anyClassInfo,
     qualifiedExpressionInfo,
     valueSpecificationInfo,
-    baseExpressionInfo
+    baseExpressionInfo,
+    classDefinitionInfo,
+    interfaceDefinitionInfo,
+    objectDefinitionInfo,
+    objectExpressionInfo,
+    objectArgumentInfo
 }
 import com.vasileff.ceylon.structures {
     HashMultimap
@@ -41,7 +52,57 @@ import com.vasileff.ceylon.structures {
 shared
 void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
-    value captures = HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
+    value dartTypes = ctx.dartTypes;
+    value captures = HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel
+                                  | TypeParameterModel>();
+
+    "For proper operation, this visitor must be visited by a [[CompilationUnit]]."
+    object captureTypeParameterVisitor satisfies Visitor {
+        shared actual
+        void visitClassDefinition(ClassDefinition that) {
+            captureTypeParameters(classDefinitionInfo(that).declarationModel);
+            super.visitClassDefinition(that);
+        }
+
+        shared actual
+        void visitObjectDefinition(ObjectDefinition that) {
+            captureTypeParameters(objectDefinitionInfo(that).anonymousClass);
+            super.visitObjectDefinition(that);
+        }
+
+        shared actual
+        void visitObjectExpression(ObjectExpression that) {
+            captureTypeParameters(objectExpressionInfo(that).anonymousClass);
+            super.visitObjectExpression(that);
+        }
+
+        shared actual
+        void visitObjectArgument(ObjectArgument that) {
+            captureTypeParameters(objectArgumentInfo(that).anonymousClass);
+            super.visitObjectArgument(that);
+        }
+
+        shared actual
+        void visitInterfaceDefinition(InterfaceDefinition that) {
+            captureTypeParameters(interfaceDefinitionInfo(that).declarationModel);
+            super.visitInterfaceDefinition(that);
+        }
+
+        void captureTypeParameters(ClassOrInterfaceModel declaration) {
+            // capture all type parameters of all intervening functions between this
+            // class or interface and the next ancestor class or interface.
+            value parametersToCapture
+                =   dartTypes.ancestorElements(declaration)
+                        .rest
+                        .takeWhile((e) => !e is ClassOrInterfaceModel)
+                        .map((e) => if (is FunctionModel e) then e else null)
+                        .coalesced.sequence().reversed
+                        .flatMap((f) => {*f.typeParameters})
+                        .sequence();
+
+            captures.putMultiple(declaration, parametersToCapture);
+        }
+    }
 
     "For proper operation, this visitor must be visited by a [[CompilationUnit]]."
     object captureVisitor satisfies Visitor {
@@ -191,7 +252,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
 
                 maybeCapture {
                     declarationToCapture;
-                    getContainingClassOrInterface(toScopeModel(declarationToCapture));
+                    getContainingClassOrInterface(declarationToCapture);
                     getContainingClassOrInterface(info.scope);
                 };
             }
@@ -226,7 +287,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         }
 
         void maybeCapture(
-                FunctionOrValueModel target,
+                FunctionOrValueModel | TypeParameterModel target,
                 ClassOrInterfaceModel? targetsClassOrInterface,
                 ClassOrInterfaceModel? by) {
 
@@ -275,7 +336,7 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
            the inputs to this function would be "value x" and "interface I2", and the
            resultant capture would be "value x" by "Interface I1".
         """
-        void capture(FunctionOrValueModel target,
+        void capture(FunctionOrValueModel | TypeParameterModel target,
                 ClassOrInterfaceModel? targetsClassOrInterface,
                 variable ClassOrInterfaceModel by) {
 
@@ -295,10 +356,12 @@ void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
         }
     }
 
+    unit.visit(captureTypeParameterVisitor);
     unit.visit(captureVisitor);
 
     "Is the capture also captured by a supertype?"
-    function redundant(ClassOrInterfaceModel->FunctionOrValueModel entry)
+    function redundant
+            (ClassOrInterfaceModel -> <FunctionOrValueModel | TypeParameterModel> entry)
         =>  let (by->target = entry)
             supertypeDeclarations(by).skip(1).any((d)
                 =>  captures.contains(d->target));

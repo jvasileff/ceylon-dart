@@ -11,6 +11,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     FunctionOrValueModel=FunctionOrValue,
     TypedDeclarationModel=TypedDeclaration,
+    TypeParameterModel=TypeParameter,
     TypeModel=Type
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
@@ -57,15 +58,17 @@ class CompilationContext(unit, tokens) {
         =   HashMultimap<ClassModel, FunctionOrValueModel> {};
 
     shared variable
-    SetMultimap<FunctionOrValueModel, ClassOrInterfaceModel> capturedDeclarations
-        =   HashMultimap<FunctionOrValueModel, ClassOrInterfaceModel> {};
+    SetMultimap<FunctionOrValueModel | TypeParameterModel, ClassOrInterfaceModel>
+    capturedDeclarations
+        =   HashMultimap<FunctionOrValueModel| TypeParameterModel,
+                         ClassOrInterfaceModel> {};
 
     "A multimap to associated each capturing class and interface with its list of
      captures. A [[HashMultimap]] with linked stability is used to preserve insertion
      order. A consistent order is important as the capture lists will be used to build
      parameter and argument lists."
     shared variable
-    SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
+    SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel | TypeParameterModel> captures
         =   HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
 
     "Dart declaration names for Ceylon declarations.

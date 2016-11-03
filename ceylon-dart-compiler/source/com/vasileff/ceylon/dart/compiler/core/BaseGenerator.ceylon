@@ -5868,12 +5868,8 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateTypeDescriptor(DScope scope, TypeModel typeModel) {
         if (is TypeParameterModel declaration = typeModel.declaration,
-                is FunctionModel container = typeModel.declaration.container,
-                getContainingClassOrInterface(scope) is Null) {
-            // Type parameter of function without a class container, for now. More
-            // currently works, but TPs are not yet captured, so this is an easy filter.
-            // FIXME no boxing and overly simplistic expression, won't work for captures,
-            //       etc. Use synthetic ValueModels for type parameters?
+            // Type parameters of functions, for now.
+            is FunctionModel container = typeModel.declaration.container) {
             return dartTypes.invocableForBaseExpression {
                 scope;
                 declaration;

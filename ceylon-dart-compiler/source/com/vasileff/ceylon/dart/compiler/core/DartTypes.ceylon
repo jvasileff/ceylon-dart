@@ -866,7 +866,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     see(`function dartTypeNameForDeclaration`)
     DartTypeName dartCaptureTypeNameForDeclaration(
             DScope scope,
-            FunctionOrValueModel declaration,
+            FunctionOrValueModel | TypeParameterModel declaration,
             TypeModel | TypeDetails | Null type = null) {
 
         // Determine if `declaration` is implemented as a Dart function, and if
@@ -982,13 +982,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     DartTypeModel dartTypeModelForDeclaration(
-            FunctionOrValueModel declaration,
+            FunctionOrValueModel | TypeParameterModel declaration,
             TypeModel | TypeDetails | Null type = null)
         =>  if (is TypeDetails type) then
                 dartTypeModel {
                     type.type;
                     type.erasedToNative;
                     type.erasedToObject;
+                }
+            else if (is TypeParameterModel declaration) then
+                // for reified types
+                dartTypeModel {
+                    ceylonTypes.typeDescriptorDeclaration.type;
+                    false;
+                    false;
                 }
             else
                 dartTypeModel {
@@ -1197,7 +1204,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "Declarations for captures required by the given [[declaration]] and all supertype
      (extended and satisfied) declarations."
     shared
-    {FunctionOrValueModel*} captureDeclarationsForClass
+    {FunctionOrValueModel | TypeParameterModel*} captureDeclarationsForClass
         (ClassOrInterfaceModel declaration)
         =>  supertypeDeclarations(declaration)
                 .flatMap(ctx.captures.get)
