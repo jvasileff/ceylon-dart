@@ -27,7 +27,7 @@ void $package$spreadMethodsMemberClass() {
     case 0 :
       return new spreadMethodsMemberClass$C();
     }
-  }, null)).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
+  }, null)).spread(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "spreadMethodsMemberClass.C.D"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($ceylon$language.$ceylonInteger(5)) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence;
   $ceylon$language.Callable b = (() {
     $dart$core.Object $r = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
       switch ($i$) {
@@ -35,7 +35,7 @@ void $package$spreadMethodsMemberClass() {
         return new spreadMethodsMemberClass$C();
       }
     }, null);
-    return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($r as $ceylon$language.Iterable).spread(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
+    return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => (($r as $ceylon$language.Iterable).spread(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "spreadMethodsMemberClass.C.D"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as spreadMethodsMemberClass$C).$new$spreadMethodsMemberClass$C$D($ceylon$language.$dartInt($0 as $ceylon$language.Integer))))).f($0 as $ceylon$language.Integer) as $ceylon$language.Iterable).sequence() as $ceylon$language.Sequence);
   })();
   if (!((a.getFromFirst(0) as spreadMethodsMemberClass$C$D) is spreadMethodsMemberClass$C$D)) {
     throw new $ceylon$language.AssertionError("Violated: (a[0] of Anything) is C.D");
@@ -72,9 +72,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

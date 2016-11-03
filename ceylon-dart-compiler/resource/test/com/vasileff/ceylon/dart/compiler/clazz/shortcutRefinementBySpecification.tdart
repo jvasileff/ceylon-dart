@@ -73,13 +73,17 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"X":const{"mt":"c","nm":"X","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"Y":const{"mt":"c","nm":"Y","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"Z":const{"mt":"c","nm":"Z","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"I":const{"mt":"i","nm":"I","sts":const[]},"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"X":const{"mt":"c","nm":"X","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"Y":const{"mt":"c","nm":"Y","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"Z":const{"mt":"c","nm":"Z","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"I":const{"mt":"i","nm":"I"},"A":const{"mt":"c","nm":"A","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"B":const{"mt":"c","nm":"B","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]}}};
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

@@ -3,11 +3,11 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-$dart$core.Object $package$generic([$dart$core.Object x]) {
+$dart$core.Object $package$generic([final $ceylon$dart$runtime$model.runtime$TypeDescriptor T, $dart$core.Object x]) {
   return x;
 }
 
-$dart$core.Object generic([$dart$core.Object x]) => $package$generic(x);
+$dart$core.Object generic([final $ceylon$dart$runtime$model.runtime$TypeDescriptor T, $dart$core.Object x]) => $package$generic(T, x);
 
 $dart$core.String $package$nonGeneric([$dart$core.String x]) {
   return x;
@@ -16,7 +16,7 @@ $dart$core.String $package$nonGeneric([$dart$core.String x]) {
 $dart$core.String nonGeneric([$dart$core.String x]) => $package$nonGeneric(x);
 
 void $package$run() {
-  $dart$core.String myString1 = $ceylon$language.$dartString($package$generic($ceylon$language.$ceylonString("true")) as $ceylon$language.String);
+  $dart$core.String myString1 = $ceylon$language.$dartString($package$generic(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), $ceylon$language.$ceylonString("true")) as $ceylon$language.String);
   $dart$core.String myString2 = $package$nonGeneric("true");
 }
 
@@ -35,9 +35,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

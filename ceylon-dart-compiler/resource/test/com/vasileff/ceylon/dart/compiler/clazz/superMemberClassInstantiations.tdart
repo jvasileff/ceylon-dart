@@ -108,13 +108,17 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[],"\$c":const{"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC2":const{"mt":"c","nm":"IC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC2":const{"mt":"c","nm":"CC2","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"C","pk":"."},"sts":const[const{"nm":"I","pk":"."}],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"CC1","pk":"."},"sts":const[]},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"CC3","pk":"."},"sts":const[]},"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"IC1","pk":"."},"sts":const[]},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"IC3","pk":"."},"sts":const[]}}}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","\$c":const{"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"IC2":const{"mt":"c","nm":"IC2","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"Basic","pk":"\$","md":"\$"}}}},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"CC2":const{"mt":"c","nm":"CC2","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"Basic","pk":"\$","md":"\$"}}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"C","pk":"."},"sts":const[const{"nm":"I","pk":"."}],"\$c":const{"CC1":const{"mt":"c","nm":"CC1","super":const{"nm":"CC1","pk":"."}},"CC3":const{"mt":"c","nm":"CC3","super":const{"nm":"CC3","pk":"."}},"IC1":const{"mt":"c","nm":"IC1","super":const{"nm":"IC1","pk":"."}},"IC3":const{"mt":"c","nm":"IC3","super":const{"nm":"IC3","pk":"."}}}}}};
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

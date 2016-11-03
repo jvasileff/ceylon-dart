@@ -58,13 +58,17 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"i","nm":"A","sts":const[]},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"AAlias","pk":"."}]}},"\$i":const{"AAlias":const{"mt":"i","nm":"AAlias","sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"AAlias","pk":"."}]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"A":const{"mt":"i","nm":"A"},"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"\$c":const{"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"AAlias","pk":"."}]}},"\$i":const{"AAlias":const{"mt":"i","nm":"AAlias"}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"AAlias","pk":"."}]}}};
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

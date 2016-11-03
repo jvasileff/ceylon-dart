@@ -24,7 +24,7 @@ void $package$run() {
     $dart$core.Object arg$3$0 = it;
     return fb(arg$3$0);
   })());
-  $ceylon$language.print($ceylon$language.identity($ceylon$language.empty));
+  $ceylon$language.print($ceylon$language.identity(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "{ceylon.language::Integer*}"), $ceylon$language.empty));
 }
 
 void run() => $package$run();
@@ -42,9 +42,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

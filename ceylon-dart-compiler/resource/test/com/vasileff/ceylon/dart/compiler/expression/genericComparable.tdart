@@ -3,9 +3,9 @@ import "package:ceylon/interop/dart/dart.dart" as $ceylon$interop$dart;
 import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
-$dart$core.Object $package$smallest([$dart$core.Object x, $dart$core.Object y]) => (x as $ceylon$language.Comparable) < y ? x : y;
+$dart$core.Object $package$smallest([final $ceylon$dart$runtime$model.runtime$TypeDescriptor Element, $dart$core.Object x, $dart$core.Object y]) => (x as $ceylon$language.Comparable) < y ? x : y;
 
-$dart$core.Object smallest([$dart$core.Object x, $dart$core.Object y]) => $package$smallest(x, y);
+$dart$core.Object smallest([final $ceylon$dart$runtime$model.runtime$TypeDescriptor Element, $dart$core.Object x, $dart$core.Object y]) => $package$smallest(Element, x, y);
 
 $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
@@ -15,9 +15,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

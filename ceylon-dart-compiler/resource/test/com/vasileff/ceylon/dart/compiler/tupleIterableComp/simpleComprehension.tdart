@@ -4,7 +4,7 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-  $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
+  $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$language.dart$Callable(() {
     $dart$core.bool step$0$expired$0 = false;
     $dart$core.bool step$0$1() {
       if (step$0$expired$0) {
@@ -22,7 +22,7 @@ void $package$run() {
       if (!step$0$1()) {
         return false;
       }
-      iterator_1$2 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
+      iterator_1$2 = ($ceylon$language.measure(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), $ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
       return true;
     }
 
@@ -53,7 +53,7 @@ void $package$run() {
 
     return new $ceylon$language.dart$Callable(step$2$7);
   }));
-  $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$language.dart$Callable(() {
+  $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer|ceylon.language::String"), new $ceylon$language.dart$Callable(() {
     $dart$core.bool step$0$expired$8 = false;
     $dart$core.bool step$0$9() {
       if (step$0$expired$8) {
@@ -71,7 +71,7 @@ void $package$run() {
       if (!step$0$9()) {
         return false;
       }
-      iterator_1$10 = ($ceylon$language.measure($ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
+      iterator_1$10 = ($ceylon$language.measure(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), $ceylon$language.$ceylonInteger(0), 10) as $ceylon$language.List).iterator();
       return true;
     }
 
@@ -121,9 +121,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;

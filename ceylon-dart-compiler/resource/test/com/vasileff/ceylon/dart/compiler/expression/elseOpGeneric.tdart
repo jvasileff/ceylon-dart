@@ -10,7 +10,7 @@ abstract class run$B implements run$A, $ceylon$language.dart$$Identifiable {
 void $package$run() {
   run$B x$get() => $ceylon$language.nothing as run$B;
 
-  run$A y = $ceylon$language.identity((($dart$core.Object $lhs$) => null == $lhs$ ? $ceylon$language.nothing : $lhs$)(x$get())) as run$A;
+  run$A y = $ceylon$language.identity(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "run.A"), (($dart$core.Object $lhs$) => null == $lhs$ ? $ceylon$language.nothing : $lhs$)(x$get())) as run$A;
   $ceylon$language.print(y);
 }
 
@@ -29,9 +29,13 @@ const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","
 
 var _$module = null;
 
+var _$moduleInitializing = false;
+
 get $module {
-  if (_$module == null) {
+  if ((_$module == null) && (!_$moduleInitializing)) {
+    _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
+    _$moduleInitializing = false;
     _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
   }
   return _$module;
