@@ -1,4 +1,5 @@
 import ceylon.language { printTrace=printStackTrace }
+import dart.core { DError = Error }
 
 "The abstract supertype of values indicating exceptional 
  conditions. An exception may be raised using the `throw` 
@@ -74,4 +75,29 @@ class Throwable(description=null, cause=null) {
     "The exceptions that were suppressed in order to 
      propagate this exception."
     shared native Throwable[] suppressed;
+}
+
+abstract native("dart") 
+class BaseThrowable(description=null, cause=null) extends DError.Class() {
+
+    shared Throwable? cause;
+    String? description;
+
+    variable [Throwable*] suppressedThrowables = [];
+
+    shared String message 
+        =>  description else cause?.message else "";
+    
+    shared actual String string 
+        =>  className(this) + " \"``message``\"";
+
+    shared void printStackTrace()
+        =>  // Note: stackTrace is only available after `throw`
+            print(stackTrace);
+
+    shared void addSuppressed(Throwable suppressed)
+        =>  suppressedThrowables = suppressedThrowables.withTrailing(suppressed);
+
+    shared Throwable[] suppressed
+        =>  suppressedThrowables;
 }
