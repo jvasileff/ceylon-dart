@@ -130,7 +130,6 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     InterfaceModel=Interface,
     ConstructorModel=Constructor,
-    TypeParameterModel=TypeParameter,
     TypedReference
 }
 import com.vasileff.ceylon.dart.compiler {
@@ -198,8 +197,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     functionExpressionInfo,
     isCaseInfo,
     ifElseExpressionInfo,
-    moduleDecInfo,
-    BaseTypeInfo
+    moduleDecInfo
 }
 
 shared
