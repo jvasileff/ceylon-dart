@@ -51,7 +51,8 @@ import com.redhat.ceylon.model.typechecker.model {
     FunctionModel=Function,
     ValueModel=Value,
     FunctionOrValueModel=FunctionOrValue,
-    GenericModel=Generic
+    GenericModel=Generic,
+    TypeParameterModel=TypeParameter
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope
@@ -527,6 +528,15 @@ class TopLevelVisitor(CompilationContext ctx)
                 }
                 else null;
 
+        value typeParameterModels
+            =   [*classModel.typeParameters];
+
+        value fieldsForTypeParameters
+            =   typeParameterModels
+                .collect {
+                    (model) => generateFieldDeclaration(scope, model);
+                };
+
         value parameterModelModels
             =   (parameters?.parameters else []).collect {
                     (p) => parameterInfo(p).parameterModel.model;
@@ -738,13 +748,9 @@ class TopLevelVisitor(CompilationContext ctx)
                     extendedType;
                     parameters?.parameters else [];
                 }
-                else classBody.content
-                    .map((node)
-                        =>  if (is ConstructorDefinition node)
-                            then node
-                            else null)
-                    .coalesced
-                    .flatMap { (constructor)
+                else { for (node in classBody.content)
+                       if (is ConstructorDefinition node) node
+                    }.flatMap { (constructor)
                         =>  generateDartConstructors {
                                 scope;
                                 classModel;
@@ -831,6 +837,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 outerForwarders,
                 captureFields,
                 constructors,
+                fieldsForTypeParameters,
                 fieldsForInitializerParameters,
                 getterMethodBridgesForCeylonValues,
                 bridgesToSyntheticFields,
@@ -849,15 +856,22 @@ class TopLevelVisitor(CompilationContext ctx)
         value classIdentifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
 
+        value typeParameters
+            =   [*classModel.typeParameters];
+
+        value dartTypeParameters
+            =   generateTypeParameters(scope, classModel);
+
         "Initializer parameters."
         value standardParameters
-            =   if (!parameters.empty)
+            =   if (!parameters.empty || !typeParameters.empty)
                 then withInConstructorSignature {
                     classModel;
                     () => generateFormalParameterList {
                         true; false;
                         scope;
                         parameters;
+                        prependParameters = dartTypeParameters;
                     }.parameters;
                 }
                 else [];
@@ -876,6 +890,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         parameters;
                         // don't use "$dart$core.Object"
                         noDefaults = true;
+                        prependParameters = dartTypeParameters;
                     }.parameters;
                 }
                 else standardParameters;
@@ -883,13 +898,16 @@ class TopLevelVisitor(CompilationContext ctx)
         "Assign parameters to corresponding `this.` fields. Eventually, we'll just do
          this for the ones we want to capture."
         value memberParameterInitializers
-            =   parameters
-                .map {
-                    (p) => parameterInfo(p).parameterModel;
-                }.filter {
-                    // Skip assignments for *shared* callable parameters; they will have
-                    // a synthetic name and are handled below.
-                    (model) => !model.model is FunctionModel || !model.model.shared;
+            =   typeParameters
+                .chain {
+                    parameters
+                    .map {
+                        (p) => parameterInfo(p).parameterModel;
+                    }.filter {
+                        // Skip assignments for *shared* callable parameters; they will
+                        // have a synthetic name and are handled below.
+                        (model) => !model.model is FunctionModel || !model.model.shared;
+                    };
                 }.collect {
                     (model) => DartExpressionStatement {
                         DartAssignmentExpression {
@@ -897,7 +915,11 @@ class TopLevelVisitor(CompilationContext ctx)
                                 DartSimpleIdentifier("this");
                                 // The field for the Callable or the possibly synthetic
                                 // field for the value
-                                dartTypes.identifierForField(model.model);
+                                dartTypes.identifierForField {
+                                    if (is TypeParameterModel model)
+                                    then model
+                                    else model.model;
+                                };
                             };
                             DartAssignmentOperator.equal;
                             DartSimpleIdentifier(dartTypes.getName(model));
@@ -975,10 +997,13 @@ class TopLevelVisitor(CompilationContext ctx)
                                             outerAndCaptureParameters.map {
                                                 DartSimpleFormalParameter.identifier;
                                             },
-                                            parameters.map {
+                                            typeParameters.chain(parameters).map {
                                                 (p) => DartSimpleIdentifier {
                                                     dartTypes.getName {
-                                                        parameterInfo(p).parameterModel;
+                                                        if (is TypeParameterModel p)
+                                                        then p
+                                                        else parameterInfo(p)
+                                                                .parameterModel;
                                                     };
                                                 };
                                             }
@@ -1132,6 +1157,12 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value classIdentifier
             =   dartTypes.dartIdentifierForClassOrInterfaceDeclaration(classModel);
+
+        value dartTypeParameters
+            =   generateTypeParameters(scope, classModel);
+
+        value dartTypeArgs
+            =   dartTypeParameters.collect(DartFormalParameter.identifier);
 
         value constructorInfo
             =   constructorDefinitionInfo(constructor);
@@ -1359,6 +1390,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         true; false;
                         concatenate {
                             outerAndCaptureParameters,
+                            dartTypeParameters,
                             dartParameters
                         };
                     };
@@ -1369,6 +1401,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             concatenate {
                                 [constructorBitmapValue],
                                 outerAndCaptureArgs,
+                                dartTypeArgs,
                                 [DartNullLiteral()].repeat {
                                     followingConstructorParameters.size;
                                 },
@@ -1394,6 +1427,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             concatenate {
                                 [bitmapParameter],
                                 outerAndCaptureParameters,
+                                dartTypeParameters,
                                 mangledFollowingConstructorDartParams,
                                 mangledDartParameters
                             };
@@ -1410,6 +1444,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                         constructorBitmapValue;
                                     }],
                                     outerAndCaptureArgs,
+                                    dartTypeArgs,
                                     mangledFollowingConstructorDartArgs,
                                     // calculated arguments passed in a Dart List
                                     [createExpressionEvaluationWithSetup {
@@ -1459,6 +1494,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             concatenate {
                                 [bitmapParameter],
                                 outerAndCaptureParameters,
+                                dartTypeParameters,
                                 mangledFollowingConstructorDartParams,
                                 [DartSimpleFormalParameter {
                                     false; false;
@@ -1473,6 +1509,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 concatenate {
                                     [bitmapParameter.identifier],
                                     outerAndCaptureArgs,
+                                    dartTypeArgs,
                                     mangledFollowingConstructorDartArgs,
                                     // spread List of arguments
                                     [ for (i in 0:parameters.size)
@@ -1506,6 +1543,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             concatenate {
                                 [bitmapParameter],
                                 outerAndCaptureParameters,
+                                dartTypeParameters,
                                 mangledFollowingConstructorDartParams,
                                 mangledDartParamsNoDefault
                             };
@@ -1531,6 +1569,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                         constructorBitmapValue;
                                     }],
                                     outerAndCaptureArgs,
+                                    dartTypeArgs,
                                     mangledFollowingConstructorDartArgs,
                                     mangledDartArgs,
                                     [DartNullLiteral()].repeat {
@@ -1560,6 +1599,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                                     constructorBitmapValue;
                                                 }],
                                                 outerAndCaptureArgs,
+                                                dartTypeArgs,
                                                 mangledFollowingConstructorDartArgs,
                                                 mangledDartArgs
                                             };
@@ -1637,6 +1677,26 @@ class TopLevelVisitor(CompilationContext ctx)
                         };
                     };
 
+        value typeParameters
+            =   [*classModel.typeParameters];
+
+        value dartTypeParameters
+            =   generateTypeParameters(scope, classModel);
+
+        value typeParameterMemberInitializers
+            =   typeParameters.map {
+                    (model) => DartExpressionStatement {
+                        DartAssignmentExpression {
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("this");
+                                dartTypes.identifierForField(model);
+                            };
+                            DartAssignmentOperator.equal;
+                            DartSimpleIdentifier(dartTypes.getName(model));
+                        };
+                    };
+                };
+
         return
         withInConsolidatedConstructor {
             classModel;
@@ -1654,39 +1714,44 @@ class TopLevelVisitor(CompilationContext ctx)
                             bitmapIdentifier;
                         }],
                         outerAndCaptureParameters,
+                        dartTypeParameters,
                         consolidatedParameterList.parameters
                     };
                 };
                 DartBlockFunctionBody {
                     null; false;
                     DartBlock {
-                        classBody.children.flatMap((node) {
-                            if (!is ConstructorDefinition node) {
-                                return node.transform(classStatementTransformer);
-                            }
-                            return [DartIfStatement {
-                                DartBinaryExpression {
-                                    DartIntegerLiteral(0);
-                                    "!=";
+                        concatenate {
+                            typeParameterMemberInitializers,
+                            classBody.children.flatMap((node) {
+                                if (!is ConstructorDefinition node) {
+                                    return node.transform(classStatementTransformer);
+                                }
+                                return [DartIfStatement {
                                     DartBinaryExpression {
-                                        bitmapIdentifier;
-                                        "&";
-                                        DartIntegerLiteral {
-                                            1.leftLogicalShift(
-                                                constructorIndexes[node] else 0);
+                                        DartIntegerLiteral(0);
+                                        "!=";
+                                        DartBinaryExpression {
+                                            bitmapIdentifier;
+                                            "&";
+                                            DartIntegerLiteral {
+                                                1.leftLogicalShift(
+                                                    constructorIndexes[node] else 0);
+                                            };
                                         };
                                     };
-                                };
-                                DartBlock {
-                                    concatenate {
-                                        outerAndCaptureMemberInitializers,
-                                        *node.block.transformChildren {
-                                            statementTransformer;
-                                        }
+                                    DartBlock {
+                                        concatenate {
+                                            // FIXME move initializers to start of block
+                                            outerAndCaptureMemberInitializers,
+                                            *node.block.transformChildren {
+                                                statementTransformer;
+                                            }
+                                        };
                                     };
-                                };
-                            }];
-                        }).coalesced.sequence();
+                                }];
+                            }).coalesced
+                        };
                     };
                 };
             };
@@ -1706,6 +1771,12 @@ class TopLevelVisitor(CompilationContext ctx)
                     extendedClassModel;
                 };
 
+        value dartTypeArguments
+            =   if (exists et = classModel.extendedType)
+                    then [for (ta in et.typeArgumentList)
+                          generateTypeDescriptor(scope, ta)]
+                    else [];
+
         [DartExpression*] dartArguments;
 
         ClassModel | ConstructorModel | Null resolvedExtendedDeclaration;
@@ -1718,7 +1789,8 @@ class TopLevelVisitor(CompilationContext ctx)
                 =   extensionOrConstructionInfo(extensionOrConstruction);
 
             "Arguments must exist for constructor or initializer extends"
-            assert (exists arguments = extensionOrConstruction.arguments);
+            assert (exists arguments
+                =   extensionOrConstruction.arguments);
 
             assert (exists extendedDeclaration
                 =   ecInfo.declaration);
@@ -1768,6 +1840,7 @@ class TopLevelVisitor(CompilationContext ctx)
         // Note: always include super invocation if we are extending a constructor
 
         if (!outerAndCaptureArguments.empty || !dartArguments.empty
+                || !dartTypeArguments.empty
                 || resolvedExtendedDeclaration is ConstructorModel) {
             return
             DartSuperConstructorInvocation {
@@ -1779,6 +1852,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 DartArgumentList {
                     concatenate {
                         outerAndCaptureArguments,
+                        dartTypeArguments,
                         dartArguments
                     };
                 };
