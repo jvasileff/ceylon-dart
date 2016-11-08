@@ -111,7 +111,6 @@ class CeylonInstallDartTool() extends OutputRepoUsingTool(installResourceBundle)
         // auto-discover version
         String? moduleVersion(String moduleName)
             =>  checkModuleVersionsOrShowSuggestions(
-                    repositoryManager,
                     moduleName,
                     null,
                     ModuleQuery.Type.\iDART,

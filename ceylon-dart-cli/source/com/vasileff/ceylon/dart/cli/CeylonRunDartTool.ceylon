@@ -97,7 +97,6 @@ class CeylonRunDartTool() extends RepoUsingTool(repoUsingToolresourceBundle) {
                 =   if (moduleName == "default")
                     then "unversioned"
                     else (checkModuleVersionsOrShowSuggestions(
-                        repositoryManager,
                         moduleName,
                         ModuleUtil.moduleVersion(moduleString),
                         ModuleQuery.Type.\iDART,
