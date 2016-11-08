@@ -2102,7 +2102,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else {
                 throw Exception(
                         "Cannot find native type for lhs type \
-                         '``definiteLhs.asQualifiedString()``'");
+                         '``definiteLhs.asString()``'");
             }
         } else {
             value definiteRhs = ceylonTypes.definiteType(rhsType);
@@ -2121,7 +2121,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             else {
                 throw Exception(
                         "Cannot find native type for rhs type \
-                         '``definiteRhs.asQualifiedString()``'");
+                         '``definiteRhs.asString()``'");
             }
         }
     }

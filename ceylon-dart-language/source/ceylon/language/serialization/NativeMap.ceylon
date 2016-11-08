@@ -1,16 +1,16 @@
-import java.util{
-    HashMap,
-    JavaIterator=Iterator
-}
-import ceylon.language.impl{BaseIterable, BaseIterator}
 import dart.core {
     DMap = Map
 }
 import ceylon.interop.dart {
     CeylonIterable
 }
+import ceylon.language.impl {
+    BaseIterable,
+    BaseIterator
+}
 
-"Need a map-like thing, but can't use java.util.HashMap directly, not ceylon.collection::HashMap"
+"Need a map-like thing, but can't use java.util.HashMap directly, 
+ not ceylon.collection::HashMap"
 native class NativeMap<Key,Element>() {
     shared native Element? get(Key id);
     shared native void put(Key id, Element instanceOrPartial);
@@ -24,6 +24,10 @@ native class NativeMap<Key,Element>() {
 
 native("jvm") class NativeMap<Key,Element>() {
     
+    import java.util {
+        HashMap,
+        JavaIterator=Iterator
+    }
     native("jvm") HashMap<Key, Element> m = HashMap<Key, Element>();
     
     shared native("jvm") void put(Key id, Element instanceOrPartial) {

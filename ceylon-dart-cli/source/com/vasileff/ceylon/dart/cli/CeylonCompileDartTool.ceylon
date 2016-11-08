@@ -26,7 +26,8 @@ import com.redhat.ceylon.common.tools {
     CeylonTool,
     SourceArgumentsResolver,
     CeylonToolLoader,
-    OutputRepoUsingTool
+    OutputRepoUsingTool,
+    SourceDependencyResolver
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
@@ -47,6 +48,9 @@ import java.lang {
 import java.util {
     JList=List,
     EnumSet
+}
+import com.redhat.ceylon.cmr.api {
+    ModuleQuery
 }
 
 shared
@@ -149,6 +153,16 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
     shared variable
     JList<JFile>? src = null;
 
+    shared variable option
+    optionArgument {
+        argumentName = "flags";
+    }
+    description {
+        "Determines if and how compilation of dependencies should be handled. \
+         Allowed flags include: `never`, `once`, `force`, `check`.";
+    }
+    String? includeDependencies = null;
+
     shared variable optionArgument
     description("Repeat compilation the specified number of times (useful for
                  performance testing).")
@@ -211,6 +225,27 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
                     sourceDirectories, resources, ".ceylon", ".dart");
 
         resolver.cwd(cwd).expandAndParse(moduleOrFile, dartBackend);
+
+        if (exists id = includeDependencies, id != compileNever) {
+            // Determine any dependencies that might need compiling as well
+            value sdr = SourceDependencyResolver(sourceDirectories, dartBackend.asSet());
+            if (sdr.cwd(cwd).traverseDependencies(resolver.sourceFiles)) {
+                for (mvd in sdr.additionalModules) {
+                    if (id == compileForce
+                            || (id in [compileCheck, ""] && shouldRecompile(
+                                        offlineRepositoryManager,
+                                        mvd.\imodule, mvd.version,
+                                        ModuleQuery.Type.dart, true))
+                            || (id == compileOnce && shouldRecompile(
+                                        offlineRepositoryManager,
+                                        mvd.\imodule, mvd.version,
+                                        ModuleQuery.Type.dart, false))) {
+                        moduleOrFile.add(javaString(mvd.\imodule));
+                        resolver.expandAndParse(moduleOrFile, dartBackend);
+                    }
+                }
+            }
+        }
 
         if (resolver.sourceFiles.empty && resolver.sourceModules.empty) {
             throw ReportableException("No modules or source files to compile.");

@@ -145,7 +145,6 @@ class CeylonAssembleDartTool() extends RepoUsingTool(repoUsingToolresourceBundle
 
         value moduleVersion
             =   checkModuleVersionsOrShowSuggestions(
-                    repositoryManager,
                     moduleName,
                     ModuleUtil.moduleVersion(moduleString),
                     ModuleQuery.Type.\iDART,

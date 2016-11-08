@@ -1,4 +1,3 @@
-import java.util{ArrayDeque, Deque}
 import dart.collection {
     DoubleLinkedQueue
 }
@@ -13,6 +12,11 @@ native class NativeDeque() {
 }
 
 native("jvm") class NativeDeque() {
+    import java.util {
+        ArrayDeque,
+        Deque
+    }
+
     Deque<Anything> deque = ArrayDeque<Anything>();
     shared native("jvm") void pushFront(Anything element) {
         deque.addFirst(element);

@@ -1,8 +1,3 @@
-import ceylon.collection {
-    HashMap,
-    unmodifiableMap
-}
-
 interface EscapableType of
         name | attributeValue |
         text | rawText | escapableRawText {
@@ -31,10 +26,10 @@ object name satisfies EscapableType {
 
 object attributeValue satisfies EscapableType {
     shared actual
-    Map<Character, String> entities = unmodifiableMap(HashMap {
+    Map<Character, String> entities = map {
         '\'' -> "&#39;",
         '"' -> "&quot;",
-        '&' -> "&amp;"});
+        '&' -> "&amp;"};
 }
 
 "From <http://www.w3.org/TR/html5/syntax.html#elements-0>
@@ -43,9 +38,9 @@ object attributeValue satisfies EscapableType {
  or an ambiguous ampersand."
 object text satisfies EscapableType {
     shared actual
-    Map<Character, String> entities = unmodifiableMap(HashMap {
+    Map<Character, String> entities = map {
         '<' -> "&lt;",
-        '&' -> "&amp;"});
+        '&' -> "&amp;"};
 }
 
 "From <http://www.w3.org/TR/html5/syntax.html#elements-0>
@@ -78,16 +73,15 @@ object rawText satisfies EscapableType {
  avoiding the \"further restrictions\"."
 object escapableRawText satisfies EscapableType {
     shared actual
-    Map<Character, String> entities = unmodifiableMap(HashMap {
+    Map<Character, String> entities = map {
         '<' -> "&lt;",
-        '&' -> "&amp;"});
+        '&' -> "&amp;"};
 }
 
 \Itext | \IrawText | \IescapableRawText typeForElement(String element)
     =>  let (lower = element.lowercased)
-        if (rawTextElements.contains(lower)) then
-            rawText
-        else if (escapableRawTextElements.contains(lower)) then
-            escapableRawText
-        else
-            text;
+        if (lower in rawTextElements)
+            then rawText
+        else if (lower in escapableRawTextElements)
+            then escapableRawText
+        else text;
