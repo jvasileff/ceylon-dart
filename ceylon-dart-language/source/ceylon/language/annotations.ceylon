@@ -131,9 +131,9 @@ shared final sealed annotation class StaticAnnotation()
 
 "Annotation to mark a member of a toplevel class as static. 
  A `static` member does not have access to any current 
- instance of the class or interface, and must occur before 
- any non-`static` member declarations in the body of the 
- class or interface declaration.
+ instance of the class, and must occur before all 
+ constructor declarations and non-`static` member 
+ declarations in the body of the class.
  
  For example:
  
@@ -141,8 +141,23 @@ shared final sealed annotation class StaticAnnotation()
          shared static void hello() => print(\"hello\");
          shared new() {}
      }
+ 
+ A `static` member may be invoked or evaluated without any
+ receiving instance of the class, by qualifying the member
+ by a reference to the class itself.
+ 
+     shared void run() => Hello.hello();
+ 
+ The type parameters of a generic class are in scope at the
+ declaration of a `static` member.
+ 
+     class Box<Element> {
+         shared static Box<Element>[2] pair(Element x, Element y)
+                => [create(x), create(y)];
+         shared new create(Element element) {}
+     }
      
-     shared void run() => Hello.hello();"
+     Box<Float>[2] boxes = Box.pair(1.0, 2.0);"
 shared annotation StaticAnnotation static()
         => StaticAnnotation();
 
@@ -152,7 +167,21 @@ shared final sealed annotation class LateAnnotation()
                     ValueDeclaration> {}
 
 "Annotation to disable definite initialization analysis for 
- a reference."
+ a toplevel value, or for an attribute of a class.
+ 
+ - In the case of a class attribute, the attribute may not
+   be initialized by its declaration, and may be left 
+   unassigned by the class initializer.
+ - In the case of a toplevel value, the value may not be
+   initialized by its declaration.
+ 
+ A `late` value may be assigned by any code to which it is
+ visible, but repeated assignment produces an 
+ [[InitializationError]].
+ 
+ Evaluation of a `late` value cannot be guaranteed sound by
+ the compiler, and so evaluation of a `late` value before 
+ initialization produces an [[InitializationError]]."
 shared annotation LateAnnotation late()
         => LateAnnotation();
 
@@ -201,15 +230,27 @@ shared annotation InheritedAnnotation inherited()
 
 "The annotation class for the [[doc]] annotation."
 shared final sealed annotation class DocAnnotation(
-    "Documentation, in Markdown syntax, about the annotated 
-     program element"
+    "Documentation, in Markdown syntax, describing the 
+     annotated program element"
     shared String description)
         satisfies OptionalAnnotation<DocAnnotation> {}
 
-"Annotation to specify API documentation of a program
- element."
+"Annotation to specify API documentation of a program 
+ element. The `doc` annotation need not be explicitly 
+ specified, since a string literal at the beginning of a
+ declaration is implicitly considered an argument to
+ `doc()`.
+ 
+     \"Something awesome\"
+     void hello() => print(\"hello\");
+ 
+ Is an abbreviation for:
+ 
+     doc (\"Something awesome\")
+     void hello() => print(\"hello\");"
 shared annotation DocAnnotation doc(
-    "Documentation, in Markdown syntax, about the annotated element"
+    "Documentation, in Markdown syntax, describing the 
+     annotated program element"
     String description) 
         => DocAnnotation(description);
 
@@ -253,7 +294,10 @@ shared final sealed annotation class ThrownExceptionAnnotation(
                   | ConstructorDeclaration> {}
 
 "Annotation to document the exception types thrown by a 
- function, value, class, or constructor."
+ function, value, class, or constructor.
+ 
+     throws(`class Exception`)
+     void die() { throw; }"
 shared annotation ThrownExceptionAnnotation throws(
     "The [[Exception]] type that is thrown."
     Declaration type,
@@ -304,8 +348,9 @@ shared final sealed annotation class AliasesAnnotation(
     shared String* aliases)
         satisfies OptionalAnnotation<AliasesAnnotation> {}
 
-"Annotation to specify a list of aliases that tools such as auto-completion and
- quick-fixes should consider, to help users find a declaration using its aliases."
+"Annotation to specify a list of aliases that tools such as 
+ auto-completion and quick-fixes should consider, to help 
+ users find a declaration using its aliases."
 since("1.2.0")
 shared annotation AliasesAnnotation aliased(
     "The aliases, in plain text."
@@ -326,13 +371,30 @@ shared annotation LicenseAnnotation license(
     String description)
         => LicenseAnnotation(description);
 
+"The annotation class for the [[since]] annotation."
+since("1.3.0")
+shared final sealed annotation class SinceAnnotation(
+    "The version of the module when this declaration was added."
+    shared String version)
+        satisfies OptionalAnnotation<SinceAnnotation> {}
+
+"Annotation to indicate at which moment the annotated declaration
+ was added to the module."
+since("1.3.0")
+shared annotation SinceAnnotation since(
+    "The version of the module when this declaration was added."
+    String version) 
+        => SinceAnnotation(version);
+
 "The annotation class for the [[optional]] annotation."
 shared final sealed annotation class OptionalImportAnnotation()
         satisfies OptionalAnnotation<OptionalImportAnnotation,
                     Import> {}
 
 "Annotation to specify that a module can be executed even if 
- the annotated dependency is not available."
+ the annotated dependency is not available.
+ 
+     optional import org.some.service.provider \"1.2.3\";"
 shared annotation OptionalImportAnnotation optional()
         => OptionalImportAnnotation();
 
@@ -412,9 +474,18 @@ shared final annotation class SmallAnnotation()
                     FunctionOrValueDeclaration> {
 }
 
-"Annotation to hint to the compiler that an `Integer` or 
- `Float` typed value or function should be represented using 
- a 32-bit signed integer or 32-bit IEEE float if possible."
+"Annotation to hint to the compiler that, if possible:
+ 
+  - an [[Integer]] type should be represented using a 32-bit 
+    signed integer,
+  - a [[Float]] type should be represented using 32-bit IEEE 
+    float, or
+  - a [[Character]] type should be represented as a single 
+    16-bit code point in the Basic Multilingual Plane.
+ 
+ The compiler is permitted to ignore this hint.
+ 
+     small Integer zero = 0;"
 since("1.3.0")
 shared annotation SmallAnnotation small() 
         => SmallAnnotation();
@@ -451,17 +522,3 @@ shared annotation ServiceAnnotation service(
     ClassOrInterfaceDeclaration contract) 
         => ServiceAnnotation(contract);
 
-"The annotation class for the [[since]] annotation."
-since("1.3.0")
-shared final sealed annotation class SinceAnnotation(
-    "The version of the module when this declaration was added."
-    shared String version)
-        satisfies OptionalAnnotation<SinceAnnotation> {}
-
-"Annotation to indicate at which moment the annotated declaration
- was added to the module."
-since("1.3.0")
-shared annotation SinceAnnotation since(
-    "The version of the module when this declaration was added."
-    String version) 
-        => SinceAnnotation(version);

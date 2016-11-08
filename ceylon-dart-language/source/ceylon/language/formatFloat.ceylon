@@ -1,6 +1,3 @@
-import java.lang {
-    JVMMath=Math
-}
 import ceylon.interop.dart {
     dartNumFromFloat
 }
@@ -192,7 +189,7 @@ shared String formatFloat(
             result.appendCharacter('0'.neighbour(digit));
         }
     }
-    if (float < 0.0) {
+    if (float < 0.0 && result.containsAny('1'..'9')) {
         result.appendCharacter('-');
     }
     return(result.string.reversed);
@@ -254,8 +251,13 @@ native
 Float log10(Float num);
 
 native("jvm")
-Float log10(Float num)
-    =>  JVMMath.log10(num);
+Float log10(Float num) {
+    import java.lang {
+        Math
+    }
+    
+    return Math.log10(num);
+}
 
 native("js")
 Float log10(Float num) {

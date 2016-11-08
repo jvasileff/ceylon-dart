@@ -1,4 +1,3 @@
-import java.lang { System }
 import dart.core { identityHashCode }
 
 "Return the system-defined identity hash value of the given 
@@ -8,8 +7,13 @@ see (`function identical`)
 shared native Integer identityHash(Identifiable identifiable);
 
 shared native("jvm") 
-Integer identityHash(Identifiable identifiable)
-        => System.identityHashCode(identifiable);
+Integer identityHash(Identifiable identifiable) {
+    import java.lang {
+        System
+    }
+
+    return System.identityHashCode(identifiable);
+}
 
 native("js")
 variable Integer _BasicId = 0;

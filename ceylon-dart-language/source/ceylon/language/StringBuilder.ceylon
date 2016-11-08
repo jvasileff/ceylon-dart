@@ -1,11 +1,3 @@
-import java.lang {
-    JStringBuilder=StringBuilder,
-    JCharacter=Character {
-        toChars,
-        charCount
-    },
-    IndexOutOfBoundsException
-}
 import dart.core {
     DStringBuffer = StringBuffer {
         DStringBufferClass = Class
@@ -237,6 +229,15 @@ shared native("jvm") final class StringBuilder()
         satisfies SearchableList<Character> &
                   Ranged<Integer,Character,String> &
                   IndexedCorrespondenceMutator<Character> {
+    
+    import java.lang {
+        JStringBuilder=StringBuilder,
+        JCharacter=Character {
+            toChars,
+            charCount
+        },
+        IndexOutOfBoundsException
+    }
     
     value builder = JStringBuilder();
     
