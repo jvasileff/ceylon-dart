@@ -939,6 +939,23 @@ class ExpressionTransformer(CompilationContext ctx)
              the constructor from within the class."
             assert (is BaseExpression | QualifiedExpression invoked = that.invoked);
 
+            // find type arguments
+            assert (is QualifiedExpressionInfo | BaseExpressionInfo invokedInfo);
+
+            value invokedTarget
+                =   targetForExpressionInfo(invokedInfo);
+
+            value classType
+                // If the declaration is a FunctionModel, it's a constructor
+                =   if (invokedTarget.declaration is FunctionModel)
+                    then invokedTarget.qualifyingType
+                    else invokedTarget;
+
+            value typeArguments
+                =   if (!isDartNative(invokedDeclaration))
+                    then [*classType.typeArgumentList]
+                    else [];
+
             // Peel back a layer if this is a constructor invocation; invoked.receiver
             // for constructor invocations is basically the same as invoked for class
             // initializer invocations.
@@ -985,6 +1002,8 @@ class ExpressionTransformer(CompilationContext ctx)
                                         || !getClassOfConstructor(classModel).shared)
                                 then generateArgumentsForCaptures(info, classModel)
                                 else [],
+                                typeArguments.collect((typeModel)
+                                    =>  generateTypeDescriptor(info, typeModel)),
                                 arguments
                             };
                         };
@@ -1048,7 +1067,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     () => argument.transform(expressionTransformer);
                     !isConstant(argument);
                     invokedDeclaration;
-                    []; // TODO type arguments for constructors
+                    typeArguments;
                     info.typeModel;
                     null;
                 };
@@ -1064,7 +1083,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     superType;
                     null;
                     invokedDeclaration;
-                    typeArguments = []; // TODO type arguments for constructors
+                    typeArguments;
                     signatureAndArguments = [
                         signature,
                         that.arguments
@@ -1081,7 +1100,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 receiverInfo.typeModel;
                 () => classInvoked.receiverExpression.transform(expressionTransformer);
                 invokedDeclaration;
-                typeArguments = []; // TODO type arguments for constructors
+                typeArguments;
                 signatureAndArguments = [
                     signature,
                     that.arguments
