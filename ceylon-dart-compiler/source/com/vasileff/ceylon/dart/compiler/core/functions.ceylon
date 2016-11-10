@@ -49,7 +49,8 @@ import com.redhat.ceylon.model.typechecker.model {
     TypeModel=Type,
     ModuleImportModel=ModuleImport,
     TypedReferenceModel=TypedReference,
-    ClassAliasModel=ClassAlias
+    ClassAliasModel=ClassAlias,
+    ModelUtil
 }
 import com.vasileff.ceylon.dart.compiler {
     dartBackend,
@@ -334,6 +335,13 @@ Boolean isStaticMethodReferencePrimary(ExpressionInfo? expressionInfo)
         case (is QualifiedExpression) [receiver.receiverExpression, constructor]
         case (is BaseExpression) [null, constructor];
 }
+
+"If the [[type]] is for a constructor, the qualifying type. Otherwise, [[type]]."
+TypeModel | TypedReferenceModel stripConstructorType
+        (TypeModel|TypedReferenceModel type)
+    =>  if (ModelUtil.isConstructor(type.declaration))
+        then type.qualifyingType
+        else type;
 
 "All *shared* constructors for the class if the class has constructors.
  Otherwise, the class."

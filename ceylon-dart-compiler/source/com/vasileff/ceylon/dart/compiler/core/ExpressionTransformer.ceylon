@@ -129,8 +129,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
-    ConstructorModel=Constructor,
-    TypedReference
+    ConstructorModel=Constructor
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -235,6 +234,12 @@ class ExpressionTransformer(CompilationContext ctx)
         assert (is QualifiedExpressionInfo | BaseExpressionInfo info
             =   expressionInfo(that));
 
+        value typeArguments
+            =>  if (!isDartNative(targetDeclaration))
+                then [*stripConstructorType(targetForExpressionInfo(info))
+                        .typeArgumentList]
+                else [];
+
         switch (nameAndArgs)
         case (is MemberNameWithTypeArguments?) {
             if (!is ValueModel | FunctionModel targetDeclaration) {
@@ -258,8 +263,7 @@ class ExpressionTransformer(CompilationContext ctx)
                     return generateCallableForBE {
                         info;
                         constructorModel;
-                        // TODO type arguments
-                        [];
+                        typeArguments;
                     };
                 }
                 case (is ValueModel) {
@@ -335,15 +339,6 @@ class ExpressionTransformer(CompilationContext ctx)
                 else {
                     // TODO support type constructors if info.typeModel.typeConstructor
 
-                    assert (is TypedReference typedReference
-                        =   targetForExpressionInfo(info));
-
-                    value typeArguments
-                        =   if (!isDartNative(targetDeclaration)
-                                && !targetDeclaration.anonymous)
-                            then [*typedReference.typeArgumentList]
-                            else [];
-
                     // A newly created Callable, which is not erased
                     return withBoxingNonNative {
                         info;
@@ -371,8 +366,7 @@ class ExpressionTransformer(CompilationContext ctx)
             return generateCallableForBE {
                 info;
                 declaration;
-                // TODO type arguments
-                [];
+                typeArguments;
             };
         }
     }
@@ -400,6 +394,17 @@ class ExpressionTransformer(CompilationContext ctx)
             =   if (exists receiver)
                 then expressionInfo(receiver)
                 else null;
+
+        value typeArguments
+            =>  if (!isDartNative(memberDeclaration)
+                    // Don't provide type args to anonymous functions for now
+                    // Note: memberDeclaration.anonymous is always 'true' for
+                    // constructors for some reason
+                    && !(memberDeclaration is FunctionModel
+                         && memberDeclaration.anonymous))
+                then [*stripConstructorType(targetForExpressionInfo(info))
+                        .typeArgumentList]
+                else [];
 
         "Qualified expressions not involving assignments or specifications must not be
          Setters."
@@ -477,13 +482,6 @@ class ExpressionTransformer(CompilationContext ctx)
             // TODO future support for the return type of the callable being a type
             //      constructor? ceylon/ceylon#6677
 
-            value typeArguments
-                =   if (memberDeclaration is FunctionModel,
-                        !isDartNative(memberDeclaration)
-                        && !memberDeclaration.anonymous)
-                    then [*targetForExpressionInfo(info).typeArgumentList]
-                    else [];
-
             // Return a `Callable` that takes a `containerType` and returns a
             // `Callable` that can be used to invoke the `memberDeclaration`
             return generateCallableForStaticMemberReference {
@@ -492,7 +490,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info.target.fullType;
                 deSugaredTarget;
                 memberOperator;
-                typeArguments = typeArguments;
+                typeArguments;
             };
         }
 
@@ -541,18 +539,11 @@ class ExpressionTransformer(CompilationContext ctx)
                     dartTypes.syntheticValueForValueConstructor {
                         memberDeclaration;
                     };
-                    typeArguments = []; // TODO type arguments for constructors
+                    typeArguments = [];
                     null;
                     that.memberOperator;
                 };
             }
-
-            value typeArguments
-                =   if (memberDeclaration is FunctionModel,
-                        !isDartNative(memberDeclaration)
-                        && !memberDeclaration.anonymous)
-                    then [*targetForExpressionInfo(info).typeArgumentList]
-                    else [];
 
             // QualifiedExpression with a `super` receiver
             if (exists superType
@@ -790,6 +781,14 @@ class ExpressionTransformer(CompilationContext ctx)
                     ctx.unit.getCallableArgumentTypes(invokedInfo.typeModel);
                 };
 
+        value typeArguments
+            =>  if (exists invokedDeclaration,
+                    is QualifiedExpressionInfo | BaseExpressionInfo invokedInfo,
+                    !isDartNative(invokedDeclaration))
+                then [*stripConstructorType(targetForExpressionInfo(invokedInfo))
+                        .typeArgumentList]
+                else [];
+
         switch (invokedDeclaration)
         case (is ValueModel?) {
             return indirectInvocationOnCallable(invokedDeclaration);
@@ -800,17 +799,6 @@ class ExpressionTransformer(CompilationContext ctx)
             "If the declaration is FunctionModel, the expression must be a base
              expression or a qualified expression"
             assert (is QualifiedExpression | BaseExpression invoked = that.invoked);
-
-            // find type arguments
-            assert (is QualifiedExpressionInfo | BaseExpressionInfo invokedInfo);
-
-            assert (is TypedReference typedReference
-                =   targetForExpressionInfo(invokedInfo));
-
-            value typeArguments
-                =   if (!isDartNative(invokedDeclaration))
-                    then [*typedReference.typeArgumentList]
-                    else [];
 
             // QualifiedExpression with a `super` receiver
             if (is QualifiedExpression invoked,
@@ -938,23 +926,6 @@ class ExpressionTransformer(CompilationContext ctx)
              constructors of toplevel classes, where a BaseExpression may be used for
              the constructor from within the class."
             assert (is BaseExpression | QualifiedExpression invoked = that.invoked);
-
-            // find type arguments
-            assert (is QualifiedExpressionInfo | BaseExpressionInfo invokedInfo);
-
-            value invokedTarget
-                =   targetForExpressionInfo(invokedInfo);
-
-            value classType
-                // If the declaration is a FunctionModel, it's a constructor
-                =   if (invokedTarget.declaration is FunctionModel)
-                    then invokedTarget.qualifyingType
-                    else invokedTarget;
-
-            value typeArguments
-                =   if (!isDartNative(invokedDeclaration))
-                    then [*classType.typeArgumentList]
-                    else [];
 
             // Peel back a layer if this is a constructor invocation; invoked.receiver
             // for constructor invocations is basically the same as invoked for class

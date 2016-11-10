@@ -4563,6 +4563,7 @@ class BaseGenerator(CompilationContext ctx)
                                         || !functionModel.shared)
                                 then generateArgumentsForCaptures(scope, functionModel)
                                 else [],
+                                dartTypeArguments,
                                 innerArguments
                             };
                         };
