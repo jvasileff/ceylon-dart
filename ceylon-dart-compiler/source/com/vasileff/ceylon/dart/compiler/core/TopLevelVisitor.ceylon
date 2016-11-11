@@ -1772,7 +1772,8 @@ class TopLevelVisitor(CompilationContext ctx)
                 };
 
         value dartTypeArguments
-            =   if (exists et = classModel.extendedType)
+            =   if (exists et = classModel.extendedType,
+                        !isDartNative(et.declaration))
                     then [for (ta in et.typeArgumentList)
                           generateTypeDescriptor(scope, ta)]
                     else [];
