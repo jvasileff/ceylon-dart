@@ -1606,7 +1606,8 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformEntryOperation(EntryOperation that)
-        =>  let (info = nodeInfo(that))
+        =>  let (info = expressionInfo(that),
+                 typeArguments = info.typeModel.typeArgumentList)
             withBoxingNonNative {
                 info;
                 expressionInfo(that).typeModel;
@@ -1617,7 +1618,9 @@ class ExpressionTransformer(CompilationContext ctx)
                         ceylonTypes.entryDeclaration;
                     };
                     DartArgumentList {
-                        [withLhsNonNative {
+                        [generateTypeDescriptor(info, typeArguments.get(0)),
+                        generateTypeDescriptor(info, typeArguments.get(1)),
+                        withLhsNonNative {
                             ceylonTypes.objectType;
                             () => that.key.transform(this);
                         },
