@@ -193,7 +193,7 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
             };
         };
 
-        // declare _$runToplevel Callable
+        // declare _$runToplevel Callable - Boolean(String)
         return DartTopLevelVariableDeclaration {
             DartVariableDeclarationList {
                 null;
@@ -212,7 +212,12 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                             };
                             null;
                         };
-                        DartArgumentList([runnerFunctionExpression]);
+                        DartArgumentList {
+                            [generateTypeDescriptor(scope, ceylonTypes.booleanType),
+                            generateTypeDescriptor(scope,
+                                ceylonTypes.getTupleType([ceylonTypes.stringType])),
+                            runnerFunctionExpression];
+                        };
                     };
                 }];
             };

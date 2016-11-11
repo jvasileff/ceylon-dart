@@ -568,12 +568,12 @@ class CeylonTypes(Unit unit) {
 
     shared
     Type getTupleType([Type*] elementTypes,
-                        Integer? firstDefaulted,
+                        Integer? firstDefaulted = null,
                         "- `true` for a non-empty variadic Rest
                          - `false` for a possibly-empty variadic Rest
                          - a [[Type]] for an explicitly specified Rest
                          - `null` if not variadic"
-                        Boolean | Type | Null restType)
+                        Boolean | Type | Null restType = null)
         =>  let (typeList = JavaList(elementTypes)) (
             switch (restType)
             case (is Type)
