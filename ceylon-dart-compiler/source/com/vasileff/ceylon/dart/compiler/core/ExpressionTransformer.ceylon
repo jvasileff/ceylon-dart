@@ -683,8 +683,10 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformIterable(Iterable that)
-        =>  generateIterable {
-                expressionInfo(that);
+        =>  let (info = expressionInfo(that))
+            generateIterable {
+                info;
+                info.typeModel;
                 that.argumentList.listedArguments;
                 that.argumentList.sequenceArgument;
             };

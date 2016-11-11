@@ -1557,6 +1557,7 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartExpression generateIterable(
             DScope scope,
+            TypeModel iterableType,
             [Expression*] listedArguments,
             SpreadArgument | Comprehension | Null sequenceArgument) {
 
@@ -1605,7 +1606,11 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
                     DartArgumentList {
-                        [DartIntegerLiteral(listedArguments.size),
+                        [generateTypeDescriptor {
+                            scope;
+                            ceylonTypes.getIteratedType(iterableType);
+                        },
+                        DartIntegerLiteral(listedArguments.size),
                         DartFunctionExpression {
                             DartFormalParameterList {
                                 false; false;
@@ -5314,6 +5319,10 @@ class BaseGenerator(CompilationContext ctx)
             assert (exists parameterModel = iterableInfo.parameter);
             assert (exists details = parameterDetails[parameterModel]);
             value [index, typeModel, parameterModelModel, dartIdentifier] = details;
+            value iterableType
+                =   if (is TypeModel typeModel)
+                    then typeModel
+                    else typeModel.type;
 
             iterableArgument
                 =   [DartVariableDeclarationStatement {
@@ -5329,6 +5338,7 @@ class BaseGenerator(CompilationContext ctx)
                                     typeModel;
                                     () => expressionTransformer.generateIterable {
                                         scope;
+                                        iterableType;
                                         namedArguments.iterableArgument.listedArguments;
                                         namedArguments.iterableArgument.sequenceArgument;
                                     };
