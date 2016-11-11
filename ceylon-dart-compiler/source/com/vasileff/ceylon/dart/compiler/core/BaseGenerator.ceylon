@@ -1729,6 +1729,9 @@ class BaseGenerator(CompilationContext ctx)
                         restType;
                     };
 
+            value tupleTypeArguments
+                =   tupleType.typeArgumentList;
+
             return
             withBoxingNonNative {
                 scope;
@@ -1746,7 +1749,10 @@ class BaseGenerator(CompilationContext ctx)
                         };
                     };
                     DartArgumentList {
-                        [DartListLiteral {
+                        [generateTypeDescriptor(scope, tupleTypeArguments.get(0)),
+                        generateTypeDescriptor(scope, tupleTypeArguments.get(1)),
+                        generateTypeDescriptor(scope, tupleTypeArguments.get(2)),
+                        DartListLiteral {
                             false;
                             // Sequences are generic, so elements must
                             // not be erased to native.
