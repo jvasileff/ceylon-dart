@@ -573,6 +573,7 @@ class StatementTransformer(CompilationContext ctx)
                 // (specification statements with type parameters not
                 // allowed)
                 [];
+                callableType = declarationModel.typedReference.fullType;
                 generateFunctionExpressionRaw {
                     info;
                     declarationModel;

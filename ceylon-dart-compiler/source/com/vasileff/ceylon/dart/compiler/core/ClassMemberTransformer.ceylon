@@ -187,6 +187,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                                 // (specification statements with type parameters not
                                 // allowed)
                                 [];
+                                callableType = declaration.type;
                                 generateFunctionExpressionRaw {
                                     info;
                                     functionModel;
@@ -656,6 +657,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                                     info;
                                     model;
                                     [];
+                                    model.typedReference.fullType;
                                     generateFunctionExpression(that);
                                 };
                             };

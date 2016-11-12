@@ -264,6 +264,10 @@ class ExpressionTransformer(CompilationContext ctx)
                         info;
                         constructorModel;
                         typeArguments;
+                        // TODO the return type of the 'typeModel' Callable is for the
+                        //      constructor, not the constructor's class (e.g. C.create)
+                        //      Is that ok?
+                        callableType = info.typeModel;
                     };
                 }
                 case (is ValueModel) {
@@ -346,7 +350,8 @@ class ExpressionTransformer(CompilationContext ctx)
                         generateCallableForBE {
                             info;
                             targetDeclaration;
-                            typeArguments = typeArguments;
+                            typeArguments;
+                            callableType = info.typeModel;
                         };
                     };
                 }
@@ -367,6 +372,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info;
                 declaration;
                 typeArguments;
+                callableType = info.typeModel;
             };
         }
     }
@@ -1227,6 +1233,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 info;
                 info.declarationModel;
                 [];
+                info.typeModel;
                 generateFunctionExpression(that);
             };
         };
@@ -2053,6 +2060,22 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformComprehension(Comprehension that) {
         value info = nodeInfo(that);
 
+        // FIXME calculate `Absent` type argument
+
+        // The type of the Iterable we are creating and the return type of
+        // `dartFunctionIterableFactory`.
+        value [elementType, resultType] = elementAndIterableComprehensionType(that);
+
+        "The type of the `Callable` used to generate elements"
+        value innerCallableType
+            =   ceylonTypes.getCallableType {
+                    ceylonTypes.unionType(elementType, ceylonTypes.finishedType);
+                };
+
+        "The type of the Callable used as a factory for `Callable`s to generate elements"
+        value outerCallableType
+            =   ceylonTypes.getCallableType(innerCallableType);
+
         function generateStepFunctionName(Integer step)
             =>  DartSimpleIdentifier {
                     dartTypes.createTempNameCustom {
@@ -2688,21 +2711,16 @@ class ExpressionTransformer(CompilationContext ctx)
                 value outerReturn
                     =   DartReturnStatement {
                             // Easy. Until we reify generics.
-                            createCallable(info, stepFunctionId);
+                            createCallable {
+                                info;
+                                innerCallableType;
+                                stepFunctionId;
+                            };
                         };
 
                 return [dartStepFunctionDeclaration, outerReturn];
             }
         }
-
-
-        // The type of the Iterable we are creating and the return type of
-        // `dartFunctionIterableFactory`.
-        //
-        // Note: when we reify, we'll need to make sure the `Absent` type parameter is
-        // correct. It would also be better to have dartFunctionIterableFactory model
-        // information, and calculate the return type using a `FunctionModel`.
-        value [elementType, resultType] = elementAndIterableComprehensionType(that);
 
         // Return a new Iterable based on a function that returns a
         // function that returns the elements of the comprehension.
@@ -2717,10 +2735,10 @@ class ExpressionTransformer(CompilationContext ctx)
                     dartTypes.dartFunctionIterableFactory;
                 };
                 DartArgumentList {
-                    // Easy. Until we reify generics.
                     [generateTypeDescriptor(info, elementType),
                     createCallable {
                         info;
+                        outerCallableType;
                         DartFunctionExpression {
                             dartFormalParameterListEmpty;
                             DartBlockFunctionBody {

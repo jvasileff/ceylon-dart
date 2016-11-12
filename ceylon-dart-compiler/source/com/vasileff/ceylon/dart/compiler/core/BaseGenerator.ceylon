@@ -357,12 +357,16 @@ class BaseGenerator(CompilationContext ctx)
     shared
     DartInstanceCreationExpression createCallable(
             DScope scope,
+            TypeModel callableType,
             DartExpression delegateFunction,
             Integer? variadicParameterIndex = null) {
 
         if (exists variadicParameterIndex) {
             assert (!variadicParameterIndex.negative);
         }
+
+        assert (exists [returnType, argumentsType]
+            =   ceylonTypes.getCallableReturnAndTuple(callableType));
 
         return
         DartInstanceCreationExpression {
@@ -375,7 +379,8 @@ class BaseGenerator(CompilationContext ctx)
                 null;
             };
             DartArgumentList {
-                {
+                {   generateTypeDescriptor(scope, returnType),
+                    generateTypeDescriptor(scope, argumentsType),
                     delegateFunction,
                     omap(DartIntegerLiteral)(variadicParameterIndex)
                 }.coalesced.sequence();
@@ -1363,6 +1368,16 @@ class BaseGenerator(CompilationContext ctx)
                     .collect((i) =>  i.parameterModel));
         }
 
+        value fullType
+            =   functionModel.typedReference.fullType;
+
+        "Callable return type by parameter list index (for curried functionModels)"
+        value callableTypes
+            =   loop(fullType)((t) => ceylonTypes.getCallableReturnType(t))
+                    .skip(1)
+                    .take(parameterLists.size - 1)
+                    .sequence();
+
         // For multiple parameter lists, eagerly call the delegate in case there are side
         // effects. https://github.com/ceylon/ceylon/issues/3916
 
@@ -1390,7 +1405,8 @@ class BaseGenerator(CompilationContext ctx)
 
             if (i < parameterLists.size - 1) {
                 // wrap nested function in a callable
-                assert(exists inner = result);
+                assert (exists inner = result);
+                assert (exists callableType = callableTypes[i]);
 
                 // generateCallableForBE() *thinks* the innermost call returns a native
                 // value, but it doesn't since we're really invoking another Callable. So,
@@ -1399,7 +1415,14 @@ class BaseGenerator(CompilationContext ctx)
                 // combos. Better would be to teach generateCallableForBE that our return
                 // values are never erased-to-native.
                 // TODO type arguments
-                result = generateCallableForBE(scope, functionModel, [], inner, i+1);
+                result = generateCallableForBE {
+                    scope;
+                    functionModel;
+                    [];
+                    callableType;
+                    inner;
+                    i+1;
+                };
             }
 
             value delegateIdentifier
@@ -2701,6 +2724,7 @@ class BaseGenerator(CompilationContext ctx)
                                         scope;
                                         parameterModelModel;
                                         [];
+                                        parameterModelModel.typedReference.fullType;
                                         generateFunctionExpression {
                                             param;
                                             suppressDefaultArgumentAssigment = true;
@@ -3488,24 +3512,40 @@ class BaseGenerator(CompilationContext ctx)
              that invoke these Callables."
             Boolean suppressDefaultArgumentAssigment = false) {
 
-        variable DartExpression? result = null;
-        value isVoid = functionModel.declaredVoid;
+        value fullType
+            =   functionModel.typedReference.fullType;
+
+        "Callable return type by parameter list index (for curried functionModels)"
+        value callableTypes
+            =   loop(fullType)((t) => ceylonTypes.getCallableReturnType(t))
+                    .skip(1)
+                    .take(parameterLists.size - 1)
+                    .sequence();
 
         value typeParameters
             =   if (!functionModel.anonymous)
                 then generateTypeParameters(scope, functionModel)
                 else [];
 
+        value isVoid
+            =   functionModel.declaredVoid;
+
+        variable DartExpression? result
+            =   null;
+
         for (i -> list in parameterLists.indexed.sequence().reversed) {
             if (i < parameterLists.size - 1) {
                 // wrap nested function in a callable
-                assert(exists previous = result);
-                assert(exists previousPList = parameterLists[i+1]);
+                assert (exists previous = result);
+                assert (exists previousPList = parameterLists[i+1]);
+                assert (exists callableType = callableTypes[i]);
+
                 result
                     =   generateCallableForBE {
                             scope;
                             functionModel;
                             []; // no type arguments
+                            callableType;
                             previous;
                             i+1;
                             parameterList = parametersInfo(previousPList).model;
@@ -4235,7 +4275,12 @@ class BaseGenerator(CompilationContext ctx)
                 then parameters.size - 1;
 
         value callable
-            =   createCallable(scope, outerFunction, variadicParameterIndex);
+            =   createCallable {
+                    scope;
+                    callableType;
+                    outerFunction;
+                    variadicParameterIndex;
+                };
 
         // Eagerly evaluate the receiver, if necessary
         if (eagerlyEvaluateReceiver, exists generateReceiver) {
@@ -4279,6 +4324,8 @@ class BaseGenerator(CompilationContext ctx)
             "The MemberOperator. Null safe and spread are not supported."
             MemberOperator memberOperator = MemberOperator(),
             [TypeModel*] typeArguments = []) {
+
+        value callableType = ceylonTypes.getCallableType(memberType, containerType);
 
         switch (memberDeclaration)
         case (is ValueModel) {
@@ -4324,7 +4371,7 @@ class BaseGenerator(CompilationContext ctx)
                     };
 
             // The Callable that takes a `containerType`
-            return createCallable(scope, outerFunction);
+            return createCallable(scope, callableType, outerFunction);
         }
         case (is FunctionModel | ClassModel | ConstructorModel) {
             // Return a `Callable` that takes a `containerType` and returns a
@@ -4371,17 +4418,20 @@ class BaseGenerator(CompilationContext ctx)
                     };
 
             // The Callable that takes a `containerType`
-            return createCallable(scope, outerFunction);
+            return createCallable(scope, callableType, outerFunction);
         }
     }
 
     shared
     DartInstanceCreationExpression generateCallableForBE(
             DScope scope,
+            "The function or constructor to call."
             FunctionModel | ClassModel | ConstructorModel functionModel,
             "The type arguments. For type constructors, (for now), include an 'unknown'
              type for each required parameter."
             [TypeModel*] typeArguments,
+            "The Callable type for the returned Callable."
+            TypeModel callableType,
             DartExpression? delegateFunction = null,
             Integer parameterListNumber = 0,
             "The parameterList, which may be different than the one indicated by the
@@ -4450,9 +4500,6 @@ class BaseGenerator(CompilationContext ctx)
                 || !functionModel.shared && functionModel.container is InterfaceModel;
 
         if (!needsWrapperFunction) {
-            "A bit ugly, but we do know it's not a ClassModel | ConstructorModel
-             from above test."
-            assert (!is ClassModel | ConstructorModel functionModel);
             outerFunction
                 =   delegateFunction else
                     dartTypes.invocableForBaseExpression {
@@ -4617,7 +4664,12 @@ class BaseGenerator(CompilationContext ctx)
                 then parameters.size - 1;
 
         // create the Callable!
-        return createCallable(scope, outerFunction, variadicParameterIndex);
+        return createCallable {
+            scope;
+            callableType;
+            outerFunction;
+            variadicParameterIndex;
+        };
     }
 
     "Generate a DartExpression for a series of `BooleanCondition`s."
@@ -5208,6 +5260,10 @@ class BaseGenerator(CompilationContext ctx)
                                             argumentInfo;
                                             declarationModel;
                                             [];
+                                            callableType
+                                                =   if (is TypeModel typeModel)
+                                                    then typeModel
+                                                    else typeModel.type;
                                             generateFunctionExpressionRaw {
                                                 lsInfo;
                                                 declarationModel;
@@ -5280,6 +5336,10 @@ class BaseGenerator(CompilationContext ctx)
                                         argumentInfo;
                                         argumentInfo.declarationModel;
                                         [];
+                                        callableType
+                                            =   if (is TypeModel typeModel)
+                                                then typeModel
+                                                else typeModel.type;
                                         generateFunctionExpression(argumentInfo.node);
                                     };
                                     lhsIsParameter = true;

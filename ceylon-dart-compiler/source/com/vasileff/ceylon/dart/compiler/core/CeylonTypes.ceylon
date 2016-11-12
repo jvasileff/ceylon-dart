@@ -584,6 +584,13 @@ class CeylonTypes(Unit unit) {
                 unit.getTupleType(typeList, false, false, firstDefaulted else -1));
 
     shared
+    Type getCallableType(Type returnType, Type* argumentTypes)
+        =>  ModelUtil.appliedType(
+                callableDeclaration,
+                returnType,
+                getTupleType(argumentTypes));
+
+    shared
     Type getSequentialTypeForIterable(Type iterableType) {
         if (isCeylonSequential(iterableType)) {
             return iterableType;
@@ -613,6 +620,15 @@ class CeylonTypes(Unit unit) {
     shared
     Type? getCallableTuple(Type callableType)
         =>  unit.getCallableTuple(callableType) else null;
+
+    shared
+    [Type, Type]? getCallableReturnAndTuple(Type callableType) {
+        if (exists ct = callableType.getSupertype(callableDeclaration)) {
+            value typeArgs = ct.typeArgumentList;
+            return [typeArgs.get(0), typeArgs.get(1)];
+        }
+        return null;
+    }
 
     shared
     Boolean equalDeclarations(Declaration first, Declaration second)
