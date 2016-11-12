@@ -1007,6 +1007,12 @@ class ClassMemberTransformer(CompilationContext ctx)
                     then constructor
                     else constructor.container);
 
+            value dartTypeParameters
+                =   generateTypeParameters(info, classModel);
+
+            value dartTypeArgs
+                =   dartTypeParameters.collect(DartFormalParameter.identifier);
+
             "Initializer parameters."
             value standardParameters
                 =   withInConstructorSignature {
@@ -1035,10 +1041,11 @@ class ClassMemberTransformer(CompilationContext ctx)
                 dartTypes.identifierForMemberFactory(constructor, static);
                 DartFormalParameterList {
                     true; false;
-                    if (static)
-                    then [generateParameterForThis(info, container),
-                          *standardParameters]
-                    else standardParameters;
+                    concatenate {
+                        static then [generateParameterForThis(info, container)] else [],
+                        dartTypeParameters,
+                        standardParameters
+                    };
                 };
                 !classModel.formal && (static || container is ClassModel) then
                 DartExpressionFunctionBody {
@@ -1055,6 +1062,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                                     containerScope;
                                     constructor;
                                 },
+                                dartTypeArgs,
                                 [ for (p in standardParameters) p.identifier ]
                             };
                         };
