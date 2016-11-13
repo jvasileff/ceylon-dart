@@ -228,19 +228,20 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // and the type inherits a non-shared member of the same name. This is because
         // in Dart, private is more like Java's package-private, so *all* members are
         // polymorphic and we need to use unique names to avoid unintentional refinements.
-        //
-        // Or... for type parameters, always use a unique name (TPs are shared in dart,
-        // but not per the Ceylon model.)
+        // This includes TypeParameters, for which we are using non-shared (i.e.
+        // '_' prefixed) names in Dart.
         if (is FunctionOrValueModel | TypeParameterModel originalDeclaration,
                 is ClassOrInterfaceModel container = originalDeclaration.container,
-                !originalDeclaration.shared
-                    || originalDeclaration is TypeParameterModel) {
+                !originalDeclaration.shared) {
+
+            // TODO only class members matter, right? Since interface members are called
+            //      statically (not inherited).
 
             value conflictCount
-                =   supertypeDeclarations(container).rest.count((superType)
+                =   supertypeDeclarations(container).rest.distinct.count((superType)
                     =>  if (exists member = superType.getDirectMember(
                                 originalDeclaration.name, null, false))
-                        then !member.shared || originalDeclaration is TypeParameterModel
+                        then !member.shared
                         else false);
 
             return if (conflictCount > 0)
@@ -356,9 +357,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             // identifiers private, since in dev our files aren't always in proper
             // Dart packages. And for convenience, leaving the non `$package$` qualified
             // bridges alone.
-            if (!declaration is TypeParameterModel
-                    && (isClassOrInterfaceMember(declaration))
-                    && !declaration.shared) {
+            if (isClassOrInterfaceMember(declaration) && !declaration.shared) {
                 // see https://github.com/jvasileff/ceylon-dart/issues/25
                 return "_" + baseName;
             }
@@ -380,8 +379,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is TypeParameterModel) {
             // TODO TPs of Interfaces will need fully unique names (include ancestors
             //      in name)
-            return sanitizeIdentifier {
-                usableShortName(originalDeclaration);
+            return makePrivate {
+                originalDeclaration;
+                sanitizeIdentifier {
+                    usableShortName(originalDeclaration);
+                };
             };
         }
         case (is ClassModel) {
@@ -572,8 +574,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         }
         case (is TypeParameterModel) {
             // TODO special rules for captures, etc.
-            return identifierPackagePrefix(declaration)
-                        + getUnprefixedName(declaration);
+            return getUnprefixedName(declaration);
 
         }
         else {
