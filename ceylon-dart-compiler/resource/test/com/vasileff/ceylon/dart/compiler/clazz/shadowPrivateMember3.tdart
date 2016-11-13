@@ -9,7 +9,7 @@ class run$E$F  extends run$E {
     this.$outer$default$run$E = $outer$default$run$E;
   }
   $dart$core.String get _id$1 => $ceylon$language.$dartString($ceylon$language.nothing as $ceylon$language.String);
-  $dart$core.String get eId => $ceylon$language.$dartString((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => $ceylon$language.$ceylonString(($r as run$E)._id))).f(this) as $ceylon$language.String);
+  $dart$core.String get eId => $ceylon$language.$dartString((new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[run.E]"), ([$dart$core.Object $r]) => $ceylon$language.$ceylonString(($r as run$E)._id))).f(this) as $ceylon$language.String);
 }
 class run$E implements $ceylon$language.dart$$Basic {
   run$E() {}
@@ -24,7 +24,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -44,7 +44,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

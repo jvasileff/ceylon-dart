@@ -5,13 +5,13 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
   $ceylon$language.Iterable unbounded0 = $ceylon$language.empty;
-  $ceylon$language.Iterable unbounded1 = new $ceylon$language.LazyIterable(1, (final $dart$core.int $i$) {
+  $ceylon$language.Iterable unbounded1 = new $ceylon$language.LazyIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), 1, (final $dart$core.int $i$) {
     switch ($i$) {
     case 0 :
       return $ceylon$language.$ceylonInteger(1);
     }
   }, null);
-  $ceylon$language.Iterable unbounded2 = new $ceylon$language.LazyIterable(2, (final $dart$core.int $i$) {
+  $ceylon$language.Iterable unbounded2 = new $ceylon$language.LazyIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), 2, (final $dart$core.int $i$) {
     switch ($i$) {
     case 0 :
       return $ceylon$language.$ceylonInteger(1);
@@ -19,10 +19,10 @@ void $package$run() {
       return $ceylon$language.$ceylonInteger(2);
     }
   }, null);
-  $ceylon$language.Sequence fa([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a)], rest);
+  $ceylon$language.Sequence fa([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer[]"), [$ceylon$language.$ceylonInteger(a)], rest);
 
   $ceylon$language.print((() {
-    $ceylon$language.Tuple arg$0$s = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(0)], unbounded2.sequence());
+    $ceylon$language.Tuple arg$0$s = new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer[]"), [$ceylon$language.$ceylonInteger(0)], unbounded2.sequence());
     return fa($ceylon$language.$dartInt(arg$0$s.getFromFirst(0) as $ceylon$language.Integer), arg$0$s.spanFrom($ceylon$language.$ceylonInteger(1)));
   })());
   $ceylon$language.Sequential fb([$ceylon$language.Sequential rest]) => rest;
@@ -34,7 +34,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -54,7 +54,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

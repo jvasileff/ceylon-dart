@@ -25,7 +25,7 @@ $dart$core.String $package$bar() => "";
 
 $dart$core.String bar() => $package$bar();
 
-$ceylon$language.Callable $package$barCurry() => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString((() => "")()));
+$ceylon$language.Callable $package$barCurry() => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonString((() => "")()));
 
 $ceylon$language.Callable barCurry() => $package$barCurry();
 
@@ -37,7 +37,7 @@ abstract class I {
 class A implements $ceylon$language.dart$$Basic, I {
   A() {
     id = "hello";
-    foo$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString($package$bar()));
+    foo$c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonString($package$bar()));
   }
   $dart$core.String id;
   $ceylon$language.Callable foo$c;
@@ -47,7 +47,7 @@ class A implements $ceylon$language.dart$$Basic, I {
 }
 class B implements $ceylon$language.dart$$Basic, I {
   B() {
-    _barCurryRef = new $ceylon$language.dart$Callable($package$barCurry);
+    _barCurryRef = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String()"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), $package$barCurry);
     foo$c = _barCurryRef.f() as $ceylon$language.Callable;
   }
   $dart$core.String get id => "hello";
@@ -60,7 +60,7 @@ class B implements $ceylon$language.dart$$Basic, I {
 class C implements $ceylon$language.dart$$Basic, I {
   C() {
     id = "hello";
-    fdf$c = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString("fdfImpl"));
+    fdf$c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonString("fdfImpl"));
   }
   $dart$core.String id;
   $ceylon$language.Callable fdf$c;
@@ -69,7 +69,7 @@ class C implements $ceylon$language.dart$$Basic, I {
   }
   $dart$core.String foo() => I.$foo(this);
 }
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
 });
 
@@ -84,7 +84,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

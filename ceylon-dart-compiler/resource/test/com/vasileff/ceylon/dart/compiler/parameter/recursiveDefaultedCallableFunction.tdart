@@ -6,7 +6,7 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 void $package$recursiveDefaultedCallableFunction() {
   void testFact([$dart$core.Object fact = $ceylon$language.dart$default]) {
     if ($dart$core.identical(fact, $ceylon$language.dart$default)) {
-      fact = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((fact as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
+      fact = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => $ceylon$language.$dartInt(i) < 2 ? i : $ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) * $ceylon$language.$dartInt((fact as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger($ceylon$language.$dartInt(i) - 1)) as $ceylon$language.Integer)));
     }
     if (!($ceylon$language.$dartInt((fact as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(4)) as $ceylon$language.Integer) == 24)) {
       throw new $ceylon$language.AssertionError("Violated: fact(4) == 24");
@@ -18,7 +18,7 @@ void $package$recursiveDefaultedCallableFunction() {
 
 void recursiveDefaultedCallableFunction() => $package$recursiveDefaultedCallableFunction();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "recursiveDefaultedCallableFunction" :
     $package$recursiveDefaultedCallableFunction();
@@ -38,7 +38,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

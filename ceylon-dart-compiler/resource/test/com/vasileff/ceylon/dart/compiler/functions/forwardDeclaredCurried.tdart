@@ -7,7 +7,7 @@ void $package$run() {
   $ceylon$language.Callable echo1$c;
   $ceylon$language.Callable echo1([$dart$core.String s]) {
     $ceylon$language.Callable echo1$c1 = echo1$c.f($ceylon$language.$ceylonString(s));
-    return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
       return $ceylon$language.$dartString(echo1$c1.f(t));
     })($0)));
   }
@@ -15,13 +15,13 @@ void $package$run() {
   $ceylon$language.Callable echo2$c;
   $ceylon$language.Callable echo2([$dart$core.String s]) {
     $ceylon$language.Callable echo2$c1 = echo2$c.f($ceylon$language.$ceylonString(s));
-    return new $ceylon$language.dart$Callable(([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String $0]) => $ceylon$language.$ceylonString((($ceylon$language.String t) {
       return $ceylon$language.$dartString(echo2$c1.f(t));
     })($0)));
   }
 
-  echo1$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
-  echo2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
+  echo1$c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String(ceylon.language::String)"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
+  echo2$c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String(ceylon.language::String)"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String t]) => $ceylon$language.$ceylonString($ceylon$language.$dartString(s) + $ceylon$language.$dartString(t))));
   if (!($ceylon$language.$dartString(echo1("wor").f($ceylon$language.$ceylonString("ks")) as $ceylon$language.String) == "works")) {
     throw new $ceylon$language.AssertionError("Violated: echo1(\"wor\")(\"ks\") == \"works\"");
   }
@@ -32,7 +32,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -52,7 +52,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

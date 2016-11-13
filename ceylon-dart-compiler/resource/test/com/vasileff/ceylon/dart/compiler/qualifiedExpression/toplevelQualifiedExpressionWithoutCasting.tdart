@@ -12,8 +12,8 @@ $ceylon$language.List $package$somethingL = $ceylon$language.nothing as $ceylon$
 $ceylon$language.List get somethingL => $package$somethingL;
 
 void $package$run() {
-  $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonBoolean($package$somethingE.contains($0)));
-  $ceylon$language.Callable cl = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonBoolean($package$somethingL.contains($0)));
+  $ceylon$language.Callable ce = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Object]"), ([$dart$core.Object $0]) => $ceylon$language.$ceylonBoolean($package$somethingE.contains($0)));
+  $ceylon$language.Callable cl = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Object]"), ([$dart$core.Object $0]) => $ceylon$language.$ceylonBoolean($package$somethingL.contains($0)));
   $package$somethingE.contains($ceylon$language.$ceylonString("x"));
   $ceylon$language.print($ceylon$language.$ceylonBoolean($package$somethingE.contains($ceylon$language.$ceylonString("x"))));
   $package$somethingL.contains($ceylon$language.$ceylonString("x"));
@@ -22,7 +22,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
 });
 
@@ -37,7 +37,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

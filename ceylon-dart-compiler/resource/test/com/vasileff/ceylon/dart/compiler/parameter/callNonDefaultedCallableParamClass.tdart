@@ -25,7 +25,7 @@ class callNonDefaultedCallableParamClass$C implements $ceylon$language.dart$$Bas
 void $package$callNonDefaultedCallableParamClass() {
   $dart$core.int id([$dart$core.int i]) => i;
 
-  callNonDefaultedCallableParamClass$C c = new callNonDefaultedCallableParamClass$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
+  callNonDefaultedCallableParamClass$C c = new callNonDefaultedCallableParamClass$C(new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(id($ceylon$language.$dartInt($0)))));
   if (!(c.a(1) == 1)) {
     throw new $ceylon$language.AssertionError("Violated: c.a(1) == 1");
   }
@@ -45,7 +45,7 @@ void $package$callNonDefaultedCallableParamClass() {
 
 void callNonDefaultedCallableParamClass() => $package$callNonDefaultedCallableParamClass();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "callNonDefaultedCallableParamClass" :
     $package$callNonDefaultedCallableParamClass();
@@ -65,7 +65,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

@@ -33,11 +33,11 @@ I$J $package$j = (new j$$anonymous$1_$1j$1()).j;
 
 I$J get j => $package$j;
 
-$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(() => $package$j.$new$I$J$C());
+$ceylon$language.Callable $package$newC = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I.J.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $package$j.$new$I$J$C());
 
 $ceylon$language.Callable get newC => $package$newC;
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
 });
 
@@ -52,7 +52,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

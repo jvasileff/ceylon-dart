@@ -6,10 +6,10 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class referenceToCallableParamQE$C implements $ceylon$language.dart$$Basic {
   referenceToCallableParamQE$C([$ceylon$language.Callable echoShared, $ceylon$language.Callable echoNonShared, $dart$core.Object echoSharedDefaulted = $ceylon$language.dart$default, $dart$core.Object echoNonSharedDefaulted = $ceylon$language.dart$default]) : this.$s((() {
     if ($dart$core.identical(echoSharedDefaulted, $ceylon$language.dart$default)) {
-      echoSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
+      echoSharedDefaulted = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => i);
     }
     if ($dart$core.identical(echoNonSharedDefaulted, $ceylon$language.dart$default)) {
-      echoNonSharedDefaulted = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
+      echoNonSharedDefaulted = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => i);
     }
     return [echoShared, echoNonShared, echoSharedDefaulted, echoNonSharedDefaulted];
   })());
@@ -19,10 +19,10 @@ class referenceToCallableParamQE$C implements $ceylon$language.dart$$Basic {
     this._echoNonSharedDefaulted = echoNonSharedDefaulted;
     this._echoShared$c = echoShared;
     this._echoSharedDefaulted$c = echoSharedDefaulted;
-    _echoSharedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
-    _echoNonSharedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => this._echoNonShared.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
-    _echoSharedDefaultedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
-    _echoNonSharedDefaultedRef = new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => this._echoNonSharedDefaulted.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
+    _echoSharedRef = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoShared($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
+    _echoNonSharedRef = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => this._echoNonShared.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
+    _echoSharedDefaultedRef = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => $ceylon$language.$ceylonInteger(this.echoSharedDefaulted($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
+    _echoNonSharedDefaultedRef = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => this._echoNonSharedDefaulted.f($0 as $ceylon$language.Integer) as $ceylon$language.Integer);
     if (!($ceylon$language.$dartInt(_echoSharedRef.f($ceylon$language.$ceylonInteger(1)) as $ceylon$language.Integer) == 1)) {
       throw new $ceylon$language.AssertionError("Violated: echoSharedRef(1) == 1");
     }
@@ -54,12 +54,12 @@ class referenceToCallableParamQE$C implements $ceylon$language.dart$$Basic {
 void $package$referenceToCallableParamQE() {
   $dart$core.int echo([$dart$core.int i]) => i;
 
-  new referenceToCallableParamQE$C(new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))));
+  new referenceToCallableParamQE$C(new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))), new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer $0]) => $ceylon$language.$ceylonInteger(echo($ceylon$language.$dartInt($0)))));
 }
 
 void referenceToCallableParamQE() => $package$referenceToCallableParamQE();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "referenceToCallableParamQE" :
     $package$referenceToCallableParamQE();
@@ -79,7 +79,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

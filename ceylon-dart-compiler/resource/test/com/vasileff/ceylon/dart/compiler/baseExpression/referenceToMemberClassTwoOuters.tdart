@@ -12,18 +12,18 @@ class I1$I2$C implements $ceylon$language.dart$$Basic, I1$I2 {
 }
 abstract class I1$I2 {
   I1 get $outer$default$I1;
-  static $ceylon$language.Callable $get$_newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
-  static $ceylon$language.Callable $get$_newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+  static $ceylon$language.Callable $get$_newC1([final I1$I2 $this]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => new I1$I2$C($this));
+  static $ceylon$language.Callable $get$_newC2([final I1$I2 $this]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => new I1$I2$C($this));
   static void $_foo([final I1$I2 $this]) {
-    $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    $ceylon$language.Callable newC3$get() => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => new I1$I2$C($this));
 
-    $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(() => new I1$I2$C($this));
+    $ceylon$language.Callable newC4$get() => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => new I1$I2$C($this));
 
   }
 }
 abstract class I1 {
 }
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
 });
 
@@ -38,7 +38,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

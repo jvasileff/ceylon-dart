@@ -68,7 +68,7 @@ class Run implements $ceylon$language.dart$$Object {
     if (!($package$obj.$new$obj_$ObjMemberClass$instance.foo() == "foo")) {
       throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.instance.foo() == \"foo\"");
     }
-    if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
+    if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String()"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[simple::obj.ObjMemberClass]"), ([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
       throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.foo(obj.ObjMemberClass())() == \"foo\"");
     }
     if (!($package$obj.hashCode == $package$obj.hashCode)) {
@@ -104,7 +104,7 @@ void $package$run() {
   if (!($package$obj.$new$obj_$ObjMemberClass$instance.foo() == "foo")) {
     throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.instance.foo() == \"foo\"");
   }
-  if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
+  if (!($ceylon$language.$dartString(((new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String()"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[simple::obj.ObjMemberClass]"), ([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonString(($r as obj_$ObjMemberClass).foo())))).f($package$obj.$new$obj_$ObjMemberClass()) as $ceylon$language.Callable).f() as $ceylon$language.String) == "foo")) {
     throw new $ceylon$language.AssertionError("Violated: ObjMemberClass.foo(obj.ObjMemberClass())() == \"foo\"");
   }
   if (!($package$obj.hashCode == $package$obj.hashCode)) {
@@ -129,7 +129,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -152,7 +152,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

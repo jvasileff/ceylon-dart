@@ -18,7 +18,7 @@ class run$Foo$FooMember implements $ceylon$language.dart$$Basic {
   $dart$core.int _fooMemberInt;
   $dart$core.String get _fooMemberString2 => $outer$default$run$Foo.$capture$run$runString2;
   run$Foo get fooMemberHoldsAFooLazily => new run$Foo($outer$default$run$Foo.$capture$run$runString1, $outer$default$run$Foo.$capture$run$runString2, 11);
-  $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList([new $ceylon$language.Entry($ceylon$language.$ceylonString("fooString1"), $ceylon$language.$ceylonString($outer$default$run$Foo._fooString1)), new $ceylon$language.Entry($ceylon$language.$ceylonString("fooMemberString2"), $ceylon$language.$ceylonString(_fooMemberString2)), new $ceylon$language.Entry($ceylon$language.$ceylonString("fooInt"), $ceylon$language.$ceylonInteger($outer$default$run$Foo._fooInt)), new $ceylon$language.Entry($ceylon$language.$ceylonString("fooMemberInt"), $ceylon$language.$ceylonInteger(_fooMemberInt))]);
+  $ceylon$language.Iterable get data => new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "<ceylon.language::String->ceylon.language::String>|<ceylon.language::String->ceylon.language::Integer>"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String->ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String->ceylon.language::String, ceylon.language::String->ceylon.language::Integer, ceylon.language::String->ceylon.language::Integer]"), [new $ceylon$language.Entry(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), $ceylon$language.$ceylonString("fooString1"), $ceylon$language.$ceylonString($outer$default$run$Foo._fooString1)), new $ceylon$language.Entry(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), $ceylon$language.$ceylonString("fooMemberString2"), $ceylon$language.$ceylonString(_fooMemberString2)), new $ceylon$language.Entry(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), $ceylon$language.$ceylonString("fooInt"), $ceylon$language.$ceylonInteger($outer$default$run$Foo._fooInt)), new $ceylon$language.Entry(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), $ceylon$language.$ceylonString("fooMemberInt"), $ceylon$language.$ceylonInteger(_fooMemberInt))]);
 }
 class run$Foo implements $ceylon$language.dart$$Basic {
   $dart$core.String $capture$run$runString1;
@@ -50,7 +50,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -70,7 +70,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

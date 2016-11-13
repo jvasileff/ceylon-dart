@@ -6,13 +6,13 @@ import "package:ceylon/language/language.dart" as $ceylon$language;
 class callPriorDefaultedCallableParamClass$C implements $ceylon$language.dart$$Basic {
   callPriorDefaultedCallableParamClass$C([$dart$core.Object a = $ceylon$language.dart$default, $dart$core.Object b = $ceylon$language.dart$default, $dart$core.Object c = $ceylon$language.dart$default]) : this.$s((() {
     if ($dart$core.identical(a, $ceylon$language.dart$default)) {
-      a = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => i);
+      a = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => i);
     }
     if ($dart$core.identical(b, $ceylon$language.dart$default)) {
-      b = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
+      b = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => (a as $ceylon$language.Callable).f(i));
     }
     if ($dart$core.identical(c, $ceylon$language.dart$default)) {
-      c = new $ceylon$language.dart$Callable(([$ceylon$language.Integer i]) => (b as $ceylon$language.Callable).f(i));
+      c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$ceylon$language.Integer i]) => (b as $ceylon$language.Callable).f(i));
     }
     return [a, b, c];
   })());
@@ -55,7 +55,7 @@ void $package$callPriorDefaultedCallableParamClass() {
 
 void callPriorDefaultedCallableParamClass() => $package$callPriorDefaultedCallableParamClass();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "callPriorDefaultedCallableParamClass" :
     $package$callPriorDefaultedCallableParamClass();
@@ -75,7 +75,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

@@ -4,7 +4,7 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-  $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$language.dart$Callable(() {
+  $ceylon$language.Iterable iter0 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "<ceylon.language::Finished|ceylon.language::Integer>()"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () {
     $dart$core.bool step$0$expired$0 = false;
     $dart$core.bool step$0$1() {
       if (step$0$expired$0) {
@@ -51,9 +51,9 @@ void $package$run() {
       return i;
     }
 
-    return new $ceylon$language.dart$Callable(step$2$7);
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Finished|ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), step$2$7);
   }));
-  $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer|ceylon.language::String"), new $ceylon$language.dart$Callable(() {
+  $ceylon$language.Iterable iter1 = $ceylon$language.dart$functionIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer|ceylon.language::String"), new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "<ceylon.language::Finished|ceylon.language::Integer|ceylon.language::String>()"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () {
     $dart$core.bool step$0$expired$8 = false;
     $dart$core.bool step$0$9() {
       if (step$0$expired$8) {
@@ -100,7 +100,7 @@ void $package$run() {
       return $ceylon$language.$ceylonInteger(2).divides(i) ? i : $ceylon$language.$ceylonString("nope");
     }
 
-    return new $ceylon$language.dart$Callable(step$2$15);
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Finished|ceylon.language::Integer|ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), step$2$15);
   }));
   $ceylon$language.printAll(iter0);
   $ceylon$language.printAll(iter1);
@@ -108,7 +108,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -128,7 +128,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

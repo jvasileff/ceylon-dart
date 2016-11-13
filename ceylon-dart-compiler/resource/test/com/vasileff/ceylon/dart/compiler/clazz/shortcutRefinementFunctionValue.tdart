@@ -15,7 +15,7 @@ class C implements $ceylon$language.dart$$Basic, I {
     if (!((v1.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
       throw new $ceylon$language.AssertionError("Violated: v1(\"hello\").size == 5");
     }
-    v2 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    v2 = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => s);
     if (!((v2.f($ceylon$language.$ceylonString("hello")) as $ceylon$language.String).size == 5)) {
       throw new $ceylon$language.AssertionError("Violated: v2(\"hello\").size == 5");
     }
@@ -25,15 +25,15 @@ class C implements $ceylon$language.dart$$Basic, I {
     if (!($ceylon$language.$ceylonString(f1("hello")).size == 5)) {
       throw new $ceylon$language.AssertionError("Violated: f1(\"hello\").size == 5");
     }
-    f2$c = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+    f2$c = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => s);
     if (!($ceylon$language.$ceylonString(f2("hello")).size == 5)) {
       throw new $ceylon$language.AssertionError("Violated: f2(\"hello\").size == 5");
     }
     $ceylon$language.print($ceylon$language.$ceylonString("done!"));
   }
-  $ceylon$language.Callable v1 = new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  $ceylon$language.Callable v1 = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => s);
   $ceylon$language.Callable v2;
-  $ceylon$language.Callable get v3 => new $ceylon$language.dart$Callable(([$ceylon$language.String s]) => s);
+  $ceylon$language.Callable get v3 => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ([$ceylon$language.String s]) => s);
   $dart$core.String f1([$dart$core.String s]) => s;
   $ceylon$language.Callable f2$c;
   $dart$core.String f2([$dart$core.String s]) {
@@ -46,7 +46,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -66,7 +66,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

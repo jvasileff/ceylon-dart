@@ -49,16 +49,16 @@ class run$i1o$$anonymous$0_ implements $ceylon$language.dart$$Basic, I1 {
 void $package$run() {
   I1 i1o$get() => new run$i1o$$anonymous$0_();
 
-  $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => ($r as I1$I2).$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
+  $ceylon$language.Callable newC$get() => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C(ceylon.language::Integer)"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[I1.I2]"), ([$dart$core.Object $r]) => new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => ($r as I1$I2).$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer))));
 
   I1$I2$C c = (newC$get().f(i1o$get().i2) as $ceylon$language.Callable).f($ceylon$language.$ceylonInteger(1)) as I1$I2$C;
   I1$I2$C c1 = (() {
     I1$I2 $r = i1o$get().i2;
-    return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer)));
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer)));
   })().f($ceylon$language.$ceylonInteger(1)) as I1$I2$C;
   I1$I2$C c2 = (() {
     I1$I2 $r = i1o$get().i2;
-    return new $ceylon$language.dart$Callable(([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer)));
+    return new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I1.I2.C"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::Integer]"), ([$dart$core.Object $0]) => $r.$new$I1$I2$C($ceylon$language.$dartInt($0 as $ceylon$language.Integer)));
   })().f($ceylon$language.$ceylonInteger(1)) as I1$I2$C;
   if (!(c.cident == "c-1")) {
     throw new $ceylon$language.AssertionError("Violated: c.cident == \"c-1\"");
@@ -90,7 +90,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -110,7 +110,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

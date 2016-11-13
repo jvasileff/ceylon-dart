@@ -7,7 +7,7 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
   callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer;
   callOuterSuperNonSharedCallableParam$Outer$Inner([callOuterSuperNonSharedCallableParam$Outer $outer$default$callOuterSuperNonSharedCallableParam$Outer, $dart$core.Object foo2 = $ceylon$language.dart$default]) : this.$s((() {
     if ($dart$core.identical(foo2, $ceylon$language.dart$default)) {
-      foo2 = new $ceylon$language.dart$Callable(() => $outer$default$callOuterSuperNonSharedCallableParam$Outer._foo.f());
+      foo2 = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $outer$default$callOuterSuperNonSharedCallableParam$Outer._foo.f());
     }
     return [$outer$default$callOuterSuperNonSharedCallableParam$Outer, foo2];
   })());
@@ -32,7 +32,7 @@ class callOuterSuperNonSharedCallableParam$Outer$Inner  extends callOuterSuperNo
 class callOuterSuperNonSharedCallableParam$Outer implements $ceylon$language.dart$$Basic {
   callOuterSuperNonSharedCallableParam$Outer([$dart$core.Object foo = $ceylon$language.dart$default]) : this.$s((() {
     if ($dart$core.identical(foo, $ceylon$language.dart$default)) {
-      foo = new $ceylon$language.dart$Callable(() => $ceylon$language.$ceylonInteger(1));
+      foo = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $ceylon$language.$ceylonInteger(1));
     }
     return [foo];
   })());
@@ -49,7 +49,7 @@ void $package$callOuterSuperNonSharedCallableParam() {
 
 void callOuterSuperNonSharedCallableParam() => $package$callOuterSuperNonSharedCallableParam();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "callOuterSuperNonSharedCallableParam" :
     $package$callOuterSuperNonSharedCallableParam();
@@ -69,7 +69,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

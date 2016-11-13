@@ -4,14 +4,14 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 void $package$run() {
-  $ceylon$language.Callable newEntry = new $ceylon$language.dart$Callable(([$dart$core.Object $0, $dart$core.Object $1]) => new $ceylon$language.Entry($0, $1));
+  $ceylon$language.Callable newEntry = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String->ceylon.language::Destroyable?"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String, ceylon.language::Destroyable?]"), ([$dart$core.Object $0, $dart$core.Object $1]) => new $ceylon$language.Entry(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Destroyable?"), $0, $1));
   $ceylon$language.Entry entry = newEntry.f($ceylon$language.$ceylonString("d"), null) as $ceylon$language.Entry;
   $ceylon$language.print(entry);
 }
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -31,7 +31,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

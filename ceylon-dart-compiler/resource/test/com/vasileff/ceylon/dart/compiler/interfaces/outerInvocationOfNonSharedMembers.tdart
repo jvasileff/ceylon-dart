@@ -23,14 +23,14 @@ class I$C implements $ceylon$language.dart$$Basic {
   void test() {
     $outer$default$I.sharedInt();
     I.$_nonSharedInt($outer$default$I);
-    $ceylon$language.Callable si = new $ceylon$language.dart$Callable($outer$default$I.sharedInt);
-    $ceylon$language.Callable nsi = new $ceylon$language.dart$Callable(() => I.$_nonSharedInt($outer$default$I));
+    $ceylon$language.Callable si = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), $outer$default$I.sharedInt);
+    $ceylon$language.Callable nsi = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => I.$_nonSharedInt($outer$default$I));
     $outer$default$I.$new$I$SharedClass();
     new I$NonSharedClass($outer$default$I);
-    $ceylon$language.Callable sc = new $ceylon$language.dart$Callable(() => $outer$default$I.$new$I$SharedClass());
-    $ceylon$language.Callable nsc = new $ceylon$language.dart$Callable(() => new I$NonSharedClass($outer$default$I));
-    $ceylon$language.noop(new $ceylon$language.Tuple.$withList([$outer$default$I.sharedTransient]));
-    $ceylon$language.noop(new $ceylon$language.Tuple.$withList([I.$get$_nonSharedTransient($outer$default$I)]));
+    $ceylon$language.Callable sc = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I.SharedClass"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => $outer$default$I.$new$I$SharedClass());
+    $ceylon$language.Callable nsc = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "I.NonSharedClass"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), () => new I$NonSharedClass($outer$default$I));
+    $ceylon$language.noop(new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), [$outer$default$I.sharedTransient]));
+    $ceylon$language.noop(new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Anything"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[]"), [I.$get$_nonSharedTransient($outer$default$I)]));
     $outer$default$I.sharedTransient = $ceylon$language.$ceylonInteger(4);
     I.$set$_nonSharedTransient($outer$default$I, $ceylon$language.$ceylonInteger(5));
   }
@@ -52,7 +52,7 @@ abstract class I {
   static I$SharedClass $$new$I$SharedClass([final I $this]) => new I$SharedClass($this);
   I$SharedClass $new$I$SharedClass();
 }
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   return $ceylon$language.$false;
 });
 
@@ -67,7 +67,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

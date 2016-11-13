@@ -31,7 +31,7 @@ class A implements $ceylon$language.dart$$Basic {
   A$B $new$A$B() => new A$B(this);
 }
 void $package$run() {
-  $ceylon$language.Callable iFactory = new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as A$B).$new$A$B$C$instance);
+  $ceylon$language.Callable iFactory = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "A.B.C.instance"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[A.B]"), ([$dart$core.Object $r]) => ($r as A$B).$new$A$B$C$instance);
   if (!((iFactory.f((new A()).$new$A$B()) as A$B$C).toString() == "instance")) {
     throw new $ceylon$language.AssertionError("Violated: iFactory(A().B()).string == \"instance\"");
   }
@@ -39,7 +39,7 @@ void $package$run() {
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -59,7 +59,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }

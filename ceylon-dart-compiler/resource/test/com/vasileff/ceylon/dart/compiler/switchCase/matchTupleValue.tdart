@@ -8,9 +8,9 @@ void $package$run() {
     $ceylon$language.Sequential switch$0 = strings;
     if (switch$0 is $ceylon$language.Empty) {
       return "empty";
-    } else if ((switch$0 is $ceylon$language.Tuple) && (switch$0 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("a"), $ceylon$language.$ceylonString("b")])))) {
+    } else if ((switch$0 is $ceylon$language.Tuple) && (switch$0 == (new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), [$ceylon$language.$ceylonString("a"), $ceylon$language.$ceylonString("b")])))) {
       return "ab";
-    } else if ((switch$0 is $ceylon$language.Tuple) && (switch$0 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("b"), $ceylon$language.$ceylonString("c")])))) {
+    } else if ((switch$0 is $ceylon$language.Tuple) && (switch$0 == (new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), [$ceylon$language.$ceylonString("b"), $ceylon$language.$ceylonString("c")])))) {
       return "bc";
     } else {
       return "other";
@@ -20,20 +20,20 @@ void $package$run() {
   if (!(f($ceylon$language.empty) == "empty")) {
     throw new $ceylon$language.AssertionError("Violated: f([]) == \"empty\"");
   }
-  if (!(f(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("a"), $ceylon$language.$ceylonString("b")])) == "ab")) {
+  if (!(f(new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), [$ceylon$language.$ceylonString("a"), $ceylon$language.$ceylonString("b")])) == "ab")) {
     throw new $ceylon$language.AssertionError("Violated: f([\"a\", \"b\"]) == \"ab\"");
   }
-  if (!(f(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("b"), $ceylon$language.$ceylonString("c")])) == "bc")) {
+  if (!(f(new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), [$ceylon$language.$ceylonString("b"), $ceylon$language.$ceylonString("c")])) == "bc")) {
     throw new $ceylon$language.AssertionError("Violated: f([\"b\", \"c\"]) == \"bc\"");
   }
-  if (!(f(new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonString("c"), $ceylon$language.$ceylonString("d")])) == "other")) {
+  if (!(f(new $ceylon$language.Tuple.$withList(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), [$ceylon$language.$ceylonString("c"), $ceylon$language.$ceylonString("d")])) == "other")) {
     throw new $ceylon$language.AssertionError("Violated: f([\"c\", \"d\"]) == \"other\"");
   }
 }
 
 void run() => $package$run();
 
-$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(($ceylon$language.String toplevel) {
+$ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Boolean"), new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "[ceylon.language::String]"), ($ceylon$language.String toplevel) {
   switch (toplevel.toString()) {
   case "run" :
     $package$run();
@@ -53,7 +53,7 @@ get $module {
     _$moduleInitializing = true;
     _$module = new $ceylon$dart$runtime$model.json$LazyJsonModule(new $ceylon$interop$dart.JsonObject(_$jsonModel), _$runToplevel);
     _$moduleInitializing = false;
-    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable([$ceylon$language.$module])).sequence());
+    _$module.initializeImports((new $ceylon$interop$dart.CeylonIterable(new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.dart.runtime.model::Module"), [$ceylon$language.$module])).sequence());
   }
   return _$module;
 }
