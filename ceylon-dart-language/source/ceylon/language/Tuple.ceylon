@@ -179,13 +179,22 @@ class Tuple<out Element, out First, out Rest = []>
 }
 
 native
-[Element*] tupleWithList<Element>(Object /*DList<Element>*/ list, [Element*] rest = []);
+Tuple<Element, First, Rest> tupleWithList<Element, First, Rest>
+        (Object /*DList<Element>*/ list, Rest rest)
+        given First satisfies Element
+        given Rest satisfies Element[];
 
 native
-[Element*] tupleOfElements<Element>({Element*} rest);
+Tuple<Element, First, Rest> tupleOfElements<Element, First, Rest>
+        ({Element*} rest)
+        given First satisfies Element
+        given Rest satisfies Element[];
 
 native
-[Element*] tupleTrailing<Element>({Element*} initial, Element element);
+Tuple<First | Element | Other, First, [Element | Other+]>
+tupleTrailing<Element, First, Other>
+        ([First, Element*] initial, Other element)
+        given First satisfies Element;
 
 abstract native("dart")
 class BaseTuple<out Element, out First, out Rest = []>
@@ -196,6 +205,9 @@ class BaseTuple<out Element, out First, out Rest = []>
 
     DList<Element> list;
     [Element*] restSequence;
+
+    shared formal
+    Tuple<Element,First,Rest> thisTuple;
 
     shared
     new (Element first, [Element*] rest = []) extends Object() {
@@ -239,6 +251,7 @@ class BaseTuple<out Element, out First, out Rest = []>
         assert(is Rest result
             =   if (list.length == 1)
                 then restSequence
+                // FIXME type args won't be right
                 else tupleWithList(list.sublist(1), restSequence));
         return result;
     }
@@ -284,6 +297,7 @@ class BaseTuple<out Element, out First, out Rest = []>
             return this;
         }
         else if (from < list.length) {
+            // FIXME type args won't be right
             return tupleWithList(list.sublist(from), restSequence);
         }
         else {
@@ -302,21 +316,15 @@ class BaseTuple<out Element, out First, out Rest = []>
 
     shared actual
     Tuple<Element|Other,Other,Tuple<Element,First,Rest>>
-    withLeading<Other>(Other element) {
-        assert (is Tuple<Element, First, Rest> self = (this of Anything));
-        return Tuple(element, self);
-    }
+    withLeading<Other>(Other element)
+        =>  Tuple(element, thisTuple);
 
     shared actual
-    [First,Element|Other+] withTrailing<Other>(Other element) {
-        assert (is [First,Element|Other+] result = tupleTrailing(this, element));
-        return result;
-    }
+    [First,Element|Other+] withTrailing<Other>(Other element)
+        =>  tupleTrailing(thisTuple, element);
 
     shared actual
-    [First,Element|Other*] append<Other>(Other[] elements) {
-        assert (is [First, Element | Other*] result
-            =   tupleWithList(list, restSequence.append(elements)));
-        return result;
-    }
+    [First,Element|Other*] append<Other>(Other[] elements)
+        =>  tupleWithList<Element | Other, First, [Element | Other*]>(
+                list, restSequence.append(elements));
 }

@@ -127,6 +127,11 @@ class CeylonTypes(Unit unit) {
         // find it.
         =>  unit.\ipackage.\imodule.languageModule.getPackage("ceylon.interop.dart");
 
+    Package modelPackage
+        // use the language module to find the package; see interopPackage notes
+        =>  unit.\ipackage.\imodule.languageModule.getPackage(
+                "ceylon.dart.runtime.model");
+
     Package modelRuntimePackage
         // use the language module to find the package; see interopPackage notes
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
@@ -166,6 +171,10 @@ class CeylonTypes(Unit unit) {
     shared
     Class jsonObjectDeclaration
         =>  assertClass(interopPackage.getDirectMember("JsonObject", null, false));
+
+    shared
+    Class moduleDeclaration
+        =>  assertClass(modelPackage.getDirectMember("Module", null, false));
 
     shared
     Class moduleImplDeclaration

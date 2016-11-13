@@ -341,20 +341,26 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                         DartSimpleIdentifier("initializeImports");
                                         DartArgumentList {
                 [withLhs {
-                    ceylonTypes.anythingType; // really, [Module*]
+                    // [Module*]
+                    ctx.unit.getSequentialType(ceylonTypes.moduleDeclaration.type);
                     null;
                     () => generateInvocationSynthetic {
                         scope;
 
                         receiverType // TODO element type should be ceylon.model::Module
-                            =   ctx.unit.getIterableType(ceylonTypes.anythingType);
+                            =   ctx.unit.getIterableType(
+                                    ceylonTypes.moduleDeclaration.type);
 
                         generateReceiver()
                             =>  dartTypes.invocableForBaseExpression {
                                     scope;
                                     ceylonTypes.ceylonIterable;
                                 }.expressionForInvocation {
-                                    [DartListLiteral {
+                                    [generateTypeDescriptor {
+                                        scope;
+                                        ceylonTypes.moduleDeclaration.type;
+                                    },
+                                    DartListLiteral {
                                         false;
                                         CeylonIterable(mod.imports)
                                                 // TODO remove filter once dart interop

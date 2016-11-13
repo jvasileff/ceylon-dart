@@ -2,8 +2,8 @@ library ceylon.language;
 
 import 'dart:core' as $dart$core;
 import 'dart:math' as $dart$math;
-import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$model;
-import '../../../ceylon.language.dart';
+import "../../../build/modules-dart/main/ceylon/dart/runtime/model/1.3.1-SNAPSHOT/ceylon.dart.runtime.model-1.3.1-SNAPSHOT.dart" as $ceylon$dart$runtime$model;
+import "../../../build/modules-dart/main/ceylon/language/1.3.1-DP5-SNAPSHOT/ceylon.language-1.3.1-DP5-SNAPSHOT.dart";
 
 /////////////////////////////////////////////////
 //
@@ -12,15 +12,16 @@ import '../../../ceylon.language.dart';
 /////////////////////////////////////////////////
 
 class LazyIterable extends impl$BaseIterable {
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor Element;
   $dart$core.int count_;
   $dart$core.Function generate; // Object(Integer)
   Iterable spread_;
 
-  LazyIterable(this.count_, this.generate, this.spread_) {}
+  LazyIterable(this.Element, this.count_, this.generate, this.spread_) {}
 
   @$dart$core.override
   Iterator iterator()
-    =>  new LazyIterator(count_, generate, spread_);
+    =>  new LazyIterator(Element, count_, generate, spread_);
 }
 
 class LazyIterator implements Iterator {
@@ -31,7 +32,8 @@ class LazyIterator implements Iterator {
   $dart$core.int index = 0;
   Iterator rest;
 
-  LazyIterator(this.count, this.generate, this.spread) {}
+  LazyIterator($ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      this.count, this.generate, this.spread) {}
 
   Iterator flatten()
       =>  rest;
@@ -39,7 +41,7 @@ class LazyIterator implements Iterator {
   $dart$core.Object next() {
     if (rest != null) {
       while (rest is LazyIterator) {
-        var replacement = rest.flatten();
+        var replacement = (rest as LazyIterator).flatten();
         if (replacement != null) {
           rest = replacement;
         } else {
@@ -280,43 +282,84 @@ class Throwable extends BaseThrowable {
 
 Tuple tupleTrailing(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
-      Iterable initial, $dart$core.Object element)
-  =>  new Tuple.$trailing(initial, element);
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Other,
+      Iterable initial,
+      $dart$core.Object element)
+  // FIXME type args; impossible this way.
+  =>  new Tuple.$trailing(null, First, null, initial, element);
 
 Tuple $package$tupleTrailing(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
-      Iterable initial, $dart$core.Object element)
-  =>  tupleTrailing(Element, initial, element);
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Other,
+      Iterable initial,
+      $dart$core.Object element)
+  =>  tupleTrailing(Element, First, Other, initial, element);
 
 Tuple tupleOfElements(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
       Iterable rest)
-  =>  new Tuple.$ofElements(rest);
+  =>  new Tuple.$ofElements(Element, First, Rest, rest);
 
 Tuple $package$tupleOfElements(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
       Iterable rest)
-  =>  tupleOfElements(Element rest);
+  =>  tupleOfElements(Element, First, Rest, rest);
 
 Tuple tupleWithList([
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
-      $dart$core.List list, $dart$core.Object rest = dart$default])
-  =>  new Tuple.$withList(list, rest);
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      $dart$core.List list,
+      $dart$core.Object rest = dart$default])
+  =>  new Tuple.$withList(Element, First, Rest, list, rest);
 
 Tuple $package$tupleWithList([
       $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
-      $dart$core.List list, $dart$core.Object rest = dart$default])
-  =>  tupleWithList(Element, list, rest);
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      $dart$core.List list,
+      $dart$core.Object rest = dart$default])
+  =>  tupleWithList(Element, First, Rest, list, rest);
 
 class Tuple extends BaseTuple {
 
-  Tuple([$dart$core.Object first, $dart$core.Object rest = dart$default]) : super(first, rest) {}
+  Tuple([$ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      $dart$core.Object first,
+      $dart$core.Object rest = dart$default])
+        : super(Element, First, Rest, first, rest) {}
 
-  Tuple.$trailing(Iterable initial, $dart$core.Object element) : super.trailing(initial, element);
+  Tuple.$trailing(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      Iterable initial,
+      $dart$core.Object element)
+        : super.trailing(Element, First, Rest, initial, element);
 
-  Tuple.$ofElements(Iterable rest) : super.ofElements(rest) {}
+  Tuple.$ofElements(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      Iterable rest)
+        : super.ofElements(Element, First, Rest, rest) {}
 
-  Tuple.$withList([$dart$core.List list, $dart$core.Object rest = dart$default]) : super.withList(list, rest) {}
+  Tuple.$withList([
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Element,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor First,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor Rest,
+      $dart$core.List list,
+      $dart$core.Object rest = dart$default])
+        : super.withList(Element, First, Rest, list, rest) {}
+
+  Tuple get thisTuple => this;
 }
 
 /////////////////////////////////////////////////
@@ -372,7 +415,7 @@ $run(
     processArguments = new ArraySequence(new Array.withList(
         arguments.map((s) => $ceylonString(s)).toList(growable: false)));
   }
-  value success = mod.runApplication(runDeclaration);
+  var success = mod.runApplication(runDeclaration);
   if (!success) {
     $dart$core.print("Could not find toplevel function '$runDeclaration'.");
     process.exit(1);
@@ -391,7 +434,7 @@ $run(
 
 abstract class dart$$Object {
   // used for 'super.string' from within an interface
-  static $dart$core.String $get$string([final Object $this])
+  static $dart$core.String $get$string([final dart$$Object $this])
     => "Instance of '" + className($this) + "'";
 }
 abstract class dart$$Identifiable extends dart$$Object {}
@@ -416,7 +459,11 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
 
   $dart$core.bool operator ==($dart$core.Object other) => false;
 
-  dart$Callable([$dart$core.Function this._function, $dart$core.int this._variadicIndex = -1]);
+  dart$Callable([
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Arguments,
+    $dart$core.Function this._function,
+    $dart$core.int this._variadicIndex = -1]);
 
   // for non-spread calls `f()`
   $dart$core.Function get f => _variadicIndex == -1 ? _function : this;
@@ -444,7 +491,9 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
 
       if (inArgs.length > initialLength) {
         // The rest form the variadic parameter
-        outArgs[_variadicIndex] = new Tuple.$withList(inArgs.sublist(initialLength));
+        outArgs[_variadicIndex] = new Tuple.$withList(
+              // FIXME type args
+              null, null, null, inArgs.sublist(initialLength));
       }
       else {
         // Fill with default values
@@ -522,7 +571,10 @@ class dart$Callable implements dart$$Object, $dart$core.Function, Callable {
         else {
           // Create new tuple with tail of inArgs and entire spread
           outArgs[_variadicIndex]
-              = new Tuple.$withList(inArgs.sublist(initialLength, inArgs.length - 1), seq);
+              = new Tuple.$withList(
+                  // FIXME type args
+                  null, null, null,
+                  inArgs.sublist(initialLength, inArgs.length - 1), seq);
         }
 
         return $dart$core.Function.apply(_function, outArgs, null);
@@ -541,7 +593,7 @@ Callable flatten(
   if (tupleFunction is dart$UnflatFunction) {
     return tupleFunction.flatFunction;
   }
-  return new dart$FlatFunction(tupleFunction);
+  return new dart$FlatFunction(Return, Args, tupleFunction);
 }
 
 Callable unflatten(
@@ -551,13 +603,16 @@ Callable unflatten(
   if (flatFunction is dart$FlatFunction) {
     return flatFunction.tupleFunction;
   }
-  return new dart$UnflatFunction(flatFunction);
+  return new dart$UnflatFunction(Return, Args, flatFunction);
 }
 
 class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
   final Callable tupleFunction;
 
-  dart$FlatFunction(Callable this.tupleFunction);
+  dart$FlatFunction(
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Arguments,
+    Callable this.tupleFunction);
 
   $dart$core.bool operator ==($dart$core.Object other) => false;
 
@@ -569,7 +624,9 @@ class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
     var inArgs = invocation.positionalArguments;
     if (invocation.memberName == #f || invocation.memberName == #call) {
       var tuple = invocation.positionalArguments.length > 0
-          ? new Tuple.$withList(inArgs, empty) : empty;
+          ? new Tuple.$withList(
+              // FIXME type args
+              null, null, null, inArgs, empty) : empty;
 
       return tupleFunction.f(tuple);
     }
@@ -581,6 +638,8 @@ class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
       else {
         // assert(inArgs > 1)
         return tupleFunction.f(new Tuple.$withList(
+                // FIXME type args
+                null, null, null,
                 inArgs.sublist(0, inArgs.length - 1), inArgs.last), null);
       }
     }
@@ -593,7 +652,10 @@ class dart$FlatFunction implements dart$$Object, $dart$core.Function, Callable {
 class dart$UnflatFunction implements dart$$Object, $dart$core.Function, dart$Callable {
   final Callable flatFunction;
 
-  dart$UnflatFunction(Callable this.flatFunction);
+  dart$UnflatFunction(
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Return,
+    $ceylon$dart$runtime$model.runtime$TypeDescriptor Arguments,
+    Callable this.flatFunction);
 
   $dart$core.bool operator ==($dart$core.Object other) => false;
 
