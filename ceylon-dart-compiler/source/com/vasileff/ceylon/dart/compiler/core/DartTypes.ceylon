@@ -1495,11 +1495,17 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             }
 
             value ancestoryToReceiver
-                =   if (!originalDeclaration.static, exists scopeContainer)
-                    then ancestorClassOrInterfacesToInheritingDeclaration {
-                        scopeContainer;
-                        declarationContainer;
-                    }
+                =   if (!originalDeclaration.static, exists scopeContainer) then
+                        // type parameters are not inherited
+                        if (declaration is TypeParameterModel)
+                        then ancestorClassOrInterfacesToExactDeclaration {
+                            scopeContainer;
+                            declarationContainer;
+                        }
+                        else ancestorClassOrInterfacesToInheritingDeclaration {
+                            scopeContainer;
+                            declarationContainer;
+                        }
                     else null;
 
             DartExpression? receiver;
