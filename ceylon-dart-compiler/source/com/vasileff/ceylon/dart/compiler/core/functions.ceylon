@@ -393,6 +393,14 @@ shared
     };
 }
 
+"A stream including the given [[declaration]], its extended type, etc, recursively."
+shared
+{ClassModel+} extendedTypeDeclarations(ClassModel declaration)
+    =>  loop(declaration)((d) {
+            assert (is ClassModel? etd = d.extendedType?.declaration);
+            return etd else finished;
+        });
+
 "True if the non-ConditionScope container is a class or interface.
 
  Note: this method does not distinguish between captured and non-captured declarations

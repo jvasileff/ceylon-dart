@@ -231,15 +231,12 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         // This includes TypeParameters, for which we are using non-shared (i.e.
         // '_' prefixed) names in Dart.
         if (is FunctionOrValueModel | TypeParameterModel originalDeclaration,
-                is ClassOrInterfaceModel container = originalDeclaration.container,
+                is ClassModel container = originalDeclaration.container,
                 !originalDeclaration.shared) {
 
-            // TODO only class members matter, right? Since interface members are called
-            //      statically (not inherited).
-
             value conflictCount
-                =   supertypeDeclarations(container).rest.distinct.count((superType)
-                    =>  if (exists member = superType.getDirectMember(
+                =   extendedTypeDeclarations(container).rest.count((extendedType)
+                    =>  if (exists member = extendedType.getDirectMember(
                                 originalDeclaration.name, null, false))
                         then !member.shared
                         else false);
