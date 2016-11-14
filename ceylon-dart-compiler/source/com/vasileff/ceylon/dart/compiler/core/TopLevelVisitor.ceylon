@@ -362,20 +362,18 @@ class TopLevelVisitor(CompilationContext ctx)
 
         value declarationsForCaptures
             =   ctx.captures.get(info.declarationModel).map {
-                    // TODO declare as a "get" method, not a field?
-                    (capture) => DartFieldDeclaration {
+                    (capture) => DartMethodDeclaration {
                         false;
-                        DartVariableDeclarationList {
-                            null;
-                            dartTypes.dartCaptureTypeNameForDeclaration {
-                                info;
-                                capture;
-                            };
-                            [DartVariableDeclaration {
-                                dartTypes.identifierForCapture(capture);
-                                null;
-                            }];
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            info;
+                            capture;
                         };
+                        "get";
+                        false;
+                        dartTypes.identifierForCapture(capture);
+                        null;
+                        null;
                     };
                 };
 
