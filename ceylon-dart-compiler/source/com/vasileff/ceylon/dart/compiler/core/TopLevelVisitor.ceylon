@@ -551,6 +551,52 @@ class TopLevelVisitor(CompilationContext ctx)
                     (model) => generateFieldDeclaration(scope, model);
                 };
 
+        value interfaceTypeArgumentGetters
+            =   {*classModel.satisfiedTypes}
+                    .map((st) {
+                        assert (is InterfaceModel d = st.declaration);
+                        return d;
+                    })
+                    .flatMap(supertypeDeclarations)
+                    .filter((d) => d is InterfaceModel)
+                    .distinct
+                    .flatMap((i) {
+                        value superType = classModel.type.getSupertype(i);
+                        return {for (tp in i.typeParameters)
+                            // TODO Skip declarations if the extended type already
+                            //      already provides exactly the same type descriptor.
+                            //
+                            //      Also, even when not explicitly re-satisfying an
+                            //      interface, the interface's TPs may be simplified
+                            //      if providing TAs to the extended type that don't
+                            //      involve TPs (e.g. class X() extends Y<String>() where
+                            //      Y's TP is used as a TA to an interface I.)
+                            //      We could refine I's TA getter in that case, as an
+                            //      optimization (although, no benefit really unless
+                            //      Y's TA to I's TP is a union or something.)
+                            DartMethodDeclaration {
+                                false;
+                                null;
+                                dartTypes.dartTypeName {
+                                    scope;
+                                    tp.type;
+                                    false; false;
+                                };
+                                "get";
+                                false;
+                                name = DartSimpleIdentifier(dartTypes.getName(tp));
+                                null;
+                                DartExpressionFunctionBody {
+                                    false;
+                                    generateTypeDescriptor {
+                                        scope;
+                                        superType.typeArguments.get(tp);
+                                    };
+                                };
+                            }
+                        };
+                    });
+
         value parameterModelModels
             =   (parameters?.parameters else []).collect {
                     (p) => parameterInfo(p).parameterModel.model;
@@ -852,6 +898,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 captureFields,
                 constructors,
                 fieldsForTypeParameters,
+                interfaceTypeArgumentGetters,
                 fieldsForInitializerParameters,
                 getterMethodBridgesForCeylonValues,
                 bridgesToSyntheticFields,
