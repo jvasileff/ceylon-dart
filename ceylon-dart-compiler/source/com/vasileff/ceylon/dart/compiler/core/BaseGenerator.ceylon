@@ -5944,9 +5944,7 @@ class BaseGenerator(CompilationContext ctx)
 
     shared
     DartExpression generateTypeDescriptor(DScope scope, TypeModel typeModel) {
-        if (is TypeParameterModel declaration = typeModel.declaration,
-            // Exclude type parameters of interfaces for now
-            !is InterfaceModel container = typeModel.declaration.container) {
+        if (is TypeParameterModel declaration = typeModel.declaration) {
             return dartTypes.invocableForBaseExpression {
                 scope;
                 declaration;
