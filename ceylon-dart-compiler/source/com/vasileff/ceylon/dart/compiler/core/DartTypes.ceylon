@@ -587,7 +587,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         case (is TypeParameterModel) {
             if (is InterfaceModel container = declaration.container) {
                 // must be unique; will be implemented by non-abstract classes
-                return "_$TP$``getName(container)``$``getUnprefixedName(declaration)``";
+                return "$TP$``getName(container)``$``getUnprefixedName(declaration)``";
             }
             else {
                 return getUnprefixedName(declaration);
