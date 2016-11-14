@@ -1,9 +1,10 @@
 import ceylon.language.meta.model {
-    Type, Class, UnionType, IntersectionType, nothingType
+    Type, Class, Interface, UnionType, IntersectionType, nothingType
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelClass = Class,
+    ModelInterface = Interface,
     ModelUnionType = UnionType,
     ModelIntersectionType = IntersectionType,
     ModelNothingDeclaration = NothingDeclaration
@@ -15,6 +16,14 @@ import ceylon.dart.runtime.model.runtime {
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Class<T> newClass<T=Anything>(ModelType | TypeDescriptor type)
     =>  ClassImpl<T> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Interface<T> newInterface<T=Anything>(ModelType | TypeDescriptor type)
+    =>  InterfaceImpl<T> {
             if (is TypeDescriptor type)
             then type.type
             else type;
@@ -48,6 +57,9 @@ shared Type<T> newType<T=Anything>(ModelType | TypeDescriptor type) {
     switch (d = t.declaration)
     case (is ModelClass) {
         return newClass(t);
+    }
+    case (is ModelInterface) {
+        return newInterface(t);
     }
     case (is ModelUnionType) {
         return newUnionType(t);

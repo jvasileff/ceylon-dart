@@ -1,25 +1,23 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, Class, ClassOrInterface, Member,
-    MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
-    CallableConstructor, ValueConstructor
+    AppliedType = Type, Interface, ClassOrInterface, Member,
+    MemberClass, MemberInterface, Method, Attribute
 }
 import ceylon.language.meta.declaration {
-    ClassDeclaration
+    InterfaceDeclaration
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelClass = Class
+    ModelInterface = Interface
 }
 
-shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
+shared class InterfaceImpl<out Type=Anything>(modelType)
         extends ClassOrInterfaceImpl<Type>()
-        satisfies Class<Type, Arguments>
-        given Arguments satisfies Anything[] {
+        satisfies Interface<Type> {
 
     shared actual ModelType modelType;
 
-    "The declaration for a Class Type must be a Class"
-    assert (modelType.declaration is ModelClass);
+    "The declaration for a Interface Type must be a Interface"
+    assert (modelType.declaration is ModelInterface);
 
     // FROM ClassOrInterface
 
@@ -138,53 +136,10 @@ shared class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
 
     container => containerImpl;
 
-    // FROM ClassModel
+    // FROM InterfaceModel
 
-    shared actual ClassDeclaration declaration {
-        assert (is ModelClass modelDeclaration = modelType.declaration);
-        // FIXME could be ClassWithInitializerDeclaration
-        return ClassWithConstructorsDeclarationImpl(modelDeclaration);
+    shared actual InterfaceDeclaration declaration {
+        assert (is ModelInterface modelDeclaration = modelType.declaration);
+        return nothing;
     }
-
-    // shared actual FunctionModel<Type, Arguments>? defaultConstructor => nothing;
-
-    // shared actual FunctionModel<Type, Arguments>|ValueModel<Type>? getConstructor
-    //         <Arguments>
-    //         (String name)
-    //             given Arguments satisfies Anything[] => nothing;
-
-    shared actual FunctionModel<Type, Arguments>|ValueModel<Type>? getDeclaredConstructor
-            <Arguments>
-            (String name)
-                given Arguments satisfies Anything[] => nothing;
-
-    shared actual FunctionModel<Type, Arguments>[] getDeclaredCallableConstructors
-            <Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
-                given Arguments satisfies Anything[] => nothing;
-
-    shared actual FunctionModel<Type, Arguments>[] getCallableConstructors
-            <Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
-                given Arguments satisfies Anything[] => nothing;
-
-    shared actual ValueModel<Type>[] getDeclaredValueConstructors
-            (AppliedType<Annotation>* annotationTypes) => nothing;
-
-    shared actual ValueModel<Type>[] getValueConstructors
-            (AppliedType<Annotation>* annotationTypes) => nothing;
-
-    // FROM Class
-
-    shared actual CallableConstructor<Type, Arguments>? defaultConstructor => nothing;
-
-    shared actual CallableConstructor<Type, Arguments>|ValueConstructor<Type>?
-    getConstructor<Arguments>(String name)
-            given Arguments satisfies Anything[] => nothing;
-
-    // FROM Applicable
-
-    shared actual Type apply(Anything* arguments) => nothing;
-
-    shared actual Type namedApply({<String->Anything>*} arguments) => nothing;
 }
