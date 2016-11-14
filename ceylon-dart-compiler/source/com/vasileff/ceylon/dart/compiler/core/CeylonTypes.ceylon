@@ -182,7 +182,7 @@ class CeylonTypes(Unit unit) {
 
     shared
     Function newTypeImplDeclaration
-        =>  assertFunction(implMetaPackage.getDirectMember("newClass", null, false));
+        =>  assertFunction(implMetaPackage.getDirectMember("newType", null, false));
 
     shared
     Boolean isAwaitDeclaration(Function declaration)
