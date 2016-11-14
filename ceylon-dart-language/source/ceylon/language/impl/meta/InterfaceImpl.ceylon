@@ -19,6 +19,11 @@ shared class InterfaceImpl<out Type=Anything>(modelType)
     "The declaration for a Interface Type must be a Interface"
     assert (modelType.declaration is ModelInterface);
 
+    shared actual InterfaceDeclaration declaration {
+        assert (is ModelInterface modelDeclaration = modelType.declaration);
+        return InterfaceDeclarationImpl(modelDeclaration);
+    }
+
     // FROM ClassOrInterface
 
     extendedType => extendedTypeImpl;
@@ -135,11 +140,4 @@ shared class InterfaceImpl<out Type=Anything>(modelType)
     // FROM Model
 
     container => containerImpl;
-
-    // FROM InterfaceModel
-
-    shared actual InterfaceDeclaration declaration {
-        assert (is ModelInterface modelDeclaration = modelType.declaration);
-        return nothing;
-    }
 }
