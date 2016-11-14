@@ -341,33 +341,28 @@ class TopLevelVisitor(CompilationContext ctx)
                 then getContainingClassOrInterface(info.scope.container)
                 else null;
 
-        "An $outer getter declaration, if there is an outer class or interface."
-        value outerField
-            =   if (exists outerDeclaration) then
-                    DartMethodDeclaration {
+        value declarationsForTypeParameters
+            =   [*info.declarationModel.typeParameters].map {
+                    (tp) => DartMethodDeclaration {
                         false;
                         null;
-                        dartTypes.dartTypeName {
+                        dartTypes.dartTypeNameForDeclaration {
                             info;
-                            outerDeclaration.type;
-                            false; false;
+                            tp;
                         };
                         "get";
                         false;
-                        dartTypes.identifierForOuter(outerDeclaration);
+                        DartSimpleIdentifier {
+                            dartTypes.getName(tp);
+                        };
                         null;
                         null;
-                    }
-                else
-                    null;
-
-        value members
-            =   { outerField,
-                  *expand(that.body.transformChildren(classMemberTransformer))
-                }.coalesced;
+                    };
+                };
 
         value declarationsForCaptures
             =   ctx.captures.get(info.declarationModel).map {
+                    // TODO declare as a "get" method, not a field?
                     (capture) => DartFieldDeclaration {
                         false;
                         DartVariableDeclarationList {
@@ -384,6 +379,25 @@ class TopLevelVisitor(CompilationContext ctx)
                     };
                 };
 
+        "An $outer getter declaration, if there is an outer class or interface."
+        value declarationForOuter
+            =   if (exists outerDeclaration) then
+                    [DartMethodDeclaration {
+                        false;
+                        null;
+                        dartTypes.dartTypeName {
+                            info;
+                            outerDeclaration.type;
+                            false; false;
+                        };
+                        "get";
+                        false;
+                        dartTypes.identifierForOuter(outerDeclaration);
+                        null;
+                        null;
+                    }]
+                else [];
+
         add {
             DartClassDeclaration {
                 abstract = true;
@@ -393,9 +407,11 @@ class TopLevelVisitor(CompilationContext ctx)
                     if (exists implementsTypes)
                     then DartImplementsClause(implementsTypes)
                     else null;
-                concatenate {
-                    members,
-                    declarationsForCaptures
+                members = concatenate {
+                    declarationsForTypeParameters,
+                    declarationForOuter,
+                    declarationsForCaptures,
+                    expand(that.body.transformChildren(classMemberTransformer))
                 };
             };
         };

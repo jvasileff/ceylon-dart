@@ -145,6 +145,16 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
         =>  supertypeDeclarations(by).any((d)
             =>  ctx.captures.contains(d->target));
 
+    "A stream containing the given [[declaration]] followed by declarations for all
+     of [[declaration]]'s ancestors, including all declarations and control blocks.
+     See also [[ancestorClassOrInterfaces]]."
+    {DeclarationModel|ControlBlockModel+} ancestorDeclarations
+            (DeclarationModel declaration)
+        =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)
+            =>  if (is DeclarationModel|ControlBlockModel result = d.container)
+                then result
+                else finished);
+
     "A stream containing the given [[element]] followed by element for all
      of [[element]]'s ancestors."
     shared
@@ -374,14 +384,19 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
         }
         case (is TypeParameterModel) {
-            // TODO TPs of Interfaces will need fully unique names (include ancestors
-            //      in name)
-            return makePrivate {
-                originalDeclaration;
-                sanitizeIdentifier {
+            if (originalDeclaration.container is InterfaceModel) {
+                return sanitizeIdentifier {
                     usableShortName(originalDeclaration);
                 };
-            };
+            }
+            else {
+                return makePrivate {
+                    originalDeclaration;
+                    sanitizeIdentifier {
+                        usableShortName(originalDeclaration);
+                    };
+                };
+            }
         }
         case (is ClassModel) {
             value usn = usableShortName(originalDeclaration);
@@ -570,9 +585,13 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + classOrInterfaceSuffix(declaration);
         }
         case (is TypeParameterModel) {
-            // TODO special rules for captures, etc.
-            return getUnprefixedName(declaration);
-
+            if (is InterfaceModel container = declaration.container) {
+                // must be unique; will be implemented by non-abstract classes
+                return "_$TP$``getName(container)``$``getUnprefixedName(declaration)``";
+            }
+            else {
+                return getUnprefixedName(declaration);
+            }
         }
         else {
             // TODO let's encode this is the method signature
@@ -1661,16 +1680,6 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             ClassOrInterfaceModel inner,
             Boolean found(ClassOrInterfaceModel declaration))
         =>  takeUntil(classOrInterfaceContainers(inner))(found);
-
-    "A stream containing the given [[declaration]] followed by declarations for all
-     of [[declaration]]'s ancestors, including all declarations and control blocks.
-     See also [[ancestorClassOrInterfaces]]."
-    {DeclarationModel|ControlBlockModel+} ancestorDeclarations
-            (DeclarationModel declaration)
-        =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)
-            =>  if (is DeclarationModel|ControlBlockModel result = d.container)
-                then result
-                else finished);
 
     "A stream containing the given [[scope]] followed by all ancestor scopes, including
      the containing package scope. Note that the reutrned stream may include 'fake'
