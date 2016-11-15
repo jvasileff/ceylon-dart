@@ -24,17 +24,35 @@ import ceylon.language.meta.model {
 shared abstract
 class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration */ {
 
-    shared formal ClassOrInterfaceModel delegate;
+    shared formal ClassOrInterfaceModel modelDeclaration;
 
     // FROM ClassOrInterfaceDeclaration
 
-    shared OpenType[] caseTypesImpl => nothing;
+    shared
+    OpenType[] caseTypesImpl
+        =>  modelDeclaration.caseTypes.collect(newOpenType);
 
-    shared OpenClassType? extendedTypeImpl => nothing;
+    shared
+    OpenClassType? extendedTypeImpl {
+        if (exists modelExtendedType = modelDeclaration.extendedType) {
+            assert (is OpenClassType result = newOpenType(modelExtendedType));
+            return result;
+        }
+        "Only 'Anything' has no extended type."
+        assert (modelDeclaration.isAnything);
+        return null;
+    }
 
-    shared Boolean isAliasImpl => delegate.isAlias;
+    shared
+    Boolean isAliasImpl
+        =>  modelDeclaration.isAlias;
 
-    shared OpenInterfaceType[] satisfiedTypesImpl => nothing;
+    shared
+    OpenInterfaceType[] satisfiedTypesImpl
+        =>  modelDeclaration.satisfiedTypes.collect((st) {
+                assert (is OpenInterfaceType ot = newOpenType(st));
+                return ot;
+            });
 
     shared Kind[] annotatedDeclaredMemberDeclarationsImpl<Kind, Annotation>()
             given Kind satisfies NestableDeclaration
@@ -49,20 +67,20 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
 
     shared Kind[] declaredMemberDeclarationsImpl<Kind>()
             given Kind satisfies NestableDeclaration
-        =>  [ for (member in delegate.members.map(Entry.item)
+        =>  [ for (member in modelDeclaration.members.map(Entry.item)
                                      .map(newNestableDeclaration))
               if (is Kind member) member ];
 
     shared Kind? getDeclaredMemberDeclarationImpl<Kind>(String name)
             given Kind satisfies NestableDeclaration
-        =>  if (exists memberModel = delegate.getDirectMember(name),
+        =>  if (exists memberModel = modelDeclaration.getDirectMember(name),
                 is Kind member = newNestableDeclaration(memberModel))
             then member
             else null;
 
     shared Kind? getMemberDeclarationImpl<Kind>(String name)
             given Kind satisfies NestableDeclaration
-        =>  if (exists memberModel = delegate.getMember(name, null),
+        =>  if (exists memberModel = modelDeclaration.getMember(name, null),
                 memberModel.isShared,
                 is Kind member = newNestableDeclaration(memberModel))
             then member
@@ -76,15 +94,15 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
     shared Kind[] memberDeclarationsImpl<Kind>()
             given Kind satisfies NestableDeclaration
         // FIXME should include inherited members
-        =>  [ for (member in delegate.members.map(Entry.item)
+        =>  [ for (member in modelDeclaration.members.map(Entry.item)
                                      .map(newNestableDeclaration))
               if (is Kind member) member ];
 
     // FROM Declaration
 
-    shared String nameImpl => delegate.name;
+    shared String nameImpl => modelDeclaration.name;
     
-    shared String qualifiedNameImpl => delegate.qualifiedName;
+    shared String qualifiedNameImpl => modelDeclaration.qualifiedName;
 
     // FROM GenericDeclaration
 
@@ -94,10 +112,10 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
 
     // FROM NestableDeclaration
 
-    shared Boolean actualImpl => delegate.isActual;
+    shared Boolean actualImpl => modelDeclaration.isActual;
 
     shared NestableDeclaration | Package containerImpl {
-        switch (containerModel = delegate.container)
+        switch (containerModel = modelDeclaration.container)
         case (is PackageModel) {
             return PackageImpl(containerModel);
         }
@@ -109,21 +127,23 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
         }
     }
 
-    shared Module containingModuleImpl => ModuleImpl(delegate.mod);
+    shared Module containingModuleImpl => ModuleImpl(modelDeclaration.mod);
 
-    shared Package containingPackageImpl => PackageImpl(delegate.pkg);
+    shared Package containingPackageImpl => PackageImpl(modelDeclaration.pkg);
 
-    shared Boolean defaultImpl => delegate.isDefault;
+    shared Boolean defaultImpl => modelDeclaration.isDefault;
 
-    shared Boolean formalImpl => delegate.isFormal;
+    shared Boolean formalImpl => modelDeclaration.isFormal;
 
-    shared Boolean sharedImpl => delegate.isShared;
+    shared Boolean sharedImpl => modelDeclaration.isShared;
 
-    shared Boolean toplevelImpl => delegate.isToplevel;
+    shared Boolean toplevelImpl => modelDeclaration.isToplevel;
 
     // FROM TypedDeclaration
 
-    shared OpenType openTypeImpl => nothing;
+    shared
+    OpenType openTypeImpl
+        =>  newOpenType(modelDeclaration.type);
 
     // FROM AnnotatedDeclaration
 

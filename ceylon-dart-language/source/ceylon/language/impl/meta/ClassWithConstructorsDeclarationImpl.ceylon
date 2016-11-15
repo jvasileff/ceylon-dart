@@ -1,5 +1,5 @@
 import ceylon.dart.runtime.model {
-    ClassModel=Class
+    ModelClass = Class
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -21,11 +21,11 @@ import ceylon.language.meta.model {
     ClassOrInterface
 }
 
-shared class ClassWithConstructorsDeclarationImpl(delegate)
+shared class ClassWithConstructorsDeclarationImpl(modelDeclaration)
         extends ClassOrInterfaceDeclarationImpl()
         satisfies ClassWithConstructorsDeclaration {
 
-    shared actual ClassModel delegate;
+    shared actual ModelClass modelDeclaration;
 
     shared actual CallableConstructorDeclaration[]
     annotatedConstructorDeclarations<Annotation>()
@@ -33,7 +33,7 @@ shared class ClassWithConstructorsDeclarationImpl(delegate)
 
     shared actual Boolean annotation => nothing;
 
-    shared actual Boolean anonymous => delegate.isAnonymous;
+    shared actual Boolean anonymous => modelDeclaration.isAnonymous;
 
     shared actual Class<Type,Arguments> classApply<Type, Arguments>
             (AppliedType<Anything>* typeArguments)
@@ -41,9 +41,9 @@ shared class ClassWithConstructorsDeclarationImpl(delegate)
 
     shared actual CallableConstructorDeclaration defaultConstructor => nothing;
 
-    shared actual Boolean final => delegate.isFinal;
+    shared actual Boolean final => modelDeclaration.isFinal;
 
-    shared actual Boolean abstract => delegate.isAbstract;
+    shared actual Boolean abstract => modelDeclaration.isAbstract;
 
     shared actual FunctionOrValueDeclaration? getParameterDeclaration
             (String name) => nothing;

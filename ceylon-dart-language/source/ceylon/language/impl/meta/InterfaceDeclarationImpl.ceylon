@@ -1,5 +1,5 @@
 import ceylon.dart.runtime.model {
-    InterfaceModel=Interface
+    ModelInterface = Interface
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -11,17 +11,17 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     Interface,
     MemberInterface,
-    AppliedType=Type,
+    AppliedType = Type,
     Member,
     ClassOrInterface
 }
 
 shared
-class InterfaceDeclarationImpl(delegate)
+class InterfaceDeclarationImpl(modelDeclaration)
         extends ClassOrInterfaceDeclarationImpl()
         satisfies InterfaceDeclaration {
 
-    shared actual InterfaceModel delegate;
+    shared actual ModelInterface modelDeclaration;
 
     shared actual Interface<Type> interfaceApply<Type=Anything>
             (AppliedType<>* typeArguments)
