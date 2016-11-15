@@ -1,13 +1,10 @@
 import ceylon.dart.runtime.model {
-    ClassModel=Class,
-    InterfaceModel=Interface,
     ClassDefinitionModel=ClassDefinition,
     ClassAliasModel=ClassAlias,
     InterfaceDefinitionModel=InterfaceDefinition,
     InterfaceAliasModel=InterfaceAlias,
     FunctionModel=Function,
     ValueModel=Value,
-    ClassOrInterfaceModel=ClassOrInterface,
     TypeParameterModel=TypeParameter,
     NothingDeclarationModel=NothingDeclaration,
     DeclarationModel=Declaration,
@@ -18,24 +15,9 @@ import ceylon.dart.runtime.model {
     UnknownTypeModel=UnknownType,
     SetterModel=Setter
 }
-import ceylon.language {
-    AnnotationType=Annotation
-}
 import ceylon.language.meta.declaration {
-    Module,
-    Package,
-    NestableDeclaration,
-    OpenType,
-    OpenInterfaceType,
-    OpenClassType,
-    TypeParameter
+    NestableDeclaration
 }
-import ceylon.language.meta.model {
-    AppliedType=Type,
-    Member,
-    ClassOrInterface
-}
-
 
 NestableDeclaration? wrapNestableDeclaration(DeclarationModel model) {
     // TODO incomplete. Make non-optional after finishing
