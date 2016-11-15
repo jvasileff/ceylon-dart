@@ -1,5 +1,7 @@
 import ceylon.dart.runtime.model {
-    ClassOrInterfaceModel=ClassOrInterface
+    ClassOrInterfaceModel=ClassOrInterface,
+    PackageModel=Package,
+    DeclarationModel=Declaration
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -45,15 +47,26 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
     shared ClassOrInterface<Type> applyImpl<Type>
             (AppliedType<Anything>* typeArguments) => nothing;
 
-
     shared Kind[] declaredMemberDeclarationsImpl<Kind>()
-            given Kind satisfies NestableDeclaration => nothing;
+            given Kind satisfies NestableDeclaration
+        =>  [ for (member in delegate.members.map(Entry.item)
+                                     .map(wrapNestableDeclaration))
+              if (is Kind member) member ];
 
     shared Kind? getDeclaredMemberDeclarationImpl<Kind>(String name)
-            given Kind satisfies NestableDeclaration => nothing;
+            given Kind satisfies NestableDeclaration
+        =>  if (exists memberModel = delegate.getDirectMember(name),
+                is Kind member = wrapNestableDeclaration(memberModel))
+            then member
+            else null;
 
     shared Kind? getMemberDeclarationImpl<Kind>(String name)
-            given Kind satisfies NestableDeclaration => nothing;
+            given Kind satisfies NestableDeclaration
+        =>  if (exists memberModel = delegate.getMember(name, null),
+                memberModel.isShared,
+                is Kind member = wrapNestableDeclaration(memberModel))
+            then member
+            else null;
 
     shared Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApplyImpl<Container, Type>(
@@ -61,7 +74,11 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
             AppliedType<Anything>* typeArguments) => nothing;
 
     shared Kind[] memberDeclarationsImpl<Kind>()
-            given Kind satisfies NestableDeclaration => nothing;
+            given Kind satisfies NestableDeclaration
+        // FIXME should include inherited members
+        =>  [ for (member in delegate.members.map(Entry.item)
+                                     .map(wrapNestableDeclaration))
+              if (is Kind member) member ];
 
     // FROM Declaration
 
@@ -79,7 +96,18 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
 
     shared Boolean actualImpl => delegate.isActual;
 
-    shared NestableDeclaration | Package containerImpl => nothing;
+    shared NestableDeclaration | Package containerImpl {
+        switch (containerModel = delegate.container)
+        case (is PackageModel) {
+            return PackageImpl(containerModel);
+        }
+        case (is DeclarationModel) {
+            if (exists declaration = wrapNestableDeclaration(containerModel)) {
+                return declaration;
+            }
+            throw AssertionError("unimplemented declaration type for ``containerModel``");
+        }
+    }
 
     shared Module containingModuleImpl => ModuleImpl(delegate.mod);
 

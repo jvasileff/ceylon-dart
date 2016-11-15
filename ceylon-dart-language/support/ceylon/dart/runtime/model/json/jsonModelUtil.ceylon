@@ -277,7 +277,7 @@ object jsonModelUtil {
             declaration.addMember(parseClass(declaration, classJson));
         }
 
-        for (interfaceJson in getObjectOrEmpty(json, keyClasses).items) {
+        for (interfaceJson in getObjectOrEmpty(json, keyInterfaces).items) {
             assert (is JsonObject interfaceJson);
             declaration.addMember(parseInterface(declaration, interfaceJson));
         }
@@ -337,7 +337,7 @@ object jsonModelUtil {
             declaration.addMember(parseClass(declaration, classJson));
         }
 
-        for (interfaceJson in getObjectOrEmpty(json, keyClasses).items) {
+        for (interfaceJson in getObjectOrEmpty(json, keyInterfaces).items) {
             assert (is JsonObject interfaceJson);
             declaration.addMember(parseInterface(declaration, interfaceJson));
         }
