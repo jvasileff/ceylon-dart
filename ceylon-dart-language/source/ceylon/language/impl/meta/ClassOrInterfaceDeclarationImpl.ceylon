@@ -50,13 +50,13 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
     shared Kind[] declaredMemberDeclarationsImpl<Kind>()
             given Kind satisfies NestableDeclaration
         =>  [ for (member in delegate.members.map(Entry.item)
-                                     .map(wrapNestableDeclaration))
+                                     .map(newNestableDeclaration))
               if (is Kind member) member ];
 
     shared Kind? getDeclaredMemberDeclarationImpl<Kind>(String name)
             given Kind satisfies NestableDeclaration
         =>  if (exists memberModel = delegate.getDirectMember(name),
-                is Kind member = wrapNestableDeclaration(memberModel))
+                is Kind member = newNestableDeclaration(memberModel))
             then member
             else null;
 
@@ -64,7 +64,7 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
             given Kind satisfies NestableDeclaration
         =>  if (exists memberModel = delegate.getMember(name, null),
                 memberModel.isShared,
-                is Kind member = wrapNestableDeclaration(memberModel))
+                is Kind member = newNestableDeclaration(memberModel))
             then member
             else null;
 
@@ -77,7 +77,7 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
             given Kind satisfies NestableDeclaration
         // FIXME should include inherited members
         =>  [ for (member in delegate.members.map(Entry.item)
-                                     .map(wrapNestableDeclaration))
+                                     .map(newNestableDeclaration))
               if (is Kind member) member ];
 
     // FROM Declaration
@@ -102,7 +102,7 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
             return PackageImpl(containerModel);
         }
         case (is DeclarationModel) {
-            if (exists declaration = wrapNestableDeclaration(containerModel)) {
+            if (exists declaration = newNestableDeclaration(containerModel)) {
                 return declaration;
             }
             throw AssertionError("unimplemented declaration type for ``containerModel``");
