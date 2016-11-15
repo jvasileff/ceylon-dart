@@ -106,7 +106,9 @@ class ClassOrInterfaceDeclarationImpl() /* satisfies ClassOrInterfaceDeclaration
 
     // FROM GenericDeclaration
 
-    shared TypeParameter[] typeParameterDeclarationsImpl => nothing;
+    shared
+    TypeParameter[] typeParameterDeclarationsImpl
+        =>  modelDeclaration.typeParameters.collect(TypeParameterImpl);
 
     shared TypeParameter? getTypeParameterDeclarationImpl(String name) => nothing;
 

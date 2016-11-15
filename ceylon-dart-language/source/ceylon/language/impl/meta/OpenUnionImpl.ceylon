@@ -14,6 +14,10 @@ class OpenUnionImpl(modelType)
     "The declaration for an OpenUnion must be a Union"
     assert (modelType.declaration is ModelUnionType);
 
+    // TODO
+    shared actual
+    String string => modelType.format { printFullyQualified = true; };
+
     shared actual
     [OpenType+] caseTypes {
         assert (is ModelUnionType modelUnionType = modelType.declaration);

@@ -14,6 +14,10 @@ class OpenClassTypeImpl(modelType)
     "The declaration for an OpenClassType must be a Class"
     assert (modelType.declaration is ModelClass);
 
+    // TODO
+    shared actual
+    String string => modelType.format { printFullyQualified = true; };
+
     object helper extends OpenClassOrInterfaceTypeHelper() {
         modelType => outer.modelType;
 

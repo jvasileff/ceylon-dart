@@ -1,25 +1,16 @@
 import ceylon.language.meta.declaration {
-    OpenType, OpenClassOrInterfaceType, OpenClassType, OpenInterfaceType,
-    ClassOrInterfaceDeclaration, TypeParameter, OpenTypeArgument,
-    NestableDeclaration, Variance, ClassDeclaration,
-    invariant, covariant, contravariant
-}
-import ceylon.language.meta.model {
-    AppliedType = Type, ClassOrInterface, ClassModel, InterfaceModel, Member,
-    MemberClass, MemberInterface, Method, Attribute, TypeArgument
+    OpenType, TypeParameter,
+    NestableDeclaration, Variance
 }
 import ceylon.dart.runtime.model {
-    ModelType = Type,
-    ModelClass = Class,
-    ModelVariance = Variance,
-    ModelTypeParameter = TypeParameter,
-    modelInvariant = invariant,
-    modelCovariant = covariant,
-    modelContravariant = contravariant
+    ModelTypeParameter = TypeParameter
 }
 
-class
-TypeParameterImpl(shared ModelTypeParameter modelTypeParameter) satisfies TypeParameter {
+class TypeParameterImpl(modelTypeParameter)
+        satisfies TypeParameter {
+
+    shared ModelTypeParameter modelTypeParameter;
+
     shared actual String name => modelTypeParameter.name;
     shared actual String qualifiedName => modelTypeParameter.qualifiedName;
 
@@ -30,11 +21,18 @@ TypeParameterImpl(shared ModelTypeParameter modelTypeParameter) satisfies TypePa
     shared actual OpenType[] satisfiedTypes => nothing;
     shared actual OpenType[] caseTypes => nothing;
 
-    shared actual Boolean equals(Object other)
+    // TODO
+    shared actual
+    String string
+        =>  modelTypeParameter.string;
+
+    shared actual
+    Boolean equals(Object other)
         =>  if (is TypeParameterImpl other)
             then modelTypeParameter == other.modelTypeParameter
             else false;
 
-    shared actual Integer hash
+    shared actual
+    Integer hash
         =>  modelTypeParameter.hash;
 }

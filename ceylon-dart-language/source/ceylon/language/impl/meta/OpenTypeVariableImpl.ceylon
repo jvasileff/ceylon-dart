@@ -14,6 +14,10 @@ class OpenTypeVariableImpl(modelType)
     "The declaration for an OpenTypeVariable must be a TypeParameter"
     assert (modelType.declaration is ModelTypeParameter);
 
+    // TODO
+    shared actual
+    String string => modelType.format { printFullyQualified = true; };
+
     shared actual
     TypeParameter declaration {
         assert (is ModelTypeParameter modelDeclaration = modelType.declaration);

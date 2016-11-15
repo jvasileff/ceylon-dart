@@ -14,6 +14,10 @@ class OpenInterfaceTypeImpl(modelType)
     "The declaration for an OpenInterfaceType must be a Interface"
     assert (modelType.declaration is ModelInterface);
 
+    // TODO
+    shared actual
+    String string => modelType.format { printFullyQualified = true; };
+
     object helper extends OpenClassOrInterfaceTypeHelper() {
         modelType => outer.modelType;
 
