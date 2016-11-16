@@ -1,8 +1,6 @@
 import ceylon.dart.runtime.model {
     ModelClassDefinition = ClassDefinition,
     ModelClassAlias = ClassAlias,
-    ModelInterfaceDefinition = InterfaceDefinition,
-    ModelInterfaceAlias = InterfaceAlias,
     ModelFunction = Function,
     ModelValue = Value,
     ModelTypeParameter = TypeParameter,
@@ -25,31 +23,23 @@ import ceylon.language.meta.declaration {
 
 shared
 ClassDeclaration newClassDeclaration(ModelClass model) {
-    // TODO various declaration types
     switch (model)
     case (is ModelClassDefinition) {
-        return ClassWithConstructorsDeclarationImpl(model);
+        // TODO ClassWithConstructorsDeclarationImpl if class has constructors
+        return ClassWithInitializerDeclarationImpl(model);
     }
     case (is ModelClassAlias) {
-        return ClassWithConstructorsDeclarationImpl(model);
+        return ClassWithInitializerDeclarationImpl(model);
     }
 }
 
 shared
-InterfaceDeclaration newInterfaceDeclaration(ModelInterface model) {
-    // TODO various declaration types
-    switch (model)
-    case (is ModelInterfaceDefinition) {
-        return InterfaceDeclarationImpl(model);
-    }
-    case (is ModelInterfaceAlias) {
-        return InterfaceDeclarationImpl(model);
-    }
-}
+InterfaceDeclaration newInterfaceDeclaration(ModelInterface model)
+    =>  InterfaceDeclarationImpl(model);
 
 shared
 ConstructorDeclaration newConstructorDeclaration(ModelConstructor model) {
-    // TODO value constructors
+    // TODO CallableValueDeclarationImpl if value constructor
     return CallableConstructorDeclarationImpl(model);
 }
 
