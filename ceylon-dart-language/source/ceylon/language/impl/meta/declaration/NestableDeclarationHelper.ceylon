@@ -4,31 +4,11 @@ import ceylon.dart.runtime.model {
     ModelTypedDeclaration = TypedDeclaration,
     ModelTypeDeclaration = TypeDeclaration
 }
-import ceylon.language {
-    AnnotationType = Annotation
-}
 import ceylon.language.meta.declaration {
     Module,
     Package,
     NestableDeclaration,
     OpenType
-}
-
-interface AnnotatedHelper
-        satisfies DeclarationHelper {
-
-    shared
-    Boolean annotated<Annotation>()
-            given Annotation satisfies AnnotationType => nothing;
-}
-
-interface AnnotatedDeclarationHelper
-        satisfies DeclarationHelper & AnnotatedHelper {
-
-    shared
-    Annotation[] annotations<Annotation>()
-            given Annotation satisfies AnnotationType
-        =>  nothing;
 }
 
 interface NestableDeclarationHelper
