@@ -7,7 +7,7 @@ import ceylon.dart.runtime.model {
     ModelUnionType = UnionType
 }
 
-shared class UnionTypeImpl<out Type=Anything>(modelType)
+class UnionTypeImpl<out Type=Anything>(modelType)
         extends TypeImpl<Type>()
         satisfies UnionType<Type> {
 
@@ -18,4 +18,9 @@ shared class UnionTypeImpl<out Type=Anything>(modelType)
 
     shared actual List<AppliedType<>> caseTypes
         =>  [ for (type in modelType.caseTypes) newType(type) ];
+
+    shared actual object helper satisfies TypeHelper<Type> {
+        thisType => outer;
+        modelType => outer.modelType;
+    }
 }

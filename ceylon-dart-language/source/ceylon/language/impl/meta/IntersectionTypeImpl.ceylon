@@ -7,7 +7,7 @@ import ceylon.dart.runtime.model {
     ModelIntersectionType = IntersectionType
 }
 
-shared class IntersectionTypeImpl<out Type=Anything>(modelType)
+class IntersectionTypeImpl<out Type=Anything>(modelType)
         extends TypeImpl<Type>()
         satisfies IntersectionType<Type> {
 
@@ -18,4 +18,9 @@ shared class IntersectionTypeImpl<out Type=Anything>(modelType)
 
     shared actual List<AppliedType<>> satisfiedTypes
         =>  [ for (type in modelType.satisfiedTypes) newType(type) ];
+
+    shared actual object helper satisfies TypeHelper<Type> {
+        thisType => outer;
+        modelType => outer.modelType;
+    }
 }

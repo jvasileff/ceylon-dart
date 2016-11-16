@@ -10,8 +10,8 @@ import ceylon.dart.runtime.model {
     ModelInterface = Interface
 }
 
-shared class InterfaceImpl<out Type=Anything>(modelType)
-        extends ClassOrInterfaceImpl<Type>()
+class InterfaceImpl<out Type=Anything>(modelType)
+        extends TypeImpl<Type>()
         satisfies Interface<Type> {
 
     shared actual ModelType modelType;
@@ -19,125 +19,148 @@ shared class InterfaceImpl<out Type=Anything>(modelType)
     "The declaration for a Interface Type must be a Interface"
     assert (modelType.declaration is ModelInterface);
 
+    shared actual object helper satisfies ClassOrInterfaceHelper<Type> {
+        thisType => outer;
+        modelType => outer.modelType;
+    }
+
     shared actual InterfaceDeclaration declaration {
         assert (is ModelInterface modelDeclaration = modelType.declaration);
         return InterfaceDeclarationImpl(modelDeclaration);
     }
 
-    // FROM ClassOrInterface
+    // ClassOrInterface
 
-    extendedType => extendedTypeImpl;
-    satisfiedTypes => satisfiedTypesImpl;
-    caseValues => caseValuesImpl;
+    extendedType => helper.extendedType;
+    satisfiedTypes => helper.satisfiedTypes;
+    caseValues => helper.caseValues;
 
-    shared actual Member<Container, Kind>? getClassOrInterface
-            <Container=Nothing, Kind=ClassOrInterface<>>
+    shared actual
+    Member<Container, Kind>?
+    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
             (String name, AppliedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything>
-        =>  getClassOrInterfaceImpl<Container, Kind>(name, *types);
+        =>  helper.getClassOrInterface<Container, Kind>(name, *types);
 
-    shared actual Member<Container, Kind>? getDeclaredClassOrInterface
-            <Container=Nothing, Kind=ClassOrInterface<>>
+    shared actual
+    Member<Container, Kind>?
+    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
             (String name, AppliedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything>
-        =>  getDeclaredClassOrInterfaceImpl<Container, Kind>(name, *types);
+        =>  helper.getDeclaredClassOrInterface<Container, Kind>(name, *types);
 
-    shared actual MemberClass<Container, Type, Arguments>? getClass
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    MemberClass<Container, Type, Arguments>?
+    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, AppliedType<Anything>* types)
             given Arguments satisfies Anything[]
-        =>  getClassImpl<Container, Type, Arguments>(name, *types);
+        =>  helper.getClass<Container, Type, Arguments>(name, *types);
 
-    shared actual MemberClass<Container, Type, Arguments>? getDeclaredClass
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    MemberClass<Container, Type, Arguments>?
+    getDeclaredClass<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, AppliedType<Anything>* types)
             given Arguments satisfies Anything[]
-        =>  getDeclaredClassImpl<Container, Type, Arguments>(name, *types);
+        =>  helper.getDeclaredClass<Container, Type, Arguments>(name, *types);
 
-    shared actual MemberInterface<Container, Type>? getInterface
-            <Container=Nothing, Type=Anything>
+    shared actual
+    MemberInterface<Container, Type>?
+    getInterface<Container=Nothing, Type=Anything>
             (String name, AppliedType<Anything>* types)
-        =>  getInterfaceImpl<Container, Type>(name, *types);
+        =>  helper.getInterface<Container, Type>(name, *types);
 
-    shared actual MemberInterface<Container, Type>? getDeclaredInterface
-            <Container=Nothing, Type=Anything>
+    shared actual
+    MemberInterface<Container, Type>?
+    getDeclaredInterface<Container=Nothing, Type=Anything>
             (String name, AppliedType<Anything>* types)
-        =>  getDeclaredInterfaceImpl<Container, Type>(name, *types);
+        =>  helper.getDeclaredInterface<Container, Type>(name, *types);
     
-    shared actual Method<Container, Type, Arguments>? getMethod
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    Method<Container, Type, Arguments>?
+    getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, AppliedType<Anything>* types)
             given Arguments satisfies Anything[]
-        =>  getMethodImpl<Container, Type, Arguments>(name, *types);
+        =>  helper.getMethod<Container, Type, Arguments>(name, *types);
 
-    shared actual Method<Container, Type, Arguments>? getDeclaredMethod
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    Method<Container, Type, Arguments>?
+    getDeclaredMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, AppliedType<Anything>* types)
             given Arguments satisfies Anything[]
-        =>  getDeclaredMethodImpl<Container, Type, Arguments>(name, *types);
+        =>  helper.getDeclaredMethod<Container, Type, Arguments>(name, *types);
 
-    shared actual Attribute<Container, Get, Set>? getAttribute
-            <Container=Nothing, Get=Anything, Set=Nothing>
+    shared actual
+    Attribute<Container, Get, Set>?
+    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>
             (String name)
-        =>  getAttributeImpl<Container, Get, Set>(name);
+        =>  helper.getAttribute<Container, Get, Set>(name);
 
-    shared actual Attribute<Container, Get, Set>? getDeclaredAttribute
-            <Container=Nothing, Get=Anything, Set=Nothing>
+    shared actual
+    Attribute<Container, Get, Set>?
+    getDeclaredAttribute<Container=Nothing, Get=Anything, Set=Nothing>
             (String name)
-        =>  getDeclaredAttributeImpl<Container, Get, Set>(name);
+        =>  helper.getDeclaredAttribute<Container, Get, Set>(name);
 
-    shared actual Attribute<Container, Get, Set>[] getDeclaredAttributes
-            <Container=Nothing, Get=Anything, Set=Nothing>
+    shared actual
+    Attribute<Container, Get, Set>[]
+    getDeclaredAttributes<Container=Nothing, Get=Anything, Set=Nothing>
             (AppliedType<Annotation>* annotationTypes)
-        =>  getDeclaredAttributesImpl<Container, Get, Set>(*annotationTypes);
+        =>  helper.getDeclaredAttributes<Container, Get, Set>(*annotationTypes);
 
-    shared actual Attribute<Container, Get, Set>[] getAttributes
-            <Container=Nothing, Get=Anything, Set=Nothing>
+    shared actual
+    Attribute<Container, Get, Set>[]
+    getAttributes<Container=Nothing, Get=Anything, Set=Nothing>
             (AppliedType<Annotation>* annotationTypes)
-        =>  getAttributesImpl<Container, Get, Set>(*annotationTypes);
+        =>  helper.getAttributes<Container, Get, Set>(*annotationTypes);
 
-    shared actual Method<Container, Type, Arguments>[] getDeclaredMethods
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
-            given Arguments satisfies Anything[]
-        =>  getDeclaredMethodsImpl<Container, Type, Arguments>(*annotationTypes);
-
-    shared actual Method<Container, Type, Arguments>[] getMethods
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    Method<Container, Type, Arguments>[]
+    getDeclaredMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
             (AppliedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
-        =>  getMethodsImpl<Container, Type, Arguments>(*annotationTypes);
+        =>  helper.getDeclaredMethods<Container, Type, Arguments>(*annotationTypes);
 
-    shared actual MemberClass<Container, Type, Arguments>[] getDeclaredClasses
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    Method<Container, Type, Arguments>[]
+    getMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
             (AppliedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
-        =>  getDeclaredClasses<Container, Type, Arguments>(*annotationTypes);
+        =>  helper.getMethods<Container, Type, Arguments>(*annotationTypes);
 
-    shared actual MemberClass<Container, Type, Arguments>[] getClasses
-            <Container=Nothing, Type=Anything, Arguments=Nothing>
+    shared actual
+    MemberClass<Container, Type, Arguments>[]
+    getDeclaredClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
             (AppliedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
-        =>  getClassesImpl<Container, Type, Arguments>(*annotationTypes);
+        =>  helper.getDeclaredClasses<Container, Type, Arguments>(*annotationTypes);
 
-    shared actual MemberInterface<Container, Type>[] getDeclaredInterfaces
-            <Container=Nothing, Type=Anything>
+    shared actual
+    MemberClass<Container, Type, Arguments>[]
+    getClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
             (AppliedType<Annotation>* annotationTypes)
-        =>  getDeclaredInterfacesImpl<Container, Type>(*annotationTypes);
+            given Arguments satisfies Anything[]
+        =>  helper.getClasses<Container, Type, Arguments>(*annotationTypes);
 
-    shared actual MemberInterface<Container, Type>[] getInterfaces
-            <Container=Nothing, Type=Anything>
+    shared actual
+    MemberInterface<Container, Type>[]
+    getDeclaredInterfaces<Container=Nothing, Type=Anything>
             (AppliedType<Annotation>* annotationTypes)
-        =>  getInterfaces<Container, Type>(*annotationTypes);
+        =>  helper.getDeclaredInterfaces<Container, Type>(*annotationTypes);
 
-    // FROM Generic
+    shared actual
+    MemberInterface<Container, Type>[]
+    getInterfaces<Container=Nothing, Type=Anything>
+            (AppliedType<Annotation>* annotationTypes)
+        =>  helper.getInterfaces<Container, Type>(*annotationTypes);
 
-    typeArguments => typeArgumentsImpl;
-    typeArgumentList => typeArgumentListImpl;
-    typeArgumentWithVariances => typeArgumentWithVariancesImpl;
-    typeArgumentWithVarianceList => typeArgumentWithVarianceListImpl;
+    // Generic
 
-    // FROM Model
+    typeArguments => helper.typeArguments;
+    typeArgumentList => helper.typeArgumentList;
+    typeArgumentWithVariances => helper.typeArgumentWithVariances;
+    typeArgumentWithVarianceList => helper.typeArgumentWithVarianceList;
 
-    container => containerImpl;
+    // Model
+
+    container => helper.container;
 }
