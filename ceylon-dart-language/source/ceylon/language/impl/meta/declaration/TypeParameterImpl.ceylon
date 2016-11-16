@@ -1,6 +1,5 @@
 import ceylon.language.meta.declaration {
-    OpenType, TypeParameter,
-    NestableDeclaration, Variance
+    TypeParameter
 }
 import ceylon.dart.runtime.model {
     ModelTypeParameter = TypeParameter
@@ -11,28 +10,33 @@ class TypeParameterImpl(modelTypeParameter)
 
     shared ModelTypeParameter modelTypeParameter;
 
-    shared actual String name => modelTypeParameter.name;
-    shared actual String qualifiedName => modelTypeParameter.qualifiedName;
+    name => modelTypeParameter.name;
 
-    shared actual NestableDeclaration container => nothing;
-    shared actual Boolean defaulted => modelTypeParameter.defaultTypeArgument exists;
-    shared actual OpenType? defaultTypeArgument => nothing;
-    shared actual Variance variance => varianceFor(modelTypeParameter.variance);
-    shared actual OpenType[] satisfiedTypes => nothing;
-    shared actual OpenType[] caseTypes => nothing;
+    qualifiedName => modelTypeParameter.qualifiedName;
+
+    // TODO remove else nothing when newNestableDeclaration is complete
+    container => newNestableDeclaration(modelTypeParameter.container) else nothing;    
+
+    defaulted => modelTypeParameter.defaultTypeArgument exists;
+
+    defaultTypeArgument
+        =>  if (exists defaultArgument = modelTypeParameter.defaultTypeArgument)
+            then newOpenType(defaultArgument)
+            else null;
+
+    variance => varianceFor(modelTypeParameter.variance);
+
+    satisfiedTypes => modelTypeParameter.satisfiedTypes.collect(newOpenType);
+
+    caseTypes => modelTypeParameter.caseTypes.collect(newOpenType);
 
     // TODO
-    shared actual
-    String string
-        =>  modelTypeParameter.string;
+    string => modelTypeParameter.string;
 
-    shared actual
-    Boolean equals(Object other)
+    equals(Object other)
         =>  if (is TypeParameterImpl other)
             then modelTypeParameter == other.modelTypeParameter
             else false;
 
-    shared actual
-    Integer hash
-        =>  modelTypeParameter.hash;
+    hash => modelTypeParameter.hash;
 }
