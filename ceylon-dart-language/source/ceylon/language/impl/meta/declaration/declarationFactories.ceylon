@@ -18,7 +18,9 @@ import ceylon.dart.runtime.model {
     InterfaceModel=Interface
 }
 import ceylon.language.meta.declaration {
-    NestableDeclaration, ClassDeclaration, InterfaceDeclaration
+    NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
+    FunctionDeclaration, ValueDeclaration, SetterDeclaration,
+    AliasDeclaration, nothingType
 }
 
 shared
@@ -46,6 +48,22 @@ InterfaceDeclaration newInterfaceDeclaration(InterfaceModel model) {
 }
 
 shared
+FunctionDeclaration newFunctionDeclaration(FunctionModel model)
+    =>  FunctionDeclarationImpl(model);
+
+shared
+ValueDeclaration newValueDeclaration(ValueModel model)
+    =>  ValueDeclarationImpl(model);
+
+shared
+SetterDeclaration newSetterDeclaration(SetterModel model)
+    =>  SetterDeclarationImpl(model);
+
+shared
+AliasDeclaration newAliasDeclaration(TypeAliasModel model)
+    =>  AliasDeclarationImpl(model);
+
+shared
 NestableDeclaration? newNestableDeclaration(DeclarationModel model) {
     // TODO incomplete. Make non-optional after finishing
     switch (model)
@@ -55,15 +73,28 @@ NestableDeclaration? newNestableDeclaration(DeclarationModel model) {
     case (is InterfaceModel) {
         return newInterfaceDeclaration(model);
     }
-    case (is TypeParameterModel) {}
-    case (is NothingDeclarationModel) {}
-    case (is TypeAliasModel) {}
-    case (is FunctionModel) {}
-    case (is ValueModel) {}
-    case (is SetterModel) {}
-    case (is ConstructorModel) {}
-    case (is IntersectionTypeModel | UnionTypeModel | UnknownTypeModel) {
+    case (is FunctionModel) {
+        return newFunctionDeclaration(model);
+    }
+    case (is ValueModel) {
+        return newValueDeclaration(model);
+    }
+    case (is SetterModel) {
+        return newSetterDeclaration(model);
+    }
+    case (is TypeAliasModel) {
+        return newAliasDeclaration(model);
+    }
+    case (is ConstructorModel) {
+        // TODO need ceylon-model to split ConstructorModel
+        //      into CallableConstructor & ValueConstructor
+        throw AssertionError {
+            "ConstructorDeclarations not yet supported; unable to create declaration \
+             for ``model``";
+        };
+    }
+    case (is TypeParameterModel | IntersectionTypeModel | UnionTypeModel
+                | NothingDeclarationModel | UnknownTypeModel) {
         throw AssertionError("Unexpected declaration type for ``model``");
     }
-    return null;
 }
