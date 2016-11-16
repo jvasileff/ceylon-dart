@@ -1,45 +1,36 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, Class, ClassOrInterface, Member,
-    MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
-    MemberClassCallableConstructor,
-    MemberClassValueConstructor
+    AppliedType = Type, Interface, ClassOrInterface, Member,
+    MemberClass, MemberInterface, Method, Attribute
+}
+import ceylon.language.meta.declaration {
+    InterfaceDeclaration
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelClass = Class
+    ModelInterface = Interface
 }
 
-class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (modelType)
+class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
         extends TypeImpl<Type>()
-        satisfies MemberClass<Container, Type, Arguments>
-        given Arguments satisfies Anything[] {
+        satisfies MemberInterface<Container, Type> {
 
     shared actual ModelType modelType;
 
-    "The declaration for a Class Type must be a Class"
-    assert (modelType.declaration is ModelClass);
+    "The declaration for a Interface Type must be a Interface"
+    assert (modelType.declaration is ModelInterface);
 
-    shared actual
-    object helper satisfies ClassModelHelper<Type> {
+    shared actual object helper satisfies ClassOrInterfaceHelper<Type> {
         thisType => outer;
         modelType => outer.modelType;
     }
 
-    shared actual
-    Class<Type, Arguments> bind(Object container)
-        =>  nothing;
+    shared actual InterfaceDeclaration declaration {
+        assert (is ModelInterface modelDeclaration = modelType.declaration);
+        return InterfaceDeclarationImpl(modelDeclaration);
+    }
 
     shared actual
-    MemberClassCallableConstructor<Container, Type, Arguments>? defaultConstructor
-        =>  nothing;
-
-    shared actual
-    MemberClassCallableConstructor<Container,Type,Arguments>
-    | MemberClassValueConstructor<Container,Type>?
-    getConstructor<Arguments>(String name)
-            given Arguments satisfies Anything[]
-        =>  nothing;
+    Interface<Type> bind(Object container) => nothing;
 
     // Member
 
@@ -48,37 +39,6 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
         assert (exists qualifyingType = modelType.qualifyingType);
         return newType<>(qualifyingType);
     }
-
-    // ClassModel
-
-    declaration => helper.declaration;
-
-    shared actual
-    FunctionModel<Type, Arguments>[]
-    getCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
-            given Arguments satisfies Anything[]
-        =>  helper.getCallableConstructors<Arguments>(*annotationTypes);
-
-    shared actual
-    FunctionModel<Type, Arguments>[]
-    getDeclaredCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
-            given Arguments satisfies Anything[]
-        =>  helper.getDeclaredCallableConstructors<Arguments>(*annotationTypes);
-
-    shared actual
-    FunctionModel<Type, Arguments>|ValueModel<Type>?
-    getDeclaredConstructor<Arguments>
-            (String name)
-            given Arguments satisfies Anything[]
-        =>  helper.getDeclaredConstructor<Arguments>(name);
-
-    getDeclaredValueConstructors(AppliedType<Annotation>* annotationTypes)
-        =>  helper.getDeclaredValueConstructors(*annotationTypes);
-
-    getValueConstructors(AppliedType<Annotation>* annotationTypes)
-        =>  helper.getValueConstructors(*annotationTypes);
 
     // ClassOrInterface
 

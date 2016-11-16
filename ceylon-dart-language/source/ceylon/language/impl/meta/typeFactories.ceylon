@@ -1,5 +1,5 @@
 import ceylon.language.meta.model {
-    ClosedType = Type, Class, MemberClass, Interface, UnionType,
+    ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
     IntersectionType, nothingType
 }
 import ceylon.dart.runtime.model {
@@ -18,20 +18,36 @@ import ceylon.dart.runtime.model.runtime {
 shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>
         (ModelType | TypeDescriptor type)
         given Arguments satisfies Anything[]
-    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
-        ClassImpl<Type, Arguments>(modelType);
+    =>  ClassImpl<Type, Arguments> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared MemberClass<Container, Type, Arguments>
 newMemberClass<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
         (ModelType | TypeDescriptor type)
         given Arguments satisfies Anything[]
-    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
-        MemberClassImpl<Container, Type, Arguments>(modelType);
+    =>  MemberClassImpl<Container, Type, Arguments> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Interface<Type> newInterface<out Type=Anything>(ModelType | TypeDescriptor type)
     =>  InterfaceImpl<Type> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared MemberInterface<Container, Type>
+newMemberInterface<in Container=Nothing, out Type=Anything>
+        (ModelType | TypeDescriptor type)
+    =>  MemberInterfaceImpl<Container, Type> {
             if (is TypeDescriptor type)
             then type.type
             else type;
@@ -66,11 +82,13 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     switch (d = modelType.declaration)
     case (is ModelClass) {
         return if (d.isMember)
-            then newMemberClass(modelType)
-            else newClass(modelType);
+               then newMemberClass(modelType)
+               else newClass(modelType);
     }
     case (is ModelInterface) {
-        return newInterface(modelType);
+        return if (d.isMember)
+               then newMemberInterface(modelType)
+               else newInterface(modelType);
     }
     case (is ModelUnionType) {
         return newUnionType(modelType);
