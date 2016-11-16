@@ -20,7 +20,7 @@ import ceylon.dart.runtime.model {
 import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
-    AliasDeclaration
+    AliasDeclaration, ConstructorDeclaration
 }
 
 shared
@@ -48,6 +48,12 @@ InterfaceDeclaration newInterfaceDeclaration(ModelInterface model) {
 }
 
 shared
+ConstructorDeclaration newConstructorDeclaration(ModelConstructor model) {
+    // TODO value constructors
+    return CallableConstructorDeclarationImpl(model);
+}
+
+shared
 FunctionDeclaration newFunctionDeclaration(ModelFunction model)
     =>  FunctionDeclarationImpl(model);
 
@@ -65,13 +71,15 @@ AliasDeclaration newAliasDeclaration(ModelTypeAlias model)
 
 shared
 NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
-    // TODO incomplete. Make non-optional after finishing
     switch (model)
     case (is ModelClass) {
         return newClassDeclaration(model);
     }
     case (is ModelInterface) {
         return newInterfaceDeclaration(model);
+    }
+    case (is ModelConstructor) {
+        return newConstructorDeclaration(model);
     }
     case (is ModelFunction) {
         return newFunctionDeclaration(model);
@@ -84,14 +92,6 @@ NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
     }
     case (is ModelTypeAlias) {
         return newAliasDeclaration(model);
-    }
-    case (is ModelConstructor) {
-        // TODO need ceylon-model to split ModelConstructor
-        //      into CallableConstructor & ValueConstructor
-        throw AssertionError {
-            "ConstructorDeclarations not yet supported; unable to create declaration \
-             for ``model``";
-        };
     }
     case (is ModelTypeParameter | ModelIntersectionType | ModelUnionType
                 | ModelNothingDeclaration | ModelUnknownType) {
