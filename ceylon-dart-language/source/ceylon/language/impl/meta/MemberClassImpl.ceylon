@@ -1,5 +1,5 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, Class, ClassOrInterface, Member,
+    ClosedType = Type, Class, ClassOrInterface, Member,
     MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
     MemberClassCallableConstructor,
     MemberClassValueConstructor
@@ -44,7 +44,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     // Member
 
     shared actual
-    AppliedType<> declaringType {
+    ClosedType<> declaringType {
         assert (exists qualifyingType = modelType.qualifyingType);
         return newType<>(qualifyingType);
     }
@@ -56,14 +56,14 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     shared actual
     FunctionModel<Type, Arguments>[]
     getCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getCallableConstructors<Arguments>(*annotationTypes);
 
     shared actual
     FunctionModel<Type, Arguments>[]
     getDeclaredCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredCallableConstructors<Arguments>(*annotationTypes);
 
@@ -74,10 +74,10 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredConstructor<Arguments>(name);
 
-    getDeclaredValueConstructors(AppliedType<Annotation>* annotationTypes)
+    getDeclaredValueConstructors(ClosedType<Annotation>* annotationTypes)
         =>  helper.getDeclaredValueConstructors(*annotationTypes);
 
-    getValueConstructors(AppliedType<Annotation>* annotationTypes)
+    getValueConstructors(ClosedType<Annotation>* annotationTypes)
         =>  helper.getValueConstructors(*annotationTypes);
 
     // ClassOrInterface
@@ -89,54 +89,54 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     shared actual
     Member<Container, Kind>?
     getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything>
         =>  helper.getClassOrInterface<Container, Kind>(name, *types);
 
     shared actual
     Member<Container, Kind>?
     getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything>
         =>  helper.getDeclaredClassOrInterface<Container, Kind>(name, *types);
 
     shared actual
     MemberClass<Container, Type, Arguments>?
     getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  helper.getClass<Container, Type, Arguments>(name, *types);
 
     shared actual
     MemberClass<Container, Type, Arguments>?
     getDeclaredClass<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredClass<Container, Type, Arguments>(name, *types);
 
     shared actual
     MemberInterface<Container, Type>?
     getInterface<Container=Nothing, Type=Anything>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
         =>  helper.getInterface<Container, Type>(name, *types);
 
     shared actual
     MemberInterface<Container, Type>?
     getDeclaredInterface<Container=Nothing, Type=Anything>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
         =>  helper.getDeclaredInterface<Container, Type>(name, *types);
     
     shared actual
     Method<Container, Type, Arguments>?
     getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  helper.getMethod<Container, Type, Arguments>(name, *types);
 
     shared actual
     Method<Container, Type, Arguments>?
     getDeclaredMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, AppliedType<Anything>* types)
+            (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredMethod<Container, Type, Arguments>(name, *types);
 
@@ -155,53 +155,53 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     shared actual
     Attribute<Container, Get, Set>[]
     getDeclaredAttributes<Container=Nothing, Get=Anything, Set=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
         =>  helper.getDeclaredAttributes<Container, Get, Set>(*annotationTypes);
 
     shared actual
     Attribute<Container, Get, Set>[]
     getAttributes<Container=Nothing, Get=Anything, Set=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
         =>  helper.getAttributes<Container, Get, Set>(*annotationTypes);
 
     shared actual
     Method<Container, Type, Arguments>[]
     getDeclaredMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredMethods<Container, Type, Arguments>(*annotationTypes);
 
     shared actual
     Method<Container, Type, Arguments>[]
     getMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getMethods<Container, Type, Arguments>(*annotationTypes);
 
     shared actual
     MemberClass<Container, Type, Arguments>[]
     getDeclaredClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getDeclaredClasses<Container, Type, Arguments>(*annotationTypes);
 
     shared actual
     MemberClass<Container, Type, Arguments>[]
     getClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  helper.getClasses<Container, Type, Arguments>(*annotationTypes);
 
     shared actual
     MemberInterface<Container, Type>[]
     getDeclaredInterfaces<Container=Nothing, Type=Anything>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
         =>  helper.getDeclaredInterfaces<Container, Type>(*annotationTypes);
 
     shared actual
     MemberInterface<Container, Type>[]
     getInterfaces<Container=Nothing, Type=Anything>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
         =>  helper.getInterfaces<Container, Type>(*annotationTypes);
 
     // Generic

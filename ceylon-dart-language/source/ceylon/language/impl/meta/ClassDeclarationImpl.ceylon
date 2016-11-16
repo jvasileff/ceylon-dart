@@ -12,7 +12,7 @@ import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
-    AppliedType = Type,
+    ClosedType = Type,
     MemberClass,
     Class
 }
@@ -53,7 +53,7 @@ interface ClassDeclarationHelper
 
     shared
     Class<Type,Arguments> classApply<Type, Arguments>
-            (AppliedType<Anything>* typeArguments)
+            (ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[] => nothing;
 
     shared
@@ -68,7 +68,7 @@ interface ClassDeclarationHelper
 
     shared
     MemberClass<Container,Type,Arguments> memberClassApply<Container, Type, Arguments>
-            (AppliedType<Object> containerType, AppliedType<Anything>* typeArguments)
+            (ClosedType<Object> containerType, ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[] => nothing;
 
     string => "class ``qualifiedName``";

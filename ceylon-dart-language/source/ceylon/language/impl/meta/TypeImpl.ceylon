@@ -1,5 +1,5 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, nothingType
+    ClosedType = Type, nothingType
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
@@ -8,21 +8,21 @@ import ceylon.dart.runtime.model {
 }
 
 abstract
-class TypeImpl<out Type=Anything>() satisfies AppliedType<Type> {
+class TypeImpl<out Type=Anything>() satisfies ClosedType<Type> {
     shared formal ModelType modelType;
     shared formal TypeHelper<Type> helper;
 
     typeOf(Anything instance) => helper.typeOf(instance);
-    supertypeOf(AppliedType<> type) => helper.supertypeOf(type);
-    exactly(AppliedType<> type) => helper.exactly(type);
+    supertypeOf(ClosedType<> type) => helper.supertypeOf(type);
+    exactly(ClosedType<> type) => helper.exactly(type);
     string => helper.string;
 
     shared actual
-    AppliedType<Type|Other> union<Other>(AppliedType<Other> other)
+    ClosedType<Type|Other> union<Other>(ClosedType<Other> other)
         =>  helper.union<Other>(other);
 
     shared actual
-    AppliedType<Type&Other> intersection<Other>(AppliedType<Other> other)
+    ClosedType<Type&Other> intersection<Other>(ClosedType<Other> other)
         =>  helper.intersection<Other>(other);
 }
 
@@ -30,7 +30,7 @@ interface TypeHelper<out Type> satisfies HasModelReference {
     shared actual formal ModelType modelType;
     shared formal TypeImpl<Type> thisType;
 
-    function assertedTypeImpl(AppliedType<> type) {
+    function assertedTypeImpl(ClosedType<> type) {
         assert (is TypeImpl<> type);
         return type;
     }
@@ -39,19 +39,19 @@ interface TypeHelper<out Type> satisfies HasModelReference {
     Boolean typeOf(Anything instance) => nothing;
 
     shared
-    Boolean supertypeOf(AppliedType<> type)
+    Boolean supertypeOf(ClosedType<> type)
         =>  switch (type)
             case (nothingType) true
             else modelType.isSupertypeOf(assertedTypeImpl(type).modelType);
 
     shared
-    Boolean exactly(AppliedType<> type)
+    Boolean exactly(ClosedType<> type)
         =>  switch (type)
             case (nothingType) modelType.isExactlyNothing // in theory, always false...
             else modelType.isExactly(assertedTypeImpl(type).modelType);
 
     shared
-    AppliedType<Type|Other> union<Other>(AppliedType<Other> other)
+    ClosedType<Type|Other> union<Other>(ClosedType<Other> other)
         =>  switch (other)
             case (nothingType) thisType
             else newType<Type | Other> {
@@ -62,7 +62,7 @@ interface TypeHelper<out Type> satisfies HasModelReference {
             };
 
     shared
-    AppliedType<Type&Other> intersection<Other>(AppliedType<Other> other)
+    ClosedType<Type&Other> intersection<Other>(ClosedType<Other> other)
         =>  switch (other)
             case (nothingType) nothingType
             else newType<Type & Other> {

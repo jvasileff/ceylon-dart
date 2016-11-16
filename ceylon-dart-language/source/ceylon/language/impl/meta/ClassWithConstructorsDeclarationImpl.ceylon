@@ -12,7 +12,7 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     Class,
     MemberClass,
-    AppliedType=Type,
+    ClosedType=Type,
     Member,
     ClassOrInterface
 }
@@ -46,7 +46,7 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
 
     shared actual
     Class<Type,Arguments> classApply<Type, Arguments>
-            (AppliedType<Anything>* typeArguments)
+            (ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[]
         =>  helper.classApply<Type, Arguments>(*typeArguments);
 
@@ -56,7 +56,7 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
 
     shared actual
     MemberClass<Container,Type,Arguments> memberClassApply<Container, Type, Arguments>
-            (AppliedType<Object> containerType, AppliedType<Anything>* typeArguments)
+            (ClosedType<Object> containerType, ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[]
         =>  helper.memberClassApply<Container, Type, Arguments>(
                     containerType, *typeArguments);
@@ -82,7 +82,7 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
 
     shared actual
     ClassOrInterface<Type> apply<Type>
-            (AppliedType<Anything>* typeArguments)
+            (ClosedType<Anything>* typeArguments)
         =>  helper.apply<Type>(*typeArguments);
 
     shared actual
@@ -103,8 +103,8 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
     shared actual
     Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApply<Container, Type>(
-            AppliedType<Object> containerType,
-            AppliedType<Anything>* typeArguments)
+            ClosedType<Object> containerType,
+            ClosedType<Anything>* typeArguments)
         =>  helper.memberApply<Container, Type>(containerType, *typeArguments);
 
     shared actual

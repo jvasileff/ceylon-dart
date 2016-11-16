@@ -1,6 +1,6 @@
 import ceylon.language.meta.model {
     IntersectionType,
-    AppliedType = Type
+    ClosedType = Type
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
@@ -16,7 +16,7 @@ class IntersectionTypeImpl<out Type=Anything>(modelType)
     "The declaration for a IntersectionType must be a IntersectionType"
     assert (modelType.declaration is ModelIntersectionType);
 
-    shared actual List<AppliedType<>> satisfiedTypes
+    shared actual List<ClosedType<>> satisfiedTypes
         =>  [ for (type in modelType.satisfiedTypes) newType(type) ];
 
     shared actual object helper satisfies TypeHelper<Type> {

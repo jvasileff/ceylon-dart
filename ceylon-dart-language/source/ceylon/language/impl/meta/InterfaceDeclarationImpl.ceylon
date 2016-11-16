@@ -11,7 +11,7 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     Interface,
     MemberInterface,
-    AppliedType = Type,
+    ClosedType = Type,
     Member,
     ClassOrInterface
 }
@@ -27,12 +27,12 @@ class InterfaceDeclarationImpl(modelDeclaration)
     }
 
     shared actual Interface<Type> interfaceApply<Type=Anything>
-            (AppliedType<>* typeArguments)
+            (ClosedType<>* typeArguments)
         =>  nothing;
 
     shared actual MemberInterface<Container, Type> memberInterfaceApply
             <Container=Nothing, Type=Anything>
-            (AppliedType<Object> containerType, AppliedType<>* typeArguments)
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
         =>  nothing;
 
     string => "interface ``qualifiedName``";
@@ -58,7 +58,7 @@ class InterfaceDeclarationImpl(modelDeclaration)
 
     shared actual
     ClassOrInterface<Type> apply<Type>
-            (AppliedType<Anything>* typeArguments)
+            (ClosedType<Anything>* typeArguments)
         =>  helper.apply<Type>(*typeArguments);
 
     shared actual
@@ -79,8 +79,8 @@ class InterfaceDeclarationImpl(modelDeclaration)
     shared actual
     Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApply<Container, Type>(
-            AppliedType<Object> containerType,
-            AppliedType<Anything>* typeArguments)
+            ClosedType<Object> containerType,
+            ClosedType<Anything>* typeArguments)
         =>  helper.memberApply<Container, Type>(containerType, *typeArguments);
 
     shared actual

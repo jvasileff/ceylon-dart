@@ -1,5 +1,5 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, FunctionModel, ValueModel
+    ClosedType = Type, FunctionModel, ValueModel
 }
 import ceylon.language.meta.declaration {
     ClassDeclaration
@@ -20,13 +20,13 @@ interface ClassModelHelper<out Type>
 
     shared
     FunctionModel<Type, Arguments>[] getCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  nothing;
 
     shared
     FunctionModel<Type, Arguments>[] getDeclaredCallableConstructors<Arguments=Nothing>
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[]
         =>  nothing;
 
@@ -39,10 +39,10 @@ interface ClassModelHelper<out Type>
 
     shared
     ValueModel<Type>[] getDeclaredValueConstructors
-            (AppliedType<Annotation>* annotationTypes)
+            (ClosedType<Annotation>* annotationTypes)
         =>  nothing;
 
     shared
-    ValueModel<Type>[] getValueConstructors(AppliedType<Annotation>* annotationTypes)
+    ValueModel<Type>[] getValueConstructors(ClosedType<Annotation>* annotationTypes)
         =>  nothing;
 }

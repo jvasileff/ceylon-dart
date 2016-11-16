@@ -1,9 +1,9 @@
 import ceylon.language.meta.model {
-    AppliedType = Type
+    ClosedType = Type
 }
 
 interface ModelHelper satisfies HasModelReference {
-    shared AppliedType<>? container
+    shared ClosedType<>? container
         =>  if (exists qt = modelType.qualifyingType)
             then newType(qt)
             else null;    

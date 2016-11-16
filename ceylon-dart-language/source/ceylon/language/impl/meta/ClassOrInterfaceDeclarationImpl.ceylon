@@ -11,7 +11,7 @@ import ceylon.language.meta.declaration {
     OpenClassType
 }
 import ceylon.language.meta.model {
-    AppliedType = Type,
+    ClosedType = Type,
     Member,
     ClassOrInterface
 }
@@ -61,7 +61,7 @@ interface ClassOrInterfaceDeclarationHelper
 
     shared
     ClassOrInterface<Type> apply<Type>
-            (AppliedType<Anything>* typeArguments) => nothing;
+            (ClosedType<Anything>* typeArguments) => nothing;
 
     shared
     Kind[] declaredMemberDeclarations<Kind>()
@@ -90,8 +90,8 @@ interface ClassOrInterfaceDeclarationHelper
     shared
     Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApply<Container, Type>(
-            AppliedType<Object> containerType,
-            AppliedType<Anything>* typeArguments) => nothing;
+            ClosedType<Object> containerType,
+            ClosedType<Anything>* typeArguments) => nothing;
 
     shared
     Kind[] memberDeclarations<Kind>()

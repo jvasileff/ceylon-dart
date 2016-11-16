@@ -1,5 +1,5 @@
 import ceylon.language.meta.model {
-    AppliedType = Type, TypeArgument
+    ClosedType = Type, TypeArgument
 }
 import ceylon.language.meta.declaration {
     TypeParameter
@@ -8,7 +8,7 @@ import ceylon.language.meta.declaration {
 interface GenericHelper satisfies HasModelReference {
 
     shared
-    AppliedType<>[] typeArgumentList
+    ClosedType<>[] typeArgumentList
         =>  modelType.typeArguments.map(Entry.item).collect(newType);
 
     shared
@@ -19,6 +19,6 @@ interface GenericHelper satisfies HasModelReference {
     Map<TypeParameter, TypeArgument> typeArgumentWithVariances
         =>  nothing;
 
-    shared Map<TypeParameter, AppliedType<>> typeArguments
+    shared Map<TypeParameter, ClosedType<>> typeArguments
         =>  nothing;    
 }
