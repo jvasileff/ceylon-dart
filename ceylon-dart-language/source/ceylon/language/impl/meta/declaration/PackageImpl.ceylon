@@ -1,6 +1,6 @@
 import ceylon.dart.runtime.model {
-    PackageModel=Package,
-    ClassModel=Class
+    ModelPackage = Package,
+    ModelClass = Class
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -16,7 +16,7 @@ import ceylon.language.meta.declaration {
 }
 
 shared
-class PackageImpl(PackageModel delegate) satisfies Package {
+class PackageImpl(ModelPackage delegate) satisfies Package {
 
     shared actual
     Boolean annotated<Annotation>()
@@ -61,7 +61,7 @@ class PackageImpl(PackageModel delegate) satisfies Package {
             given Kind satisfies NestableDeclaration
         // TODO filter out native headers, support all declaration types
         =>  delegate.members.items
-                .narrow<ClassModel>() // just classes for now...
+                .narrow<ModelClass>() // just classes for now...
                 .map(ClassWithConstructorsDeclarationImpl) // ignoring withInitializer
                 .narrow<Kind>()
                 .sequence();

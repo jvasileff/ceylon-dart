@@ -1,100 +1,100 @@
 import ceylon.dart.runtime.model {
-    ClassDefinitionModel=ClassDefinition,
-    ClassAliasModel=ClassAlias,
-    InterfaceDefinitionModel=InterfaceDefinition,
-    InterfaceAliasModel=InterfaceAlias,
-    FunctionModel=Function,
-    ValueModel=Value,
-    TypeParameterModel=TypeParameter,
-    NothingDeclarationModel=NothingDeclaration,
-    DeclarationModel=Declaration,
-    TypeAliasModel=TypeAlias,
-    ConstructorModel=Constructor,
-    IntersectionTypeModel=IntersectionType,
-    UnionTypeModel=UnionType,
-    UnknownTypeModel=UnknownType,
-    SetterModel=Setter,
-    ClassModel=Class,
-    InterfaceModel=Interface
+    ModelClassDefinition = ClassDefinition,
+    ModelClassAlias = ClassAlias,
+    ModelInterfaceDefinition = InterfaceDefinition,
+    ModelInterfaceAlias = InterfaceAlias,
+    ModelFunction = Function,
+    ModelValue = Value,
+    ModelTypeParameter = TypeParameter,
+    ModelNothingDeclaration = NothingDeclaration,
+    ModelDeclaration = Declaration,
+    ModelTypeAlias = TypeAlias,
+    ModelConstructor = Constructor,
+    ModelIntersectionType = IntersectionType,
+    ModelUnionType = UnionType,
+    ModelUnknownType = UnknownType,
+    ModelSetter = Setter,
+    ModelClass = Class,
+    ModelInterface = Interface
 }
 import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
-    AliasDeclaration, nothingType
+    AliasDeclaration
 }
 
 shared
-ClassDeclaration newClassDeclaration(ClassModel model) {
+ClassDeclaration newClassDeclaration(ModelClass model) {
     // TODO various declaration types
     switch (model)
-    case (is ClassDefinitionModel) {
+    case (is ModelClassDefinition) {
         return ClassWithConstructorsDeclarationImpl(model);
     }
-    case (is ClassAliasModel) {
+    case (is ModelClassAlias) {
         return ClassWithConstructorsDeclarationImpl(model);
     }
 }
 
 shared
-InterfaceDeclaration newInterfaceDeclaration(InterfaceModel model) {
+InterfaceDeclaration newInterfaceDeclaration(ModelInterface model) {
     // TODO various declaration types
     switch (model)
-    case (is InterfaceDefinitionModel) {
+    case (is ModelInterfaceDefinition) {
         return InterfaceDeclarationImpl(model);
     }
-    case (is InterfaceAliasModel) {
+    case (is ModelInterfaceAlias) {
         return InterfaceDeclarationImpl(model);
     }
 }
 
 shared
-FunctionDeclaration newFunctionDeclaration(FunctionModel model)
+FunctionDeclaration newFunctionDeclaration(ModelFunction model)
     =>  FunctionDeclarationImpl(model);
 
 shared
-ValueDeclaration newValueDeclaration(ValueModel model)
+ValueDeclaration newValueDeclaration(ModelValue model)
     =>  ValueDeclarationImpl(model);
 
 shared
-SetterDeclaration newSetterDeclaration(SetterModel model)
+SetterDeclaration newSetterDeclaration(ModelSetter model)
     =>  SetterDeclarationImpl(model);
 
 shared
-AliasDeclaration newAliasDeclaration(TypeAliasModel model)
+AliasDeclaration newAliasDeclaration(ModelTypeAlias model)
     =>  AliasDeclarationImpl(model);
 
 shared
-NestableDeclaration newNestableDeclaration(DeclarationModel model) {
+NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
     // TODO incomplete. Make non-optional after finishing
     switch (model)
-    case (is ClassModel) {
+    case (is ModelClass) {
         return newClassDeclaration(model);
     }
-    case (is InterfaceModel) {
+    case (is ModelInterface) {
         return newInterfaceDeclaration(model);
     }
-    case (is FunctionModel) {
+    case (is ModelFunction) {
         return newFunctionDeclaration(model);
     }
-    case (is ValueModel) {
+    case (is ModelValue) {
         return newValueDeclaration(model);
     }
-    case (is SetterModel) {
+    case (is ModelSetter) {
         return newSetterDeclaration(model);
     }
-    case (is TypeAliasModel) {
+    case (is ModelTypeAlias) {
         return newAliasDeclaration(model);
     }
-    case (is ConstructorModel) {
-        // TODO need ceylon-model to split ConstructorModel
+    case (is ModelConstructor) {
+        // TODO need ceylon-model to split ModelConstructor
         //      into CallableConstructor & ValueConstructor
         throw AssertionError {
             "ConstructorDeclarations not yet supported; unable to create declaration \
              for ``model``";
         };
     }
-    case (is TypeParameterModel | IntersectionTypeModel | UnionTypeModel
-                | NothingDeclarationModel | UnknownTypeModel) {
+    case (is ModelTypeParameter | ModelIntersectionType | ModelUnionType
+                | ModelNothingDeclaration | ModelUnknownType) {
         throw AssertionError("Unexpected declaration type for ``model``");
     }
 }
