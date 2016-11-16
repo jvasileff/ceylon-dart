@@ -64,7 +64,7 @@ AliasDeclaration newAliasDeclaration(TypeAliasModel model)
     =>  AliasDeclarationImpl(model);
 
 shared
-NestableDeclaration? newNestableDeclaration(DeclarationModel model) {
+NestableDeclaration newNestableDeclaration(DeclarationModel model) {
     // TODO incomplete. Make non-optional after finishing
     switch (model)
     case (is ClassModel) {

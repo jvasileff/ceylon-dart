@@ -25,10 +25,7 @@ interface NestableDeclarationHelper
             return PackageImpl(containerModel);
         }
         case (is ModelDeclaration) {
-            if (exists declaration = newNestableDeclaration(containerModel)) {
-                return declaration;
-            }
-            throw AssertionError("unimplemented declaration type for ``containerModel``");
+            return newNestableDeclaration(containerModel);
         }
     }
 

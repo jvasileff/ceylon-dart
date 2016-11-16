@@ -14,8 +14,7 @@ class TypeParameterImpl(modelTypeParameter)
 
     qualifiedName => modelTypeParameter.qualifiedName;
 
-    // TODO remove else nothing when newNestableDeclaration is complete
-    container => newNestableDeclaration(modelTypeParameter.container) else nothing;    
+    container => newNestableDeclaration(modelTypeParameter.container);
 
     defaulted => modelTypeParameter.defaultTypeArgument exists;
 
