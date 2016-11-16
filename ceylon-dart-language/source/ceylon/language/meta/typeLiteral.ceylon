@@ -12,7 +12,7 @@ shared native ClosedType<Type> typeLiteral<out Type>()
 
 shared native("dart") ClosedType<Type> typeLiteral<out Type>()
         given Type satisfies Anything
-    =>  nothing;
+    =>  `Type`;
 
 shared native("jvm") ClosedType<Type> typeLiteral<out Type>()
         given Type satisfies Anything

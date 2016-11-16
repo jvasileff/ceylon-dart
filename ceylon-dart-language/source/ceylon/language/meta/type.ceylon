@@ -8,8 +8,8 @@ shared native ClassModel<Type,Nothing> type<out Type>(Type instance)
 
 shared native("dart")
 ClassModel<Type,Nothing> type<out Type>(Type instance) given Type satisfies Anything
-   =>   nothing;
+    =>  nothing;
 
 shared native("jvm")
 ClassModel<Type,Nothing> type<out Type>(Type instance) given Type satisfies Anything
-   =>   nothing;
+    =>  nothing;
