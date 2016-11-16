@@ -5,9 +5,6 @@ import ceylon.language.meta.model {
 import ceylon.language.meta.declaration {
     TypeParameter
 }
-import ceylon.dart.runtime.model {
-    ModelType = Type
-}
 
 shared abstract class ClassOrInterfaceImpl<out Type=Anything>()
         extends TypeImpl<Type>() /* satisfies ClassOrInterface<Type> */ {

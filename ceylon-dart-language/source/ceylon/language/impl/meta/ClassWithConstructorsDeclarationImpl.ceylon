@@ -5,13 +5,9 @@ import ceylon.language {
     AnnotationType=Annotation
 }
 import ceylon.language.meta.declaration {
-    ValueDeclaration,
     NestableDeclaration,
     ClassWithConstructorsDeclaration,
-    FunctionOrValueDeclaration,
-    CallableConstructorDeclaration,
-    ConstructorDeclaration,
-    ValueConstructorDeclaration
+    CallableConstructorDeclaration
 }
 import ceylon.language.meta.model {
     Class,
@@ -21,128 +17,137 @@ import ceylon.language.meta.model {
     ClassOrInterface
 }
 
-shared class ClassWithConstructorsDeclarationImpl(modelDeclaration)
-        extends ClassOrInterfaceDeclarationImpl()
+class ClassWithConstructorsDeclarationImpl(modelDeclaration)
         satisfies ClassWithConstructorsDeclaration {
 
-    shared actual ModelClass modelDeclaration;
+    shared ModelClass modelDeclaration;
 
-    shared actual CallableConstructorDeclaration[]
-    annotatedConstructorDeclarations<Annotation>()
-            given Annotation satisfies AnnotationType => nothing;
-
-    shared actual Boolean annotation => nothing;
-
-    shared actual Boolean anonymous => modelDeclaration.isAnonymous;
-
-    shared actual Class<Type,Arguments> classApply<Type, Arguments>
-            (AppliedType<Anything>* typeArguments)
-            given Arguments satisfies Anything[] => nothing;
-
-    shared actual CallableConstructorDeclaration defaultConstructor => nothing;
-
-    shared actual Boolean final => modelDeclaration.isFinal;
-
-    shared actual Boolean abstract => modelDeclaration.isAbstract;
-
-    shared actual FunctionOrValueDeclaration? getParameterDeclaration
-            (String name) => nothing;
-
-    shared actual MemberClass<Container,Type,Arguments> memberClassApply
-            <Container, Type, Arguments>
-            (AppliedType<Object> containerType, AppliedType<Anything>* typeArguments)
-            given Arguments satisfies Anything[] => nothing;
-
-    shared actual ValueDeclaration? objectValue => nothing;
-
-    shared actual FunctionOrValueDeclaration[] parameterDeclarations => nothing;
-
-    shared actual Boolean serializable => nothing;
-
-    shared actual ConstructorDeclaration[] constructorDeclarations() => nothing;
-
-    shared actual <CallableConstructorDeclaration|ValueConstructorDeclaration>?
-    getConstructorDeclaration(String name) => nothing;
+    object helper satisfies ClassDeclarationHelper {
+        modelDeclaration => outer.modelDeclaration;
+    }
 
     string => "class ``qualifiedName``";
 
-    // FROM ClassOrInterfaceDeclaration
+    // ClassDeclaration
 
-    caseTypes => caseTypesImpl;
-    extendedType => extendedTypeImpl;
-    isAlias => isAliasImpl;
-    satisfiedTypes => satisfiedTypesImpl;
+    abstract => helper.abstract;
+    annotation => helper.annotation;
+    anonymous => helper.anonymous;
+    defaultConstructor => helper.defaultConstructor;
+    final => helper.final;
+    objectValue => helper.objectValue;
+    parameterDeclarations => helper.parameterDeclarations;
+    serializable => helper.serializable;
 
-    shared actual Kind[] annotatedDeclaredMemberDeclarations<Kind, Annotation>()
-            given Kind satisfies NestableDeclaration
+    shared actual
+    CallableConstructorDeclaration[] annotatedConstructorDeclarations<Annotation>()
             given Annotation satisfies AnnotationType
-        =>  annotatedDeclaredMemberDeclarationsImpl<Kind, Annotation>();
+        =>  helper.annotatedConstructorDeclarations<Annotation>();
 
-    shared actual Kind[] annotatedMemberDeclarations<Kind, Annotation>()
-            given Kind satisfies NestableDeclaration
-            given Annotation satisfies AnnotationType
-        =>  annotatedMemberDeclarationsImpl<Kind, Annotation>();
-
-    shared actual ClassOrInterface<Type> apply<Type>
+    shared actual
+    Class<Type,Arguments> classApply<Type, Arguments>
             (AppliedType<Anything>* typeArguments)
-        =>  applyImpl<Type>(*typeArguments);
+            given Arguments satisfies Anything[]
+        =>  helper.classApply<Type, Arguments>(*typeArguments);
 
-    shared actual Kind[] declaredMemberDeclarations<Kind>()
+    constructorDeclarations() => helper.constructorDeclarations();
+    getConstructorDeclaration(String name) => helper.getConstructorDeclaration(name);
+    getParameterDeclaration(String name) => helper.getParameterDeclaration(name);
+
+    shared actual
+    MemberClass<Container,Type,Arguments> memberClassApply<Container, Type, Arguments>
+            (AppliedType<Object> containerType, AppliedType<Anything>* typeArguments)
+            given Arguments satisfies Anything[]
+        =>  helper.memberClassApply<Container, Type, Arguments>(
+                    containerType, *typeArguments);
+
+    // ClassOrInterfaceDeclaration
+
+    caseTypes => helper.caseTypes;
+    extendedType => helper.extendedType;
+    isAlias => helper.isAlias;
+    satisfiedTypes => helper.satisfiedTypes;
+
+    shared actual
+    Kind[] annotatedDeclaredMemberDeclarations<Kind, Annotation>()
             given Kind satisfies NestableDeclaration
-        =>  declaredMemberDeclarationsImpl<Kind>();
+            given Annotation satisfies AnnotationType
+        =>  helper.annotatedDeclaredMemberDeclarations<Kind, Annotation>();
 
-    shared actual Kind? getDeclaredMemberDeclaration<Kind>(String name)
+    shared actual
+    Kind[] annotatedMemberDeclarations<Kind, Annotation>()
             given Kind satisfies NestableDeclaration
-        =>  getDeclaredMemberDeclarationImpl<Kind>(name);
+            given Annotation satisfies AnnotationType
+        =>  helper.annotatedMemberDeclarations<Kind, Annotation>();
 
-    shared actual Kind? getMemberDeclaration<Kind>(String name)
+    shared actual
+    ClassOrInterface<Type> apply<Type>
+            (AppliedType<Anything>* typeArguments)
+        =>  helper.apply<Type>(*typeArguments);
+
+    shared actual
+    Kind[] declaredMemberDeclarations<Kind>()
             given Kind satisfies NestableDeclaration
-        =>  getMemberDeclarationImpl<Kind>(name);
+        =>  helper.declaredMemberDeclarations<Kind>();
 
-    shared actual Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
+    shared actual
+    Kind? getDeclaredMemberDeclaration<Kind>(String name)
+            given Kind satisfies NestableDeclaration
+        =>  helper.getDeclaredMemberDeclaration<Kind>(name);
+
+    shared actual
+    Kind? getMemberDeclaration<Kind>(String name)
+            given Kind satisfies NestableDeclaration
+        =>  helper.getMemberDeclaration<Kind>(name);
+
+    shared actual
+    Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApply<Container, Type>(
             AppliedType<Object> containerType,
             AppliedType<Anything>* typeArguments)
-        =>  memberApplyImpl<Container, Type>(containerType, *typeArguments);
+        =>  helper.memberApply<Container, Type>(containerType, *typeArguments);
 
-    shared actual Kind[] memberDeclarations<Kind>()
+    shared actual
+    Kind[] memberDeclarations<Kind>()
             given Kind satisfies NestableDeclaration
-        =>  memberDeclarationsImpl<Kind>();
+        =>  helper.memberDeclarations<Kind>();
 
-    // FROM Declaration
+    // Declaration
 
-    name => nameImpl;
-    qualifiedName => qualifiedNameImpl;
+    name => helper.name;
+    qualifiedName => helper.qualifiedName;
 
-    // FROM GenericDeclaration
+    // GenericDeclaration
 
-    typeParameterDeclarations => typeParameterDeclarationsImpl;
-    getTypeParameterDeclaration(String name) => getTypeParameterDeclarationImpl(name);
+    typeParameterDeclarations => helper.typeParameterDeclarations;
+    getTypeParameterDeclaration(String name) => helper.getTypeParameterDeclaration(name);
 
-    // FROM NestableDeclaration
+    // NestableDeclaration
 
-    actual => actualImpl;
-    container => containerImpl;
-    containingModule => containingModuleImpl;
-    containingPackage => containingPackageImpl;
-    default => defaultImpl;
-    formal => formalImpl;
-    shared => sharedImpl;
-    toplevel => toplevelImpl;
+    actual => helper.actual;
+    container => helper.container;
+    containingModule => helper.containingModule;
+    containingPackage => helper.containingPackage;
+    default => helper.default;
+    formal => helper.formal;
+    shared => helper.shared;
+    toplevel => helper.toplevel;
 
-    // FROM TypedDeclaration
+    // TypedDeclaration
 
-    openType => openTypeImpl;
+    openType => helper.openType;
 
-    // FROM AnnotatedDeclaration
+    // AnnotatedDeclaration
 
-    shared actual Annotation[] annotations<Annotation>()
+    shared actual
+    Annotation[] annotations<Annotation>()
             given Annotation satisfies AnnotationType
-        =>  annotationsImpl<Annotation>();
+        =>  helper.annotations<Annotation>();
 
-    // FROM Annotated
+    // Annotated
 
-    shared actual Boolean annotated<Annotation>()
+    shared actual
+    Boolean annotated<Annotation>()
             given Annotation satisfies AnnotationType
-        =>  annotatedImpl<Annotation>();
+        =>  helper.annotated<Annotation>();
 }
