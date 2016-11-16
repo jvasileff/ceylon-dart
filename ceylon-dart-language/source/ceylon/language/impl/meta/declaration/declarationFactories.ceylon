@@ -21,6 +21,7 @@ import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration
 }
 
+shared
 ClassDeclaration newClassDeclaration(ClassModel model) {
     // TODO various declaration types
     switch (model)
@@ -32,6 +33,7 @@ ClassDeclaration newClassDeclaration(ClassModel model) {
     }
 }
 
+shared
 InterfaceDeclaration newInterfaceDeclaration(InterfaceModel model) {
     // TODO various declaration types
     switch (model)
@@ -43,6 +45,7 @@ InterfaceDeclaration newInterfaceDeclaration(InterfaceModel model) {
     }
 }
 
+shared
 NestableDeclaration? newNestableDeclaration(DeclarationModel model) {
     // TODO incomplete. Make non-optional after finishing
     switch (model)

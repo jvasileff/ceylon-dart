@@ -137,8 +137,11 @@ class CeylonTypes(Unit unit) {
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
                 "ceylon.dart.runtime.model.runtime");
 
-    Package implMetaPackage
-        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta");
+    Package implMetaModelPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta.model");
+
+    Package implMetaDeclarationPackage
+        =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta.declaration");
 
     shared
     Class asyncDeclaration {
@@ -178,11 +181,11 @@ class CeylonTypes(Unit unit) {
 
     shared
     Class moduleImplDeclaration
-        =>  assertClass(implMetaPackage.getDirectMember("ModuleImpl", null, false));
+        =>  assertClass(implMetaDeclarationPackage.getDirectMember("ModuleImpl", null, false));
 
     shared
     Function newTypeImplDeclaration
-        =>  assertFunction(implMetaPackage.getDirectMember("newType", null, false));
+        =>  assertFunction(implMetaModelPackage.getDirectMember("newType", null, false));
 
     shared
     Boolean isAwaitDeclaration(Function declaration)

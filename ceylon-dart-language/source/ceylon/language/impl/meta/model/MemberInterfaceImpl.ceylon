@@ -9,10 +9,13 @@ import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelInterface = Interface
 }
+import ceylon.language.impl.meta.declaration {
+    InterfaceDeclarationImpl
+}
 
-class InterfaceImpl<out Type=Anything>(modelType)
+class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
         extends TypeImpl<Type>()
-        satisfies Interface<Type> {
+        satisfies MemberInterface<Container, Type> {
 
     shared actual ModelType modelType;
 
@@ -27,6 +30,17 @@ class InterfaceImpl<out Type=Anything>(modelType)
     shared actual InterfaceDeclaration declaration {
         assert (is ModelInterface modelDeclaration = modelType.declaration);
         return InterfaceDeclarationImpl(modelDeclaration);
+    }
+
+    shared actual
+    Interface<Type> bind(Object container) => nothing;
+
+    // Member
+
+    shared actual
+    ClosedType<> declaringType {
+        assert (exists qualifyingType = modelType.qualifyingType);
+        return newType<>(qualifyingType);
     }
 
     // ClassOrInterface

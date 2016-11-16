@@ -7,6 +7,9 @@ import ceylon.language.meta.declaration {
 import ceylon.dart.runtime.model {
     ModelClass = Class
 }
+import ceylon.language.impl.meta.declaration {
+    newClassDeclaration
+}
 
 interface ClassModelHelper<out Type>
         satisfies ClassOrInterfaceHelper<Type> {
@@ -14,8 +17,7 @@ interface ClassModelHelper<out Type>
     shared
     ClassDeclaration declaration {
         assert (is ModelClass modelDeclaration = modelType.declaration);
-        // FIXME could be ClassWithInitializerDeclaration
-        return ClassWithConstructorsDeclarationImpl(modelDeclaration);
+        return newClassDeclaration(modelDeclaration);
     }
 
     shared
