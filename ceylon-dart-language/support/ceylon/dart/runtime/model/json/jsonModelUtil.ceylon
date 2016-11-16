@@ -206,7 +206,7 @@ object jsonModelUtil {
 
     shared
     TypeParameter parseTypeParameter
-            (Scope scope, JsonObject json, TypeDeclaration? selfTypeDeclaration)
+            (Declaration scope, JsonObject json, TypeDeclaration? selfTypeDeclaration)
         =>  TypeParameter {
                 container = scope;
                 name = getString(json, keyName);

@@ -44,7 +44,7 @@ class TypeParameter(
     shared actual
     Value[] caseValues => nothing;
 
-    shared actual Scope container;
+    shared actual Declaration container;
     shared actual String name;
     shared TypeDeclaration? selfTypeDeclaration;
     shared Variance variance;
