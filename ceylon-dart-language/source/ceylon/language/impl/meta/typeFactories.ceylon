@@ -1,5 +1,6 @@
 import ceylon.language.meta.model {
-    Type, Class, Interface, UnionType, IntersectionType, nothingType
+    ClosedType = Type, Class, MemberClass, Interface, UnionType,
+    IntersectionType, nothingType
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
@@ -14,58 +15,68 @@ import ceylon.dart.runtime.model.runtime {
 }
 
 // FIXME make this native & provide correct type arguments to the type's constructor
-shared Class<T> newClass<T=Anything>(ModelType | TypeDescriptor type)
-    =>  ClassImpl<T> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
-        };
-
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Interface<T> newInterface<T=Anything>(ModelType | TypeDescriptor type)
-    =>  InterfaceImpl<T> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
-        };
-
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared UnionType<T> newUnionType<T=Anything>(ModelType | TypeDescriptor type)
-    =>  UnionTypeImpl<T> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
-        };
-
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared IntersectionType<T> newIntersectionType<T=Anything>
+shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>
         (ModelType | TypeDescriptor type)
-    =>  IntersectionTypeImpl<T> {
+        given Arguments satisfies Anything[]
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        ClassImpl<Type, Arguments>(modelType);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared MemberClass<Container, Type, Arguments>
+newMemberClass<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
+        (ModelType | TypeDescriptor type)
+        given Arguments satisfies Anything[]
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        MemberClassImpl<Container, Type, Arguments>(modelType);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Interface<Type> newInterface<out Type=Anything>(ModelType | TypeDescriptor type)
+    =>  InterfaceImpl<Type> {
             if (is TypeDescriptor type)
             then type.type
             else type;
         };
 
-"Return the ceylon metamodel type for the type. The type parameter `T` is not actually
- used, but is provided as a convenience in order for callers to avoid an expensive
- assert() on the returned value. Note that the value for `T` is *not* checked for
- correctness!"
-shared Type<T> newType<T=Anything>(ModelType | TypeDescriptor type) {
-    value t = if (is TypeDescriptor type)
-              then type.type
-              else type;
-    switch (d = t.declaration)
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared UnionType<Type> newUnionType<out Type=Anything>(ModelType | TypeDescriptor type)
+    =>  UnionTypeImpl<Type> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared IntersectionType<Type> newIntersectionType<out Type=Anything>
+        (ModelType | TypeDescriptor type)
+    =>  IntersectionTypeImpl<Type> {
+            if (is TypeDescriptor type)
+            then type.type
+            else type;
+        };
+
+"Return the ceylon metamodel type for the type. The type parameters are not actually
+ used or verified, but are provided as a convenience in order for callers to avoid an
+ expensive assert() on the returned value."
+shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor type) {
+    value modelType
+        =   if (is TypeDescriptor type)
+            then type.type
+            else type;
+
+    switch (d = modelType.declaration)
     case (is ModelClass) {
-        return newClass(t);
+        return if (d.isMember)
+            then newMemberClass(modelType)
+            else newClass(modelType);
     }
     case (is ModelInterface) {
-        return newInterface(t);
+        return newInterface(modelType);
     }
     case (is ModelUnionType) {
-        return newUnionType(t);
+        return newUnionType(modelType);
     }
     case (is ModelIntersectionType) {
-        return newIntersectionType(t);
+        return newIntersectionType(modelType);
     }
     case (is ModelNothingDeclaration) {
         return nothingType;
