@@ -40,8 +40,9 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
         return result;
     }
 
-    shared actual ClassModel<Type, Nothing> container {
-        // FIXME is this right?
+    shared actual
+    ClassModel<Type, Nothing> container {
+        // FIXME is this right? (See also ValueConstructorImpl)
         assert (exists qt = modelType.qualifyingType);
         return newClass<Type, Nothing>(qt);
     }
