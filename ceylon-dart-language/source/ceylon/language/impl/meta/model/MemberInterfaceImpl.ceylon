@@ -22,7 +22,7 @@ class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
     "The declaration for a Interface Type must be a Interface"
     assert (modelType.declaration is ModelInterface);
 
-    shared actual object helper satisfies ClassOrInterfaceHelper<Type> {
+    shared actual object helper satisfies ClassOrInterfaceHelper<Type> & MemberHelper {
         thisType => outer;
         modelType => outer.modelType;
     }
@@ -37,11 +37,7 @@ class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
 
     // Member
 
-    shared actual
-    ClosedType<> declaringType {
-        assert (exists qualifyingType = modelType.qualifyingType);
-        return newType<>(qualifyingType);
-    }
+    declaringType => helper.declaringType;
 
     // ClassOrInterface
 

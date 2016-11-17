@@ -21,7 +21,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     assert (modelType.declaration is ModelClass);
 
     shared actual
-    object helper satisfies ClassModelHelper<Type> {
+    object helper satisfies ClassModelHelper<Type> & MemberHelper {
         thisType => outer;
         modelType => outer.modelType;
     }
@@ -43,11 +43,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
 
     // Member
 
-    shared actual
-    ClosedType<> declaringType {
-        assert (exists qualifyingType = modelType.qualifyingType);
-        return newType<>(qualifyingType);
-    }
+    declaringType => helper.declaringType;
 
     // ClassModel
 

@@ -5,7 +5,7 @@ import ceylon.language.meta.declaration {
     TypeParameter
 }
 
-interface GenericHelper satisfies HasModelReference {
+interface GenericHelper satisfies ModelHelper {
 
     shared
     ClosedType<>[] typeArgumentList
