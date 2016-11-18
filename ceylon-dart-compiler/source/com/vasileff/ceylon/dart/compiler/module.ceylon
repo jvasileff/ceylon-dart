@@ -9,12 +9,12 @@ module com.vasileff.ceylon.dart.compiler "1.3.1-DP5-SNAPSHOT" {
 
     import com.vasileff.ceylon.structures "1.1.0-SNAPSHOT";
 
-    import com.redhat.ceylon.cli "1.3.1-SNAPSHOT";
+    import com.redhat.ceylon.cli "1.3.1";
 
     shared import java.base "7";
     shared import ceylon.json "1.3.1-SNAPSHOT";
     shared import ceylon.file "1.3.1-SNAPSHOT";
     shared import ceylon.ast.core "1.3.1-SNAPSHOT";
-    shared import com.redhat.ceylon.typechecker "1.3.1-SNAPSHOT";
+    shared import com.redhat.ceylon.typechecker "1.3.1";
     shared import "net.minidev.json-smart" "1.1.1";
 }
