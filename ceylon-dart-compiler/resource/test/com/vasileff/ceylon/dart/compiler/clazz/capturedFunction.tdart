@@ -4,11 +4,11 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class run$I {
+  $dart$core.Object get $capture$run$fun;
   void callFun();
   static void $callFun([final run$I $this]) {
     $this.$capture$run$fun();
   }
-  $dart$core.Function $capture$run$fun;
 }
 class run$C implements $ceylon$language.dart$$Basic, run$I {
   $dart$core.Function $capture$run$fun;

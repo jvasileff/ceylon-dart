@@ -26,9 +26,9 @@ abstract class run$I1$I2 implements run$I1 {
   }
 }
 abstract class run$I1 {
+  $dart$core.String get $capture$run$s1;
   $dart$core.String get i1s1;
   static $dart$core.String $get$i1s1([final run$I1 $this]) => $this.$capture$run$s1;
-  $dart$core.String $capture$run$s1;
 }
 void $package$run() {
   $dart$core.String s1 = "";

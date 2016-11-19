@@ -9,6 +9,8 @@ class forwardDeclaredValueMapped$A implements $ceylon$language.dart$$Basic, $cey
     _string$f = () => "hello";
     _hashCode$f = () => 1;
   }
+  $dart$core.Object get $TP$Invertible$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "forwardDeclaredValueMapped.A");
+  $dart$core.Object get $TP$Summable$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "forwardDeclaredValueMapped.A");
   forwardDeclaredValueMapped$A operator +(forwardDeclaredValueMapped$A other) => $ceylon$language.nothing as forwardDeclaredValueMapped$A;
   $dart$core.Function _negated$f;
   forwardDeclaredValueMapped$A operator -() => _negated$f();

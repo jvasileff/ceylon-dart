@@ -4,9 +4,9 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class fun$A {
+  $dart$core.String get $capture$fun$idForA$get;
   $dart$core.String get id;
   static $dart$core.String $get$id([final fun$A $this]) => $this.$capture$fun$idForA$get();
-  $dart$core.Function $capture$fun$idForA$get;
 }
 class fun$moreFun$B$X implements $ceylon$language.dart$$Basic, fun$A {
   fun$moreFun$B $outer$default$fun$moreFun$B;

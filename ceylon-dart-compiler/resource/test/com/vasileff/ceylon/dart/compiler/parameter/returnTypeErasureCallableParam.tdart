@@ -4,6 +4,7 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class returnTypeErasureCallableParam$I {
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor get $TP$returnTypeErasureCallableParam$I$T;
   $dart$core.Object echoObj([$dart$core.Object t]);
   $dart$core.String echoStr([$dart$core.String t]);
 }
@@ -22,6 +23,7 @@ class returnTypeErasureCallableParam$C implements $ceylon$language.dart$$Basic, 
     this._echoObj$c = echoObj;
     this._echoStr$c = echoStr;
   }
+  $dart$core.Object get $TP$returnTypeErasureCallableParam$I$T => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::String");
   $ceylon$language.Callable _echoObj$c;
   $ceylon$language.Callable _echoStr$c;
   $ceylon$language.String echoObj([$ceylon$language.String s]) {

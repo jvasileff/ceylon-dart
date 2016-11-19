@@ -4,10 +4,12 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class I {
+  $ceylon$dart$runtime$model.runtime$TypeDescriptor get $TP$I$T;
   void foo([$dart$core.Object o]);
 }
 class J implements $ceylon$language.dart$$Basic, I {
   J() {}
+  $dart$core.Object get $TP$I$T => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "ceylon.language::Integer");
   void foo([$ceylon$language.Integer i]) {
     $ceylon$language.noop($ceylon$language.empty);
   }

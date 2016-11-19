@@ -13,6 +13,8 @@ class negatedAssign$A implements $ceylon$language.dart$$Basic, $ceylon$language.
       }
     }, null);
   }
+  $dart$core.Object get $TP$Invertible$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedAssign.A");
+  $dart$core.Object get $TP$Summable$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedAssign.A");
   $dart$core.int id;
   $ceylon$language.Iterable _x;
   negatedAssign$A operator -() => _x.first as negatedAssign$A;
@@ -44,6 +46,8 @@ class negatedReference$A implements $ceylon$language.dart$$Basic, $ceylon$langua
   negatedReference$A([$dart$core.int id]) {
     this.id = id;
   }
+  $dart$core.Object get $TP$Invertible$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedReference.A");
+  $dart$core.Object get $TP$Summable$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedReference.A");
   $dart$core.int id;
   negatedReference$A operator -() => this;
   negatedReference$A operator +(negatedReference$A other) => this;
@@ -71,6 +75,8 @@ class negatedReferenceVariable$A implements $ceylon$language.dart$$Basic, $ceylo
   negatedReferenceVariable$A([$dart$core.int id]) {
     this.id = id;
   }
+  $dart$core.Object get $TP$Invertible$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedReferenceVariable.A");
+  $dart$core.Object get $TP$Summable$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedReferenceVariable.A");
   $dart$core.int id;
   negatedReferenceVariable$A operator -() => this;
   negatedReferenceVariable$A operator +(negatedReferenceVariable$A other) => this;
@@ -116,6 +122,8 @@ abstract class negatedInterface$I implements $ceylon$language.Invertible {
 }
 class negatedInterface$o_ implements $ceylon$language.dart$$Basic, negatedInterface$I {
   negatedInterface$o_() {}
+  $dart$core.Object get $TP$Invertible$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedInterface.I");
+  $dart$core.Object get $TP$Summable$Other => new $ceylon$dart$runtime$model.runtime$TypeDescriptor($module, "negatedInterface.I");
   $dart$core.bool operator ==($dart$core.Object that) => that is negatedInterface$o_;
   $dart$core.int get id => negatedInterface$I.$get$id(this);
   negatedInterface$I operator -() => negatedInterface$I.$get$negated(this);

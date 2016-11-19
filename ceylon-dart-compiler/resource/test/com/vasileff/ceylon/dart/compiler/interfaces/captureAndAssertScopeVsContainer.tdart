@@ -4,13 +4,13 @@ import "package:ceylon/dart/runtime/model/model.dart" as $ceylon$dart$runtime$mo
 import "package:ceylon/language/language.dart" as $ceylon$language;
 
 abstract class capturesWithControlBlocks$Bar {
+  $dart$core.int get $capture$capturesWithControlBlocks$$x$0;
+  $dart$core.int get $capture$capturesWithControlBlocks$y;
   void foo();
   static void $foo([final capturesWithControlBlocks$Bar $this]) {
     $dart$core.int captureX = $this.$capture$capturesWithControlBlocks$$x$0;
     $dart$core.int captureY = $this.$capture$capturesWithControlBlocks$y;
   }
-  $dart$core.int $capture$capturesWithControlBlocks$$x$0;
-  $dart$core.int $capture$capturesWithControlBlocks$y;
 }
 void $package$capturesWithControlBlocks() {
   $dart$core.Object x = $ceylon$language.$ceylonInteger(5);

@@ -9,7 +9,7 @@ abstract class run$I1$I2 {
   static $dart$core.int $get$capturedX([final run$I1$I2 $this]) => $this.$outer$default$run$I1.$capture$run$x;
 }
 abstract class run$I1 {
-  $dart$core.int $capture$run$x;
+  $dart$core.int get $capture$run$x;
 }
 void $package$run() {
   $dart$core.int x = 5;
