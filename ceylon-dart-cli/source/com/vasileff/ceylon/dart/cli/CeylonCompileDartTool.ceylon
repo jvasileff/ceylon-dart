@@ -228,8 +228,8 @@ class CeylonCompileDartTool() extends OutputRepoUsingTool(null) {
 
         if (exists id = includeDependencies, id != compileNever) {
             // Determine any dependencies that might need compiling as well
-            value sdr = SourceDependencyResolver(sourceDirectories, dartBackend.asSet());
-            if (sdr.cwd(cwd).traverseDependencies(resolver.sourceFiles)) {
+            value sdr = SourceDependencyResolver(moduleVersionReader, sourceDirectories, dartBackend.asSet());
+            if (sdr.traverseDependencies(resolver.sourceFiles)) {
                 for (mvd in sdr.additionalModules) {
                     if (id == compileForce
                             || (id in [compileCheck, ""] && shouldRecompile(

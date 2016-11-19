@@ -33,8 +33,8 @@ module ceylon.language "1.3.1-DP5-SNAPSHOT" {
     native("jvm") import java.base "7";
     native("dart") import dart.core "1.3.1";
     native("dart") import dart.math "1.3.1";
-    native("dart") import ceylon.interop.dart "1.3.1-SNAPSHOT";
-    native("dart") import ceylon.dart.runtime.core "1.3.1-SNAPSHOT";
+    native("dart") import ceylon.interop.dart "1.3.1";
+    native("dart") import ceylon.dart.runtime.core "1.3.1";
     // can't be native("dart") unless we un-share the c.l.meta impls
-    import ceylon.dart.runtime.model "1.3.1-SNAPSHOT";
+    import ceylon.dart.runtime.model "1.3.1";
 }

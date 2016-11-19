@@ -19,7 +19,7 @@ shared native object language {
     
     "The Ceylon language version qualifier."
     since("1.3.0")
-    shared String versionQualifier => "SNAPSHOT";
+    shared native String versionQualifier => "SNAPSHOT";
     
     "The Ceylon language release name."
     shared native String versionName => "Now We Try It My Way";
@@ -57,6 +57,7 @@ shared native("dart") object language {
     shared native("dart") Integer majorVersion => 1;
     shared native("dart") Integer minorVersion => 3;
     shared native("dart") Integer releaseVersion => 1;
+    shared native("dart") String versionQualifier => "SNAPSHOT";
     shared native("dart") String versionName => "Now We Try It My Way";
     shared native("dart") Integer majorVersionBinary => 8;
     shared native("dart") Integer minorVersionBinary => 0;
