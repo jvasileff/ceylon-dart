@@ -6,6 +6,3 @@ autoexportmavendependencies=false
 
 [formattool]
 profile=default
-
-[compiler]
-suppresswarning=inferredNotNull
