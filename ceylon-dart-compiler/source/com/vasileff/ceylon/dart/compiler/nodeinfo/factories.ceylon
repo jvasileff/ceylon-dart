@@ -99,7 +99,7 @@ import ceylon.ast.core {
     UnionableType,
     DefaultedType,
     RequiredParameter,
-    ImportFunctionValueElement,
+    ImportElement,
     InlineDefinitionArgument,
     PackageDescriptor,
     MemberNameWithTypeArguments,
@@ -126,7 +126,7 @@ import ceylon.ast.core {
     KeySubscript,
     VariablePattern,
     UnionAssignmentOperation,
-    ImportFunctionValueAlias,
+    ImportAlias,
     InterfaceDefinition,
     NonemptyOperation,
     Subscript,
@@ -150,7 +150,6 @@ import ceylon.ast.core {
     Variance,
     TypeConstraint,
     ValueModifier,
-    ImportTypeElement,
     PrefixIncrementOperation,
     IterableType,
     LetExpression,
@@ -164,7 +163,6 @@ import ceylon.ast.core {
     SetAssignmentOperation,
     VariadicType,
     Meta,
-    ImportElement,
     EqualityOperation,
     CallableType,
     SatisfiedTypes,
@@ -246,7 +244,6 @@ import ceylon.ast.core {
     SwitchCases,
     LIdentifier,
     OrOperation,
-    ImportTypeAlias,
     AnyInterfaceDefinition,
     InterfaceAliasDefinition,
     IdenticalOperation,
@@ -276,7 +273,6 @@ import ceylon.ast.core {
     ImportWildcard,
     LargeAsOperation,
     SelfReference,
-    ImportAlias,
     PrefixOperation,
     ClosedBound,
     SwitchClause,
@@ -1106,30 +1102,6 @@ ImportElementInfo importElementInfo(ImportElement node) {
 shared
 ImportElementsInfo importElementsInfo(ImportElements node) {
     assert (is ImportElementsInfo result = nodeInfo(node));
-    return result;
-}
-
-shared
-ImportFunctionValueAliasInfo importFunctionValueAliasInfo(ImportFunctionValueAlias node) {
-    assert (is ImportFunctionValueAliasInfo result = nodeInfo(node));
-    return result;
-}
-
-shared
-ImportFunctionValueElementInfo importFunctionValueElementInfo(ImportFunctionValueElement node) {
-    assert (is ImportFunctionValueElementInfo result = nodeInfo(node));
-    return result;
-}
-
-shared
-ImportTypeAliasInfo importTypeAliasInfo(ImportTypeAlias node) {
-    assert (is ImportTypeAliasInfo result = nodeInfo(node));
-    return result;
-}
-
-shared
-ImportTypeElementInfo importTypeElementInfo(ImportTypeElement node) {
-    assert (is ImportTypeElementInfo result = nodeInfo(node));
     return result;
 }
 
