@@ -13,10 +13,6 @@
 		<buildCommand>
 			<name>com.redhat.ceylon.eclipse.ui.ceylonBuilder</name>
 			<arguments>
-				<dictionary>
-					<key>systemRepo</key>
-					<value>../../ceylon/dist/osgi/embeddedRepository/repo</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
