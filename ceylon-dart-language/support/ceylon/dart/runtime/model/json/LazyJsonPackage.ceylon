@@ -2,19 +2,22 @@ import ceylon.dart.runtime.model {
     Package,
     Unit,
     Module,
-    Declaration
+    Declaration,
+    Annotation
 }
 import ceylon.dart.runtime.structures {
     ListMultimap
 }
 
 shared
-class LazyJsonPackage(name, mod, json, Unit(Package)? unitLG = null)
-        extends Package(name, mod, unitLG) {
-
-    [String+] name;
-    Module mod;
-    JsonObject json;
+class LazyJsonPackage(
+        [String+] name,
+        Module mod,
+        JsonObject json,
+        Boolean isShared = jsonModelUtil.parsePackageSharedAnnotation(json),
+        [Annotation*] annotations = jsonModelUtil.parsePackageAnnotations(json),
+        Unit(Package)? unitLG = null)
+        extends Package(name, mod, isShared, annotations, unitLG) {
 
     variable Boolean allLoaded = false;
 

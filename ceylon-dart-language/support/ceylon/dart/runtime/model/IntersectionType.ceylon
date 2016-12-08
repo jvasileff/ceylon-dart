@@ -8,6 +8,7 @@ class IntersectionType(satisfiedTypes, unit) extends TypeDeclaration() {
     shared actual [Type+] satisfiedTypes;
     shared actual Unit unit;
 
+    shared actual [Annotation*] annotations => [];
     shared actual [] caseTypes => [];
     shared actual [] caseValues => [];
     shared actual Type extendedType => unit.anythingDeclaration.type;

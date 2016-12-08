@@ -3,7 +3,10 @@ import ceylon.dart.runtime.model.internal {
 }
 
 shared abstract
-class Declaration() of TypeDeclaration | TypedDeclaration extends Element() {
+class Declaration() of TypeDeclaration | TypedDeclaration
+        extends Element()
+        satisfies Annotated {
+
     variable String? qualifiedNameMemo = null;
     variable Integer? hashMemo = null;
 
@@ -21,6 +24,8 @@ class Declaration() of TypeDeclaration | TypedDeclaration extends Element() {
      See also https://github.com/ceylon/ceylon/issues/162"
     shared formal Integer? qualifier;
     shared formal String name;
+
+    // TODO shared formal [String*] aliases;
 
     variable Declaration? refinedDeclarationMemo = null;
 
@@ -123,7 +128,7 @@ class Declaration() of TypeDeclaration | TypedDeclaration extends Element() {
     shared see(`function aggregateTypeArguments`)
     Map<TypeParameter, Type> typeParametersAsArguments
         =>  if (is Generic self = this, !self.typeParameters.empty)
-            then map(self.typeParameters.tabulate(TypeParameter.type))
+            then self.typeParameters.tabulate(TypeParameter.type)
             else emptyMap;
 
     "Is [[other]] assignable to `this`'s type? This method must be refined

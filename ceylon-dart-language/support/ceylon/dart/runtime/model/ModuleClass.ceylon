@@ -10,13 +10,16 @@ import ceylon.dart.runtime.model.internal {
 }
 
 shared
-class Module(name, version, unitLG = null) {
+class Module(name, version, annotations = [], unitLG = null) satisfies Annotated {
 
     shared
     [String+] name;
 
     shared
     String? version;
+
+    shared actual
+    [Annotation*] annotations;
 
     Unit(Package)? unitLG;
 

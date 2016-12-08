@@ -7,6 +7,7 @@ class NothingDeclaration(unit) extends TypeDeclaration() {
     "The NothingDeclaration must be defined by the ceylon.language package."
     assert(unit.pkg.qualifiedName == "ceylon.language");
 
+    shared actual [Annotation*] annotations => [];
     shared actual [] caseTypes => [];
     shared actual [] caseValues => [];
     shared actual Package container => pkg;

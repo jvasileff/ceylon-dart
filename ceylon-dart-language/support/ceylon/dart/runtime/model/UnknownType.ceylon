@@ -5,6 +5,7 @@ class UnknownType(unit) extends TypeDeclaration() {
 
     shared actual Unit unit;
 
+    shared actual [Annotation*] annotations => [];
     shared actual Type[] caseTypes => [];
     shared actual Value[] caseValues => [];
     shared actual Package container => pkg;

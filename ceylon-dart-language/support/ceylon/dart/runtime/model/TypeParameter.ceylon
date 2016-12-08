@@ -4,9 +4,9 @@ import ceylon.dart.runtime.model.internal {
 
 shared
 class TypeParameter(
-        container, name, satisfiedTypesLG = [], caseTypesLG = [],
-        variance = invariant, selfTypeDeclaration = null,
-        defaultTypeArgumentLG = null, isTypeConstructor = false)
+        container, name, satisfiedTypesLG = [], caseTypesLG = [], variance = invariant,
+        selfTypeDeclaration = null, defaultTypeArgumentLG = null,
+        isTypeConstructor = false)
         extends TypeDeclaration() {
 
     {Type | Type(Scope)*} satisfiedTypesLG;
@@ -40,22 +40,20 @@ class TypeParameter(
                 then (defaultTypeArgumentMemo = toType(this)(defaultTypeArgumentLG))
                 else null);
 
-    // TODO lazy
-    shared actual
-    Value[] caseValues => nothing;
-
-    shared actual Scope container;
+    shared actual Declaration container;
     shared actual String name;
     shared TypeDeclaration? selfTypeDeclaration;
     shared Variance variance;
 
     shared Boolean isTypeConstructor;
 
+    shared actual Value[] caseValues => [];
     shared actual Type extendedType => unit.anythingDeclaration.type;
     shared actual Null qualifier => null;
     shared actual TypeParameter refinedDeclaration => this;
     shared actual Null selfType => null;
     shared actual Unit unit => container.unit;
+    shared actual [Annotation*] annotations => [];
 
     shared actual Boolean isActual => false;
     shared actual Boolean isAnnotation => false;

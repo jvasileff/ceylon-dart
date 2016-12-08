@@ -4,6 +4,7 @@ class UnionType(caseTypes, unit) extends TypeDeclaration() {
     shared actual [Type+] caseTypes;
     shared actual Unit unit;
 
+    shared actual [Annotation*] annotations => [];
     shared actual [] caseValues => [];
     shared actual Type extendedType => unit.anythingDeclaration.type;
     shared actual String name => type.formatted;

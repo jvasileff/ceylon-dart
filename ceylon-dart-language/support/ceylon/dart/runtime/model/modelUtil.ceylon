@@ -682,8 +682,6 @@ Type substitute(type, variance, substitutions, varianceOverrides, dedup = true) 
                     isTypeConstructor = type.isTypeConstructor;
                     typeConstructorParameter = type.typeConstructorParameter;
                     varianceOverrides = type.varianceOverrides;
-                    // FIXME What is this????
-                    //underlyingType = type.underlyingType;
                 };
 
         Type substitutedAppliedTypeConstructor

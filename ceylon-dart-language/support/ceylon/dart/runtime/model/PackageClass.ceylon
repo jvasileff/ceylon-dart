@@ -9,13 +9,20 @@ import ceylon.dart.runtime.structures {
 }
 
 shared
-class Package(name, mod, Unit(Package)? unitLG = null) satisfies Scope {
+class Package(name, mod, isShared = false, annotations = [], Unit(Package)? unitLG = null)
+        satisfies Scope & Annotated {
 
     shared
     [String+] name;
 
     shared actual
     Module mod;
+
+    shared
+    Boolean isShared;
+
+    shared actual
+    [Annotation*] annotations;
 
     "A cached map of all members. A [[ListMultimap]] is used since [[Declaration]]s may
      not be unique, to support headers and multiple `native` declarations."
