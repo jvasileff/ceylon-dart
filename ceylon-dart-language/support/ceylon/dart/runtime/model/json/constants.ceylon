@@ -1,7 +1,9 @@
+shared String keyAbstract      = "abstract";
 shared String keyClasses       = "$c";
 shared String keyInterfaces    = "$i";
 shared String keyObjects       = "$o";
 shared String keyMethods       = "$m";
+shared String keyCompositeType = "comp";
 shared String keyAttributes    = "$at";
 shared String keyAnnotations   = "an";
 shared String keyPackedAnnotations = "pa";
@@ -30,6 +32,7 @@ shared String keyConstructors  = "$cn";
 shared String keyFlags         = "$ff";
 shared String keySetter        = "$set";
 shared String keyAlias         = "$alias";
+shared String keyVariable      = "var";
 
 shared String keyDefault       = "def";
 shared String keySequenced     = "seq";
@@ -37,9 +40,11 @@ shared String keyNamed         = "nam";
 shared String keyDynamic       = "dyn";
 shared String keyStatic        = "sta";
 
-shared String keyComposite     = "comp";
-
 shared String keyNativeDart   = "$mod-native-dart";
+
+shared String typeUnion         = "u";
+shared String typeIntersection  = "i";
+shared String typeUnknown       = "$U";
 
 shared String metatypeClass           = "c";
 shared String metatypeInterface       = "i";
@@ -64,3 +69,4 @@ shared Integer abstractBit = 8;
 shared Integer annotationBit = 9;
 shared Integer variableBit = 10;
 shared Integer serializableBit = 11;
+shared Integer staticBit = 12;

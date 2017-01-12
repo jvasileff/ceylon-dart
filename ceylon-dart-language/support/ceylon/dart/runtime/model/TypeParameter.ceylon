@@ -68,6 +68,7 @@ class TypeParameter(
     shared actual Boolean isSelfType => selfTypeDeclaration exists;
     shared actual Boolean isShared => false;
     shared actual Boolean isStatic => false;
+    shared actual Boolean isDynamic => false;
 
     shared actual
     Boolean inherits(ClassOrInterface | TypeParameter that)

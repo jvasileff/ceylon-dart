@@ -25,6 +25,7 @@ class Setter(getter, isActual = false, isDeprecated = false, annotations = [])
     shared actual Boolean isNamed => true;
     shared actual Boolean isShared => getter.isShared;
     shared actual Boolean isStatic => getter.isStatic;
+    shared actual Boolean isDynamic => getter.isDynamic;
 
     shared actual Type type => getter.type;
 

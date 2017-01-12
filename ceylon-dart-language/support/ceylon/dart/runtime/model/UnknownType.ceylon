@@ -30,6 +30,7 @@ class UnknownType(unit) extends TypeDeclaration() {
     shared actual Boolean isNamed => true;
     shared actual Boolean isSealed => false;
     shared actual Boolean isStatic => false;
+    shared actual Boolean isDynamic => false;
 
     shared actual
     Boolean inherits(ClassOrInterface | TypeParameter that)

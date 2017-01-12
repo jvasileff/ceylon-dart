@@ -54,6 +54,7 @@ class Declaration() of TypeDeclaration | TypedDeclaration
     shared formal Boolean isFormal;
     shared formal Boolean isShared;
     shared formal Boolean isStatic;
+    shared formal Boolean isDynamic;
 
     "`true` if this is an anonymous class or anything with a rubbish system-generated
      name."
@@ -141,7 +142,7 @@ class Declaration() of TypeDeclaration | TypedDeclaration
     shared
     Boolean isResolvable
         =>  !this is Setter        // return getters, not setters
-            && !this.isAnonymous;  // don't return types for 'object's
+            && !this.isAnonymous;  // don't return types for object's
 
     shared actual default
     Boolean equals(Object other) {

@@ -2,7 +2,8 @@ shared
 class InterfaceAlias(
         container, name, extendedTypeLG,
         qualifier = null, isShared = false, isDeprecated = false, isStatic = false,
-        isSealed = false, annotations = [], unit = container.pkg.defaultUnit)
+        isDynamic = false, isSealed = false, annotations = [],
+        unit = container.pkg.defaultUnit)
         extends Interface() {
 
     Type | Type(Scope) extendedTypeLG;
@@ -29,6 +30,7 @@ class InterfaceAlias(
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     "Used to avoid circularities, particularly with Scope.getBase() attempting to search
      inherited members while lazily generating the supertypes that define inheritance.

@@ -31,6 +31,7 @@ class NothingDeclaration(unit) extends TypeDeclaration() {
     shared actual Boolean isSealed => false;
     shared actual Boolean isShared => true;
     shared actual Boolean isStatic => false;
+    shared actual Boolean isDynamic => false;
 
     shared actual
     Boolean canEqual(Object other)

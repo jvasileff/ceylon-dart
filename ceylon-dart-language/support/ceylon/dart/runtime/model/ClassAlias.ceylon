@@ -2,8 +2,8 @@ shared
 class ClassAlias(
         container, name, extendedTypeLG, parameterLists = [ParameterList()],
         isAbstract = false, isActual = false, isDefault = false,
-        isDeprecated = false, isFormal = false, isSealed = false,
-        isShared = false, qualifier = null, annotations = [],
+        isDeprecated = false, isFormal = false, isStatic = false, isSealed = false,
+        isDynamic = false, isShared = false, qualifier = null, annotations = [],
         unit = container.pkg.defaultUnit)
         extends Class(extendedTypeLG)
         satisfies Functional {
@@ -29,6 +29,8 @@ class ClassAlias(
     shared actual Boolean isFormal;
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
+    shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual [] caseTypes => [];
     shared actual [] caseValues => [];
@@ -40,7 +42,6 @@ class ClassAlias(
     shared actual Boolean isAnonymous => false;
     shared actual Boolean isFinal => false;
     shared actual Boolean isNamed => true;
-    shared actual Boolean isStatic => false;
 
     shared actual Boolean isAlias => true;
 

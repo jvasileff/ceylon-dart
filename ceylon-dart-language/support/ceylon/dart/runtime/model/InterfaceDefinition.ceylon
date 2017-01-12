@@ -8,7 +8,7 @@ class InterfaceDefinition(
         qualifier = null, satisfiedTypesLG = [], caseTypesLG = [], caseValuesLG = [],
         isShared = false, isFormal = false, isActual = false,
         isDefault = false, isAnnotation = false, isDeprecated = false,
-        isStatic = false, isSealed = false, isFinal = false,
+        isStatic = false, isSealed = false, isFinal = false, isDynamic = false,
         annotations = [], unit = container.pkg.defaultUnit)
         extends Interface() {
 
@@ -70,6 +70,7 @@ class InterfaceDefinition(
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual Type extendedType => unit.objectDeclaration.type;
 

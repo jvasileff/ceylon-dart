@@ -1,7 +1,8 @@
 shared final
 class ValueConstructor(
         name, container, isDeprecated = false, isSealed = false,
-        isShared = false, annotations = [], unit = container.pkg.defaultUnit)
+        isShared = false, isDynamic = false, annotations = [],
+        unit = container.pkg.defaultUnit)
         extends Constructor() {
 
     variable Type? extendedTypeMemo = null;
@@ -14,6 +15,7 @@ class ValueConstructor(
     shared actual Boolean isDeprecated;
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
+    shared actual Boolean isDynamic;
 
     shared actual Type extendedType
         =>  extendedTypeMemo else (

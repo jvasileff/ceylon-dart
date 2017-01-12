@@ -26,8 +26,11 @@ class LazyJsonPackage(
         value membersAtStart = super.members;
         if (!allLoaded) {
             for (name -> memberJson in json) {
-                if (!membersAtStart.contains(name)) {
-                    jsonModelUtil.loadToplevelDeclaration(this, name, json);
+                if (!name.startsWith("$pkg-") && !membersAtStart.contains(name)) {
+                    assert (is JsonObject memberJson);
+                    defaultUnit.addDeclarations {
+                        jsonModelUtil.parseToplevelDeclaration(this, memberJson);
+                    };
                 }
             }
             allLoaded = true;
@@ -44,7 +47,9 @@ class LazyJsonPackage(
         //      invalidating the cache on declarations.add().
 
         if (!allLoaded && !super.members.contains(name)) {
-            jsonModelUtil.loadToplevelDeclaration(this, name, json);
+            defaultUnit.addDeclarations {
+                jsonModelUtil.parseToplevelDeclarationWithName(this, name, json);
+            };
         }
         return super.getDirectMember(name);
     }

@@ -3,7 +3,7 @@ class Function(
         container, name, typeLG, qualifier = null, isDeclaredVoid = false, isShared = false,
         isFormal = false, isActual = false, isDefault = false, isAnnotation = false,
         isDeprecated = false, isStatic = false, isAnonymous = false, isNamed = true,
-        annotations = [], unit = container.pkg.defaultUnit)
+        isDynamic = false, annotations = [], unit = container.pkg.defaultUnit)
         extends FunctionOrValue()
         satisfies Functional & Generic {
 
@@ -69,6 +69,7 @@ class Function(
     shared actual Boolean isNamed;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual Boolean isDeclaredVoid;
 

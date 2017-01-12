@@ -5,7 +5,7 @@ class ClassWithInitializer(
         isShared = false, isFormal = false, isActual = false, isDefault = false,
         isAnnotation = false, isDeprecated = false, isStatic = false, isSealed = false,
         isAbstract = false, isAnonymous = false, isNamed = true, isFinal = false,
-        annotations = [], unit = container.pkg.defaultUnit)
+        isDynamic = false, annotations = [], unit = container.pkg.defaultUnit)
         extends ClassDefinition(
             extendedTypeLG, satisfiedTypesLG, caseTypesLG, caseValuesLG)
         satisfies Functional {
@@ -35,6 +35,7 @@ class ClassWithInitializer(
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual
     Boolean isDeclaredVoid

@@ -1,8 +1,8 @@
 shared
 class TypeAlias(
         container, name, extendedTypeLG, isDeprecated = false, isShared = false,
-        isStatic = false, qualifier = null, isAnonymous = false, annotations = [],
-        unit = container.pkg.defaultUnit)
+        isStatic = false, isDynamic = false, qualifier = null, isAnonymous = false,
+        annotations = [], unit = container.pkg.defaultUnit)
         extends TypeDeclaration() {
 
     Type | Type(Scope) extendedTypeLG;
@@ -30,6 +30,7 @@ class TypeAlias(
     shared actual Boolean isSealed => false;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual Boolean isAlias => true;
 

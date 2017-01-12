@@ -25,6 +25,7 @@ class UnionType(caseTypes, unit) extends TypeDeclaration() {
     shared actual Boolean isSealed => false;
     shared actual Boolean isShared => false;
     shared actual Boolean isStatic => false;
+    shared actual Boolean isDynamic => false;
 
     shared actual
     Nothing container {
