@@ -43,14 +43,12 @@ class TypeDeclaration()
       arguments, we use this as a convenience method to quickly get a produced type for
       use outside the body of the declaration, but this is not really correct!"
     shared default
-    Type type {
-        // avoid => to workaround https://github.com/ceylon/ceylon/issues/6221
-        return createType {
-            declaration = this;
-            qualifyingType = memberContainerType;
-            typeArguments = typeParametersAsArguments;
-        };
-    }
+    Type type
+        =>  createType {
+                declaration = this;
+                qualifyingType = memberContainerType;
+                typeArguments = typeParametersAsArguments;
+            };
 
     shared
     Type appliedType(

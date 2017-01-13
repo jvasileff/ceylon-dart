@@ -1,10 +1,11 @@
-shared class Parameter(model, isDefaulted = false) {
-    //shared String name; // Just get it from the model?
-    //shared Boolean atLeastOne;
-    //shared Boolean isDeclaredAnything;
-    //shared Boolean isHidden;
-
+shared final
+class Parameter(model, isDefaulted = false, isSequenced = false) {
     shared FunctionOrValue model;
     shared Boolean isDefaulted;
-    shared Boolean isSequenced => false; // FIXME
+    shared Boolean isSequenced;
+
+    shared String name => model.name;    
+    shared Boolean atLeastOne => isSequenced && model.type.isSequence;
+
+    string => model.string;
 }

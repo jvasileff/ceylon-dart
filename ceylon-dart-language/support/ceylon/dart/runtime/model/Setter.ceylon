@@ -1,5 +1,5 @@
 shared
-class Setter(getter, isActual = false, isDeprecated = false)
+class Setter(getter, isActual = false, isDeprecated = false, annotations = [])
         extends FunctionOrValue() {
 
     shared Value getter;
@@ -11,6 +11,7 @@ class Setter(getter, isActual = false, isDeprecated = false)
         return c;
     }
 
+    shared actual [Annotation*] annotations;
     shared actual Scope container => getter.container;
     shared actual String name => getter.name;
     shared actual Integer? qualifier => getter.qualifier;
@@ -24,6 +25,7 @@ class Setter(getter, isActual = false, isDeprecated = false)
     shared actual Boolean isNamed => true;
     shared actual Boolean isShared => getter.isShared;
     shared actual Boolean isStatic => getter.isStatic;
+    shared actual Boolean isDynamic => getter.isDynamic;
 
     shared actual Type type => getter.type;
 

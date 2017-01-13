@@ -15,7 +15,7 @@ import ceylon.ast.core {
     FunctionDefinition,
     DefaultedType,
     UnspecifiedVariable,
-    ImportFunctionValueElement,
+    ImportElement,
     PackageDescriptor,
     MemberNameWithTypeArguments,
     InOperation,
@@ -41,7 +41,7 @@ import ceylon.ast.core {
     VariablePattern,
     While,
     UnionAssignmentOperation,
-    ImportFunctionValueAlias,
+    ImportAlias,
     InterfaceDefinition,
     NonemptyOperation,
     IsCondition,
@@ -62,7 +62,6 @@ import ceylon.ast.core {
     SpecifiedArgument,
     ValueModifier,
     ValueParameter,
-    ImportTypeElement,
     PrefixIncrementOperation,
     ValueSetterDefinition,
     IterableType,
@@ -169,7 +168,6 @@ import ceylon.ast.core {
     SwitchCases,
     LIdentifier,
     OrOperation,
-    ImportTypeAlias,
     InterfaceAliasDefinition,
     IdenticalOperation,
     StringTemplate,
@@ -428,13 +426,9 @@ object nodeInfoTransformer satisfies ImmediateNarrowingTransformer<NodeInfo> {
 
     shared actual NodeInfo transformImportElements(ImportElements that) => ImportElementsInfo(that);
 
-    shared actual NodeInfo transformImportFunctionValueAlias(ImportFunctionValueAlias that) => ImportFunctionValueAliasInfo(that);
+    shared actual NodeInfo transformImportElement(ImportElement that) => ImportElementInfo(that);
 
-    shared actual NodeInfo transformImportFunctionValueElement(ImportFunctionValueElement that) => ImportFunctionValueElementInfo(that);
-
-    shared actual NodeInfo transformImportTypeAlias(ImportTypeAlias that) => ImportTypeAliasInfo(that);
-
-    shared actual NodeInfo transformImportTypeElement(ImportTypeElement that) => ImportTypeElementInfo(that);
+    shared actual NodeInfo transformImportAlias(ImportAlias that) => ImportAliasInfo(that);
 
     shared actual NodeInfo transformImportWildcard(ImportWildcard that) => ImportWildcardInfo(that);
 

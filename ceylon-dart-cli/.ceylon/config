@@ -1,4 +1,3 @@
-
 [defaults]
 encoding=UTF-8
 flatclasspath=false
@@ -10,4 +9,6 @@ profile=default
 [compiler]
 source=source
 resource=resource
-suppresswarning=inferredNotNull
+
+[compiler.jvm]
+target=7

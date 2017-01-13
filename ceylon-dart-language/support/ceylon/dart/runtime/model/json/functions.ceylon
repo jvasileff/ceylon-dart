@@ -18,6 +18,11 @@ Integer? getIntegerOrNull(JsonObject json, String key) {
     return result;
 }
 
+JsonArray getArray(JsonObject json, String key) {
+    assert (is JsonArray result = json[key]);
+    return result;
+}
+
 JsonArray? getArrayOrNull(JsonObject json, String key) {
     assert (is JsonArray? result = json[key]);
     return result;
@@ -26,6 +31,11 @@ JsonArray? getArrayOrNull(JsonObject json, String key) {
 JsonArray getArrayOrEmpty(JsonObject json, String key) {
     assert (is JsonArray? result = json[key]);
     return result else [];
+}
+
+JsonObject getObject(JsonObject json, String key) {
+    assert (is JsonObject result = json[key]);
+    return result;
 }
 
 JsonObject? getObjectOrNull(JsonObject json, String key) {

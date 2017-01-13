@@ -2,19 +2,22 @@ import ceylon.dart.runtime.model {
     Package,
     Unit,
     Module,
-    Declaration
+    Declaration,
+    Annotation
 }
 import ceylon.dart.runtime.structures {
     ListMultimap
 }
 
 shared
-class LazyJsonPackage(name, mod, json, Unit(Package)? unitLG = null)
-        extends Package(name, mod, unitLG) {
-
-    [String+] name;
-    Module mod;
-    JsonObject json;
+class LazyJsonPackage(
+        [String+] name,
+        Module mod,
+        JsonObject json,
+        Boolean isShared = jsonModelUtil.parsePackageSharedAnnotation(json),
+        [Annotation*] annotations = jsonModelUtil.parsePackageAnnotations(json),
+        Unit(Package)? unitLG = null)
+        extends Package(name, mod, isShared, annotations, unitLG) {
 
     variable Boolean allLoaded = false;
 
@@ -23,8 +26,11 @@ class LazyJsonPackage(name, mod, json, Unit(Package)? unitLG = null)
         value membersAtStart = super.members;
         if (!allLoaded) {
             for (name -> memberJson in json) {
-                if (!membersAtStart.contains(name)) {
-                    jsonModelUtil.loadToplevelDeclaration(this, name, json);
+                if (!name.startsWith("$pkg-") && !membersAtStart.contains(name)) {
+                    assert (is JsonObject memberJson);
+                    defaultUnit.addDeclarations {
+                        jsonModelUtil.parseToplevelDeclaration(this, memberJson);
+                    };
                 }
             }
             allLoaded = true;
@@ -41,7 +47,9 @@ class LazyJsonPackage(name, mod, json, Unit(Package)? unitLG = null)
         //      invalidating the cache on declarations.add().
 
         if (!allLoaded && !super.members.contains(name)) {
-            jsonModelUtil.loadToplevelDeclaration(this, name, json);
+            defaultUnit.addDeclarations {
+                jsonModelUtil.parseToplevelDeclarationWithName(this, name, json);
+            };
         }
         return super.getDirectMember(name);
     }

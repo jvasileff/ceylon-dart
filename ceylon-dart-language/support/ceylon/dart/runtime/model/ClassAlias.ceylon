@@ -1,18 +1,27 @@
 shared
 class ClassAlias(
-        container, name, extendedType, parameterLists = [ParameterList.empty],
+        container, name, extendedTypeLG, parameterLists = [ParameterList()],
         isAbstract = false, isActual = false, isDefault = false,
-        isDeprecated = false, isFormal = false, isSealed = false,
-        isShared = false, qualifier = null, unit = container.pkg.defaultUnit)
-        extends Class() {
+        isDeprecated = false, isFormal = false, isStatic = false, isSealed = false,
+        isDynamic = false, isShared = false, qualifier = null, annotations = [],
+        unit = container.pkg.defaultUnit)
+        extends Class(extendedTypeLG)
+        satisfies Functional {
+
+    Type | Type(Scope) extendedTypeLG;
+
+    shared actual Type extendedType {
+        assert (exists extendedType = super.extendedType);
+        return extendedType;
+    }
 
     shared actual Scope container;
-    shared actual Type extendedType;
     shared actual Boolean isAbstract;
     shared actual String name;
     shared actual [ParameterList+] parameterLists;
     shared actual Unit unit;
     shared actual Integer? qualifier;
+    shared actual [Annotation*] annotations;
 
     shared actual Boolean isActual;
     shared actual Boolean isDefault;
@@ -20,10 +29,12 @@ class ClassAlias(
     shared actual Boolean isFormal;
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
+    shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual [] caseTypes => [];
     shared actual [] caseValues => [];
-    shared actual Boolean declaredVoid => false;
+    shared actual Boolean isDeclaredVoid => false;
     shared actual [] satisfiedTypes => [];
     shared actual Null selfType => null;
 
@@ -31,7 +42,8 @@ class ClassAlias(
     shared actual Boolean isAnonymous => false;
     shared actual Boolean isFinal => false;
     shared actual Boolean isNamed => true;
-    shared actual Boolean isStatic => false;
+
+    shared actual Boolean isAlias => true;
 
     shared actual
     Boolean inherits(ClassOrInterface | TypeParameter that)

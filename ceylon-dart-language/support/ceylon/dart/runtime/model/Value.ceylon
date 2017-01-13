@@ -1,7 +1,8 @@
 shared
 class Value(container, name, typeLG, isShared = false,
         isFormal = false, isActual = false, isDefault = false, isDeprecated = false,
-        isStatic = false, unit = container.pkg.defaultUnit)
+        isStatic = false, isDynamic = false, isLate = false, isVariable = false,
+        isTransient = false, annotations = [], unit = container.pkg.defaultUnit)
         extends FunctionOrValue() {
 
     Type | Type(Scope) typeLG;
@@ -18,11 +19,16 @@ class Value(container, name, typeLG, isShared = false,
     shared actual Scope container;
     shared actual String name;
     shared actual Unit unit;
+    shared actual [Annotation*] annotations;
 
     shared actual Value refinedDeclaration {
         assert(is Value c = super.refinedDeclaration);
         return c;
     }
+
+    shared Boolean isLate;
+    shared Boolean isVariable;
+    shared Boolean isTransient;
 
     shared actual Boolean isActual;
     shared actual Boolean isDefault;
@@ -30,6 +36,7 @@ class Value(container, name, typeLG, isShared = false,
     shared actual Boolean isFormal;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual Null qualifier => null;
 

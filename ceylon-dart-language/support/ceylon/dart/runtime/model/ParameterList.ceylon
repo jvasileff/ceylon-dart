@@ -1,14 +1,12 @@
 shared final
-class ParameterList {
+class ParameterList(parameters = [], first = true) {
     shared [Parameter*] parameters;
-
-    shared new ([Parameter*] parameters = []) {
-        this.parameters = parameters;
-    }
-
-    shared new empty extends ParameterList() {}
+    shared Boolean first;
 
     shared
     Boolean hasSequencedParameter
         =>  parameters.last?.isSequenced else false;
+
+    string
+        =>  "(``", ".join(parameters)``)";
 }

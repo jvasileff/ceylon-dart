@@ -5,7 +5,7 @@ import ceylon.dart.runtime.nativecollection {
 
 import ceylon.dart.runtime.model.internal {
     assertedInterface,
-    assertedClass,
+    assertedClassWithInitializer,
     assertedValue,
     eq
 }
@@ -195,16 +195,16 @@ class Unit(pkg) {
         =>  mod.ceylonLanguageSerializationPackage;
 
     shared
-    Class anythingDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Anything"));
+    ClassWithInitializer anythingDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Anything"));
 
     shared
-    Class basicDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Basic"));
+    ClassWithInitializer basicDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Basic"));
 
     shared
-    Class characterDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Character"));
+    ClassWithInitializer characterDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Character"));
 
     shared
     Interface callableDeclaration
@@ -215,20 +215,20 @@ class Unit(pkg) {
         =>  assertedInterface(ceylonLanguagePackage.getMember("Empty"));
 
     shared
-    Class entryDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Entry"));
+    ClassWithInitializer entryDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Entry"));
 
     shared
     Interface iterableDeclaration
         =>  assertedInterface(ceylonLanguagePackage.getMember("Iterable"));
 
     shared
-    Class objectDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Object"));
+    ClassWithInitializer objectDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Object"));
 
     shared
-    Class stringDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("String"));
+    ClassWithInitializer stringDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("String"));
 
     shared
     NothingDeclaration nothingDeclaration {
@@ -238,8 +238,8 @@ class Unit(pkg) {
     }
 
     shared
-    Class nullDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Null"));
+    ClassWithInitializer nullDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Null"));
 
     shared
     Value nullValueDeclaration
@@ -254,8 +254,8 @@ class Unit(pkg) {
         =>  assertedInterface(ceylonLanguagePackage.getMember("Sequential"));
 
     shared
-    Class tupleDeclaration
-        =>  assertedClass(ceylonLanguagePackage.getMember("Tuple"));
+    ClassWithInitializer tupleDeclaration
+        =>  assertedClassWithInitializer(ceylonLanguagePackage.getMember("Tuple"));
 
     shared
     Type sequentialAnythingType

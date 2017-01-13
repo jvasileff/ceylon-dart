@@ -41,6 +41,9 @@ interface Scope of Package | Element {
      Shared and unshared members will be searched, but not inherited members, members of
      ancestor scopes, or imports.
 
+     For `object`s, a `value` will be returned (anonymous classes are not considered
+     to be resolveable).
+
      Import aliases will not be resolved.
 
      Note that if there are multiple declarations with the same name (as may be the case
@@ -61,6 +64,9 @@ interface Scope of Package | Element {
 
         - members of ancestor scopes
         - imports
+
+     For `object`s, a `value` will be returned (anonymous classes are not considered
+     to be resolveable).
 
      Import aliases for members will be resolved if [[unit]] is provided.
 

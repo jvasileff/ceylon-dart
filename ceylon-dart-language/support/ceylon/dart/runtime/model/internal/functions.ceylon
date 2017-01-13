@@ -1,6 +1,8 @@
 import ceylon.dart.runtime.model {
     TypeDeclaration,
     Class,
+    ClassWithInitializer,
+    ClassWithConstructors,
     Declaration,
     Value,
     Scope,
@@ -22,8 +24,26 @@ Type toType(Scope scope)(Type | Type(Scope) lt)
         else (lt(scope));
 
 shared
+Value toValue(Scope scope)(Value | Value(Scope) lv)
+    =>  switch (lv)
+        case (is Value) lv
+        else (lv(scope));
+
+shared
 Class assertedClass(Declaration? d) {
     assert (is Class d);
+    return d;
+}
+
+shared
+ClassWithInitializer assertedClassWithInitializer(Declaration? d) {
+    assert (is ClassWithInitializer d);
+    return d;
+}
+
+shared
+ClassWithConstructors assertedClassWithConstructors(Declaration? d) {
+    assert (is ClassWithConstructors d);
     return d;
 }
 

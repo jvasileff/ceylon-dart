@@ -44,14 +44,10 @@ import ceylon.ast.core {
     InterfaceBody,
     OpenBound,
     ClosedBound,
-    ImportFunctionValueAlias,
-    ImportTypeAlias,
     NamedArguments,
     PositionalArguments,
     LIdentifier,
     UIdentifier,
-    ImportTypeElement,
-    ImportFunctionValueElement,
     TypeModifier,
     DynamicModifier,
     LocalModifier,
@@ -128,14 +124,10 @@ shared class ModuleBodyInfo(ModuleBody that) => DefaultNodeInfo(that);
 shared class ModuleDescriptorInfo(ModuleDescriptor that) => DefaultNodeInfo(that);
 
 shared class ImportAliasInfo(ImportAlias that) => DefaultNodeInfo(that);
-shared class ImportFunctionValueAliasInfo(ImportFunctionValueAlias that) => ImportAliasInfo(that);
-shared class ImportTypeAliasInfo(ImportTypeAlias that) => ImportAliasInfo(that);
 
 shared class ImportWildcardInfo(ImportWildcard that) => DefaultNodeInfo(that);
 
 shared class ImportElementInfo(ImportElement that) => DefaultNodeInfo(that);
-shared class ImportTypeElementInfo(ImportTypeElement that) => ImportElementInfo(that);
-shared class ImportFunctionValueElementInfo(ImportFunctionValueElement that) => ImportElementInfo(that);
 
 shared class ImportElementsInfo(ImportElements that) => DefaultNodeInfo(that);
 shared class ImportInfo(Import that) => DefaultNodeInfo(that);

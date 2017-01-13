@@ -8,6 +8,7 @@ class IntersectionType(satisfiedTypes, unit) extends TypeDeclaration() {
     shared actual [Type+] satisfiedTypes;
     shared actual Unit unit;
 
+    shared actual [Annotation*] annotations => [];
     shared actual [] caseTypes => [];
     shared actual [] caseValues => [];
     shared actual Type extendedType => unit.anythingDeclaration.type;
@@ -28,6 +29,7 @@ class IntersectionType(satisfiedTypes, unit) extends TypeDeclaration() {
     shared actual Boolean isSealed => false;
     shared actual Boolean isShared => false;
     shared actual Boolean isStatic => false;
+    shared actual Boolean isDynamic => false;
 
     shared actual
     Nothing canEqual(Object other) {

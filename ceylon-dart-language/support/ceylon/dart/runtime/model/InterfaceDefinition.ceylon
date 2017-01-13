@@ -1,22 +1,24 @@
 import ceylon.dart.runtime.model.internal {
-    toType
+    toType, toValue
 }
 
 shared
 class InterfaceDefinition(
         container, name,
-        qualifier = null, satisfiedTypesLG = [], caseTypesLG = [], caseValues = [],
+        qualifier = null, satisfiedTypesLG = [], caseTypesLG = [], caseValuesLG = [],
         isShared = false, isFormal = false, isActual = false,
         isDefault = false, isAnnotation = false, isDeprecated = false,
-        isStatic = false, isSealed = false, isFinal = false,
-        unit = container.pkg.defaultUnit)
+        isStatic = false, isSealed = false, isFinal = false, isDynamic = false,
+        annotations = [], unit = container.pkg.defaultUnit)
         extends Interface() {
 
     {Type | Type(Scope)*} satisfiedTypesLG;
     {Type | Type(Scope)*} caseTypesLG;
+    {Value | Value(Scope)*} caseValuesLG;
 
     variable [Type*]? satisfiesTypesMemo = null;
     variable [Type*]? caseTypesMemo = null;
+    variable [Value*]? caseValuesMemo = null;
 
     "Used to avoid circularities, particularly with Scope.getBase() attempting to search
      inherited members while lazily generating the supertypes that define inheritance.
@@ -48,11 +50,16 @@ class InterfaceDefinition(
         =>  caseTypesMemo else (caseTypesMemo
             =   caseTypesLG.collect(toType(this)));
 
-    shared actual [Value*] caseValues;
+    shared actual
+    Value[] caseValues
+        =>  caseValuesMemo else (caseValuesMemo
+            =   caseValuesLG.collect(toValue(this)));
+
     shared actual Scope container;
     shared actual String name;
     shared actual Integer? qualifier;
     shared actual Unit unit;
+    shared actual [Annotation*] annotations;
 
     shared actual Boolean isActual;
     shared actual Boolean isAnnotation;
@@ -63,6 +70,7 @@ class InterfaceDefinition(
     shared actual Boolean isSealed;
     shared actual Boolean isShared;
     shared actual Boolean isStatic;
+    shared actual Boolean isDynamic;
 
     shared actual Type extendedType => unit.objectDeclaration.type;
 
