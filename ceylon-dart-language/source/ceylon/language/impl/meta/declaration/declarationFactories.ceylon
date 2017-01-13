@@ -1,6 +1,7 @@
 import ceylon.dart.runtime.model {
     ModelClassDefinition = ClassDefinition,
     ModelClassAlias = ClassAlias,
+    ModelClassOrInterface = ClassOrInterface,
     ModelFunction = Function,
     ModelValue = Value,
     ModelTypeParameter = TypeParameter,
@@ -18,7 +19,7 @@ import ceylon.dart.runtime.model {
 import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
-    AliasDeclaration, ConstructorDeclaration
+    AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration
 }
 
 shared
@@ -58,6 +59,17 @@ SetterDeclaration newSetterDeclaration(ModelSetter model)
 shared
 AliasDeclaration newAliasDeclaration(ModelTypeAlias model)
     =>  AliasDeclarationImpl(model);
+
+shared
+ClassOrInterfaceDeclaration newClassOrInterfaceDeclaration(ModelClassOrInterface model) {
+    switch (model)
+    case (is ModelClass) {
+        return newClassDeclaration(model);
+    }
+    case (is ModelInterface) {
+        return newInterfaceDeclaration(model);
+    }
+}
 
 shared
 NestableDeclaration newNestableDeclaration(ModelDeclaration model) {

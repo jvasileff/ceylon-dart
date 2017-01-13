@@ -1,6 +1,10 @@
 import ceylon.dart.runtime.model {
     ModelPackage = Package,
-    ModelClass = Class
+    ModelNothingDeclaration = NothingDeclaration,
+    ModelClassOrInterface = ClassOrInterface,
+    ModelFunction = Function,
+    ModelValue = Value,
+    ModelTypeAlias = TypeAlias
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -16,7 +20,7 @@ import ceylon.language.meta.declaration {
 }
 
 shared
-class PackageImpl(ModelPackage delegate) satisfies Package {
+class PackageImpl(ModelPackage modelPackage) satisfies Package {
 
     shared actual
     Boolean annotated<Annotation>()
@@ -33,36 +37,55 @@ class PackageImpl(ModelPackage delegate) satisfies Package {
 
     shared actual
     Module container
-        =>  ModuleImpl(delegate.mod);
+        =>  ModuleImpl(modelPackage.mod);
 
     shared actual
     AliasDeclaration? getAlias(String name)
-        =>  nothing;
+        =>  if (exists memberModel = modelPackage.getDirectMember(name),
+                is ModelTypeAlias memberModel)
+            then newAliasDeclaration(memberModel)
+            else null;
 
     shared actual
     ClassOrInterfaceDeclaration? getClassOrInterface(String name)
-        =>  nothing;
+        =>  if (exists memberModel = modelPackage.getDirectMember(name),
+                is ModelClassOrInterface memberModel)
+            then newClassOrInterfaceDeclaration(memberModel)
+            else null;
 
     shared actual
     FunctionDeclaration? getFunction(String name)
-        =>  nothing;
+        =>  if (exists memberModel = modelPackage.getDirectMember(name),
+                is ModelFunction memberModel)
+            then newFunctionDeclaration(memberModel)
+            else null;
 
     shared actual
     Kind? getMember<Kind>(String name)
             given Kind satisfies NestableDeclaration
-        =>  nothing;
+        =>  if (exists memberModel = modelPackage.getDirectMember(name),
+                // TODO is this right? See same in 'members' below
+                !memberModel is ModelNothingDeclaration,
+                is Kind member = newNestableDeclaration(memberModel))
+            then member
+            else null;
 
     shared actual
     ValueDeclaration? getValue(String name)
-        =>  nothing;
+        =>  if (exists memberModel = modelPackage.getDirectMember(name),
+                is ModelValue memberModel)
+            then newValueDeclaration(memberModel)
+            else null;
 
     shared actual
     Kind[] members<Kind>()
             given Kind satisfies NestableDeclaration
-        // TODO filter out native headers, support all declaration types
-        =>  delegate.members.items
-                .narrow<ModelClass>() // just classes for now...
-                .map(ClassWithConstructorsDeclarationImpl) // ignoring withInitializer
+        // TODO filter out native headers
+        =>  modelPackage.members.items
+                // TODO is this right? JVM doesn't seem to provide access to
+                //      `class Nothing`.
+                .filter((d) => !d is ModelNothingDeclaration)
+                .map(newNestableDeclaration)
                 .narrow<Kind>()
                 .sequence();
 
@@ -72,11 +95,11 @@ class PackageImpl(ModelPackage delegate) satisfies Package {
 
     shared actual
     String qualifiedName
-        =>  delegate.qualifiedName;
+        =>  modelPackage.qualifiedName;
 
     shared actual
     Boolean shared
-        =>  nothing;
+        =>  modelPackage.isShared;
 
     shared actual
     String string
