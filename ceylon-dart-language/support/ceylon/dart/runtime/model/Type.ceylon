@@ -1292,6 +1292,7 @@ class Type() extends Reference() {
     String formattedAsSourceCode
         =>  formatEscaped();
 
+    suppressWarnings("deprecated")
     String typeArgumentsAsString
         =>  if (nonempty typeArgumentList = this.typeArgumentList.sequence())
             then "<``", ".join(typeArgumentList.map(
@@ -1299,6 +1300,9 @@ class Type() extends Reference() {
             else "";
 
     shared
+    suppressWarnings("deprecated")
+    deprecated("review changes made in ceylon.model. Use type formatter for this, or \
+                just remove entirely?")
     String qualifiedNameWithTypeArguments {
         if (isUnion) {
             // verbose ref to Type.qualifiedNameWithTypeArguments ceylon/ceylon#6565
