@@ -14,7 +14,8 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     ClosedType = Type,
     MemberClass,
-    Class
+    Class,
+    IncompatibleTypeException
 }
 
 interface ClassDeclarationHelper
@@ -69,7 +70,18 @@ interface ClassDeclarationHelper
     shared
     MemberClass<Container,Type,Arguments> memberClassApply<Container, Type, Arguments>
             (ClosedType<Object> containerType, ClosedType<Anything>* typeArguments)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[] {
+
+        value result = memberApplyUnchecked(containerType, *typeArguments);
+
+        if (!is MemberClass<Container,Type,Arguments> result) {
+            // TODO Improve. The JVM code claims to do better with
+            //      checkReifiedTypeArgument()
+            throw IncompatibleTypeException("Incorrect Container, Type, or Arguments");
+        }
+
+        return result;
+    }
 
     string => "class ``qualifiedName``";
 }

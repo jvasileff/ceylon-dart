@@ -32,8 +32,12 @@ class InterfaceDeclarationImpl(modelDeclaration)
 
     shared actual MemberInterface<Container, Type> memberInterfaceApply
             <Container=Nothing, Type=Anything>
-            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
-        =>  nothing;
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments) {
+        // TODO remove this expensive & redundant reified is test
+        assert (is MemberInterface<Container, Type> result
+            =   memberApply<Container, Type>(containerType, *typeArguments));
+        return result;
+    }
 
     string => "interface ``qualifiedName``";
 

@@ -1,4 +1,6 @@
 import ceylon.dart.runtime.model {
+    ModelType = Type,
+    ModelDeclaration = Declaration,
     ModelClassOrInterface = ClassOrInterface
 }
 import ceylon.language {
@@ -13,7 +15,13 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     ClosedType = Type,
     Member,
-    ClassOrInterface
+    ClassOrInterface,
+    IncompatibleTypeException,
+    TypeApplicationException
+}
+import ceylon.language.impl.meta.model {
+    modelTypeFromType,
+    newType
 }
 
 interface ClassOrInterfaceDeclarationHelper
@@ -91,7 +99,52 @@ interface ClassOrInterfaceDeclarationHelper
     Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
     memberApply<Container, Type>(
             ClosedType<Object> containerType,
-            ClosedType<Anything>* typeArguments) => nothing;
+            ClosedType<Anything>* typeArguments) {
+
+        value result = memberApplyUnchecked(containerType, *typeArguments);
+
+        if (!is Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type> result) {
+            // TODO Improve. The JVM code claims to do better with
+            //      checkReifiedTypeArgument()
+            throw IncompatibleTypeException("Incorrect Container or Type");
+        }
+
+        return result;
+    }
+
+    shared
+    ClosedType<> memberApplyUnchecked(
+            ClosedType<Object> containerType,
+            ClosedType<Anything>* typeArguments) {
+
+        if (toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a toplevel declaration to a container type: use apply");
+        }
+
+        value qualifyingType
+            =   getQualifyingSupertypeOrThrow {
+                    modelTypeFromType(containerType);
+                    modelDeclaration;
+                };
+
+        value modelTypeArgs
+            =   typeArguments.collect(modelTypeFromType);
+
+        validateTypeArgumentsOrThrow {
+            qualifyingType;
+            modelDeclaration;
+            modelTypeArgs;
+        };
+
+        return newType {
+            modelDeclaration.appliedType {
+                qualifyingType = qualifyingType;
+                typeArguments = modelTypeArgs;
+                varianceOverrides = emptyMap;
+            };
+        };
+    }
 
     shared
     Kind[] memberDeclarations<Kind>()
