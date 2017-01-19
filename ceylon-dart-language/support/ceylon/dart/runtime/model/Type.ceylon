@@ -1340,6 +1340,41 @@ class Type() extends Reference() {
                 unionDeduped(caseTypes.map((t) => t.withNullEliminated), unit)
             else this;
 
+    "Substitute invocation type arguments into an upper bound on a type parameter of the
+     invocation, where this type represents an upper bound."
+    shared
+    Type appliedType(
+            "the type that receives the invocation, if any"
+            Type? receiver,
+            "the invoked member"
+            Declaration member,
+            "the explicit or inferred type arguments of the invocation"
+            [Type*] typeArguments,
+            [Variance*] variances) {
+
+        Type? receivingType;
+        if (exists receiver) {
+            assert (is ClassOrInterface memberContainer = member.container);
+            receivingType = receiver.getSupertype(memberContainer);
+        }
+        else {
+            receivingType = null;
+        }
+
+        return substitute {
+            aggregateTypeArguments {
+                receivingType;
+                member;
+                typeArguments;
+            };
+            aggregateVariances {
+                receivingType;
+                member;
+                variances;
+            };
+        };
+    }
+
     shared
     String formatEscaped()
         =>  format {

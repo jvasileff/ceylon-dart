@@ -159,6 +159,42 @@ void addToIntersection(MutableSet<Type> types, Type that, Unit unit) {
     }
 }
 
+shared
+Boolean argumentSatisfiesEnumeratedConstraint(
+            Type? receiver,
+            Declaration member,
+            [Type*] typeArguments,
+            TypeParameter typeParameter,
+            Type typeArgument) {
+
+    if (typeParameter.caseTypes.empty) {
+        return true;
+    }
+
+    // if the type argument is a subtype of one of the cases
+    // of the type parameter then the constraint is satisfied
+    if (typeParameter.caseTypes.any((ct)
+        =>  ct.appliedType(receiver, member, typeArguments, [])
+                .isSupertypeOf(typeArgument))) {
+        return true;
+    }
+
+    // if the type argument is itself a type parameter with
+    // an enumerated constraint, and every enumerated case
+    // is a subtype of one of the cases of the type parameter,
+    // then the constraint is satisfied
+    if (is TypeParameter argTP = typeArgument.declaration,
+        !argTP.caseTypes.empty,
+        argTP.caseTypes.every((argCase)
+            =>  typeParameter.caseTypes.any((ct)
+                =>  ct.appliedType(receiver, member, typeArguments, [])
+                        .isSupertypeOf(argCase)))) {
+            return true;
+    }
+
+    return false;
+}
+
 Boolean disjoint(Type a, Type b, Unit unit) {
     "Implement the rule that `Foo&Bar==Nothing` if there exists some enumerated
      type Baz with
@@ -623,6 +659,68 @@ Map<TypeParameter, Type> aggregateTypeArguments(
             then declaration.typeParameters else [];
 
     for (param->arg in zipEntries(params, typeArguments)) {
+        if (exists arg) {
+            result.put(param, arg);
+        }
+    }
+
+    return result;
+}
+
+Map<TypeParameter, Variance> aggregateVariances(
+        Type? receivingType,
+        Declaration declaration,
+        [Variance?*] variances) {
+
+    value result
+        =   HashMap<TypeParameter, Variance>();
+
+    void aggregate(variable Type? dt, variable Declaration d) {
+        while (exists current = dt) {
+            assert (!is Null | IntersectionType | NothingDeclaration | TypeAlias
+                        | TypeParameter | UnionType | UnknownType declaringType
+                =   d.container);
+
+            Type? aqt;
+            switch (declaringType)
+            case (is ClassOrInterface) {
+                aqt = current.getSupertype(declaringType);
+            }
+            case (is FunctionOrValue | Constructor) {
+                // Note: ceylon-model breaks for Constructors, but seems to work.
+                // actually FunctionOrValueInterface in ceylon-model
+                // take as-is
+                aqt = dt;
+            }
+            case (is Package) {
+                break;
+            }
+            if (!exists aqt) {
+                break;
+            }
+            result.putAll(aqt.varianceOverrides);
+            dt = aqt.qualifyingType;
+            d = aqt.declaration;
+        }
+    }
+
+    if (exists receivingType) {
+        if (receivingType.isIntersection) {
+            for (superType in receivingType.satisfiedTypes) {
+                aggregate(superType, declaration);
+            }
+        }
+        else {
+            aggregate(receivingType, declaration);
+        }
+    }
+
+    // include the passed-in type arguments
+    value params
+        =   if (is Generic declaration)
+            then declaration.typeParameters else [];
+
+    for (param->arg in zipEntries(params, variances)) {
         if (exists arg) {
             result.put(param, arg);
         }
