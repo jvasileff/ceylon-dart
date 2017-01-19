@@ -193,10 +193,10 @@ Map<String, Object> encodeClass(ClassModel declaration) {
             {
                 keyName -> tp.name,
                 if (tp.covariant)
-                    then keyUsVariance -> "out"
+                    then keyDsVariance -> "out"
                     else null,
                 if (tp.contravariant)
-                    then keyUsVariance -> "in"
+                    then keyDsVariance -> "in"
                     else null,
                 if (exists selfType = (tp of TypeDeclarationModel).selfType)
                     then keySelfType -> selfType.declaration.name
