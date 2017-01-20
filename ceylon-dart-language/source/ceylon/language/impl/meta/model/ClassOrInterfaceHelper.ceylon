@@ -1,6 +1,17 @@
 import ceylon.language.meta.model {
     ClosedType = Type, ClassOrInterface, ClassModel, InterfaceModel, Member,
-    MemberClass, MemberInterface, Method, Attribute
+    MemberClass, MemberInterface, Method, Attribute,
+    nothingType,
+    IncompatibleTypeException
+}
+import ceylon.language.impl.meta.declaration {
+    newClassDeclaration
+}
+import ceylon.dart.runtime.model {
+    unionDeduped,
+    ModelClass = Class,
+    ModelClassOrInterface = ClassOrInterface,
+    ModelType = Type
 }
 
 interface ClassOrInterfaceHelper<out Type>
@@ -34,7 +45,43 @@ interface ClassOrInterfaceHelper<out Type>
     MemberClass<Container, Type, Arguments>?
     getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, ClosedType<Anything>* types)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[] {
+
+        // Regarding Container, see https://github.com/ceylon/ceylon/issues/5137    
+
+        value containerType = `Container`;
+
+        ModelType union;
+        if (containerType == nothingType) {
+            union = modelType;
+        }
+        else {
+            assert (is TypeImpl<Anything> containerType);
+            union = unionDeduped([modelType, containerType.modelType], modelType.unit);
+        }
+
+        value modelMember = union.declaration.getMember(name, null);
+        if (!exists modelMember) {
+            return null;
+        }
+        if (!is ModelClass modelMember) {
+            throw IncompatibleTypeException("Specified member is not a class: ``name``");
+        }
+
+        assert (is ModelClassOrInterface modelMemberContainer
+            =   modelMember.container);
+
+        assert (exists modelQualifyingType
+            =   union.getSupertype(modelMemberContainer));
+
+        value classDeclaration
+            =   newClassDeclaration(modelMember);
+
+        return classDeclaration.memberClassApply<Container, Type, Arguments> {
+            containerType = newType(modelQualifyingType);
+            typeArguments = types.sequence();
+        };
+    }
 
     shared
     MemberClass<Container, Type, Arguments>?
