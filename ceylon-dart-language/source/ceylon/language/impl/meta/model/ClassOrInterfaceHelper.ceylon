@@ -10,12 +10,14 @@ import ceylon.language.meta.declaration {
 }
 import ceylon.language.impl.meta.declaration {
     newClassDeclaration,
-    newNestableDeclaration
+    newInterfaceDeclaration,
+    newClassOrInterfaceDeclaration
 }
 import ceylon.dart.runtime.model {
     unionDeduped,
     ModelDeclaration = Declaration,
     ModelClass = Class,
+    ModelInterface = Interface,
     ModelClassOrInterface = ClassOrInterface,
     ModelType = Type
 }
@@ -68,7 +70,32 @@ interface ClassOrInterfaceHelper<out Type>
     Member<Container, Kind>?
     getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
             (String name, ClosedType<Anything>* types)
-            given Kind satisfies ClassOrInterface<Anything> => nothing;
+            given Kind satisfies ClassOrInterface<Anything> {
+
+        value models = getModelMember<Container>(name);
+        if (!exists models) {
+            return null;
+        }
+        value [modelQualifyingType, modelMember] = models;
+
+        if (!is ModelClassOrInterface modelMember) {
+            throw IncompatibleTypeException(
+                "Specified member is not a class or interface: ``name``");
+        }
+
+        value result
+            =   newClassOrInterfaceDeclaration(modelMember)
+                        .memberApply<Container, Nothing> {
+                    containerType = newType(modelQualifyingType);
+                    typeArguments = types.sequence();
+                };
+
+        if (!is Member<Container, Kind> result) {
+            // TODO Improve. The JVM code claims to do better in applyClassOrInterface()
+            throw IncompatibleTypeException("Incorrect Kind: `` `Kind` ``");
+        }
+        return result;
+    }
 
     shared
     Member<Container, Kind>?
@@ -108,7 +135,30 @@ interface ClassOrInterfaceHelper<out Type>
     shared
     MemberInterface<Container, Type>?
     getInterface<Container=Nothing, Type=Anything>
-            (String name, ClosedType<Anything>* types) => nothing;
+            (String name, ClosedType<Anything>* types) {
+
+        value models = getModelMember<Container>(name);
+        if (!exists models) {
+            return null;
+        }
+        value [modelQualifyingType, modelMember] = models;
+
+        if (!is ModelInterface modelMember) {
+            throw IncompatibleTypeException(
+                "Specified member is not a class or interface: ``name``");
+        }
+
+        value result
+            =   newInterfaceDeclaration(modelMember)
+                        .memberApply<Container, Type> {
+                    containerType = newType(modelQualifyingType);
+                    typeArguments = types.sequence();
+                };
+
+        // TODO eliminate expesive reified is test
+        assert (is MemberInterface<Container, Type> result);
+        return result;
+    }
 
     shared
     MemberInterface<Container, Type>?
