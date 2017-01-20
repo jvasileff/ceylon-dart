@@ -1,5 +1,5 @@
 import ceylon.dart.runtime.model {
-    ModelClass = Class
+    ModelClassWithConstructors = ClassWithConstructors
 }
 import ceylon.language {
     AnnotationType=Annotation
@@ -20,7 +20,7 @@ import ceylon.language.meta.model {
 class ClassWithConstructorsDeclarationImpl(modelDeclaration)
         satisfies ClassWithConstructorsDeclaration {
 
-    shared ModelClass modelDeclaration;
+    shared ModelClassWithConstructors modelDeclaration;
 
     object helper satisfies ClassDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;

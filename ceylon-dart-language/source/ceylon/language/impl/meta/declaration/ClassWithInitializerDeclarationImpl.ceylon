@@ -1,5 +1,6 @@
 import ceylon.dart.runtime.model {
-    ModelClass = Class
+    ModelClassWithInitializer = ClassWithInitializer,
+    ModelClassAlias = ClassAlias
 }
 import ceylon.language {
     AnnotationType = Annotation
@@ -20,7 +21,7 @@ import ceylon.language.meta.model {
 class ClassWithInitializerDeclarationImpl(modelDeclaration)
         satisfies ClassWithInitializerDeclaration {
 
-    shared ModelClass modelDeclaration;
+    shared ModelClassWithInitializer | ModelClassAlias modelDeclaration;
 
     object helper satisfies ClassDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;

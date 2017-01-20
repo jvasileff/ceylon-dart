@@ -5,37 +5,37 @@ import ceylon.dart.runtime.model {
     ModelTypeParameter = TypeParameter
 }
 
-class TypeParameterImpl(modelTypeParameter)
+class TypeParameterImpl(modelDeclaration)
         satisfies TypeParameter {
 
-    shared ModelTypeParameter modelTypeParameter;
+    shared ModelTypeParameter modelDeclaration;
 
-    name => modelTypeParameter.name;
+    name => modelDeclaration.name;
 
-    qualifiedName => modelTypeParameter.qualifiedName;
+    qualifiedName => modelDeclaration.qualifiedName;
 
-    container => newNestableDeclaration(modelTypeParameter.container);
+    container => newNestableDeclaration(modelDeclaration.container);
 
-    defaulted => modelTypeParameter.defaultTypeArgument exists;
+    defaulted => modelDeclaration.defaultTypeArgument exists;
 
     defaultTypeArgument
-        =>  if (exists defaultArgument = modelTypeParameter.defaultTypeArgument)
+        =>  if (exists defaultArgument = modelDeclaration.defaultTypeArgument)
             then newOpenType(defaultArgument)
             else null;
 
-    variance => varianceFor(modelTypeParameter.variance);
+    variance => varianceFor(modelDeclaration.variance);
 
-    satisfiedTypes => modelTypeParameter.satisfiedTypes.collect(newOpenType);
+    satisfiedTypes => modelDeclaration.satisfiedTypes.collect(newOpenType);
 
-    caseTypes => modelTypeParameter.caseTypes.collect(newOpenType);
+    caseTypes => modelDeclaration.caseTypes.collect(newOpenType);
 
     // TODO
-    string => modelTypeParameter.string;
+    string => modelDeclaration.string;
 
     equals(Object other)
         =>  if (is TypeParameterImpl other)
-            then modelTypeParameter == other.modelTypeParameter
+            then modelDeclaration == other.modelDeclaration
             else false;
 
-    hash => modelTypeParameter.hash;
+    hash => modelDeclaration.hash;
 }

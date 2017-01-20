@@ -53,7 +53,7 @@ class OpenClassOrInterfaceTypeHelper() {
                     assert (is TypeParameterImpl typeParameter);
 
                     value modelTypeParameter
-                        =   typeParameter.modelTypeParameter;
+                        =   typeParameter.modelDeclaration;
 
                     // assuming we only care about use site overrides; "invariant" means
                     // no override, even if the TP is covariant or contravariant.

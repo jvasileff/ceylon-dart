@@ -1,9 +1,16 @@
 import ceylon.language.meta.declaration {
     Variance, invariant, covariant, contravariant,
     NestableDeclaration,
+    ClassOrInterfaceDeclaration,
+    ClassDeclaration,
+    InterfaceDeclaration,
+    TypeParameter,
     OpenType,
     OpenInterfaceType,
-    OpenClassType
+    OpenClassType,
+    Declaration,
+    ClassWithConstructorsDeclaration,
+    ClassWithInitializerDeclaration
 }
 import ceylon.dart.runtime.model {
     ModelVariance = Variance,
@@ -14,6 +21,11 @@ import ceylon.dart.runtime.model {
     ModelTypeParameter = TypeParameter,
     ModelDeclaration = Declaration,
     ModelClassOrInterface = ClassOrInterface,
+    ModelClass = Class,
+    ModelClassWithInitializer = ClassWithInitializer,
+    ModelClassWithConstructors = ClassWithConstructors,
+    ModelClassAlias = ClassAlias,
+    ModelInterface = Interface,
     ModelGeneric = Generic,
     argumentSatisfiesEnumeratedConstraint
 }
@@ -31,6 +43,40 @@ import ceylon.language.impl.meta.model {
     modelTypeFromType,
     newType
 }
+
+shared
+ModelClassWithConstructors modelFromClassWithConstructorsDeclaration
+        (ClassWithConstructorsDeclaration d) {
+    assert (is ClassWithConstructorsDeclarationImpl d);
+    return d.modelDeclaration;
+}
+
+shared
+ModelClassWithInitializer | ModelClassAlias modelFromClassWithInitializerDeclaration
+        (ClassWithInitializerDeclaration d) {
+    assert (is ClassWithInitializerDeclarationImpl d);
+    return d.modelDeclaration;
+}
+
+shared
+ModelClass modelFromClassDeclaration(ClassDeclaration d)
+    =>  switch (d)
+        case (is ClassWithInitializerDeclaration)
+            modelFromClassWithInitializerDeclaration(d)
+        case (is ClassWithConstructorsDeclaration)
+            modelFromClassWithConstructorsDeclaration(d);
+
+shared
+ModelInterface modelFromInterfaceDeclaration(InterfaceDeclaration d) {
+    assert (is InterfaceDeclarationImpl d);
+    return d.modelDeclaration;
+}
+
+shared
+ModelClassOrInterface modelFromClassOrInterfaceDeclaration(ClassOrInterfaceDeclaration d)
+    =>  switch (d)
+        case (is ClassDeclaration) modelFromClassDeclaration(d)
+        case (is InterfaceDeclaration) modelFromInterfaceDeclaration(d);
 
 Variance | Absent varianceFor<Absent = Nothing>(ModelVariance | Absent variance)
         given Absent satisfies Null
