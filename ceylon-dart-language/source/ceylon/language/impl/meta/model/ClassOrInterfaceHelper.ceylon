@@ -4,11 +4,17 @@ import ceylon.language.meta.model {
     nothingType,
     IncompatibleTypeException
 }
+import ceylon.language.meta.declaration {
+    ClassDeclaration,
+    NestableDeclaration
+}
 import ceylon.language.impl.meta.declaration {
-    newClassDeclaration
+    newClassDeclaration,
+    newNestableDeclaration
 }
 import ceylon.dart.runtime.model {
     unionDeduped,
+    ModelDeclaration = Declaration,
     ModelClass = Class,
     ModelClassOrInterface = ClassOrInterface,
     ModelType = Type
@@ -30,23 +36,7 @@ interface ClassOrInterfaceHelper<out Type>
     Type[] caseValues => nothing;
 
     shared
-    Member<Container, Kind>?
-    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, ClosedType<Anything>* types)
-            given Kind satisfies ClassOrInterface<Anything> => nothing;
-
-    shared
-    Member<Container, Kind>?
-    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, ClosedType<Anything>* types)
-            given Kind satisfies ClassOrInterface<Anything> => nothing;
-
-    shared
-    MemberClass<Container, Type, Arguments>?
-    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, ClosedType<Anything>* types)
-            given Arguments satisfies Anything[] {
-
+    [ModelType, ModelDeclaration]? getModelMember<Container>(String name) {
         // Regarding Container, see https://github.com/ceylon/ceylon/issues/5137    
 
         value containerType = `Container`;
@@ -64,9 +54,6 @@ interface ClassOrInterfaceHelper<out Type>
         if (!exists modelMember) {
             return null;
         }
-        if (!is ModelClass modelMember) {
-            throw IncompatibleTypeException("Specified member is not a class: ``name``");
-        }
 
         assert (is ModelClassOrInterface modelMemberContainer
             =   modelMember.container);
@@ -74,10 +61,39 @@ interface ClassOrInterfaceHelper<out Type>
         assert (exists modelQualifyingType
             =   union.getSupertype(modelMemberContainer));
 
-        value classDeclaration
-            =   newClassDeclaration(modelMember);
+        return [modelQualifyingType, modelMember];
+    }
 
-        return classDeclaration.memberClassApply<Container, Type, Arguments> {
+    shared
+    Member<Container, Kind>?
+    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
+            (String name, ClosedType<Anything>* types)
+            given Kind satisfies ClassOrInterface<Anything> => nothing;
+
+    shared
+    Member<Container, Kind>?
+    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
+            (String name, ClosedType<Anything>* types)
+            given Kind satisfies ClassOrInterface<Anything> => nothing;
+
+    shared
+    MemberClass<Container, Type, Arguments>?
+    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+            (String name, ClosedType<Anything>* types)
+            given Arguments satisfies Anything[] {
+
+        value models = getModelMember<Container>(name);
+        if (!exists models) {
+            return null;
+        }
+        value [modelQualifyingType, modelMember] = models;
+
+        if (!is ModelClass modelMember) {
+            throw IncompatibleTypeException("Specified member is not a class: ``name``");
+        }
+
+        return newClassDeclaration(modelMember)
+                .memberClassApply<Container, Type, Arguments> {
             containerType = newType(modelQualifyingType);
             typeArguments = types.sequence();
         };
