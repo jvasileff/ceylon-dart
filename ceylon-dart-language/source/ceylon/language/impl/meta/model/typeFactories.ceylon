@@ -1,5 +1,6 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
+    InterfaceModel,
     IntersectionType, nothingType,
     Function, Method, Value, Attribute
 }
@@ -123,6 +124,11 @@ shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
     }
 }
 
+shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
+    =>  if (modelType.declaration.isMember)
+        then newMemberInterface(modelType)
+        else newInterface(modelType);
+
 "Return the ceylon metamodel type for the type. The type parameters are not actually
  used or verified, but are provided as a convenience in order for callers to avoid an
  expensive assert() on the returned value."
@@ -139,9 +145,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
                else newClass(modelType);
     }
     case (is ModelInterface) {
-        return if (d.isMember)
-               then newMemberInterface(modelType)
-               else newInterface(modelType);
+        return newInterfaceModel(modelType);
     }
     case (is ModelUnionType) {
         return newUnionType(modelType);

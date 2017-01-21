@@ -32,7 +32,8 @@ interface ClassOrInterfaceHelper<out Type>
             else null;
 
     shared
-    InterfaceModel<>[] satisfiedTypes => nothing;
+    InterfaceModel<>[] satisfiedTypes
+        =>  modelType.satisfiedTypes.collect((mst) => newInterfaceModel(mst));
 
     shared
     Type[] caseValues => nothing;
