@@ -50,6 +50,13 @@ class TypeDeclaration()
                 typeArguments = typeParametersAsArguments;
             };
 
+    shared actual
+    Reference appliedReference(
+            Type? qualifyingType,
+            {Type?*} typeArguments,
+            Map<TypeParameter, Variance> varianceOverrides)
+        =>  appliedType(qualifyingType, typeArguments, varianceOverrides);
+
     shared
     Type appliedType(
             Type? qualifyingType,

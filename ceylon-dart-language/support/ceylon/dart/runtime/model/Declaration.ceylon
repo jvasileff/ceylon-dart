@@ -74,6 +74,12 @@ class Declaration() of TypeDeclaration | TypedDeclaration
     Boolean isToplevel
         =>  container is Package;
 
+    shared formal
+    Reference appliedReference(
+        Type? qualifyingType,
+        {Type?*} typeArguments,
+        Map<TypeParameter, Variance> varianceOverrides = emptyMap);
+
     shared actual default
     String qualifiedName
         =>  qualifiedNameMemo
