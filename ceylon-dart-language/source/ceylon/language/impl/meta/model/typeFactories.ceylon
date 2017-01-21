@@ -1,11 +1,20 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
-    IntersectionType, nothingType
+    IntersectionType, nothingType,
+    Function, Method, Value, Attribute
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
+    ModelTypedReference = TypedReference,
     ModelClass = Class,
+    ModelConstructor = Constructor,
+    ModelTypeAlias = TypeAlias,
+    ModelTypeParameter = TypeParameter,
     ModelInterface = Interface,
+    ModelFunction = Function,
+    ModelUnknownType = UnknownType,
+    ModelValue = Value,
+    ModelSetter = Setter,
     ModelUnionType = UnionType,
     ModelIntersectionType = IntersectionType,
     ModelNothingDeclaration = NothingDeclaration
@@ -13,6 +22,32 @@ import ceylon.dart.runtime.model {
 import ceylon.dart.runtime.model.runtime {
     TypeDescriptor
 }
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Value<Get, Set>
+newValue<out Get=Anything, in Set=Nothing>
+        (ModelTypedReference typedReference)
+    =>  ValueImpl<Get, Set>(typedReference);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Attribute<Container, Get, Set>
+newAttribute<in Container = Nothing, out Get=Anything, in Set=Nothing>
+        (ModelTypedReference typedReference)
+    =>  AttributeImpl<Container, Get, Set>(typedReference);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Function<Type, Arguments>
+newFunction<out Type=Anything, in Arguments=Nothing>
+        (ModelTypedReference typedReference)
+        given Arguments satisfies Anything[]
+    =>  FunctionImpl<Type, Arguments>(typedReference);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared Method<Container, Type, Arguments>
+newMethod<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
+        (ModelTypedReference typedReference)
+        given Arguments satisfies Anything[]
+    =>  MethodImpl<Container, Type, Arguments>(typedReference);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>
@@ -70,6 +105,24 @@ shared IntersectionType<Type> newIntersectionType<out Type=Anything>
             else type;
         };
 
+shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
+        (ModelTypedReference typedReference) {
+    switch (d = typedReference.declaration)
+    case (is ModelFunction) {
+        return if (d.isMember)
+               then newMethod<>(typedReference)
+               else newFunction<>(typedReference);
+    }
+    case (is ModelValue) {
+        return if (d.isMember)
+               then newAttribute<>(typedReference)
+               else newValue<>(typedReference);
+    }
+    case (is ModelSetter) {
+        throw AssertionError("creating models for setters is not supported");
+    }
+}
+
 "Return the ceylon metamodel type for the type. The type parameters are not actually
  used or verified, but are provided as a convenience in order for callers to avoid an
  expensive assert() on the returned value."
@@ -99,7 +152,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     case (is ModelNothingDeclaration) {
         return nothingType;
     }
-    else {
+    case (is ModelTypeAlias | ModelConstructor | ModelUnknownType | ModelTypeParameter) {
         throw AssertionError(
             "Meta expressions not yet supported for type declaration type: \
             ``className(d)``");
