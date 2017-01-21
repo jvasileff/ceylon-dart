@@ -9,10 +9,21 @@ import ceylon.language.meta.declaration {
 }
 import ceylon.language.meta.model {
     ClosedType = Type,
+    MemberClass,
+    Class,
+    Member,
+    ClassOrInterface,
+    IncompatibleTypeException,
+    TypeApplicationException,
     FunctionModel,
     Function,
     Method,
     Qualified
+}
+import ceylon.language.impl.meta.model {
+    modelTypeFromType,
+    newType,
+    newMethod
 }
 
 class FunctionDeclarationImpl(modelDeclaration)
@@ -31,13 +42,56 @@ class FunctionDeclarationImpl(modelDeclaration)
             given Arguments satisfies Anything[]
         =>  nothing;
 
+    shared
+    Method<> memberApplyUnchecked(
+            ClosedType<Object> containerType,
+            ClosedType<Anything>* typeArguments) {
+
+        if (toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a toplevel declaration to a container type: use apply");
+        }
+
+        value qualifyingType
+            =   getQualifyingSupertypeOrThrow {
+                    modelTypeFromType(containerType);
+                    modelDeclaration;
+                };
+
+        value modelTypeArgs
+            =   typeArguments.collect(modelTypeFromType);
+
+        validateTypeArgumentsOrThrow {
+            qualifyingType;
+            modelDeclaration;
+            modelTypeArgs;
+        };
+
+        return newMethod {
+            modelDeclaration.appliedTypedReference {
+                qualifyingType = qualifyingType;
+                typeArguments = modelTypeArgs;
+                varianceOverrides = emptyMap;
+            };
+        };
+    }
+
     shared actual
     Method<Container, Return, Arguments>
-    & Qualified<FunctionModel<Return, Arguments>, Container>
     memberApply<Container=Nothing, Return=Anything, Arguments=Nothing>
             (ClosedType<Object> containerType, ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[]
-        =>  nothing;
+            given Arguments satisfies Anything[] {
+
+        value result = memberApplyUnchecked(containerType, *typeArguments);
+
+        if (!is Method<Container, Return, Arguments> result) {
+            // TODO Improve. The JVM code claims to do better with
+            //      checkReifiedTypeArgument()
+            throw IncompatibleTypeException("Incorrect Container, Return, or Arguments");
+        }
+
+        return result;
+    }
 
     // FunctionalDeclaration
 

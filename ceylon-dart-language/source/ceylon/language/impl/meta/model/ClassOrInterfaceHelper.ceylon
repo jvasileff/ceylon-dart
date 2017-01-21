@@ -4,19 +4,19 @@ import ceylon.language.meta.model {
     nothingType,
     IncompatibleTypeException
 }
-import ceylon.language.meta.declaration {
-    ClassDeclaration,
-    NestableDeclaration
-}
 import ceylon.language.impl.meta.declaration {
     newClassDeclaration,
     newInterfaceDeclaration,
+    newFunctionDeclaration,
+    newValueDeclaration,
     newClassOrInterfaceDeclaration
 }
 import ceylon.dart.runtime.model {
     unionDeduped,
     ModelDeclaration = Declaration,
     ModelClass = Class,
+    ModelFunction = Function,
+    ModelValue = Value,
     ModelInterface = Interface,
     ModelClassOrInterface = ClassOrInterface,
     ModelType = Type
@@ -169,7 +169,25 @@ interface ClassOrInterfaceHelper<out Type>
     Method<Container, Type, Arguments>?
     getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, ClosedType<Anything>* types)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[] {
+
+        value models = getModelMember<Container>(name);
+        if (!exists models) {
+            return null;
+        }
+        value [modelQualifyingType, modelMember] = models;
+
+        if (!is ModelFunction modelMember) {
+            throw IncompatibleTypeException(
+                    "Specified member is not a function: ``name``");
+        }
+
+        return newFunctionDeclaration(modelMember)
+                .memberApply<Container, Type, Arguments> {
+            containerType = newType(modelQualifyingType);
+            typeArguments = types.sequence();
+        };
+    }
 
     shared
     Method<Container, Type, Arguments>?
@@ -179,8 +197,24 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Attribute<Container, Get, Set>?
-    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>
-            (String name) => nothing;
+    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name) {
+
+        value models = getModelMember<Container>(name);
+        if (!exists models) {
+            return null;
+        }
+        value [modelQualifyingType, modelMember] = models;
+
+        if (!is ModelValue modelMember) {
+            throw IncompatibleTypeException(
+                    "Specified member is not a value: ``name``");
+        }
+
+        return newValueDeclaration(modelMember)
+                .memberApply<Container, Get, Set> {
+            containerType = newType(modelQualifyingType);
+        };
+    }
 
     shared
     Attribute<Container, Get, Set>?
