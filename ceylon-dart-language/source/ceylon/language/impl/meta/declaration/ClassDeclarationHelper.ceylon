@@ -55,7 +55,17 @@ interface ClassDeclarationHelper
     shared
     Class<Type,Arguments> classApply<Type, Arguments>
             (ClosedType<Anything>* typeArguments)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[] {
+
+        value result = applyUnchecked(*typeArguments);
+
+        if (!is Class<Type, Arguments> result) {
+            // TODO Improve
+            throw IncompatibleTypeException("Incorrect Type, or Arguments");
+        }
+
+        return result;
+    }
 
     shared
     ConstructorDeclaration[] constructorDeclarations() => nothing;

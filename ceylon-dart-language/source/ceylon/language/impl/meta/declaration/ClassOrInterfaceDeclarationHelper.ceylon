@@ -68,8 +68,16 @@ interface ClassOrInterfaceDeclarationHelper
             given Annotation satisfies AnnotationType => nothing;
 
     shared
-    ClassOrInterface<Type> apply<Type>
-            (ClosedType<Anything>* typeArguments) => nothing;
+    ClassOrInterface<Type> apply<Type>(ClosedType<Anything>* typeArguments) {
+        value result = applyUnchecked(*typeArguments);
+
+        if (!is ClassOrInterface<Type> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Type");
+        }
+
+        return result;
+    }
 
     shared
     Kind[] declaredMemberDeclarations<Kind>()
@@ -110,6 +118,32 @@ interface ClassOrInterfaceDeclarationHelper
         }
 
         return result;
+    }
+
+    shared
+    ClosedType<> applyUnchecked(ClosedType<Anything>* typeArguments) {
+
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration to a toplevel type: use memberApply");
+        }
+
+        value modelTypeArgs
+            =   typeArguments.collect(modelTypeFromType);
+
+        validateTypeArgumentsOrThrow {
+            null;
+            modelDeclaration;
+            modelTypeArgs;
+        };
+
+        return newType {
+            modelDeclaration.appliedType {
+                qualifyingType = null;
+                typeArguments = modelTypeArgs;
+                varianceOverrides = emptyMap;
+            };
+        };
     }
 
     shared

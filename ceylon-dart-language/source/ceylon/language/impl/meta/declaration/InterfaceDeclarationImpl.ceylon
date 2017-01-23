@@ -27,8 +27,11 @@ class InterfaceDeclarationImpl(modelDeclaration)
     }
 
     shared actual Interface<Type> interfaceApply<Type=Anything>
-            (ClosedType<>* typeArguments)
-        =>  nothing;
+            (ClosedType<>* typeArguments) {
+        // TODO remove this expensive & redundant reified is test
+        assert (is Interface<Type> result = apply<Type>(*typeArguments));
+        return result;
+    }
 
     shared actual MemberInterface<Container, Type> memberInterfaceApply
             <Container=Nothing, Type=Anything>
