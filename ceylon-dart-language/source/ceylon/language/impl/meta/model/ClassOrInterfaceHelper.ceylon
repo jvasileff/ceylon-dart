@@ -38,7 +38,6 @@ interface ClassOrInterfaceHelper<out Type>
     shared
     Type[] caseValues => nothing;
 
-    shared
     [ModelType, ModelDeclaration]? getModelMember<Container>(String name) {
         // Regarding Container, see https://github.com/ceylon/ceylon/issues/5137    
 
@@ -67,21 +66,20 @@ interface ClassOrInterfaceHelper<out Type>
         return [modelQualifyingType, modelMember];
     }
 
-    shared
     Member<Container, Kind>?
-    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, ClosedType<Anything>* types)
+    appliedMemberClassOrInterface<Container, Kind>(
+            ModelType modelQualifyingType,
+            ModelDeclaration? modelMember,
+            [ClosedType<Anything>*] types)
             given Kind satisfies ClassOrInterface<Anything> {
 
-        value models = getModelMember<Container>(name);
-        if (!exists models) {
+        if (!exists modelMember) {
             return null;
         }
-        value [modelQualifyingType, modelMember] = models;
 
         if (!is ModelClassOrInterface modelMember) {
             throw IncompatibleTypeException(
-                "Specified member is not a class or interface: ``name``");
+                "Specified member is not a class or interface: ``modelMember.name``");
         }
 
         value result
@@ -100,24 +98,45 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Member<Container, Kind>?
-    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
+    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
             (String name, ClosedType<Anything>* types)
-            given Kind satisfies ClassOrInterface<Anything> => nothing;
+            given Kind satisfies ClassOrInterface<Anything>
+        =>  if (exists [modelQualifyingType, modelMember]
+                =   getModelMember<Container>(name))
+            then appliedMemberClassOrInterface<Container, Kind> {
+                modelQualifyingType;
+                modelMember;
+                types;
+            }
+            else null;
 
     shared
-    MemberClass<Container, Type, Arguments>?
-    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+    Member<Container, Kind>?
+    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
             (String name, ClosedType<Anything>* types)
+            given Kind satisfies ClassOrInterface<Anything> {
+        validateDeclaredContainer(`Container`);
+        return appliedMemberClassOrInterface<Container, Kind> {
+            modelType;
+            modelType.declaration.getDirectMember(name);
+            types;
+        };
+    }
+
+    MemberClass<Container, Type, Arguments>?
+    appliedMemberClass<Container, Type, Arguments>(
+            ModelType modelQualifyingType,
+            ModelDeclaration? modelMember,
+            [ClosedType<Anything>*] types)
             given Arguments satisfies Anything[] {
 
-        value models = getModelMember<Container>(name);
-        if (!exists models) {
+        if (!exists modelMember) {
             return null;
         }
-        value [modelQualifyingType, modelMember] = models;
 
         if (!is ModelClass modelMember) {
-            throw IncompatibleTypeException("Specified member is not a class: ``name``");
+            throw IncompatibleTypeException(
+                "Specified member is not a class: ``modelMember.name``");
         }
 
         return newClassDeclaration(modelMember)
@@ -129,24 +148,44 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     MemberClass<Container, Type, Arguments>?
-    getDeclaredClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, ClosedType<Anything>* types)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[]
+        =>  if (exists [modelQualifyingType, modelMember]
+                =   getModelMember<Container>(name))
+            then appliedMemberClass<Container, Type, Arguments> {
+                modelQualifyingType;
+                modelMember;
+                types;
+            }
+            else null;
 
     shared
-    MemberInterface<Container, Type>?
-    getInterface<Container=Nothing, Type=Anything>
-            (String name, ClosedType<Anything>* types) {
+    MemberClass<Container, Type, Arguments>?
+    getDeclaredClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+            (String name, ClosedType<Anything>* types)
+            given Arguments satisfies Anything[] {
+        validateDeclaredContainer(`Container`);
+        return appliedMemberClass<Container, Type, Arguments> {
+            modelType;
+            modelType.declaration.getDirectMember(name);
+            types;
+        };
+    }
 
-        value models = getModelMember<Container>(name);
-        if (!exists models) {
+    MemberInterface<Container, Type>?
+    appliedMemberInterface<Container, Type>(
+            ModelType modelQualifyingType,
+            ModelDeclaration? modelMember,
+            [ClosedType<Anything>*] types) {
+
+        if (!exists modelMember) {
             return null;
         }
-        value [modelQualifyingType, modelMember] = models;
 
         if (!is ModelInterface modelMember) {
             throw IncompatibleTypeException(
-                "Specified member is not a class or interface: ``name``");
+                "Specified member is not an interface: ``modelMember.name``");
         }
 
         value result
@@ -163,9 +202,29 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     MemberInterface<Container, Type>?
+    getInterface<Container=Nothing, Type=Anything>
+            (String name, ClosedType<Anything>* types)
+        =>  if (exists [modelQualifyingType, modelMember]
+                =   getModelMember<Container>(name))
+            then appliedMemberInterface<Container, Type> {
+                modelQualifyingType;
+                modelMember;
+                types;
+            }
+            else null;
+
+    shared
+    MemberInterface<Container, Type>?
     getDeclaredInterface<Container=Nothing, Type=Anything>
-            (String name, ClosedType<Anything>* types) => nothing;
-    
+            (String name, ClosedType<Anything>* types) {
+        validateDeclaredContainer(`Container`);
+        return appliedMemberInterface<Container, Type> {
+            modelType;
+            modelType.declaration.getDirectMember(name);
+            types;
+        };
+    }
+
     shared
     Method<Container, Type, Arguments>?
     getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
@@ -264,4 +323,14 @@ interface ClassOrInterfaceHelper<out Type>
     shared MemberInterface<Container, Type>[]
     getInterfaces<Container=Nothing, Type=Anything>
             (ClosedType<Annotation>* annotationTypes) => nothing;
+
+    "For use only by the getDeclared*() functions."
+    void validateDeclaredContainer(ClosedType<> container) {
+        if (!container.subtypeOf(thisType)) {
+            // TODO use same error message as JVM impl
+            throw IncompatibleTypeException(
+                "Specified Container '``container``' is not a subtype of this \
+                 type '``thisType``'");
+        }
+    }
 }
