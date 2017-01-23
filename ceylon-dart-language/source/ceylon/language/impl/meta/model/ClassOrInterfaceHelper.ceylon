@@ -98,8 +98,7 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Member<Container, Kind>?
-    getClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, ClosedType<Anything>* types)
+    getClassOrInterface<Container, Kind>(String name, ClosedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything>
         =>  if (exists [modelQualifyingType, modelMember]
                 =   getModelMember<Container>(name))
@@ -112,8 +111,7 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Member<Container, Kind>?
-    getDeclaredClassOrInterface<Container=Nothing, Kind=ClassOrInterface<>>
-            (String name, ClosedType<Anything>* types)
+    getDeclaredClassOrInterface<Container, Kind>(String name, ClosedType<Anything>* types)
             given Kind satisfies ClassOrInterface<Anything> {
         validateDeclaredContainer(`Container`);
         return appliedMemberClassOrInterface<Container, Kind> {
@@ -147,8 +145,7 @@ interface ClassOrInterfaceHelper<out Type>
     }
 
     shared
-    MemberClass<Container, Type, Arguments>?
-    getClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+    MemberClass<Container, Type, Arguments>? getClass<Container, Type, Arguments>
             (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  if (exists [modelQualifyingType, modelMember]
@@ -161,8 +158,7 @@ interface ClassOrInterfaceHelper<out Type>
             else null;
 
     shared
-    MemberClass<Container, Type, Arguments>?
-    getDeclaredClass<Container=Nothing, Type=Anything, Arguments=Nothing>
+    MemberClass<Container, Type, Arguments>? getDeclaredClass<Container, Type, Arguments>
             (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[] {
         validateDeclaredContainer(`Container`);
@@ -202,8 +198,7 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     MemberInterface<Container, Type>?
-    getInterface<Container=Nothing, Type=Anything>
-            (String name, ClosedType<Anything>* types)
+    getInterface<Container, Type>(String name, ClosedType<Anything>* types)
         =>  if (exists [modelQualifyingType, modelMember]
                 =   getModelMember<Container>(name))
             then appliedMemberInterface<Container, Type> {
@@ -215,8 +210,7 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     MemberInterface<Container, Type>?
-    getDeclaredInterface<Container=Nothing, Type=Anything>
-            (String name, ClosedType<Anything>* types) {
+    getDeclaredInterface<Container, Type>(String name, ClosedType<Anything>* types) {
         validateDeclaredContainer(`Container`);
         return appliedMemberInterface<Container, Type> {
             modelType;
@@ -249,8 +243,7 @@ interface ClassOrInterfaceHelper<out Type>
     }
 
     shared
-    Method<Container, Type, Arguments>?
-    getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
+    Method<Container, Type, Arguments>? getMethod<Container, Type, Arguments>
             (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[]
         =>  if (exists [modelQualifyingType, modelMember]
@@ -263,8 +256,7 @@ interface ClassOrInterfaceHelper<out Type>
             else null;
 
     shared
-    Method<Container, Type, Arguments>?
-    getDeclaredMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
+    Method<Container, Type, Arguments>? getDeclaredMethod<Container, Type, Arguments>
             (String name, ClosedType<Anything>* types)
             given Arguments satisfies Anything[] {
         validateDeclaredContainer(`Container`);
@@ -296,8 +288,7 @@ interface ClassOrInterfaceHelper<out Type>
     }
 
     shared
-    Attribute<Container, Get, Set>?
-    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name)
+    Attribute<Container, Get, Set>? getAttribute<Container, Get, Set>(String name)
         =>  if (exists [modelQualifyingType, modelMember]
                 =   getModelMember<Container>(name))
             then appliedAttribute<Container, Get, Set> {
@@ -307,8 +298,8 @@ interface ClassOrInterfaceHelper<out Type>
             else null;
 
     shared
-    Attribute<Container, Get, Set>?
-    getDeclaredAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name) {
+    Attribute<Container, Get, Set>? getDeclaredAttribute<Container, Get, Set>
+            (String name) {
         validateDeclaredContainer(`Container`);
         return appliedAttribute<Container, Get, Set> {
             modelType;
@@ -317,46 +308,39 @@ interface ClassOrInterfaceHelper<out Type>
     }
 
     shared
-    Attribute<Container, Get, Set>[]
-    getDeclaredAttributes<Container=Nothing, Get=Anything, Set=Nothing>
+    Attribute<Container, Get, Set>[] getDeclaredAttributes<Container, Get, Set>
             (ClosedType<Annotation>* annotationTypes) => nothing;
 
     shared
-    Attribute<Container, Get, Set>[]
-    getAttributes<Container=Nothing, Get=Anything, Set=Nothing>
+    Attribute<Container, Get, Set>[] getAttributes<Container, Get, Set>
             (ClosedType<Annotation>* annotationTypes) => nothing;
 
     shared
-    Method<Container, Type, Arguments>[]
-    getDeclaredMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
+    Method<Container, Type, Arguments>[] getDeclaredMethods<Container, Type, Arguments>
             (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[] => nothing;
 
     shared
-    Method<Container, Type, Arguments>[]
-    getMethods<Container=Nothing, Type=Anything, Arguments=Nothing>
+    Method<Container, Type, Arguments>[] getMethods<Container, Type, Arguments>
             (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[] => nothing;
 
     shared
     MemberClass<Container, Type, Arguments>[]
-    getDeclaredClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
+    getDeclaredClasses<Container, Type, Arguments>
             (ClosedType<Annotation>* annotationTypes)
             given Arguments satisfies Anything[] => nothing;
 
     shared
-    MemberClass<Container, Type, Arguments>[]
-    getClasses<Container=Nothing, Type=Anything, Arguments=Nothing>
+    MemberClass<Container, Type, Arguments>[] getClasses<Container, Type, Arguments>
             (ClosedType<Annotation>* annotationTypes)
                 given Arguments satisfies Anything[] => nothing;
 
     shared
-    MemberInterface<Container, Type>[]
-    getDeclaredInterfaces<Container=Nothing, Type=Anything>
+    MemberInterface<Container, Type>[] getDeclaredInterfaces<Container, Type>
             (ClosedType<Annotation>* annotationTypes) => nothing;
 
-    shared MemberInterface<Container, Type>[]
-    getInterfaces<Container=Nothing, Type=Anything>
+    shared MemberInterface<Container, Type>[] getInterfaces<Container, Type>
             (ClosedType<Annotation>* annotationTypes) => nothing;
 
     "For use only by the getDeclared*() functions."
