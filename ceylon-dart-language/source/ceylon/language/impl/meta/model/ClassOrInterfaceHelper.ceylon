@@ -225,21 +225,20 @@ interface ClassOrInterfaceHelper<out Type>
         };
     }
 
-    shared
     Method<Container, Type, Arguments>?
-    getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
-            (String name, ClosedType<Anything>* types)
+    appliedMethod<Container, Type, Arguments>(
+            ModelType modelQualifyingType,
+            ModelDeclaration? modelMember,
+            [ClosedType<Anything>*] types)
             given Arguments satisfies Anything[] {
 
-        value models = getModelMember<Container>(name);
-        if (!exists models) {
+        if (!exists modelMember) {
             return null;
         }
-        value [modelQualifyingType, modelMember] = models;
 
         if (!is ModelFunction modelMember) {
             throw IncompatibleTypeException(
-                    "Specified member is not a function: ``name``");
+                "Specified member is not a method: ``modelMember.name``");
         }
 
         return newFunctionDeclaration(modelMember)
@@ -251,23 +250,43 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Method<Container, Type, Arguments>?
-    getDeclaredMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
+    getMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
             (String name, ClosedType<Anything>* types)
-            given Arguments satisfies Anything[] => nothing;
+            given Arguments satisfies Anything[]
+        =>  if (exists [modelQualifyingType, modelMember]
+                =   getModelMember<Container>(name))
+            then appliedMethod<Container, Type, Arguments> {
+                modelQualifyingType;
+                modelMember;
+                types;
+            }
+            else null;
 
     shared
-    Attribute<Container, Get, Set>?
-    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name) {
+    Method<Container, Type, Arguments>?
+    getDeclaredMethod<Container=Nothing, Type=Anything, Arguments=Nothing>
+            (String name, ClosedType<Anything>* types)
+            given Arguments satisfies Anything[] {
+        validateDeclaredContainer(`Container`);
+        return appliedMethod<Container, Type, Arguments> {
+            modelType;
+            modelType.declaration.getDirectMember(name);
+            types;
+        };
+    }
 
-        value models = getModelMember<Container>(name);
-        if (!exists models) {
+    Attribute<Container, Get, Set>?
+    appliedAttribute<Container, Get, Set>(
+            ModelType modelQualifyingType,
+            ModelDeclaration? modelMember) {
+
+        if (!exists modelMember) {
             return null;
         }
-        value [modelQualifyingType, modelMember] = models;
 
         if (!is ModelValue modelMember) {
             throw IncompatibleTypeException(
-                    "Specified member is not a value: ``name``");
+                "Specified member is not a value: ``modelMember.name``");
         }
 
         return newValueDeclaration(modelMember)
@@ -278,8 +297,24 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     Attribute<Container, Get, Set>?
-    getDeclaredAttribute<Container=Nothing, Get=Anything, Set=Nothing>
-            (String name) => nothing;
+    getAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name)
+        =>  if (exists [modelQualifyingType, modelMember]
+                =   getModelMember<Container>(name))
+            then appliedAttribute<Container, Get, Set> {
+                modelQualifyingType;
+                modelMember;
+            }
+            else null;
+
+    shared
+    Attribute<Container, Get, Set>?
+    getDeclaredAttribute<Container=Nothing, Get=Anything, Set=Nothing>(String name) {
+        validateDeclaredContainer(`Container`);
+        return appliedAttribute<Container, Get, Set> {
+            modelType;
+            modelType.declaration.getDirectMember(name);
+        };
+    }
 
     shared
     Attribute<Container, Get, Set>[]
