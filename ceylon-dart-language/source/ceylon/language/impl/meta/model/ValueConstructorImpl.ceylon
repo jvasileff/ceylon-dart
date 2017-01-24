@@ -1,5 +1,5 @@
 import ceylon.language.impl.meta.declaration {
-    newConstructorDeclaration
+    newValueConstructorDeclaration
 }
 import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
@@ -8,7 +8,7 @@ import ceylon.language.meta.model {
     ValueConstructor, Class
 }
 import ceylon.dart.runtime.model {
-    ModelConstructor = Constructor,
+    ModelValueConstructor = ValueConstructor,
     ModelType = Type
 }
 
@@ -17,8 +17,8 @@ class ValueConstructorImpl<out Type=Object>(modelType)
 
     shared ModelType modelType;
 
-    "The declaration for a Constructor Type must be a Constructor"
-    assert (modelType.declaration is ModelConstructor);
+    "The declaration for a Constructor Type must be a ValueConstructor"
+    assert (modelType.declaration is ModelValueConstructor);
 
     object helper
             satisfies ValueModelHelper<Type> & GettableHelper<Type, Nothing> {
@@ -27,9 +27,8 @@ class ValueConstructorImpl<out Type=Object>(modelType)
 
     shared actual
     ValueConstructorDeclaration declaration {
-        assert (is ModelConstructor model = modelType.declaration);
-        assert (is ValueConstructorDeclaration result = newConstructorDeclaration(model));
-        return result;
+        assert (is ModelValueConstructor model = modelType.declaration);
+        return newValueConstructorDeclaration(model);
     }
 
     shared actual

@@ -1,5 +1,5 @@
 import ceylon.language.impl.meta.declaration {
-    newConstructorDeclaration
+    newCallableConstructorDeclaration
 }
 import ceylon.language.impl.meta.model {
     newClass
@@ -12,7 +12,7 @@ import ceylon.language.meta.model {
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelConstructor = Constructor
+    ModelCallableConstructor = CallableConstructor
 }
 
 class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType)
@@ -21,8 +21,8 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
 
     shared ModelType modelType;
 
-    "The declaration for a Constructor Type must be a Constructor"
-    assert (modelType.declaration is ModelConstructor);
+    "The declaration for a Constructor Type must be a CallableConstructor"
+    assert (modelType.declaration is ModelCallableConstructor);
 
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {
@@ -31,13 +31,8 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
 
     shared actual
     CallableConstructorDeclaration declaration {
-        assert (is ModelConstructor model
-            =   modelType.declaration);
-
-        assert (is CallableConstructorDeclaration result
-            =   newConstructorDeclaration(model));
-
-        return result;
+        assert (is ModelCallableConstructor model = modelType.declaration);
+        return newCallableConstructorDeclaration(model);
     }
 
     shared actual

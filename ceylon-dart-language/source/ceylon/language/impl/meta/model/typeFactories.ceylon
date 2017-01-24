@@ -1,6 +1,6 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
-    InterfaceModel,
+    InterfaceModel, CallableConstructor, ValueConstructor,
     IntersectionType, nothingType,
     Function, Method, Value, Attribute
 }
@@ -9,6 +9,8 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference,
     ModelClass = Class,
     ModelConstructor = Constructor,
+    ModelValueConstructor = ValueConstructor,
+    ModelCallableConstructor = CallableConstructor,
     ModelTypeAlias = TypeAlias,
     ModelTypeParameter = TypeParameter,
     ModelInterface = Interface,
@@ -23,6 +25,19 @@ import ceylon.dart.runtime.model {
 import ceylon.dart.runtime.model.runtime {
     TypeDescriptor
 }
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared CallableConstructor<Type, Arguments>
+newCallableConstructor<out Type=Anything, in Arguments=Nothing>
+        (ModelType type)
+        given Arguments satisfies Anything[]
+    =>  CallableConstructorImpl<Type, Arguments>(type);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared ValueConstructor<Type>
+newValueConstructor<out Type=Anything>
+        (ModelType type)
+    =>  ValueConstructorImpl<Type>(type);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Value<Get, Set>
@@ -160,5 +175,23 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
         throw AssertionError(
             "Meta expressions not yet supported for type declaration type: \
             ``className(d)``");
+    }
+}
+
+// TODO remove if not needed
+CallableConstructor<Type> | ValueConstructor<Type>
+newConstructor<out Type=Anything>(ModelType modelType) {
+    switch (d = modelType.declaration)
+    case (is ModelValueConstructor) {
+        return newValueConstructor<Type>(modelType);
+    }
+    case (is ModelCallableConstructor) {
+        return newValueConstructor<Type>(modelType);
+    }
+    case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
+                ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
+                ModelTypeParameter) {
+        throw AssertionError(
+            "Argument does not represent a constructor; use newType() instead.");
     }
 }

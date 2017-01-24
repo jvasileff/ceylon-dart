@@ -11,6 +11,8 @@ import ceylon.dart.runtime.model {
     ModelDeclaration = Declaration,
     ModelTypeAlias = TypeAlias,
     ModelConstructor = Constructor,
+    ModelValueConstructor = ValueConstructor,
+    ModelCallableConstructor = CallableConstructor,
     ModelIntersectionType = IntersectionType,
     ModelUnionType = UnionType,
     ModelUnknownType = UnknownType,
@@ -21,7 +23,8 @@ import ceylon.dart.runtime.model {
 import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
-    AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration
+    AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration,
+    ValueConstructorDeclaration, CallableConstructorDeclaration
 }
 
 shared
@@ -36,10 +39,22 @@ InterfaceDeclaration newInterfaceDeclaration(ModelInterface model)
     =>  InterfaceDeclarationImpl(model);
 
 shared
-ConstructorDeclaration newConstructorDeclaration(ModelConstructor model) {
-    // TODO CallableValueDeclarationImpl if value constructor
-    return CallableConstructorDeclarationImpl(model);
-}
+CallableConstructorDeclaration newCallableConstructorDeclaration
+        (ModelCallableConstructor model)
+    =>  CallableConstructorDeclarationImpl(model);
+
+shared
+ValueConstructorDeclaration newValueConstructorDeclaration
+        (ModelValueConstructor model)
+    =>  ValueConstructorDeclarationImpl(model);
+
+shared
+ConstructorDeclaration newConstructorDeclaration(ModelConstructor model)
+    =>  switch (model)
+        case (is ModelCallableConstructor)
+            CallableConstructorDeclarationImpl(model)
+        case (is ModelValueConstructor)
+            ValueConstructorDeclarationImpl(model);
 
 shared
 FunctionDeclaration newFunctionDeclaration(ModelFunction model)
