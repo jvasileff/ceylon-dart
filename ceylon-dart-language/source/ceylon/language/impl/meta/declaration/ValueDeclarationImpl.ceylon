@@ -28,6 +28,7 @@ import ceylon.language.impl.meta.model {
     modelTypeFromType,
     newType,
     newMethod,
+    newValue,
     newAttribute
 }
 
@@ -52,12 +53,35 @@ class ValueDeclarationImpl(modelDeclaration)
     shared actual
     ClassDeclaration? objectClass => nothing;
 
+    Value<> applyUnchecked() {
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
+        }
+
+        return newValue {
+            modelDeclaration.appliedTypedReference {
+                qualifyingType = null;
+                typeArguments = [];
+                varianceOverrides = emptyMap;
+            };
+        };
+    }
+
     shared actual
-    Value<Get, Set> apply<Get=Anything, Set=Nothing>() => nothing;
+    Value<Get, Set> apply<Get=Anything, Set=Nothing>() {
+        value result = applyUnchecked();
 
-    shared
+        if (!is Value<Get, Set> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Get or Set");
+        }
+
+        return result;
+    }
+
     Attribute<> memberApplyUnchecked(ClosedType<Object> containerType) {
-
         if (toplevel) {
             throw TypeApplicationException(
                 "Cannot apply a toplevel declaration to a container type: use apply");
@@ -82,7 +106,6 @@ class ValueDeclarationImpl(modelDeclaration)
     Attribute<Container, Get, Set>
     memberApply<Container=Nothing, Get=Anything, Set=Nothing>
             (ClosedType<Object> containerType) {
-
         value result = memberApplyUnchecked(containerType);
 
         if (!is Attribute<Container, Get, Set> result) {

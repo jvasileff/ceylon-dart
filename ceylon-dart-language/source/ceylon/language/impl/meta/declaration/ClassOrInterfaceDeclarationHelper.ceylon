@@ -122,10 +122,10 @@ interface ClassOrInterfaceDeclarationHelper
 
     shared
     ClosedType<> applyUnchecked(ClosedType<Anything>* typeArguments) {
-
         if (!toplevel) {
             throw TypeApplicationException(
-                "Cannot apply a member declaration to a toplevel type: use memberApply");
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
         }
 
         value modelTypeArgs

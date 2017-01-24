@@ -22,8 +22,8 @@ import ceylon.language.meta.model {
 }
 import ceylon.language.impl.meta.model {
     modelTypeFromType,
-    newType,
-    newMethod
+    newMethod,
+    newFunction
 }
 
 class FunctionDeclarationImpl(modelDeclaration)
@@ -36,13 +36,44 @@ class FunctionDeclarationImpl(modelDeclaration)
         modelDeclaration => outer.modelDeclaration;
     }
 
-    shared actual
-    Function<Return,Arguments>
-    apply<Return=Anything, Arguments=Nothing>(ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[]
-        =>  nothing;
+    Function<> applyUnchecked(ClosedType<Anything>* typeArguments) {
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
+        }
 
-    shared
+        value modelTypeArgs
+            =   typeArguments.collect(modelTypeFromType);
+
+        validateTypeArgumentsOrThrow {
+            null;
+            modelDeclaration;
+            modelTypeArgs;
+        };
+
+        return newFunction {
+            modelDeclaration.appliedTypedReference {
+                qualifyingType = null;
+                typeArguments = modelTypeArgs;
+                varianceOverrides = emptyMap;
+            };
+        };
+    }
+
+    shared actual
+    Function<Return,Arguments> apply<Return, Arguments>(ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[] {
+        value result = applyUnchecked(*typeArguments);
+
+        if (!is Function<Return, Arguments> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Return or Arguments");
+        }
+
+        return result;
+    }
+
     Method<> memberApplyUnchecked(
             ClosedType<Object> containerType,
             ClosedType<Anything>* typeArguments) {
