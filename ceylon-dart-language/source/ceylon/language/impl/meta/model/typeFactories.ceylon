@@ -1,6 +1,7 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
-    InterfaceModel, CallableConstructor, ValueConstructor,
+    InterfaceModel, CallableConstructor, ValueConstructor, ClassModel,
+    MemberClassCallableConstructor, MemberClassValueConstructor,
     IntersectionType, nothingType,
     Function, Method, Value, Attribute
 }
@@ -34,10 +35,24 @@ newCallableConstructor<out Type=Anything, in Arguments=Nothing>
     =>  CallableConstructorImpl<Type, Arguments>(type);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
+shared MemberClassCallableConstructor<Container, Type>
+newMemberClassCallableConstructor
+        <in Container = Nothing, out Type=Object, in Arguments=Nothing>
+        (ModelType type)
+        given Arguments satisfies Anything[]
+    =>  MemberClassCallableConstructorImpl<Container, Type, Arguments>(type);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
 shared ValueConstructor<Type>
 newValueConstructor<out Type=Anything>
         (ModelType type)
     =>  ValueConstructorImpl<Type>(type);
+
+// FIXME make this native & provide correct type arguments to the type's constructor
+shared MemberClassValueConstructor<Container, Type>
+newMemberClassValueConstructor<in Container = Nothing, out Type=Object>
+        (ModelType type)
+    =>  MemberClassValueConstructorImpl<Container, Type>(type);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Value<Get, Set>
@@ -139,6 +154,11 @@ shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
     }
 }
 
+shared ClassModel<Type> newClassModel<out Type=Anything>(ModelType modelType)
+    =>  if (modelType.declaration.isMember)
+        then newMemberClass(modelType)
+        else newClass(modelType);
+
 shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberInterface(modelType)
@@ -155,9 +175,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
 
     switch (d = modelType.declaration)
     case (is ModelClass) {
-        return if (d.isMember)
-               then newMemberClass(modelType)
-               else newClass(modelType);
+        return newClassModel(modelType);
     }
     case (is ModelInterface) {
         return newInterfaceModel(modelType);
@@ -171,7 +189,11 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     case (is ModelNothingDeclaration) {
         return nothingType;
     }
-    case (is ModelTypeAlias | ModelConstructor | ModelUnknownType | ModelTypeParameter) {
+    case (is ModelConstructor) {
+        throw AssertionError(
+            "Constructors are not supported; use newConstructor() instead.");
+    }
+    case (is ModelTypeAlias | ModelUnknownType | ModelTypeParameter) {
         throw AssertionError(
             "Meta expressions not yet supported for type declaration type: \
             ``className(d)``");
