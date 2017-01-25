@@ -5,10 +5,11 @@ import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
-    ValueConstructor, Class
+    ValueConstructor
 }
 import ceylon.dart.runtime.model {
     ModelValueConstructor = ValueConstructor,
+    ModelDeclaration = Declaration,
     ModelType = Type
 }
 
@@ -19,6 +20,10 @@ class ValueConstructorImpl<out Type=Object>(modelType)
 
     "The declaration for a Constructor Type must be a ValueConstructor"
     assert (modelType.declaration is ModelValueConstructor);
+
+    "A ValueConstructor must have a toplevel container"
+    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+            modelClass.isToplevel);
 
     object helper
             satisfies ValueModelHelper<Type> & GettableHelper<Type, Nothing> {
@@ -31,16 +36,16 @@ class ValueConstructorImpl<out Type=Object>(modelType)
         return newValueConstructorDeclaration(model);
     }
 
-    shared actual
-    Class<Type, Nothing> container {
-        // FIXME is this right? (See also CallableConstructorImpl)
-        assert (exists qt = modelType.qualifyingType);
-        return newClass<Type, Nothing>(qt);
-    }
+    container => type;
 
     // ValueModel
 
-    type => ClassImpl(modelType);
+    ModelType modelQualifyingType {
+        assert (exists qt = modelType.qualifyingType);
+        return qt;
+    }
+
+    type => newClass<Type>(modelQualifyingType);
 
     // Gettable
 

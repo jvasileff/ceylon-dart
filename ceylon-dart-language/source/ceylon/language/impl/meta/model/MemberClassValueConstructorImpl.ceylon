@@ -1,14 +1,15 @@
 import ceylon.language.impl.meta.declaration {
-    newConstructorDeclaration
+    newValueConstructorDeclaration
 }
 import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
-    MemberClassValueConstructor, ValueConstructor, Class
+    MemberClass, MemberClassValueConstructor, ValueConstructor, Class
 }
 import ceylon.dart.runtime.model {
-    ModelConstructor = Constructor,
+    ModelValueConstructor = ValueConstructor,
+    ModelDeclaration = Declaration,
     ModelType = Type
 }
 
@@ -17,25 +18,28 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
 
     shared ModelType modelType;
 
-    "The declaration for a Constructor Type must be a Constructor"
-    assert (modelType.declaration is ModelConstructor);
+    "The declaration for a value constructor must be a value constructor"
+    assert (modelType.declaration is ModelValueConstructor);
+
+    "A MemberClassValueConstructor must not have a toplevel container"
+    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+            !modelClass.isToplevel);
 
     shared actual
     ValueConstructorDeclaration declaration {
-        assert (is ModelConstructor model = modelType.declaration);
-        assert (is ValueConstructorDeclaration result = newConstructorDeclaration(model));
-        return result;
+        assert (is ModelValueConstructor model = modelType.declaration);
+        return newValueConstructorDeclaration(model);
     }
 
     shared actual
     ValueConstructor<Type> bind(Object container) => nothing;
 
-    shared actual
-    Class<Type, Nothing> container {
-        // FIXME is this right? (See also CallableConstructorImpl)
+    ModelType modelQualifyingType {
         assert (exists qt = modelType.qualifyingType);
-        return newClass<Type, Nothing>(qt);
+        return qt;
     }
 
-    type => newMemberClass(modelType);
+    container => type;
+
+    type => newMemberClass<Container, Type>(modelQualifyingType);
 }

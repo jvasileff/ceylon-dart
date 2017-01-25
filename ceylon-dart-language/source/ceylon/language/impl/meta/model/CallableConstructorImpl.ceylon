@@ -8,10 +8,11 @@ import ceylon.language.meta.declaration {
     CallableConstructorDeclaration
 }
 import ceylon.language.meta.model {
-    CallableConstructor, ClassModel
+    CallableConstructor
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
+    ModelDeclaration = Declaration,
     ModelCallableConstructor = CallableConstructor
 }
 
@@ -24,6 +25,10 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
     "The declaration for a Constructor Type must be a CallableConstructor"
     assert (modelType.declaration is ModelCallableConstructor);
 
+    "A CallableConstructor must have a toplevel container"
+    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+            modelClass.isToplevel);
+
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {
         modelType => outer.modelType;
@@ -35,16 +40,16 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
         return newCallableConstructorDeclaration(model);
     }
 
-    shared actual
-    ClassModel<Type, Nothing> container {
-        // FIXME is this right? (See also ValueConstructorImpl)
-        assert (exists qt = modelType.qualifyingType);
-        return newClass<Type, Nothing>(qt);
-    }
+    container => type;
 
     // Functional
 
-    type => newClass(modelType);
+    ModelType modelQualifyingType {
+        assert (exists qt = modelType.qualifyingType);
+        return qt;
+    }
+
+    type => newClass<Type>(modelQualifyingType);
 
     // FunctionModel
 

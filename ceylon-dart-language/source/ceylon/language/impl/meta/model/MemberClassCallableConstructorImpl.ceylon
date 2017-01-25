@@ -1,5 +1,5 @@
 import ceylon.language.impl.meta.declaration {
-    newConstructorDeclaration
+    newCallableConstructorDeclaration
 }
 import ceylon.language.impl.meta.model {
     newClass, newMemberClass
@@ -14,7 +14,8 @@ import ceylon.language.meta.model {
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelConstructor = Constructor
+    ModelDeclaration = Declaration,
+    ModelCallableConstructor = CallableConstructor
 }
 
 class MemberClassCallableConstructorImpl
@@ -24,8 +25,12 @@ class MemberClassCallableConstructorImpl
 
     shared ModelType modelType;
 
-    "The declaration for a Constructor Type must be a Constructor"
-    assert (modelType.declaration is ModelConstructor);
+    "The declaration for a callable constructor must be a callable constructor"
+    assert (modelType.declaration is ModelCallableConstructor);
+
+    "A MemberClassCallableConstructor must not have a toplevel container"
+    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+            !modelClass.isToplevel);
 
     object helper satisfies FunctionModelHelper<Type, Arguments> {
         modelType => outer.modelType;
@@ -33,27 +38,23 @@ class MemberClassCallableConstructorImpl
 
     shared actual
     CallableConstructorDeclaration declaration {
-        assert (is ModelConstructor model
-            =   modelType.declaration);
-
-        assert (is CallableConstructorDeclaration result
-            =   newConstructorDeclaration(model));
-
-        return result;
+        assert (is ModelCallableConstructor model = modelType.declaration);
+        return newCallableConstructorDeclaration(model);
     }
 
-    shared actual ClassModel<Type, Nothing> container {
-        // FIXME is this right?
-        assert (exists qt = modelType.qualifyingType);
-        return newClass<Type, Nothing>(qt);
-    }
+    container => type;
 
     shared actual
     CallableConstructor<Type, Arguments> bind(Object container) => nothing;
 
     // Functional
 
-    type => newMemberClass(modelType);
+    ModelType modelQualifyingType {
+        assert (exists qt = modelType.qualifyingType);
+        return qt;
+    }
+
+    type => newMemberClass<Container, Type>(modelQualifyingType);
 
     // FunctionModel
 
