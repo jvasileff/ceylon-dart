@@ -11,7 +11,14 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     ClosedType = Type,
     CallableConstructor,
-    MemberClassCallableConstructor
+    MemberClassCallableConstructor,
+    IncompatibleTypeException
+}
+import ceylon.language.impl.meta.model {
+    modelTypeFromType,
+    newValueConstructor,
+    newCallableConstructor,
+    newMemberClassCallableConstructor
 }
 
 class CallableConstructorDeclarationImpl(modelDeclaration)
@@ -34,18 +41,46 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
         =>  nothing;
 
     shared actual
-    CallableConstructor<Result,Arguments>
-    apply<Result=Object,Arguments=Nothing>
+    CallableConstructor<Result, Arguments>
+    apply<Result=Object, Arguments=Nothing>
             (ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[]
-        =>  nothing;
+            given Arguments satisfies Anything[] {
+        value result
+            =   newCallableConstructor<> {
+                    modelDeclaration.appliedType {
+                        modelTypeFromType {
+                            container.apply<>(*typeArguments);
+                        };
+                        [];
+                    };
+                };
+        if (!is CallableConstructor<Result, Arguments> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Result or Arguments");
+        }
+        return result;
+    }
 
     shared actual
     MemberClassCallableConstructor<Container,Result,Arguments>
     memberApply<Container=Nothing,Result=Object,Arguments=Nothing>
             (ClosedType<Object> containerType, ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[]
-        =>  nothing;
+            given Arguments satisfies Anything[] {
+        value result
+            =   newMemberClassCallableConstructor<> {
+                    modelDeclaration.appliedType {
+                        modelTypeFromType {
+                            container.memberApply<>(containerType, *typeArguments);
+                        };
+                        [];
+                    };
+                };
+        if (!is MemberClassCallableConstructor<Container, Result, Arguments> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Container, Result or Arguments");
+        }
+        return result;
+    }
 
     // FunctionalDeclaration
 

@@ -1,5 +1,5 @@
 import ceylon.dart.runtime.model {
-    ModelConstructor = Constructor
+    ModelValueConstructor = ValueConstructor
 }
 import ceylon.language {
     AnnotationType = Annotation
@@ -13,11 +13,16 @@ import ceylon.language.meta.model {
     ValueConstructor,
     MemberClassValueConstructor
 }
+import ceylon.language.impl.meta.model {
+    modelTypeFromType,
+    newValueConstructor,
+    newMemberClassValueConstructor
+}
 
 class ValueConstructorDeclarationImpl(modelDeclaration)
         satisfies ValueConstructorDeclaration {
 
-    shared ModelConstructor modelDeclaration;
+    shared ModelValueConstructor modelDeclaration;
 
     object helper satisfies NestableDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;
@@ -25,13 +30,29 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
 
     shared actual
     ValueConstructor<Result> apply<Result=Object>()
-        =>  nothing;
+        =>  newValueConstructor<Result> {
+                modelDeclaration.appliedType {
+                    modelTypeFromType {
+                        // TODO call with <> and perform our own type arg checking
+                        container.apply<Result>();
+                    };
+                    [];
+                };
+            };
 
     shared actual
-    MemberClassValueConstructor<Container,Result>
-    memberApply<Container=Nothing,Result=Object>
+    MemberClassValueConstructor<Container, Result>
+    memberApply<Container=Nothing, Result=Object>
             (ClosedType<Object> containerType)
-        =>  nothing;
+        =>  newMemberClassValueConstructor<Container, Result> {
+                modelDeclaration.appliedType {
+                    modelTypeFromType {
+                        // TODO call with <> and perform our own type arg checking
+                        container.memberApply<Container, Result>(containerType);
+                    };
+                    [];
+                };
+            };
 
     // Declaration
 
