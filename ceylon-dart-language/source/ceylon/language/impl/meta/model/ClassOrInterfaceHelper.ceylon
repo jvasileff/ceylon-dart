@@ -73,13 +73,8 @@ interface ClassOrInterfaceHelper<out Type>
             [ClosedType<Anything>*] types)
             given Kind satisfies ClassOrInterface<Anything> {
 
-        if (!exists modelMember) {
-            return null;
-        }
-
         if (!is ModelClassOrInterface modelMember) {
-            throw IncompatibleTypeException(
-                "Specified member is not a class or interface: ``modelMember.name``");
+            return null;
         }
 
         value result
@@ -128,13 +123,8 @@ interface ClassOrInterfaceHelper<out Type>
             [ClosedType<Anything>*] types)
             given Arguments satisfies Anything[] {
 
-        if (!exists modelMember) {
-            return null;
-        }
-
         if (!is ModelClass modelMember) {
-            throw IncompatibleTypeException(
-                "Specified member is not a class: ``modelMember.name``");
+            return null;
         }
 
         return newClassDeclaration(modelMember)
@@ -175,13 +165,8 @@ interface ClassOrInterfaceHelper<out Type>
             ModelDeclaration? modelMember,
             [ClosedType<Anything>*] types) {
 
-        if (!exists modelMember) {
-            return null;
-        }
-
         if (!is ModelInterface modelMember) {
-            throw IncompatibleTypeException(
-                "Specified member is not an interface: ``modelMember.name``");
+            return null;
         }
 
         value result
@@ -226,13 +211,8 @@ interface ClassOrInterfaceHelper<out Type>
             [ClosedType<Anything>*] types)
             given Arguments satisfies Anything[] {
 
-        if (!exists modelMember) {
-            return null;
-        }
-
         if (!is ModelFunction modelMember) {
-            throw IncompatibleTypeException(
-                "Specified member is not a method: ``modelMember.name``");
+            return null;
         }
 
         return newFunctionDeclaration(modelMember)
@@ -272,13 +252,8 @@ interface ClassOrInterfaceHelper<out Type>
             ModelType modelQualifyingType,
             ModelDeclaration? modelMember) {
 
-        if (!exists modelMember) {
-            return null;
-        }
-
         if (!is ModelValue modelMember) {
-            throw IncompatibleTypeException(
-                "Specified member is not a value: ``modelMember.name``");
+            return null;
         }
 
         return newValueDeclaration(modelMember)
