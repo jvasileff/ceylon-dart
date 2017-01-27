@@ -32,13 +32,6 @@ interface ClassModelHelper<out Type>
             given Arguments satisfies Anything[]
         =>  nothing;
 
-
-    shared
-    FunctionModel<Type, Arguments>|ValueModel<Type>? getDeclaredConstructor<Arguments>
-            (String name)
-            given Arguments satisfies Anything[]
-        =>  nothing;
-
     shared
     ValueModel<Type>[] getDeclaredValueConstructors
             (ClosedType<Annotation>* annotationTypes)

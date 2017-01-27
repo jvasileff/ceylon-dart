@@ -16,6 +16,7 @@ import ceylon.dart.runtime.model {
     ModelTypeParameter = TypeParameter,
     ModelInterface = Interface,
     ModelFunction = Function,
+    ModelPackage = Package,
     ModelUnknownType = UnknownType,
     ModelValue = Value,
     ModelSetter = Setter,
@@ -35,7 +36,7 @@ newCallableConstructor<out Type=Anything, in Arguments=Nothing>
     =>  CallableConstructorImpl<Type, Arguments>(type);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
-shared MemberClassCallableConstructor<Container, Type>
+shared MemberClassCallableConstructor<Container, Type, Arguments>
 newMemberClassCallableConstructor
         <in Container = Nothing, out Type=Object, in Arguments=Nothing>
         (ModelType type)
@@ -200,15 +201,43 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     }
 }
 
-// TODO remove if not needed
-CallableConstructor<Type> | ValueConstructor<Type>
-newConstructor<out Type=Anything>(ModelType modelType) {
+MemberClassCallableConstructor<Container, Type, Arguments> |
+MemberClassValueConstructor<Container, Type>
+newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
+        (ModelType modelType)
+        given Arguments satisfies Anything[] {
+
+    "must be constructor for a member class (use newConstructor())"
+    assert(modelType.declaration.container is ModelClass);
+
+    switch (d = modelType.declaration)
+    case (is ModelValueConstructor) {
+        return newMemberClassValueConstructor<Container, Type>(modelType);
+    }
+    case (is ModelCallableConstructor) {
+        return newMemberClassCallableConstructor<Container, Type, Arguments>(modelType);
+    }
+    case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
+                ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
+                ModelTypeParameter) {
+        throw AssertionError(
+            "Argument does not represent a constructor; use newType() instead.");
+    }
+}
+
+CallableConstructor<Type, Arguments> | ValueConstructor<Type>
+newConstructor<out Type=Anything, in Arguments=Nothing>(ModelType modelType)
+        given Arguments satisfies Anything[] {
+
+    "must be constructor for a toplevel class (use newMemberClassConstructor())"
+    assert(modelType.declaration.container is ModelPackage);
+
     switch (d = modelType.declaration)
     case (is ModelValueConstructor) {
         return newValueConstructor<Type>(modelType);
     }
     case (is ModelCallableConstructor) {
-        return newValueConstructor<Type>(modelType);
+        return newCallableConstructor<Type, Arguments>(modelType);
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |

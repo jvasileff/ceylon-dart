@@ -1,11 +1,24 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, ClassOrInterface, Member,
     MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
-    CallableConstructor, ValueConstructor
+    CallableConstructor, ValueConstructor,
+    IncompatibleTypeException,
+    MemberClassValueConstructor,
+    MemberClassCallableConstructor
+}
+import ceylon.language.impl.meta.model {
+    newClass, newMemberClass, newConstructor
+}
+import ceylon.language.meta.declaration {
+    CallableConstructorDeclaration
+}
+import ceylon.language.impl.meta.declaration {
+    newConstructorDeclaration
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelClass = Class
+    ModelClass = Class,
+    ModelConstructor = Constructor
 }
 
 class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
@@ -16,7 +29,7 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
     shared actual ModelType modelType;
 
     "The declaration for a Class Type must be a Class"
-    assert (modelType.declaration is ModelClass);
+    assert (is ModelClass modelDeclaration = modelType.declaration);
 
     shared actual object helper
             satisfies ClassModelHelper<Type> & ApplicableHelper<Type, Arguments> {
@@ -24,15 +37,60 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
         modelType => outer.modelType;
     }
 
+    CallableConstructor<Type, Arguments> | ValueConstructor<Type>?
+    getConstructorInternal<Arguments>(String name, Boolean allowUnshared)
+            given Arguments satisfies Anything[] {
+
+        // TODO special case "constructor" for class initializers, to use as
+        //      the default constructor (name == "")
+
+        value modelConstructor = modelDeclaration.getDirectMember(name);
+        if (!is ModelConstructor modelConstructor) {
+            return null;
+        }
+        if (!allowUnshared && !modelConstructor.isShared) {
+            return null;
+        }
+
+        if (modelDeclaration.isToplevel) {
+            value result = newConstructor<> {
+                modelConstructor.appliedType(modelType, [], emptyMap);
+            };
+            if (!is CallableConstructor<Type, Arguments>
+                    | ValueConstructor<Type> result) {
+                // TODO improve
+                throw IncompatibleTypeException("Incorrect Type or Arguments");
+            }
+            return result;
+        }
+        else {
+            // we are a member class that has been bound to a containing instance
+            value memberClassConstructor = newMemberClassConstructor<> {
+                modelConstructor.appliedType(modelType, [], emptyMap);
+            };
+            if (!is MemberClassCallableConstructor<Nothing, Type, Arguments>
+                    | MemberClassValueConstructor<Nothing, Type>
+                    memberClassConstructor) {
+                // TODO improve
+                throw IncompatibleTypeException("Incorrect Type or Arguments");
+            }
+            // FIXME argument should be the container instance
+            return memberClassConstructor(nothing);
+        }
+    }
+
     shared actual
     CallableConstructor<Type, Arguments>? defaultConstructor
-        =>  nothing;
+        =>  if (is CallableConstructor<> result
+                =   getConstructorInternal<Arguments>("", false))
+            then result
+            else null;
 
     shared actual
     CallableConstructor<Type, Arguments>|ValueConstructor<Type>?
     getConstructor<Arguments>(String name)
             given Arguments satisfies Anything[]
-        =>  nothing;
+        =>  getConstructorInternal(name, false);
 
     // Applicable
 
@@ -62,7 +120,8 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
     getDeclaredConstructor<Arguments>
             (String name)
             given Arguments satisfies Anything[]
-        =>  helper.getDeclaredConstructor<Arguments>(name);
+        // TODO why the crummy return type?
+        =>  getConstructorInternal(name, true);
 
     getDeclaredValueConstructors(ClosedType<Annotation>* annotationTypes)
         =>  helper.getDeclaredValueConstructors(*annotationTypes);

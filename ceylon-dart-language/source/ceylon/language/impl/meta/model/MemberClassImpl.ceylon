@@ -2,11 +2,13 @@ import ceylon.language.meta.model {
     ClosedType = Type, Class, ClassOrInterface, Member,
     MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
     MemberClassCallableConstructor,
-    MemberClassValueConstructor
+    MemberClassValueConstructor,
+    IncompatibleTypeException
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelClass = Class
+    ModelClass = Class,
+    ModelConstructor = Constructor
 }
 
 class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
@@ -18,12 +20,41 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     shared actual ModelType modelType;
 
     "The declaration for a Class Type must be a Class"
-    assert (modelType.declaration is ModelClass);
+    assert (is ModelClass modelDeclaration = modelType.declaration);
 
     shared actual
     object helper satisfies ClassModelHelper<Type> & MemberHelper {
         thisType => outer;
         modelType => outer.modelType;
+    }
+
+    MemberClassCallableConstructor<Container, Type, Arguments> |
+    MemberClassValueConstructor<Container, Type>?
+    getConstructorInternal<Arguments>(String name, Boolean allowUnshared)
+            given Arguments satisfies Anything[] {
+
+        // TODO special case "constructor" for class initializers, to use as
+        //      the default constructor (name == "")
+
+        value modelConstructor = modelDeclaration.getDirectMember(name);
+        if (!is ModelConstructor modelConstructor) {
+            return null;
+        }
+        if (!allowUnshared && !modelConstructor.isShared) {
+            return null;
+        }
+
+        value memberClassConstructor = newMemberClassConstructor<> {
+            modelConstructor.appliedType(modelType, [], emptyMap);
+        };
+        if (!is MemberClassCallableConstructor<Container, Type, Arguments>
+                | MemberClassValueConstructor<Container, Type>
+                memberClassConstructor) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Type or Arguments");
+        }
+
+        return memberClassConstructor;
     }
 
     shared actual
@@ -35,11 +66,11 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
         =>  nothing;
 
     shared actual
-    MemberClassCallableConstructor<Container,Type,Arguments>
-    | MemberClassValueConstructor<Container,Type>?
+    MemberClassCallableConstructor<Container,Type,Arguments> |
+    MemberClassValueConstructor<Container,Type>?
     getConstructor<Arguments>(String name)
             given Arguments satisfies Anything[]
-        =>  nothing;
+        =>  getConstructorInternal<Arguments>(name, false);
 
     // Member
 
@@ -68,7 +99,8 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     getDeclaredConstructor<Arguments>
             (String name)
             given Arguments satisfies Anything[]
-        =>  helper.getDeclaredConstructor<Arguments>(name);
+        // TODO better would be MemberClass*Constructor<>, right?
+        =>  getConstructorInternal<Arguments>(name, true);
 
     getDeclaredValueConstructors(ClosedType<Annotation>* annotationTypes)
         =>  helper.getDeclaredValueConstructors(*annotationTypes);
