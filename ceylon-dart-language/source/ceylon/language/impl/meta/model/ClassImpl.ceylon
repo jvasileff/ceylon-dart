@@ -21,7 +21,9 @@ import ceylon.dart.runtime.model {
     ModelConstructor = Constructor
 }
 
-class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
+class ClassImpl<out Type=Anything, in Arguments=Nothing>(
+        modelType,
+        Anything qualifyingInstance = null)
         extends TypeImpl<Type>()
         satisfies Class<Type, Arguments>
         given Arguments satisfies Anything[] {
@@ -51,32 +53,16 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(modelType)
         if (!allowUnshared && !modelConstructor.isShared) {
             return null;
         }
-
-        if (modelDeclaration.isToplevel) {
-            value result = newConstructor<> {
-                modelConstructor.appliedType(modelType, [], emptyMap);
-            };
-            if (!is CallableConstructor<Type, Arguments>
-                    | ValueConstructor<Type> result) {
-                // TODO improve
-                throw IncompatibleTypeException("Incorrect Type or Arguments");
-            }
-            return result;
+        value result = newConstructor<> {
+            modelConstructor.appliedType(modelType, [], emptyMap);
+            qualifyingInstance;
+        };
+        if (!is CallableConstructor<Type, Arguments>
+                | ValueConstructor<Type> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Type or Arguments");
         }
-        else {
-            // we are a member class that has been bound to a containing instance
-            value memberClassConstructor = newMemberClassConstructor<> {
-                modelConstructor.appliedType(modelType, [], emptyMap);
-            };
-            if (!is MemberClassCallableConstructor<Nothing, Type, Arguments>
-                    | MemberClassValueConstructor<Nothing, Type>
-                    memberClassConstructor) {
-                // TODO improve
-                throw IncompatibleTypeException("Incorrect Type or Arguments");
-            }
-            // FIXME argument should be the container instance
-            return memberClassConstructor(nothing);
-        }
+        return result;
     }
 
     shared actual

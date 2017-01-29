@@ -28,7 +28,7 @@ interface ClassOrInterfaceHelper<out Type>
     shared
     ClassModel<>? extendedType
         =>  if (exists et = modelType.declaration.extendedType)
-            then newClass(et)
+            then newClassModel(et)
             else null;
 
     shared

@@ -13,7 +13,9 @@ import ceylon.language.impl.meta.declaration {
     InterfaceDeclarationImpl
 }
 
-class InterfaceImpl<out Type=Anything>(modelType)
+class InterfaceImpl<out Type=Anything>(
+        modelType,
+        Anything qualifyingInstance = null)
         extends TypeImpl<Type>()
         satisfies Interface<Type> {
 

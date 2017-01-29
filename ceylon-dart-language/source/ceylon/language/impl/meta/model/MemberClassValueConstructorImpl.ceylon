@@ -1,11 +1,16 @@
 import ceylon.language.impl.meta.declaration {
     newValueConstructorDeclaration
 }
+import ceylon.language.meta {
+    metaType = type
+}
 import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
-    MemberClass, MemberClassValueConstructor, ValueConstructor, Class
+    MemberClassValueConstructor,
+    ValueConstructor,
+    IncompatibleTypeException
 }
 import ceylon.dart.runtime.model {
     ModelValueConstructor = ValueConstructor,
@@ -32,7 +37,18 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
     }
 
     shared actual
-    ValueConstructor<Type> bind(Object container) => nothing;
+    ValueConstructor<Type> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` metaType(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    ValueConstructor<Type> bindSafe(Container container)
+        =>  newValueConstructor(modelType, container);
 
     ModelType modelQualifyingType {
         assert (exists qt = modelType.qualifyingType);

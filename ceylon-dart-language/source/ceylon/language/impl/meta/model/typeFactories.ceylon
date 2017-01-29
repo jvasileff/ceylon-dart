@@ -30,10 +30,11 @@ import ceylon.dart.runtime.model.runtime {
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared CallableConstructor<Type, Arguments>
-newCallableConstructor<out Type=Anything, in Arguments=Nothing>
-        (ModelType type)
+newCallableConstructor<out Type=Anything, in Arguments=Nothing>(
+        ModelType type,
+        Anything qualifyingInstance)
         given Arguments satisfies Anything[]
-    =>  CallableConstructorImpl<Type, Arguments>(type);
+    =>  CallableConstructorImpl<Type, Arguments>(type, qualifyingInstance);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared MemberClassCallableConstructor<Container, Type, Arguments>
@@ -45,9 +46,10 @@ newMemberClassCallableConstructor
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared ValueConstructor<Type>
-newValueConstructor<out Type=Anything>
-        (ModelType type)
-    =>  ValueConstructorImpl<Type>(type);
+newValueConstructor<out Type=Anything>(
+        ModelType type,
+        Anything qualifyingInstance)
+    =>  ValueConstructorImpl<Type>(type, qualifyingInstance);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared MemberClassValueConstructor<Container, Type>
@@ -82,13 +84,14 @@ newMethod<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
     =>  MethodImpl<Container, Type, Arguments>(typedReference);
 
 // FIXME make this native & provide correct type arguments to the type's constructor
-shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>
-        (ModelType | TypeDescriptor type)
+shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>(
+        ModelType | TypeDescriptor type,
+        Anything qualifyingInstance)
         given Arguments satisfies Anything[]
     =>  ClassImpl<Type, Arguments> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
+            if (is TypeDescriptor type) then type.type else type;
+            // as with the type arguments, not validating the container instance
+            qualifyingInstance;
         };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
@@ -103,11 +106,14 @@ newMemberClass<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
         };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
-shared Interface<Type> newInterface<out Type=Anything>(ModelType | TypeDescriptor type)
+shared Interface<Type> newInterface<out Type=Anything>(
+        ModelType | TypeDescriptor type,
+        Anything qualifyingInstance)
     =>  InterfaceImpl<Type> {
             if (is TypeDescriptor type)
-            then type.type
-            else type;
+                then type.type
+                else type;
+            qualifyingInstance;
         };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
@@ -158,12 +164,12 @@ shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
 shared ClassModel<Type> newClassModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberClass(modelType)
-        else newClass(modelType);
+        else newClass(modelType, null);
 
 shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberInterface(modelType)
-        else newInterface(modelType);
+        else newInterface(modelType, null);
 
 "Return the ceylon metamodel type for the type. The type parameters are not actually
  used or verified, but are provided as a convenience in order for callers to avoid an
@@ -226,18 +232,21 @@ newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Argument
 }
 
 CallableConstructor<Type, Arguments> | ValueConstructor<Type>
-newConstructor<out Type=Anything, in Arguments=Nothing>(ModelType modelType)
+newConstructor<out Type=Anything, in Arguments=Nothing>(
+        ModelType modelType,
+        Anything qualifyingInstance)
         given Arguments satisfies Anything[] {
 
-    "must be constructor for a toplevel class (use newMemberClassConstructor())"
-    assert(modelType.declaration.container is ModelPackage);
+    "A containing instance must be provided xor the constructor must be for a
+     toplevel class"
+    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
 
     switch (d = modelType.declaration)
     case (is ModelValueConstructor) {
-        return newValueConstructor<Type>(modelType);
+        return newValueConstructor<Type>(modelType, qualifyingInstance);
     }
     case (is ModelCallableConstructor) {
-        return newCallableConstructor<Type, Arguments>(modelType);
+        return newCallableConstructor<Type, Arguments>(modelType, qualifyingInstance);
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |

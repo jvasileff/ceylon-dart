@@ -1,6 +1,10 @@
+import ceylon.language.meta {
+    type
+}
 import ceylon.language.meta.model {
     ClosedType = Type, Interface, ClassOrInterface, Member,
-    MemberClass, MemberInterface, Method, Attribute
+    MemberClass, MemberInterface, Method, Attribute,
+    IncompatibleTypeException
 }
 import ceylon.language.meta.declaration {
     InterfaceDeclaration
@@ -33,7 +37,18 @@ class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
     }
 
     shared actual
-    Interface<Type> bind(Object container) => nothing;
+    Interface<Type> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` type(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    Interface<Type> bindSafe(Container container)
+        =>  newInterface(modelType, container);
 
     // Member
 

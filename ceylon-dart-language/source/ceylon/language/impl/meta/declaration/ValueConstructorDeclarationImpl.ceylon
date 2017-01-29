@@ -11,7 +11,9 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     ClosedType = Type,
     ValueConstructor,
-    MemberClassValueConstructor
+    MemberClassValueConstructor,
+    TypeApplicationException,
+    IncompatibleTypeException
 }
 import ceylon.language.impl.meta.model {
     modelTypeFromType,
@@ -29,30 +31,59 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
     }
 
     shared actual
-    ValueConstructor<Result> apply<Result=Object>()
-        =>  newValueConstructor<Result> {
-                modelDeclaration.appliedType {
-                    modelTypeFromType {
-                        // TODO call with <> and perform our own type arg checking
-                        container.apply<Result>();
+    ValueConstructor<Result> apply<Result = Object>() {
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
+        }
+
+        value result
+            =   newValueConstructor<> {
+                    modelDeclaration.appliedType {
+                        modelTypeFromType {
+                            container.apply<>();
+                        };
+                        [];
                     };
-                    [];
+                    null;
                 };
-            };
+
+        if (!is ValueConstructor<Result> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Result");
+        }
+
+        return result;
+    }
 
     shared actual
     MemberClassValueConstructor<Container, Result>
     memberApply<Container=Nothing, Result=Object>
-            (ClosedType<Object> containerType)
-        =>  newMemberClassValueConstructor<Container, Result> {
-                modelDeclaration.appliedType {
-                    modelTypeFromType {
-                        // TODO call with <> and perform our own type arg checking
-                        container.memberApply<Container, Result>(containerType);
+            (ClosedType<Object> containerType) {
+
+        if (toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a toplevel declaration to a container type: use apply");
+        }
+
+        value result
+            =   newMemberClassValueConstructor<> {
+                    modelDeclaration.appliedType {
+                        modelTypeFromType {
+                            container.memberApply<>(containerType);
+                        };
+                        [];
                     };
-                    [];
                 };
-            };
+
+        if (!is MemberClassValueConstructor<Container, Result> result) {
+            // TODO improve
+            throw IncompatibleTypeException("Incorrect Container or Result");
+        }
+
+        return result;
+    }
 
     // Declaration
 

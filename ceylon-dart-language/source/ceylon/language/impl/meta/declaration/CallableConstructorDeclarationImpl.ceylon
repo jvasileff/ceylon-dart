@@ -12,11 +12,11 @@ import ceylon.language.meta.model {
     ClosedType = Type,
     CallableConstructor,
     MemberClassCallableConstructor,
-    IncompatibleTypeException
+    IncompatibleTypeException,
+    TypeApplicationException
 }
 import ceylon.language.impl.meta.model {
     modelTypeFromType,
-    newValueConstructor,
     newCallableConstructor,
     newMemberClassCallableConstructor
 }
@@ -45,6 +45,13 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
     apply<Result=Object, Arguments=Nothing>
             (ClosedType<>* typeArguments)
             given Arguments satisfies Anything[] {
+
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
+        }
+
         value result
             =   newCallableConstructor<> {
                     modelDeclaration.appliedType {
@@ -53,11 +60,14 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
                         };
                         [];
                     };
+                    null;
                 };
+
         if (!is CallableConstructor<Result, Arguments> result) {
             // TODO improve
             throw IncompatibleTypeException("Incorrect Result or Arguments");
         }
+
         return result;
     }
 
@@ -66,6 +76,12 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
     memberApply<Container=Nothing,Result=Object,Arguments=Nothing>
             (ClosedType<Object> containerType, ClosedType<>* typeArguments)
             given Arguments satisfies Anything[] {
+
+        if (toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a toplevel declaration to a container type: use apply");
+        }
+
         value result
             =   newMemberClassCallableConstructor<> {
                     modelDeclaration.appliedType {
@@ -75,10 +91,12 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
                         [];
                     };
                 };
+
         if (!is MemberClassCallableConstructor<Container, Result, Arguments> result) {
             // TODO improve
             throw IncompatibleTypeException("Incorrect Container, Result or Arguments");
         }
+
         return result;
     }
 

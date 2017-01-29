@@ -1,8 +1,11 @@
 import ceylon.language.impl.meta.declaration {
     newCallableConstructorDeclaration
 }
+import ceylon.language.meta {
+    metaType = type
+}
 import ceylon.language.impl.meta.model {
-    newClass, newMemberClass
+    newMemberClass
 }
 import ceylon.language.meta.declaration {
     CallableConstructorDeclaration
@@ -10,7 +13,7 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     CallableConstructor,
     MemberClassCallableConstructor,
-    ClassModel
+    IncompatibleTypeException
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
@@ -45,7 +48,18 @@ class MemberClassCallableConstructorImpl
     container => type;
 
     shared actual
-    CallableConstructor<Type, Arguments> bind(Object container) => nothing;
+    CallableConstructor<Type, Arguments> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` metaType(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    CallableConstructor<Type, Arguments> bindSafe(Container container)
+        =>  newCallableConstructor(modelType, container);
 
     // Functional
 

@@ -10,10 +10,13 @@ import ceylon.language.meta.model {
 import ceylon.dart.runtime.model {
     ModelValueConstructor = ValueConstructor,
     ModelDeclaration = Declaration,
-    ModelType = Type
+    ModelType = Type,
+    ModelPackage = Package
 }
 
-class ValueConstructorImpl<out Type=Object>(modelType)
+class ValueConstructorImpl<out Type=Object>(
+        modelType,
+        Anything qualifyingInstance = null)
         satisfies ValueConstructor<Type> {
 
     shared ModelType modelType;
@@ -21,9 +24,8 @@ class ValueConstructorImpl<out Type=Object>(modelType)
     "The declaration for a Constructor Type must be a ValueConstructor"
     assert (modelType.declaration is ModelValueConstructor);
 
-    "A ValueConstructor must have a toplevel container"
-    assert (is ModelDeclaration modelClass = modelType.declaration.container,
-            modelClass.isToplevel);
+    "A ValueConstructor must either be for a toplevel class or have a qualifyingInstance"
+    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
 
     object helper
             satisfies ValueModelHelper<Type> & GettableHelper<Type, Nothing> {
@@ -45,7 +47,8 @@ class ValueConstructorImpl<out Type=Object>(modelType)
         return qt;
     }
 
-    type => newClass<Type>(modelQualifyingType);
+    // TODO possibly change after https://github.com/ceylon/ceylon/issues/6903
+    type => newClass<Type>(modelQualifyingType, qualifyingInstance);
 
     // Gettable
 

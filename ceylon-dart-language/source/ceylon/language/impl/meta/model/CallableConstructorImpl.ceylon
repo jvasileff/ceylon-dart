@@ -13,10 +13,13 @@ import ceylon.language.meta.model {
 import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelDeclaration = Declaration,
+    ModelPackage = Package,
     ModelCallableConstructor = CallableConstructor
 }
 
-class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType)
+class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
+        modelType,
+        Anything qualifyingInstance = null)
         satisfies CallableConstructor<Type, Arguments>
         given Arguments satisfies Anything[] {
 
@@ -25,9 +28,9 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
     "The declaration for a Constructor Type must be a CallableConstructor"
     assert (modelType.declaration is ModelCallableConstructor);
 
-    "A CallableConstructor must have a toplevel container"
-    assert (is ModelDeclaration modelClass = modelType.declaration.container,
-            modelClass.isToplevel);
+    "A CallableConstructor must either be for a toplevel class or have a
+     qualifyingInstance"
+    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
 
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {
@@ -49,7 +52,8 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(modelType
         return qt;
     }
 
-    type => newClass<Type>(modelQualifyingType);
+    // TODO possibly change after https://github.com/ceylon/ceylon/issues/6903
+    type => newClassModel<Type>(modelQualifyingType);
 
     // FunctionModel
 

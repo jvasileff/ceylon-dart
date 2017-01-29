@@ -1,3 +1,6 @@
+import ceylon.language.meta {
+    type
+}
 import ceylon.language.meta.model {
     ClosedType = Type, Class, ClassOrInterface, Member,
     MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
@@ -15,6 +18,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
         (modelType)
         extends TypeImpl<Type>()
         satisfies MemberClass<Container, Type, Arguments>
+        // TODO given Container satisfies Object
         given Arguments satisfies Anything[] {
 
     shared actual ModelType modelType;
@@ -58,8 +62,18 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
     }
 
     shared actual
-    Class<Type, Arguments> bind(Object container)
-        =>  nothing;
+    Class<Type, Arguments> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` type(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    Class<Type, Arguments> bindSafe(Container container)
+        =>  newClass(modelType, container);
 
     shared actual
     MemberClassCallableConstructor<Container, Type, Arguments>? defaultConstructor
