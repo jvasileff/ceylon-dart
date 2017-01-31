@@ -11,7 +11,6 @@ import ceylon.dart.runtime.model.parser {
     parseType
 }
 
-
 // TODO elminiate this global. One option would be to have TypeDescriptor's first param
 //      be [module, moduleTypeCache], which would be a toplevel in the module.
 MutableMap<[Module, String, [TypeDescriptor*]], Type> typeCache
@@ -19,9 +18,9 @@ MutableMap<[Module, String, [TypeDescriptor*]], Type> typeCache
 
 shared
 class TypeDescriptor(mod, typeString, arguments = []) {
-    shared Module mod;
-    shared String typeString;
-    shared [TypeDescriptor*] arguments;
+    Module mod;
+    String typeString;
+    [TypeDescriptor*] arguments;
 
     variable Type? typeMemo = null;
     variable Integer? hashMemo = null;
