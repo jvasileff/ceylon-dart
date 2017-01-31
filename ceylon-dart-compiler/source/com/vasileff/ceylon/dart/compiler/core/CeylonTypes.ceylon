@@ -192,10 +192,23 @@ class CeylonTypes(Unit unit) {
         =>  declaration == awaitDeclaration;
 
     shared
-    Class typeDescriptorDeclaration {
+    Interface typeDescriptorDeclaration {
+        assert (is Interface i
+            =   modelRuntimePackage.getDirectMember("TypeDescriptor", null, false));
+        return i;
+    }
+
+    shared
+    Class typeDescriptorImplDeclaration {
         assert (is Class c
-            =   modelRuntimePackage
-                .getDirectMember("TypeDescriptor", null, false));
+            =   modelRuntimePackage.getDirectMember("TypeDescriptorImpl", null, false));
+        return c;
+    }
+
+    shared
+    Class lazyTypeDescriptorDeclaration {
+        assert (is Class c
+            =   modelRuntimePackage.getDirectMember("LazyTypeDescriptor", null, false));
         return c;
     }
 

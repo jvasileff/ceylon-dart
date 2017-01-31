@@ -5955,7 +5955,7 @@ class BaseGenerator(CompilationContext ctx)
             return
             dartTypes.invocableForBaseExpression {
                 scope;
-                ceylonTypes.typeDescriptorDeclaration;
+                ceylonTypes.lazyTypeDescriptorDeclaration;
             }.expressionForInvocation([
                 // TODO should have and use a synthetic ValueModel for $module
                 DartSimpleIdentifier("$module"),

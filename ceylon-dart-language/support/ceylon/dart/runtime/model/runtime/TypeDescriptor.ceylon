@@ -16,8 +16,17 @@ import ceylon.dart.runtime.model.parser {
 MutableMap<[Module, String, [TypeDescriptor*]], Type> typeCache
     =   HashMap<[Module, String, [TypeDescriptor*]], Type>();
 
+shared sealed
+interface TypeDescriptor {
+    shared formal Type type;
+    // TODO define equals & hash so that the typeCache will work
+}
+
 shared
-class TypeDescriptor(mod, typeString, arguments = []) {
+class TypeDescriptorImpl(shared actual Type type) satisfies TypeDescriptor {}
+
+shared
+class LazyTypeDescriptor(mod, typeString, arguments = []) satisfies TypeDescriptor {
     Module mod;
     String typeString;
     [TypeDescriptor*] arguments;
@@ -25,7 +34,7 @@ class TypeDescriptor(mod, typeString, arguments = []) {
     variable Type? typeMemo = null;
     variable Integer? hashMemo = null;
 
-    shared Type type {
+    shared actual Type type {
         // TODO if all arguments are for the same module as mod, substitution by string
         //      manipulation is possible, which could lead to a cache hit
 
@@ -61,7 +70,7 @@ class TypeDescriptor(mod, typeString, arguments = []) {
 
     shared actual
     Boolean equals(Object that)
-        =>  if (is TypeDescriptor that)
+        =>  if (is LazyTypeDescriptor that)
             then mod == that.mod &&
                  typeString == that.typeString &&
                  arguments == that.arguments
