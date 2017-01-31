@@ -36,7 +36,10 @@ class FunctionDeclarationImpl(modelDeclaration)
         modelDeclaration => outer.modelDeclaration;
     }
 
-    Function<> applyUnchecked(ClosedType<Anything>* typeArguments) {
+    shared actual
+    Function<Return,Arguments> apply<Return, Arguments>(ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[] {
+
         if (!toplevel) {
             throw TypeApplicationException(
                 "Cannot apply a member declaration with no container type: \
@@ -52,19 +55,14 @@ class FunctionDeclarationImpl(modelDeclaration)
             modelTypeArgs;
         };
 
-        return newFunction {
-            modelDeclaration.appliedTypedReference {
-                qualifyingType = null;
-                typeArguments = modelTypeArgs;
-                varianceOverrides = emptyMap;
+        value result =
+            newFunction<> {
+                modelDeclaration.appliedTypedReference {
+                    qualifyingType = null;
+                    typeArguments = modelTypeArgs;
+                    varianceOverrides = emptyMap;
+                };
             };
-        };
-    }
-
-    shared actual
-    Function<Return,Arguments> apply<Return, Arguments>(ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[] {
-        value result = applyUnchecked(*typeArguments);
 
         if (!is Function<Return, Arguments> result) {
             // TODO improve
@@ -74,9 +72,11 @@ class FunctionDeclarationImpl(modelDeclaration)
         return result;
     }
 
-    Method<> memberApplyUnchecked(
-            ClosedType<Object> containerType,
-            ClosedType<Anything>* typeArguments) {
+    shared actual
+    Method<Container, Return, Arguments>
+    memberApply<Container=Nothing, Return=Anything, Arguments=Nothing>
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[] {
 
         if (toplevel) {
             throw TypeApplicationException(
@@ -98,22 +98,14 @@ class FunctionDeclarationImpl(modelDeclaration)
             modelTypeArgs;
         };
 
-        return newMethod {
-            modelDeclaration.appliedTypedReference {
-                qualifyingType = qualifyingType;
-                typeArguments = modelTypeArgs;
-                varianceOverrides = emptyMap;
-            };
-        };
-    }
-
-    shared actual
-    Method<Container, Return, Arguments>
-    memberApply<Container=Nothing, Return=Anything, Arguments=Nothing>
-            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
-            given Arguments satisfies Anything[] {
-
-        value result = memberApplyUnchecked(containerType, *typeArguments);
+        value result
+            =   newMethod<> {
+                    modelDeclaration.appliedTypedReference {
+                        qualifyingType = qualifyingType;
+                        typeArguments = modelTypeArgs;
+                        varianceOverrides = emptyMap;
+                    };
+                };
 
         if (!is Method<Container, Return, Arguments> result) {
             // TODO Improve. The JVM code claims to do better with

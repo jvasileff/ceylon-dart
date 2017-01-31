@@ -68,9 +68,34 @@ interface ClassOrInterfaceDeclarationHelper
             given Annotation satisfies AnnotationType => nothing;
 
     shared
-    ClassOrInterface<Type> apply<Type>(ClosedType<Anything>* typeArguments) {
-        value result = applyUnchecked(*typeArguments);
+    ClassOrInterface<Type> apply<out Type = Anything>
+            (ClosedType<Anything>* typeArguments) {
 
+        if (!toplevel) {
+            throw TypeApplicationException(
+                "Cannot apply a member declaration with no container type: \
+                 use memberApply");
+        }
+
+        value modelTypeArgs
+            =   typeArguments.collect(modelTypeFromType);
+
+        validateTypeArgumentsOrThrow {
+            null;
+            modelDeclaration;
+            modelTypeArgs;
+        };
+
+        value result
+            =   newType {
+                    modelDeclaration.appliedType {
+                        qualifyingType = null;
+                        typeArguments = modelTypeArgs;
+                        varianceOverrides = emptyMap;
+                    };
+                };
+
+        // TODO optimize away type argument checks when Type = Anything
         if (!is ClassOrInterface<Type> result) {
             // TODO improve
             throw IncompatibleTypeException("Incorrect Type");
@@ -104,50 +129,8 @@ interface ClassOrInterfaceDeclarationHelper
             else null;
 
     shared
-    Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type>
-    memberApply<Container, Type>(
-            ClosedType<Object> containerType,
-            ClosedType<Anything>* typeArguments) {
-
-        value result = memberApplyUnchecked(containerType, *typeArguments);
-
-        if (!is Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type> result) {
-            // TODO Improve. The JVM code claims to do better with
-            //      checkReifiedTypeArgument()
-            throw IncompatibleTypeException("Incorrect Container or Type");
-        }
-
-        return result;
-    }
-
-    shared
-    ClosedType<> applyUnchecked(ClosedType<Anything>* typeArguments) {
-        if (!toplevel) {
-            throw TypeApplicationException(
-                "Cannot apply a member declaration with no container type: \
-                 use memberApply");
-        }
-
-        value modelTypeArgs
-            =   typeArguments.collect(modelTypeFromType);
-
-        validateTypeArgumentsOrThrow {
-            null;
-            modelDeclaration;
-            modelTypeArgs;
-        };
-
-        return newType {
-            modelDeclaration.appliedType {
-                qualifyingType = null;
-                typeArguments = modelTypeArgs;
-                varianceOverrides = emptyMap;
-            };
-        };
-    }
-
-    shared
-    ClosedType<> memberApplyUnchecked(
+    Member<Container, ClassOrInterface<Type>> & ClassOrInterface<Type>
+    memberApply<in Container = Nothing, out Type = Anything>(
             ClosedType<Object> containerType,
             ClosedType<Anything>* typeArguments) {
 
@@ -171,13 +154,23 @@ interface ClassOrInterfaceDeclarationHelper
             modelTypeArgs;
         };
 
-        return newType {
-            modelDeclaration.appliedType {
-                qualifyingType = qualifyingType;
-                typeArguments = modelTypeArgs;
-                varianceOverrides = emptyMap;
-            };
-        };
+        value result 
+            =   newType {
+                    modelDeclaration.appliedType {
+                        qualifyingType = qualifyingType;
+                        typeArguments = modelTypeArgs;
+                        varianceOverrides = emptyMap;
+                    };
+                };
+
+        // TODO optimize away type argument checks when Container=Nothing, Type=Anything
+        if (!is Member<Container,ClassOrInterface<Type>>&ClassOrInterface<Type> result) {
+            // TODO Improve. The JVM code claims to do better with
+            //      checkReifiedTypeArgument()
+            throw IncompatibleTypeException("Incorrect Container or Type");
+        }
+
+        return result;
     }
 
     shared

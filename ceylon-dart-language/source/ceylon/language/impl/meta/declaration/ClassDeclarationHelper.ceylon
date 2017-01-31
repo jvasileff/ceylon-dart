@@ -57,7 +57,7 @@ interface ClassDeclarationHelper
             (ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[] {
 
-        value result = applyUnchecked(*typeArguments);
+        value result = apply<>(*typeArguments);
 
         if (!is Class<Type, Arguments> result) {
             // TODO Improve
@@ -82,7 +82,7 @@ interface ClassDeclarationHelper
             (ClosedType<Object> containerType, ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[] {
 
-        value result = memberApplyUnchecked(containerType, *typeArguments);
+        value result = memberApply<>(containerType, *typeArguments);
 
         if (!is MemberClass<Container,Type,Arguments> result) {
             // TODO Improve. The JVM code claims to do better with

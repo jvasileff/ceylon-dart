@@ -53,25 +53,22 @@ class ValueDeclarationImpl(modelDeclaration)
     shared actual
     ClassDeclaration? objectClass => nothing;
 
-    Value<> applyUnchecked() {
+    shared actual
+    Value<Get, Set> apply<Get=Anything, Set=Nothing>() {
         if (!toplevel) {
             throw TypeApplicationException(
                 "Cannot apply a member declaration with no container type: \
                  use memberApply");
         }
 
-        return newValue {
-            modelDeclaration.appliedTypedReference {
-                qualifyingType = null;
-                typeArguments = [];
-                varianceOverrides = emptyMap;
-            };
-        };
-    }
-
-    shared actual
-    Value<Get, Set> apply<Get=Anything, Set=Nothing>() {
-        value result = applyUnchecked();
+        value result
+            =   newValue<> {
+                    modelDeclaration.appliedTypedReference {
+                        qualifyingType = null;
+                        typeArguments = [];
+                        varianceOverrides = emptyMap;
+                    };
+                };
 
         if (!is Value<Get, Set> result) {
             // TODO improve
@@ -81,7 +78,11 @@ class ValueDeclarationImpl(modelDeclaration)
         return result;
     }
 
-    Attribute<> memberApplyUnchecked(ClosedType<Object> containerType) {
+    shared actual
+    Attribute<Container, Get, Set>
+    memberApply<Container=Nothing, Get=Anything, Set=Nothing>
+            (ClosedType<Object> containerType) {
+
         if (toplevel) {
             throw TypeApplicationException(
                 "Cannot apply a toplevel declaration to a container type: use apply");
@@ -93,20 +94,14 @@ class ValueDeclarationImpl(modelDeclaration)
                     modelDeclaration;
                 };
 
-        return newAttribute {
-            modelDeclaration.appliedTypedReference {
-                qualifyingType = qualifyingType;
-                typeArguments = [];
-                varianceOverrides = emptyMap;
-            };
-        };
-    }
-
-    shared actual
-    Attribute<Container, Get, Set>
-    memberApply<Container=Nothing, Get=Anything, Set=Nothing>
-            (ClosedType<Object> containerType) {
-        value result = memberApplyUnchecked(containerType);
+        value result
+            =   newAttribute<> {
+                    modelDeclaration.appliedTypedReference {
+                        qualifyingType = qualifyingType;
+                        typeArguments = [];
+                        varianceOverrides = emptyMap;
+                    };
+                };
 
         if (!is Attribute<Container, Get, Set> result) {
             // TODO Improve. The JVM code claims to do better with
