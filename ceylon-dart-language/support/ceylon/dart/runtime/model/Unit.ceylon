@@ -455,6 +455,37 @@ class Unit(pkg) {
         return null;
     }
 
+    shared
+    [Type*] getCallableArgumentTypes(Type t)
+        =>  if (exists tuple = getCallableTuple(t))
+            then (getTupleElementTypes(tuple) else [])
+            else [];
+
+    shared
+    Type[2]? getCallableReturnAndTuple(Type t)
+        =>  if (exists args = t.getSupertype(callableDeclaration)
+                    ?.typeArgumentList?.sequence(),
+                exists returnType = args[0],
+                exists tupleType = args[1])
+            then [returnType, tupleType]
+            else null;
+
+    shared
+    Type? getCallableTuple(Type t)
+        =>  let (ct = t.getSupertype(callableDeclaration))
+            if (exists ct, exists tuple = ct.typeArgumentList.getFromFirst(1))
+            then tuple
+            else null;
+
+    shared
+    Type? getCallableReturnType(Type t)
+        =>  if (t.isNothing)
+            then t
+            else let (ct = t.getSupertype(callableDeclaration))
+                if (exists ct, exists returnType = ct.typeArgumentList.getFromFirst(0))
+                then returnType
+                else null;
+
     "Returns [] if `type` is a subtype of [[Empty]]. Returns `null` if `type` is not a
      sequential."
     shared
