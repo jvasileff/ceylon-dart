@@ -40,6 +40,8 @@ class Type() extends Reference() {
 
     shared Unit unit => declaration.unit;
 
+    shared actual Type type => this;
+
     "Are all type arguments available?"
     shared Boolean isWellDefined {
         if (exists qt = qualifyingType, !qt.isWellDefined) {

@@ -14,5 +14,5 @@ class TypedReference(
     shared actual Map<TypeParameter, Type> specifiedTypeArguments;
     shared Variance variance;
 
-    shared Type type => declaration.type.substituteFromTypedReference(this);
+    shared actual Type type => declaration.type.substituteFromTypedReference(this);
 }

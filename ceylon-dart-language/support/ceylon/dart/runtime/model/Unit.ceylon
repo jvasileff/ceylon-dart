@@ -295,6 +295,107 @@ class Unit(pkg) {
     Type getSequenceType(Type elementType)
         =>  sequenceDeclaration.appliedType(null, [elementType]);
 
+    shared
+    Type getEmptyType()
+            // ceylon-model caches this in the language module
+        =>  emptyDeclaration.type;
+
+    shared
+    Type getNothingType()
+            // ceylon-model caches this in the language module
+        =>  nothingDeclaration.type;
+
+    shared
+    Type getTupleTypeWithVariadicTail(
+            [Type*] elementTypes,
+            Type variadicTailType,
+            Boolean atLeastOne = false,
+            "The index of the first element to be defaulted. If `null` or greater than
+             `elementTypes.lastIndex`, no elements will be defaulted."
+            Integer? firstDefaulted = null)
+        =>  getTupleType {
+                elementTypes.withTrailing(variadicTailType);
+                true;
+                atLeastOne;
+                firstDefaulted;
+            };
+
+    shared
+    Type getTupleType(
+            [Type*] elementTypes,
+            Boolean variadic,
+            Boolean atLeastOne,
+            "The index of the first element to be defaulted. If `null` or greater than
+             `elementTypes.lastIndex`, no elements will be defaulted."
+            Integer? firstDefaulted = null,
+            variable Type rest = getEmptyType(),
+            variable Type union = getNothingType()) {
+
+        value firstDefaultedInt = firstDefaulted else runtime.maxIntegerValue;
+
+        for (i -> elementType in elementTypes.reversed.indexed) {
+            union = unionType(union, elementType, this);
+            if (variadic && i==0) {
+                rest = if (atLeastOne)
+                         then getSequenceType(elementType)
+                         else getSequentialType(elementType);
+            }
+            else {
+                rest = tupleDeclaration.appliedType {
+                    null;
+                    [union, elementType, rest];
+                    emptyMap;
+                };
+                if ((elementTypes.size - i - 1) >= firstDefaultedInt) {
+                    rest = unionType(rest, getEmptyType(), this);
+                }
+            }
+        }
+        return rest;
+    }
+
+    shared
+    Type getCallableType(Reference reference, Type returnType = reference.type) {
+        value declaration = reference.declaration;
+        if (!is Functional declaration) {
+            return returnType;
+        }
+        variable value result = returnType;
+        for (parameterList in declaration.parameterLists.reversed) {
+            value paramListType
+                =   getTupleType {
+                        elementTypes
+                            =   parameterList.parameters.collect((parameter) {
+                                    value np = reference.getTypedParameter(parameter);
+                                    value npt = np.type;
+                                    if (np.declaration is Functional) {
+                                        return getCallableType(np, npt);
+                                    }
+                                    else if (parameter.isSequenced) {
+                                        assert (exists it = getIteratedType(npt));
+                                        return it;
+                                    }
+                                    else {
+                                        return npt;
+                                    }
+                                });
+
+                        variadic
+                            =   parameterList.parameters.last?.isSequenced else false;
+
+                        firstDefaulted
+                            =   parameterList.parameters.count(
+                                        not(Parameter.isDefaulted));
+
+                        atLeastOne
+                            =   parameterList.parameters.last?.atLeastOne else false;
+                    };
+
+            result = callableDeclaration.appliedType(null, [result, paramListType]);
+        }
+        return result;
+    }
+
     "Returns the intersection of [[type]] and `Object`."
     shared
     Type getDefiniteType(Type type)
