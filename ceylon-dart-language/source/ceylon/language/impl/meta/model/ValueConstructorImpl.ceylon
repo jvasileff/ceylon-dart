@@ -5,6 +5,7 @@ import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
+    Class,
     ValueConstructor
 }
 import ceylon.dart.runtime.model {
@@ -14,12 +15,11 @@ import ceylon.dart.runtime.model {
     ModelPackage = Package
 }
 
-class ValueConstructorImpl<out Type=Object>(
-        modelType,
-        Anything qualifyingInstance = null)
+class ValueConstructorImpl<out Type=Object>(modelType, qualifyingInstance = null)
         satisfies ValueConstructor<Type> {
 
     shared ModelType modelType;
+    Anything qualifyingInstance;
 
     "The declaration for a Constructor Type must be a ValueConstructor"
     assert (modelType.declaration is ModelValueConstructor);
@@ -48,7 +48,8 @@ class ValueConstructorImpl<out Type=Object>(
     }
 
     // TODO possibly change after https://github.com/ceylon/ceylon/issues/6903
-    type => newClass<Type>(modelQualifyingType, qualifyingInstance);
+    type => unsafeCast<Class<Type,Nothing>>(
+                newClass(modelQualifyingType, qualifyingInstance));
 
     // Gettable
 

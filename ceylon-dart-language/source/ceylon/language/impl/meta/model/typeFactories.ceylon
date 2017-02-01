@@ -9,6 +9,8 @@ import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelTypedReference = TypedReference,
     ModelClass = Class,
+    ModelClassWithInitializer = ClassWithInitializer,
+    ModelParameter = Parameter,
     ModelConstructor = Constructor,
     ModelValueConstructor = ValueConstructor,
     ModelCallableConstructor = CallableConstructor,
@@ -16,6 +18,7 @@ import ceylon.dart.runtime.model {
     ModelTypeParameter = TypeParameter,
     ModelInterface = Interface,
     ModelFunction = Function,
+    ModelFunctional = Functional,
     ModelPackage = Package,
     ModelUnknownType = UnknownType,
     ModelValue = Value,
@@ -25,7 +28,8 @@ import ceylon.dart.runtime.model {
     ModelNothingDeclaration = NothingDeclaration
 }
 import ceylon.dart.runtime.model.runtime {
-    TypeDescriptor
+    TypeDescriptor,
+    TypeDescriptorImpl
 }
 
 // FIXME make this native & provide correct type arguments to the type's constructor
@@ -83,16 +87,46 @@ newMethod<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
         given Arguments satisfies Anything[]
     =>  MethodImpl<Container, Type, Arguments>(typedReference);
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Class<Type, Arguments> newClass<out Type=Anything, in Arguments=Nothing>(
+native
+Class<Anything, Nothing> createClass(
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelType modelType,
+        Anything qualifyingInstance);
+
+shared Class<Anything, Nothing> newClass(
         ModelType | TypeDescriptor type,
-        Anything qualifyingInstance)
-        given Arguments satisfies Anything[]
-    =>  ClassImpl<Type, Arguments> {
-            if (is TypeDescriptor type) then type.type else type;
-            // as with the type arguments, not validating the container instance
-            qualifyingInstance;
-        };
+        Anything qualifyingInstance) {
+
+    value modelType = if (is TypeDescriptor type) then type.type else type;
+    ModelType argumentsType;
+
+    assert (is ModelClassDefinition modelDeclaration = modelType.declaration);
+
+    if (is ModelClassWithInitializer modelDeclaration) {
+        assert (exists t = modelType.unit.getCallableTuple(modelType.fullType));
+        argumentsType = t;
+    }
+    else if (is ModelConstructor defaultCtor = modelDeclaration.getDirectMember(""),
+             defaultCtor.isShared) {
+        assert (exists t = modelType.unit.getCallableTuple {
+            defaultCtor.appliedType(modelType, [], emptyMap);
+        });
+        argumentsType = t;
+    }
+    else {
+        argumentsType = modelType.unit.getNothingType();
+    }
+
+    return
+    createClass {
+        modelType = modelType;
+        typeTP = TypeDescriptorImpl(modelType);
+        argumentsTP = TypeDescriptorImpl(argumentsType);
+        // not validating the container instance
+        qualifyingInstance = qualifyingInstance;
+    };
+}
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared MemberClass<Container, Type, Arguments>
@@ -164,7 +198,7 @@ shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
 shared ClassModel<Type> newClassModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberClass(modelType)
-        else newClass(modelType, null);
+        else unsafeCast<ClassModel<Type>>(newClass(modelType, null));
 
 shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
