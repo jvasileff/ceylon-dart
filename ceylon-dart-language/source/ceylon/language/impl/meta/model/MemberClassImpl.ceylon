@@ -73,7 +73,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
 
     shared
     Class<Type, Arguments> bindSafe(Container container)
-        =>  newClass(modelType, container);
+        =>  ClassImpl<Type, Arguments>(modelType, container);
 
     shared actual
     MemberClassCallableConstructor<Container, Type, Arguments>? defaultConstructor
