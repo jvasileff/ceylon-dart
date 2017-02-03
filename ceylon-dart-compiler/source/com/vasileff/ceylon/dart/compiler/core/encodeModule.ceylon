@@ -205,7 +205,7 @@ Map<String, Object> encodeValue(ValueModel v) {
     m.putAll(encodeAnnotations(v));
 
     if (exists s = v.setter) {
-        value sm = HashMap<String, Anything>();
+        value sm = HashMap<String, Object>();
         m.put("$set", sm);
         sm.put(keyMetatype, metatypeSetter);
         sm.putAll(encodeMembers({*s.members}));
