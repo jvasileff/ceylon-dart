@@ -217,6 +217,31 @@ Map<String, Object> encodeValue(ValueModel v) {
     return m;
 }
 
+Map<String, Object> encodeConstructor(ConstructorModel declaration) {
+    value m = HashMap<String, Object>();
+
+    if (exists name = declaration.name) {
+        m.put(keyName, name);
+    }
+
+    m.putAll {
+        keyType -> encodeType(declaration.type, declaration)
+    };
+
+    if (declaration.\idynamic) {
+        m.put(keyDynamic, 1);
+    }
+
+    if (exists list = declaration.parameterList) {
+        m.put(keyParams, encodeValueParameterList(list));
+    }
+
+    m.putAll(encodeAnnotations(declaration));
+    m.putAll(encodeMembers({*declaration.members}));
+
+    return m;
+}
+
 Map<String, Object> encodeFunction(FunctionModel declaration) {
     value m = HashMap<String, Object>();
 
@@ -414,7 +439,13 @@ Boolean interestingDeclaration(DeclarationModel d)
                 return name -> m;
             });
 
-    // TODO constructors
+    value constructors
+        =   members.narrow<ConstructorModel>()
+                    .map(encodeConstructor).collect((m) {
+                assert (is String name = m[keyName] else "$def");
+                return name -> m;
+            });
+
     // TODO aliases, other?
 
     return {
@@ -428,7 +459,10 @@ Boolean interestingDeclaration(DeclarationModel d)
             then keyAttributes -> map(values)
             else null,
         if (nonempty functions)
-            then keyMethods -> map(values)
+            then keyMethods -> map(functions)
+            else null,
+        if (nonempty constructors)
+            then keyConstructors -> map(constructors)
             else null
     }.coalesced.sequence();
 }
