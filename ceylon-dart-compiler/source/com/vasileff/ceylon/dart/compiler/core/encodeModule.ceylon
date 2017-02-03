@@ -175,13 +175,12 @@ Map<String, Object> encodeClass(ClassModel declaration) {
         m[keyCases] = types;
     }
 
+    // initializer parameters
     if (exists parameterList = declaration.parameterList) {
         m.put(keyParams, encodeValueParameterList(parameterList));
     }
 
-    // initializer parameters (skipping)
-
-    // annotations (only packed annotations)
+    // annotations
     m.putAll(encodeAnnotations(declaration));
 
     // members
