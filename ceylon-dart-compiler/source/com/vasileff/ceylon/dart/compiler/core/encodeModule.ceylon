@@ -217,6 +217,38 @@ Map<String, Object> encodeValue(ValueModel v) {
     return m;
 }
 
+Map<String, Object> encodeFunction(FunctionModel declaration) {
+    value m = HashMap<String, Object>();
+
+    m.putAll {
+        keyName -> declaration.name,
+        keyMetatype -> metatypeMethod,
+        keyType -> encodeType(declaration.type, declaration)
+    };
+
+    if (declaration.\idynamic) {
+        m.put(keyDynamic, 1);
+    }
+
+    value flags
+        =   0.set(0, declaration.declaredVoid)
+            .set(1, declaration.deferred);
+
+    if (!flags.zero) {
+        m.put(keyFlags, flags);
+    }
+
+    value parameterLists = encodeValueParameterListsFor(declaration);
+    if (parameterLists.size > 1 || parameterLists.first nonempty) {
+        m.put(keyParams, parameterLists);
+    }
+
+    m.putAll(encodeAnnotations(declaration));
+    m.putAll(encodeMembers({*declaration.members}));
+
+    return m;
+}
+
 {<String -> Object>*} encodeAnnotations(DeclarationModel | PackageModel | ModuleModel d) {
     value paKey => if (d is ModuleModel) then "$mod-pa"
                    else if (d is PackageModel) then "$pkg-pa"
@@ -277,6 +309,10 @@ Boolean isOrContainsType(DeclarationModel d)
         else d is TypeDeclarationModel
             || {*d.members}.any(isOrContainsType);
 
+[[Map<String, Object>*]*] encodeValueParameterListsFor(FunctionModel declaration)
+    =>  [for (parameterList in declaration.parameterLists)
+            encodeValueParameterList(parameterList)];
+
 [Map<String, Object>*] encodeValueParameterList(ParameterListModel list)
     =>  [ for (parameter in list.parameters) encodeValueParameter(parameter) ];
 
@@ -296,10 +332,7 @@ Map<String, Object> encodeValueParameter(ParameterModel parameter) {
             keyType -> encodeType(model.type, parameter.declaration),
             keyMetatype -> metatypeParameter,
             keyName -> parameter.name,
-            keyParams -> [
-                for (parameterList in model.parameterLists)
-                encodeValueParameterList(parameterList)
-            ]
+            keyParams -> encodeValueParameterListsFor(model)
         };
 }
 
@@ -347,7 +380,12 @@ Map<String, Object> encodeValueParameter(ParameterModel parameter) {
 Boolean interestingDeclaration(DeclarationModel d)
     =>  d.toplevel || d.member || isOrContainsType(d);
 
-{<String -> Map<String, Object>>*} encodeMembers({DeclarationModel*} members) {
+[<String -> Map<String, Object>>*] encodeMembers({DeclarationModel*} members) {
+    // FIXME What if multiple members share the same name, as can happen with headers
+    //       and backend implementations? Since the metamodel needs to work for
+    //       non-shared declarations, we prob need to filter for our backend, or use
+    //       the header if there is no backend impl.
+
     value classes
         =   members.narrow<ClassModel>().map(encodeClass).collect((m) {
                 assert (is String name = m[keyName]);
@@ -368,6 +406,17 @@ Boolean interestingDeclaration(DeclarationModel d)
                 return name -> m;
             });
 
+    value functions
+        =   members.narrow<FunctionModel>()
+                    .filter(interestingDeclaration)
+                    .map(encodeFunction).collect((m) {
+                assert (is String name = m[keyName]);
+                return name -> m;
+            });
+
+    // TODO constructors
+    // TODO aliases, other?
+
     return {
         if (nonempty classes)
             then keyClasses -> map(classes)
@@ -377,8 +426,11 @@ Boolean interestingDeclaration(DeclarationModel d)
             else null,
         if (nonempty values)
             then keyAttributes -> map(values)
+            else null,
+        if (nonempty functions)
+            then keyMethods -> map(values)
             else null
-    }.coalesced;
+    }.coalesced.sequence();
 }
 
 "Encode an interface, as seen from within its container (name is not qualified)."
