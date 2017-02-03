@@ -402,7 +402,8 @@ Map<String, Object> encodeValueParameter(ParameterModel parameter) {
 }
 
 Boolean interestingDeclaration(DeclarationModel d)
-    =>  d.toplevel || d.member || isOrContainsType(d);
+    =>  !(ModelUtil.isConstructor(d) && !d is ConstructorModel)
+        && (d.toplevel || d.member || isOrContainsType(d));
 
 [<String -> Map<String, Object>>*] encodeMembers({DeclarationModel*} members) {
     // FIXME What if multiple members share the same name, as can happen with headers
