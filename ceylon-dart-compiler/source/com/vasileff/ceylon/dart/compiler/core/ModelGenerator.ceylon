@@ -47,7 +47,9 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartExpressionStatement,
     DartMethodInvocation,
     DartPrefixExpression,
-    DartBooleanLiteral
+    DartBooleanLiteral,
+    DartIntegerLiteral,
+    DartDoubleLiteral
 }
 import com.vasileff.ceylon.dart.compiler.loader {
     JsonModule
@@ -404,6 +406,12 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
     DartExpression generateJsonLiteral(Object json, Boolean const) {
         if (is String json) {
             return DartSimpleStringLiteral(json);
+        }
+        else if (is Integer json) {
+            return DartIntegerLiteral(json);
+        }
+        else if (is Float json) {
+            return DartDoubleLiteral(json);
         }
         else if (is Map<String, Object> json) {
             return generateMapLiteral(json, const);

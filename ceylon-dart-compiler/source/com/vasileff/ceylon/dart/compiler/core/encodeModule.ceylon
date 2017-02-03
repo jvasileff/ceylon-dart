@@ -7,6 +7,7 @@ import ceylon.interop.java {
 
 import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
+    ConstructorModel=Constructor,
     TypeModel=Type,
     DeclarationModel=Declaration,
     ModuleModel=Module,
@@ -14,7 +15,11 @@ import com.redhat.ceylon.model.typechecker.model {
     InterfaceModel=Interface,
     TypeParameterModel=TypeParameter,
     TypeDeclarationModel=TypeDeclaration,
-    ModelUtil
+    ModelUtil,
+    ParameterListModel=ParameterList,
+    ParameterModel=Parameter,
+    ValueModel=Value,
+    FunctionModel=Function
 }
 
 shared String keyClasses       = "$c";
@@ -74,6 +79,11 @@ shared String metatypeSetter          = "s";
 shared String metatypeTypeParameter   = "tp";
 shared String metatypeParameter       = "prm";
 
+shared Set<String> packedAnnotations = set {
+    "shared", "actual", "formal", "default", "sealed", "final", "native", "late",
+    "abstract", "annotation", "variable", "serializable", "static"
+};
+
 shared Integer sharedBit = 0;
 shared Integer actualBit = 1;
 shared Integer formalBit = 2;
@@ -93,9 +103,9 @@ Map<String, Object> encodeModule(ModuleModel mod) {
     value m = HashMap<String, Object>();
     m.put(keyModuleName, mod.nameAsString);
     m.put(keyModuleVersion, mod.version);
+    m.putAll(encodeAnnotations(mod));
     // TODO $mod-bin: binary version
     // TODO $mod-nat: backends for native modules
-    // TODO annotations
     // TODO imports
 
     // packages
@@ -107,7 +117,7 @@ Map<String, Object> encodeModule(ModuleModel mod) {
 
 Map<String, Object> encodePackage(PackageModel pkg) {
     value m = HashMap<String, Object>();
-    // TODO annotations
+    m.putAll(encodeAnnotations(pkg));
 
     for (member in pkg.members) {
         if (is ClassModel member) {
@@ -165,13 +175,132 @@ Map<String, Object> encodeClass(ClassModel declaration) {
         m[keyCases] = types;
     }
 
+    if (exists parameterList = declaration.parameterList) {
+        m.put(keyParams, encodeValueParameterList(parameterList));
+    }
+
     // initializer parameters (skipping)
+
     // annotations (only packed annotations)
+    m.putAll(encodeAnnotations(declaration));
 
     // members
     m.putAll(encodeMembers({*declaration.members}));
 
     return m;
+}
+
+"Callers should skip values that aren't:
+
+     v.toplevel || v.member || isOrContainsType(v)"
+Map<String, Object> encodeValue(ValueModel v) {
+    value m = HashMap<String, Object>();
+    m.putAll {
+        keyName -> v.name,
+        keyMetatype -> (v.transient then metatypeGetter else metatypeAttribute),
+        keyType -> encodeType(v.type, v)
+    };
+    if (v.\idynamic) {
+        m.put(keyDynamic, 1);
+    }
+    m.putAll(encodeAnnotations(v));
+
+    if (exists s = v.setter) {
+        value sm = HashMap<String, Anything>();
+        m.put("$set", sm);
+        sm.put(keyMetatype, metatypeSetter);
+        sm.putAll(encodeMembers({*s.members}));
+        sm.putAll(encodeAnnotations(s));
+    }
+
+    m.putAll(encodeMembers({*v.members}));
+    return m;
+}
+
+{<String -> Object>*} encodeAnnotations(DeclarationModel | PackageModel | ModuleModel d) {
+    value paKey => if (d is ModuleModel) then "$mod-pa"
+                   else if (d is PackageModel) then "$pkg-pa"
+                   else keyPackedAnnotations;
+
+    value packedAnnotations = encodePackedAnnotations(d);
+
+    // TODO non-packed annotations
+
+    return {
+        !packedAnnotations.zero then paKey -> packedAnnotations
+    }.coalesced;
+}
+
+Integer encodePackedAnnotations(DeclarationModel | PackageModel | ModuleModel d) {
+
+    value sealed
+        =>  if (is TypeDeclarationModel d, d.sealed) then true else false;
+
+    value final
+        =>  if (is TypeDeclarationModel d, d.final) then true else false;
+
+    value late
+        =>  if (is ValueModel d, d.late) then true else false;
+
+    value abstract
+        =>  if (is ConstructorModel | ClassModel d, d.abstract) then true else false;
+
+    value variable
+        =>  if (is ValueModel d, d.variable) then true else false;
+
+    value serializable
+        =>  if (is ClassModel d, d.serializable) then true else false;
+
+    value declarationAnnotations
+        =>  if (is DeclarationModel d)
+            then 0.set(sharedBit, d.shared)
+                .set(actualBit, d.actual)
+                .set(formalBit, d.formal)
+                .set(defaultBit, d.default)
+                .set(annotationBit, d.annotation)
+                .set(staticBit, d.static)
+            else 0;
+
+    return declarationAnnotations
+        .set(sealedBit, sealed)
+        .set(finalBit, final)
+        //.set(nativeBit, d.native) // TODO
+        .set(lateBit, late)
+        .set(abstractBit, abstract)
+        .set(variableBit, variable)
+        .set(serializableBit, serializable);
+}
+
+Boolean isOrContainsType(DeclarationModel d)
+    =>  if (is ValueModel d, d.typeDeclaration.anonymous)
+        then true
+        else d is TypeDeclarationModel
+            || {*d.members}.any(isOrContainsType);
+
+[Map<String, Object>*] encodeValueParameterList(ParameterListModel list)
+    =>  [ for (parameter in list.parameters) encodeValueParameter(parameter) ];
+
+Map<String, Object> encodeValueParameter(ParameterModel parameter) {
+    assert (is ValueModel | FunctionModel model = parameter.model);
+    return
+        if (is ValueModel model)
+        then map({
+            keyType -> encodeType(model.type, parameter.declaration),
+            keyMetatype -> metatypeParameter,
+            keyName -> parameter.name,
+            (parameter.sequenced) then keySequenced -> 1,
+            (parameter.atLeastOne) then "$min1" -> 1
+        }.coalesced)
+        else map { // is FunctionModel
+            "$pt" -> "f",
+            keyType -> encodeType(model.type, parameter.declaration),
+            keyMetatype -> metatypeParameter,
+            keyName -> parameter.name,
+            keyParams -> [
+                for (parameterList in model.parameterLists)
+                encodeValueParameterList(parameterList)
+            ]
+        };
 }
 
 [Map<String, Object>*] encodeTypeParameters(
@@ -215,6 +344,9 @@ Map<String, Object> encodeClass(ClassModel declaration) {
     });
 }
 
+Boolean interestingDeclaration(DeclarationModel d)
+    =>  d.toplevel || d.member || isOrContainsType(d);
+
 {<String -> Map<String, Object>>*} encodeMembers({DeclarationModel*} members) {
     value classes
         =   members.narrow<ClassModel>().map(encodeClass).collect((m) {
@@ -228,12 +360,23 @@ Map<String, Object> encodeClass(ClassModel declaration) {
                 return name -> m;
             });
 
+    value values
+        =   members.narrow<ValueModel>()
+                    .filter(interestingDeclaration)
+                    .map(encodeValue).collect((m) {
+                assert (is String name = m[keyName]);
+                return name -> m;
+            });
+
     return {
         if (nonempty classes)
             then keyClasses -> map(classes)
             else null,
         if (nonempty interfaces)
             then keyInterfaces -> map(interfaces)
+            else null,
+        if (nonempty values)
+            then keyAttributes -> map(values)
             else null
     }.coalesced;
 }
@@ -272,7 +415,8 @@ Map<String, Object> encodeInterface(InterfaceModel declaration) {
         m[keyCases] = types;
     }
 
-    // annotations (only packed annotations)
+    // annotations
+    m.putAll(encodeAnnotations(declaration));
 
     // members
     m.putAll(encodeMembers({*declaration.members}));
