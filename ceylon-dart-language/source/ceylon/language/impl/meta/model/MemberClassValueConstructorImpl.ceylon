@@ -53,7 +53,7 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
 
     shared
     ValueConstructor<Type> bindSafe(Container container)
-        =>  newValueConstructor(modelType, container);
+        =>  unsafeCast<ValueConstructor<Type>>(newValueConstructor(modelType, container));
 
     ModelType modelQualifyingType {
         assert (exists qt = modelType.qualifyingType);

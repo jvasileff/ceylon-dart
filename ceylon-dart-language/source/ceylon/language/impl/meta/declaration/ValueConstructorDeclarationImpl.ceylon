@@ -39,7 +39,7 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
         }
 
         value result
-            =   newValueConstructor<> {
+            =   newValueConstructor {
                     modelDeclaration.appliedType {
                         modelTypeFromType {
                             container.apply<>();
@@ -68,7 +68,7 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
         }
 
         value result
-            =   newMemberClassValueConstructor<> {
+            =   newMemberClassValueConstructor {
                     modelDeclaration.appliedType {
                         modelTypeFromType {
                             container.memberApply<>(containerType);
