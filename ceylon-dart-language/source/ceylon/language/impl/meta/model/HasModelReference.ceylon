@@ -5,4 +5,7 @@ import ceylon.dart.runtime.model {
 interface HasModelReference {
     shared formal
     ModelReference modelType;
+
+    // TODO use same format as Metamodel.toTypeString
+    string => modelType.string;
 }

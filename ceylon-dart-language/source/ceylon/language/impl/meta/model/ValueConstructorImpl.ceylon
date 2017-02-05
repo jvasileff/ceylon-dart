@@ -23,9 +23,10 @@ class ValueConstructorImpl<out Type=Object>(modelType, qualifyingInstance = null
 
     "The declaration for a Constructor Type must be a ValueConstructor"
     assert (modelType.declaration is ModelValueConstructor);
-
+ 
     "A ValueConstructor must either be for a toplevel class or have a qualifyingInstance"
-    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
+    assert(qualifyingInstance exists
+            != modelType.declaration.container.container is ModelPackage);
 
     object helper
             satisfies ValueModelHelper<Type> & GettableHelper<Type, Nothing> {
@@ -56,4 +57,8 @@ class ValueConstructorImpl<out Type=Object>(modelType, qualifyingInstance = null
     get() => helper.get();
     shared actual void set(Nothing newValue) {}
     setIfAssignable(Anything newValue) => setIfAssignable(newValue);
+
+    // Object
+
+    string => helper.string;
 }

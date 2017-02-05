@@ -31,6 +31,10 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
     assert (is ModelDeclaration modelClass = modelType.declaration.container,
             !modelClass.isToplevel);
 
+    object helper satisfies HasModelReference {
+        modelType => outer.modelType;
+    }
+
     shared actual
     ValueConstructorDeclaration declaration {
         assert (is ModelValueConstructor model = modelType.declaration);
@@ -60,4 +64,8 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
 
     type => unsafeCast<MemberClass<Container, Type, Nothing>>
                 (newMemberClass(modelQualifyingType));
+
+    // Object
+
+    string => helper.string;
 }

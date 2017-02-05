@@ -60,7 +60,8 @@ class MemberClassCallableConstructorImpl
 
     shared
     CallableConstructor<Type, Arguments> bindSafe(Container container)
-        =>  newCallableConstructor(modelType, container);
+        =>  unsafeCast<CallableConstructor<Type, Arguments>>(
+                    newCallableConstructor(modelType, container));
 
     // Functional
 
@@ -82,4 +83,8 @@ class MemberClassCallableConstructorImpl
     typeArgumentList => helper.typeArgumentList;
     typeArgumentWithVariances => helper.typeArgumentWithVariances;
     typeArgumentWithVarianceList => helper.typeArgumentWithVarianceList;
+
+    // Object
+
+    string => helper.string;
 }

@@ -52,7 +52,4 @@ interface TypeHelper<out Type> satisfies HasModelReference {
                     modelType.unit;
                 };
             };
-
-    // TODO use same format as Metamodel.toTypeString
-    string => modelType.string;
 }

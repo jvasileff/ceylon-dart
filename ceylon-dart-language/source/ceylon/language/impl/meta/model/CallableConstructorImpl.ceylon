@@ -31,7 +31,8 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
 
     "A CallableConstructor must either be for a toplevel class or have a
      qualifyingInstance"
-    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
+    assert(qualifyingInstance exists
+            != modelType.declaration.container.container is ModelPackage);
 
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {
@@ -71,4 +72,8 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
     typeArgumentList => helper.typeArgumentList;
     typeArgumentWithVariances => helper.typeArgumentWithVariances;
     typeArgumentWithVarianceList => helper.typeArgumentWithVarianceList;
+
+    // Object
+
+    string => helper.string;
 }

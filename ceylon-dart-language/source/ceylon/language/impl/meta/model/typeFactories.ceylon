@@ -34,13 +34,23 @@ import ceylon.dart.runtime.model.runtime {
     TypeDescriptorImpl
 }
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared CallableConstructor<Type, Arguments>
-newCallableConstructor<out Type=Anything, in Arguments=Nothing>(
-        ModelType type,
-        Anything qualifyingInstance)
-        given Arguments satisfies Anything[]
-    =>  CallableConstructorImpl<Type, Arguments>(type, qualifyingInstance);
+[ModelType, ModelType] returnTypeAndArgumentsTupleForReference(ModelType modelType) {
+    value callableType = modelType.fullType;
+    assert (exists returnType = callableType.unit.getCallableReturnType(callableType));
+    assert (exists argumentsTuple = callableType.unit.getCallableTuple(callableType));
+    return [returnType, argumentsTuple];
+}
+
+shared CallableConstructor<Anything, Nothing>
+newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
+    =>  let ([returnType, argumentsTuple]
+            = returnTypeAndArgumentsTupleForReference(modelType))
+        createCallableConstructor {
+            constructorType = modelType;    
+            typeTP = TypeDescriptorImpl(returnType);
+            argumentsTP = TypeDescriptorImpl(argumentsTuple);
+            qualifyingInstance = qualifyingInstance;
+        };
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared MemberClassCallableConstructor<Container, Type, Arguments>
@@ -266,6 +276,7 @@ newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Argument
     }
 }
 
+// TODO return worse types and let caller call unsafeCast()
 CallableConstructor<Type, Arguments> | ValueConstructor<Type>
 newConstructor<out Type=Anything, in Arguments=Nothing>(
         ModelType modelType,
@@ -274,14 +285,16 @@ newConstructor<out Type=Anything, in Arguments=Nothing>(
 
     "A containing instance must be provided xor the constructor must be for a
      toplevel class"
-    assert(qualifyingInstance exists != modelType.declaration.container is ModelPackage);
+    assert(qualifyingInstance exists
+        != modelType.declaration.container.container is ModelPackage);
 
     switch (d = modelType.declaration)
     case (is ModelValueConstructor) {
         return newValueConstructor<Type>(modelType, qualifyingInstance);
     }
     case (is ModelCallableConstructor) {
-        return newCallableConstructor<Type, Arguments>(modelType, qualifyingInstance);
+        return unsafeCast<CallableConstructor<Type, Arguments>>(
+                newCallableConstructor(modelType, qualifyingInstance));
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
@@ -295,7 +308,8 @@ native
 CallableConstructor<Anything, Nothing> createCallableConstructor(
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
-        ModelType constructorType);
+        ModelType constructorType,
+        Anything qualifyingInstance);
 
 native
 Class<Anything, Nothing> createClass(
