@@ -21,6 +21,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ValueModel=Value,
     FunctionModel=Function
 }
+import com.vasileff.ceylon.dart.compiler {
+    dartBackend
+}
 
 shared String keyClasses       = "$c";
 shared String keyInterfaces    = "$i";
@@ -119,7 +122,7 @@ Map<String, Object> encodePackage(PackageModel pkg) {
     value m = HashMap<String, Object>();
     m.putAll(encodeAnnotations(pkg));
 
-    for (member in pkg.members) {
+    for (member in {*pkg.members}.filter(interestingDeclaration)) {
         if (is ClassModel member) {
             value memberMap = encodeClass(member);
             assert (is String name = memberMap[keyName]);
@@ -189,11 +192,9 @@ Map<String, Object> encodeClass(ClassModel declaration) {
     return m;
 }
 
-"Callers should skip values that aren't:
-
-     v.toplevel || v.member || isOrContainsType(v)"
 Map<String, Object> encodeValue(ValueModel v) {
     value m = HashMap<String, Object>();
+
     m.putAll {
         keyName -> v.name,
         keyMetatype -> (v.transient then metatypeGetter else metatypeAttribute),
@@ -222,10 +223,6 @@ Map<String, Object> encodeConstructor(ConstructorModel declaration) {
     if (exists name = declaration.name) {
         m.put(keyName, name);
     }
-
-    m.putAll {
-        keyType -> encodeType(declaration.type, declaration)
-    };
 
     if (declaration.\idynamic) {
         m.put(keyDynamic, 1);
@@ -401,15 +398,23 @@ Map<String, Object> encodeValueParameter(ParameterModel parameter) {
     });
 }
 
-Boolean interestingDeclaration(DeclarationModel d)
-    =>  !(ModelUtil.isConstructor(d) && !d is ConstructorModel)
-        && (d.toplevel || d.member || isOrContainsType(d));
+Boolean interestingDeclaration(DeclarationModel d) {
+    value nativeHeaderWithoutImpl
+        =   d.nativeHeader
+            && !d.container.getDirectMemberForBackend(
+                    d.name, dartBackend.asSet()) exists;
 
-[<String -> Map<String, Object>>*] encodeMembers({DeclarationModel*} members) {
-    // FIXME What if multiple members share the same name, as can happen with headers
-    //       and backend implementations? Since the metamodel needs to work for
-    //       non-shared declarations, we prob need to filter for our backend, or use
-    //       the header if there is no backend impl.
+    value functionOrValueForConstructor
+        =   ModelUtil.isConstructor(d) && !d is ConstructorModel;
+
+    return !functionOrValueForConstructor
+            && (d.toplevel || d.member || isOrContainsType(d))
+            && (isForDartBackend(d) || nativeHeaderWithoutImpl);
+}
+
+[<String -> Map<String, Object>>*] encodeMembers(variable {DeclarationModel*} members) {
+    // skip native declarations for other backends, unneeded locals, etc.
+    members = members.filter(interestingDeclaration);
 
     value classes
         =   members.narrow<ClassModel>().map(encodeClass).collect((m) {
@@ -424,17 +429,13 @@ Boolean interestingDeclaration(DeclarationModel d)
             });
 
     value values
-        =   members.narrow<ValueModel>()
-                    .filter(interestingDeclaration)
-                    .map(encodeValue).collect((m) {
+        =   members.narrow<ValueModel>().map(encodeValue).collect((m) {
                 assert (is String name = m[keyName]);
                 return name -> m;
             });
 
     value functions
-        =   members.narrow<FunctionModel>()
-                    .filter(interestingDeclaration)
-                    .map(encodeFunction).collect((m) {
+        =   members.narrow<FunctionModel>().map(encodeFunction).collect((m) {
                 assert (is String name = m[keyName]);
                 return name -> m;
             });
@@ -546,7 +547,8 @@ HashMap<String, Object> encodeType(TypeModel type, DeclarationModel scope) {
     }
     else {
         // TODO use qualifiedNameString w/o package part and mangled for locals
-        m.put(keyName, declaration.name);
+        // the 'else ""' is for the "Type" of default constructors
+        m.put(keyName, declaration.name else "");
     }
 
     if (!type.typeParameter) {
