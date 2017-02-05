@@ -80,7 +80,9 @@ interface ClassOrInterfaceHelper<out Type>
         value result
             =   newClassOrInterfaceDeclaration(modelMember)
                         .memberApply<Container, Nothing> {
-                    containerType = newType(modelQualifyingType);
+                    containerType = unsafeCast<ClosedType<Object>> {
+                        newType(modelQualifyingType);
+                    };
                     typeArguments = types.sequence();
                 };
 
@@ -129,7 +131,7 @@ interface ClassOrInterfaceHelper<out Type>
 
         return newClassDeclaration(modelMember)
                 .memberClassApply<Container, Type, Arguments> {
-            containerType = newType(modelQualifyingType);
+            containerType = unsafeCast<ClosedType<Object>>(newType(modelQualifyingType));
             typeArguments = types.sequence();
         };
     }
@@ -172,7 +174,9 @@ interface ClassOrInterfaceHelper<out Type>
         value result
             =   newInterfaceDeclaration(modelMember)
                         .memberApply<Container, Type> {
-                    containerType = newType(modelQualifyingType);
+                    containerType = unsafeCast<ClosedType<Object>> {
+                        newType(modelQualifyingType);
+                    };
                     typeArguments = types.sequence();
                 };
 
@@ -217,7 +221,7 @@ interface ClassOrInterfaceHelper<out Type>
 
         return newFunctionDeclaration(modelMember)
                 .memberApply<Container, Type, Arguments> {
-            containerType = newType(modelQualifyingType);
+            containerType = unsafeCast<ClosedType<Object>>(newType(modelQualifyingType));
             typeArguments = types.sequence();
         };
     }
@@ -258,7 +262,7 @@ interface ClassOrInterfaceHelper<out Type>
 
         return newValueDeclaration(modelMember)
                 .memberApply<Container, Get, Set> {
-            containerType = newType(modelQualifyingType);
+            containerType = unsafeCast<ClosedType<Object>>(newType(modelQualifyingType));
         };
     }
 

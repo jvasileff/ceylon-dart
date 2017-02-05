@@ -223,11 +223,8 @@ shared InterfaceModel<Anything> newInterfaceModel(ModelType modelType)
         then newMemberInterface(modelType)
         else newInterface(modelType, null);
 
-// FIXME return ClosedType<Anything> and let caller call unsafeCast
-"Return the ceylon metamodel type for the type. The type parameters are not actually
- used or verified, but are provided as a convenience in order for callers to avoid an
- expensive assert() on the returned value."
-shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor type) {
+"Return the ceylon metamodel type for the type."
+shared ClosedType<Anything> newType(ModelType | TypeDescriptor type) {
     value modelType
         =   if (is TypeDescriptor type)
             then type.type
@@ -235,16 +232,16 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
 
     switch (d = modelType.declaration)
     case (is ModelClass) {
-        return unsafeCast<ClassModel<Type>>(newClassModel(modelType));
+        return newClassModel(modelType);
     }
     case (is ModelInterface) {
-        return unsafeCast<ClassModel<Type>>(newInterfaceModel(modelType));
+        return newInterfaceModel(modelType);
     }
     case (is ModelUnionType) {
-        return unsafeCast<ClassModel<Type>>(newUnionType(modelType));
+        return newUnionType(modelType);
     }
     case (is ModelIntersectionType) {
-        return unsafeCast<ClassModel<Type>>(newIntersectionType(modelType));
+        return newIntersectionType(modelType);
     }
     case (is ModelNothingDeclaration) {
         return nothingType;

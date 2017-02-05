@@ -32,24 +32,28 @@ interface TypeHelper<out Type> satisfies HasModelReference {
             else modelType.isExactly(assertedTypeImpl(type).modelType);
 
     shared
-    ClosedType<Type|Other> union<Other>(ClosedType<Other> other)
-        =>  switch (other)
-            case (nothingType) thisType
-            else newType<Type | Other> {
-                unionDeduped {
-                    [modelType, assertedTypeImpl(other).modelType];
-                    modelType.unit;
+    ClosedType<Type | Other> union<Other>(ClosedType<Other> other)
+        =>  unsafeCast<ClosedType<Type | Other>> {
+                switch (other)
+                case (nothingType) thisType
+                else newType {
+                    unionDeduped {
+                        [modelType, assertedTypeImpl(other).modelType];
+                        modelType.unit;
+                    };
                 };
             };
 
     shared
-    ClosedType<Type&Other> intersection<Other>(ClosedType<Other> other)
-        =>  switch (other)
-            case (nothingType) nothingType
-            else newType<Type & Other> {
-                intersectionDedupedCanonical {
-                    [modelType, assertedTypeImpl(other).modelType];
-                    modelType.unit;
+    ClosedType<Type & Other> intersection<Other>(ClosedType<Other> other)
+        =>  unsafeCast<ClosedType<Type & Other>> {
+                switch (other)
+                case (nothingType) nothingType
+                else newType {
+                    intersectionDedupedCanonical {
+                        [modelType, assertedTypeImpl(other).modelType];
+                        modelType.unit;
+                    };
                 };
             };
 }

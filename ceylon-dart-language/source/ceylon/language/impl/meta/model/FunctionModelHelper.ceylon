@@ -17,12 +17,15 @@ interface FunctionModelHelper<out Type, in Arguments>
     // ModelTypedReference modelType;
 
     shared
-    ClosedType<Type> type
-        =>  switch (modelType = this.modelType)
-            case (is ModelTypedReference) // function or method
-                newType<Type>(modelType.type)
-            case (is ModelType) // constructor
-                newType<Type>(modelType);
+    ClosedType<Type> type => `Type`;
+        // TODO cleanup/remove:
+        // =>  unsafeCast<ClosedType<Type>> {
+        //         switch (modelType = this.modelType)
+        //         case (is ModelTypedReference) // function or method
+        //             newType(modelType.type)
+        //         case (is ModelType) // constructor
+        //             newType(modelType);
+        //     };
 
     // Functional
 
