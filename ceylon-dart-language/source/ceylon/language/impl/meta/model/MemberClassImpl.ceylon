@@ -48,7 +48,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
             return null;
         }
 
-        value memberClassConstructor = newMemberClassConstructor<> {
+        value memberClassConstructor = newMemberClassConstructor {
             modelConstructor.appliedType(modelType, [], emptyMap);
         };
         if (!is MemberClassCallableConstructor<Container, Type, Arguments>

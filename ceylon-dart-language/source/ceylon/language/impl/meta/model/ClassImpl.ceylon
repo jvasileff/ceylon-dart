@@ -53,7 +53,7 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(
         if (!allowUnshared && !modelConstructor.isShared) {
             return null;
         }
-        value result = newConstructor<> {
+        value result = newConstructor {
             modelConstructor.appliedType(modelType, [], emptyMap);
             qualifyingInstance;
         };

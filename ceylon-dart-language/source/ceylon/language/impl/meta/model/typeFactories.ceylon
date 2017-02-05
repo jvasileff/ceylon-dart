@@ -264,24 +264,18 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     }
 }
 
-// TODO let callers call unsafeCast()
-MemberClassCallableConstructor<Container, Type, Arguments> |
-MemberClassValueConstructor<Container, Type>
-newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (ModelType modelType)
-        given Arguments satisfies Anything[] {
-
+MemberClassCallableConstructor<Nothing, Anything, Nothing> |
+MemberClassValueConstructor<Nothing, Anything>
+newMemberClassConstructor(ModelType modelType) {
     "must be constructor for a member class (use newConstructor())"
     assert(modelType.declaration.container is ModelClass);
 
     switch (d = modelType.declaration)
     case (is ModelValueConstructor) {
-        return unsafeCast<MemberClassValueConstructor<Container, Type>>(
-                newMemberClassValueConstructor(modelType));
+        return newMemberClassValueConstructor(modelType);
     }
     case (is ModelCallableConstructor) {
-        return unsafeCast<MemberClassCallableConstructor<Container, Type, Arguments>>(
-                newMemberClassCallableConstructor(modelType));
+        return newMemberClassCallableConstructor(modelType);
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
@@ -291,13 +285,8 @@ newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Argument
     }
 }
 
-// TODO return worse types and let caller call unsafeCast()
-CallableConstructor<Type, Arguments> | ValueConstructor<Type>
-newConstructor<out Type=Anything, in Arguments=Nothing>(
-        ModelType modelType,
-        Anything qualifyingInstance)
-        given Arguments satisfies Anything[] {
-
+CallableConstructor<Anything, Nothing> | ValueConstructor<Anything>
+newConstructor(ModelType modelType, Anything qualifyingInstance) {
     "A containing instance must be provided xor the constructor must be for a
      toplevel class"
     assert(qualifyingInstance exists
@@ -305,12 +294,10 @@ newConstructor<out Type=Anything, in Arguments=Nothing>(
 
     switch (d = modelType.declaration)
     case (is ModelValueConstructor) {
-        return unsafeCast<ValueConstructor<Type>>(
-                newValueConstructor(modelType, qualifyingInstance));
+        return newValueConstructor(modelType, qualifyingInstance);
     }
     case (is ModelCallableConstructor) {
-        return unsafeCast<CallableConstructor<Type, Arguments>>(
-                newCallableConstructor(modelType, qualifyingInstance));
+        return newCallableConstructor(modelType, qualifyingInstance);
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
