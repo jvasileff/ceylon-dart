@@ -12,7 +12,7 @@ class Constructor()
 
     shared actual Boolean isActual => false;
     shared actual Boolean isAnnotation => false;
-    shared actual Boolean isAnonymous => true;
+    shared actual Boolean isAnonymous => false;
     shared actual Boolean isDefault => false;
     shared actual Boolean isFinal => false;
     shared actual Boolean isFormal => false;
