@@ -181,21 +181,18 @@ newMemberInterface(ModelType | TypeDescriptor type) {
     };
 }
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared UnionType<Type> newUnionType<out Type=Anything>(ModelType | TypeDescriptor type)
-    =>  UnionTypeImpl<Type> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
+shared UnionType<Anything> newUnionType(ModelType | TypeDescriptor type)
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        createUnionType {
+            typeTP = TypeDescriptorImpl(modelType);
+            modelType = modelType;
         };
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared IntersectionType<Type> newIntersectionType<out Type=Anything>
-        (ModelType | TypeDescriptor type)
-    =>  IntersectionTypeImpl<Type> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
+shared IntersectionType<Anything> newIntersectionType(ModelType | TypeDescriptor type)
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        createIntersectionType {
+            typeTP = TypeDescriptorImpl(modelType);
+            modelType = modelType;
         };
 
 shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
@@ -244,10 +241,10 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
         return unsafeCast<ClassModel<Type>>(newInterfaceModel(modelType));
     }
     case (is ModelUnionType) {
-        return newUnionType(modelType);
+        return unsafeCast<ClassModel<Type>>(newUnionType(modelType));
     }
     case (is ModelIntersectionType) {
-        return newIntersectionType(modelType);
+        return unsafeCast<ClassModel<Type>>(newIntersectionType(modelType));
     }
     case (is ModelNothingDeclaration) {
         return nothingType;
@@ -327,6 +324,11 @@ Interface<Anything> createInterface(
         Anything qualifyingInstance);
 
 native
+IntersectionType<Anything> createIntersectionType(
+        TypeDescriptor typeTP,
+        ModelType modelType);
+
+native
 MemberClass<Nothing, Anything, Nothing> createMemberClass(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
@@ -348,9 +350,13 @@ createMemberClassCallableConstructor(
         ModelType modelType);
 
 native
-MemberClassValueConstructor<Nothing, Anything>
-createMemberClassValueConstructor(
+MemberClassValueConstructor<Nothing, Anything> createMemberClassValueConstructor(
         TypeDescriptor containerTP,
+        TypeDescriptor typeTP,
+        ModelType modelType);
+
+native
+UnionType<Anything> createUnionType(
         TypeDescriptor typeTP,
         ModelType modelType);
 

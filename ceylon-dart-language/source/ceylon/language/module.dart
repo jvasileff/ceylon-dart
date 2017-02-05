@@ -751,6 +751,16 @@ meta$model$Interface $package$impl$meta$model$createInterface(
       $dart$core.Object qualifyingInstance)
   =>  new impl$meta$model$InterfaceImpl(typeTP, modelType, qualifyingInstance);
 
+meta$model$IntersectionType impl$meta$model$createIntersectionType(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  $package$impl$meta$model$createIntersectionType(typeTP, modelType);
+
+meta$model$IntersectionType $package$impl$meta$model$createIntersectionType(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  new impl$meta$model$IntersectionTypeImpl(typeTP, modelType);
+
 meta$model$MemberClass impl$meta$model$createMemberClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
@@ -802,6 +812,16 @@ meta$model$MemberClassValueConstructor $package$impl$meta$model$createMemberClas
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.Type modelType)
   =>  new impl$meta$model$MemberClassValueConstructorImpl(containerTP, typeTP, modelType);
+
+meta$model$UnionType impl$meta$model$createUnionType(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  $package$impl$meta$model$createUnionType(typeTP, modelType);
+
+meta$model$UnionType $package$impl$meta$model$createUnionType(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  new impl$meta$model$UnionTypeImpl(typeTP, modelType);
 
 meta$model$ValueConstructor impl$meta$model$createValueConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
