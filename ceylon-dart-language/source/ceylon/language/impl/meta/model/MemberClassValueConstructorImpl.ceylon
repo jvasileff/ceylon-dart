@@ -8,6 +8,7 @@ import ceylon.language.meta.declaration {
     ValueConstructorDeclaration
 }
 import ceylon.language.meta.model {
+    MemberClass,
     MemberClassValueConstructor,
     ValueConstructor,
     IncompatibleTypeException
@@ -57,5 +58,6 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
 
     container => type;
 
-    type => newMemberClass<Container, Type>(modelQualifyingType);
+    type => unsafeCast<MemberClass<Container, Type, Nothing>>
+                (newMemberClass(modelQualifyingType));
 }

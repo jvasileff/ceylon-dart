@@ -8,6 +8,7 @@ import ceylon.language.meta.declaration {
     CallableConstructorDeclaration
 }
 import ceylon.language.meta.model {
+    ClassModel,
     CallableConstructor
 }
 import ceylon.dart.runtime.model {
@@ -53,7 +54,7 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
     }
 
     // TODO possibly change after https://github.com/ceylon/ceylon/issues/6903
-    type => newClassModel<Type>(modelQualifyingType);
+    type => unsafeCast<ClassModel<Type>>(newClassModel(modelQualifyingType));
 
     // FunctionModel
 

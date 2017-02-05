@@ -9,7 +9,9 @@ import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelTypedReference = TypedReference,
     ModelClass = Class,
+    ModelClassDefinition = ClassDefinition,
     ModelClassWithInitializer = ClassWithInitializer,
+    ModelClassWithConstructors = ClassWithConstructors,
     ModelParameter = Parameter,
     ModelConstructor = Constructor,
     ModelValueConstructor = ValueConstructor,
@@ -87,57 +89,55 @@ newMethod<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
         given Arguments satisfies Anything[]
     =>  MethodImpl<Container, Type, Arguments>(typedReference);
 
-native
-Class<Anything, Nothing> createClass(
-        TypeDescriptor typeTP,
-        TypeDescriptor argumentsTP,
-        ModelType modelType,
-        Anything qualifyingInstance);
-
-shared Class<Anything, Nothing> newClass(
-        ModelType | TypeDescriptor type,
-        Anything qualifyingInstance) {
+shared Class<Anything, Nothing> newClass
+        (ModelType | TypeDescriptor type, Anything qualifyingInstance) {
 
     value modelType = if (is TypeDescriptor type) then type.type else type;
-    ModelType argumentsType;
 
+    return
+    createClass {
+        typeTP = TypeDescriptorImpl(modelType);
+        argumentsTP = TypeDescriptorImpl(argumentsTupleForClass(modelType));
+        modelType = modelType;
+        // not validating the container instance
+        qualifyingInstance = qualifyingInstance;
+    };
+}
+
+ModelType argumentsTupleForClass(ModelType modelType) {
     assert (is ModelClassDefinition modelDeclaration = modelType.declaration);
-
     if (is ModelClassWithInitializer modelDeclaration) {
         assert (exists t = modelType.unit.getCallableTuple(modelType.fullType));
-        argumentsType = t;
+        return t;
     }
     else if (is ModelConstructor defaultCtor = modelDeclaration.getDirectMember(""),
              defaultCtor.isShared) {
         assert (exists t = modelType.unit.getCallableTuple {
             defaultCtor.appliedType(modelType, [], emptyMap);
         });
-        argumentsType = t;
+        return t;
     }
     else {
-        argumentsType = modelType.unit.getNothingType();
+        return modelType.unit.getNothingType();
     }
-
-    return
-    createClass {
-        modelType = modelType;
-        typeTP = TypeDescriptorImpl(modelType);
-        argumentsTP = TypeDescriptorImpl(argumentsType);
-        // not validating the container instance
-        qualifyingInstance = qualifyingInstance;
-    };
 }
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared MemberClass<Container, Type, Arguments>
-newMemberClass<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (ModelType | TypeDescriptor type)
-        given Arguments satisfies Anything[]
-    =>  MemberClassImpl<Container, Type, Arguments> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
-        };
+shared MemberClass<Nothing, Anything, Nothing> newMemberClass
+        (ModelType | TypeDescriptor type) {
+
+    value modelType = if (is TypeDescriptor type) then type.type else type;
+
+    "A member class must have a qualifying type."
+    assert (exists qualifyingTypeModel = modelType.qualifyingType);
+
+    return
+    createMemberClass {
+        containerTP = TypeDescriptorImpl(qualifyingTypeModel);
+        typeTP = TypeDescriptorImpl(modelType);
+        argumentsTP = TypeDescriptorImpl(argumentsTupleForClass(modelType));
+        modelType = modelType;
+    };
+}
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared Interface<Type> newInterface<out Type=Anything>(
@@ -195,16 +195,17 @@ shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
     }
 }
 
-shared ClassModel<Type> newClassModel<out Type=Anything>(ModelType modelType)
+shared ClassModel<Anything> newClassModel(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberClass(modelType)
-        else unsafeCast<ClassModel<Type>>(newClass(modelType, null));
+        else newClass(modelType, null);
 
 shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberInterface(modelType)
         else newInterface(modelType, null);
 
+// FIXME return ClosedType<Anything> and let caller call unsafeCast
 "Return the ceylon metamodel type for the type. The type parameters are not actually
  used or verified, but are provided as a convenience in order for callers to avoid an
  expensive assert() on the returned value."
@@ -216,7 +217,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
 
     switch (d = modelType.declaration)
     case (is ModelClass) {
-        return newClassModel(modelType);
+        return unsafeCast<ClassModel<Type>>(newClassModel(modelType));
     }
     case (is ModelInterface) {
         return newInterfaceModel(modelType);
@@ -289,3 +290,23 @@ newConstructor<out Type=Anything, in Arguments=Nothing>(
             "Argument does not represent a constructor; use newType() instead.");
     }
 }
+
+native
+CallableConstructor<Anything, Nothing> createCallableConstructor(
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelType constructorType);
+
+native
+Class<Anything, Nothing> createClass(
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelType modelType,
+        Anything qualifyingInstance);
+
+native
+MemberClass<Nothing, Anything, Nothing> createMemberClass(
+        TypeDescriptor containerTP,
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelType modelType);

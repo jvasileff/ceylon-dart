@@ -12,6 +12,7 @@ import ceylon.language.meta.declaration {
 }
 import ceylon.language.meta.model {
     CallableConstructor,
+    MemberClass,
     MemberClassCallableConstructor,
     IncompatibleTypeException
 }
@@ -68,7 +69,8 @@ class MemberClassCallableConstructorImpl
         return qt;
     }
 
-    type => newMemberClass<Container, Type>(modelQualifyingType);
+    type => unsafeCast<MemberClass<Container, Type, Nothing>>
+                (newMemberClass(modelQualifyingType));
 
     // FunctionModel
 
