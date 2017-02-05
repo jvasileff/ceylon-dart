@@ -35,16 +35,18 @@ import ceylon.dart.runtime.model.runtime {
 }
 
 [ModelType, ModelType] returnTypeAndArgumentsTupleForReference(ModelType modelType) {
+    // Note: For constructors, the return type's declaration is the constructor and the
+    //       extended type is the class, which is a bit weird, but ok since usually used
+    //       for the covariant `Type` TA?
     value callableType = modelType.fullType;
-    assert (exists returnType = callableType.unit.getCallableReturnType(callableType));
-    assert (exists argumentsTuple = callableType.unit.getCallableTuple(callableType));
-    return [returnType, argumentsTuple];
+    assert (exists result = callableType.unit.getCallableReturnAndTuple(callableType));
+    return result;
 }
 
 shared CallableConstructor<Anything, Nothing>
 newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
     =>  let ([returnType, argumentsTuple]
-            = returnTypeAndArgumentsTupleForReference(modelType))
+            =   returnTypeAndArgumentsTupleForReference(modelType))
         createCallableConstructor {
             constructorType = modelType;    
             typeTP = TypeDescriptorImpl(returnType);
