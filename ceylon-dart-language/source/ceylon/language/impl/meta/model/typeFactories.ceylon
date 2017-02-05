@@ -48,19 +48,24 @@ newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
     =>  let ([returnType, argumentsTuple]
             =   returnTypeAndArgumentsTupleForReference(modelType))
         createCallableConstructor {
-            constructorType = modelType;    
             typeTP = TypeDescriptorImpl(returnType);
             argumentsTP = TypeDescriptorImpl(argumentsTuple);
+            modelType = modelType;
             qualifyingInstance = qualifyingInstance;
         };
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared MemberClassCallableConstructor<Container, Type, Arguments>
-newMemberClassCallableConstructor
-        <in Container = Nothing, out Type=Object, in Arguments=Nothing>
-        (ModelType type)
-        given Arguments satisfies Anything[]
-    =>  MemberClassCallableConstructorImpl<Container, Type, Arguments>(type);
+shared MemberClassCallableConstructor<Nothing, Anything, Nothing>
+newMemberClassCallableConstructor(ModelType modelType) {
+    assert (exists qualifyingType = modelType.qualifyingType?.qualifyingType);
+    return let ([returnType, argumentsTuple]
+            =   returnTypeAndArgumentsTupleForReference(modelType))
+        createMemberClassCallableConstructor {
+            containerTP = TypeDescriptorImpl(qualifyingType);
+            typeTP = TypeDescriptorImpl(returnType);
+            argumentsTP = TypeDescriptorImpl(argumentsTuple);
+            modelType = modelType;
+        };
+}
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared ValueConstructor<Type>
@@ -254,6 +259,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
     }
 }
 
+// TODO let callers call unsafeCast()
 MemberClassCallableConstructor<Container, Type, Arguments> |
 MemberClassValueConstructor<Container, Type>
 newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
@@ -268,7 +274,8 @@ newMemberClassConstructor<in Container = Nothing, out Type=Anything, in Argument
         return newMemberClassValueConstructor<Container, Type>(modelType);
     }
     case (is ModelCallableConstructor) {
-        return newMemberClassCallableConstructor<Container, Type, Arguments>(modelType);
+        return unsafeCast<MemberClassCallableConstructor<Container, Type, Arguments>>(
+                newMemberClassCallableConstructor(modelType));
     }
     case (is ModelClass | ModelInterface | ModelUnionType | ModelIntersectionType |
                 ModelNothingDeclaration | ModelTypeAlias | ModelUnknownType |
@@ -310,7 +317,7 @@ native
 CallableConstructor<Anything, Nothing> createCallableConstructor(
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
-        ModelType constructorType,
+        ModelType modelType,
         Anything qualifyingInstance);
 
 native
@@ -322,6 +329,14 @@ Class<Anything, Nothing> createClass(
 
 native
 MemberClass<Nothing, Anything, Nothing> createMemberClass(
+        TypeDescriptor containerTP,
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelType modelType);
+
+native
+MemberClassCallableConstructor<Nothing, Anything, Nothing>
+createMemberClassCallableConstructor(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,

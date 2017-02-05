@@ -83,7 +83,7 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
         }
 
         value result
-            =   newMemberClassCallableConstructor<> {
+            =   newMemberClassCallableConstructor {
                     modelDeclaration.appliedType {
                         modelTypeFromType {
                             container.memberApply<>(containerType, *typeArguments);
