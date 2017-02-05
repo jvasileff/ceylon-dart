@@ -48,7 +48,7 @@ class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
 
     shared
     Interface<Type> bindSafe(Container container)
-        =>  newInterface(modelType, container);
+        =>  unsafeCast<Interface<Type>>(newInterface(modelType, container));
 
     // Member
 

@@ -739,6 +739,18 @@ meta$model$Class $package$impl$meta$model$createClass(
       $dart$core.Object qualifyingInstance)
   =>  new impl$meta$model$ClassImpl(typeTP, argumentsTP, modelType, qualifyingInstance);
 
+meta$model$Interface impl$meta$model$createInterface(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  $package$impl$meta$model$createInterface(typeTP, modelType, qualifyingInstance);
+
+meta$model$Interface $package$impl$meta$model$createInterface(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  new impl$meta$model$InterfaceImpl(typeTP, modelType, qualifyingInstance);
+
 meta$model$MemberClass impl$meta$model$createMemberClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
@@ -752,6 +764,18 @@ meta$model$MemberClass $package$impl$meta$model$createMemberClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
       $ceylon$dart$runtime$model.Type modelType)
   =>  new impl$meta$model$MemberClassImpl(containerTP, typeTP, argumentsTP, modelType);
+
+meta$model$MemberInterface impl$meta$model$createMemberInterface(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  $package$impl$meta$model$createMemberInterface(containerTP, typeTP, modelType);
+
+meta$model$MemberInterface $package$impl$meta$model$createMemberInterface(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  new impl$meta$model$MemberInterfaceImpl(containerTP, typeTP, modelType);
 
 meta$model$MemberClassCallableConstructor impl$meta$model$createMemberClassCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,

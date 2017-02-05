@@ -161,26 +161,25 @@ shared MemberClass<Nothing, Anything, Nothing> newMemberClass
     };
 }
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Interface<Type> newInterface<out Type=Anything>(
-        ModelType | TypeDescriptor type,
-        Anything qualifyingInstance)
-    =>  InterfaceImpl<Type> {
-            if (is TypeDescriptor type)
-                then type.type
-                else type;
-            qualifyingInstance;
+shared Interface<Anything> newInterface
+        (ModelType | TypeDescriptor type, Anything qualifyingInstance)
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        createInterface {
+            typeTP = TypeDescriptorImpl(modelType);
+            modelType = modelType;
+            qualifyingInstance = qualifyingInstance;
         };
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared MemberInterface<Container, Type>
-newMemberInterface<in Container=Nothing, out Type=Anything>
-        (ModelType | TypeDescriptor type)
-    =>  MemberInterfaceImpl<Container, Type> {
-            if (is TypeDescriptor type)
-            then type.type
-            else type;
-        };
+shared MemberInterface<Nothing, Anything>
+newMemberInterface(ModelType | TypeDescriptor type) {
+    value modelType = if (is TypeDescriptor type) then type.type else type;
+    assert (exists qualifyingType = modelType.qualifyingType);
+    return  createMemberInterface {
+        containerTP = TypeDescriptorImpl(qualifyingType);
+        typeTP = TypeDescriptorImpl(modelType);
+        modelType = modelType;
+    };
+}
 
 // FIXME make this native & provide correct type arguments to the type's constructor
 shared UnionType<Type> newUnionType<out Type=Anything>(ModelType | TypeDescriptor type)
@@ -222,7 +221,7 @@ shared ClassModel<Anything> newClassModel(ModelType modelType)
         then newMemberClass(modelType)
         else newClass(modelType, null);
 
-shared InterfaceModel<Type> newInterfaceModel<out Type=Anything>(ModelType modelType)
+shared InterfaceModel<Anything> newInterfaceModel(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberInterface(modelType)
         else newInterface(modelType, null);
@@ -242,7 +241,7 @@ shared ClosedType<Type> newType<out Type=Anything>(ModelType | TypeDescriptor ty
         return unsafeCast<ClassModel<Type>>(newClassModel(modelType));
     }
     case (is ModelInterface) {
-        return newInterfaceModel(modelType);
+        return unsafeCast<ClassModel<Type>>(newInterfaceModel(modelType));
     }
     case (is ModelUnionType) {
         return newUnionType(modelType);
@@ -322,10 +321,22 @@ Class<Anything, Nothing> createClass(
         Anything qualifyingInstance);
 
 native
+Interface<Anything> createInterface(
+        TypeDescriptor typeTP,
+        ModelType modelType,
+        Anything qualifyingInstance);
+
+native
 MemberClass<Nothing, Anything, Nothing> createMemberClass(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
+        ModelType modelType);
+
+native
+MemberInterface<Nothing, Anything> createMemberInterface(
+        TypeDescriptor containerTP,
+        TypeDescriptor typeTP,
         ModelType modelType);
 
 native
