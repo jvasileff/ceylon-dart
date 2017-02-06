@@ -12,7 +12,7 @@ interface TypeHelper<out Type> satisfies HasModelReference {
     shared formal TypeImpl<Type> thisType;
 
     function assertedTypeImpl(ClosedType<> type) {
-        assert (is TypeImpl<> type);
+        assert (is TypeImpl<Anything> type);
         return type;
     }
 

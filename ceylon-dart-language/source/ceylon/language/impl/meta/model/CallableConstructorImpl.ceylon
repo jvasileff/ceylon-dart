@@ -18,13 +18,12 @@ import ceylon.dart.runtime.model {
     ModelCallableConstructor = CallableConstructor
 }
 
-class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
-        modelReference,
-        Anything qualifyingInstance = null)
+class CallableConstructorImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         satisfies CallableConstructor<Type, Arguments>
         given Arguments satisfies Anything[] {
 
     shared ModelType modelReference;
+    Anything qualifyingInstance;
 
     "The declaration for a Constructor Type must be a CallableConstructor"
     assert (modelReference.declaration is ModelCallableConstructor);

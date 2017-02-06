@@ -15,7 +15,7 @@ import ceylon.dart.runtime.model {
     ModelPackage = Package
 }
 
-class ValueConstructorImpl<out Type=Object>(modelReference, qualifyingInstance = null)
+class ValueConstructorImpl<out Type>(modelReference, qualifyingInstance)
         satisfies ValueConstructor<Type> {
 
     shared ModelType modelReference;

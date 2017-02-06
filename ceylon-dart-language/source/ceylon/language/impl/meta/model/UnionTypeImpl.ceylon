@@ -7,7 +7,7 @@ import ceylon.dart.runtime.model {
     ModelUnionType = UnionType
 }
 
-class UnionTypeImpl<out Type=Anything>(modelReference)
+class UnionTypeImpl<out Type>(modelReference)
         extends TypeImpl<Type>()
         satisfies UnionType<Type> {
 

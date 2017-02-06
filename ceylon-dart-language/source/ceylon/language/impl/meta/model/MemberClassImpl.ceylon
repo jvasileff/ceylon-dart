@@ -14,8 +14,7 @@ import ceylon.dart.runtime.model {
     ModelConstructor = Constructor
 }
 
-class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (modelReference)
+class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
         extends TypeImpl<Type>()
         satisfies MemberClass<Container, Type, Arguments>
         // TODO given Container satisfies Object

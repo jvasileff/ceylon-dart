@@ -16,8 +16,7 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>
-        (modelReference)
+class AttributeImpl<in Container, out Get, in Set>(modelReference)
         satisfies Attribute<Container, Get, Set> {
 
     shared ModelTypedReference modelReference;

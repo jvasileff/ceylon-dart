@@ -13,13 +13,12 @@ import ceylon.language.impl.meta.declaration {
     InterfaceDeclarationImpl
 }
 
-class InterfaceImpl<out Type=Anything>(
-        modelReference,
-        Anything qualifyingInstance = null)
+class InterfaceImpl<out Type>(modelReference, qualifyingInstance)
         extends TypeImpl<Type>()
         satisfies Interface<Type> {
 
     shared actual ModelType modelReference;
+    Anything qualifyingInstance;
 
     "The declaration for a Interface Type must be a Interface"
     assert (modelReference.declaration is ModelInterface);

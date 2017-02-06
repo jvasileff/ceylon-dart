@@ -7,7 +7,7 @@ import ceylon.dart.runtime.model {
     ModelIntersectionType = IntersectionType
 }
 
-class IntersectionTypeImpl<out Type=Anything>(modelReference)
+class IntersectionTypeImpl<out Type>(modelReference)
         extends TypeImpl<Type>()
         satisfies IntersectionType<Type> {
 

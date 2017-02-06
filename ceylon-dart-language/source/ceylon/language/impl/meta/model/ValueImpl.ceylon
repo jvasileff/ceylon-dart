@@ -13,8 +13,7 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class ValueImpl<out Get=Anything, in Set=Nothing>
-        (modelReference, qualifyingInstance)
+class ValueImpl<out Get, in Set>(modelReference, qualifyingInstance)
         satisfies Value<Get, Set> {
 
     shared ModelTypedReference modelReference;

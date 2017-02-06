@@ -19,8 +19,7 @@ import ceylon.dart.runtime.model {
     ModelType = Type
 }
 
-class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>
-        (modelReference)
+class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
         satisfies MemberClassValueConstructor<Container, Type> {
 
     shared ModelType modelReference;

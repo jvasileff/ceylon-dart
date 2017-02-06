@@ -21,14 +21,13 @@ import ceylon.dart.runtime.model {
     ModelConstructor = Constructor
 }
 
-class ClassImpl<out Type=Anything, in Arguments=Nothing>(
-        modelReference,
-        Anything qualifyingInstance = null)
+class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         extends TypeImpl<Type>()
         satisfies Class<Type, Arguments>
         given Arguments satisfies Anything[] {
 
     shared actual ModelType modelReference;
+    Anything qualifyingInstance;
 
     "The declaration for a Class Type must be a Class"
     assert (is ModelClass modelDeclaration = modelReference.declaration);

@@ -17,7 +17,7 @@ import ceylon.language.impl.meta.declaration {
     InterfaceDeclarationImpl
 }
 
-class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelReference)
+class MemberInterfaceImpl<in Container, out Type>(modelReference)
         extends TypeImpl<Type>()
         satisfies MemberInterface<Container, Type> {
 

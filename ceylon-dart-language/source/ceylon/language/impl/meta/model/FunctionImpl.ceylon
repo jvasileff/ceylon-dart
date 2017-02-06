@@ -13,8 +13,7 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class FunctionImpl<out Type=Anything, in Arguments=Nothing>
-        (modelReference, qualifyingInstance)
+class FunctionImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         satisfies Function<Type, Arguments>
         given Arguments satisfies Anything[] {
 

@@ -16,8 +16,7 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>
-        (modelReference)
+class MethodImpl<in Container, out Type, in Arguments>(modelReference)
         satisfies Method<Container, Type, Arguments>
         given Arguments satisfies Anything[] {
 

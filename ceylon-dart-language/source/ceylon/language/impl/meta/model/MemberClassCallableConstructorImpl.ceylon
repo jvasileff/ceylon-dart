@@ -22,8 +22,8 @@ import ceylon.dart.runtime.model {
     ModelCallableConstructor = CallableConstructor
 }
 
-class MemberClassCallableConstructorImpl
-        <in Container=Nothing, out Type=Anything, in Arguments=Nothing>(modelReference)
+class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
+        (modelReference)
         satisfies MemberClassCallableConstructor<Container, Type, Arguments>
         given Arguments satisfies Anything[] {
 
