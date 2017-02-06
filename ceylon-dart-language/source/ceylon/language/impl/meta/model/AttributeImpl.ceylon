@@ -60,4 +60,8 @@ class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>(mo
     // Model
 
     container => helper.container;
+
+    // Object
+
+    string => helper.string;
 }

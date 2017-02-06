@@ -158,4 +158,8 @@ class ValueDeclarationImpl(modelDeclaration)
     Boolean annotated<Annotation>()
             given Annotation satisfies AnnotationType
         =>  helper.annotated<Annotation>();
+
+    // Object
+
+    string => helper.string;
 }

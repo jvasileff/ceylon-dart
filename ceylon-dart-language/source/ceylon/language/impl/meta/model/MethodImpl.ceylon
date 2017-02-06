@@ -73,4 +73,8 @@ class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>(
     // Model
 
     container => helper.container;
+
+    // Object
+
+    string => helper.string;
 }

@@ -51,4 +51,8 @@ class ValueImpl<out Get=Anything, in Set=Nothing>
     // Model
 
     container => helper.container;
+
+    // Object
+
+    string => helper.string;
 }
