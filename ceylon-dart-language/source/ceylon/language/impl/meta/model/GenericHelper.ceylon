@@ -9,7 +9,7 @@ interface GenericHelper satisfies ModelHelper {
 
     shared
     ClosedType<>[] typeArgumentList
-        =>  modelType.typeArguments.map(Entry.item).collect(newType);
+        =>  modelReference.typeArguments.map(Entry.item).collect(newType);
 
     shared
     TypeArgument[] typeArgumentWithVarianceList

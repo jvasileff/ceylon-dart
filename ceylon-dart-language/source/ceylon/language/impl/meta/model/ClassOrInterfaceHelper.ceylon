@@ -27,13 +27,13 @@ interface ClassOrInterfaceHelper<out Type>
 
     shared
     ClassModel<>? extendedType
-        =>  if (exists et = modelType.declaration.extendedType)
+        =>  if (exists et = modelReference.declaration.extendedType)
             then newClassModel(et)
             else null;
 
     shared
     InterfaceModel<>[] satisfiedTypes
-        =>  modelType.satisfiedTypes.collect((mst) => newInterfaceModel(mst));
+        =>  modelReference.satisfiedTypes.collect((mst) => newInterfaceModel(mst));
 
     shared
     Type[] caseValues => nothing;
@@ -45,11 +45,14 @@ interface ClassOrInterfaceHelper<out Type>
 
         ModelType union;
         if (containerType == nothingType) {
-            union = modelType;
+            union = modelReference;
         }
         else {
             assert (is TypeImpl<Anything> containerType);
-            union = unionDeduped([modelType, containerType.modelType], modelType.unit);
+            union = unionDeduped {
+                [modelReference, containerType.modelReference];
+                modelReference.unit;
+            };
         }
 
         value modelMember = union.declaration.getMember(name, null);
@@ -112,8 +115,8 @@ interface ClassOrInterfaceHelper<out Type>
             given Kind satisfies ClassOrInterface<Anything> {
         validateDeclaredContainer(`Container`);
         return appliedMemberClassOrInterface<Container, Kind> {
-            modelType;
-            modelType.declaration.getDirectMember(name);
+            modelReference;
+            modelReference.declaration.getDirectMember(name);
             types;
         };
     }
@@ -155,8 +158,8 @@ interface ClassOrInterfaceHelper<out Type>
             given Arguments satisfies Anything[] {
         validateDeclaredContainer(`Container`);
         return appliedMemberClass<Container, Type, Arguments> {
-            modelType;
-            modelType.declaration.getDirectMember(name);
+            modelReference;
+            modelReference.declaration.getDirectMember(name);
             types;
         };
     }
@@ -202,8 +205,8 @@ interface ClassOrInterfaceHelper<out Type>
     getDeclaredInterface<Container, Type>(String name, ClosedType<Anything>* types) {
         validateDeclaredContainer(`Container`);
         return appliedMemberInterface<Container, Type> {
-            modelType;
-            modelType.declaration.getDirectMember(name);
+            modelReference;
+            modelReference.declaration.getDirectMember(name);
             types;
         };
     }
@@ -245,8 +248,8 @@ interface ClassOrInterfaceHelper<out Type>
             given Arguments satisfies Anything[] {
         validateDeclaredContainer(`Container`);
         return appliedMethod<Container, Type, Arguments> {
-            modelType;
-            modelType.declaration.getDirectMember(name);
+            modelReference;
+            modelReference.declaration.getDirectMember(name);
             types;
         };
     }
@@ -281,8 +284,8 @@ interface ClassOrInterfaceHelper<out Type>
             (String name) {
         validateDeclaredContainer(`Container`);
         return appliedAttribute<Container, Get, Set> {
-            modelType;
-            modelType.declaration.getDirectMember(name);
+            modelReference;
+            modelReference.declaration.getDirectMember(name);
         };
     }
 

@@ -14,29 +14,29 @@ import ceylon.dart.runtime.model {
 }
 
 class FunctionImpl<out Type=Anything, in Arguments=Nothing>
-        (modelType, qualifyingInstance)
+        (modelReference, qualifyingInstance)
         satisfies Function<Type, Arguments>
         given Arguments satisfies Anything[] {
 
-    shared ModelTypedReference modelType;
+    shared ModelTypedReference modelReference;
     Anything qualifyingInstance;
 
     "The declaration for a Function Type must be a Function"
-    assert (modelType.declaration is ModelFunction);
+    assert (modelReference.declaration is ModelFunction);
 
     "Must either be for a toplevel class or have a qualifyingInstance"
     assert(qualifyingInstance exists
-            != modelType.declaration.container is ModelPackage);
+            != modelReference.declaration.container is ModelPackage);
 
     object helper
             satisfies FunctionModelHelper<Type, Arguments>
                     & ApplicableHelper<Type, Arguments> {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     FunctionDeclaration declaration {
-        assert (is ModelFunction model = modelType.declaration);
+        assert (is ModelFunction model = modelReference.declaration);
         return newFunctionDeclaration(model);
     }
 

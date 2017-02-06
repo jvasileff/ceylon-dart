@@ -19,29 +19,29 @@ import ceylon.dart.runtime.model {
 }
 
 class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
-        modelType,
+        modelReference,
         Anything qualifyingInstance = null)
         satisfies CallableConstructor<Type, Arguments>
         given Arguments satisfies Anything[] {
 
-    shared ModelType modelType;
+    shared ModelType modelReference;
 
     "The declaration for a Constructor Type must be a CallableConstructor"
-    assert (modelType.declaration is ModelCallableConstructor);
+    assert (modelReference.declaration is ModelCallableConstructor);
 
     "A CallableConstructor must either be for a toplevel class or have a
      qualifyingInstance"
     assert(qualifyingInstance exists
-            != modelType.declaration.container.container is ModelPackage);
+            != modelReference.declaration.container.container is ModelPackage);
 
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     CallableConstructorDeclaration declaration {
-        assert (is ModelCallableConstructor model = modelType.declaration);
+        assert (is ModelCallableConstructor model = modelReference.declaration);
         return newCallableConstructorDeclaration(model);
     }
 
@@ -50,7 +50,7 @@ class CallableConstructorImpl<out Type=Anything, in Arguments=Nothing>(
     // Functional
 
     ModelType modelQualifyingType {
-        assert (exists qt = modelType.qualifyingType);
+        assert (exists qt = modelReference.qualifyingType);
         return qt;
     }
 

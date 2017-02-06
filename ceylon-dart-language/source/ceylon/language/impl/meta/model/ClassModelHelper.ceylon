@@ -16,7 +16,7 @@ interface ClassModelHelper<out Type>
 
     shared
     ClassDeclaration declaration {
-        assert (is ModelClass modelDeclaration = modelType.declaration);
+        assert (is ModelClass modelDeclaration = modelReference.declaration);
         return newClassDeclaration(modelDeclaration);
     }
 

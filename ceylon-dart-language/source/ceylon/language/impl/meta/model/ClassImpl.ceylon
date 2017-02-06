@@ -22,21 +22,21 @@ import ceylon.dart.runtime.model {
 }
 
 class ClassImpl<out Type=Anything, in Arguments=Nothing>(
-        modelType,
+        modelReference,
         Anything qualifyingInstance = null)
         extends TypeImpl<Type>()
         satisfies Class<Type, Arguments>
         given Arguments satisfies Anything[] {
 
-    shared actual ModelType modelType;
+    shared actual ModelType modelReference;
 
     "The declaration for a Class Type must be a Class"
-    assert (is ModelClass modelDeclaration = modelType.declaration);
+    assert (is ModelClass modelDeclaration = modelReference.declaration);
 
     shared actual object helper
             satisfies ClassModelHelper<Type> & ApplicableHelper<Type, Arguments> {
         thisType => outer;
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     CallableConstructor<Type, Arguments> | ValueConstructor<Type>?
@@ -54,7 +54,7 @@ class ClassImpl<out Type=Anything, in Arguments=Nothing>(
             return null;
         }
         value result = newConstructor {
-            modelConstructor.appliedType(modelType, [], emptyMap);
+            modelConstructor.appliedType(modelReference, [], emptyMap);
             qualifyingInstance;
         };
         if (!is CallableConstructor<Type, Arguments>

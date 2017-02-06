@@ -23,26 +23,26 @@ import ceylon.dart.runtime.model {
 }
 
 class MemberClassCallableConstructorImpl
-        <in Container=Nothing, out Type=Anything, in Arguments=Nothing>(modelType)
+        <in Container=Nothing, out Type=Anything, in Arguments=Nothing>(modelReference)
         satisfies MemberClassCallableConstructor<Container, Type, Arguments>
         given Arguments satisfies Anything[] {
 
-    shared ModelType modelType;
+    shared ModelType modelReference;
 
     "The declaration for a callable constructor must be a callable constructor"
-    assert (modelType.declaration is ModelCallableConstructor);
+    assert (modelReference.declaration is ModelCallableConstructor);
 
     "A MemberClassCallableConstructor must not have a toplevel container"
-    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+    assert (is ModelDeclaration modelClass = modelReference.declaration.container,
             !modelClass.isToplevel);
 
     object helper satisfies FunctionModelHelper<Type, Arguments> {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     CallableConstructorDeclaration declaration {
-        assert (is ModelCallableConstructor model = modelType.declaration);
+        assert (is ModelCallableConstructor model = modelReference.declaration);
         return newCallableConstructorDeclaration(model);
     }
 
@@ -61,12 +61,12 @@ class MemberClassCallableConstructorImpl
     shared
     CallableConstructor<Type, Arguments> bindSafe(Container container)
         =>  unsafeCast<CallableConstructor<Type, Arguments>>(
-                    newCallableConstructor(modelType, container));
+                    newCallableConstructor(modelReference, container));
 
     // Functional
 
     ModelType modelQualifyingType {
-        assert (exists qt = modelType.qualifyingType);
+        assert (exists qt = modelReference.qualifyingType);
         return qt;
     }
 

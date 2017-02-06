@@ -17,22 +17,22 @@ import ceylon.language.impl.meta.declaration {
     InterfaceDeclarationImpl
 }
 
-class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
+class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelReference)
         extends TypeImpl<Type>()
         satisfies MemberInterface<Container, Type> {
 
-    shared actual ModelType modelType;
+    shared actual ModelType modelReference;
 
     "The declaration for a Interface Type must be a Interface"
-    assert (modelType.declaration is ModelInterface);
+    assert (modelReference.declaration is ModelInterface);
 
     shared actual object helper satisfies ClassOrInterfaceHelper<Type> & MemberHelper {
         thisType => outer;
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual InterfaceDeclaration declaration {
-        assert (is ModelInterface modelDeclaration = modelType.declaration);
+        assert (is ModelInterface modelDeclaration = modelReference.declaration);
         return InterfaceDeclarationImpl(modelDeclaration);
     }
 
@@ -48,7 +48,7 @@ class MemberInterfaceImpl<in Container=Nothing, out Type=Anything>(modelType)
 
     shared
     Interface<Type> bindSafe(Container container)
-        =>  unsafeCast<Interface<Type>>(newInterface(modelType, container));
+        =>  unsafeCast<Interface<Type>>(newInterface(modelReference, container));
 
     // Member
 

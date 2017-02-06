@@ -19,25 +19,26 @@ import ceylon.dart.runtime.model {
     ModelType = Type
 }
 
-class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(modelType)
+class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>
+        (modelReference)
         satisfies MemberClassValueConstructor<Container, Type> {
 
-    shared ModelType modelType;
+    shared ModelType modelReference;
 
     "The declaration for a value constructor must be a value constructor"
-    assert (modelType.declaration is ModelValueConstructor);
+    assert (modelReference.declaration is ModelValueConstructor);
 
     "A MemberClassValueConstructor must not have a toplevel container"
-    assert (is ModelDeclaration modelClass = modelType.declaration.container,
+    assert (is ModelDeclaration modelClass = modelReference.declaration.container,
             !modelClass.isToplevel);
 
     object helper satisfies HasModelReference {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     ValueConstructorDeclaration declaration {
-        assert (is ModelValueConstructor model = modelType.declaration);
+        assert (is ModelValueConstructor model = modelReference.declaration);
         return newValueConstructorDeclaration(model);
     }
 
@@ -53,10 +54,11 @@ class MemberClassValueConstructorImpl<in Container = Nothing, out Type=Object>(m
 
     shared
     ValueConstructor<Type> bindSafe(Container container)
-        =>  unsafeCast<ValueConstructor<Type>>(newValueConstructor(modelType, container));
+        =>  unsafeCast<ValueConstructor<Type>>
+                (newValueConstructor(modelReference, container));
 
     ModelType modelQualifyingType {
-        assert (exists qt = modelType.qualifyingType);
+        assert (exists qt = modelReference.qualifyingType);
         return qt;
     }
 

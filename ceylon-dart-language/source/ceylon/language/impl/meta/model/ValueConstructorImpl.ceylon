@@ -15,27 +15,27 @@ import ceylon.dart.runtime.model {
     ModelPackage = Package
 }
 
-class ValueConstructorImpl<out Type=Object>(modelType, qualifyingInstance = null)
+class ValueConstructorImpl<out Type=Object>(modelReference, qualifyingInstance = null)
         satisfies ValueConstructor<Type> {
 
-    shared ModelType modelType;
+    shared ModelType modelReference;
     Anything qualifyingInstance;
 
     "The declaration for a Constructor Type must be a ValueConstructor"
-    assert (modelType.declaration is ModelValueConstructor);
+    assert (modelReference.declaration is ModelValueConstructor);
  
     "A ValueConstructor must either be for a toplevel class or have a qualifyingInstance"
     assert(qualifyingInstance exists
-            != modelType.declaration.container.container is ModelPackage);
+            != modelReference.declaration.container.container is ModelPackage);
 
     object helper
             satisfies ValueModelHelper<Type> & GettableHelper<Type, Nothing> {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     ValueConstructorDeclaration declaration {
-        assert (is ModelValueConstructor model = modelType.declaration);
+        assert (is ModelValueConstructor model = modelReference.declaration);
         return newValueConstructorDeclaration(model);
     }
 
@@ -44,7 +44,7 @@ class ValueConstructorImpl<out Type=Object>(modelType, qualifyingInstance = null
     // ValueModel
 
     ModelType modelQualifyingType {
-        assert (exists qt = modelType.qualifyingType);
+        assert (exists qt = modelReference.qualifyingType);
         return qt;
     }
 

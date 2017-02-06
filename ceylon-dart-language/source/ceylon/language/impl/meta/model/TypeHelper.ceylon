@@ -8,7 +8,7 @@ import ceylon.dart.runtime.model {
 }
 
 interface TypeHelper<out Type> satisfies HasModelReference {
-    shared actual formal ModelType modelType;
+    shared actual formal ModelType modelReference;
     shared formal TypeImpl<Type> thisType;
 
     function assertedTypeImpl(ClosedType<> type) {
@@ -23,13 +23,13 @@ interface TypeHelper<out Type> satisfies HasModelReference {
     Boolean supertypeOf(ClosedType<> type)
         =>  switch (type)
             case (nothingType) true
-            else modelType.isSupertypeOf(assertedTypeImpl(type).modelType);
+            else modelReference.isSupertypeOf(assertedTypeImpl(type).modelReference);
 
     shared
     Boolean exactly(ClosedType<> type)
         =>  switch (type)
-            case (nothingType) modelType.isExactlyNothing // in theory, always false...
-            else modelType.isExactly(assertedTypeImpl(type).modelType);
+            case (nothingType) modelReference.isExactlyNothing // in theory, always false
+            else modelReference.isExactly(assertedTypeImpl(type).modelReference);
 
     shared
     ClosedType<Type | Other> union<Other>(ClosedType<Other> other)
@@ -38,8 +38,8 @@ interface TypeHelper<out Type> satisfies HasModelReference {
                 case (nothingType) thisType
                 else newType {
                     unionDeduped {
-                        [modelType, assertedTypeImpl(other).modelType];
-                        modelType.unit;
+                        [modelReference, assertedTypeImpl(other).modelReference];
+                        modelReference.unit;
                     };
                 };
             };
@@ -51,8 +51,8 @@ interface TypeHelper<out Type> satisfies HasModelReference {
                 case (nothingType) nothingType
                 else newType {
                     intersectionDedupedCanonical {
-                        [modelType, assertedTypeImpl(other).modelType];
-                        modelType.unit;
+                        [modelReference, assertedTypeImpl(other).modelReference];
+                        modelReference.unit;
                     };
                 };
             };

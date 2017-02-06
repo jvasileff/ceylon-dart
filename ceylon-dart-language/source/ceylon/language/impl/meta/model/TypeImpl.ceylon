@@ -7,7 +7,7 @@ import ceylon.dart.runtime.model {
 
 abstract
 class TypeImpl<out Type=Anything>() satisfies ClosedType<Type> {
-    shared formal ModelType modelType;
+    shared formal ModelType modelReference;
     shared formal TypeHelper<Type> helper;
 
     typeOf(Anything instance) => helper.typeOf(instance);

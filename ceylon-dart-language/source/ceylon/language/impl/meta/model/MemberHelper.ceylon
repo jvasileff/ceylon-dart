@@ -5,7 +5,7 @@ import ceylon.language.meta.model {
 interface MemberHelper satisfies HasModelReference {
     shared
     ClosedType<> declaringType {
-        assert (exists qualifyingType = modelType.qualifyingType);
+        assert (exists qualifyingType = modelReference.qualifyingType);
         return newType(qualifyingType);
     }
 }

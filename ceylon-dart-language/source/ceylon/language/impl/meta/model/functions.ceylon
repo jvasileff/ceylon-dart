@@ -11,7 +11,7 @@ import ceylon.language.impl.meta.model {
 shared
 ModelType modelTypeFromType(ClosedType<Anything> t) {
     assert (is TypeImpl<Anything> t);
-    return t.modelType;
+    return t.modelReference;
 }
 
 shared

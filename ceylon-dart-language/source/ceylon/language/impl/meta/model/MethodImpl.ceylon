@@ -16,24 +16,25 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>(modelType)
+class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>
+        (modelReference)
         satisfies Method<Container, Type, Arguments>
         given Arguments satisfies Anything[] {
 
-    shared ModelTypedReference modelType;
+    shared ModelTypedReference modelReference;
 
     "The declaration for a Function Type must be a Function"
-    assert (modelType.declaration is ModelFunction);
+    assert (modelReference.declaration is ModelFunction);
 
     object helper
             satisfies FunctionModelHelper<Type, Arguments>
                     & MemberHelper {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     FunctionDeclaration declaration {
-        assert (is ModelFunction model = modelType.declaration);
+        assert (is ModelFunction model = modelReference.declaration);
         return newFunctionDeclaration(model);
     }
 
@@ -49,7 +50,7 @@ class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>(
 
     shared
     Function<Type, Arguments> bindSafe(Container container)
-        =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelType, container));
+        =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelReference, container));
 
     // Member
 

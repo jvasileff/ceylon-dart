@@ -15,21 +15,21 @@ import ceylon.dart.runtime.model {
 }
 
 class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (modelType)
+        (modelReference)
         extends TypeImpl<Type>()
         satisfies MemberClass<Container, Type, Arguments>
         // TODO given Container satisfies Object
         given Arguments satisfies Anything[] {
 
-    shared actual ModelType modelType;
+    shared actual ModelType modelReference;
 
     "The declaration for a Class Type must be a Class"
-    assert (is ModelClass modelDeclaration = modelType.declaration);
+    assert (is ModelClass modelDeclaration = modelReference.declaration);
 
     shared actual
     object helper satisfies ClassModelHelper<Type> & MemberHelper {
         thisType => outer;
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     MemberClassCallableConstructor<Container, Type, Arguments> |
@@ -49,7 +49,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
         }
 
         value memberClassConstructor = newMemberClassConstructor {
-            modelConstructor.appliedType(modelType, [], emptyMap);
+            modelConstructor.appliedType(modelReference, [], emptyMap);
         };
         if (!is MemberClassCallableConstructor<Container, Type, Arguments>
                 | MemberClassValueConstructor<Container, Type>
@@ -73,7 +73,7 @@ class MemberClassImpl<in Container = Nothing, out Type=Anything, in Arguments=No
 
     shared
     Class<Type, Arguments> bindSafe(Container container)
-        =>  ClassImpl<Type, Arguments>(modelType, container);
+        =>  ClassImpl<Type, Arguments>(modelReference, container);
 
     shared actual
     MemberClassCallableConstructor<Container, Type, Arguments>? defaultConstructor

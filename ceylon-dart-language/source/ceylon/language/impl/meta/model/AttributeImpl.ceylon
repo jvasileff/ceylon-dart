@@ -16,22 +16,23 @@ import ceylon.dart.runtime.model {
     ModelTypedReference = TypedReference
 }
 
-class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>(modelType)
+class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>
+        (modelReference)
         satisfies Attribute<Container, Get, Set> {
 
-    shared ModelTypedReference modelType;
+    shared ModelTypedReference modelReference;
 
     "The declaration for a Value Type must be a Value"
-    assert (modelType.declaration is ModelValue);
+    assert (modelReference.declaration is ModelValue);
 
     object helper
             satisfies ValueModelHelper<Get> & MemberHelper {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     ValueDeclaration declaration {
-        assert (is ModelValue model = modelType.declaration);
+        assert (is ModelValue model = modelReference.declaration);
         return newValueDeclaration(model);
     }
 
@@ -47,7 +48,7 @@ class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>(mo
 
     shared
     Value<Get, Set> bindSafe(Container container)
-        =>  unsafeCast<Value<Get, Set>>(newValue(modelType, container));
+        =>  unsafeCast<Value<Get, Set>>(newValue(modelReference, container));
 
     // Member
 

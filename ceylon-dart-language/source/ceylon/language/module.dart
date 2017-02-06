@@ -714,179 +714,179 @@ const $package$dart$default = dart$default;
 meta$model$Function impl$meta$model$createFunction(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createFunction(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createFunction(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$Function $package$impl$meta$model$createFunction(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$FunctionImpl(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$FunctionImpl(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$Method impl$meta$model$createMethod(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createMethod(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createMethod(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$Method $package$impl$meta$model$createMethod(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$MethodImpl(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$MethodImpl(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$Value impl$meta$model$createValue(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createValue(getTP, setTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createValue(getTP, setTP, modelReference, qualifyingInstance);
 
 meta$model$Value $package$impl$meta$model$createValue(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$ValueImpl(getTP, setTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$ValueImpl(getTP, setTP, modelReference, qualifyingInstance);
 
 meta$model$Attribute impl$meta$model$createAttribute(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createAttribute(containerTP, getTP, setTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createAttribute(containerTP, getTP, setTP, modelReference);
 
 meta$model$Attribute $package$impl$meta$model$createAttribute(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$AttributeImpl(containerTP, getTP, setTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$AttributeImpl(containerTP, getTP, setTP, modelReference);
 
 meta$model$CallableConstructor impl$meta$model$createCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createCallableConstructor(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createCallableConstructor(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$CallableConstructor $package$impl$meta$model$createCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$CallableConstructorImpl(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$CallableConstructorImpl(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$Class impl$meta$model$createClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createClass(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createClass(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$Class $package$impl$meta$model$createClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$ClassImpl(typeTP, argumentsTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$ClassImpl(typeTP, argumentsTP, modelReference, qualifyingInstance);
 
 meta$model$Interface impl$meta$model$createInterface(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createInterface(typeTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createInterface(typeTP, modelReference, qualifyingInstance);
 
 meta$model$Interface $package$impl$meta$model$createInterface(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$InterfaceImpl(typeTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$InterfaceImpl(typeTP, modelReference, qualifyingInstance);
 
 meta$model$IntersectionType impl$meta$model$createIntersectionType(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createIntersectionType(typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createIntersectionType(typeTP, modelReference);
 
 meta$model$IntersectionType $package$impl$meta$model$createIntersectionType(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$IntersectionTypeImpl(typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$IntersectionTypeImpl(typeTP, modelReference);
 
 meta$model$MemberClass impl$meta$model$createMemberClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createMemberClass(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createMemberClass(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$MemberClass $package$impl$meta$model$createMemberClass(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$MemberClassImpl(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$MemberClassImpl(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$MemberInterface impl$meta$model$createMemberInterface(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createMemberInterface(containerTP, typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createMemberInterface(containerTP, typeTP, modelReference);
 
 meta$model$MemberInterface $package$impl$meta$model$createMemberInterface(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$MemberInterfaceImpl(containerTP, typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$MemberInterfaceImpl(containerTP, typeTP, modelReference);
 
 meta$model$MemberClassCallableConstructor impl$meta$model$createMemberClassCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createMemberClassCallableConstructor(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createMemberClassCallableConstructor(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$MemberClassCallableConstructor $package$impl$meta$model$createMemberClassCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$MemberClassCallableConstructorImpl(containerTP, typeTP, argumentsTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$MemberClassCallableConstructorImpl(containerTP, typeTP, argumentsTP, modelReference);
 
 meta$model$MemberClassValueConstructor impl$meta$model$createMemberClassValueConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createMemberClassValueConstructor(containerTP, typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createMemberClassValueConstructor(containerTP, typeTP, modelReference);
 
 meta$model$MemberClassValueConstructor $package$impl$meta$model$createMemberClassValueConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$MemberClassValueConstructorImpl(containerTP, typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$MemberClassValueConstructorImpl(containerTP, typeTP, modelReference);
 
 meta$model$UnionType impl$meta$model$createUnionType(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  $package$impl$meta$model$createUnionType(typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  $package$impl$meta$model$createUnionType(typeTP, modelReference);
 
 meta$model$UnionType $package$impl$meta$model$createUnionType(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType)
-  =>  new impl$meta$model$UnionTypeImpl(typeTP, modelType);
+      $ceylon$dart$runtime$model.Type modelReference)
+  =>  new impl$meta$model$UnionTypeImpl(typeTP, modelReference);
 
 meta$model$ValueConstructor impl$meta$model$createValueConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  $package$impl$meta$model$createValueConstructor(typeTP, modelType, qualifyingInstance);
+  =>  $package$impl$meta$model$createValueConstructor(typeTP, modelReference, qualifyingInstance);
 
 meta$model$ValueConstructor $package$impl$meta$model$createValueConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
-      $ceylon$dart$runtime$model.Type modelType,
+      $ceylon$dart$runtime$model.Type modelReference,
       $dart$core.Object qualifyingInstance)
-  =>  new impl$meta$model$ValueConstructorImpl(typeTP, modelType, qualifyingInstance);
+  =>  new impl$meta$model$ValueConstructorImpl(typeTP, modelReference, qualifyingInstance);

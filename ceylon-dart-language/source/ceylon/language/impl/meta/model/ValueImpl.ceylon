@@ -14,27 +14,27 @@ import ceylon.dart.runtime.model {
 }
 
 class ValueImpl<out Get=Anything, in Set=Nothing>
-        (modelType, qualifyingInstance)
+        (modelReference, qualifyingInstance)
         satisfies Value<Get, Set> {
 
-    shared ModelTypedReference modelType;
+    shared ModelTypedReference modelReference;
     Anything qualifyingInstance;
 
     "The declaration for a Value Type must be a Value"
-    assert (modelType.declaration is ModelValue);
+    assert (modelReference.declaration is ModelValue);
 
     "Must either be for a toplevel class or have a qualifyingInstance"
     assert(qualifyingInstance exists
-            != modelType.declaration.container is ModelPackage);
+            != modelReference.declaration.container is ModelPackage);
 
     object helper
             satisfies ValueModelHelper<Get> & GettableHelper<Get, Set> {
-        modelType => outer.modelType;
+        modelReference => outer.modelReference;
     }
 
     shared actual
     ValueDeclaration declaration {
-        assert (is ModelValue model = modelType.declaration);
+        assert (is ModelValue model = modelReference.declaration);
         return newValueDeclaration(model);
     }
 
