@@ -62,12 +62,13 @@ class ValueDeclarationImpl(modelDeclaration)
         }
 
         value result
-            =   newValue<> {
+            =   newValue {
                     modelDeclaration.appliedTypedReference {
                         qualifyingType = null;
                         typeArguments = [];
                         varianceOverrides = emptyMap;
                     };
+                    null;
                 };
 
         if (!is Value<Get, Set> result) {
@@ -95,7 +96,7 @@ class ValueDeclarationImpl(modelDeclaration)
                 };
 
         value result
-            =   newAttribute<> {
+            =   newAttribute {
                     modelDeclaration.appliedTypedReference {
                         qualifyingType = qualifyingType;
                         typeArguments = [];

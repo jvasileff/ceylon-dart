@@ -1,11 +1,15 @@
 import ceylon.language.impl.meta.declaration {
     newValueDeclaration
 }
+import ceylon.language.meta {
+    metaType = type
+}
 import ceylon.language.meta.declaration {
     ValueDeclaration
 }
 import ceylon.language.meta.model {
-    Attribute, Value
+    Attribute, Value,
+    IncompatibleTypeException
 }
 import ceylon.dart.runtime.model {
     ModelValue = Value,
@@ -32,7 +36,18 @@ class AttributeImpl<in Container = Nothing, out Get=Anything, in Set=Nothing>(mo
     }
 
     shared actual
-    Value<Get,Set> bind(Object container) => nothing;
+    Value<Get, Set> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` metaType(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    Value<Get, Set> bindSafe(Container container)
+        =>  unsafeCast<Value<Get, Set>>(newValue(modelType, container));
 
     // Member
 

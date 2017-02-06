@@ -1,11 +1,15 @@
 import ceylon.language.impl.meta.declaration {
     newFunctionDeclaration
 }
+import ceylon.language.meta {
+    metaType = type
+}
 import ceylon.language.meta.declaration {
     FunctionDeclaration
 }
 import ceylon.language.meta.model {
-    Method, Function
+    Method, Function,
+    IncompatibleTypeException
 }
 import ceylon.dart.runtime.model {
     ModelFunction = Function,
@@ -34,7 +38,18 @@ class MethodImpl<in Container=Nothing, out Type=Anything, in Arguments=Nothing>(
     }
 
     shared actual
-    Function<Type, Arguments> bind(Object container) => nothing;
+    Function<Type, Arguments> bind(Object container) {
+        if (!is Container container) {
+            throw IncompatibleTypeException(
+                "Invalid container ``container``, expected type `` `Container` `` \
+                 but got `` metaType(container) ``");
+        }
+        return bindSafe(container);
+    }
+
+    shared
+    Function<Type, Arguments> bindSafe(Container container)
+        =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelType, container));
 
     // Member
 

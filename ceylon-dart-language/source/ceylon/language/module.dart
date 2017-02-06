@@ -711,6 +711,62 @@ const $package$dart$default = dart$default;
 //
 /////////////////////////////////////////////////
 
+meta$model$Function impl$meta$model$createFunction(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  $package$impl$meta$model$createFunction(typeTP, argumentsTP, modelType, qualifyingInstance);
+
+meta$model$Function $package$impl$meta$model$createFunction(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  new impl$meta$model$FunctionImpl(typeTP, argumentsTP, modelType, qualifyingInstance);
+
+meta$model$Method impl$meta$model$createMethod(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  $package$impl$meta$model$createMethod(containerTP, typeTP, argumentsTP, modelType);
+
+meta$model$Method $package$impl$meta$model$createMethod(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  new impl$meta$model$MethodImpl(containerTP, typeTP, argumentsTP, modelType);
+
+meta$model$Value impl$meta$model$createValue(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  $package$impl$meta$model$createValue(getTP, setTP, modelType, qualifyingInstance);
+
+meta$model$Value $package$impl$meta$model$createValue(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
+      $ceylon$dart$runtime$model.Type modelType,
+      $dart$core.Object qualifyingInstance)
+  =>  new impl$meta$model$ValueImpl(getTP, setTP, modelType, qualifyingInstance);
+
+meta$model$Attribute impl$meta$model$createAttribute(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  $package$impl$meta$model$createAttribute(containerTP, getTP, setTP, modelType);
+
+meta$model$Attribute $package$impl$meta$model$createAttribute(
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor containerTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor getTP,
+      $ceylon$dart$runtime$model.runtime$TypeDescriptor setTP,
+      $ceylon$dart$runtime$model.Type modelType)
+  =>  new impl$meta$model$AttributeImpl(containerTP, getTP, setTP, modelType);
+
 meta$model$CallableConstructor impl$meta$model$createCallableConstructor(
       $ceylon$dart$runtime$model.runtime$TypeDescriptor typeTP,
       $ceylon$dart$runtime$model.runtime$TypeDescriptor argumentsTP,

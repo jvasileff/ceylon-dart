@@ -6,6 +6,7 @@ import ceylon.language.meta.model {
     Function, Method, Value, Attribute
 }
 import ceylon.dart.runtime.model {
+    ModelReference = Reference,
     ModelType = Type,
     ModelTypedReference = TypedReference,
     ModelClass = Class,
@@ -34,19 +35,19 @@ import ceylon.dart.runtime.model.runtime {
     TypeDescriptorImpl
 }
 
-[ModelType, ModelType] returnTypeAndArgumentsTupleForReference(ModelType modelType) {
+[ModelType, ModelType] returnTypeAndArguments
+        (ModelReference modelReference) {
     // Note: For constructors, the return type's declaration is the constructor and the
     //       extended type is the class, which is a bit weird, but ok since usually used
     //       for the covariant `Type` TA?
-    value callableType = modelType.fullType;
+    value callableType = modelReference.fullType;
     assert (exists result = callableType.unit.getCallableReturnAndTuple(callableType));
     return result;
 }
 
 shared CallableConstructor<Anything, Nothing>
 newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
-    =>  let ([returnType, argumentsTuple]
-            =   returnTypeAndArgumentsTupleForReference(modelType))
+    =>  let ([returnType, argumentsTuple] = returnTypeAndArguments(modelType))
         createCallableConstructor {
             typeTP = TypeDescriptorImpl(returnType);
             argumentsTP = TypeDescriptorImpl(argumentsTuple);
@@ -57,8 +58,7 @@ newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
 shared MemberClassCallableConstructor<Nothing, Anything, Nothing>
 newMemberClassCallableConstructor(ModelType modelType) {
     assert (exists qualifyingType = modelType.qualifyingType?.qualifyingType);
-    return let ([returnType, argumentsTuple]
-            =   returnTypeAndArgumentsTupleForReference(modelType))
+    return let ([returnType, argumentsTuple] = returnTypeAndArguments(modelType))
         createMemberClassCallableConstructor {
             containerTP = TypeDescriptorImpl(qualifyingType);
             typeTP = TypeDescriptorImpl(returnType);
@@ -67,8 +67,8 @@ newMemberClassCallableConstructor(ModelType modelType) {
         };
 }
 
-shared ValueConstructor<Anything>
-newValueConstructor(ModelType modelType, Anything qualifyingInstance)
+shared ValueConstructor<Anything> newValueConstructor
+        (ModelType modelType, Anything qualifyingInstance)
     =>  createValueConstructor {
             typeTP = TypeDescriptorImpl(modelType);
             modelType = modelType;
@@ -85,31 +85,57 @@ newMemberClassValueConstructor(ModelType modelType) {
         };
 }
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Value<Get, Set>
-newValue<out Get=Anything, in Set=Nothing>
-        (ModelTypedReference typedReference)
-    =>  ValueImpl<Get, Set>(typedReference);
+Boolean isVariableOrHasSetter(ModelTypedReference modelReference)
+    =>  if (is ModelValue v = modelReference.declaration)
+        then v.isVariable || v.setter exists
+        else false;
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Attribute<Container, Get, Set>
-newAttribute<in Container = Nothing, out Get=Anything, in Set=Nothing>
-        (ModelTypedReference typedReference)
-    =>  AttributeImpl<Container, Get, Set>(typedReference);
+shared Value<> newValue(ModelTypedReference modelReference, Anything qualifyingInstance)
+    =>  let (typeTD = TypeDescriptorImpl(modelReference.type))
+        createValue {
+            getTP = typeTD;
+            setTP = if (isVariableOrHasSetter(modelReference))
+                    then typeTD
+                    else TypeDescriptorImpl(
+                        modelReference.declaration.unit.getNothingType());
+            modelType = modelReference;
+            qualifyingInstance = qualifyingInstance;
+        };
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Function<Type, Arguments>
-newFunction<out Type=Anything, in Arguments=Nothing>
-        (ModelTypedReference typedReference)
-        given Arguments satisfies Anything[]
-    =>  FunctionImpl<Type, Arguments>(typedReference);
+shared Attribute<> newAttribute(ModelTypedReference modelReference) {
+    assert (exists qualifyingType = modelReference.qualifyingType);
+    value typeTD = TypeDescriptorImpl(modelReference.type);
+    return createAttribute {
+        containerTP = TypeDescriptorImpl(qualifyingType);
+        getTP = typeTD;
+        setTP = if (isVariableOrHasSetter(modelReference))
+                then typeTD
+                else TypeDescriptorImpl(
+                    modelReference.declaration.unit.getNothingType());
+        modelType = modelReference;
+    };
+}
 
-// FIXME make this native & provide correct type arguments to the type's constructor
-shared Method<Container, Type, Arguments>
-newMethod<in Container = Nothing, out Type=Anything, in Arguments=Nothing>
-        (ModelTypedReference typedReference)
-        given Arguments satisfies Anything[]
-    =>  MethodImpl<Container, Type, Arguments>(typedReference);
+shared Function<> newFunction
+        (ModelTypedReference modelReference, Anything qualifyingInstance)
+    =>  let ([returnType, argumentsTuple] = returnTypeAndArguments(modelReference))
+        createFunction {
+            TypeDescriptorImpl(returnType);
+            TypeDescriptorImpl(argumentsTuple);
+            modelReference;
+            qualifyingInstance;
+        };
+
+shared Method<> newMethod(ModelTypedReference modelReference) {
+    assert (exists containerType = modelReference.qualifyingType);
+    return let ([returnType, argumentsTuple] = returnTypeAndArguments(modelReference))
+        createMethod {
+            TypeDescriptorImpl(containerType);
+            TypeDescriptorImpl(returnType);
+            TypeDescriptorImpl(argumentsTuple);
+            modelReference;
+        };
+}
 
 shared Class<Anything, Nothing> newClass
         (ModelType | TypeDescriptor type, Anything qualifyingInstance) {
@@ -194,24 +220,6 @@ shared IntersectionType<Anything> newIntersectionType(ModelType | TypeDescriptor
             typeTP = TypeDescriptorImpl(modelType);
             modelType = modelType;
         };
-
-shared Function<> | Method<> | Value<> | Attribute<> newFunctionOrValue
-        (ModelTypedReference typedReference) {
-    switch (d = typedReference.declaration)
-    case (is ModelFunction) {
-        return if (d.isMember)
-               then newMethod<>(typedReference)
-               else newFunction<>(typedReference);
-    }
-    case (is ModelValue) {
-        return if (d.isMember)
-               then newAttribute<>(typedReference)
-               else newValue<>(typedReference);
-    }
-    case (is ModelSetter) {
-        throw AssertionError("creating models for setters is not supported");
-    }
-}
 
 shared ClassModel<Anything> newClassModel(ModelType modelType)
     =>  if (modelType.declaration.isMember)
@@ -299,6 +307,34 @@ newConstructor(ModelType modelType, Anything qualifyingInstance) {
             "Argument does not represent a constructor; use newType() instead.");
     }
 }
+
+native
+Function<> createFunction(
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelTypedReference modelType,
+        Anything qualifyingInstance);
+
+native
+Method<> createMethod(
+        TypeDescriptor containerTP,
+        TypeDescriptor typeTP,
+        TypeDescriptor argumentsTP,
+        ModelTypedReference modelType);
+
+native
+Value<> createValue(
+        TypeDescriptor getTP,
+        TypeDescriptor setTP,
+        ModelTypedReference modelType,
+        Anything qualifyingInstance);
+
+native
+Attribute<> createAttribute(
+        TypeDescriptor containerTP,
+        TypeDescriptor getTP,
+        TypeDescriptor setTP,
+        ModelTypedReference modelType);
 
 native
 CallableConstructor<Anything, Nothing> createCallableConstructor(

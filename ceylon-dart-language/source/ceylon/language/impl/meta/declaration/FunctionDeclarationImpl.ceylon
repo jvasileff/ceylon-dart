@@ -55,14 +55,15 @@ class FunctionDeclarationImpl(modelDeclaration)
             modelTypeArgs;
         };
 
-        value result =
-            newFunction<> {
-                modelDeclaration.appliedTypedReference {
-                    qualifyingType = null;
-                    typeArguments = modelTypeArgs;
-                    varianceOverrides = emptyMap;
+        value result
+            =   newFunction {
+                    modelDeclaration.appliedTypedReference {
+                        qualifyingType = null;
+                        typeArguments = modelTypeArgs;
+                        varianceOverrides = emptyMap;
+                    };
+                    null;
                 };
-            };
 
         if (!is Function<Return, Arguments> result) {
             // TODO improve
@@ -99,7 +100,7 @@ class FunctionDeclarationImpl(modelDeclaration)
         };
 
         value result
-            =   newMethod<> {
+            =   newMethod {
                     modelDeclaration.appliedTypedReference {
                         qualifyingType = qualifyingType;
                         typeArguments = modelTypeArgs;
