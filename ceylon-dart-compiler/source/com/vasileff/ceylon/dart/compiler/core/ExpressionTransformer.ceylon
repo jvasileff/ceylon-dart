@@ -3079,8 +3079,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 ceylonTypes.newTypeImplDeclaration;
             }.expressionForInvocation {
                 null;
-                [generateTypeDescriptor(tInfo, ceylonTypes.anythingType),
-                 generateTypeDescriptor(tInfo, tInfo.typeModel)];
+                [generateTypeDescriptor(tInfo, tInfo.typeModel)];
             };
 
     shared actual
