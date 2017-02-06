@@ -12,20 +12,15 @@ import ceylon.dart.runtime.model {
     ModelClass = Class,
     ModelClassDefinition = ClassDefinition,
     ModelClassWithInitializer = ClassWithInitializer,
-    ModelClassWithConstructors = ClassWithConstructors,
-    ModelParameter = Parameter,
     ModelConstructor = Constructor,
     ModelValueConstructor = ValueConstructor,
     ModelCallableConstructor = CallableConstructor,
     ModelTypeAlias = TypeAlias,
     ModelTypeParameter = TypeParameter,
     ModelInterface = Interface,
-    ModelFunction = Function,
-    ModelFunctional = Functional,
     ModelPackage = Package,
     ModelUnknownType = UnknownType,
     ModelValue = Value,
-    ModelSetter = Setter,
     ModelUnionType = UnionType,
     ModelIntersectionType = IntersectionType,
     ModelNothingDeclaration = NothingDeclaration
@@ -35,18 +30,8 @@ import ceylon.dart.runtime.model.runtime {
     TypeDescriptorImpl
 }
 
-[ModelType, ModelType] returnTypeAndArguments
-        (ModelReference modelReference) {
-    // Note: For constructors, the return type's declaration is the constructor and the
-    //       extended type is the class, which is a bit weird, but ok since usually used
-    //       for the covariant `Type` TA?
-    value callableType = modelReference.fullType;
-    assert (exists result = callableType.unit.getCallableReturnAndTuple(callableType));
-    return result;
-}
-
-shared CallableConstructor<Anything, Nothing>
-newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
+shared CallableConstructor<> newCallableConstructor
+        (ModelType modelType, Anything qualifyingInstance)
     =>  let ([returnType, argumentsTuple] = returnTypeAndArguments(modelType))
         createCallableConstructor {
             typeTP = TypeDescriptorImpl(returnType);
@@ -55,8 +40,8 @@ newCallableConstructor(ModelType modelType, Anything qualifyingInstance)
             qualifyingInstance = qualifyingInstance;
         };
 
-shared MemberClassCallableConstructor<Nothing, Anything, Nothing>
-newMemberClassCallableConstructor(ModelType modelType) {
+shared MemberClassCallableConstructor<> newMemberClassCallableConstructor
+        (ModelType modelType) {
     assert (exists qualifyingType = modelType.qualifyingType?.qualifyingType);
     return let ([returnType, argumentsTuple] = returnTypeAndArguments(modelType))
         createMemberClassCallableConstructor {
@@ -67,7 +52,7 @@ newMemberClassCallableConstructor(ModelType modelType) {
         };
 }
 
-shared ValueConstructor<Anything> newValueConstructor
+shared ValueConstructor<> newValueConstructor
         (ModelType modelType, Anything qualifyingInstance)
     =>  createValueConstructor {
             typeTP = TypeDescriptorImpl(modelType);
@@ -75,8 +60,8 @@ shared ValueConstructor<Anything> newValueConstructor
             qualifyingInstance = qualifyingInstance;
         };
 
-shared MemberClassValueConstructor<Nothing, Anything>
-newMemberClassValueConstructor(ModelType modelType) {
+shared MemberClassValueConstructor<> newMemberClassValueConstructor
+        (ModelType modelType) {
     assert (exists qualifyingType = modelType.qualifyingType?.qualifyingType);
     return createMemberClassValueConstructor {
             containerTP = TypeDescriptorImpl(qualifyingType);
@@ -84,11 +69,6 @@ newMemberClassValueConstructor(ModelType modelType) {
             modelType = modelType;
         };
 }
-
-Boolean isVariableOrHasSetter(ModelTypedReference modelReference)
-    =>  if (is ModelValue v = modelReference.declaration)
-        then v.isVariable || v.setter exists
-        else false;
 
 shared Value<> newValue(ModelTypedReference modelReference, Anything qualifyingInstance)
     =>  let (typeTD = TypeDescriptorImpl(modelReference.type))
@@ -137,42 +117,17 @@ shared Method<> newMethod(ModelTypedReference modelReference) {
         };
 }
 
-shared Class<Anything, Nothing> newClass
-        (ModelType | TypeDescriptor type, Anything qualifyingInstance) {
+shared Class<> newClass(ModelType | TypeDescriptor type, Anything qualifyingInstance)
+    =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
+        createClass {
+            typeTP = TypeDescriptorImpl(modelType);
+            argumentsTP = TypeDescriptorImpl(argumentsTupleForClass(modelType));
+            modelType = modelType;
+            // not validating the container instance
+            qualifyingInstance = qualifyingInstance;
+        };
 
-    value modelType = if (is TypeDescriptor type) then type.type else type;
-
-    return
-    createClass {
-        typeTP = TypeDescriptorImpl(modelType);
-        argumentsTP = TypeDescriptorImpl(argumentsTupleForClass(modelType));
-        modelType = modelType;
-        // not validating the container instance
-        qualifyingInstance = qualifyingInstance;
-    };
-}
-
-ModelType argumentsTupleForClass(ModelType modelType) {
-    assert (is ModelClassDefinition modelDeclaration = modelType.declaration);
-    if (is ModelClassWithInitializer modelDeclaration) {
-        assert (exists t = modelType.unit.getCallableTuple(modelType.fullType));
-        return t;
-    }
-    else if (is ModelConstructor defaultCtor = modelDeclaration.getDirectMember(""),
-             defaultCtor.isShared) {
-        assert (exists t = modelType.unit.getCallableTuple {
-            defaultCtor.appliedType(modelType, [], emptyMap);
-        });
-        return t;
-    }
-    else {
-        return modelType.unit.getNothingType();
-    }
-}
-
-shared MemberClass<Nothing, Anything, Nothing> newMemberClass
-        (ModelType | TypeDescriptor type) {
-
+shared MemberClass<> newMemberClass(ModelType | TypeDescriptor type) {
     value modelType = if (is TypeDescriptor type) then type.type else type;
 
     "A member class must have a qualifying type."
@@ -187,7 +142,7 @@ shared MemberClass<Nothing, Anything, Nothing> newMemberClass
     };
 }
 
-shared Interface<Anything> newInterface
+shared Interface<> newInterface
         (ModelType | TypeDescriptor type, Anything qualifyingInstance)
     =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
         createInterface {
@@ -196,8 +151,7 @@ shared Interface<Anything> newInterface
             qualifyingInstance = qualifyingInstance;
         };
 
-shared MemberInterface<Nothing, Anything>
-newMemberInterface(ModelType | TypeDescriptor type) {
+shared MemberInterface<> newMemberInterface(ModelType | TypeDescriptor type) {
     value modelType = if (is TypeDescriptor type) then type.type else type;
     assert (exists qualifyingType = modelType.qualifyingType);
     return  createMemberInterface {
@@ -207,32 +161,32 @@ newMemberInterface(ModelType | TypeDescriptor type) {
     };
 }
 
-shared UnionType<Anything> newUnionType(ModelType | TypeDescriptor type)
+shared UnionType<> newUnionType(ModelType | TypeDescriptor type)
     =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
         createUnionType {
             typeTP = TypeDescriptorImpl(modelType);
             modelType = modelType;
         };
 
-shared IntersectionType<Anything> newIntersectionType(ModelType | TypeDescriptor type)
+shared IntersectionType<> newIntersectionType(ModelType | TypeDescriptor type)
     =>  let (modelType = if (is TypeDescriptor type) then type.type else type)
         createIntersectionType {
             typeTP = TypeDescriptorImpl(modelType);
             modelType = modelType;
         };
 
-shared ClassModel<Anything> newClassModel(ModelType modelType)
+shared ClassModel<> newClassModel(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberClass(modelType)
         else newClass(modelType, null);
 
-shared InterfaceModel<Anything> newInterfaceModel(ModelType modelType)
+shared InterfaceModel<> newInterfaceModel(ModelType modelType)
     =>  if (modelType.declaration.isMember)
         then newMemberInterface(modelType)
         else newInterface(modelType, null);
 
 "Return the ceylon metamodel type for the type."
-shared ClosedType<Anything> newType(ModelType | TypeDescriptor type) {
+shared ClosedType<> newType(ModelType | TypeDescriptor type) {
     value modelType
         =   if (is TypeDescriptor type)
             then type.type
@@ -265,8 +219,7 @@ shared ClosedType<Anything> newType(ModelType | TypeDescriptor type) {
     }
 }
 
-MemberClassCallableConstructor<Nothing, Anything, Nothing> |
-MemberClassValueConstructor<Nothing, Anything>
+MemberClassCallableConstructor<> | MemberClassValueConstructor<>
 newMemberClassConstructor(ModelType modelType) {
     "must be constructor for a member class (use newConstructor())"
     assert(modelType.declaration.container is ModelClass);
@@ -286,8 +239,9 @@ newMemberClassConstructor(ModelType modelType) {
     }
 }
 
-CallableConstructor<Anything, Nothing> | ValueConstructor<Anything>
-newConstructor(ModelType modelType, Anything qualifyingInstance) {
+CallableConstructor<> | ValueConstructor<> newConstructor
+        (ModelType modelType, Anything qualifyingInstance) {
+
     "A containing instance must be provided xor the constructor must be for a
      toplevel class"
     assert(qualifyingInstance exists
@@ -305,6 +259,39 @@ newConstructor(ModelType modelType, Anything qualifyingInstance) {
                 ModelTypeParameter) {
         throw AssertionError(
             "Argument does not represent a constructor; use newType() instead.");
+    }
+}
+
+[ModelType, ModelType] returnTypeAndArguments
+        (ModelReference modelReference) {
+    // Note: For constructors, the return type's declaration is the constructor and the
+    //       extended type is the class, which is a bit weird, but ok since usually used
+    //       for the covariant `Type` TA?
+    value callableType = modelReference.fullType;
+    assert (exists result = callableType.unit.getCallableReturnAndTuple(callableType));
+    return result;
+}
+
+Boolean isVariableOrHasSetter(ModelTypedReference modelReference)
+    =>  if (is ModelValue v = modelReference.declaration)
+        then v.isVariable || v.setter exists
+        else false;
+
+ModelType argumentsTupleForClass(ModelType modelType) {
+    assert (is ModelClassDefinition modelDeclaration = modelType.declaration);
+    if (is ModelClassWithInitializer modelDeclaration) {
+        assert (exists t = modelType.unit.getCallableTuple(modelType.fullType));
+        return t;
+    }
+    else if (is ModelConstructor defaultCtor = modelDeclaration.getDirectMember(""),
+             defaultCtor.isShared) {
+        assert (exists t = modelType.unit.getCallableTuple {
+            defaultCtor.appliedType(modelType, [], emptyMap);
+        });
+        return t;
+    }
+    else {
+        return modelType.unit.getNothingType();
     }
 }
 
@@ -337,45 +324,45 @@ Attribute<> createAttribute(
         ModelTypedReference modelType);
 
 native
-CallableConstructor<Anything, Nothing> createCallableConstructor(
+CallableConstructor<> createCallableConstructor(
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
         ModelType modelType,
         Anything qualifyingInstance);
 
 native
-Class<Anything, Nothing> createClass(
+Class<> createClass(
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
         ModelType modelType,
         Anything qualifyingInstance);
 
 native
-Interface<Anything> createInterface(
+Interface<> createInterface(
         TypeDescriptor typeTP,
         ModelType modelType,
         Anything qualifyingInstance);
 
 native
-IntersectionType<Anything> createIntersectionType(
+IntersectionType<> createIntersectionType(
         TypeDescriptor typeTP,
         ModelType modelType);
 
 native
-MemberClass<Nothing, Anything, Nothing> createMemberClass(
+MemberClass<> createMemberClass(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
         TypeDescriptor argumentsTP,
         ModelType modelType);
 
 native
-MemberInterface<Nothing, Anything> createMemberInterface(
+MemberInterface<> createMemberInterface(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
         ModelType modelType);
 
 native
-MemberClassCallableConstructor<Nothing, Anything, Nothing>
+MemberClassCallableConstructor<>
 createMemberClassCallableConstructor(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
@@ -383,18 +370,18 @@ createMemberClassCallableConstructor(
         ModelType modelType);
 
 native
-MemberClassValueConstructor<Nothing, Anything> createMemberClassValueConstructor(
+MemberClassValueConstructor<> createMemberClassValueConstructor(
         TypeDescriptor containerTP,
         TypeDescriptor typeTP,
         ModelType modelType);
 
 native
-UnionType<Anything> createUnionType(
+UnionType<> createUnionType(
         TypeDescriptor typeTP,
         ModelType modelType);
 
 native
-ValueConstructor<Anything> createValueConstructor(
+ValueConstructor<> createValueConstructor(
         TypeDescriptor typeTP,
         ModelType modelType,
         Anything qualifyingInstance);
