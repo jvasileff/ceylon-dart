@@ -116,6 +116,7 @@ import com.redhat.ceylon.compiler.typechecker.tree {
 }
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
+    PackageModel=Package,
     TypeModel=Type,
     TypedReferenceModel=TypedReference,
     DeclarationModel=Declaration,
@@ -219,6 +220,11 @@ class PackageDecInfo(shared actual PackageDec node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared PackageModel model {
+        assert (is PackageModel m = tcNode.importPath.model);
+        return m;
+    }
 }
 
 shared

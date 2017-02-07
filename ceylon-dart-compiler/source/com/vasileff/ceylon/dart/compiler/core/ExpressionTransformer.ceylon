@@ -112,7 +112,8 @@ import ceylon.ast.core {
     MemberOperator,
     Dec,
     ModuleDec,
-    TypeMeta
+    TypeMeta,
+    PackageDec
 }
 import ceylon.collection {
     LinkedList
@@ -196,7 +197,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     functionExpressionInfo,
     isCaseInfo,
     ifElseExpressionInfo,
-    moduleDecInfo
+    moduleDecInfo,
+    packageDecInfo
 }
 
 shared
@@ -3127,6 +3129,26 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         };
     }
+
+    shared actual
+    DartExpression transformPackageDec(PackageDec that)
+        =>  let (info = packageDecInfo(that))
+            // invoke "ceylon.language.meta.declaration::Module.findPackage()
+            dartTypes.dartInvocable {
+                info;
+                ceylonTypes.clMetaModuleFindImportedPackageDeclaration;
+            }.expressionForInvocation {
+                receiver // $module, wrapped
+                    =   dartTypes.dartInvocable {
+                            info;
+                            ceylonTypes.moduleImplDeclaration;
+                        }.expressionForInvocation {
+                            receiver = null;
+                            arguments = [DartSimpleIdentifier("$module")];
+                        };
+                arguments // the package name
+                    =   [DartSimpleStringLiteral(info.model.qualifiedNameString)];
+            };
 
     shared actual default
     DartExpression transformNode(Node that) {

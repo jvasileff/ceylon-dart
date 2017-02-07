@@ -116,6 +116,24 @@ class CeylonTypes(Unit unit) {
     shared
     Type nothingType => unit.nothingType;
 
+    // meta
+
+    shared
+    Package clMetaDeclarationPackage
+        // use the language module to find the package; see interopPackage notes
+        =>  unit.\ipackage.\imodule.languageModule.getPackage(
+                "ceylon.language.meta.declaration");
+
+    shared
+    Interface clMetaModuleInterface
+        =>  assertInterface(clMetaDeclarationPackage.getDirectMember(
+                "Module", null, false));
+
+    shared
+    Function clMetaModuleFindImportedPackageDeclaration
+        =>  assertFunction(clMetaModuleInterface.getDirectMember(
+                "findImportedPackage", null, false));
+
     /////////////////////////////////////////////
     // Dart Specific Types and Declarations
     /////////////////////////////////////////////
@@ -313,7 +331,6 @@ class CeylonTypes(Unit unit) {
         return declaration;
     }
 
-    suppressWarnings("unusedDeclaration")
     Interface assertInterface(Declaration declaration) {
         assert (is Interface declaration);
         return declaration;
