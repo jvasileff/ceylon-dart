@@ -346,44 +346,23 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                     // [Module*]
                     ctx.unit.getSequentialType(ceylonTypes.moduleDeclaration.type);
                     null;
-                    () => generateInvocationSynthetic {
+                    () => generateSequentialFromElements {
                         scope;
+                        elementType
+                            =   ceylonTypes.moduleDeclaration.type;
 
-                        receiverType // TODO element type should be ceylon.model::Module
-                            =   ctx.unit.getIterableType(
-                                    ceylonTypes.moduleDeclaration.type);
-
-                        generateReceiver()
-                            =>  dartTypes.invocableForBaseExpression {
-                                    scope;
-                                    ceylonTypes.ceylonIterable;
-                                }.expressionForInvocation {
-                                    [generateTypeDescriptor {
-                                        scope;
-                                        ceylonTypes.moduleDeclaration.type;
-                                    },
-                                    DartListLiteral {
-                                        false;
-                                        CeylonIterable(mod.imports)
-                                                // TODO remove filter once dart interop
-                                                //      modules include runtime model info
-                                                .filter(not(dartNative))
-                                                .filter(isForDartBackend)
-                                                .collect {
-                                            // the.imported.module.$module
-                                            (imp) => DartPrefixedIdentifier {
-                                                DartSimpleIdentifier {
-                                                    moduleImportPrefix(imp.\imodule);
-                                                };
-                                                DartSimpleIdentifier("$module");
-                                            };
-                                        };
-                                    }];
-                                };
-
-                        memberName = "sequence";
-                        typeArguments = [];
-                        arguments = [];
+                        elements
+                            =   [for (imp in mod.imports)
+                                // TODO remove filter once dart interop
+                                //      modules include runtime model info
+                                if (!dartNative(imp))
+                                if (isForDartBackend(imp))
+                                DartPrefixedIdentifier {
+                                    DartSimpleIdentifier {
+                                        moduleImportPrefix(imp.\imodule);
+                                    };
+                                    DartSimpleIdentifier("$module");
+                                }];
                     };
                 }];
                                         };

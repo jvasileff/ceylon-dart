@@ -1586,15 +1586,7 @@ class BaseGenerator(CompilationContext ctx)
 
         if (listedArguments.empty && !sequenceArgument exists) {
             // Easy; there are no elements.
-            return withBoxingNonNative {
-                scope;
-                ceylonTypes.emptyType;
-                dartTypes.dartInvocable {
-                    scope;
-                    ceylonTypes.emptyValueDeclaration;
-                    false;
-                }.expressionForInvocation();
-            };
+            return generateEmpty(scope);
         }
         else if (!nonempty listedArguments) {
             // Just evaluate and return the spread expression. We don't care about the
@@ -1703,16 +1695,7 @@ class BaseGenerator(CompilationContext ctx)
 
         if (listedArguments.empty && !sequenceArgument exists) {
             // If there are no arguments, its empty.
-            return
-            withBoxingNonNative {
-                scope;
-                ceylonTypes.emptyType;
-                dartTypes.dartInvocable {
-                    scope;
-                    ceylonTypes.emptyValueDeclaration;
-                    false;
-                }.expressionForInvocation();
-            };
+            return generateEmpty(scope);
         }
 
         if (!nonempty listedArguments) {
@@ -5022,16 +5005,7 @@ class BaseGenerator(CompilationContext ctx)
                     withLhs {
                         parameterType;
                         parameter.model;
-                        () => withBoxing {
-                            scope;
-                            ceylonTypes.emptyType;
-                            null;
-                            dartTypes.dartInvocable {
-                                scope;
-                                ceylonTypes.emptyValueDeclaration;
-                                false;
-                            }.expressionForInvocation();
-                        };
+                        () => generateEmpty(scope);
                     };
                 };
             }
@@ -5449,11 +5423,10 @@ class BaseGenerator(CompilationContext ctx)
                     else if (parameter.sequenced) then
                         // Per spec 4.3.6: A variadic parameter may not have a
                         // default argument.
-                        dartTypes.dartInvocable {
-                            scope;
-                            ceylonTypes.emptyValueDeclaration;
-                            false;
-                        }.expressionForInvocation()
+                        withLhsNonNative {
+                            type;
+                            () => generateEmpty(scope);
+                        }
                     else if (parameter.defaulted) then
                         dartTypes.dartDefault(scope)
                     else
@@ -5466,12 +5439,10 @@ class BaseGenerator(CompilationContext ctx)
                                 case (is TypeModel) type;
                             });
 
-                            return
-                            dartTypes.dartInvocable {
-                                scope;
-                                ceylonTypes.emptyValueDeclaration;
-                                false;
-                            }.expressionForInvocation();
+                            return withLhsNonNative {
+                                type;
+                                () => generateEmpty(scope);
+                            };
                         })()));
 
         return [argsSetup, arguments];
@@ -5762,6 +5733,61 @@ class BaseGenerator(CompilationContext ctx)
                     [];
                     [];
                 };
+
+    shared
+    DartExpression generateEmpty(DScope scope)
+        =>  withBoxingNonNative {
+                scope;
+                ceylonTypes.emptyType;
+                dartTypes.dartInvocable {
+                    scope;
+                    ceylonTypes.emptyValueDeclaration;
+                    false;
+                }.expressionForInvocation();
+            };
+
+    shared
+    DartExpression generateSequentialFromElements(
+            DScope scope,
+            TypeModel elementType,
+            [DartExpression | DartExpression()*] elements)
+        // TODO come up with a more efficient implementation. Best may be to call a
+        //      native Dart function that creates an ArraySequence(Array.withList(DList)).
+        //      This will have to be written in Dart, since we don't want such a function
+        //      to be shared.
+        =>  if (!nonempty elements)
+            then generateEmpty(scope)
+            else generateInvocationSynthetic {
+                scope;
+
+                receiverType
+                    =   ctx.unit.getIterableType(elementType);
+
+                generateReceiver()
+                    =>  dartTypes.invocableForBaseExpression {
+                            scope;
+                            ceylonTypes.ceylonIterable;
+                        }.expressionForInvocation {
+                            [generateTypeDescriptor {
+                                scope;
+                                elementType;
+                            },
+                            DartListLiteral {
+                                false;
+                                withLhsNonNative {
+                                    lhsType = elementType;
+                                    () => [for (element in elements)
+                                           switch(element)
+                                           case (is DartExpression) element
+                                           else element()];
+                                };
+                            }];
+                        };
+
+                memberName = "sequence";
+                typeArguments = [];
+                arguments = [];
+            };
 
     "Generate a Dart field declaration for the Ceylon function or value member. This
      may be:
