@@ -247,6 +247,10 @@ Map<String, Object> encodeFunction(FunctionModel declaration) {
         keyType -> encodeType(declaration.type, declaration)
     };
 
+    if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {
+        m[keyTypeParams] = tps;
+    }
+
     if (declaration.\idynamic) {
         m.put(keyDynamic, 1);
     }
