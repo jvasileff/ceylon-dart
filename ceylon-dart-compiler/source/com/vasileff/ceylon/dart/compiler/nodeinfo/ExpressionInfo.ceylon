@@ -148,7 +148,7 @@ class ValueExpressionInfo()
 shared abstract
 class PrimaryInfo()
         of  AtomInfo | BaseExpressionInfo | QualifiedExpressionInfo | InvocationInfo
-            | DecInfo | DefaultPrimaryInfo
+            | MetaInfo | DecInfo | DefaultPrimaryInfo
         extends ValueExpressionInfo() {}
 
 shared
@@ -157,6 +157,53 @@ class DefaultPrimaryInfo(shared actual Expression node)
         extends PrimaryInfo() {
 
     shared alias TcNodeType => Tree.Term;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared abstract
+class MetaInfo()
+        of TypeMetaInfo | BaseMetaInfo | MemberMetaInfo
+        extends PrimaryInfo() {
+
+    shared actual formal Meta node;
+    shared actual formal Tree.MetaLiteral tcNode;
+
+    shared DeclarationModel declaration => tcNode.declaration;
+}
+
+shared
+class TypeMetaInfo(shared actual TypeMeta node)
+        extends MetaInfo() {
+
+    shared alias TcNodeType => Tree.TypeLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class BaseMetaInfo(shared actual BaseMeta node)
+        extends MetaInfo() {
+
+    shared alias TcNodeType => Tree.MemberLiteral;
+    value lazyTcNode {
+        assert (is TcNodeType node = getTcNode(node));
+        return node;
+    }
+    shared actual TcNodeType tcNode = lazyTcNode;
+}
+
+shared
+class MemberMetaInfo(shared actual MemberMeta node)
+        extends MetaInfo() {
+
+    shared alias TcNodeType => Tree.MemberLiteral;
     value lazyTcNode {
         assert (is TcNodeType node = getTcNode(node));
         return node;
@@ -626,8 +673,3 @@ shared class InterfaceDecInfo(InterfaceDec that) => TypeDecInfo(that);
 
 shared class ElementOrSubrangeExpressionInfo(ElementOrSubrangeExpression that) => DefaultPrimaryInfo(that);
 
-shared class MetaInfo(Meta that) => DefaultPrimaryInfo(that);
-
-shared class BaseMetaInfo(BaseMeta that) => MetaInfo(that);
-shared class MemberMetaInfo(MemberMeta that) => MetaInfo(that);
-shared class TypeMetaInfo(TypeMeta that) => MetaInfo(that);

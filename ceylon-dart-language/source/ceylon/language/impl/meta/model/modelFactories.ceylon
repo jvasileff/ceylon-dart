@@ -1,7 +1,7 @@
 import ceylon.language.meta.model {
     ClosedType = Type, Class, MemberClass, Interface, MemberInterface, UnionType,
     InterfaceModel, CallableConstructor, ValueConstructor, ClassModel,
-    MemberClassCallableConstructor, MemberClassValueConstructor,
+    MemberClassCallableConstructor, MemberClassValueConstructor, ClassOrInterface,
     IntersectionType, nothingType,
     Function, Method, Value, Attribute
 }
@@ -184,6 +184,11 @@ shared InterfaceModel<> newInterfaceModel(ModelType modelReference)
     =>  if (modelReference.declaration.isMember)
         then newMemberInterface(modelReference)
         else newInterface(modelReference, null);
+
+shared ClassOrInterface<> newClassOrInterface(ModelType modelReference)
+    =>  if (modelReference.declaration is ModelClass)
+        then newClassModel(modelReference)
+        else newInterfaceModel(modelReference);
 
 "Return the ceylon metamodel type for the type."
 shared ClosedType<> newType(ModelType | TypeDescriptor type) {

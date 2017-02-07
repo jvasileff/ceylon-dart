@@ -120,9 +120,23 @@ class CeylonTypes(Unit unit) {
 
     shared
     Package clMetaDeclarationPackage
-        // use the language module to find the package; see interopPackage notes
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
                 "ceylon.language.meta.declaration");
+
+    shared
+    Package clMetaModelPackage
+        =>  unit.\ipackage.\imodule.languageModule.getPackage(
+                "ceylon.language.meta.model");
+
+    shared
+    Interface clMetaModelClassOrInterface
+        =>  assertInterface(clMetaModelPackage.getDirectMember(
+                "ClassOrInterface", null, false));
+
+    shared
+    Interface clMetaModelClassModel
+        =>  assertInterface(clMetaModelPackage.getDirectMember(
+                "ClassModel", null, false));
 
     shared
     Interface clMetaModuleInterface
@@ -133,6 +147,10 @@ class CeylonTypes(Unit unit) {
     Function clMetaModuleFindImportedPackageDeclaration
         =>  assertFunction(clMetaModuleInterface.getDirectMember(
                 "findImportedPackage", null, false));
+    shared
+    Function clMetaModelCOrIGetDeclaredMethod
+        =>  assertFunction(clMetaModelClassOrInterface.getDirectMember(
+                "getDeclaredMethod", null, false));
 
     /////////////////////////////////////////////
     // Dart Specific Types and Declarations
@@ -204,6 +222,14 @@ class CeylonTypes(Unit unit) {
     shared
     Function newTypeImplDeclaration
         =>  assertFunction(implMetaModelPackage.getDirectMember("newType", null, false));
+
+    shared
+    Function newClassOrInterfaceImplDeclaration
+        =>  assertFunction(implMetaModelPackage.getDirectMember("newClassOrInterface", null, false));
+
+    shared
+    Function newClassModelImplDeclaration
+        =>  assertFunction(implMetaModelPackage.getDirectMember("newClassModel", null, false));
 
     shared
     Boolean isAwaitDeclaration(Function declaration)

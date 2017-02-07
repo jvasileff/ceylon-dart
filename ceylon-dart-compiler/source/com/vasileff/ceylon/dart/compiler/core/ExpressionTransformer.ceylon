@@ -113,7 +113,10 @@ import ceylon.ast.core {
     Dec,
     ModuleDec,
     TypeMeta,
-    PackageDec
+    PackageDec,
+    MemberMeta,
+    InModifier,
+    OutModifier
 }
 import ceylon.collection {
     LinkedList
@@ -130,7 +133,9 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassOrInterfaceModel=ClassOrInterface,
     ClassModel=Class,
     InterfaceModel=Interface,
-    ConstructorModel=Constructor
+    ConstructorModel=Constructor,
+    TypeDeclarationModel=TypeDeclaration,
+    ModelUtil
 }
 import com.vasileff.ceylon.dart.compiler {
     DScope,
@@ -198,7 +203,11 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     isCaseInfo,
     ifElseExpressionInfo,
     moduleDecInfo,
-    packageDecInfo
+    packageDecInfo,
+    memberMetaInfo,
+    TypeInfo,
+    memberNameWithTypeArgumentsInfo,
+    typeArgumentInfo
 }
 
 shared
@@ -3083,6 +3092,147 @@ class ExpressionTransformer(CompilationContext ctx)
                 null;
                 [generateTypeDescriptor(tInfo, tInfo.typeModel)];
             };
+
+    shared actual
+    DartExpression transformMemberMeta(MemberMeta that) {
+        value info  = memberMetaInfo(that);
+        value tInfo = typeInfo(that.qualifier);
+
+        "The member declaration to lookup"
+        value declaration
+            =   info.declaration;
+
+        "The type arguments for the member"
+        value typeArguments
+            =>  that.nameAndArgs.typeArguments?.typeArguments?.collect((typeArgument)
+                =>  generateTypeDescriptor {
+                        info;
+                        typeArgumentInfo(typeArgument).typeModel;
+                    }) else [];
+
+        assert (is TypeDeclarationModel declarationContainer
+            =   declaration.container);
+
+        "The type to use when searching for the member. This is necessary since the
+         search will be performed using 'getDeclaredX()', which must be used to support
+         lookups of non-shared members."
+        value qualifyingSupertype
+            =   tInfo.typeModel.getSupertype(declarationContainer);
+
+        "The container of the member to lookup"
+        function qualifyingMetaType
+                // avoid some casts by being specific on
+                // which newX() function to call
+                (FunctionModel factory)
+            =>  withBoxingNonNative {
+                    info;
+                    rhsType
+                        =   factory.type;
+
+                    dartExpression
+                        =   dartTypes.dartInvocable {
+                                scope = expressionInfo(that);
+                                factory;
+                            }.expressionForInvocation {
+                                null;
+                                [generateTypeDescriptor(tInfo, qualifyingSupertype)];
+                            };
+                };
+
+        "Type for 'ClassOrInterface'"
+        value classOrInterfaceType
+            =>  ModelUtil.appliedType(
+                    ceylonTypes.clMetaModelClassOrInterface,
+                    ceylonTypes.anythingType
+                );
+
+        "Type for 'ClassModel'"
+        value classModelType
+            =>  ModelUtil.appliedType(
+                    ceylonTypes.clMetaModelClassModel,
+                    ceylonTypes.anythingType
+                );
+
+        // method, attribute, or constructor
+
+        if (ModelUtil.isConstructor(declaration)) {
+            return
+            generateInvocationSynthetic {
+                scope = info;
+                receiverType = classModelType;
+                memberName = "getConstructor";
+
+                generateReceiver()
+                    =>  qualifyingMetaType {
+                            ceylonTypes.newClassModelImplDeclaration;
+                        };
+
+                typeArguments
+                    =   [ceylonTypes.nothingType];
+
+                arguments
+                    =   [()=>DartSimpleStringLiteral(declaration.name)];
+            };
+        }
+        else if (is FunctionModel declaration) {
+            // Method<Container,Type,Arguments>?
+            // getDeclaredMethod<Container, Type, Arguments>
+            //      (String name, ClosedType<Anything>[] types)
+            return
+            generateInvocationSynthetic {
+                scope = info;
+                receiverType = classOrInterfaceType;
+                memberName = "getDeclaredMethod";
+
+                generateReceiver()
+                    =>  qualifyingMetaType {
+                            ceylonTypes.newClassOrInterfaceImplDeclaration;
+                        };
+
+                typeArguments
+                    =   [ceylonTypes.nothingType,
+                         ceylonTypes.anythingType,
+                         ceylonTypes.nothingType];
+
+                arguments = [ // name and [Type*] arguments
+                    ()=>DartSimpleStringLiteral(declaration.name),
+                    ()=>generateSequentialFromElements {
+                        info;
+                        ceylonTypes.typeDescriptorDeclaration.type;
+                        typeArguments;
+                    }
+                ];
+            };
+        }
+        else if (is ValueModel declaration) {
+            // Attribute<Container,Get,Set>?
+            // getDeclaredAttribute<Container, Get, Set>(String name)
+            return
+            generateInvocationSynthetic {
+                scope = info;
+                receiverType = classOrInterfaceType;
+                memberName = "getDeclaredAttribute";
+
+                generateReceiver()
+                    =>  qualifyingMetaType {
+                            ceylonTypes.newClassOrInterfaceImplDeclaration;
+                        };
+
+                typeArguments
+                    =   [ceylonTypes.nothingType,
+                         ceylonTypes.anythingType,
+                         ceylonTypes.nothingType];
+
+                arguments
+                    =   [()=>DartSimpleStringLiteral(declaration.name)];
+            };
+        }
+        else {
+            addError(that, "unexpected declaration type for MemberMeta expression: \
+                            ``className(declaration)``");
+            return DartNullLiteral();
+        }
+    }
 
     shared actual
     DartExpression transformModuleDec(ModuleDec that) {
