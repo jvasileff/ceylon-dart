@@ -540,9 +540,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
             return getName(declaration.model);
         }
+
         case (is ValueModel) {
-            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
-                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+            if (!declaration.static &&
+                (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                 || ctx.withinConstructorSignatureSet.contains(declaration.container))) {
                 // If we're really accessing the parameter for default value
                 // initialiation or calls to super, use the identifier for the
                 // parameter as described in the (is ParameterModel) case.
@@ -562,9 +564,11 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
                     + getUnprefixedName(declaration)
                     + getterSetterSuffix(declaration);
         }
+
         case (is FunctionModel) {
-            if (ctx.withinConstructorDefaultsSet.contains(declaration.container)
-                || ctx.withinConstructorSignatureSet.contains(declaration.container)) {
+            if (!declaration.static &&
+                (ctx.withinConstructorDefaultsSet.contains(declaration.container)
+                 || ctx.withinConstructorSignatureSet.contains(declaration.container))) {
                 // See notes about parameters in (is ValueModel) case
                 return sanitizeIdentifier(declaration.name);
             }

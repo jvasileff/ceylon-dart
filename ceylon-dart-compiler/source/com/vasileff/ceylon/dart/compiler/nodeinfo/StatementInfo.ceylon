@@ -152,7 +152,15 @@ class LazySpecificationInfo(shared actual LazySpecification node)
     shared actual FunctionModel | ValueModel declaration {
         assert (is FunctionModel | ValueModel d
             =   switch (tcn = tcNode)
-                case (is Tree.SpecifierStatement) tcn.declaration
+                case (is Tree.SpecifierStatement)
+                    // https://github.com/ceylon/ceylon/issues/6913
+                    // typechecker is not setting Tree.SpecifierStatement.declaration for
+                    // specifications for forward declared members, like
+                    // 'this.string => "";'
+                    if (is Tree.QualifiedMemberExpression bme
+                        =   tcn.baseMemberExpression)
+                    then bme.declaration
+                    else tcn.declaration
                 else tcn.declarationModel);
         return d;
     }
