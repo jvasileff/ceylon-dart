@@ -118,6 +118,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
     PackageModel=Package,
     TypeModel=Type,
+    ReferenceModel=Reference,
     TypedReferenceModel=TypedReference,
     DeclarationModel=Declaration,
     FunctionModel=Function,
@@ -197,6 +198,7 @@ class BaseMetaInfo(shared actual BaseMeta node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+    shared ReferenceModel target => tcNode.target;
 }
 
 shared
@@ -209,6 +211,7 @@ class MemberMetaInfo(shared actual MemberMeta node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+    shared ReferenceModel target => tcNode.target;
 }
 
 shared abstract

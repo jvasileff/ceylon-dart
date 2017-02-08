@@ -129,6 +129,11 @@ class CeylonTypes(Unit unit) {
                 "ceylon.language.meta.model");
 
     shared
+    Interface clMetaModelType
+        =>  assertInterface(clMetaModelPackage.getDirectMember(
+                "Type", null, false));
+
+    shared
     Interface clMetaModelClassOrInterface
         =>  assertInterface(clMetaModelPackage.getDirectMember(
                 "ClassOrInterface", null, false));
@@ -254,6 +259,13 @@ class CeylonTypes(Unit unit) {
         assert (is Class c
             =   modelRuntimePackage.getDirectMember("LazyTypeDescriptor", null, false));
         return c;
+    }
+
+    shared
+    Value typeDescriptorTypeDeclaration {
+        assert (is Value v
+            =   typeDescriptorDeclaration.getDirectMember("type", null, false));
+        return v;
     }
 
     /////////////////////////////////////////////
