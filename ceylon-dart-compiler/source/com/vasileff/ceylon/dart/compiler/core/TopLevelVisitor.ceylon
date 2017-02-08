@@ -564,37 +564,36 @@ class TopLevelVisitor(CompilationContext ctx)
 
 
         "All shared callable parameters in the class initializer parameter list."
-        value sharedCallableParameterInfos
+        value sharedCallableParameters
             =   (parameters?.parameters else [])
-                .map {
-                    (p) => switch (p)
-                    case (is DefaultedCallableParameter) p.parameter
-                    case (is CallableParameter) p
-                    else null;
-                }.coalesced.map {
-                    callableParameterInfo;
-                }
-                .filter {
-                    (pInfo) => pInfo.functionModel.shared;
-                };
+                .map { (parameter)
+                    =>  let (pInfo = parameterInfo(parameter))
+                        if (is FunctionModel declaration = pInfo.parameterModel.model,
+                            declaration.shared)
+                        then [pInfo, declaration]
+                        else null;
+                }.coalesced;
 
         "Methods that forward to Callable values for shared Ceylon methods that are
          defined by callable parameters in the intializer parameter list."
         value callableParameterForwarders
-            =   sharedCallableParameterInfos
+            =   sharedCallableParameters
                 .collect {
-                    (pInfo) {
+                    ([pInfo, functionModel]) {
                         value functionExpression
                             =   generateForwardDeclaredForwarder {
                                     pInfo;
-                                    pInfo.functionModel;
-                                    pInfo.node.parameterLists;
+                                    functionModel;
+                                    // parameters of callable parameters may not have
+                                    // default arguments, so `null` is ok here; the ast
+                                    // nodes are not needed
+                                    parameters = null;
                                 };
 
                         value [identifier, dartElementType]
                             =   dartTypes.dartInvocable {
                                     pInfo;
-                                    pInfo.functionModel;
+                                    functionModel;
                                 }.oldPairSimple;
 
                         assert (dartElementType is \IdartFunction | DartOperator);
@@ -605,7 +604,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             null;
                             generateFunctionReturnType {
                                 pInfo;
-                                pInfo.functionModel;
+                                functionModel;
                             };
                             null;
                             dartElementType is DartOperator;
@@ -619,9 +618,9 @@ class TopLevelVisitor(CompilationContext ctx)
         "Fields to hold Callable values for shared callable parameters, which are
          synthetic."
         value fieldsForCallableValues
-            =   sharedCallableParameterInfos
+            =   sharedCallableParameters
                 .collect {
-                    (pInfo) => DartFieldDeclaration {
+                    ([pInfo, functionModel]) => DartFieldDeclaration {
                         false;
                             DartVariableDeclarationList {
                                 null;
@@ -632,7 +631,7 @@ class TopLevelVisitor(CompilationContext ctx)
                                 [DartVariableDeclaration {
                                     DartSimpleIdentifier {
                                         // TODO consolidate naming logic
-                                        "_" + dartTypes.getName(pInfo.functionModel) + "$c";
+                                        "_" + dartTypes.getName(functionModel) + "$c";
                                     };
                                 }];
                             };
