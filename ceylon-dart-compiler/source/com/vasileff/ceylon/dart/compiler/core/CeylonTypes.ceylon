@@ -119,38 +119,53 @@ class CeylonTypes(Unit unit) {
     // meta
 
     shared
-    Package clMetaDeclarationPackage
+    Package clMetaDeclaration
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
                 "ceylon.language.meta.declaration");
 
     shared
-    Package clMetaModelPackage
+    Package clMetaModel
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
                 "ceylon.language.meta.model");
 
     shared
     Interface clMetaModelType
-        =>  assertInterface(clMetaModelPackage.getDirectMember(
+        =>  assertInterface(clMetaModel.getDirectMember(
                 "Type", null, false));
 
     shared
+    Interface clMetaDeclarationPackage
+        =>  assertInterface(clMetaDeclaration.getDirectMember(
+                "Package", null, false));
+
+    shared
+    Interface clMetaDeclarationFunctionDeclaration
+        =>  assertInterface(clMetaDeclaration.getDirectMember(
+                "FunctionDeclaration", null, false));
+
+    shared
+    Interface clMetaDeclarationValueDeclaration
+        =>  assertInterface(clMetaDeclaration.getDirectMember(
+                "ValueDeclaration", null, false));
+
+    shared
     Interface clMetaModelClassOrInterface
-        =>  assertInterface(clMetaModelPackage.getDirectMember(
+        =>  assertInterface(clMetaModel.getDirectMember(
                 "ClassOrInterface", null, false));
 
     shared
     Interface clMetaModelClassModel
-        =>  assertInterface(clMetaModelPackage.getDirectMember(
+        =>  assertInterface(clMetaModel.getDirectMember(
                 "ClassModel", null, false));
 
     shared
-    Interface clMetaModuleInterface
-        =>  assertInterface(clMetaDeclarationPackage.getDirectMember(
+    Interface clMetaModule
+        =>  assertInterface(clMetaDeclaration.getDirectMember(
                 "Module", null, false));
 
     shared
     Function clMetaModuleFindImportedPackageDeclaration
-        =>  assertFunction(clMetaModuleInterface.getDirectMember(
+        =>  assertFunction(clMetaModule.getDirectMember(
                 "findImportedPackage", null, false));
     shared
     Function clMetaModelCOrIGetDeclaredMethod

@@ -3104,21 +3104,119 @@ class ExpressionTransformer(CompilationContext ctx)
     DartExpression transformBaseMeta(BaseMeta that) {
         // could be a toplevel function or value, or a method, attribute, or constructor
         value info  = baseMetaInfo(that);
+        value declaration = info.target.declaration;
 
-        if (info.target.declaration.member) {
+        if (declaration.member) {
             return generateMemberMeta {
                 info;
                 info.target;
             };
         }
-        else {
-            // get the package
-            // getFunction or getValue
-            // apply() (no value params for values, values for TAs for functions)
-        }
 
-        return super.transformBaseMeta(that);
+        // It's a toplevel, so
+        // 1. get the package
+        // 2. call getFunction or getValue
+        // 3. call apply()
+
+        if (is FunctionModel declaration) {
+            return
+            generateInvocationSynthetic {
+                info;
+                receiverType
+                    =   ceylonTypes.clMetaDeclarationFunctionDeclaration.type;
+
+                memberName
+                    =   "apply";
+
+                generateReceiver()
+                    =>  generateInvocationSynthetic {
+                            info;
+                            receiverType
+                                =   ceylonTypes.clMetaDeclarationPackage.type;
+
+                            memberName
+                                =   "getFunction";
+
+                            generateReceiver()
+                                =>  generatePackageDec {
+                                        info;
+                                        info.target.declaration.unit.\ipackage;
+                                    };
+
+                            typeArguments
+                                =   [];
+
+                            arguments
+                                =   [()=>DartSimpleStringLiteral(declaration.name)];
+                        };
+
+                typeArguments
+                    =   [ceylonTypes.anythingType, ceylonTypes.nothingType];
+
+                arguments
+                    =   [()=>generateTypeArgumentsSequential {
+                            info;
+                            *info.target.typeArgumentList
+                        }];
+            };
+        }
+        else if (is ValueModel declaration) {
+            return
+            generateInvocationSynthetic {
+                info;
+                receiverType
+                    =   ceylonTypes.clMetaDeclarationValueDeclaration.type;
+
+                memberName
+                    =   "apply";
+
+                generateReceiver()
+                    =>  generateInvocationSynthetic {
+                            info;
+                            receiverType
+                                =   ceylonTypes.clMetaDeclarationPackage.type;
+
+                            memberName
+                                =   "getValue";
+
+                            generateReceiver()
+                                =>  generatePackageDec {
+                                        info;
+                                        info.target.declaration.unit.\ipackage;
+                                    };
+
+                            typeArguments
+                                =   [];
+
+                            arguments
+                                =   [()=>DartSimpleStringLiteral(declaration.name)];
+                        };
+
+                typeArguments
+                    =   [ceylonTypes.anythingType, ceylonTypes.nothingType];
+
+                arguments
+                    =   [];
+            };
+        }
+        else {
+            addError(info, "unexpected declaration type for meta expression: \
+                             ``className(declaration)``");
+            return DartNullLiteral();
+        }
     }
+
+    DartExpression generateTypeArgumentsSequential
+            (DScope scope, {TypeModel*} typeArguments)
+        =>  generateSequentialFromElements {
+                scope;
+                ModelUtil.appliedType(
+                    ceylonTypes.clMetaModelType,
+                    ceylonTypes.anythingType
+                );
+                [for (typeArgument in typeArguments)
+                    ()=>generateTypeMeta(scope, typeArgument)];
+            };
 
     DartExpression generateMemberMeta(
             DScope scope,
@@ -3128,9 +3226,6 @@ class ExpressionTransformer(CompilationContext ctx)
 
         "The member declaration to lookup"
         value memberDeclaration = typedReference.declaration;
-
-        "The type arguments for the member"
-        value typeArguments = [*typedReference.typeArgumentList];
 
         assert (is TypeDeclarationModel declarationContainer
             =   memberDeclaration.container);
@@ -3237,14 +3332,9 @@ class ExpressionTransformer(CompilationContext ctx)
 
                 arguments = [ // name and [Type*] arguments
                     ()=>DartSimpleStringLiteral(memberDeclaration.name),
-                    ()=>generateSequentialFromElements {
+                    ()=>generateTypeArgumentsSequential {
                         scope;
-                        ModelUtil.appliedType(
-                            ceylonTypes.clMetaModelType,
-                            ceylonTypes.anythingType
-                        );
-                        [for (typeArgument in typeArguments)
-                            ()=>generateTypeMeta(scope, typeArgument)];
+                        *typedReference.typeArgumentList
                     }
                 ];
             };
@@ -3273,7 +3363,7 @@ class ExpressionTransformer(CompilationContext ctx)
             };
         }
         else {
-            addError(scope, "unexpected declaration type for MemberMeta expression: \
+            addError(scope, "unexpected declaration type for meta expression: \
                              ``className(memberDeclaration)``");
             return DartNullLiteral();
         }
@@ -3303,7 +3393,8 @@ class ExpressionTransformer(CompilationContext ctx)
         };
     }
 
-    shared actual DartExpression transformDec(Dec that) {
+    shared actual
+    DartExpression transformDec(Dec that) {
         value info = expressionInfo(that);
 
         addWarning(info, Warning.unsupported,
