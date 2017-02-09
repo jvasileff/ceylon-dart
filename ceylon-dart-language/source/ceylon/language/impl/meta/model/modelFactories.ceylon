@@ -288,10 +288,11 @@ ModelType argumentsTupleForClass(ModelType modelReference) {
         assert (exists t = modelReference.unit.getCallableTuple(modelReference.fullType));
         return t;
     }
-    else if (is ModelConstructor defaultCtor = modelDeclaration.getDirectMember(""),
-             defaultCtor.isShared) {
+    else if (is ModelCallableConstructor defaultCtor
+                =   modelDeclaration.getDirectMember(""),
+            defaultCtor.isShared) {
         assert (exists t = modelReference.unit.getCallableTuple {
-            defaultCtor.appliedType(modelReference, [], emptyMap);
+            defaultCtor.appliedType(modelReference, [], emptyMap).fullType;
         });
         return t;
     }
