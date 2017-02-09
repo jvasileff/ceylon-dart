@@ -71,7 +71,8 @@ import com.redhat.ceylon.model.typechecker.model {
     ParameterListModel=ParameterList,
     TypeParameterModel=TypeParameter,
     SiteVariance,
-    GenericModel=Generic
+    GenericModel=Generic,
+    ModelUtil
 }
 import com.redhat.ceylon.model.typechecker.util {
     TypePrinter
@@ -5746,6 +5747,36 @@ class BaseGenerator(CompilationContext ctx)
                 }.expressionForInvocation();
             };
 
+    // FIXME we should support non-empty Iterables,
+    //       since that might be needed by callers
+    shared
+    DartExpression generateIterableFromElements(
+            DScope scope,
+            TypeModel elementType,
+            [DartExpression()*] elements)
+        =>  if (!nonempty elements)
+            then generateEmpty(scope)
+            else withBoxingNonNative {
+                scope;
+                ModelUtil.appliedType(ceylonTypes.ceylonIterable, elementType);
+                dartTypes.invocableForBaseExpression {
+                    scope;
+                    ceylonTypes.ceylonIterable;
+                }.expressionForInvocation {
+                    [generateTypeDescriptor {
+                        scope;
+                        elementType;
+                    },
+                    DartListLiteral {
+                        false;
+                        withLhsNonNative {
+                            lhsType = elementType;
+                            () => [for (element in elements) element()];
+                        };
+                    }];
+                };
+            };
+
     shared
     DartExpression generateSequentialFromElements(
             DScope scope,
@@ -5764,21 +5795,10 @@ class BaseGenerator(CompilationContext ctx)
                     =   ctx.unit.getIterableType(elementType);
 
                 generateReceiver()
-                    =>  dartTypes.invocableForBaseExpression {
+                    =>  generateIterableFromElements {
                             scope;
-                            ceylonTypes.ceylonIterable;
-                        }.expressionForInvocation {
-                            [generateTypeDescriptor {
-                                scope;
-                                elementType;
-                            },
-                            DartListLiteral {
-                                false;
-                                withLhsNonNative {
-                                    lhsType = elementType;
-                                    () => [for (element in elements) element()];
-                                };
-                            }];
+                            elementType;
+                            elements;
                         };
 
                 memberName = "sequence";
