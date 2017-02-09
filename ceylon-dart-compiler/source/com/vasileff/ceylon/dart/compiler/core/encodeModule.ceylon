@@ -133,6 +133,17 @@ Map<String, Object> encodePackage(PackageModel pkg) {
             assert (is String name = memberMap[keyName]);
             m.put(name, memberMap);
         }
+        else if (is ValueModel member) {
+            value memberMap = encodeValue(member);
+            assert (is String name = memberMap[keyName]);
+            m.put(name, memberMap);
+        }
+        else if (is FunctionModel member) {
+            value memberMap = encodeFunction(member);
+            assert (is String name = memberMap[keyName]);
+            m.put(name, memberMap);
+        }
+
         // TODO other types
     }
     return m;
