@@ -5750,7 +5750,7 @@ class BaseGenerator(CompilationContext ctx)
     DartExpression generateSequentialFromElements(
             DScope scope,
             TypeModel elementType,
-            [DartExpression | DartExpression()*] elements)
+            [DartExpression()*] elements)
         // TODO come up with a more efficient implementation. Best may be to call a
         //      native Dart function that creates an ArraySequence(Array.withList(DList)).
         //      This will have to be written in Dart, since we don't want such a function
@@ -5776,10 +5776,7 @@ class BaseGenerator(CompilationContext ctx)
                                 false;
                                 withLhsNonNative {
                                     lhsType = elementType;
-                                    () => [for (element in elements)
-                                           switch(element)
-                                           case (is DartExpression) element
-                                           else element()];
+                                    () => [for (element in elements) element()];
                                 };
                             }];
                         };

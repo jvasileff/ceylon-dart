@@ -357,7 +357,7 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                 //      modules include runtime model info
                                 if (!dartNative(imp))
                                 if (isForDartBackend(imp))
-                                DartPrefixedIdentifier {
+                                ()=>DartPrefixedIdentifier {
                                     DartSimpleIdentifier {
                                         moduleImportPrefix(imp.\imodule);
                                     };
