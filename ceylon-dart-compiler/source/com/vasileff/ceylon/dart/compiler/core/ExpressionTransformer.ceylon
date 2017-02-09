@@ -115,7 +115,10 @@ import ceylon.ast.core {
     TypeMeta,
     PackageDec,
     MemberMeta,
-    BaseMeta
+    BaseMeta,
+    ConstructorDec,
+    MemberDec,
+    TypeDec
 }
 import ceylon.collection {
     LinkedList
@@ -206,7 +209,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     moduleDecInfo,
     packageDecInfo,
     memberMetaInfo,
-    baseMetaInfo
+    baseMetaInfo,
+    decInfo
 }
 
 shared
@@ -3395,28 +3399,52 @@ class ExpressionTransformer(CompilationContext ctx)
 
     shared actual
     DartExpression transformDec(Dec that) {
-        value info = expressionInfo(that);
+        "Package and module decs have their own transform method"
+        assert (is TypeDec | MemberDec | ConstructorDec that);
 
-        addWarning(info, Warning.unsupported,
-            "unsupported feature: metamodel expressions are not yet supported on the
-             Dart backend");
+        value info = decInfo(that);
+        assert (is DeclarationModel declaration = info.model);
 
-        return DartThrowExpression {
-            DartInstanceCreationExpression {
-                const = false;
-                DartConstructorName {
-                    dartTypes.dartTypeName {
-                        info;
-                        ceylonTypes.assertionErrorType;
-                        false; false;
-                    };
-                };
-                DartArgumentList {
-                    [DartSimpleStringLiteral {
-                        "Dec expressions not yet supported at \
-                         '``info.filename``: ``info.location``'";
+        // TODO improve once we take qualifiers in account
+        value nameParts
+            =   dartTypes.ancestorDeclarations(declaration)
+                    .narrow<DeclarationModel>()
+                    .collect((d) => d.name).reversed;
+
+        // findNestableDeclaration(thePackage, nameParts)
+        return
+        withBoxingNonNative {
+            info;
+            ceylonTypes.findNestableDeclaration.type;
+            dartTypes.dartInvocable {
+                info;
+                ceylonTypes.findNestableDeclaration;
+            }.expressionForInvocation {
+                arguments = [
+                    withLhsNonNative {
+                        lhsType
+                            =   ceylonTypes.findNestableDeclaration.firstParameterList
+                                    .parameters.get(0).type;
+
+                        ()  =>  generatePackageDec(info, declaration.unit.\ipackage);
+                    },
+                    withLhsNonNative {
+                        lhsType
+                            =   ceylonTypes.findNestableDeclaration.firstParameterList
+                                    .parameters.get(1).type;
+
+                        ()  =>  generateIterableFromElements {
+                                    info;
+                                    elementType = ceylonTypes.stringType;
+                                    elements = nameParts.collect((part)
+                                        =>  ()=>withBoxing {
+                                                info;
+                                                rhsType = ceylonTypes.stringType;
+                                                rhsDeclaration = null;
+                                                DartSimpleStringLiteral(part);
+                                            });
+                                };
                     }];
-                };
             };
         };
     }

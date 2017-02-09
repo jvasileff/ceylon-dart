@@ -148,6 +148,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     "A stream containing the given [[declaration]] followed by declarations for all
      of [[declaration]]'s ancestors, including all declarations and control blocks.
      See also [[ancestorClassOrInterfaces]]."
+    shared
     {DeclarationModel|ControlBlockModel+} ancestorDeclarations
             (DeclarationModel declaration)
         =>  loop<DeclarationModel|ControlBlockModel>(declaration)((d)

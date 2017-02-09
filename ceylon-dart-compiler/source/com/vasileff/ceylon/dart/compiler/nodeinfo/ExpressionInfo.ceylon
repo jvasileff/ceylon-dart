@@ -116,8 +116,12 @@ import com.redhat.ceylon.compiler.typechecker.tree {
 }
 import com.redhat.ceylon.model.typechecker.model {
     ModuleModel=Module,
+    InterfaceModel=Interface,
+    ConstructorModel=Constructor,
     PackageModel=Package,
     TypeModel=Type,
+    TypeAliasModel=TypeAlias,
+    TypeParameterModel=TypeParameter,
     ReferenceModel=Reference,
     TypedReferenceModel=TypedReference,
     DeclarationModel=Declaration,
@@ -222,6 +226,7 @@ class DecInfo()
 
     shared actual formal Dec node;
     shared actual formal Tree.MetaLiteral tcNode;
+    shared formal DeclarationModel | PackageModel | ModuleModel model;
 }
 
 shared
@@ -234,6 +239,13 @@ class TypeDecInfo(shared actual TypeDec node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual default
+    ClassModel | InterfaceModel | TypeAliasModel | TypeParameterModel model {
+        assert (is ClassModel | InterfaceModel | TypeAliasModel | TypeParameterModel d
+            =   tcNode.declaration);
+        return d;
+    }
 }
 
 shared
@@ -246,6 +258,11 @@ class MemberDecInfo(shared actual MemberDec node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual default FunctionModel | ValueModel model {
+        assert (is FunctionModel | ValueModel d = tcNode.declaration);
+        return d;
+    }
 }
 
 shared
@@ -258,6 +275,11 @@ class ConstructorDecInfo(shared actual ConstructorDec node)
         return node;
     }
     shared actual TcNodeType tcNode = lazyTcNode;
+
+    shared actual default ConstructorModel model {
+        assert (is ConstructorModel d = tcNode.declaration);
+        return d;
+    }
 }
 
 shared
@@ -271,7 +293,7 @@ class PackageDecInfo(shared actual PackageDec node)
     }
     shared actual TcNodeType tcNode = lazyTcNode;
 
-    shared PackageModel model {
+    shared actual PackageModel model {
         assert (is PackageModel m = tcNode.importPath.model);
         return m;
     }
@@ -288,7 +310,7 @@ class ModuleDecInfo(shared actual ModuleDec node)
     }
     shared actual TcNodeType tcNode = lazyTcNode;
 
-    shared ModuleModel model {
+    shared actual ModuleModel model {
         assert (is ModuleModel m = tcNode.importPath.model);
         return m;
     }

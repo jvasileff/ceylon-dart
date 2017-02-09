@@ -20,7 +20,7 @@ import ceylon.language.meta.declaration {
 }
 
 shared
-class PackageImpl(ModelPackage modelPackage) satisfies Package {
+class PackageImpl(shared ModelPackage modelPackage) satisfies Package {
 
     shared actual
     Boolean annotated<Annotation>()

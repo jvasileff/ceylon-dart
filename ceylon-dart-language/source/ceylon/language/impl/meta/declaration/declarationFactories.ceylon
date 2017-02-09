@@ -24,7 +24,8 @@ import ceylon.language.meta.declaration {
     NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
     AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration,
-    ValueConstructorDeclaration, CallableConstructorDeclaration
+    ValueConstructorDeclaration, CallableConstructorDeclaration,
+    Package
 }
 
 shared
@@ -111,4 +112,14 @@ NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
                 | ModelNothingDeclaration | ModelUnknownType) {
         throw AssertionError("Unexpected declaration type for ``model``");
     }
+}
+
+shared
+NestableDeclaration? findNestableDeclaration(Package pkg, {String+} nameParts) {
+    // FIXME will need to improve to support qualifiers for disambiguation
+    assert (is PackageImpl pkg);
+    if (exists modelDeclaration = pkg.modelPackage.findDeclaration(nameParts)) {
+        return newNestableDeclaration(modelDeclaration);
+    }
+    return null;
 }
