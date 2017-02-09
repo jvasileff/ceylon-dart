@@ -126,6 +126,7 @@ import ceylon.interop.java {
 
 import com.redhat.ceylon.model.typechecker.model {
     DeclarationModel=Declaration,
+    PackageModel=Package,
     FunctionModel=Function,
     ValueModel=Value,
     TypeModel=Type,
@@ -3329,25 +3330,28 @@ class ExpressionTransformer(CompilationContext ctx)
         };
     }
 
-    shared actual
-    DartExpression transformPackageDec(PackageDec that)
-        =>  let (info = packageDecInfo(that))
-            // invoke "ceylon.language.meta.declaration::Module.findPackage()
+    DartExpression generatePackageDec(DScope scope, PackageModel pkg)
+        =>  // invoke "ceylon.language.meta.declaration::Module.findPackage()
             dartTypes.dartInvocable {
-                info;
+                scope;
                 ceylonTypes.clMetaModuleFindImportedPackageDeclaration;
             }.expressionForInvocation {
                 receiver // $module, wrapped
                     =   dartTypes.dartInvocable {
-                            info;
+                            scope;
                             ceylonTypes.moduleImplDeclaration;
                         }.expressionForInvocation {
                             receiver = null;
                             arguments = [DartSimpleIdentifier("$module")];
                         };
                 arguments // the package name
-                    =   [DartSimpleStringLiteral(info.model.qualifiedNameString)];
+                    =   [DartSimpleStringLiteral(pkg.qualifiedNameString)];
             };
+
+    shared actual
+    DartExpression transformPackageDec(PackageDec that)
+        =>  let (info = packageDecInfo(that))
+            generatePackageDec(info, info.model);
 
     shared actual default
     DartExpression transformNode(Node that) {
