@@ -8,9 +8,7 @@ interface FunctionOrValueDeclarationHelper
 
     shared actual formal ModelFunctionOrValue modelDeclaration;
 
-    // TODO ceylon-model support for getting the Parameter?
-    //      Inspect container's parameter list?
-    ModelParameter? modelParameter => nothing;
+    ModelParameter? modelParameter => modelDeclaration.parameter;
 
     shared Boolean parameter => modelParameter exists;
     shared Boolean defaulted => modelParameter?.isDefaulted else false;

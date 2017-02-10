@@ -1,4 +1,5 @@
 import ceylon.dart.runtime.model {
+    ModelTypeParameter = TypeParameter,
     ModelTypedDeclaration = TypedDeclaration,
     ModelTypeDeclaration = TypeDeclaration,
     ModelGeneric = Generic
@@ -13,8 +14,12 @@ interface GenericDeclarationHelper satisfies NestableDeclarationHelper {
 
     shared
     TypeParameter[] typeParameterDeclarations
-        =>  modelDeclaration.typeParameters.collect(TypeParameterImpl);
+        =>  modelDeclaration.typeParameters.collect(newTypeParameter);
 
     shared
-    TypeParameter? getTypeParameterDeclaration(String name) => nothing;
+    TypeParameter? getTypeParameterDeclaration(String name)
+        =>  if (is ModelTypeParameter modelTypeParameter
+                =   modelDeclaration.getDirectMember(name))
+            then newTypeParameter(modelTypeParameter)
+            else null;
 }

@@ -35,7 +35,12 @@ interface ClassDeclarationHelper
     Boolean anonymous => modelDeclaration.isAnonymous;
 
     shared
-    CallableConstructorDeclaration? defaultConstructor => nothing;
+    CallableConstructorDeclaration? defaultConstructor {
+        "A default constructor, if it exists, will be a callable constructor."
+        assert (is CallableConstructorDeclaration? c
+            =   getConstructorDeclaration(""));
+        return c;
+    }
 
     shared
     Boolean final => modelDeclaration.isFinal;
@@ -44,7 +49,8 @@ interface ClassDeclarationHelper
     ValueDeclaration? objectValue => nothing;
 
     shared
-    FunctionOrValueDeclaration[] parameterDeclarations => nothing;
+    FunctionOrValueDeclaration[]? parameterDeclarations
+        =>  defaultConstructor?.parameterDeclarations;
 
     shared
     Boolean serializable => nothing;

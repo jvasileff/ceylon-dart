@@ -8,7 +8,8 @@ import ceylon.language {
 import ceylon.language.meta.declaration {
     NestableDeclaration,
     CallableConstructorDeclaration,
-    ClassWithInitializerDeclaration
+    ClassWithInitializerDeclaration,
+    FunctionOrValueDeclaration
 }
 import ceylon.language.meta.model {
     ClosedType = Type,
@@ -60,7 +61,8 @@ class ClassWithInitializerDeclarationImpl(modelDeclaration)
     anonymous => helper.anonymous;
     final => helper.final;
     objectValue => helper.objectValue;
-    parameterDeclarations => helper.parameterDeclarations;
+    parameterDeclarations => defaultConstructor.parameterDeclarations;
+
     serializable => helper.serializable;
     getParameterDeclaration(String name) => helper.getParameterDeclaration(name);
 

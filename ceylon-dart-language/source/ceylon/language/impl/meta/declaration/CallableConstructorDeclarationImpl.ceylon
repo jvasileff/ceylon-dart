@@ -32,10 +32,10 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
     }
 
     shared actual
-    Boolean abstract => nothing;
+    Boolean abstract => modelDeclaration.isAbstract;
 
     shared actual
-    Boolean defaultConstructor => nothing;
+    Boolean defaultConstructor => name.empty;
 
     shared actual
     Object invoke(ClosedType<>[] typeArguments, Anything* arguments)

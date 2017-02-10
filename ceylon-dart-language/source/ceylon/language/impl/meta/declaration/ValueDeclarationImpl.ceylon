@@ -42,10 +42,10 @@ class ValueDeclarationImpl(modelDeclaration)
     }
 
     shared actual
-    Boolean late => nothing;//modelDeclaration.isLate;
+    Boolean late => modelDeclaration.isLate;
 
     shared actual
-    Boolean variable => nothing;//modelDeclaration.isVariable;
+    Boolean variable => modelDeclaration.isVariable;
 
     shared actual
     Boolean objectValue => nothing;
@@ -117,7 +117,10 @@ class ValueDeclarationImpl(modelDeclaration)
     void memberSet(Object container, Anything newValue) { throw; }
 
     shared actual
-    SetterDeclaration? setter => nothing;
+    SetterDeclaration? setter
+        =>  if (exists modelSetter = modelDeclaration.setter)
+            then newSetterDeclaration(modelSetter)
+            else null;
 
     // FunctionOrValueDeclaration
 
