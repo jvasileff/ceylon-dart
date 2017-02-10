@@ -245,8 +245,8 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(implMetaDeclarationPackage.getDirectMember("ModuleImpl", null, false));
 
     shared
-    Function findNestableDeclaration
-        =>  assertFunction(implMetaDeclarationPackage.getDirectMember("findNestableDeclaration", null, false));
+    Function findDeclaration
+        =>  assertFunction(implMetaDeclarationPackage.getDirectMember("findDeclaration", null, false));
 
     shared
     Function newTypeImplDeclaration

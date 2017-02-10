@@ -6,6 +6,7 @@ import ceylon.dart.runtime.model {
     ModelClassOrInterface = ClassOrInterface,
     ModelFunction = Function,
     ModelValue = Value,
+    ModelFunctionOrValue = FunctionOrValue,
     ModelTypeParameter = TypeParameter,
     ModelNothingDeclaration = NothingDeclaration,
     ModelDeclaration = Declaration,
@@ -21,11 +22,11 @@ import ceylon.dart.runtime.model {
     ModelInterface = Interface
 }
 import ceylon.language.meta.declaration {
-    NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
+    Declaration, NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
     AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration,
     ValueConstructorDeclaration, CallableConstructorDeclaration,
-    Package
+    TypeParameter, Package, FunctionOrValueDeclaration
 }
 
 shared
@@ -74,6 +75,10 @@ AliasDeclaration newAliasDeclaration(ModelTypeAlias model)
     =>  AliasDeclarationImpl(model);
 
 shared
+TypeParameter newTypeParameter(ModelTypeParameter model)
+    =>  TypeParameterImpl(model);
+
+shared
 ClassOrInterfaceDeclaration newClassOrInterfaceDeclaration(ModelClassOrInterface model) {
     switch (model)
     case (is ModelClass) {
@@ -83,6 +88,12 @@ ClassOrInterfaceDeclaration newClassOrInterfaceDeclaration(ModelClassOrInterface
         return newInterfaceDeclaration(model);
     }
 }
+
+shared
+Declaration newDeclaration(ModelDeclaration model)
+    =>  if (is ModelTypeParameter model)
+        then newTypeParameter(model)
+        else newNestableDeclaration(model);
 
 shared
 NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
@@ -115,11 +126,11 @@ NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
 }
 
 shared
-NestableDeclaration? findNestableDeclaration(Package pkg, {String+} nameParts) {
+Declaration? findDeclaration(Package pkg, {String+} nameParts) {
     // FIXME will need to improve to support qualifiers for disambiguation
     assert (is PackageImpl pkg);
     if (exists modelDeclaration = pkg.modelPackage.findDeclaration(nameParts)) {
-        return newNestableDeclaration(modelDeclaration);
+        return newDeclaration(modelDeclaration);
     }
     return null;
 }

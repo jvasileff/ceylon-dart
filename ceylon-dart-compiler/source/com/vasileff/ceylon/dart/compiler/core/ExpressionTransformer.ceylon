@@ -3415,22 +3415,22 @@ class ExpressionTransformer(CompilationContext ctx)
         return
         withBoxingNonNative {
             info;
-            ceylonTypes.findNestableDeclaration.type;
+            ceylonTypes.findDeclaration.type;
             dartTypes.dartInvocable {
                 info;
-                ceylonTypes.findNestableDeclaration;
+                ceylonTypes.findDeclaration;
             }.expressionForInvocation {
                 arguments = [
                     withLhsNonNative {
                         lhsType
-                            =   ceylonTypes.findNestableDeclaration.firstParameterList
+                            =   ceylonTypes.findDeclaration.firstParameterList
                                     .parameters.get(0).type;
 
                         ()  =>  generatePackageDec(info, declaration.unit.\ipackage);
                     },
                     withLhsNonNative {
                         lhsType
-                            =   ceylonTypes.findNestableDeclaration.firstParameterList
+                            =   ceylonTypes.findDeclaration.firstParameterList
                                     .parameters.get(1).type;
 
                         ()  =>  generateIterableFromElements {
