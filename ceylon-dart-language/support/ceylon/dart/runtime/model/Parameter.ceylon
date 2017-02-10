@@ -1,6 +1,6 @@
 shared final
 class Parameter(model, isDefaulted = false, isSequenced = false) {
-    shared FunctionOrValue model;
+    shared Function | Value model;
     shared Boolean isDefaulted;
     shared Boolean isSequenced;
 

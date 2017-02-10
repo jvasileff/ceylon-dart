@@ -459,10 +459,10 @@ object jsonModelUtil {
         =>  ParameterList {
             json.collect((jsonParameter) {
                 assert (is JsonObject jsonParameter);
-                FunctionOrValue model;
+                Function | Value model;
                 if (exists m = scope.getDirectMember(getString(jsonParameter, keyName))) {
                     "Parameters are functions or values"
-                    assert (is FunctionOrValue m);
+                    assert (is Function | Value m);
                     model = m;
                 }
                 else {
