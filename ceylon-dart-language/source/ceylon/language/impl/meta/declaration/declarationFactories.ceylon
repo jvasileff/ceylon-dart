@@ -51,12 +51,20 @@ ValueConstructorDeclaration newValueConstructorDeclaration
     =>  ValueConstructorDeclarationImpl(model);
 
 shared
-ConstructorDeclaration newConstructorDeclaration(ModelConstructor model)
+CallableConstructorDeclaration | ValueConstructorDeclaration
+newConstructorDeclaration(ModelConstructor model)
     =>  switch (model)
         case (is ModelCallableConstructor)
             CallableConstructorDeclarationImpl(model)
         case (is ModelValueConstructor)
             ValueConstructorDeclarationImpl(model);
+
+shared
+FunctionOrValueDeclaration newFunctionOrValueDeclaration
+        (ModelFunction | ModelValue model)
+    =>  switch(model)
+        case (is ModelFunction) newFunctionDeclaration(model)
+        case (is ModelValue) newValueDeclaration(model);
 
 shared
 FunctionDeclaration newFunctionDeclaration(ModelFunction model)

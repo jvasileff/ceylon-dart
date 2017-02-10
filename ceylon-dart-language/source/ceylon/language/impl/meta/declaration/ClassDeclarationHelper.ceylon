@@ -1,5 +1,6 @@
 import ceylon.dart.runtime.model {
-    ModelClass = Class
+    ModelClass = Class,
+    ModelConstructor = Constructor
 }
 import ceylon.language {
     AnnotationType = Annotation
@@ -68,14 +69,22 @@ interface ClassDeclarationHelper
     }
 
     shared
-    ConstructorDeclaration[] constructorDeclarations() => nothing;
+    ConstructorDeclaration[] constructorDeclarations()
+        =>  modelDeclaration.members
+                .narrow<ModelConstructor>()
+                // .distinct // shouldn't be necessary w/runtime model
+                .collect(newConstructorDeclaration);
 
     shared
     <CallableConstructorDeclaration|ValueConstructorDeclaration>?
-    getConstructorDeclaration(String name) => nothing;
+    getConstructorDeclaration(String name)
+        =>  if (is ModelConstructor c = modelDeclaration.getDirectMember(name))
+            then newConstructorDeclaration(c)
+            else null;
 
     shared
-    FunctionOrValueDeclaration? getParameterDeclaration(String name) => nothing;
+    FunctionOrValueDeclaration? getParameterDeclaration(String name)
+        =>  defaultConstructor?.getParameterDeclaration(name);
 
     shared
     MemberClass<Container,Type,Arguments> memberClassApply<Container, Type, Arguments>

@@ -4,32 +4,37 @@ import ceylon.language.meta.declaration {
 import ceylon.language.meta.model {
     ClosedType = Type
 }
+import ceylon.dart.runtime.model {
+    ModelFunctional = Functional,
+    ModelParameter = Parameter,
+    ModelTypedDeclaration = TypedDeclaration,
+    ModelTypeDeclaration = TypeDeclaration,
+    ModelGeneric = Generic
+}
 
 interface FunctionalDeclarationHelper
         satisfies GenericDeclarationHelper {
+
+    shared actual formal
+    ModelFunctional & ModelGeneric & <ModelTypeDeclaration | ModelTypedDeclaration>
+    modelDeclaration;
 
     shared
     Boolean annotation =>  nothing;
 
     shared
-    FunctionOrValueDeclaration[] parameterDeclarations => nothing;
+    FunctionOrValueDeclaration[] parameterDeclarations
+        =>  modelDeclaration.parameterLists[0].parameters
+                .map(ModelParameter.model)
+                .collect(newFunctionOrValueDeclaration);
 
     shared
-    FunctionOrValueDeclaration? getParameterDeclaration(String name) => nothing;
-
-    // shared
-    // FunctionModel<Return, Arguments>& Applicable<Return, Arguments>
-    // apply<Return=Anything, Arguments=Nothing>(ClosedType<>* typeArguments)
-    //         given Arguments satisfies Anything[]
-    //     =>  nothing;
-
-    // shared
-    // FunctionModel<Return, Arguments>
-    // & Qualified<FunctionModel<Return, Arguments>, Container>
-    // memberApply<Container=Nothing, Return=Anything, Arguments=Nothing>
-    //         (ClosedType<Object> containerType, ClosedType<>* typeArguments)
-    //         given Arguments satisfies Anything[]
-    //     =>  nothing;
+    FunctionOrValueDeclaration? getParameterDeclaration(String name)
+        =>  if (exists modelParameter
+                =   modelDeclaration.parameterLists.first.parameters
+                        .find((p) => p.name == name))
+            then newFunctionOrValueDeclaration(modelParameter.model)
+            else null;
 
     shared
     Anything memberInvoke

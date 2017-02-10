@@ -123,7 +123,7 @@ class FunctionDeclarationImpl(modelDeclaration)
 
     parameterDeclarations => helper.parameterDeclarations;
 
-    getParameterDeclaration(String name) => getParameterDeclaration(name);
+    getParameterDeclaration(String name) => helper.getParameterDeclaration(name);
 
     memberInvoke(Object container, ClosedType<>[] typeArguments, Anything* arguments)
         =>  helper.memberInvoke(container, typeArguments, *arguments);

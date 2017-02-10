@@ -1,5 +1,6 @@
 import ceylon.dart.runtime.model {
-    ModelConstructor = Constructor
+    ModelConstructor = Constructor,
+    ModelCallableConstructor = CallableConstructor
 }
 import ceylon.language {
     AnnotationType = Annotation
@@ -24,7 +25,7 @@ import ceylon.language.impl.meta.model {
 class CallableConstructorDeclarationImpl(modelDeclaration)
         satisfies CallableConstructorDeclaration {
 
-    shared ModelConstructor modelDeclaration;
+    shared ModelCallableConstructor modelDeclaration;
 
     object helper satisfies FunctionalDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;
@@ -106,7 +107,7 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
 
     parameterDeclarations => helper.parameterDeclarations;
 
-    getParameterDeclaration(String name) => getParameterDeclaration(name);
+    getParameterDeclaration(String name) => helper.getParameterDeclaration(name);
 
     shared actual
     Object memberInvoke
