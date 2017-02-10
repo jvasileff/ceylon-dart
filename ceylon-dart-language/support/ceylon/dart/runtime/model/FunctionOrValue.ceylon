@@ -7,4 +7,13 @@ class FunctionOrValue()
         assert(is FunctionOrValue f = super.refinedDeclaration);
         return f;
     }
+
+    "The [[Parameter]] if the container is a [[Functional]] and this function or value is
+     a `Parameter` in the containing `Functional`'s parameter list."
+    shared Parameter? parameter
+        =>  if (is Functional container = this.container)
+            then container.parameterLists
+                .flatMap(ParameterList.parameters)
+                .find((p) => p.model == this)
+            else null;
 }
