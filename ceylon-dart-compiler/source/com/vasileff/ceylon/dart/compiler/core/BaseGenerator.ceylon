@@ -5747,8 +5747,6 @@ class BaseGenerator(CompilationContext ctx)
                 }.expressionForInvocation();
             };
 
-    // FIXME we should support non-empty Iterables,
-    //       since that might be needed by callers
     shared
     DartExpression generateIterableFromElements(
             DScope scope,
@@ -5758,10 +5756,13 @@ class BaseGenerator(CompilationContext ctx)
             then generateEmpty(scope)
             else withBoxingNonNative {
                 scope;
-                ModelUtil.appliedType(ceylonTypes.ceylonIterable, elementType);
+                ModelUtil.appliedType(
+                    ceylonTypes.nonemptyCeylonIterableDeclaration,
+                    elementType
+                );
                 dartTypes.invocableForBaseExpression {
                     scope;
-                    ceylonTypes.ceylonIterable;
+                    ceylonTypes.nonemptyCeylonIterableDeclaration;
                 }.expressionForInvocation {
                     [generateTypeDescriptor {
                         scope;

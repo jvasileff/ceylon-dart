@@ -193,6 +193,11 @@ class CeylonTypes(Unit unit) {
         =>  unit.\ipackage.\imodule.languageModule.getPackage(
                 "ceylon.dart.runtime.model.runtime");
 
+    Package runtimeNativePackage
+        // use the language module to find the package; see interopPackage notes
+        =>  unit.\ipackage.\imodule.languageModule.getPackage(
+                "ceylon.dart.runtime.native");
+
     Package implMetaModelPackage
         =>  unit.\ipackage.\imodule.getPackage("ceylon.language.impl.meta.model");
 
@@ -254,6 +259,10 @@ class CeylonTypes(Unit unit) {
     shared
     Function newClassModelImplDeclaration
         =>  assertFunction(implMetaModelPackage.getDirectMember("newClassModel", null, false));
+
+    shared
+    Class nonemptyCeylonIterableDeclaration
+        =>  assertClass(runtimeNativePackage.getDirectMember("NonemptyCeylonIterable", null, false));
 
     shared
     Boolean isAwaitDeclaration(Function declaration)
