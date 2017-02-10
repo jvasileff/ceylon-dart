@@ -154,9 +154,12 @@ interface Scope of Package | Element {
             return null;
         }
 
-        return declarationName.rest.fold
-            (pkg.getDirectMember(declarationName.first)) // start with declarationName[0]
-            ((d, name) => d?.getDirectMember(name));     // resolve subsequent parts
+        "The result will always be the return of `Declaration? getDirectMember()`"
+        assert (is Declaration? result
+            =   declarationName.fold<Scope?>(pkg)((d, name)
+                =>  d?.getDirectMember(name)));
+
+        return result;
     }
 
     shared actual formal
