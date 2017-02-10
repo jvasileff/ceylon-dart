@@ -658,8 +658,9 @@ compileDartSP(
 
         value dcu
             =   DartCompilationUnit {
-                    // Make dart.core, ceylon.interop.dart, and ceylon.dart.runtime.model
-                    // available, even if not imported in module.ceylon.
+                    // Make dart.core, ceylon.interop.dart, ceylon.dart.runtime.model,
+                    // and ceylon.dart.runtime.native available, even if not imported in
+                    // module.ceylon.
                     {DartImportDirective {
                         DartSimpleStringLiteral("dart:core");
                         DartSimpleIdentifier("$dart$core");
@@ -667,6 +668,11 @@ compileDartSP(
                     DartImportDirective {
                         DartSimpleStringLiteral("package:ceylon/interop/dart/dart.dart");
                         DartSimpleIdentifier("$ceylon$interop$dart");
+                    },
+                    DartImportDirective {
+                        DartSimpleStringLiteral(
+                            "package:ceylon/dart/runtime/native/native.dart");
+                        DartSimpleIdentifier("$ceylon$dart$runtime$native");
                     },
                     DartImportDirective {
                         DartSimpleStringLiteral(
