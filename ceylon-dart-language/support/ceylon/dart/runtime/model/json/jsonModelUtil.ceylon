@@ -76,8 +76,7 @@ object jsonModelUtil {
             if (is Value declaration) {
                 "If the found declaration is a value, the value's type's declaration
                  must be an anonymous class"
-                assert (is Class result = declaration.type.declaration,
-                        result.isAnonymous);
+                assert (exists result = declaration.objectClass);
                 return result;
             }
             return declaration;

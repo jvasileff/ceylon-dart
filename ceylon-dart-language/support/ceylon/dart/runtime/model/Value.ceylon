@@ -52,6 +52,18 @@ class Value(container, name, typeLG, isShared = false,
     shared actual
     Boolean canEqual(Object other) => other is Value;
 
+    "If this `Value` is an `object`, the `object`'s anonymous [[ClassDefinition]]."
+    shared
+    ClassDefinition? objectClass {
+        if (is ClassDefinition result = type.declaration,
+                result.isAnonymous,
+                result.name == name,
+                result.container == container) {
+            return result;
+        }
+        return null;
+    }
+
     shared actual
     String string
         =>  "value ``partiallyQualifiedNameWithTypeParameters`` => \

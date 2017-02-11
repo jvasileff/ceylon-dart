@@ -7,6 +7,7 @@ import ceylon.dart.runtime.model {
     contravariant,
     covariant,
     TypeDeclaration,
+    Value,
     unionType,
     Scope
 }
@@ -63,12 +64,13 @@ Type parseType(String input, Scope scope, {Type*} substitutions = []) {
     }
 
     TypeDeclaration? lookup(Package | Type | Null qualifier, String name)
-        =>  if (is TypeDeclaration declaration
+        =>  switch (declaration
                 =   switch (qualifier)
                     case (is Package) qualifier.findDeclaration([name])
                     case (is Type) qualifier.declaration.getMember(name, scope.unit)
                     case (is Null) scope.getBase(name, scope.unit))
-            then declaration
+            case (is TypeDeclaration) declaration
+            case (is Value) declaration.objectClass
             else null;
 
     """

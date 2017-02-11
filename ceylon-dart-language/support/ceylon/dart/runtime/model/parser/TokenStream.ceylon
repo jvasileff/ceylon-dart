@@ -97,12 +97,14 @@ class TokenStream(List<Character> characters) satisfies {Token*} {
                 switch (next = characters[1])
                 case ('i') {
                     // forced lowercase identifier
+                    consume(2);
                     value text = characters.takeWhile(isIdentifierPart).sequence();
                     consume(text.size);
                     return LIdentifier(String(text));
                 }
                 case ('I') {
                     // forced uppercase identifier
+                    consume(2);
                     value text = characters.takeWhile(isIdentifierPart).sequence();
                     consume(text.size);
                     return UIdentifier(String(text));
