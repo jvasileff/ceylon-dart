@@ -5995,7 +5995,7 @@ class BaseGenerator(CompilationContext ctx)
             }.expressionForInvocation();
         }
         else {
-            value printer = TypePrinter(true, true, false, true, false, true, false);
+            value printer = TypePrinter(true, true, false, true, true, true, false);
             return
             dartTypes.invocableForBaseExpression {
                 scope;
