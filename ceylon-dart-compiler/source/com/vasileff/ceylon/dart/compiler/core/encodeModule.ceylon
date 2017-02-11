@@ -123,7 +123,20 @@ Map<String, Object> encodePackage(PackageModel pkg) {
     m.putAll(encodeAnnotations(pkg));
 
     for (member in {*pkg.members}.filter(interestingDeclaration)) {
-        if (is ClassModel member) {
+        if (is ValueModel member,
+                is ClassModel typeDeclaration = member.type.declaration,
+                typeDeclaration.anonymous,
+                typeDeclaration.name == member.name,
+                typeDeclaration.container == member.container) {
+            // encode the object, which is basically a class, but with metatypeObject
+            value memberMap = map {
+                keyMetatype -> metatypeObject,
+                *encodeClass(typeDeclaration)
+            };
+            assert (is String name = memberMap[keyName]);
+            m.put(name, memberMap);
+        }
+        else if (is ClassModel member) {
             value memberMap = encodeClass(member);
             assert (is String name = memberMap[keyName]);
             m.put(name, memberMap);
@@ -423,6 +436,7 @@ Boolean interestingDeclaration(DeclarationModel d) {
         =   ModelUtil.isConstructor(d) && !d is ConstructorModel;
 
     return !functionOrValueForConstructor
+            && !(d is ClassModel && d.anonymous) // use the Value to encode objects
             && (d.toplevel || d.member || isOrContainsType(d))
             && (isForDartBackend(d) || nativeHeaderWithoutImpl);
 }

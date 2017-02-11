@@ -683,7 +683,7 @@ object jsonModelUtil {
         value v
             =   Value {
                     container = scope;
-                    name = getString(json, keyName);
+                    name = c.name;
                     typeLG = (scope) => c.type;
                     annotations = toAnnotations(getObjectOrEmpty(json, keyAnnotations));
                     isShared = packedAnnotations.get(sharedBit);
@@ -693,8 +693,8 @@ object jsonModelUtil {
                     isStatic = packedAnnotations.get(staticBit);
                     isLate = packedAnnotations.get(lateBit);
                     isVariable = packedAnnotations.get(variableBit);
-                    isDynamic = json[keyDynamic] exists;
-                    isTransient = getString(json, keyMetatype) == metatypeGetter;
+                    isDynamic = c.isDynamic;
+                    isTransient = false;
                     // isDeprecated
                 };
 
