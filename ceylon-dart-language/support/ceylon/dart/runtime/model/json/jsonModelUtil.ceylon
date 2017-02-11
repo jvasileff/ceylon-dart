@@ -57,18 +57,30 @@ object jsonModelUtil {
                  else m
             else null;
 
-    Declaration? declarationFromType(Scope scope, JsonObject json) {
+    TypeDeclaration declarationFromType(Scope scope, JsonObject json) {
         value packageName = getPackageName(scope, json);
         if (!exists packageName) {
-            // it's a type parameter in scope
-            return scope.getBase(getString(json, keyName));
+            "The type is a type parameter in scope"
+            assert (is TypeParameter result
+                =   scope.getBase(getString(json, keyName)));
+            return result;
         }
         else {
-            return scope.findDeclaration {
-                declarationName = getString(json, keyName).split('.'.equals);
-                packageName;
-                moduleName = getModuleName(json);
-            };
+            "The found declaration will be a type or a value for an anonymous class"
+            assert (is Value | TypeDeclaration declaration
+                =   scope.findDeclaration {
+                        declarationName = getString(json, keyName).split('.'.equals);
+                        packageName;
+                        moduleName = getModuleName(json);
+                    });
+            if (is Value declaration) {
+                "If the found declaration is a value, the value's type's declaration
+                 must be an anonymous class"
+                assert (is Class result = declaration.type.declaration,
+                        result.isAnonymous);
+                return result;
+            }
+            return declaration;
         }
     }
 
@@ -219,17 +231,16 @@ object jsonModelUtil {
 
         return if (getString(json, keyName) == "$U")
             then scope.unit.unknownType
-            else let (declaration
-                    =   assertedTypeDeclaration {
-                            declarationFromType(scope, json);
-                        })
-                let ([typeArguments, overrides]
-                    =   typeArgumentMaps {
-                            declaration;
-                            scope;
-                            getObjectOrArrayOrNull(json, keyTypeArgs)
-                            else getObjectOrArrayOrNull(json, keyTypeParams);
-                        })
+            else
+                let (declaration
+                        = declarationFromType(scope, json),
+                    [typeArguments, overrides]
+                        =   typeArgumentMaps {
+                                declaration;
+                                scope;
+                                getObjectOrArrayOrNull(json, keyTypeArgs)
+                                else getObjectOrArrayOrNull(json, keyTypeParams);
+                            })
                 declaration.type.substitute(typeArguments, overrides);
     }
 
