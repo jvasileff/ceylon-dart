@@ -48,10 +48,13 @@ class ValueDeclarationImpl(modelDeclaration)
     Boolean variable => modelDeclaration.isVariable;
 
     shared actual
-    Boolean objectValue => nothing;
+    Boolean objectValue => modelDeclaration.objectClass exists;
 
     shared actual
-    ClassDeclaration? objectClass => nothing;
+    ClassDeclaration? objectClass
+        =>  if (exists c = modelDeclaration.objectClass)
+            then newClassDeclaration(c)
+            else null;
 
     shared actual
     Value<Get, Set> apply<Get=Anything, Set=Nothing>() {
