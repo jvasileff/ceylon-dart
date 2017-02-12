@@ -26,7 +26,7 @@ class ModuleImpl(ModuleModel delegate) satisfies Module {
 
     shared actual
     Import[] dependencies
-        =>  nothing;
+        =>  delegate.moduleImports.collect((i) => ImportImpl(this, i));
 
     shared actual
     Package? findImportedPackage(String name)

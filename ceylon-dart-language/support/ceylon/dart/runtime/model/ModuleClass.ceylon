@@ -9,16 +9,18 @@ import ceylon.dart.runtime.model.internal {
     assertedPackage
 }
 
-shared
-class Module(name, version, annotations = [], unitLG = null) satisfies Annotated {
+shared abstract
+class Module(unitLG = null) satisfies Annotated {
+    // Important: To avoid circular initialization errors with the runtime model, the
+    // initializer must not use generics or activate the metamodel in any other way.
 
-    shared
+    shared formal
     [String+] name;
 
-    shared
+    shared formal
     String? version;
 
-    shared actual
+    shared actual formal
     [Annotation*] annotations;
 
     Unit(Package)? unitLG;
@@ -26,27 +28,33 @@ class Module(name, version, annotations = [], unitLG = null) satisfies Annotated
     variable
     Unit? unitMemo = null;
 
-    shared
-    String nameAsString
-        =   ".".join(name);
-
-    shared
-    String signature
-        =   if (nameAsString == "default")
-            then nameAsString
-            else "``nameAsString``/``version else ""``";
+    variable
+    MutableList<ModuleImport>? moduleImportsMemo = null;
 
     shared
     MutableList<ModuleImport> moduleImports
         // Due to versions and shared/non-shared, there's no good way to use a HashSet
         // here. But we could wrap the ArrayList to ensure unique module names. Or,
         // use a TreeSet.
-        =   ArrayList<ModuleImport>();
+        =>  moduleImportsMemo else (moduleImportsMemo = ArrayList<ModuleImport>());
+
+    variable
+    MutableSet<Package>? packagesMemo = null;
 
     // TODO make this a private map; add shared addPackage method
     shared default
     MutableSet<Package> packages
-        =   HashSet<Package>();
+        =>  packagesMemo else (packagesMemo = HashSet<Package>());
+
+    shared
+    String nameAsString
+        =>  ".".join(name);
+
+    shared
+    String signature
+        =>  if (nameAsString == "default")
+            then nameAsString
+            else "``nameAsString``/``version else ""``";
 
     shared
     Unit unit {

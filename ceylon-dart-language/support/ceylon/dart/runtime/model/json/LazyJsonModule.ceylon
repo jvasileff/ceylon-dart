@@ -12,15 +12,33 @@ import ceylon.dart.runtime.model {
 }
 
 shared
-class LazyJsonModule(
-        JsonObject json,
-        "Returns `false` if the toplevel was not found."
-        shared Boolean runToplevel(String toplevelDeclaration) => false,
-        [String+] name = jsonModelUtil.parseModuleName(json),
-        String? version = jsonModelUtil.parseModuleVersion(json),
-        [Annotation*] annotations = jsonModelUtil.parseModuleAnnotations(json),
-        Unit(Package)? unitLG = null)
-        extends Module(name, version, annotations, unitLG) {
+class LazyJsonModule(JsonObject json, Unit(Package)? unitLG = null)
+        extends Module(unitLG) {
+
+    // Allow late initialization since generation of the Callable requires type
+    // descriptors (at least from ceylon.language), which cannot be created without first
+    // instantiating $module.
+    "Returns `false` if the toplevel was not found."
+    shared late Boolean(String) runToplevel;
+
+    // Lazily parse json to avoid using generics (and therefore accessing $module to
+    // create type descriptors) while $modules are being constructed. This avoids
+    // circular dependency problems between ceylon.language and ceylon.dart.runtime.model
+    variable [String+]? nameMemo = null;
+    variable String? versionMemo = null;
+    variable [Annotation*]? annotationsMemo = null;
+
+    name
+        =>  nameMemo else (nameMemo
+            =   jsonModelUtil.parseModuleName(json));
+
+    version
+        =>  versionMemo else (versionMemo
+            =   jsonModelUtil.parseModuleVersion(json));
+
+    annotations
+        =>  annotationsMemo else (annotationsMemo
+            =   jsonModelUtil.parseModuleAnnotations(json));
 
     variable Boolean allLoaded = false;
 

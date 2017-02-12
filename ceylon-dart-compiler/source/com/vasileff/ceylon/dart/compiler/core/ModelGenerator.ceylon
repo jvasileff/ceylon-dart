@@ -46,8 +46,6 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartSimpleFormalParameter,
     DartExpressionStatement,
     DartMethodInvocation,
-    DartPrefixExpression,
-    DartBooleanLiteral,
     DartIntegerLiteral,
     DartDoubleLiteral
 }
@@ -250,21 +248,9 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                     }];
                 };
             },
-            // FIXME figure out something better than returning 'null' when
-            //       _$moduleInitializing. The problem is that LazyJsonModule is written
-            //       in Ceylon, instantiating LazyJsonModule() involves generics, and
-            //       $module is needed to create TypeDescriptors. This results in a
-            //       stack overflow, requiring $module in order to initialize $module.
-            DartTopLevelVariableDeclaration {
-                DartVariableDeclarationList {
-                    "var";
-                    null;
-                    [DartVariableDeclaration {
-                        DartSimpleIdentifier("_$moduleInitializing");
-                        DartBooleanLiteral(false);
-                    }];
-                };
-            },
+            // Important: the assignment to $module must not involve the metamodel in
+            // order to avoid circular dependecy problems between modules
+            // ceylon.dart.runtime.model and ceylon.language.
             DartFunctionDeclaration {
                 false;
                 null;
@@ -280,26 +266,13 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                             [DartIfStatement {
                                 condition
                                     =   DartBinaryExpression {
-                                            DartBinaryExpression {
-                                                DartSimpleIdentifier("_$module");
-                                                "==";
-                                                DartNullLiteral();
-                                            };
-                                            "&&";
-                                            DartPrefixExpression {
-                                                "!";
-                                                DartSimpleIdentifier(
-                                                        "_$moduleInitializing");
-                                            };
+                                            DartSimpleIdentifier("_$module");
+                                            "==";
+                                            DartNullLiteral();
                                         };
                                 thenStatement = DartBlock {
                                     // create the model, assign to _$module
                                     [createAssignmentStatement {
-                                        DartSimpleIdentifier("_$moduleInitializing");
-                                        DartAssignmentOperator.equal;
-                                        DartBooleanLiteral(true);
-                                    },
-                                    createAssignmentStatement {
                                         DartSimpleIdentifier("_$module");
                                         DartAssignmentOperator.equal;
                                         DartInstanceCreationExpression {
@@ -325,17 +298,9 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                                                     ceylonTypes.jsonObjectDeclaration;
                                                 }.expressionForInvocation {
                                                     [DartSimpleIdentifier("_$jsonModel")];
-                                                },
-                                                DartSimpleIdentifier {
-                                                    "_$runToplevel";
                                                 }];
                                             };
                                         };
-                                    },
-                                    createAssignmentStatement {
-                                        DartSimpleIdentifier("_$moduleInitializing");
-                                        DartAssignmentOperator.equal;
-                                        DartBooleanLiteral(false);
                                     },
                                     // initialize imports
                                     createMethodInvocationStatement {
@@ -366,6 +331,16 @@ class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
                     };
                 }];
                                         };
+                                    },
+
+                                    // setup run function
+                                    createAssignmentStatement {
+                                        DartPrefixedIdentifier {
+                                            DartSimpleIdentifier("_$module");
+                                            DartSimpleIdentifier("runToplevel");
+                                        };
+                                        DartAssignmentOperator.equal;
+                                        DartSimpleIdentifier("_$runToplevel");
                                     }];
                                 };
                             },
