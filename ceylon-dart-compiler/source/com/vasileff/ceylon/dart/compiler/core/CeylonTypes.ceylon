@@ -249,6 +249,10 @@ class CeylonTypes(Unit unit) {
         =>  assertFunction(implMetaDeclarationPackage.getDirectMember("findDeclaration", null, false));
 
     shared
+    Function findClassDeclaration
+        =>  assertFunction(implMetaDeclarationPackage.getDirectMember("findClassDeclaration", null, false));
+
+    shared
     Function newTypeImplDeclaration
         =>  assertFunction(implMetaModelPackage.getDirectMember("newType", null, false));
 

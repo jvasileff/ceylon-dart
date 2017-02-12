@@ -134,6 +134,13 @@ NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
 }
 
 shared
+ClassDeclaration? findClassDeclaration(Package pkg, {String+} nameParts)
+    =>  switch (d = findDeclaration(pkg, nameParts))
+        case (is ClassDeclaration) d
+        case (is ValueDeclaration) d.objectClass
+        else null;
+
+shared
 Declaration? findDeclaration(Package pkg, {String+} nameParts) {
     // FIXME will need to improve to support qualifiers for disambiguation
     assert (is PackageImpl pkg);

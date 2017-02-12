@@ -3411,27 +3411,32 @@ class ExpressionTransformer(CompilationContext ctx)
                     .narrow<DeclarationModel>()
                     .collect((d) => d.name).reversed;
 
-        // findNestableDeclaration(thePackage, nameParts)
+        """The function used to find the declaration. findClassDeclaration() must be used
+           for classes in order to support anonymous classes like '\Itrue'."""
+        value findFunction
+            =   if (declaration is ClassModel)
+                then ceylonTypes.findClassDeclaration
+                else ceylonTypes.findDeclaration;
+
+        // findDeclaration(thePackage, nameParts)
         return
         withBoxingNonNative {
             info;
-            ceylonTypes.findDeclaration.type;
+            findFunction.type;
             dartTypes.dartInvocable {
                 info;
-                ceylonTypes.findDeclaration;
+                findFunction;
             }.expressionForInvocation {
                 arguments = [
                     withLhsNonNative {
                         lhsType
-                            =   ceylonTypes.findDeclaration.firstParameterList
-                                    .parameters.get(0).type;
+                            =   findFunction.firstParameterList.parameters.get(0).type;
 
                         ()  =>  generatePackageDec(info, declaration.unit.\ipackage);
                     },
                     withLhsNonNative {
                         lhsType
-                            =   ceylonTypes.findDeclaration.firstParameterList
-                                    .parameters.get(1).type;
+                            =   findFunction.firstParameterList.parameters.get(1).type;
 
                         ()  =>  generateIterableFromElements {
                                     info;
