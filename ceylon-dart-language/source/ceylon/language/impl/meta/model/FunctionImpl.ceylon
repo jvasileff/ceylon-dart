@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newFunctionDeclaration
 }
@@ -15,6 +18,7 @@ import ceylon.dart.runtime.model {
 
 class FunctionImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         satisfies Function<Type, Arguments>
+                & CustomCallable<Type, Arguments>
         given Arguments satisfies Anything[] {
 
     shared ModelTypedReference modelReference;
@@ -26,6 +30,12 @@ class FunctionImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
     "Must either be for a toplevel class or have a qualifyingInstance"
     assert(qualifyingInstance exists
             != modelReference.declaration.container is ModelPackage);
+
+    shared actual
+    Type(*Arguments) callableDelegate
+        // TODO make this a reference value once apply() is implemented
+        //      (avoid creating new callables each time)
+        =>  apply;
 
     object helper
             satisfies FunctionModelHelper<Type, Arguments>

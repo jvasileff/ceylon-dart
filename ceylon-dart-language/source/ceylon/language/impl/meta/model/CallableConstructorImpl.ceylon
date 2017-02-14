@@ -1,8 +1,8 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newCallableConstructorDeclaration
-}
-import ceylon.language.impl.meta.model {
-    newClass
 }
 import ceylon.language.meta.declaration {
     CallableConstructorDeclaration
@@ -13,13 +13,13 @@ import ceylon.language.meta.model {
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
-    ModelDeclaration = Declaration,
     ModelPackage = Package,
     ModelCallableConstructor = CallableConstructor
 }
 
 class CallableConstructorImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         satisfies CallableConstructor<Type, Arguments>
+                & CustomCallable<Type, Arguments>
         given Arguments satisfies Anything[] {
 
     shared ModelType modelReference;
@@ -32,6 +32,12 @@ class CallableConstructorImpl<out Type, in Arguments>(modelReference, qualifying
      qualifyingInstance"
     assert(qualifyingInstance exists
             != modelReference.declaration.container.container is ModelPackage);
+
+    shared actual
+    Type(*Arguments) callableDelegate
+        // TODO make this a reference value once apply() is implemented
+        //      (avoid creating new callables each time)
+        =>  apply;
 
     object helper satisfies FunctionModelHelper<Type, Arguments>
                           & ApplicableHelper<Type, Arguments> {

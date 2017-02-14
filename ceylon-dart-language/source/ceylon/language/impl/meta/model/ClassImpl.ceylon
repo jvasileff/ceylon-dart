@@ -1,19 +1,14 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.meta.model {
     ClosedType = Type, Class, ClassOrInterface, Member,
     MemberClass, MemberInterface, Method, Attribute, FunctionModel, ValueModel,
     CallableConstructor, ValueConstructor,
-    IncompatibleTypeException,
-    MemberClassValueConstructor,
-    MemberClassCallableConstructor
+    IncompatibleTypeException
 }
 import ceylon.language.impl.meta.model {
-    newClass, newMemberClass, newConstructor
-}
-import ceylon.language.meta.declaration {
-    CallableConstructorDeclaration
-}
-import ceylon.language.impl.meta.declaration {
-    newConstructorDeclaration
+    newConstructor
 }
 import ceylon.dart.runtime.model {
     ModelType = Type,
@@ -24,6 +19,7 @@ import ceylon.dart.runtime.model {
 class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         extends TypeImpl<Type>()
         satisfies Class<Type, Arguments>
+                & CustomCallable<Type, Arguments>
         given Arguments satisfies Anything[] {
 
     shared actual ModelType modelReference;
@@ -31,6 +27,12 @@ class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
 
     "The declaration for a Class Type must be a Class"
     assert (is ModelClass modelDeclaration = modelReference.declaration);
+
+    shared actual
+    Type(*Arguments) callableDelegate
+        // TODO make this a reference value once apply() is implemented
+        //      (avoid creating new callables each time)
+        =>  apply;
 
     shared actual object helper
             satisfies ClassModelHelper<Type> & ApplicableHelper<Type, Arguments> {
