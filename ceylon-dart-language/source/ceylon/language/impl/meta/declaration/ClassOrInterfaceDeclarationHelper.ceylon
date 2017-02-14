@@ -10,7 +10,7 @@ import ceylon.language.meta.declaration {
     NestableDeclaration,
     OpenType,
     OpenInterfaceType,
-    OpenClassType
+    OpenClassOrInterfaceType
 }
 import ceylon.language.meta.model {
     ClosedType = Type,
@@ -33,17 +33,6 @@ interface ClassOrInterfaceDeclarationHelper
     shared
     OpenType[] caseTypes
         =>  modelDeclaration.caseTypes.collect(newOpenType);
-
-    shared
-    OpenClassType? extendedType {
-        if (exists modelExtendedType = modelDeclaration.extendedType) {
-            assert (is OpenClassType result = newOpenType(modelExtendedType));
-            return result;
-        }
-        "Only 'Anything' has no extended type."
-        assert (modelDeclaration.isAnything);
-        return null;
-    }
 
     shared
     Boolean isAlias

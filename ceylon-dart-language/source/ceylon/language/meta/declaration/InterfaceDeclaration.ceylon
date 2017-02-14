@@ -50,7 +50,9 @@ import ceylon.language.meta.model {
 
 shared sealed interface InterfaceDeclaration
         satisfies ClassOrInterfaceDeclaration {
-    
+
+    shared actual formal OpenClassOrInterfaceType? extendedType;
+
     "Applies the given closed type arguments to this toplevel interface 
      declaration in order to obtain an interface model. 
      See [this code sample](#toplevel-sample) for an example on how to use this."

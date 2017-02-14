@@ -6,7 +6,8 @@ import ceylon.language {
 }
 import ceylon.language.meta.declaration {
     InterfaceDeclaration,
-    NestableDeclaration
+    NestableDeclaration,
+    OpenClassOrInterfaceType
 }
 import ceylon.language.meta.model {
     Interface,
@@ -44,10 +45,16 @@ class InterfaceDeclarationImpl(modelDeclaration)
 
     string => "interface ``qualifiedName``";
 
+    shared actual
+    OpenClassOrInterfaceType? extendedType {
+        assert (is OpenClassOrInterfaceType result
+            =   newOpenType(modelDeclaration.extendedType));
+        return result;
+    }
+
     // ClassOrInterfaceDeclaration
 
     caseTypes => helper.caseTypes;
-    extendedType => helper.extendedType;
     isAlias => helper.isAlias;
     satisfiedTypes => helper.satisfiedTypes;
 

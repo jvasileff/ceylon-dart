@@ -64,7 +64,7 @@ shared sealed interface ClassOrInterfaceDeclaration
     "This type's extended type, unless this is the class for 
      [[Anything|ceylon.language::Anything]], whichis the root 
      of the type hierarchy and thus does not have any extended type."
-    shared formal OpenClassType? extendedType;
+    shared formal OpenClassOrInterfaceType? extendedType;
     
     "The list of types satisfied by this type."
     shared formal OpenInterfaceType[] satisfiedTypes;

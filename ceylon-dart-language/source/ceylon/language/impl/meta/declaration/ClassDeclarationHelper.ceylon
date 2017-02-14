@@ -10,7 +10,8 @@ import ceylon.language.meta.declaration {
     FunctionOrValueDeclaration,
     CallableConstructorDeclaration,
     ConstructorDeclaration,
-    ValueConstructorDeclaration
+    ValueConstructorDeclaration,
+    OpenClassType
 }
 import ceylon.language.meta.model {
     ClosedType = Type,
@@ -24,6 +25,17 @@ interface ClassDeclarationHelper
 
     shared actual formal
     ModelClass modelDeclaration;
+
+    shared
+    OpenClassType? extendedType {
+        if (exists modelExtendedType = modelDeclaration.extendedType) {
+            assert (is OpenClassType result = newOpenType(modelExtendedType));
+            return result;
+        }
+        "Only 'Anything' has no extended type."
+        assert (modelDeclaration.isAnything);
+        return null;
+    }
 
     shared
     Boolean abstract => modelDeclaration.isAbstract;

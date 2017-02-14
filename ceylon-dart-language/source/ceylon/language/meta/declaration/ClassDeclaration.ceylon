@@ -62,7 +62,9 @@ import ceylon.language.meta.model {
 shared sealed interface ClassDeclaration 
         of ClassWithInitializerDeclaration | ClassWithConstructorsDeclaration
         satisfies ClassOrInterfaceDeclaration {
-    
+
+    shared actual formal OpenClassType? extendedType;
+
     "A constructor declaration representing the class initializer 
      (for a class with a parameter list) or
      the default constructor, or null if the class lacks 
