@@ -632,7 +632,7 @@ Map<String, Map<String, Object>>? encodeTypeArguments
                 value overrides = type.varianceOverrides else null;
                 return CeylonIterable(type.declaration.typeParameters).map((param) {
                     assert (exists arg = args.get(param));
-                    value map = encodeType(arg, param);
+                    value map = encodeType(arg, scope);
                     if (exists override = overrides?.get(param)) {
                         map.put(keyUsVariance, override.ordinal());
                     }
