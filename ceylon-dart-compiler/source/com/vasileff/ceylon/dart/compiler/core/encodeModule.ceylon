@@ -9,6 +9,7 @@ import com.redhat.ceylon.model.typechecker.model {
     ClassModel=Class,
     ConstructorModel=Constructor,
     TypeModel=Type,
+    TypeAliasModel=TypeAlias,
     DeclarationModel=Declaration,
     ModuleModel=Module,
     PackageModel=Package,
@@ -156,8 +157,11 @@ Map<String, Object> encodePackage(PackageModel pkg) {
             assert (is String name = memberMap[keyName]);
             m.put(name, memberMap);
         }
-
-        // TODO other types
+        else if (is TypeAliasModel member) {
+            value memberMap = encodeTypeAlias(member);
+            assert (is String name = memberMap[keyName]);
+            m.put(name, memberMap);
+        }
     }
     return m;
 }
@@ -481,7 +485,12 @@ Boolean interestingDeclaration(DeclarationModel d) {
                 return name -> m;
             });
 
-    // TODO aliases, other?
+    value typeAliases
+        =   members.narrow<TypeAliasModel>()
+                    .map(encodeTypeAlias).collect((m) {
+                assert (is String name = m[keyName]);
+                return name -> m;
+            });
 
     return {
         if (nonempty classes)
@@ -490,8 +499,9 @@ Boolean interestingDeclaration(DeclarationModel d) {
         if (nonempty interfaces)
             then keyInterfaces -> map(interfaces)
             else null,
-        if (nonempty values)
-            then keyAttributes -> map(values)
+        if (values nonempty || typeAliases nonempty)
+            // weird, type aliases are included in keyAttributes!
+            then keyAttributes -> map(values.chain(typeAliases))
             else null,
         if (nonempty functions)
             then keyMethods -> map(functions)
@@ -546,6 +556,23 @@ Map<String, Object> encodeInterface(InterfaceModel declaration) {
 
     // members
     m.putAll(encodeMembers({*declaration.members}));
+
+    return m;
+}
+
+Map<String, Object> encodeTypeAlias(TypeAliasModel declaration) {
+    value m = HashMap<String, Object>();
+    m[keyMetatype] = metatypeAlias;
+    m[keyName] = declaration.name;
+    m[keyAlias] = encodeType(declaration.extendedType, declaration);
+
+    // type parameters
+    if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {
+        m[keyTypeParams] = tps;
+    }
+
+    // annotations
+    m.putAll(encodeAnnotations(declaration));
 
     return m;
 }
