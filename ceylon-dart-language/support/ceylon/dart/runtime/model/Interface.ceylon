@@ -5,6 +5,7 @@ class Interface()
 
     shared actual Boolean isAnonymous => false;
     shared actual Boolean isNamed => true;
+    shared actual formal Type extendedType;
 
     shared actual
     String string
