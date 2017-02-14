@@ -46,7 +46,7 @@ class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
                     newCallableConstructor(modelReference, container));
 
     shared actual
-    CallableConstructor<Type, Arguments>(Container) callableDelegate
+    CallableConstructor<Type, Arguments>(Container) invoke
         =   bindSafe;
 
     object helper satisfies FunctionModelHelper<Type, Arguments> {

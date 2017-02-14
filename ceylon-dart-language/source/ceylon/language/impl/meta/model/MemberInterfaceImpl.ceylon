@@ -35,7 +35,7 @@ class MemberInterfaceImpl<in Container, out Type>(modelReference)
         =>  unsafeCast<Interface<Type>>(newInterface(modelReference, container));
 
     shared actual
-    Interface<Type>(Container) callableDelegate
+    Interface<Type>(Container) invoke
         =   bindSafe;
 
     shared actual object helper satisfies ClassOrInterfaceHelper<Type> & MemberHelper {

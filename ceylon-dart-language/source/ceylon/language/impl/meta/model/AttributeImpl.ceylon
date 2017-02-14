@@ -33,7 +33,7 @@ class AttributeImpl<in Container, out Get, in Set>(modelReference)
         =>  unsafeCast<Value<Get, Set>>(newValue(modelReference, container));
 
     shared actual
-    Value<Get, Set>(Container) callableDelegate
+    Value<Get, Set>(Container) invoke
         =   bindSafe;
 
     object helper

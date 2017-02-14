@@ -32,7 +32,7 @@ class FunctionImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
             != modelReference.declaration.container is ModelPackage);
 
     shared actual
-    Type(*Arguments) callableDelegate
+    Type(*Arguments) invoke
         // TODO make this a reference value once apply() is implemented
         //      (avoid creating new callables each time)
         =>  apply;

@@ -41,7 +41,7 @@ class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
                 (newValueConstructor(modelReference, container));
 
     shared actual
-    ValueConstructor<Type>(Container) callableDelegate
+    ValueConstructor<Type>(Container) invoke
         =   bindSafe;
 
     object helper satisfies HasModelReference {

@@ -34,7 +34,7 @@ class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
         =>  ClassImpl<Type, Arguments>(modelReference, container);
 
     shared actual
-    Class<Type, Arguments>(Container) callableDelegate
+    Class<Type, Arguments>(Container) invoke
         =   bindSafe;
 
     shared actual

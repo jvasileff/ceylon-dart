@@ -34,7 +34,7 @@ class MethodImpl<in Container, out Type, in Arguments>(modelReference)
         =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelReference, container));
 
     shared actual
-    Function<Type, Arguments>(Container) callableDelegate
+    Function<Type, Arguments>(Container) invoke
         =   bindSafe;
 
     object helper

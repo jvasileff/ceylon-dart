@@ -844,7 +844,7 @@ class TopLevelVisitor(CompilationContext ctx)
             =   if (!satisfiesCustomCallable)
                 then []
                 else [
-                    // $dart$core.Function get f => callableDelegate.f;
+                    // $dart$core.Function get f => invoke.f;
                     DartMethodDeclaration {
                         false;
                         null;
@@ -856,13 +856,13 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartExpressionFunctionBody {
                             false;
                             DartPrefixedIdentifier {
-                                DartSimpleIdentifier("callableDelegate");
+                                DartSimpleIdentifier("invoke");
                                 DartSimpleIdentifier("f");
                             };
                         };
                     },
                     // noSuchMethod($dart$core.Invocation invocation)
-                    //   => callableDelegate.noSuchMethod(invocation);
+                    //   => invoke.noSuchMethod(invocation);
                     DartMethodDeclaration {
                         false;
                         null;
@@ -882,7 +882,7 @@ class TopLevelVisitor(CompilationContext ctx)
                         DartExpressionFunctionBody {
                             false;
                             DartMethodInvocation {
-                                DartSimpleIdentifier("callableDelegate");
+                                DartSimpleIdentifier("invoke");
                                 DartSimpleIdentifier("noSuchMethod");
                                 DartArgumentList {
                                     [DartSimpleIdentifier("invocation")];

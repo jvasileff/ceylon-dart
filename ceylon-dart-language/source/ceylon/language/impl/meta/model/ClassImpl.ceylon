@@ -29,7 +29,7 @@ class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
     assert (is ModelClass modelDeclaration = modelReference.declaration);
 
     shared actual
-    Type(*Arguments) callableDelegate
+    Type(*Arguments) invoke
         // TODO make this a reference value once apply() is implemented
         //      (avoid creating new callables each time)
         =>  apply;

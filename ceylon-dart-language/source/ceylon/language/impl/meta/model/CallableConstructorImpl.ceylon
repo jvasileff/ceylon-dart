@@ -34,7 +34,7 @@ class CallableConstructorImpl<out Type, in Arguments>(modelReference, qualifying
             != modelReference.declaration.container.container is ModelPackage);
 
     shared actual
-    Type(*Arguments) callableDelegate
+    Type(*Arguments) invoke
         // TODO make this a reference value once apply() is implemented
         //      (avoid creating new callables each time)
         =>  apply;
