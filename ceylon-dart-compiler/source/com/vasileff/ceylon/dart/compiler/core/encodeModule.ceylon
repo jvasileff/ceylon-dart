@@ -171,6 +171,11 @@ Map<String, Object> encodeClass(ClassModel declaration) {
     m[keyMetatype] = metatypeClass;
     m[keyName] = declaration.name;
 
+    // alias?
+    if (declaration.\ialias) {
+        m[keyAlias] = 1;
+    }
+
     // type parameters
     if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {
         m[keyTypeParams] = tps;
@@ -504,6 +509,11 @@ Map<String, Object> encodeInterface(InterfaceModel declaration) {
     value m = HashMap<String, Object>();
     m[keyMetatype] = metatypeInterface;
     m[keyName] = declaration.name;
+
+    // alias?
+    if (declaration.\ialias) {
+        m[keyAlias] = encodeType(declaration.extendedType, declaration);
+    }
 
     // type parameters
     if (nonempty tps = encodeTypeParameters(declaration, {*declaration.typeParameters})) {

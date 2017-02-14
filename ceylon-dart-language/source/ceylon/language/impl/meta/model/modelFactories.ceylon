@@ -10,7 +10,7 @@ import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelTypedReference = TypedReference,
     ModelClass = Class,
-    ModelClassDefinition = ClassDefinition,
+    ModelClassAlias = ClassAlias,
     ModelClassWithInitializer = ClassWithInitializer,
     ModelConstructor = Constructor,
     ModelValueConstructor = ValueConstructor,
@@ -283,8 +283,10 @@ Boolean isVariableOrHasSetter(ModelTypedReference modelReference)
         else false;
 
 ModelType argumentsTupleForClass(ModelType modelReference) {
-    assert (is ModelClassDefinition modelDeclaration = modelReference.declaration);
-    if (is ModelClassWithInitializer modelDeclaration) {
+    assert (is ModelClass modelDeclaration
+        =   modelReference.declaration);
+
+    if (is ModelClassWithInitializer | ModelClassAlias modelDeclaration) {
         assert (exists t = modelReference.unit.getCallableTuple(modelReference.fullType));
         return t;
     }
