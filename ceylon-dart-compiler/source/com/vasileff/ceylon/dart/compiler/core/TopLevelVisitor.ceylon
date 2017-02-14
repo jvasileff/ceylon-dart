@@ -30,8 +30,6 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    DefaultedCallableParameter,
-    CallableParameter,
     ClassAliasDefinition,
     InterfaceAliasDefinition,
     PositionalArguments,
@@ -837,6 +835,63 @@ class TopLevelVisitor(CompilationContext ctx)
                     .flatMap((d)
                         =>  d.transform(classMemberTransformer));
 
+        value satisfiesCustomCallable
+            =   classModel.inherits(ceylonTypes.customCallableDeclaration) &&
+                !classModel.extendedType.declaration.inherits(
+                    ceylonTypes.customCallableDeclaration);
+
+        value membersForSatisfyingCallable
+            =   if (!satisfiesCustomCallable)
+                then []
+                else [
+                    // $dart$core.Function get f => callableDelegate.f;
+                    DartMethodDeclaration {
+                        false;
+                        null;
+                        dartTypes.dartFunction; // $dart$core.Function
+                        "get";
+                        false;
+                        DartSimpleIdentifier("f");
+                        null;
+                        DartExpressionFunctionBody {
+                            false;
+                            DartPrefixedIdentifier {
+                                DartSimpleIdentifier("callableDelegate");
+                                DartSimpleIdentifier("f");
+                            };
+                        };
+                    },
+                    // noSuchMethod($dart$core.Invocation invocation)
+                    //   => callableDelegate.noSuchMethod(invocation);
+                    DartMethodDeclaration {
+                        false;
+                        null;
+                        null;
+                        null;
+                        false;
+                        DartSimpleIdentifier("noSuchMethod");
+                        DartFormalParameterList {
+                            false; false;
+                            [DartSimpleFormalParameter {
+                                false;
+                                false;
+                                dartTypes.dartInvocation;
+                                DartSimpleIdentifier("invocation");
+                            }];
+                        };
+                        DartExpressionFunctionBody {
+                            false;
+                            DartMethodInvocation {
+                                DartSimpleIdentifier("callableDelegate");
+                                DartSimpleIdentifier("noSuchMethod");
+                                DartArgumentList {
+                                    [DartSimpleIdentifier("invocation")];
+                                };
+                            };
+                        };
+                    }
+                ];
+
         "Functions, values, and classes for which the most refined
          member is contained by an Interface."
         function allDeclarationsToBridge(ClassModel classModel)
@@ -903,6 +958,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 bridgesToSyntheticFields,
                 fieldsForCallableValues,
                 members,
+                membersForSatisfyingCallable,
                 callableParameterForwarders,
                 bridgeFunctions
             };

@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.meta {
     type
 }
@@ -17,6 +20,7 @@ import ceylon.dart.runtime.model {
 class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
         extends TypeImpl<Type>()
         satisfies MemberClass<Container, Type, Arguments>
+                & CustomCallable<Class<Type, Arguments>, [Container]>
         // TODO given Container satisfies Object
         given Arguments satisfies Anything[] {
 
@@ -24,6 +28,14 @@ class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
 
     "The declaration for a Class Type must be a Class"
     assert (is ModelClass modelDeclaration = modelReference.declaration);
+
+    shared
+    Class<Type, Arguments> bindSafe(Container container)
+        =>  ClassImpl<Type, Arguments>(modelReference, container);
+
+    shared actual
+    Class<Type, Arguments>(Container) callableDelegate
+        =   bindSafe;
 
     shared actual
     object helper satisfies ClassModelHelper<Type> & MemberHelper {
@@ -69,10 +81,6 @@ class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
         }
         return bindSafe(container);
     }
-
-    shared
-    Class<Type, Arguments> bindSafe(Container container)
-        =>  ClassImpl<Type, Arguments>(modelReference, container);
 
     shared actual
     MemberClassCallableConstructor<Container, Type, Arguments>? defaultConstructor

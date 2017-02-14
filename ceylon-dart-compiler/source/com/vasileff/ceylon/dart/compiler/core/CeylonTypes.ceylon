@@ -241,6 +241,10 @@ class CeylonTypes(Unit unit) {
         =>  assertClass(modelPackage.getDirectMember("Module", null, false));
 
     shared
+    Interface customCallableDeclaration
+        =>  assertInterface(ceylonLanguageDartPackage.getDirectMember("CustomCallable", null, false));
+
+    shared
     Class moduleImplDeclaration
         =>  assertClass(implMetaDeclarationPackage.getDirectMember("ModuleImpl", null, false));
 

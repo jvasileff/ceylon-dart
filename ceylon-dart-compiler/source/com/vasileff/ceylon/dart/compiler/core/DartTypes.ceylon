@@ -701,6 +701,15 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     shared
+    DartTypeName dartInvocation
+        =   DartTypeName {
+                DartPrefixedIdentifier {
+                    DartSimpleIdentifier("$dart$core");
+                    DartSimpleIdentifier("Invocation");
+                };
+            };
+
+    shared
     DartTypeName dartList
         =   DartTypeName {
                 DartPrefixedIdentifier {
