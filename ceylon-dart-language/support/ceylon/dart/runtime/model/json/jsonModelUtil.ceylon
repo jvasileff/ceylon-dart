@@ -568,7 +568,7 @@ object jsonModelUtil {
                     container = scope;
                     unit = scope.pkg.defaultUnit;
                     name = getString(json, keyName);
-                    extendedTypeLG = typeFromJsonLG(getObject(json, keyExtendedType));
+                    extendedTypeLG = typeFromJsonLG(aliasJson);
                     annotations = toAnnotations(getObjectOrEmpty(json, keyAnnotations));
                     isShared = packedAnnotations.get(sharedBit);
                     isSealed = packedAnnotations.get(sealedBit);
