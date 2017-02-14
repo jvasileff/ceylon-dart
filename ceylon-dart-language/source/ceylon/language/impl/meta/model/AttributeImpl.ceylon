@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newValueDeclaration
 }
@@ -17,12 +20,21 @@ import ceylon.dart.runtime.model {
 }
 
 class AttributeImpl<in Container, out Get, in Set>(modelReference)
-        satisfies Attribute<Container, Get, Set> {
+        satisfies Attribute<Container, Get, Set>
+                & CustomCallable<Value<Get, Set>, [Container]> {
 
     shared ModelTypedReference modelReference;
 
     "The declaration for a Value Type must be a Value"
     assert (modelReference.declaration is ModelValue);
+
+    shared
+    Value<Get, Set> bindSafe(Container container)
+        =>  unsafeCast<Value<Get, Set>>(newValue(modelReference, container));
+
+    shared actual
+    Value<Get, Set>(Container) callableDelegate
+        =   bindSafe;
 
     object helper
             satisfies ValueModelHelper<Get> & MemberHelper {
@@ -44,10 +56,6 @@ class AttributeImpl<in Container, out Get, in Set>(modelReference)
         }
         return bindSafe(container);
     }
-
-    shared
-    Value<Get, Set> bindSafe(Container container)
-        =>  unsafeCast<Value<Get, Set>>(newValue(modelReference, container));
 
     // Member
 

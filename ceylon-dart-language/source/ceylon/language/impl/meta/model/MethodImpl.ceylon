@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newFunctionDeclaration
 }
@@ -18,12 +21,21 @@ import ceylon.dart.runtime.model {
 
 class MethodImpl<in Container, out Type, in Arguments>(modelReference)
         satisfies Method<Container, Type, Arguments>
+                & CustomCallable<Function<Type, Arguments>, [Container]>
         given Arguments satisfies Anything[] {
 
     shared ModelTypedReference modelReference;
 
     "The declaration for a Function Type must be a Function"
     assert (modelReference.declaration is ModelFunction);
+
+    shared
+    Function<Type, Arguments> bindSafe(Container container)
+        =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelReference, container));
+
+    shared actual
+    Function<Type, Arguments>(Container) callableDelegate
+        =   bindSafe;
 
     object helper
             satisfies FunctionModelHelper<Type, Arguments>
@@ -46,10 +58,6 @@ class MethodImpl<in Container, out Type, in Arguments>(modelReference)
         }
         return bindSafe(container);
     }
-
-    shared
-    Function<Type, Arguments> bindSafe(Container container)
-        =>  unsafeCast<Function<Type, Arguments>>(newFunction(modelReference, container));
 
     // Member
 

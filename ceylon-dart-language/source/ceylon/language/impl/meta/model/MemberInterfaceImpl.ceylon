@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.meta {
     type
 }
@@ -19,12 +22,21 @@ import ceylon.language.impl.meta.declaration {
 
 class MemberInterfaceImpl<in Container, out Type>(modelReference)
         extends TypeImpl<Type>()
-        satisfies MemberInterface<Container, Type> {
+        satisfies MemberInterface<Container, Type>
+                & CustomCallable<Interface<Type>, [Container]> {
 
     shared actual ModelType modelReference;
 
     "The declaration for a Interface Type must be a Interface"
     assert (modelReference.declaration is ModelInterface);
+
+    shared
+    Interface<Type> bindSafe(Container container)
+        =>  unsafeCast<Interface<Type>>(newInterface(modelReference, container));
+
+    shared actual
+    Interface<Type>(Container) callableDelegate
+        =   bindSafe;
 
     shared actual object helper satisfies ClassOrInterfaceHelper<Type> & MemberHelper {
         thisType => outer;
@@ -45,10 +57,6 @@ class MemberInterfaceImpl<in Container, out Type>(modelReference)
         }
         return bindSafe(container);
     }
-
-    shared
-    Interface<Type> bindSafe(Container container)
-        =>  unsafeCast<Interface<Type>>(newInterface(modelReference, container));
 
     // Member
 

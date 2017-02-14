@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newCallableConstructorDeclaration
 }
@@ -25,6 +28,7 @@ import ceylon.dart.runtime.model {
 class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
         (modelReference)
         satisfies MemberClassCallableConstructor<Container, Type, Arguments>
+                & CustomCallable<CallableConstructor<Type, Arguments>, [Container]>
         given Arguments satisfies Anything[] {
 
     shared ModelType modelReference;
@@ -35,6 +39,15 @@ class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
     "A MemberClassCallableConstructor must not have a toplevel container"
     assert (is ModelDeclaration modelClass = modelReference.declaration.container,
             !modelClass.isToplevel);
+
+    shared
+    CallableConstructor<Type, Arguments> bindSafe(Container container)
+        =>  unsafeCast<CallableConstructor<Type, Arguments>>(
+                    newCallableConstructor(modelReference, container));
+
+    shared actual
+    CallableConstructor<Type, Arguments>(Container) callableDelegate
+        =   bindSafe;
 
     object helper satisfies FunctionModelHelper<Type, Arguments> {
         modelReference => outer.modelReference;
@@ -57,11 +70,6 @@ class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
         }
         return bindSafe(container);
     }
-
-    shared
-    CallableConstructor<Type, Arguments> bindSafe(Container container)
-        =>  unsafeCast<CallableConstructor<Type, Arguments>>(
-                    newCallableConstructor(modelReference, container));
 
     // Functional
 

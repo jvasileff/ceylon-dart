@@ -1,3 +1,6 @@
+import ceylon.language.dart {
+    CustomCallable
+}
 import ceylon.language.impl.meta.declaration {
     newValueConstructorDeclaration
 }
@@ -20,7 +23,8 @@ import ceylon.dart.runtime.model {
 }
 
 class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
-        satisfies MemberClassValueConstructor<Container, Type> {
+        satisfies MemberClassValueConstructor<Container, Type>
+                & CustomCallable<ValueConstructor<Type>, [Container]> {
 
     shared ModelType modelReference;
 
@@ -30,6 +34,15 @@ class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
     "A MemberClassValueConstructor must not have a toplevel container"
     assert (is ModelDeclaration modelClass = modelReference.declaration.container,
             !modelClass.isToplevel);
+
+    shared
+    ValueConstructor<Type> bindSafe(Container container)
+        =>  unsafeCast<ValueConstructor<Type>>
+                (newValueConstructor(modelReference, container));
+
+    shared actual
+    ValueConstructor<Type>(Container) callableDelegate
+        =   bindSafe;
 
     object helper satisfies HasModelReference {
         modelReference => outer.modelReference;
@@ -50,11 +63,6 @@ class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
         }
         return bindSafe(container);
     }
-
-    shared
-    ValueConstructor<Type> bindSafe(Container container)
-        =>  unsafeCast<ValueConstructor<Type>>
-                (newValueConstructor(modelReference, container));
 
     ModelType modelQualifyingType {
         assert (exists qt = modelReference.qualifyingType);
