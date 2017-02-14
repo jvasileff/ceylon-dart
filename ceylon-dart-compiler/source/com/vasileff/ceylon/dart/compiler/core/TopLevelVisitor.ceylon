@@ -110,7 +110,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectDefinitionInfo,
     valueDefinitionInfo,
     valueGetterDefinitionInfo,
-    callableParameterInfo,
     valueDeclarationInfo
 }
 
