@@ -148,7 +148,7 @@ class Declaration() of TypeDeclaration | TypedDeclaration
     shared
     Boolean isResolvable
         =>  !this is Setter        // return getters, not setters
-            && !this.isAnonymous;  // don't return types for object's
+            && !this.isAnonymous;  // don't return constructors or types for object's
 
     shared actual default
     Boolean equals(Object other) {
