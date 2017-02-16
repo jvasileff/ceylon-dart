@@ -441,18 +441,21 @@ Boolean interestingDeclaration(DeclarationModel d) {
             && !d.container.getDirectMemberForBackend(
                     d.name, dartBackend.asSet()) exists;
 
+    // encode only the Constructor; create the Functions and Values when parsing
     value functionOrValueForConstructor
         =   ModelUtil.isConstructor(d) && !d is ConstructorModel;
 
     return !functionOrValueForConstructor
-            && !(d is ClassModel && d.anonymous) // use the Value to encode objects
+            // use the Value to encode objects, but don't exclude constructors
+            // which are also anonymous
+            && !(d is ClassModel && d.anonymous)
             && (d.toplevel || d.member || isOrContainsType(d))
             && (isForDartBackend(d) || nativeHeaderWithoutImpl);
 }
 
 [<String -> Map<String, Object>>*] encodeMembers(variable {DeclarationModel*} members) {
     // skip native declarations for other backends, unneeded locals, etc.
-    members = members.filter(interestingDeclaration);
+    members = members.select(interestingDeclaration);
 
     value classes
         =   members.narrow<ClassModel>().map(encodeClass).collect((m) {
