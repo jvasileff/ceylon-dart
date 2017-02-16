@@ -13,16 +13,8 @@ import ceylon.language.meta.model {
     ClosedType = Type,
     Value,
     Attribute,
-    MemberClass,
-    Class,
-    Member,
-    ClassOrInterface,
     IncompatibleTypeException,
-    TypeApplicationException,
-    FunctionModel,
-    Function,
-    Method,
-    Qualified
+    TypeApplicationException
 }
 import ceylon.language.impl.meta.model {
     modelTypeFromType,
@@ -36,6 +28,9 @@ class ValueDeclarationImpl(modelDeclaration)
         satisfies ValueDeclaration {
 
     shared ModelValue modelDeclaration;
+
+    "Cannot create a `ValueDeclaration` for a constructor."
+    assert (!modelDeclaration.constructor exists);
 
     object helper satisfies FunctionOrValueDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;

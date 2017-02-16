@@ -13,7 +13,7 @@ import ceylon.language.impl.meta.model {
 import ceylon.dart.runtime.model {
     ModelType = Type,
     ModelClass = Class,
-    ModelConstructor = Constructor
+    ModelFunctionOrValue = FunctionOrValue
 }
 
 class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
@@ -47,8 +47,13 @@ class ClassImpl<out Type, in Arguments>(modelReference, qualifyingInstance)
         // TODO special case "constructor" for class initializers, to use as
         //      the default constructor (name == "")
 
-        value modelConstructor = modelDeclaration.getDirectMember(name);
-        if (!is ModelConstructor modelConstructor) {
+        value modelConstructor
+            =   if (is ModelFunctionOrValue fv
+                    =   modelDeclaration.getDirectMember(name))
+                then fv.constructor
+                else null;
+
+        if (!exists modelConstructor) {
             return null;
         }
         if (!allowUnshared && !modelConstructor.isShared) {

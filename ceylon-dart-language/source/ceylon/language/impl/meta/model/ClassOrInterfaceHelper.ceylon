@@ -4,19 +4,20 @@ import ceylon.language.meta.model {
     nothingType,
     IncompatibleTypeException
 }
+import ceylon.language.meta.declaration {
+    ValueDeclaration,
+    FunctionDeclaration
+}
 import ceylon.language.impl.meta.declaration {
+    newDeclaration,
     newClassDeclaration,
     newInterfaceDeclaration,
-    newFunctionDeclaration,
-    newValueDeclaration,
     newClassOrInterfaceDeclaration
 }
 import ceylon.dart.runtime.model {
     unionDeduped,
     ModelDeclaration = Declaration,
     ModelClass = Class,
-    ModelFunction = Function,
-    ModelValue = Value,
     ModelInterface = Interface,
     ModelClassOrInterface = ClassOrInterface,
     ModelType = Type
@@ -218,12 +219,17 @@ interface ClassOrInterfaceHelper<out Type>
             [ClosedType<Anything>*] types)
             given Arguments satisfies Anything[] {
 
-        if (!is ModelFunction modelMember) {
+        if (!exists modelMember) {
             return null;
         }
 
-        return newFunctionDeclaration(modelMember)
-                .memberApply<Container, Type, Arguments> {
+        value declaration = newDeclaration(modelMember);
+
+        if (!is FunctionDeclaration declaration) {
+            return null;
+        }
+
+        return declaration.memberApply<Container, Type, Arguments> {
             containerType = unsafeCast<ClosedType<Object>>(newType(modelQualifyingType));
             typeArguments = types.sequence();
         };
@@ -259,12 +265,17 @@ interface ClassOrInterfaceHelper<out Type>
             ModelType modelQualifyingType,
             ModelDeclaration? modelMember) {
 
-        if (!is ModelValue modelMember) {
+        if (!exists modelMember) {
             return null;
         }
 
-        return newValueDeclaration(modelMember)
-                .memberApply<Container, Get, Set> {
+        value declaration = newDeclaration(modelMember);
+
+        if (!is ValueDeclaration declaration) {
+            return null;
+        }
+
+        return declaration.memberApply<Container, Get, Set> {
             containerType = unsafeCast<ClosedType<Object>>(newType(modelQualifyingType));
         };
     }

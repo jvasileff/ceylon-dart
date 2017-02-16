@@ -31,6 +31,9 @@ class FunctionDeclarationImpl(modelDeclaration)
 
     shared ModelFunction modelDeclaration;
 
+    "Cannot create a `FunctionDeclaration` for a constructor."
+    assert (!modelDeclaration.constructor exists);
+
     object helper satisfies FunctionOrValueDeclarationHelper
                           & FunctionalDeclarationHelper {
         modelDeclaration => outer.modelDeclaration;

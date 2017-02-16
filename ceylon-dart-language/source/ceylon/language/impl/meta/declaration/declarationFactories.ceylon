@@ -1,12 +1,10 @@
 import ceylon.dart.runtime.model {
-    ModelClassDefinition = ClassDefinition,
     ModelClassWithInitializer = ClassWithInitializer,
     ModelClassWithConstructors = ClassWithConstructors,
     ModelClassAlias = ClassAlias,
     ModelClassOrInterface = ClassOrInterface,
     ModelFunction = Function,
     ModelValue = Value,
-    ModelFunctionOrValue = FunctionOrValue,
     ModelTypeParameter = TypeParameter,
     ModelNothingDeclaration = NothingDeclaration,
     ModelDeclaration = Declaration,
@@ -24,7 +22,7 @@ import ceylon.dart.runtime.model {
 import ceylon.language.meta.declaration {
     Declaration, NestableDeclaration, ClassDeclaration, InterfaceDeclaration,
     FunctionDeclaration, ValueDeclaration, SetterDeclaration,
-    AliasDeclaration, ConstructorDeclaration, ClassOrInterfaceDeclaration,
+    AliasDeclaration, ClassOrInterfaceDeclaration,
     ValueConstructorDeclaration, CallableConstructorDeclaration,
     TypeParameter, Package, FunctionOrValueDeclaration
 }
@@ -116,9 +114,15 @@ NestableDeclaration newNestableDeclaration(ModelDeclaration model) {
         return newConstructorDeclaration(model);
     }
     case (is ModelFunction) {
+        if (exists ctor = model.constructor) {
+            return newCallableConstructorDeclaration(ctor);
+        }
         return newFunctionDeclaration(model);
     }
     case (is ModelValue) {
+        if (exists ctor = model.constructor) {
+            return newValueConstructorDeclaration(ctor);
+        }
         return newValueDeclaration(model);
     }
     case (is ModelSetter) {
