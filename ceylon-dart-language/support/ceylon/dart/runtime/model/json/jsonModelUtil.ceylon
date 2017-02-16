@@ -277,7 +277,7 @@ object jsonModelUtil {
                 // Constructors
                 if (is Class scope)
                     then getObjectOrEmpty(json, keyConstructors)
-                        .map((_ -> constructorJson) {
+                        .flatMap((_ -> constructorJson) {
                             assert (is JsonObject constructorJson);
                             return parseConstructor(scope, constructorJson);
                         })
@@ -611,7 +611,7 @@ object jsonModelUtil {
     }
 
     shared
-    Constructor parseConstructor(Class scope, JsonObject json) {
+    [Function | Value, Constructor] parseConstructor(Class scope, JsonObject json) {
 
         value packedAnnotations
             =   getIntegerOrNull(json, keyPackedAnnotations) else 0;
@@ -619,7 +619,7 @@ object jsonModelUtil {
         value parameters
             =   getArrayOrNull(json, keyParams)?.sequence();
 
-        value declaration
+        value constructor
             =   if (parameters exists) then
                     CallableConstructor {
                         container = scope;
@@ -648,26 +648,59 @@ object jsonModelUtil {
 
         // value ParameterLists
         if (nonempty parameters) {
-            assert (is CallableConstructor declaration);
-            value parameterList = parseParameterList(declaration, parameters, true);
+            assert (is CallableConstructor constructor);
+            value parameterList = parseParameterList(constructor, parameters, true);
 
             // Hackish: see note in parseParameterList: add the models as members
             //          for functions and constructors
-            declaration.addMembers(parameterList.parameters.map((Parameter.model)));
-            declaration.parameterList = parameterList;
+            constructor.addMembers(parameterList.parameters.map((Parameter.model)));
+            constructor.parameterList = parameterList;
         }
 
         // remaining members
 
-        declaration.addMembers {
+        constructor.addMembers {
             parseMembers {
-                scope = declaration;
+                scope = constructor;
                 json = json;
                 selfTypeName = getStringOrNull(json, keySelfType);
             };
         };
 
-        return declaration;
+        value fv
+            =   if (!parameters exists)
+                then Value {
+                    container = scope;
+                    name = constructor.name;
+                    typeLG = (scope) => constructor.type;
+                    annotations = toAnnotations(getObjectOrEmpty(json, keyAnnotations));
+                    isShared = packedAnnotations.get(sharedBit);
+                    isActual = false;
+                    isFormal = false;
+                    isDefault = false;
+                    isStatic = false;
+                    isLate = packedAnnotations.get(lateBit);
+                    isVariable = packedAnnotations.get(variableBit);
+                    isDynamic = constructor.isDynamic;
+                    isTransient = false;
+                    // isDeprecated
+                }
+                else Function {
+                    container = scope;
+                    name = constructor.name;
+                    typeLG = (scope) => constructor.type;
+                    annotations = toAnnotations(getObjectOrEmpty(json, keyAnnotations));
+                    isDeclaredVoid = false;
+                    isShared = packedAnnotations.get(sharedBit);
+                    isActual = false;
+                    isFormal = false;
+                    isDefault = false;
+                    isAnnotation = packedAnnotations.get(annotationBit);
+                    isStatic = false;
+                    isDynamic = json[keyDynamic] exists;
+                };
+
+        return [fv, constructor];
     }
 
     shared
