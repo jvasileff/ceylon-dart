@@ -29,6 +29,8 @@ class Setter(getter, isActual = false, isDeprecated = false, annotations = [])
 
     shared actual Type type => getter.type;
 
+    shared actual Constructor? constructor => null;
+
     shared actual
     Boolean canEqual(Object other)
         => other is Setter;

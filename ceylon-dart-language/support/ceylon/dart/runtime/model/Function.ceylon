@@ -73,6 +73,14 @@ class Function(
 
     shared actual Boolean isDeclaredVoid;
 
+    "If this `Function` is a constructor, the constructor's anonymous
+     [[CallableConstructor]]."
+    shared actual
+    CallableConstructor? constructor
+        =>  if (is CallableConstructor td = type.declaration)
+            then td
+            else null;
+
     shared actual
     String string
         =>  "function ``partiallyQualifiedNameWithTypeParameters``\

@@ -64,6 +64,13 @@ class Value(container, name, typeLG, isShared = false,
         return null;
     }
 
+    "If this `Value` is a constructor, the constructor's anonymous [[ValueConstructor]]."
+    shared actual
+    ValueConstructor? constructor
+        =>  if (is ValueConstructor td = type.declaration)
+            then td
+            else null;
+
     shared actual
     String string
         =>  "value ``partiallyQualifiedNameWithTypeParameters`` => \

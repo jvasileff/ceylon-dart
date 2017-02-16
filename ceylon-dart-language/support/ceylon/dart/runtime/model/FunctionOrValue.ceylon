@@ -16,4 +16,9 @@ class FunctionOrValue()
                 .flatMap(ParameterList.parameters)
                 .find((p) => p.model == this)
             else null;
+
+    "If this `Function` is a constructor, the constructor's anonymous
+     [[CallableConstructor]]."
+    shared formal
+    Constructor? constructor;
 }
