@@ -55,6 +55,132 @@ shared native final class Float
         satisfies Number<Float> & 
                   Exponentiable<Float,Float> {
     
+    "The sum of all the floating point values in the given 
+     stream, `0.0` if the stream is empty, or an 
+     [[undefined]] value if and only if the stream contains 
+     an undefined value.
+     
+     This expression produces the mean of a list of floating
+     point values:
+     
+         Float.sum(list) / list.size"
+    since("1.3.2")
+    shared static Float sum({Float*} floats) {
+        variable value sum = 0.0;
+        for (float in floats) {
+            sum += float;
+        }
+        return sum;
+    }
+    
+    "The product of all the floating point values in the 
+     given stream, `1.0` if the stream is empty, or an 
+     [[undefined]] value if and only if the stream contains 
+     an undefined value.
+     
+     This expression produces the geometric mean of a list 
+     of floating point values:
+     
+         Float.product(list) ^ (1.0/list.size)"
+    since("1.3.2")
+    shared static Float product({Float*} floats) {
+        variable value product = 1.0;
+        for (float in floats) {
+            product *= float;
+        }
+        return product;
+    }
+    
+    "The largest floating point value in the given stream, 
+     `null` if the stream is empty, or an [[undefined]] 
+     value if and only if the stream contains an undefined 
+     value."
+    since("1.3.2")
+    shared static Float|Absent max<Absent>
+            (Iterable<Float,Absent> floats)
+            given Absent satisfies Null {
+        variable value max = 0.0/0.0;
+        for (x in floats) {
+            if (x.undefined 
+                || x==infinity) {
+                return x;
+            }
+            if (max.undefined
+                || x > max 
+                || x.strictlyPositive 
+                && max.strictlyNegative) {
+                max = x;
+            }
+        }
+        if (max.undefined) {
+            assert (is Absent null);
+            return null; 
+        }
+        else {
+            return max;
+        }
+    }
+    
+    "The smallest floating point value in the given stream, 
+     `null` if the stream is empty, or an [[undefined]] 
+     value if and only if the stream contains an undefined 
+     value."
+    since("1.3.2")
+    shared static Float|Absent min<Absent>
+            (Iterable<Float,Absent> floats)
+            given Absent satisfies Null {
+        variable value min = 0.0/0.0;
+        for (x in floats) {
+            if (x.undefined 
+                || x==-infinity) {
+                return x;
+            }
+            if (min.undefined
+                || x < min 
+                || x.strictlyNegative 
+                && min.strictlyPositive) {
+                min = x;
+            }
+        }
+        if (min.undefined) {
+            assert (is Absent null);
+            return null; 
+        }
+        else {
+            return min;
+        }
+    }
+    
+    "The smaller of the two given floating point values, or
+     an [[undefined]] value if and only if one of the values
+     is undefined."
+    since("1.3.2")
+    shared static Float smallest(Float x, Float y)
+            => if (x.strictlyNegative && y.strictlyPositive)
+                then x
+            else if (x.strictlyPositive && y.strictlyNegative)
+                then y
+            else if (x.undefined)
+                then x
+            else if (y.undefined)
+                then y
+            else if (x<y) then x else y;
+    
+    "The larger of the two given floating point values, or
+     an [[undefined]] value if and only if one of the values
+     is undefined."
+    since("1.3.2")
+    shared static Float largest(Float x, Float y)
+            => if (x.strictlyNegative && y.strictlyPositive)
+                then y
+            else if (x.strictlyPositive && y.strictlyNegative)
+                then x
+            else if (x.undefined)
+                then x
+            else if (y.undefined)
+                then y
+            else if (x>y) then x else y;
+    
     "The [[Float]] value of the given 
      [[string representation|string]] of a decimal floating 
      point number, or `null` if the string does not 
@@ -107,22 +233,22 @@ shared native final class Float
      
      For example:
      
-     - `formatFloat(1234.1234)` is `\"1234.1234\"`
-     - `formatFloat(0.1234)` is `\"0.1234\"`
-     - `formatFloat(1234.0)` is `\"1234.0\"`
-     - `formatFloat(1234.0,0)` is `\"1234\"`
-     - `formatFloat(1234.1234,6)` is `\"1234.123400\"`
-     - `formatFloat(1234.1234,0,2)` is `\"1234.12\"`
-     - `formatFloat(1234.123456,0,5)` is `\"1234.12346\"`
-     - `formatFloat(0.0001,2,2)` is `\"0.00\"`
-     - `formatFloat(0.0001,0,2)` is `\"0\"`
+     - `Float.format(1234.1234)` is `\"1234.1234\"`
+     - `Float.format(0.1234)` is `\"0.1234\"`
+     - `Float.format(1234.0)` is `\"1234.0\"`
+     - `Float.format(1234.0,0)` is `\"1234\"`
+     - `Float.format(1234.1234,6)` is `\"1234.123400\"`
+     - `Float.format(1234.1234,0,2)` is `\"1234.12\"`
+     - `Float.format(1234.123456,0,5)` is `\"1234.12346\"`
+     - `Float.format(0.0001,2,2)` is `\"0.00\"`
+     - `Float.format(0.0001,0,2)` is `\"0\"`
      
      Finally:
      
-     - `formatFloat(-0.0)` is `\"0.0\"`,
-     - `formatFloat(0.0/0)` is `\"NaN\"`,
-     - `formatFloat(1.0/0)` is `\"Infinity\"`, and
-     - `formatFloat(-1.0/0)` is `\"-Infinity\".`
+     - `Float.format(-0.0)` is `\"0.0\"`,
+     - `Float.format(0.0/0)` is `\"NaN\"`,
+     - `Float.format(1.0/0)` is `\"Infinity\"`, and
+     - `Float.format(-1.0/0)` is `\"-Infinity\".`
      
      This function never produces a representation involving 
      scientific notation."
