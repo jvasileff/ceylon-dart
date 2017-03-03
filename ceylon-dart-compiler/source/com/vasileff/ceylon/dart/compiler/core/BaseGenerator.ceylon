@@ -4529,7 +4529,7 @@ class BaseGenerator(CompilationContext ctx)
     DartExpression generateBooleanDartCondition({BooleanCondition+} conditions)
             =>  withLhsNative {
                     ceylonTypes.booleanType;
-                    () => sequence(conditions)
+                    () => conditions.sequence()
                             .reversed
                             .map(generateBooleanConditionExpression)
                             .reduce {

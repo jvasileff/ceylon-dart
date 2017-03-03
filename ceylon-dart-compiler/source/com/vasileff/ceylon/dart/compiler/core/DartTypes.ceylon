@@ -178,9 +178,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     [ClassOrInterfaceModel+]? ancestorClassOrInterfacesToInheritingDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel inheritedDeclaration)
-        =>  let (chain = sequence(
-                    takeUntil(ancestorClassOrInterfaces(scope))((c)
-                        =>  c.inherits(inheritedDeclaration))))
+        =>  let (chain = takeUntil(ancestorClassOrInterfaces(scope))((c)
+                    =>  c.inherits(inheritedDeclaration)).sequence())
             (chain.last.inherits(inheritedDeclaration) then chain);
 
     "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in

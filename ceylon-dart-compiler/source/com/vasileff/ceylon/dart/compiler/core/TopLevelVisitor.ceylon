@@ -30,8 +30,6 @@ import ceylon.ast.core {
     DynamicInterfaceDefinition,
     DynamicBlock,
     DynamicValue,
-    DefaultedCallableParameter,
-    CallableParameter,
     ClassAliasDefinition,
     InterfaceAliasDefinition,
     PositionalArguments,
@@ -110,7 +108,6 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectDefinitionInfo,
     valueDefinitionInfo,
     valueGetterDefinitionInfo,
-    callableParameterInfo,
     valueDeclarationInfo
 }
 
@@ -318,20 +315,17 @@ class TopLevelVisitor(CompilationContext ctx)
                         info.declarationModel);
 
         value implementsTypes
-            =   sequence {
-                    CeylonList(info.declarationModel.satisfiedTypes)
-                    .map {
-                        (satisfiedType) =>
-                            if (dartTypes.denotable(satisfiedType)) then
-                                dartTypes.dartTypeName(info, satisfiedType, false)
-                            else if (ceylonTypes.isCeylonIdentifiable(satisfiedType)) then
-                                dartTypes.dartTypeNameForDartModel {
-                                    info;
-                                    dartTypes.dartCeylonIdentifiableModel;
-                                }
-                            else null;
-                    }.coalesced;
-                };
+            =   {*info.declarationModel.satisfiedTypes}.map {
+                    (satisfiedType) =>
+                        if (dartTypes.denotable(satisfiedType)) then
+                            dartTypes.dartTypeName(info, satisfiedType, false)
+                        else if (ceylonTypes.isCeylonIdentifiable(satisfiedType)) then
+                            dartTypes.dartTypeNameForDartModel {
+                                info;
+                                dartTypes.dartCeylonIdentifiableModel;
+                            }
+                        else null;
+                }.coalesced.sequence();
 
         "The containing class or interface if one exists and the interface is not static"
         value outerDeclaration
@@ -388,7 +382,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 name = identifier;
                 extendsClause = null;
                 implementsClause =
-                    if (exists implementsTypes)
+                    if (nonempty implementsTypes)
                     then DartImplementsClause(implementsTypes)
                     else null;
                 concatenate {
@@ -482,10 +476,8 @@ class TopLevelVisitor(CompilationContext ctx)
                 else false;
 
         value satisfiesTypes
-            =   sequence {
-                    CeylonList(classModel.satisfiedTypes)
-                    .map {
-                        (satisfiedType) =>
+            =   {*classModel.satisfiedTypes}
+                    .map { (satisfiedType) =>
                             if (dartTypes.denotable(satisfiedType)) then
                                 dartTypes.dartTypeName(scope, satisfiedType, false)
                             else if (ceylonTypes.isCeylonIdentifiable(satisfiedType),
@@ -510,8 +502,7 @@ class TopLevelVisitor(CompilationContext ctx)
                             dartTypes.dartCeylonObjectModel;
                         };
                     }
-                    .coalesced;
-                };
+                    .coalesced.sequence();
 
         value extendsClause
             =   if (exists et = classModel.extendedType,
@@ -820,7 +811,7 @@ class TopLevelVisitor(CompilationContext ctx)
             identifier;
             extendsClause;
             implementsClause =
-                if (exists satisfiesTypes)
+                if (nonempty satisfiesTypes)
                 then DartImplementsClause(satisfiesTypes)
                 else null;
             concatenate {
