@@ -12,6 +12,6 @@
 
 by("Stéphane Épardaud", "Matej Lazar")
 license("Apache Software License")
-module ceylon.uri "1.3.1" {
-    import ceylon.buffer "1.3.1";
+module ceylon.uri "1.3.2" {
+    import ceylon.buffer "1.3.2";
 }

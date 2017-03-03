@@ -16,6 +16,6 @@
  * [[HashMultimap]]: a mutable `Collection<Key->Item>` and
    `Correspondence` from `Key` to `MutableSet<Item>` that does not store duplicate
    `key->item` entries."
-module ceylon.dart.runtime.structures "1.3.1" {
-    shared import ceylon.dart.runtime.nativecollection "1.3.1";
+module ceylon.dart.runtime.structures "1.3.2" {
+    shared import ceylon.dart.runtime.nativecollection "1.3.2";
 }
