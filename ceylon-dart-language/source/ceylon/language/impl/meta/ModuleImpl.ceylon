@@ -193,6 +193,10 @@ class ClassWithConstructorsDeclarationImpl(ClassModel delegate)
     shared actual Class<Type,Arguments> classApply<Type, Arguments>(AppliedType<Anything>* typeArguments)
             given Arguments satisfies Anything[] => nothing;
 
+    shared actual Class<Type, Arguments> staticClassApply<Type=Anything, Arguments=Nothing>
+            (AppliedType<Object> containerType, AppliedType<>* typeArguments)
+            given Arguments satisfies Anything[] => nothing;
+
     shared actual NestableDeclaration|Package container => nothing;
 
     shared actual Module containingModule => ModuleImpl(delegate.mod);
@@ -247,6 +251,8 @@ class ClassWithConstructorsDeclarationImpl(ClassModel delegate)
     shared actual Boolean serializable => nothing;
 
     shared actual Boolean shared => delegate.isShared;
+
+    shared actual Boolean static => nothing; // TODO
 
     shared actual Boolean toplevel => delegate.isToplevel;
 

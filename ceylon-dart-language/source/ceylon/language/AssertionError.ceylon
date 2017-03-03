@@ -24,4 +24,4 @@ shared native class AssertionError(message, Throwable? cause=null)
     String message;
 }
 shared native("dart")
-class AssertionError(String message) extends Throwable(message) {}
+class AssertionError(String message, Throwable? cause=null) extends Throwable(message, cause) {}

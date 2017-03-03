@@ -392,7 +392,7 @@ final serializable class Array<Element>
         =>  super.contains(element);
 
     shared actual native("dart")
-    Element[] sequence()
+    [Element+]|[] sequence()
         =>  super.sequence();
 
     shared actual native("dart")
