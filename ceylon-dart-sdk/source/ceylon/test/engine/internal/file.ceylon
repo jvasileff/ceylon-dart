@@ -38,30 +38,30 @@ native ("js") shared class FileWriter(String path) satisfies Destroyable {
         value pathSegments = path.split((Character c) => c.string == pathApi.sep).sequence();
         for(pathSegment in pathSegments[0..pathSegments.size-2] ) {
             pathBuilder.append(pathSegment);
-            if( !fsApi.existsSync(pathBuilder.string) ) {
+            if( !pathBuilder.empty
+                && !fsApi.existsSync(pathBuilder.string) ) {
                 fsApi.mkdirSync(pathBuilder.string);
             }
             pathBuilder.append(pathApi.sep);
         }
-        assert(exists pathLastSegment = pathSegments.last);
-        pathBuilder.append(pathLastSegment);
+        pathBuilder.append(pathSegments.last);
         
         fd = fsApi.openSync(pathBuilder.string, "w");
     }
     
     native ("js") shared void write(String text) {
         dynamic {
-            fs.writeSync(fd, text);
+            fsApi.writeSync(fd, text);
         }
     }
     native ("js") shared void writeLine(String line) {
         dynamic {
-            fs.writeSync(fd, line + operatingSystem.newline);
+            fsApi.writeSync(fd, line + operatingSystem.newline);
         }
     }
     native ("js") shared actual void destroy(Throwable? error) {
         dynamic {
-            fs.close(fd);
+            fsApi.close(fd);
         }
     }
 }    

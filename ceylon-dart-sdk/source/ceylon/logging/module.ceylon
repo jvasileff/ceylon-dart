@@ -128,6 +128,6 @@
    
        logger = (Category category)
            => JDKLoggerImpl(JDKLogger.getLogger(category.qualifiedName));"""
-module ceylon.logging "1.3.2" {
+module ceylon.logging maven:"org.ceylon-lang" "1.3.2" {
     import ceylon.collection "1.3.2";
 }
