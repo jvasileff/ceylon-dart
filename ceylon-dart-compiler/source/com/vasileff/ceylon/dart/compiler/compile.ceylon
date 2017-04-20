@@ -27,8 +27,7 @@ import ceylon.interop.java {
     javaClass,
     JavaIterable,
     javaString,
-    CeylonList,
-    createJavaObjectArray
+    CeylonList
 }
 import ceylon.json {
     JsonObject=Object,
@@ -63,8 +62,7 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
 import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit,
-    TypecheckerUnit
+    PhasedUnit
 }
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
@@ -123,12 +121,7 @@ import java.lang {
     JFloat=Float,
     JDouble=Double,
     JInteger=Integer,
-    JLong=Long,
-    NoSuchFieldException
-}
-import java.lang.reflect {
-    Field,
-    AccessibleObject
+    JLong=Long
 }
 import java.util {
     EnumSet,
