@@ -86,7 +86,7 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[],"\$c":const{"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]}},"\$i":const{"IStatic":const{"mt":"i","nm":"IStatic","sts":const[]}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]},"E":const{"mt":"c","nm":"E","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]},"J":const{"mt":"i","nm":"J","sts":const[const{"nm":"IStatic","pk":"."}]},"F":const{"mt":"c","nm":"F","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"J","pk":"."}]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"\$c":const{"CMember":const{"mt":"c","nm":"CMember","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]}},"\$i":const{"IStatic":const{"mt":"i","nm":"IStatic"}}},"D":const{"mt":"c","nm":"D","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]},"E":const{"mt":"c","nm":"E","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"IStatic","pk":"."}]},"J":const{"mt":"i","nm":"J","sts":const[const{"nm":"IStatic","pk":"."}]},"F":const{"mt":"c","nm":"F","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"J","pk":"."}]}}};
 
 var _$module = null;
 

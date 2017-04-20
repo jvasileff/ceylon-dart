@@ -88,7 +88,7 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"CAlias":const{"mt":"c","nm":"CAlias","super":const{"nm":"C","pk":"."},"sts":const[]},"CCreateAlias":const{"mt":"c","nm":"CCreateAlias","super":const{"nm":"C","pk":"."},"sts":const[]},"D":const{"mt":"c","nm":"D","super":const{"nm":"CAlias","pk":"."},"sts":const[]},"DCreate":const{"mt":"c","nm":"DCreate","super":const{"nm":"CCreateAlias","pk":"."},"sts":const[]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"C":const{"mt":"c","nm":"C","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"CAlias":const{"mt":"c","nm":"CAlias","super":const{"nm":"C","pk":"."}},"CCreateAlias":const{"mt":"c","nm":"CCreateAlias","super":const{"nm":"C","pk":"."}},"D":const{"mt":"c","nm":"D","super":const{"nm":"CAlias","pk":"."}},"DCreate":const{"mt":"c","nm":"DCreate","super":const{"nm":"CCreateAlias","pk":"."}}}};
 
 var _$module = null;
 

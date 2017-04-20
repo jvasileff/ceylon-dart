@@ -30,7 +30,7 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"simple","\$mod-version":"1.0.0","simple":const{"X":const{"mt":"i","nm":"X","sts":const[]},"obj":const{"mt":"c","nm":"obj","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"X","pk":"."}]}}};
+const _$jsonModel = const{"\$mod-name":"simple","\$mod-version":"1.0.0","simple":const{"X":const{"mt":"i","nm":"X"},"obj":const{"mt":"c","nm":"obj","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"X","pk":"."}]}}};
 
 var _$module = null;
 

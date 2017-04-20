@@ -26,8 +26,8 @@ void $package$spreadAttributes() {
   }, null);
   $ceylon$language.Iterable ints3 = $ceylon$language.empty;
   $ceylon$language.Sequence a1 = ints1.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence() as $ceylon$language.Sequence;
-  $ceylon$language.Sequential a2 = ints2.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence();
-  $ceylon$language.Sequential a3 = ints3.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence();
+  $ceylon$language.Sequential a2 = ints2.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence() as $ceylon$language.Sequential;
+  $ceylon$language.Sequential a3 = ints3.map(new $ceylon$language.dart$Callable(([$dart$core.Object $r]) => ($r as $ceylon$language.Integer).successor)).sequence() as $ceylon$language.Sequential;
   if (!(a1 == (new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(2), $ceylon$language.$ceylonInteger(3), $ceylon$language.$ceylonInteger(4)])))) {
     throw new $ceylon$language.AssertionError("Violated: a1 == [2,3,4]");
   }

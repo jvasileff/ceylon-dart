@@ -117,7 +117,7 @@ void $package$run() {
     }
 
     return new $ceylon$language.dart$Callable(step$5$16);
-  })).sequence());
+  })).sequence() as $ceylon$language.Sequential);
   $ceylon$language.printAll(x);
 }
 

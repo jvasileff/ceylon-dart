@@ -36,7 +36,7 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"ForwardSuper":const{"mt":"c","nm":"ForwardSuper","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[]},"ForwardAttributes":const{"mt":"c","nm":"ForwardAttributes","super":const{"nm":"ForwardSuper","pk":"."},"sts":const[]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"ForwardSuper":const{"mt":"c","nm":"ForwardSuper","super":const{"nm":"Basic","pk":"\$","md":"\$"}},"ForwardAttributes":const{"mt":"c","nm":"ForwardAttributes","super":const{"nm":"ForwardSuper","pk":"."}}}};
 
 var _$module = null;
 

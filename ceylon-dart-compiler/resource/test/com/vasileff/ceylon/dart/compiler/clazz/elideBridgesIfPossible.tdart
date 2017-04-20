@@ -26,7 +26,7 @@ $ceylon$language.dart$Callable _$runToplevel = new $ceylon$language.dart$Callabl
   return $ceylon$language.$false;
 });
 
-const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I","sts":const[]},"I2":const{"mt":"i","nm":"I2","sts":const[const{"nm":"I","pk":"."}]},"C1":const{"mt":"c","nm":"C1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"C2":const{"mt":"c","nm":"C2","super":const{"nm":"C1","pk":"."},"sts":const[]},"C3":const{"mt":"c","nm":"C3","super":const{"nm":"C1","pk":"."},"sts":const[const{"nm":"I2","pk":"."}]}}};
+const _$jsonModel = const{"\$mod-name":"default","\$mod-version":"unversioned","":const{"I":const{"mt":"i","nm":"I"},"I2":const{"mt":"i","nm":"I2","sts":const[const{"nm":"I","pk":"."}]},"C1":const{"mt":"c","nm":"C1","super":const{"nm":"Basic","pk":"\$","md":"\$"},"sts":const[const{"nm":"I","pk":"."}]},"C2":const{"mt":"c","nm":"C2","super":const{"nm":"C1","pk":"."}},"C3":const{"mt":"c","nm":"C3","super":const{"nm":"C1","pk":"."},"sts":const[const{"nm":"I2","pk":"."}]}}};
 
 var _$module = null;
 

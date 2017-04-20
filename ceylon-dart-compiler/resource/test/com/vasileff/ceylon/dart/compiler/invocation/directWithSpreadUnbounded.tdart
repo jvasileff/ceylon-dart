@@ -22,14 +22,14 @@ void $package$run() {
   $ceylon$language.Sequence fa([$dart$core.int a, $ceylon$language.Sequential rest]) => new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(a)], rest);
 
   $ceylon$language.print((() {
-    $ceylon$language.Tuple arg$0$s = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(0)], unbounded2.sequence());
+    $ceylon$language.Tuple arg$0$s = new $ceylon$language.Tuple.$withList([$ceylon$language.$ceylonInteger(0)], unbounded2.sequence() as $ceylon$language.Sequential);
     return fa($ceylon$language.$dartInt(arg$0$s.getFromFirst(0) as $ceylon$language.Integer), arg$0$s.spanFrom($ceylon$language.$ceylonInteger(1)));
   })());
   $ceylon$language.Sequential fb([$ceylon$language.Sequential rest]) => rest;
 
-  $ceylon$language.print(fb(unbounded0.sequence()));
-  $ceylon$language.print(fb(unbounded1.sequence()));
-  $ceylon$language.print(fb(unbounded2.sequence()));
+  $ceylon$language.print(fb(unbounded0.sequence() as $ceylon$language.Sequential));
+  $ceylon$language.print(fb(unbounded1.sequence() as $ceylon$language.Sequential));
+  $ceylon$language.print(fb(unbounded2.sequence() as $ceylon$language.Sequential));
 }
 
 void run() => $package$run();
