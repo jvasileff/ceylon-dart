@@ -101,7 +101,7 @@ class CoreGenerator(CompilationContext ctx) {
                      actualType
                         = dartTypes.typeConsideringElidedReplacements(rhsType,
                                 rhsDeclaration))
-                withBoxingForType {
+                withBoxingCustom {
                     scope;
                     actualType;
                     if (exists actualDeclaration)
@@ -164,20 +164,6 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     DartExpression withBoxingCustom(
-            DScope scope,
-            TypeModel rhsType,
-            Boolean rhsErasedToNative,
-            Boolean rhsErasedToObject,
-            DartExpression dartExpression)
-        =>  withBoxingForType {
-                scope;
-                rhsType;
-                rhsErasedToNative;
-                rhsErasedToObject;
-                dartExpression;
-            };
-
-    DartExpression withBoxingForType(
             DScope scope,
             TypeModel rhsType,
             Boolean rhsErasedToNative,
@@ -264,7 +250,7 @@ class CoreGenerator(CompilationContext ctx) {
             TypeModel rhsType,
             DartExpression dartExpression)
         // TODO do callers always *know* that the rhs is rhsType, and not erasedToObject?
-        =>  withBoxingForType {
+        =>  withBoxingCustom {
                 scope;
                 rhsType;
                 false;
