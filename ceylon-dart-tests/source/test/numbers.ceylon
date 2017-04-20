@@ -57,7 +57,8 @@ shared void numbers() {
     check(12.string=="12", "natural string 12");
     check((-12).string=="-12", "integer string -12");
     check((-5.5).string=="-5.5", "float string -5.5");
-    check((1.0).string in {"1", "1.0"}, "float string 1.0");
+    check((1.0).string=="1.0", "float string 1.0");
+    check((1.0e21).string.lowercased in { "1.0e21", "1.0e+21" }, "float string 1.0e21"); // #6908
     
     check(1.unit, "natural unit");
     check(!2.unit, "natural unit");
@@ -297,15 +298,42 @@ shared void numbers() {
     check(max([1, 5])==5, "max naturals");
     check(max([-1, +5])==+5, "max integers");
     check(max([-1.5, 5.2])==5.2, "max floats");
-    //eZL
     check(max([ 2, 4, 6, 8, 7, 250, 5, 3, 1 ])==250, "max");
     check(min([ 200, 400, 600, 800, 700, 500, 300, 150 ])==150, "min");
+    check(Integer.max([ 2, 4, 6, 8, 7, 250, 5, 3, 1 ])==250, "max");
+    check(Integer.min([ 200, 400, 600, 800, 700, 500, 300, 150 ])==150, "Integer.min");
+    check(!Integer.max([]) exists, "Integer.max empty");
+    check(!Integer.min([]) exists, "Integer.min empty");
+    check(Float.max([1.0,2.0])==2.0,"Float.max");
+    check(Float.min([1.0,2.0])==1.0,"Float.min");
+    check(Float.max([-0.0,0.0,-0.0]).strictlyPositive,"Float.max neg zero");
+    check(Float.min([0.0,-0.0,0.0]).strictlyNegative,"Float.min neg zero");
+    check(Float.max([1.0, 0.0/0.0, 1.0]).undefined,"Float.max undefined");
+    check(Float.min([1.0, 0.0/0.0, 1.0]).undefined,"Float.min undefined");
+    check(!Float.max([]) exists, "empty Float.max");
+    check(!Float.min([]) exists, "empty Float.min");
 
     //eZL
     check(smallest(1,2)==1,          "smallest naturals");
+    check(Integer.smallest(1,2)==1,  "Integer.smallest");
+    check(Integer.smallest(4,2)==2,  "Integer.smallest");
+    check(Float.smallest(1.0,2.0)==1.0,  "Float.smallest");
+    check(Float.smallest(2.5,2.1)==2.1,  "Float.smallest");
+    check(Float.smallest(0.0/0.0,2.0).undefined,  "Float.smallest undefined");
+    check(Float.smallest(1.0,0.0/0.0).undefined,  "Float.smallest undefined");
+    check(Float.smallest(0.0,-0.0).strictlyNegative,  "Float.smallest neg zero");
+    check(Float.smallest(-0.0,0.0).strictlyNegative,  "Float.smallest neg zero");
     check(smallest(-100, 100)==-100, "smallest integers");
     check(smallest(-1.5, 5.2)==-1.5, "smallest floats");
     check(largest(1,2)==2,           "largest naturals");
+    check(Integer.largest(3,1)==3,   "Integer.largest");
+    check(Integer.largest(1,2)==2,   "Integer.largest");
+    check(Float.largest(1.0,2.0)==2.0,   "Float.largest");
+    check(Float.largest(3.5,2.0)==3.5,   "Float.largest");
+    check(Float.largest(0.0/0.0,2.0).undefined,  "Float.largest undefined");
+    check(Float.largest(1.0,0.0/0.0).undefined,  "Float.largest undefined");
+    check(Float.largest(0.0,-0.0).strictlyPositive,  "Float.largest neg zero");
+    check(Float.largest(-0.0,0.0).strictlyPositive,  "Float.largest neg zero");
     check(largest(-100, 100)==100,   "largest integers");
     check(largest(-1.5, 5.2)==5.2,   "largest floats");
 
@@ -435,6 +463,8 @@ shared void numbers() {
     check(sum([1,2,3])==6, "sum()");
     check(max([1,3,2])==3, "max()");
     check(min([3,1,2])==1, "min()");
+    check(Integer.product { 2,3,4 } == 24, "Integer.product");
+    check(Float.product { 2.0,3.0,4.0 } == 24.0, "Float.product");
 
     // Bitwise operators, we need to test their boxed versions as well
     Binary<Integer> box(Integer i){
@@ -1119,6 +1149,9 @@ void checkFormatFloat() {
     check(formatFloat(-0.01, 1, 1) == "0.0", "formatFloat negative zero #2");
     check(formatFloat(-0.01, 2, 2) == "-0.01", "formatFloat negative (non) zero #3");
 
+    check("10000000000"==formatFloat(1.0e10, 0, 0));
+    check("100000000000000000000" == formatFloat(1.0e20, 0, 0));
+
     void checkNanComparisons<T>(T nan, T zero) 
             given T satisfies Comparable<T> {
         check(!nan == zero, "generic nan comparison");
@@ -1160,5 +1193,11 @@ void checkFormatFloat() {
     check(min { nan, nan }.undefined, "min nan");
     check(max { nan, nan }.undefined, "max nan");
     checkNanComparisons(nan, 0.0);
-    
+
+    check(Integer.sum([])==0, "Integer.sum 1");
+    check(Integer.sum([1])==1, "Integer.sum 2");
+    check(Integer.sum([1,1,1,1])==4, "Integer.sum 3");
+    check(Float.sum([])==0.0, "Float.sum 1");
+    check(Float.sum([0.5])==0.5, "Float.sum 2");
+    check(Float.sum([0.1,0.1,0.1,0.1])==0.4, "Float sum 3");
 }
