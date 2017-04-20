@@ -47,7 +47,8 @@ import ceylon.ast.core {
     LazySpecification,
     ClassAliasDefinition,
     InterfaceAliasDefinition,
-    SpecifiedVariable
+    SpecifiedVariable,
+    Import
 }
 import ceylon.collection {
     LinkedList
@@ -1640,6 +1641,11 @@ class StatementTransformer(CompilationContext ctx)
                 else null;
             }
         ];
+    }
+
+    shared actual
+    DartStatement[] transformImport(Import that) {
+        return [];
     }
 
     shared actual default

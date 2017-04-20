@@ -23,7 +23,8 @@ import ceylon.ast.core {
     DynamicBlock,
     DynamicValue,
     ClassAliasDefinition,
-    InterfaceAliasDefinition
+    InterfaceAliasDefinition,
+    Import
 }
 
 import com.vasileff.ceylon.dart.compiler.dartast {
@@ -202,6 +203,11 @@ class ClassStatementTransformer(CompilationContext ctx)
     shared actual
     DartStatement[] transformInterfaceDefinition(InterfaceDefinition that)
         =>  [];
+
+    shared actual
+    DartStatement[] transformImport(Import that) {
+        return [];
+    }
 
     shared actual default
     [] transformNode(Node that) {
