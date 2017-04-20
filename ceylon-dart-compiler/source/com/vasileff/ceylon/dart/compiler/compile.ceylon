@@ -382,12 +382,6 @@ compileDartSP(
 
     value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits).sequence();
 
-    for (phasedUnit in phasedUnits) {
-        // workaround memory leak in
-        // https://github.com/ceylon/ceylon/pull/6525
-        moduleSourceMapperField?.set(phasedUnit.unit, null);
-    }
-
     // suppress warnings
     value suppressedWarnings = EnumSet.noneOf(javaClass<Warning>());
     suppressedWarnings.addAll(javaList(suppressWarning));
@@ -1019,18 +1013,3 @@ Map<ModuleModel, String> gatherCompileDependencies(
 
     return dependencies;
 }
-
-Field? moduleSourceMapperField = (() {
-    try {
-        value field
-            =   javaClass<TypecheckerUnit>()
-                    .getDeclaredField("moduleSourceMapper");
-        // workaround https://github.com/ceylon/ceylon/issues/6526
-        AccessibleObject.setAccessible(
-            createJavaObjectArray { field }, true);
-        return field;
-    }
-    catch (NoSuchFieldException e) {
-        return null;
-    }
-})();
