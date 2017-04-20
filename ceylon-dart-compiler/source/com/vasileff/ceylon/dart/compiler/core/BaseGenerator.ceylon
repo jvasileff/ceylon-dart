@@ -273,7 +273,6 @@ class BaseGenerator(CompilationContext ctx)
 
     function nativeBinaryOptimization(
             DeclarationModel declaration,
-            TypeModel receiverType,
             TypeModel? argumentType) {
 
         if (exists o = simpleNativeBinaryFunctions(declaration)) {
@@ -970,8 +969,7 @@ class BaseGenerator(CompilationContext ctx)
                     else null;
 
             if (exists optimization
-                    =   nativeBinaryOptimization(
-                            memberDeclaration, receiverType, firstArgType)) {
+                    =   nativeBinaryOptimization(memberDeclaration, firstArgType)) {
 
                 assert (!is ValueModel | SetterModel memberDeclaration);
 
