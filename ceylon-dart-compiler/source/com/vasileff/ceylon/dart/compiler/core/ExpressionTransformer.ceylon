@@ -1545,7 +1545,7 @@ class ExpressionTransformer(CompilationContext ctx)
                 dartTypes.dartTypeName {
                     leftInfo;
                     leftInfo.typeModel;
-                    // contains(), so don't erase just to rebox later.
+                    // contains() is generic, so don't erase just to rebox later.
                     eraseToNative = false;
                     eraseToObject = false;
                 };
