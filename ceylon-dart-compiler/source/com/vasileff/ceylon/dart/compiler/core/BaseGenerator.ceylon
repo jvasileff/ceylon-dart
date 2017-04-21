@@ -5595,9 +5595,11 @@ class BaseGenerator(CompilationContext ctx)
         - a synthetic field for mapped members, such as 'string', which will also need a
           'toString()' getter, or
 
+        - a synthetic field for a memoized member (late + specified), or
+
         - a field to hold the Callable for a non-shared callable parameter
 
-     For `default` `Value`s, a synthetic field name will be used."
+     For `default` `Value`s and memoized members, a synthetic field name will be used."
     shared
     DartFieldDeclaration generateFieldDeclaration(
             DScope scope,
@@ -5679,7 +5681,8 @@ class BaseGenerator(CompilationContext ctx)
                     =   dartTypes.identifierForSyntheticField(valueModel))
             [// Don't generate a getter bridge if this is a mapped member that will
              // already have a bridge.
-             !dartTypes.valueMappedToNonField(valueModel) then
+             !dartTypes.valueMappedToNonField(valueModel)
+             && !ctx.memoizedValues.contains(valueModel) then
              DartMethodDeclaration {
                 false; null;
                 generateFunctionReturnType(scope, valueModel);
@@ -5696,7 +5699,7 @@ class BaseGenerator(CompilationContext ctx)
                     syntheticFieldIdentifier;
                 };
             },
-            valueModel.variable then
+            valueModel.variable || valueModel.late then
             DartMethodDeclaration {
                 false; null;
                 returnType = null;

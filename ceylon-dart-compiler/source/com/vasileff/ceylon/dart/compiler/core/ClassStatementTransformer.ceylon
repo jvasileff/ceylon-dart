@@ -96,6 +96,11 @@ class ClassStatementTransformer(CompilationContext ctx)
                 return [];
             }
 
+            // ignore memoized (late + specified)
+            if (ctx.memoizedValues.contains(info.declarationModel)) {
+                return [];
+            }
+
             // Similar to StatementTransformer.transformAssignmentStatement(), but we
             // can get away with using getName() and DartAssignmentExpression here since
             // we'll never be dealing with a capture, something that needs 'this.', etc.

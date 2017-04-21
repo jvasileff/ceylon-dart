@@ -422,7 +422,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     Boolean valueRequiresSyntheticField(ValueModel valueModel)
-        =>  !valueModel.transient && valueModel.default;
+        =>  !valueModel.transient &&
+                (valueModel.default || ctx.memoizedValues.contains(valueModel));
 
     shared
     Boolean capturedReferenceValue(ValueModel valueModel)
@@ -1685,6 +1686,22 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartSimpleIdentifier identifierForSyntheticField(ValueModel declaration)
         =>  DartSimpleIdentifier {
                 "_$s" +
+                ancestorDeclarations(declaration)
+                    .collect((d)
+                        =>  if (is ControlBlockModel d)
+                            then ""
+                            else getName(d))
+                    .reversed
+                    .interpose("$")
+                    .fold("$")(plus);
+            };
+
+    "The identifier for memoizedFieldBoolean."
+    see(`function ClassMemberTransformer.transformValueDefinition`)
+    shared
+    DartSimpleIdentifier identifierForMemoizedFieldBoolean(ValueModel declaration)
+        =>  DartSimpleIdentifier {
+                "_$b" +
                 ancestorDeclarations(declaration)
                     .collect((d)
                         =>  if (is ControlBlockModel d)

@@ -30,7 +30,8 @@ import ceylon.ast.core {
     Parameters,
     ClassDefinition,
     LazySpecifier,
-    InterfaceAliasDefinition
+    InterfaceAliasDefinition,
+    Specifier
 }
 import ceylon.interop.java {
     CeylonList,
@@ -74,7 +75,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartAssignmentOperator,
     DartFunctionExpressionInvocation,
     DartArgumentList,
-    DartInstanceCreationExpression
+    DartInstanceCreationExpression,
+    DartBooleanLiteral,
+    DartIfStatement,
+    createAssignmentStatement,
+    DartPrefixExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     AnyFunctionInfo,
@@ -394,7 +399,84 @@ class ClassMemberTransformer(CompilationContext ctx)
 
         value definition = that.definition;
 
-        if (is LazySpecifier definition) {
+        if (is Specifier definition, ctx.memoizedValues.contains(info.declarationModel)) {
+
+            value initBooleanIdentifier
+                =   dartTypes.identifierForMemoizedFieldBoolean(info.declarationModel);
+
+            value syntheticFieldIdentifier
+                =   dartTypes.identifierForField(info.declarationModel);
+
+            return
+                [
+                // synthetic field
+                generateFieldDeclaration {
+                    info;
+                    info.declarationModel;
+                },
+                // initialized boolean for init status
+                DartFieldDeclaration {
+                    info.declarationModel.static;
+                    DartVariableDeclarationList {
+                        null;
+                        dartTypes.dartTypeNameForDeclaration {
+                            info;
+                            info.declarationModel;
+                        };
+                        [DartVariableDeclaration {
+                            initBooleanIdentifier;
+                            DartBooleanLiteral(false);
+                        }];
+                    };
+                },
+                // memoizing getter. This magically spits out the mapped declaration if
+                // necessary, such as 'toString() => ...' instead of 'string => ...'
+                generateMethodDefinitionRaw {
+                    info;
+                    info.declarationModel;
+                    DartFunctionExpression {
+                        null;
+                        DartBlockFunctionBody {
+                            null;
+                            false;
+                            DartBlock {
+                                withLhs {
+                                    null;
+                                    info.declarationModel;
+                                    () => [
+                                        DartIfStatement {
+                                            DartPrefixExpression {
+                                                "!";
+                                                initBooleanIdentifier;
+                                            };
+                                            DartBlock {
+                                                [createAssignmentStatement {
+                                                    syntheticFieldIdentifier;
+                                                    DartAssignmentOperator.equal;
+                                                    definition.expression.transform {
+                                                        ctx.expressionTransformer;
+                                                    };
+                                                }, createAssignmentStatement {
+                                                    initBooleanIdentifier;
+                                                    DartAssignmentOperator.equal;
+                                                    DartBooleanLiteral(true);
+                                                }];
+                                            };
+                                        },
+                                        DartReturnStatement {
+                                            syntheticFieldIdentifier;
+                                        }
+                                    ];
+                                };
+                            };
+                        };
+                    };
+                },
+                // the setter
+                *generateBridgesToSyntheticField(info, info.declarationModel)
+            ];
+        }
+        else if (is LazySpecifier definition) {
             // NOTE getters cannot be variable, so not worrying about setter declarations
             //      for interfaces which are handled by ValueSetterDefinition
             return generateForMethodGetterOrSetterDefinition(that);

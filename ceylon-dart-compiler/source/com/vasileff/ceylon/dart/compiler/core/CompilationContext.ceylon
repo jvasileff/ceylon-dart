@@ -6,6 +6,7 @@ import ceylon.collection {
 }
 
 import com.redhat.ceylon.model.typechecker.model {
+    ValueModel=Value,
     UnitModel=Unit,
     ClassModel=Class,
     ClassOrInterfaceModel=ClassOrInterface,
@@ -66,6 +67,11 @@ class CompilationContext(unit, tokens) {
     shared variable
     SetMultimap<ClassOrInterfaceModel, FunctionOrValueModel> captures
         =   HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel> {};
+
+    "Value members that are `late` and specified."
+    shared
+    MutableSet<ValueModel> memoizedValues
+        =   HashSet<ValueModel>();
 
     "Dart declaration names for Ceylon declarations.
 

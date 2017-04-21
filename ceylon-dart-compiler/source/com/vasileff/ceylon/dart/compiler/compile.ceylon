@@ -91,7 +91,8 @@ import com.vasileff.ceylon.dart.compiler.core {
     moduleImportPrefix,
     ModelGenerator,
     generateMain,
-    errorThrowingDScope
+    errorThrowingDScope,
+    identifyMemoizedValues
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -510,6 +511,10 @@ compileDartSP(
 
                 try (timer.Measurement("computeClassCaptures")) {
                     computeClassCaptures(unit, ctx);
+                }
+
+                try (timer.Measurement("identifyMemoizedValues")) {
+                    identifyMemoizedValues(unit, ctx);
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
