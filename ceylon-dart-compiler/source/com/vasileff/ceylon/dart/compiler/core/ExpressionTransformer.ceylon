@@ -1533,15 +1533,40 @@ class ExpressionTransformer(CompilationContext ctx)
             };
 
     shared actual
-    DartExpression transformInOperation(InOperation that)
-        =>  let (info = nodeInfo(that))
+    DartExpression transformInOperation(InOperation that) {
+        // The *right* operand is the receiver. So, evaluate left operand to temp,
+        // then call right.contains(temp)
+        value leftTempVar = DartSimpleIdentifier {
+            dartTypes.createTempNameCustom();
+        };
+        value leftInfo = expressionInfo(that.leftOperand);
+        return let (info = nodeInfo(that)) createExpressionEvaluationWithSetup {
+            [createVariableDeclaration {
+                dartTypes.dartTypeName {
+                    leftInfo;
+                    leftInfo.typeModel;
+                    // contains(), so don't erase just to rebox later.
+                    eraseToNative = false;
+                    eraseToObject = false;
+                };
+                leftTempVar;
+                withLhsNonNative {
+                    leftInfo.typeModel;
+                    () => that.leftOperand.transform(expressionTransformer);
+                };
+            }];
             generateInvocationFromName {
                 info;
-                // Note: the *right* operand is the receiver
                 that.rightOperand;
                 "contains";
-                [that.leftOperand];
+                [() => withBoxingNonNative {
+                    info;
+                    leftInfo.typeModel;
+                    leftTempVar;
+                }]; // withBoxing not *really* necessary
             };
+        };
+    }
 
     shared actual
     DartExpression transformComparisonOperation(ComparisonOperation that)
