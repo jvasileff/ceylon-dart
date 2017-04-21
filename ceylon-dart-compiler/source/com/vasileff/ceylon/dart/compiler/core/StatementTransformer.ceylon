@@ -48,7 +48,9 @@ import ceylon.ast.core {
     ClassAliasDefinition,
     InterfaceAliasDefinition,
     SpecifiedVariable,
-    Import
+    Import,
+    AssertionMessage,
+    StringLiteral
 }
 import ceylon.collection {
     LinkedList
@@ -97,7 +99,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartTypeName,
     DartBinaryExpression,
     DartNullLiteral,
-    DartDoWhileStatement
+    DartDoWhileStatement,
+    DartExpression
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     NodeInfo,
@@ -1135,9 +1138,10 @@ class StatementTransformer(CompilationContext ctx)
 
     shared actual
     [DartStatement*] transformAssertion(Assertion that)
-        =>  [*that.conditions.conditions.flatMap(generateConditionAssertion)];
+        =>  [*that.conditions.conditions.flatMap((node)
+                =>  generateConditionAssertion(node, that.message))
+            ];
 
-    // TODO fix this
     String assertionErrorMessage(NodeInfo info)
         =>  ctx.tokens[info.token.tokenIndex..
                        info.endToken.tokenIndex]
@@ -1148,18 +1152,30 @@ class StatementTransformer(CompilationContext ctx)
             .interpose(" ")
             .fold("")(plus);
 
-    [DartStatement+] generateConditionAssertion(Condition that)
+    [DartStatement+] generateConditionAssertion
+            (Condition that, AssertionMessage? message)
         =>  switch (that)
             case (is BooleanCondition)
-                [generateBooleanConditionAssertion(that)]
+                [generateBooleanConditionAssertion(that, message)]
             case (is IsCondition | ExistsOrNonemptyCondition)
                 generateIsOrExistsOrNonemptyConditionAssertion(that);
 
-    DartStatement generateBooleanConditionAssertion(BooleanCondition that) {
-        value info = nodeInfo(that);
+    DartExpression generateAssertionErrorString(
+            NodeInfo info, AssertionMessage? message) {
+        if (exists message) {
+            return message.transform(ctx.expressionTransformer);
+        }
+        else {
+            return DartSimpleStringLiteral {
+                "Violated: ``assertionErrorMessage(info)``";
+            };
+        }
+    }
 
-        "The Ceylon source code for the condition"
-        value errorMessage = assertionErrorMessage(info);
+    DartStatement generateBooleanConditionAssertion(
+            BooleanCondition that, AssertionMessage? message) {
+
+        value info = nodeInfo(that);
 
         // if (!condition) then throw new AssertionError(...)
         return
@@ -1180,8 +1196,9 @@ class StatementTransformer(CompilationContext ctx)
                             };
                         };
                         DartArgumentList {
-                            [DartSimpleStringLiteral {
-                                "Violated: ``errorMessage``";
+                            [withLhsNative {
+                                ctx.ceylonTypes.stringType;
+                                () => generateAssertionErrorString(info, message);
                             }];
                         };
                     };
