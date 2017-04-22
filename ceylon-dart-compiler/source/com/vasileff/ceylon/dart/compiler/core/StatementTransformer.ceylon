@@ -49,8 +49,7 @@ import ceylon.ast.core {
     InterfaceAliasDefinition,
     SpecifiedVariable,
     Import,
-    AssertionMessage,
-    StringLiteral
+    AssertionMessage
 }
 import ceylon.collection {
     LinkedList
