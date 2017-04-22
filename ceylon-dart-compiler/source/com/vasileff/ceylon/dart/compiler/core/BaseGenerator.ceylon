@@ -121,7 +121,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     DartMethodDeclaration,
     DartClassMember,
     createVariableDeclaration,
-    DartPrefixedIdentifier
+    DartPrefixedIdentifier,
+    createAssignmentStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
@@ -5725,7 +5726,16 @@ class BaseGenerator(CompilationContext ctx)
                                 DartAssignmentOperator.equal;
                                 DartSimpleIdentifier("$v");
                             };
-                        }];
+                        },
+                        // if 'late' + specified, mark as initialized
+                        // (for #39 we'll want to throw before the above assignment if not
+                        //  variable and already initialized)
+                        ctx.memoizedValues.contains(valueModel) then
+                        createAssignmentStatement {
+                            dartTypes.identifierForMemoizedFieldBoolean(valueModel);
+                            DartAssignmentOperator.equal;
+                            DartBooleanLiteral(true);
+                        }].coalesced.sequence();
                     };
                 };
             }].coalesced.sequence();
