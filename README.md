@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/jvasileff/ceylon-dart.svg?branch=master)](https://travis-ci.org/jvasileff/ceylon-dart)
 # Dart backend for Ceylon
 
 ## Update (9/27/2016)
