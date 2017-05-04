@@ -1,7 +1,7 @@
 sudo: false
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk7
 install:
   - wget --quiet --output-document=/tmp/ceylon.zip $CEYLON
   - unzip /tmp/ceylon.zip
