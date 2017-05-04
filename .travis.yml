@@ -2,6 +2,18 @@ sudo: false
 language: java
 jdk:
   - oraclejdk7
+addons:
+  artifacts:
+    branch: master
+    bucket: ceylon.vasileff.com
+    target_paths: modules
+    paths:
+      - ./ceylon-dart-cli/build/modules-jvm/main
+      - ./ceylon-dart-compiler/build/modules-jvm/main
+    key:
+      secure: hOP4GxUCSQ22ey+2BQM3plCkz90JO9XScPxQvulGoc3nPqsuFZlOeWimfaN1AiD3TL1ozKA/4wJJP86fkFpX15cnmfjNehJpNzxq0ZOQlcYot0iI3M5X3DqkkrOoU9OWmHBh79jwYSK3qt75vbZFMkQDUFOPSA1t0Vw8bCJslltnqnCzq+Se+xQCmjtx6qwlphw/PiEhLxXUbZEvTJJL6zR5XOk11SIbdlHIk83ldcGs39/GJzGeYh29xnDh7jU5u/KuNGqNvN2HCki/nLW16cECHKFUJTIgfZ3Da3nuOJ5xdrGW4eFvr33WAeJ9fG/ZDpFwAs0xSmCcL+x+2r7g46ym+PZy+onBTi7a1Ky1T9SnVQoIAoznJqkcwtK67khyCtARCPlVh18HuTODjdXijWN6FAOL38eCRhn7eKhdLPYqa76RwqmOrUwa0cfFf9U5xNaqBzjEp//f0ViHV0yoUrtmettsjvgPqpIeMl/Bk6w5JfsSvhMMs+9gsz1Gh/V2lYvAeZPxIy7hTtnxTnuYZB7ac+Q6f3LZv7j0xIK4kvq06hKvf98QI5+p0YILLRUDAtHVleyEv3aZmKHHWBEgs739nnqwFZ/b/W3T0RoQmyL5Hw1V3k5KfxeT0diXh/hbrV3n9xZrhvtcCmzKkXELnLzh9JFtdpckAtJZ6U2iSLs=
+    secret:
+      secure: ohk2xkjMWCGQWdrRhfg+mHpOcypfTwBXbs+X8EC15CwPfOaCZyyjUju3dzLH2exw+R7CigjCimYc6eq99i1I1jfUi82VjR0hNGAv/iywDXFW1C7eEJxSj8906FWCseI6fuPT+MqVA7KfssvjQLgd6HcXwYa1fKU0Rvrrdqni1vXo8hS3Xdj1rZpHWg3eenJ1fU1o2SsgE8Fb1vw9jvMY+q4MRr7jCzbJzv5v7g8YAt2tYVL/R+nW77FpToI1roZ+7+TGg2yI+s5hCIgzCM0b8Vs1N93H6VFvhCX/Un72ltrLJfAJog8LytrwKwsOjZVn4irr2fAImn4UqGHgEF8UTWxWTbEouBWUCkbkEY1Qiou89pph9zu5jvFslq60KY0qR9J25DjU+wfHTbFPRfostlQO0v6k+p7tqqKh85f2u1lCugH13Lf+LBI1xX3R/Aaq+JqxREnEm/HRwNwtj8FaiYaFA/VcfUJEpmyhXnb+BsEaFd5MD326KHxc2xjl3V9P+mZcPfFLfw9zsddcqERx+YCbXy1PKAY/Y7bAM82v3INuC/MrSHvbbc6V8/2jEA+viDphLGu+DxvXNUi8ujdzNH1WP6MwMF2XikuxyRJDg6XyzLf7MA12cgiwhnmlusTl/rLA6lLX/L60RApHWUkx1v5MrDJccxX/gNBzkKZZrYU=
 install:
   - wget --quiet --output-document=/tmp/ceylon.zip $CEYLON
   - unzip /tmp/ceylon.zip
