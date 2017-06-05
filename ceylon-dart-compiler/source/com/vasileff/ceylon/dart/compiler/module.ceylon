@@ -1,5 +1,5 @@
 native("jvm")
-module com.vasileff.ceylon.dart.compiler "1.3.2-DP5-SNAPSHOT" {
+module com.vasileff.ceylon.dart.compiler "1.3.2-DP4" {
     import ceylon.whole "1.3.2";
     import ceylon.buffer "1.3.2";
     import ceylon.collection "1.3.2";

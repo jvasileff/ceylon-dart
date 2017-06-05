@@ -54,7 +54,7 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "test.com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT"
+        module "test.com.vasileff.ceylon.dart.compiler/1.3.2-DP4"
         test "test.com.vasileff.ceylon.dart.compiler"
     }
 
@@ -134,7 +134,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.3.2-DP4',
                 "${sourceDir.toString()}:${sourceDir2.toString()}",
                 "${destinationDir.toString()}",
                 file("modules-dart")
@@ -199,7 +199,7 @@ project('ceylon-dart-sdk') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.3.2-DP4',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}",
                 project(":ceylon-dart-language").compileCeylonDart.destinationDir,
