@@ -1,6 +1,15 @@
 [![Build Status](https://travis-ci.org/jvasileff/ceylon-dart.svg?branch=master)](https://travis-ci.org/jvasileff/ceylon-dart)
 # Dart backend for Ceylon
 
+## Update (6/5/2017)
+
+**Developer preview release 4 (DP4) of the Dart backend for Ceylon is now
+available**
+
+This release is compatable with Ceylon 1.3.2 and contains [several bug fixes
+and enhancements](https://github.com/jvasileff/ceylon-dart/milestone/2?closed=1)
+over DP3.
+
 ## Update (9/27/2016)
 
 **Developer preview release 3 (DP3) of the Dart backend for Ceylon is now
@@ -37,7 +46,7 @@ be easily installed on any OS X or Linux system.
 
 **Step 1: Install Ceylon**
 
-To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.3.0 is required.
+To install Ceylon, see <http://ceylon-lang.org/download/>. Ceylon 1.3.2 is required.
 
 **Step 2: Install Dart**
 
@@ -54,7 +63,7 @@ from <https://www.dartlang.org/downloads/>.
 
 The commandline interface can be installed with:
 
-    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.3.0-DP3
+    $ ceylon plugin install --force com.vasileff.ceylon.dart.cli/1.3.2-DP4
 
 Upon using `ceylon compile-dart` or `ceylon run-dart` for the first time, you
 will be prompted to complete the installation by running:
@@ -91,7 +100,7 @@ There are three main types of applications that can be written today:
 - server side applications using `dart.io`
 
 Support for pure-Ceylon CLI applications is quite advanced and supports nearly
-all valid Ceylon 1.3.0 programs. Modules can be compiled, run, and even
+all valid Ceylon 1.3.2 programs. Modules can be compiled, run, and even
 imported using standard Ceylon tools and conventions. See the "Hello, World"
 walkthrough below to get started.
 
@@ -157,7 +166,7 @@ copy the examples locally, and try them out on the Dart backend!
 #### About the `ceylon new` Command
 
 Note that the `ceylon new` command is not Dart specific; it is a standard
-command available with Ceylon 1.3.0. For help using the command, use `ceylon
+command available with Ceylon 1.3.2. For help using the command, use `ceylon
 help new`.
 
 You may notice options to create Eclipse and Ant configuration files. While
@@ -166,7 +175,7 @@ options may still be useful, as you might use Eclipse to develop a module using
 the Java or JavaScript backend, and then drop to the CLI to compile for Dart.
 
 Also note that the first argument to `ceylon new` must be the name of a
-template. Of the three templates available as part of Ceylon 1.3.0,
+template. Of the three templates available as part of Ceylon 1.3.2,
 `hello-world` and `simple` can be used for Dart projects. For example, to get
 started with a blank project, you might use:
 
