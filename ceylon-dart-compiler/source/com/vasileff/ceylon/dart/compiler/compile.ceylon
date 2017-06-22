@@ -89,10 +89,13 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeClassCaptures,
     isForDartBackend,
     moduleImportPrefix,
-    ModelGenerator,
+    modelGenerator,
     generateMain,
     errorThrowingDScope,
-    identifyMemoizedValues
+    identifyMemoizedValues,
+    topLevelVisitor,
+    compilationContextual,
+    ctx
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -458,12 +461,12 @@ compileDartSP(
 
         Integer start = system.nanoseconds;
 
-        try {
-            value ctx
-                =   CompilationContext {
+        try (compilationContextual.Using {
+                    CompilationContext {
                         phasedUnit.unit;
                         CeylonList(phasedUnit.tokens);
                     };
+                }) {
 
             AnyCompilationUnit unit;
             try (timer.Measurement("anyCompilationUnitToCeylon")) {
@@ -506,19 +509,19 @@ compileDartSP(
                 }
 
                 try (timer.Measurement("computeCaptures")) {
-                    computeCaptures(unit, ctx);
+                    computeCaptures(unit);
                 }
 
                 try (timer.Measurement("computeClassCaptures")) {
-                    computeClassCaptures(unit, ctx);
+                    computeClassCaptures(unit);
                 }
 
                 try (timer.Measurement("identifyMemoizedValues")) {
-                    identifyMemoizedValues(unit, ctx);
+                    identifyMemoizedValues(unit);
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
-                    unit.visit(ctx.topLevelVisitor);
+                    unit.visit(topLevelVisitor);
                 }
 
                 if (baselinePerfTest) {
@@ -588,14 +591,13 @@ compileDartSP(
                 then mod.packages.get(0)
                 else mod.unit.\ipackage;
 
-        value ctx
-            =   CompilationContext(unit, []);
+        try (compilationContextual.Using(CompilationContext(unit, []))) {
+            // add model info
+            members.addAll(modelGenerator.generateRuntimeModel(mod, pkg));
 
-        // add model info
-        members.addAll(ModelGenerator(ctx).generateRuntimeModel(mod, pkg));
-
-        // add main function
-        members.add(generateMain(ctx, errorThrowingDScope(pkg)));
+            // add main function
+            members.add(generateMain(errorThrowingDScope(pkg)));
+        }
     }
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();

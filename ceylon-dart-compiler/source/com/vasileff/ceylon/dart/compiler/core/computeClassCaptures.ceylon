@@ -20,7 +20,7 @@ import com.vasileff.ceylon.structures {
 }
 
 shared
-void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
+void computeClassCaptures(CompilationUnit unit) {
     // Note: This works, and is ok for now. But we should calculate captures for all
     //       declarations, not just those made by `assert`. And for `assert` replacements,
     //       perhaps a separate visitor should be used to figure out which replacment
@@ -73,7 +73,7 @@ void computeClassCaptures(CompilationUnit unit, CompilationContext ctx) {
                                 then condition
                                 else null)
                         .coalesced
-                        .map(ctx.statementTransformer.generateConditionExpression)
+                        .map(statementTransformer.generateConditionExpression)
                         .flatMap((conditionTuple) => conditionTuple[2...])
                         .map(VariableTriple.declarationModel);
 

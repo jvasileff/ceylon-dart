@@ -39,11 +39,11 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
     objectDefinitionInfo
 }
 
-"Similar to [[StatementTransformer]], but for translating children of class bodies where
+"Similar to [[statementTransformer]], but for translating children of class bodies where
  some declarations are class members and should not be re-declared in a dart constructor."
 shared
-class ClassStatementTransformer(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object classStatementTransformer
+        extends BaseGenerator()
         satisfies WideningTransformer<[DartStatement*]> {
 
     shared actual
@@ -61,7 +61,7 @@ class ClassStatementTransformer(CompilationContext ctx)
     shared actual
     [] transformTypeAliasDefinition(TypeAliasDefinition that) => [];
 
-    "Class aliases are handled by [[ClassMemberTransformer.transformAnyClass]]."
+    "Class aliases are handled by [[classMemberTransformer.transformAnyClass]]."
     shared actual
     [] transformClassAliasDefinition(ClassAliasDefinition that) => [];
 
@@ -169,7 +169,7 @@ class ClassStatementTransformer(CompilationContext ctx)
         =>  [];
 
     "Initialize the value/field. The class will have already been defined by
-     [[ClassMemberTransformer.transformObjectDefinition]]."
+     [[classMemberTransformer.transformObjectDefinition]]."
     shared actual
     DartStatement[] transformObjectDefinition(ObjectDefinition that) {
         value info = objectDefinitionInfo(that);
@@ -198,13 +198,13 @@ class ClassStatementTransformer(CompilationContext ctx)
     }
 
     "Nothing to do. The class will have already been defined/declared by
-     [[ClassMemberTransformer.transformClassDefinition]]."
+     [[classMemberTransformer.transformClassDefinition]]."
     shared actual
     DartStatement[] transformClassDefinition(ClassDefinition that)
         =>  [];
 
     "Nothing to do. The class will have already been defined/declared by
-     [[ClassMemberTransformer.transformInterfaceDefinition]]."
+     [[classMemberTransformer.transformInterfaceDefinition]]."
     shared actual
     DartStatement[] transformInterfaceDefinition(InterfaceDefinition that)
         =>  [];
@@ -214,7 +214,7 @@ class ClassStatementTransformer(CompilationContext ctx)
         return [];
     }
 
-    shared actual default
+    shared actual
     [] transformNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {

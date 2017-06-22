@@ -199,8 +199,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 }
 
 shared
-class ExpressionTransformer(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object expressionTransformer
+        extends BaseGenerator()
         satisfies WideningTransformer<DartExpression> {
 
     """
@@ -2768,7 +2768,7 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    see(`function StatementTransformer.transformIfElse`)
+    see(`function statementTransformer.transformIfElse`)
     DartExpression transformIfElseExpression(IfElseExpression that) {
         // Create a function expression for the IfElseExpression and invoke it.
         // No need for `withLhs` or `withBoxing`; our parent should have set the
@@ -3011,7 +3011,7 @@ class ExpressionTransformer(CompilationContext ctx)
         };
     }
 
-    shared actual default
+    shared actual
     DartExpression transformNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {

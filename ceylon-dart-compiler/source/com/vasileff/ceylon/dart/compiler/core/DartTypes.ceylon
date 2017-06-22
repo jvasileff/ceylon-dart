@@ -69,14 +69,13 @@ import com.vasileff.ceylon.dart.compiler.loader {
 }
 
 shared
-class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
+class DartTypes(CeylonTypes ceylonTypes) {
 
     variable value counter = 0;
 
     value nameCache => ctx.nameCache;
 
-    // TODO remove this ugliness.
-    BaseGenerator baseGenerator => ctx.expressionTransformer;
+    BaseGenerator baseGenerator => expressionTransformer;
 
     DartNamedElement?(DeclarationModel) mappedFunctionOrValue = (() {
         return map {
@@ -1697,7 +1696,7 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
             };
 
     "The identifier for memoizedFieldBoolean."
-    see(`function ClassMemberTransformer.transformValueDefinition`)
+    see(`function classMemberTransformer.transformValueDefinition`)
     shared
     DartSimpleIdentifier identifierForMemoizedFieldBoolean(ValueModel declaration)
         =>  DartSimpleIdentifier {

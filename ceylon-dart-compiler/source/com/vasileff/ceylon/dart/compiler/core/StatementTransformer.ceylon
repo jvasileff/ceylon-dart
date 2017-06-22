@@ -128,8 +128,8 @@ import org.antlr.runtime {
 }
 
 shared
-class StatementTransformer(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object statementTransformer
+        extends BaseGenerator()
         satisfies WideningTransformer<[DartStatement*]> {
 
     shared actual [DartStatement] transformAssignmentStatement(AssignmentStatement that)
@@ -1162,7 +1162,7 @@ class StatementTransformer(CompilationContext ctx)
     DartExpression generateAssertionErrorString(
             NodeInfo info, AssertionMessage? message) {
         if (exists message) {
-            return message.transform(ctx.expressionTransformer);
+            return message.transform(expressionTransformer);
         }
         else {
             return DartSimpleStringLiteral {
@@ -1664,7 +1664,7 @@ class StatementTransformer(CompilationContext ctx)
         return [];
     }
 
-    shared actual default
+    shared actual
     [] transformNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {

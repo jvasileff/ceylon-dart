@@ -113,8 +113,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 
 "For Dart TopLevel declarations."
 shared
-class TopLevelVisitor(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object topLevelVisitor
+        extends BaseGenerator()
         satisfies Visitor {
 
     void add(DartCompilationUnitMember member)
@@ -523,7 +523,7 @@ class TopLevelVisitor(CompilationContext ctx)
                 };
 
         "Fields to capture initializer parameters. See also
-         [[ClassMemberTransformer.transformValueDefinition]]."
+         [[classMemberTransformer.transformValueDefinition]]."
         value fieldsForInitializerParameters
             =   parameterModelModels
                 .filter {
@@ -751,7 +751,7 @@ class TopLevelVisitor(CompilationContext ctx)
 
         "Class members. Statements (aside from Specification and Assertion statements) do
          not introduce members and are therefore not supported by
-         [[ClassMemberTransformer]]."
+         [[classMemberTransformer]]."
         value members
             =   classBody.children
                     .map((node)
@@ -1896,7 +1896,7 @@ class TopLevelVisitor(CompilationContext ctx)
     void visitCompilationUnit(CompilationUnit that)
         =>  that.declarations.each((d) => d.visit(this));
 
-    shared actual default
+    shared actual
     void visitNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {

@@ -52,7 +52,7 @@ import com.vasileff.ceylon.dart.compiler.loader {
 }
 
 shared
-class ModelGenerator(CompilationContext ctx) extends BaseGenerator(ctx) {
+object modelGenerator extends BaseGenerator() {
 
     // FIXME use $package prefix for toplevel $module value
 

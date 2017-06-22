@@ -171,8 +171,7 @@ import java.util {
 }
 
 shared abstract
-class BaseGenerator(CompilationContext ctx)
-        extends CoreGenerator(ctx) {
+class BaseGenerator() extends CoreGenerator() {
 
     // hack to avoid error using the inherited member ceylonTypes in the initializer
     value ceylonTypes = ctx.ceylonTypes;
@@ -5307,7 +5306,7 @@ class BaseGenerator(CompilationContext ctx)
     "Generate an assignment expression.
 
      This function is basically a setter version of
-     [[ExpressionTransformer.transformInvocation]] and [[generateInvocation]] combined.
+     [[expressionTransformer.transformInvocation]] and [[generateInvocation]] combined.
      But, simpler since less can be done with setters."
     shared
     DartExpression

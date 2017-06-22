@@ -27,13 +27,29 @@ import org.antlr.runtime {
 }
 
 shared
-class CompilationContext(unit, tokens) {
+CompilationContext ctx
+    =>  compilationContextual.get();
+
+shared
+Contextual<CompilationContext> compilationContextual
+    =   Contextual<CompilationContext>();
+
+shared final
+class CompilationContext {
 
     shared
     UnitModel unit;
 
     shared
     List<Token> tokens;
+
+    shared
+    new (unit, tokens) {
+        UnitModel unit;
+        List<Token> tokens;
+        this.unit = unit;
+        this.tokens = tokens;
+    }
 
     "The output."
     shared
@@ -124,47 +140,8 @@ class CompilationContext(unit, tokens) {
     shared
     CeylonTypes ceylonTypes = CeylonTypes(unit);
 
-    variable
-    DartTypes? dartTypesMemo = null;
-
-    variable
-    ClassMemberTransformer? cmtMemo = null;
-
-    variable
-    ClassStatementTransformer? cstMemo = null;
-
-    variable
-    ExpressionTransformer? etMemo = null;
-
-    variable
-    StatementTransformer? stMemo = null;
-
-    variable
-    TopLevelVisitor? tltMemo = null;
-
     shared
-    DartTypes dartTypes
-        =>  dartTypesMemo else (dartTypesMemo = DartTypes(ceylonTypes, this));
-
-    shared
-    ClassMemberTransformer classMemberTransformer
-        =>  cmtMemo else (cmtMemo = ClassMemberTransformer(this));
-
-    shared
-    ClassStatementTransformer classStatementTransformer
-        =>  cstMemo else (cstMemo = ClassStatementTransformer(this));
-
-    shared
-    ExpressionTransformer expressionTransformer
-        =>  etMemo else (etMemo = ExpressionTransformer(this));
-
-    shared
-    StatementTransformer statementTransformer
-        =>  stMemo else (stMemo = StatementTransformer(this));
-
-    shared
-    TopLevelVisitor topLevelVisitor
-        =>  tltMemo else (tltMemo = TopLevelVisitor(this));
+    DartTypes dartTypes = DartTypes(ceylonTypes);
 
     shared
     TypeOrNoType assertedLhsTypeTop {

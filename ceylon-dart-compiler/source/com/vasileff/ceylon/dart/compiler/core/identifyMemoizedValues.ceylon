@@ -10,7 +10,7 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 }
 
 shared
-void identifyMemoizedValues(CompilationUnit unit, CompilationContext ctx) {
+void identifyMemoizedValues(CompilationUnit unit) {
     unit.visit {
         object visitor satisfies Visitor {
             shared actual

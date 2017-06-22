@@ -29,9 +29,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 
    Shared code generation methods should be placed in [[BaseGenerator]].
 """
-abstract
-shared
-class CoreGenerator(CompilationContext ctx) {
+abstract shared
+class CoreGenerator {
+
+    shared
+    new () {}
 
     shared
     CeylonTypes ceylonTypes
@@ -40,26 +42,6 @@ class CoreGenerator(CompilationContext ctx) {
     shared
     DartTypes dartTypes
         =>  ctx.dartTypes;
-
-    shared
-    ClassMemberTransformer classMemberTransformer
-        =>  ctx.classMemberTransformer;
-
-    shared
-    ClassStatementTransformer classStatementTransformer
-        =>  ctx.classStatementTransformer;
-
-    shared
-    ExpressionTransformer expressionTransformer
-        =>  ctx.expressionTransformer;
-
-    shared
-    StatementTransformer statementTransformer
-        =>  ctx.statementTransformer;
-
-    shared
-    TopLevelVisitor topLevelVisitor
-        =>  ctx.topLevelVisitor;
 
     shared
     void error(Node that, Anything message)

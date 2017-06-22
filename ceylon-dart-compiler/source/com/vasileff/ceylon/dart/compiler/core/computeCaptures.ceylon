@@ -39,7 +39,7 @@ import com.vasileff.ceylon.structures {
  captures. Store results in [[ctx]] properties [[CompilationContext.capturedDeclarations]]
  and [[CompilationContext.captures]]."
 shared
-void computeCaptures(CompilationUnit unit, CompilationContext ctx) {
+void computeCaptures(CompilationUnit unit) {
 
     value captures = HashMultimap<ClassOrInterfaceModel, FunctionOrValueModel>();
 

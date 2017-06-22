@@ -108,8 +108,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 }
 
 shared
-class ClassMemberTransformer(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object classMemberTransformer
+        extends BaseGenerator()
         satisfies WideningTransformer<[DartClassMember*]> {
 
     "Don't transform Constructors; they are handled elsewhere."
@@ -454,7 +454,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                                                     syntheticFieldIdentifier;
                                                     DartAssignmentOperator.equal;
                                                     definition.expression.transform {
-                                                        ctx.expressionTransformer;
+                                                        expressionTransformer;
                                                     };
                                                 }, createAssignmentStatement {
                                                     initBooleanIdentifier;
@@ -1278,7 +1278,7 @@ class ClassMemberTransformer(CompilationContext ctx)
                 });
     }
 
-    shared actual default
+    shared actual
     [] transformNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {
