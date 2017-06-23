@@ -178,6 +178,10 @@ import java.util {
     JList=List
 }
 
+"A collection of functions used for code generation, for use by code that is not in a
+ class that extends [[BaseGenerator]]."
+shared object generator extends BaseGenerator() {}
+
 shared abstract
 class BaseGenerator() extends CoreGenerator() {
 

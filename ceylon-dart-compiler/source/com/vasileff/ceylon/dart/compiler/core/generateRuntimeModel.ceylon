@@ -54,7 +54,14 @@ import com.vasileff.ceylon.dart.compiler.loader {
 }
 
 shared
-object modelGenerator extends BaseGenerator() {
+[DartCompilationUnitMember*] generateRuntimeModel(ModuleModel mod, PackageModel pkg) {
+
+    value dartTypes => ctx.dartTypes;
+    value ceylonTypes => ctx.ceylonTypes;
+
+    // This class is a bit awkward; it's only externally useful member is
+    // generateRuntimeModel, but turning the whole thing into a function isn't worth
+    // the effort.
 
     // FIXME use $package prefix for toplevel $module value
 
@@ -160,8 +167,8 @@ object modelGenerator extends BaseGenerator() {
                                         shortName(runnable);
                                     };
                                     [DartExpressionStatement {
-                                        withLhsNoType {
-                                            () => ctx.dartTypes
+                                        generator.withLhsNoType {
+                                            () => dartTypes
                                                     .invocableForBaseExpression {
                                                 scope;
                                                 runnable;
@@ -213,9 +220,14 @@ object modelGenerator extends BaseGenerator() {
                             null;
                         };
                         DartArgumentList {
-                            [generateTypeDescriptor(scope, ceylonTypes.booleanType),
-                            generateTypeDescriptor(scope,
-                                ceylonTypes.getTupleType([ceylonTypes.stringType])),
+                            [
+                                generator.generateTypeDescriptor {
+                                    scope; ceylonTypes.booleanType;
+                                },
+                                generator.generateTypeDescriptor {
+                                    scope;
+                                    ceylonTypes.getTupleType([ceylonTypes.stringType]);
+                                },
                             runnerFunctionExpression];
                         };
                     };
@@ -224,140 +236,30 @@ object modelGenerator extends BaseGenerator() {
         };
     }
 
-    shared
-    [DartCompilationUnitMember*] generateRuntimeModel(ModuleModel mod, PackageModel pkg)
-        =>  let (scope = errorThrowingDScope(pkg))
-            [generateToplevelRunner(mod, pkg),
-            DartTopLevelVariableDeclaration {
-                DartVariableDeclarationList {
-                    "const";
-                    null;
-                    [DartVariableDeclaration {
-                        name = DartSimpleIdentifier("_$jsonModel");
-                        generateJsonLiteral(encodeModule(mod), true);
-                    }];
-                };
-            },
-            DartTopLevelVariableDeclaration {
-                DartVariableDeclarationList {
-                    "var";
-                    null;
-                    [DartVariableDeclaration {
-                        DartSimpleIdentifier("_$module");
-                        DartNullLiteral();
-                    }];
-                };
-            },
-            // Important: the assignment to $module must not involve the metamodel in
-            // order to avoid circular dependecy problems between modules
-            // ceylon.dart.runtime.model and ceylon.language.
-            DartFunctionDeclaration {
-                false;
-                null;
-                "get";
-                DartSimpleIdentifier("$module");
-                DartFunctionExpression {
-                    null;
-                    DartBlockFunctionBody {
-                        null; false;
-                        DartBlock {
-                            // may return a partially initialized if there is a circular
-                            // dependency, which is ok.
-                            [DartIfStatement {
-                                condition
-                                    =   DartBinaryExpression {
-                                            DartSimpleIdentifier("_$module");
-                                            "==";
-                                            DartNullLiteral();
-                                        };
-                                thenStatement = DartBlock {
-                                    // create the model, assign to _$module
-                                    [createAssignmentStatement {
-                                        DartSimpleIdentifier("_$module");
-                                        DartAssignmentOperator.equal;
-                                        DartInstanceCreationExpression {
-                                            false;
-                                            // TODO ugly; use model for this
-                                            DartConstructorName {
-                                                DartTypeName {
-                                                    DartPrefixedIdentifier {
-                                                        DartSimpleIdentifier {
-                                                            "$ceylon$dart$runtime$model";
-                                                        };
-                                                        DartSimpleIdentifier {
-                                                            "json$LazyJsonModule";
-                                                        };
-                                                    };
-                                                };
-                                                null;
-                                            };
-                                            DartArgumentList {
-                                                [dartTypes.invocableForBaseExpression {
-                                                    scope;
-                                                    // ceylon.interop.dart::JsonObject()
-                                                    ceylonTypes.jsonObjectDeclaration;
-                                                }.expressionForInvocation {
-                                                    [DartSimpleIdentifier("_$jsonModel")];
-                                                }];
-                                            };
-                                        };
-                                    },
-                                    // initialize imports
-                                    createMethodInvocationStatement {
-                                        DartSimpleIdentifier("_$module");
-                                        DartSimpleIdentifier("initializeImports");
-                                        DartArgumentList {
-                [withLhs {
-                    // [Module*]
-                    ctx.unit.getSequentialType(ceylonTypes.moduleDeclaration.type);
-                    null;
-                    () => generateSequentialFromElements {
-                        scope;
-                        elementType
-                            =   ceylonTypes.moduleDeclaration.type;
-
-                        elements
-                            =   [for (imp in mod.imports)
-                                // TODO remove filter once dart interop
-                                //      modules include runtime model info
-                                if (!dartNative(imp))
-                                if (isForDartBackend(imp))
-                                ()=>DartPrefixedIdentifier {
-                                    DartSimpleIdentifier {
-                                        moduleImportPrefix(imp.\imodule);
-                                    };
-                                    DartSimpleIdentifier("$module");
-                                }];
-                    };
-                }];
-                                        };
-                                    },
-
-                                    // setup run function
-                                    createAssignmentStatement {
-                                        DartPrefixedIdentifier {
-                                            DartSimpleIdentifier("_$module");
-                                            DartSimpleIdentifier("runToplevel");
-                                        };
-                                        DartAssignmentOperator.equal;
-                                        DartSimpleIdentifier("_$runToplevel");
-                                    }];
-                                };
-                            },
-                            DartReturnStatement {
-                                DartSimpleIdentifier("_$module");
-                            }];
-                        };
-                    };
-                };
-            }];
-
     Boolean dartNative(ModuleImport mi)
         =>  if (is JsonModule m = mi.\imodule)
             then m.dartNative
             else false;
 
     DartExpression generateJsonLiteral(Object json, Boolean const) {
+
+        function generateMapLiteral(Map<String, Object> jsonObject, Boolean const)
+            =>  DartMapLiteral {
+                    const = const;
+                    entries = jsonObject.collect((entry)
+                        =>  DartMapLiteralEntry {
+                                DartSimpleStringLiteral(entry.key);
+                                generateJsonLiteral(entry.item, const);
+                            });
+                };
+
+        function generateListLiteral(List<Object> jsonArray, Boolean const)
+            =>  DartListLiteral {
+                    const = const;
+                    elements = jsonArray.collect((element)
+                        => generateJsonLiteral(element, const));
+                };
+
         if (is String json) {
             return DartSimpleStringLiteral(json);
         }
@@ -378,20 +280,130 @@ object modelGenerator extends BaseGenerator() {
         }
     }
 
-    DartMapLiteral generateMapLiteral(Map<String, Object> jsonObject, Boolean const)
-        =>  DartMapLiteral {
-                const = const;
-                entries = jsonObject.collect((entry)
-                    =>  DartMapLiteralEntry {
-                            DartSimpleStringLiteral(entry.key);
-                            generateJsonLiteral(entry.item, const);
-                        });
+    return let (scope = errorThrowingDScope(pkg)) [
+        generateToplevelRunner(mod, pkg),
+        DartTopLevelVariableDeclaration {
+            DartVariableDeclarationList {
+                "const";
+                null;
+                [DartVariableDeclaration {
+                    name = DartSimpleIdentifier("_$jsonModel");
+                    generateJsonLiteral(encodeModule(mod), true);
+                }];
             };
+        },
+        DartTopLevelVariableDeclaration {
+            DartVariableDeclarationList {
+                "var";
+                null;
+                [DartVariableDeclaration {
+                    DartSimpleIdentifier("_$module");
+                    DartNullLiteral();
+                }];
+            };
+        },
+        // Important: the assignment to $module must not involve the metamodel in
+        // order to avoid circular dependecy problems between modules
+        // ceylon.dart.runtime.model and ceylon.language.
+        DartFunctionDeclaration {
+            false;
+            null;
+            "get";
+            DartSimpleIdentifier("$module");
+            DartFunctionExpression {
+                null;
+                DartBlockFunctionBody {
+                    null; false;
+                    DartBlock {
+                        // may return a partially initialized if there is a circular
+                        // dependency, which is ok.
+                        [DartIfStatement {
+                            condition
+                                =   DartBinaryExpression {
+                                        DartSimpleIdentifier("_$module");
+                                        "==";
+                                        DartNullLiteral();
+                                    };
+                            thenStatement = DartBlock {
+                                // create the model, assign to _$module
+                                [createAssignmentStatement {
+                                    DartSimpleIdentifier("_$module");
+                                    DartAssignmentOperator.equal;
+                                    DartInstanceCreationExpression {
+                                        false;
+                                        // TODO ugly; use model for this
+                                        DartConstructorName {
+                                            DartTypeName {
+                                                DartPrefixedIdentifier {
+                                                    DartSimpleIdentifier {
+                                                        "$ceylon$dart$runtime$model";
+                                                    };
+                                                    DartSimpleIdentifier {
+                                                        "json$LazyJsonModule";
+                                                    };
+                                                };
+                                            };
+                                            null;
+                                        };
+                                        DartArgumentList {
+                                            [dartTypes.invocableForBaseExpression {
+                                                scope;
+                                                // ceylon.interop.dart::JsonObject()
+                                                ceylonTypes.jsonObjectDeclaration;
+                                            }.expressionForInvocation {
+                                                [DartSimpleIdentifier("_$jsonModel")];
+                                            }];
+                                        };
+                                    };
+                                },
+                                // initialize imports
+                                createMethodInvocationStatement {
+                                    DartSimpleIdentifier("_$module");
+                                    DartSimpleIdentifier("initializeImports");
+                                    DartArgumentList {
+            [generator.withLhs {
+                // [Module*]
+                ctx.unit.getSequentialType(ceylonTypes.moduleDeclaration.type);
+                null;
+                () => generator.generateSequentialFromElements {
+                    scope;
+                    elementType
+                        =   ceylonTypes.moduleDeclaration.type;
 
-    DartListLiteral generateListLiteral(List<Object> jsonArray, Boolean const)
-        =>  DartListLiteral {
-                const = const;
-                elements = jsonArray.collect((element)
-                    => generateJsonLiteral(element, const));
+                    elements
+                        =   [for (imp in mod.imports)
+                            // TODO remove filter once dart interop
+                            //      modules include runtime model info
+                            if (!dartNative(imp))
+                            if (isForDartBackend(imp))
+                            ()=>DartPrefixedIdentifier {
+                                DartSimpleIdentifier {
+                                    moduleImportPrefix(imp.\imodule);
+                                };
+                                DartSimpleIdentifier("$module");
+                            }];
+                };
+            }];
+                                    };
+                                },
+
+                                // setup run function
+                                createAssignmentStatement {
+                                    DartPrefixedIdentifier {
+                                        DartSimpleIdentifier("_$module");
+                                        DartSimpleIdentifier("runToplevel");
+                                    };
+                                    DartAssignmentOperator.equal;
+                                    DartSimpleIdentifier("_$runToplevel");
+                                }];
+                            };
+                        },
+                        DartReturnStatement {
+                            DartSimpleIdentifier("_$module");
+                        }];
+                    };
+                };
             };
+        }
+    ];
 }
