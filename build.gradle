@@ -82,6 +82,7 @@ project('ceylon-dart-compiler') {
         dependsOn ceylonTest;
     }
 
+    build.dependsOn test;
 }
 
 project('ceylon-dart-ant') {
