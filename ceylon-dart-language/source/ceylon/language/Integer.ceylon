@@ -53,7 +53,7 @@ shared native final class Integer
     "The sum of all the integers in the given stream, or
      `0` if the stream is empty."
     since("1.3.2")
-    shared static Integer sum({Integer*} integers) {
+    shared native static Integer sum({Integer*} integers) {
         variable value sum = 0;
         for (int in integers) {
             sum += int;
@@ -64,7 +64,7 @@ shared native final class Integer
     "The product of all the integers in the given stream, or
      `1` if the stream is empty."
     since("1.3.2")
-    shared static Integer product({Integer*} integers) {
+    shared native static Integer product({Integer*} integers) {
         variable value product = 1;
         for (int in integers) {
             product *= int;
@@ -75,7 +75,7 @@ shared native final class Integer
     "The largest integer in the given stream, or `null` if 
      the stream is empty."
     since("1.3.2")
-    shared static Integer|Absent max<Absent>
+    shared native static Integer|Absent max<Absent>
             (Iterable<Integer,Absent> integers)
             given Absent satisfies Null {
         variable value first = true;
@@ -101,7 +101,7 @@ shared native final class Integer
     "The smallest integer in the given stream, or `null` if 
      the stream is empty."
     since("1.3.2")
-    shared static Integer|Absent min<Absent>
+    shared native static Integer|Absent min<Absent>
             (Iterable<Integer,Absent> integers)
             given Absent satisfies Null {
         variable value first = true;
@@ -126,12 +126,12 @@ shared native final class Integer
     
     "The smaller of the two given integers."
     since("1.3.2")
-    shared static Integer smallest(Integer x, Integer y)
+    shared native static Integer smallest(Integer x, Integer y)
             =>  if (x < y) then x else y;
     
     "The larger of the two given integers."
     since("1.3.2")
-    shared static Integer largest(Integer x, Integer y)
+    shared native static Integer largest(Integer x, Integer y)
             =>  if (x > y) then x else y;
     
     "The [[Integer]] value of the given 
@@ -522,6 +522,74 @@ class Integer
         satisfies Integral<Integer> &
                   Binary<Integer> &
                   Exponentiable<Integer,Integer> {
+
+    shared native("dart") static Integer sum({Integer*} integers) {
+        variable value sum = 0;
+        for (int in integers) {
+            sum += int;
+        }
+        return sum;
+    }
+
+    shared native("dart") static Integer product({Integer*} integers) {
+        variable value product = 1;
+        for (int in integers) {
+            product *= int;
+        }
+        return product;
+    }
+
+    shared native("dart") static Integer|Absent max<Absent>
+            (Iterable<Integer,Absent> integers)
+            given Absent satisfies Null {
+        variable value first = true;
+        variable value max = 0;
+        for (x in integers) {
+            if (first) {
+                first = false;
+                max = x;
+            }
+            else if (x > max) {
+                max = x;
+            }
+        }
+        if (first) {
+            assert (is Absent null);
+            return null;
+        }
+        else {
+            return max;
+        }
+    }
+
+    shared native("dart") static Integer|Absent min<Absent>
+            (Iterable<Integer,Absent> integers)
+            given Absent satisfies Null {
+        variable value first = true;
+        variable value min = 0;
+        for (x in integers) {
+            if (first) {
+                first = false;
+                min = x;
+            }
+            else if (x < min) {
+                min = x;
+            }
+        }
+        if (first) {
+            assert (is Absent null);
+            return null;
+        }
+        else {
+            return min;
+        }
+    }
+
+    shared native("dart") static Integer smallest(Integer x, Integer y)
+            =>  if (x < y) then x else y;
+
+    shared native("dart") static Integer largest(Integer x, Integer y)
+            =>  if (x > y) then x else y;
 
     shared native("dart") static Integer|ParseException parse(
         String string,

@@ -1024,6 +1024,13 @@ class BaseString
             // & Ranged<Integer,Character,String>
         {
 
+    shared static
+    String sum({String*} strings) {
+        value result = StringBuilder();
+        result.appendAll(strings);
+        return result.string;
+    }
+
     String val;
 
     "This string, boxed. The implementing class will return `this`. The difference between
@@ -1054,7 +1061,9 @@ class BaseString
     {String+} split(
             Boolean splitting(Character ch) => ch.whitespace,
             Boolean discardSeparators=true,
-            Boolean groupSeparators=true)
+            Boolean groupSeparators=true,
+            // FIXME actually do something with this param
+            Integer? limit = null)
             => if (empty) then Singleton(self) else object
             satisfies {String+} {
 

@@ -225,6 +225,9 @@ String $ceylonString($dart$core.String value)
 
 class String extends BaseString implements Summable, Comparable, Ranged {
 
+  static String sum([Iterable strings])
+    =>  BaseString.sum(strings);
+
   String(Iterable characters) : super(characters) {}
 
   String.withString($dart$core.String s) : super.withString(s) {}
