@@ -65,7 +65,7 @@ shared native final class Float
      
          Float.sum(list) / list.size"
     since("1.3.2")
-    shared static Float sum({Float*} floats) {
+    shared native static Float sum({Float*} floats) {
         variable value sum = 0.0;
         for (float in floats) {
             sum += float;
@@ -83,7 +83,7 @@ shared native final class Float
      
          Float.product(list) ^ (1.0/list.size)"
     since("1.3.2")
-    shared static Float product({Float*} floats) {
+    shared native static Float product({Float*} floats) {
         variable value product = 1.0;
         for (float in floats) {
             product *= float;
@@ -96,7 +96,7 @@ shared native final class Float
      value if and only if the stream contains an undefined 
      value."
     since("1.3.2")
-    shared static Float|Absent max<Absent>
+    shared native static Float|Absent max<Absent>
             (Iterable<Float,Absent> floats)
             given Absent satisfies Null {
         variable value max = 0.0/0.0;
@@ -126,7 +126,7 @@ shared native final class Float
      value if and only if the stream contains an undefined 
      value."
     since("1.3.2")
-    shared static Float|Absent min<Absent>
+    shared native static Float|Absent min<Absent>
             (Iterable<Float,Absent> floats)
             given Absent satisfies Null {
         variable value min = 0.0/0.0;
@@ -155,7 +155,7 @@ shared native final class Float
      an [[undefined]] value if and only if one of the values
      is undefined."
     since("1.3.2")
-    shared static Float smallest(Float x, Float y)
+    shared native static Float smallest(Float x, Float y)
             => if (x.strictlyNegative && y.strictlyPositive)
                 then x
             else if (x.strictlyPositive && y.strictlyNegative)
@@ -170,7 +170,7 @@ shared native final class Float
      an [[undefined]] value if and only if one of the values
      is undefined."
     since("1.3.2")
-    shared static Float largest(Float x, Float y)
+    shared native static Float largest(Float x, Float y)
             => if (x.strictlyNegative && y.strictlyPositive)
                 then y
             else if (x.strictlyPositive && y.strictlyNegative)
@@ -519,6 +519,94 @@ shared native final class Float
 shared final native("dart")
 class Float extends Object
         satisfies Number<Float> & Exponentiable<Float,Float> {
+
+    shared native("dart") static Float sum({Float*} floats) {
+        variable value sum = 0.0;
+        for (float in floats) {
+            sum += float;
+        }
+        return sum;
+    }
+
+    shared native("dart") static Float product({Float*} floats) {
+        variable value product = 1.0;
+        for (float in floats) {
+            product *= float;
+        }
+        return product;
+    }
+
+    shared native("dart") static Float|Absent max<Absent>
+            (Iterable<Float,Absent> floats)
+            given Absent satisfies Null {
+        variable value max = 0.0/0.0;
+        for (x in floats) {
+            if (x.undefined 
+                || x==infinity) {
+                return x;
+            }
+            if (max.undefined
+                || x > max 
+                || x.strictlyPositive 
+                && max.strictlyNegative) {
+                max = x;
+            }
+        }
+        if (max.undefined) {
+            assert (is Absent null);
+            return null; 
+        }
+        else {
+            return max;
+        }
+    }
+
+   shared native("dart") static Float|Absent min<Absent>
+            (Iterable<Float,Absent> floats)
+            given Absent satisfies Null {
+        variable value min = 0.0/0.0;
+        for (x in floats) {
+            if (x.undefined 
+                || x==-infinity) {
+                return x;
+            }
+            if (min.undefined
+                || x < min 
+                || x.strictlyNegative 
+                && min.strictlyPositive) {
+                min = x;
+            }
+        }
+        if (min.undefined) {
+            assert (is Absent null);
+            return null; 
+        }
+        else {
+            return min;
+        }
+    }
+
+    shared native("dart") static Float smallest(Float x, Float y)
+            => if (x.strictlyNegative && y.strictlyPositive)
+                then x
+            else if (x.strictlyPositive && y.strictlyNegative)
+                then y
+            else if (x.undefined)
+                then x
+            else if (y.undefined)
+                then y
+            else if (x<y) then x else y;
+
+    shared native("dart") static Float largest(Float x, Float y)
+            => if (x.strictlyNegative && y.strictlyPositive)
+                then y
+            else if (x.strictlyPositive && y.strictlyNegative)
+                then x
+            else if (x.undefined)
+                then x
+            else if (y.undefined)
+                then y
+            else if (x>y) then x else y;
 
     shared native("dart") static Float|ParseException parse(String string)
             => package.parseFloat(string)
