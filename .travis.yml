@@ -1,0 +1,37 @@
+sudo: false
+language: java
+notifications:
+  email: false
+  pushover:
+    on_failure: always
+    on_success: change
+    api_key:
+      secure: YzoV+njKGrTsq5Q0I/E1DQSPfU0So1gocuOhASUSwkiohtfU2pgX+cyig6FplMbNGkUmSUqOOpijd1fHfRw35AG7CEUGdTgJfsCEg0EnVmB09/0dGplDZzlqG5Z9U6Ju3lcZsG/gQKo+0N5PTo1/0qtre7LTW64oAXuZxW1cSawAwNRetbTxCEgPj3nfiMEHj7MYt4+NYNo7fgMa1mUIF+vX5MTzyECrPwvvdJqU2in5Z0FeFccCWal/K+Xn1alHF7nxV8SV0mASZ4m1A0ridp4yW7L/W+0WWwnb/3hbY/CVSS6ksboiYPKUv7PHU6I7t32lf9A7wqyS8f+cJAgS+6JjJ6ATXFt14wUod9Ufrdgb655LkTQJyoPQCF9vOv3d08CwMhAeUyKAejZ4sORQI8V0U2NCTNCkr3HmqT+2cRr6HH/W6lxMPJ0cybis2LW9DdS7coyVHhxOrbaidhc3FXqm3Co5akRJU7FP5+gqvsj9vK5+rKN7KCjwL4uV7uej8PccQH130822oeuIUHLxHBGxJuAI1rXTvngSXevGJN8115sSAm2RaI1slvKl4tTQSLf4XYgbPPs/817wWurymxHNEzcRyq1t0D8sBhxXfo3Zpb5tSQkJH/wK4jKUsICpQ/i0ET13wKqH/YyPAsIS+Lple4NWFjTCkBDwRIeL+Vk=
+    users:
+      - secure: BzQ1Vpo+z/21vhRBYByFRLU89BpI3+HzhXfocDxZQRKyFkzpj6/iXGsZ9mzBVi7+Vrk2vVoy6NTB2uUqJH4Du/PdwhjiJSxdQ7xLkFt3uEIl0Iyi7zsIWhEsnwT9pK6y94DGZgZ8WzyqGEeBmH+RJL9XwajF2ZczzDWTPB8jnP2sUKXyCHhO52KSjADspKaL8LAE9lD7FRT3ThMeUOMIvO8NNkWFQb4DBjfZUzv/guyYZz05QoaDbSQkG2ZhVOA/LU34ckAw1TkkBNaii3tVA0b9F+7dVWRc9kBYw81J/kiurrLlL9f/07HJ2VkutIeQm4bKOiOC3PnibOVxblc8sDXFIvaeO3r/z/lwQx45GHcn3YkAuK7BoLxMHK7rlcLJ19BjWniSz1vlMWbutiYOSzwLIGbRXpoeu0ibm55DX1IeCbCoWEgato6ljxSU1gI2wfclPzg8+bJBDPhXidvUz4SYjp47SEEN9C+iXJm0AkXJFyPrRWyiLqRq492dL45YIthLmtuWPnHIjwwSxDUq8MqHXGMl53nvrDMBZurLz1LSmIIpTiu+Ncqc1yBYG9RTqJxwlc6Fapr0DWRhPtS0InIJYUFw33R5F9wXr0suDYK+D+qDn04ADrh+0yxCFX5MmputsURy8Pf/c9i/rFvz8MN/ENup25ya/8b4BwY1j6s=
+jdk:
+  - oraclejdk7
+addons:
+  artifacts:
+    branch: master
+    bucket: ceylon.vasileff.com
+    target_paths: modules
+    paths:
+      - ./ceylon-dart-cli/build/modules-jvm/main
+      - ./ceylon-dart-compiler/build/modules-jvm/main
+    key:
+      secure: hOP4GxUCSQ22ey+2BQM3plCkz90JO9XScPxQvulGoc3nPqsuFZlOeWimfaN1AiD3TL1ozKA/4wJJP86fkFpX15cnmfjNehJpNzxq0ZOQlcYot0iI3M5X3DqkkrOoU9OWmHBh79jwYSK3qt75vbZFMkQDUFOPSA1t0Vw8bCJslltnqnCzq+Se+xQCmjtx6qwlphw/PiEhLxXUbZEvTJJL6zR5XOk11SIbdlHIk83ldcGs39/GJzGeYh29xnDh7jU5u/KuNGqNvN2HCki/nLW16cECHKFUJTIgfZ3Da3nuOJ5xdrGW4eFvr33WAeJ9fG/ZDpFwAs0xSmCcL+x+2r7g46ym+PZy+onBTi7a1Ky1T9SnVQoIAoznJqkcwtK67khyCtARCPlVh18HuTODjdXijWN6FAOL38eCRhn7eKhdLPYqa76RwqmOrUwa0cfFf9U5xNaqBzjEp//f0ViHV0yoUrtmettsjvgPqpIeMl/Bk6w5JfsSvhMMs+9gsz1Gh/V2lYvAeZPxIy7hTtnxTnuYZB7ac+Q6f3LZv7j0xIK4kvq06hKvf98QI5+p0YILLRUDAtHVleyEv3aZmKHHWBEgs739nnqwFZ/b/W3T0RoQmyL5Hw1V3k5KfxeT0diXh/hbrV3n9xZrhvtcCmzKkXELnLzh9JFtdpckAtJZ6U2iSLs=
+    secret:
+      secure: ohk2xkjMWCGQWdrRhfg+mHpOcypfTwBXbs+X8EC15CwPfOaCZyyjUju3dzLH2exw+R7CigjCimYc6eq99i1I1jfUi82VjR0hNGAv/iywDXFW1C7eEJxSj8906FWCseI6fuPT+MqVA7KfssvjQLgd6HcXwYa1fKU0Rvrrdqni1vXo8hS3Xdj1rZpHWg3eenJ1fU1o2SsgE8Fb1vw9jvMY+q4MRr7jCzbJzv5v7g8YAt2tYVL/R+nW77FpToI1roZ+7+TGg2yI+s5hCIgzCM0b8Vs1N93H6VFvhCX/Un72ltrLJfAJog8LytrwKwsOjZVn4irr2fAImn4UqGHgEF8UTWxWTbEouBWUCkbkEY1Qiou89pph9zu5jvFslq60KY0qR9J25DjU+wfHTbFPRfostlQO0v6k+p7tqqKh85f2u1lCugH13Lf+LBI1xX3R/Aaq+JqxREnEm/HRwNwtj8FaiYaFA/VcfUJEpmyhXnb+BsEaFd5MD326KHxc2xjl3V9P+mZcPfFLfw9zsddcqERx+YCbXy1PKAY/Y7bAM82v3INuC/MrSHvbbc6V8/2jEA+viDphLGu+DxvXNUi8ujdzNH1WP6MwMF2XikuxyRJDg6XyzLf7MA12cgiwhnmlusTl/rLA6lLX/L60RApHWUkx1v5MrDJccxX/gNBzkKZZrYU=
+install:
+  - wget --quiet --output-document=/tmp/ceylon.zip $CEYLON
+  - unzip -q /tmp/ceylon.zip
+  - export PATH=$PATH:$PWD/ceylon-1.3.2/bin/
+  - export CEYLON_HOME=$PWD/ceylon-1.3.2
+script:
+  - ./gradlew install build
+env:
+  global:
+    - CEYLON="http://ceylon-lang.org/download/dist/1_3_2"
+    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
+

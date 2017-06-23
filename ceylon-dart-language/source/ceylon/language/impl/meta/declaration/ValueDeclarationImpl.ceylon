@@ -52,6 +52,11 @@ class ValueDeclarationImpl(modelDeclaration)
             else null;
 
     shared actual
+    Value<Get, Set> staticApply<Get=Anything, Set=Nothing>
+            (ClosedType<Object> containerType)
+        =>  nothing; // TODO
+
+    shared actual
     Value<Get, Set> apply<Get=Anything, Set=Nothing>() {
         if (!toplevel) {
             throw TypeApplicationException(
@@ -141,6 +146,7 @@ class ValueDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

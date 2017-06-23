@@ -27,8 +27,7 @@ import ceylon.interop.java {
     javaClass,
     JavaIterable,
     javaString,
-    CeylonList,
-    createJavaObjectArray
+    CeylonList
 }
 import ceylon.json {
     JsonObject=Object,
@@ -63,8 +62,7 @@ import com.redhat.ceylon.compiler.typechecker.analyzer {
     ModuleSourceMapper
 }
 import com.redhat.ceylon.compiler.typechecker.context {
-    PhasedUnit,
-    TypecheckerUnit
+    PhasedUnit
 }
 import com.redhat.ceylon.compiler.typechecker.io {
     VirtualFile
@@ -91,9 +89,13 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeClassCaptures,
     isForDartBackend,
     moduleImportPrefix,
-    ModelGenerator,
+    modelGenerator,
     generateMain,
-    errorThrowingDScope
+    errorThrowingDScope,
+    identifyMemoizedValues,
+    topLevelVisitor,
+    compilationContextual,
+    ctx
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -123,12 +125,7 @@ import java.lang {
     JFloat=Float,
     JDouble=Double,
     JInteger=Integer,
-    JLong=Long,
-    NoSuchFieldException
-}
-import java.lang.reflect {
-    Field,
-    AccessibleObject
+    JLong=Long
 }
 import java.util {
     EnumSet,
@@ -382,12 +379,6 @@ compileDartSP(
 
     value phasedUnits = CeylonIterable(typeChecker.phasedUnits.phasedUnits).sequence();
 
-    for (phasedUnit in phasedUnits) {
-        // workaround memory leak in
-        // https://github.com/ceylon/ceylon/pull/6525
-        moduleSourceMapperField?.set(phasedUnit.unit, null);
-    }
-
     // suppress warnings
     value suppressedWarnings = EnumSet.noneOf(javaClass<Warning>());
     suppressedWarnings.addAll(javaList(suppressWarning));
@@ -470,12 +461,12 @@ compileDartSP(
 
         Integer start = system.nanoseconds;
 
-        try {
-            value ctx
-                =   CompilationContext {
+        try (compilationContextual.Using {
+                    CompilationContext {
                         phasedUnit.unit;
                         CeylonList(phasedUnit.tokens);
                     };
+                }) {
 
             AnyCompilationUnit unit;
             try (timer.Measurement("anyCompilationUnitToCeylon")) {
@@ -518,15 +509,19 @@ compileDartSP(
                 }
 
                 try (timer.Measurement("computeCaptures")) {
-                    computeCaptures(unit, ctx);
+                    computeCaptures(unit);
                 }
 
                 try (timer.Measurement("computeClassCaptures")) {
-                    computeClassCaptures(unit, ctx);
+                    computeClassCaptures(unit);
+                }
+
+                try (timer.Measurement("identifyMemoizedValues")) {
+                    identifyMemoizedValues(unit);
                 }
 
                 try (timer.Measurement("transformCompilationUnit")) {
-                    unit.visit(ctx.topLevelVisitor);
+                    unit.visit(topLevelVisitor);
                 }
 
                 if (baselinePerfTest) {
@@ -596,14 +591,13 @@ compileDartSP(
                 then mod.packages.get(0)
                 else mod.unit.\ipackage;
 
-        value ctx
-            =   CompilationContext(unit, []);
+        try (compilationContextual.Using(CompilationContext(unit, []))) {
+            // add model info
+            members.addAll(modelGenerator.generateRuntimeModel(mod, pkg));
 
-        // add model info
-        members.addAll(ModelGenerator(ctx).generateRuntimeModel(mod, pkg));
-
-        // add main function
-        members.add(generateMain(ctx, errorThrowingDScope(pkg)));
+            // add main function
+            members.add(generateMain(errorThrowingDScope(pkg)));
+        }
     }
 
     value dartCompilationUnits = LinkedList<DartCompilationUnit>();
@@ -1025,18 +1019,3 @@ Map<ModuleModel, String> gatherCompileDependencies(
 
     return dependencies;
 }
-
-Field? moduleSourceMapperField = (() {
-    try {
-        value field
-            =   javaClass<TypecheckerUnit>()
-                    .getDeclaredField("moduleSourceMapper");
-        // workaround https://github.com/ceylon/ceylon/issues/6526
-        AccessibleObject.setAccessible(
-            createJavaObjectArray { field }, true);
-        return field;
-    }
-    catch (NoSuchFieldException e) {
-        return null;
-    }
-})();

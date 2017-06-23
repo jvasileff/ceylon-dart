@@ -45,6 +45,12 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
         =>  helper.annotatedConstructorDeclarations<Annotation>();
 
     shared actual
+    Class<Type, Arguments> staticClassApply<Type=Anything, Arguments=Nothing>
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[]
+        =>  nothing; // TODO
+
+    shared actual
     Class<Type,Arguments> classApply<Type, Arguments>
             (ClosedType<Anything>* typeArguments)
             given Arguments satisfies Anything[]
@@ -132,6 +138,7 @@ class ClassWithConstructorsDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

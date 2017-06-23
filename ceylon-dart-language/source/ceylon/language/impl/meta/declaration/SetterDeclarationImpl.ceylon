@@ -19,6 +19,10 @@ class SetterDeclarationImpl(modelDeclaration)
 
     variable => ValueDeclarationImpl(modelDeclaration.getter);
 
+    // NestableDeclaration
+
+    static => helper.static;
+
     // Declaration
 
     name => helper.name;

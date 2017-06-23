@@ -31,6 +31,10 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
     }
 
     shared actual
+    Anything staticGet(ClosedType<Object> containerType)
+        =>  nothing; // TODO
+
+    shared actual
     ValueConstructor<Result> apply<Result = Object>() {
         if (!toplevel) {
             throw TypeApplicationException(
@@ -105,6 +109,7 @@ class ValueConstructorDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

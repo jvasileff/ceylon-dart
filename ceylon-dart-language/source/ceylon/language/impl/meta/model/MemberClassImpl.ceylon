@@ -73,11 +73,11 @@ class MemberClassImpl<in Container, out Type, in Arguments>(modelReference)
     }
 
     shared actual
-    Class<Type, Arguments> bind(Object container) {
+    Class<Type, Arguments> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` type(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` type(container) ``");
         }
         return bindSafe(container);
     }

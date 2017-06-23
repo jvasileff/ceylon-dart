@@ -15,11 +15,6 @@ apply plugin: 'base'
 ext.ceylonRepoDir = System.getProperty("user.home") + "/.ceylon/repo"
 ext.ceylonBinDir = System.getProperty("user.home") + "/.ceylon/bin"
 
-task build(dependsOn: assemble) {
-    group = 'Build'
-    description = 'Assembles and tests this project.'
-}
-
 task cleanAll(dependsOn: [
     "ceylon-dart-ant:clean",
     "ceylon-dart-ant:cleanEclipse",
@@ -59,7 +54,7 @@ project('ceylon-dart-compiler') {
         dependsOn compileCeylon
 
         report = true
-        module "test.com.vasileff.ceylon.dart.compiler/1.3.1-DP5-SNAPSHOT"
+        module "test.com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT"
         test "test.com.vasileff.ceylon.dart.compiler"
     }
 
@@ -87,11 +82,6 @@ project('ceylon-dart-compiler') {
         dependsOn ceylonTest;
     }
 
-    task build(dependsOn: assemble) {
-        dependsOn test;
-        group = 'Build'
-        description = 'Assembles and tests this project.'
-    }
 }
 
 project('ceylon-dart-ant') {
@@ -144,7 +134,7 @@ project('ceylon-dart-language') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.3.1-DP5-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT',
                 "${sourceDir.toString()}:${sourceDir2.toString()}",
                 "${destinationDir.toString()}",
                 file("modules-dart")
@@ -162,11 +152,6 @@ project('ceylon-dart-language') {
 
     project.assemble.dependsOn compileCeylonDart
     project.assemble.dependsOn repositoryZip
-
-    task build(dependsOn: assemble) {
-        group = 'Build'
-        description = 'Assembles and tests this project.'
-    }
 
     task install {
         group "Deployment"
@@ -214,7 +199,7 @@ project('ceylon-dart-sdk') {
         commandLine 'ceylon', 'run',
                 '--rep', repository,
                 '--run', 'com.vasileff.ceylon.dart.compiler::bootstrapCompile',
-                'com.vasileff.ceylon.dart.compiler/1.3.1-DP5-SNAPSHOT',
+                'com.vasileff.ceylon.dart.compiler/1.3.2-DP5-SNAPSHOT',
                 "${sourceDir.toString()}",
                 "${destinationDir.toString()}",
                 project(":ceylon-dart-language").compileCeylonDart.destinationDir,
@@ -230,11 +215,6 @@ project('ceylon-dart-sdk') {
 
     project.assemble.dependsOn compileCeylonDart
     project.assemble.dependsOn repositoryZip
-
-    task build(dependsOn: assemble) {
-        group = 'Build'
-        description = 'Assembles and tests this project.'
-    }
 
     task install {
         group "Deployment"
@@ -347,10 +327,6 @@ project('ceylon-dart-cli') {
         into ceylonRepoDir
     }
 
-    task build(dependsOn: assemble) {
-        group = 'Build'
-        description = 'Assembles and tests this project.'
-    }
 }
 
 wrapper {

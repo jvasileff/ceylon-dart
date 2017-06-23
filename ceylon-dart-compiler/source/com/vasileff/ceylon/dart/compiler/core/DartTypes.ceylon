@@ -70,14 +70,13 @@ import com.vasileff.ceylon.dart.compiler.loader {
 }
 
 shared
-class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
+class DartTypes(CeylonTypes ceylonTypes) {
 
     variable value counter = 0;
 
     value nameCache => ctx.nameCache;
 
-    // TODO remove this ugliness.
-    BaseGenerator baseGenerator => ctx.expressionTransformer;
+    BaseGenerator baseGenerator => expressionTransformer;
 
     DartNamedElement?(DeclarationModel) mappedFunctionOrValue = (() {
         return map {
@@ -190,9 +189,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     [ClassOrInterfaceModel+]? ancestorClassOrInterfacesToInheritingDeclaration(
             ClassModel|InterfaceModel scope,
             ClassOrInterfaceModel inheritedDeclaration)
-        =>  let (chain = sequence(
-                    takeUntil(ancestorClassOrInterfaces(scope))((c)
-                        =>  c.inherits(inheritedDeclaration))))
+        =>  let (chain = takeUntil(ancestorClassOrInterfaces(scope))((c)
+                    =>  c.inherits(inheritedDeclaration)).sequence())
             (chain.last.inherits(inheritedDeclaration) then chain);
 
     "Similar to ancestorChainToInheritingDeclaration, but does not stop at `this` in
@@ -457,7 +455,8 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
 
     shared
     Boolean valueRequiresSyntheticField(ValueModel valueModel)
-        =>  !valueModel.transient && valueModel.default;
+        =>  !valueModel.transient &&
+                (valueModel.default || ctx.memoizedValues.contains(valueModel));
 
     shared
     Boolean capturedReferenceValue(ValueModel valueModel)
@@ -1746,6 +1745,22 @@ class DartTypes(CeylonTypes ceylonTypes, CompilationContext ctx) {
     DartSimpleIdentifier identifierForSyntheticField(ValueModel declaration)
         =>  DartSimpleIdentifier {
                 "_$s" +
+                ancestorDeclarations(declaration)
+                    .collect((d)
+                        =>  if (is ControlBlockModel d)
+                            then ""
+                            else getName(d))
+                    .reversed
+                    .interpose("$")
+                    .fold("$")(plus);
+            };
+
+    "The identifier for memoizedFieldBoolean."
+    see(`function classMemberTransformer.transformValueDefinition`)
+    shared
+    DartSimpleIdentifier identifierForMemoizedFieldBoolean(ValueModel declaration)
+        =>  DartSimpleIdentifier {
+                "_$b" +
                 ancestorDeclarations(declaration)
                     .collect((d)
                         =>  if (is ControlBlockModel d)

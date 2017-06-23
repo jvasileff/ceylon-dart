@@ -34,6 +34,7 @@ class AliasDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // Declaration
 

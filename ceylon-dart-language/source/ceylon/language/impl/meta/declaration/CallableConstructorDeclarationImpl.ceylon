@@ -43,6 +43,13 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
 
     shared actual
     CallableConstructor<Result, Arguments>
+    staticApply<Result=Anything, Arguments=Nothing>
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[]
+        =>  nothing; // TODO
+
+    shared actual
+    CallableConstructor<Result, Arguments>
     apply<Result=Object, Arguments=Nothing>
             (ClosedType<>* typeArguments)
             given Arguments satisfies Anything[] {
@@ -142,6 +149,7 @@ class CallableConstructorDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

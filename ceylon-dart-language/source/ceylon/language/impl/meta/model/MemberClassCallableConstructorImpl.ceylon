@@ -62,11 +62,11 @@ class MemberClassCallableConstructorImpl<in Container, out Type, in Arguments>
     container => type;
 
     shared actual
-    CallableConstructor<Type, Arguments> bind(Object container) {
+    CallableConstructor<Type, Arguments> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` metaType(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` metaType(container) ``");
         }
         return bindSafe(container);
     }

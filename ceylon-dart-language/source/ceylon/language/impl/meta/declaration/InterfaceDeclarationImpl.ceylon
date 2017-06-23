@@ -122,6 +122,7 @@ class InterfaceDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

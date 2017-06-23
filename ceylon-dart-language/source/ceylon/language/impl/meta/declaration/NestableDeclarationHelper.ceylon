@@ -41,6 +41,8 @@ interface NestableDeclarationHelper
 
     shared Boolean toplevel => modelDeclaration.isToplevel;
 
+    shared Boolean static => modelDeclaration.isStatic;
+
     // TypedDeclaration
 
     shared

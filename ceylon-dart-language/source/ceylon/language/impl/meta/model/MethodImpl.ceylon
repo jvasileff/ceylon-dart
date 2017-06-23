@@ -50,11 +50,11 @@ class MethodImpl<in Container, out Type, in Arguments>(modelReference)
     }
 
     shared actual
-    Function<Type, Arguments> bind(Object container) {
+    Function<Type, Arguments> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` metaType(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` metaType(container) ``");
         }
         return bindSafe(container);
     }

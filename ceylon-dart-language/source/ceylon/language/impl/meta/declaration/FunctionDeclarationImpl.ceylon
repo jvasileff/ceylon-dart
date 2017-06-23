@@ -40,6 +40,13 @@ class FunctionDeclarationImpl(modelDeclaration)
     }
 
     shared actual
+    Function<Return,Arguments>
+    staticApply<Return=Anything, Arguments=Nothing>
+            (ClosedType<Object> containerType, ClosedType<>* typeArguments)
+            given Arguments satisfies Anything[]
+        =>  nothing; // TODO
+
+    shared actual
     Function<Return,Arguments> apply<Return, Arguments>(ClosedType<>* typeArguments)
             given Arguments satisfies Anything[] {
 
@@ -157,6 +164,7 @@ class FunctionDeclarationImpl(modelDeclaration)
     formal => helper.formal;
     shared => helper.shared;
     toplevel => helper.toplevel;
+    static => helper.static;
 
     // TypedDeclaration
 

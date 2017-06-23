@@ -48,11 +48,11 @@ class AttributeImpl<in Container, out Get, in Set>(modelReference)
     }
 
     shared actual
-    Value<Get, Set> bind(Object container) {
+    Value<Get, Set> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` metaType(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` metaType(container) ``");
         }
         return bindSafe(container);
     }

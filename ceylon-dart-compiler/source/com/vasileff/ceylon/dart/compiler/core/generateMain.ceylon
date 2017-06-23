@@ -16,7 +16,7 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 }
 
 shared
-DartFunctionDeclaration generateMain(CompilationContext ctx, DScope scope)
+DartFunctionDeclaration generateMain(DScope scope)
     =>  let(argumentsIdentifier = DartSimpleIdentifier("arguments"))
         DartFunctionDeclaration {
             false;

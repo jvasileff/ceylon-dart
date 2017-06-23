@@ -129,7 +129,8 @@ import com.vasileff.ceylon.dart.compiler.dartast {
     createVariableDeclaration,
     DartPrefixedIdentifier,
     DartFormalParameter,
-    DartSimpleStringLiteral
+    DartSimpleStringLiteral,
+    createAssignmentStatement
 }
 import com.vasileff.ceylon.dart.compiler.nodeinfo {
     ParameterInfo,
@@ -178,8 +179,7 @@ import java.util {
 }
 
 shared abstract
-class BaseGenerator(CompilationContext ctx)
-        extends CoreGenerator(ctx) {
+class BaseGenerator() extends CoreGenerator() {
 
     // hack to avoid error using the inherited member ceylonTypes in the initializer
     value ceylonTypes = ctx.ceylonTypes;
@@ -281,7 +281,6 @@ class BaseGenerator(CompilationContext ctx)
 
     function nativeBinaryOptimization(
             DeclarationModel declaration,
-            TypeModel receiverType,
             TypeModel? argumentType) {
 
         if (exists o = simpleNativeBinaryFunctions(declaration)) {
@@ -999,8 +998,7 @@ class BaseGenerator(CompilationContext ctx)
                     else null;
 
             if (exists optimization
-                    =   nativeBinaryOptimization(
-                            memberDeclaration, receiverType, firstArgType)) {
+                    =   nativeBinaryOptimization(memberDeclaration, firstArgType)) {
 
                 assert (!is ValueModel | SetterModel memberDeclaration);
 
@@ -4661,7 +4659,7 @@ class BaseGenerator(CompilationContext ctx)
     DartExpression generateBooleanDartCondition({BooleanCondition+} conditions)
             =>  withLhsNative {
                     ceylonTypes.booleanType;
-                    () => sequence(conditions)
+                    () => conditions.sequence()
                             .reversed
                             .map(generateBooleanConditionExpression)
                             .reduce {
@@ -5452,7 +5450,7 @@ class BaseGenerator(CompilationContext ctx)
     "Generate an assignment expression.
 
      This function is basically a setter version of
-     [[ExpressionTransformer.transformInvocation]] and [[generateInvocation]] combined.
+     [[expressionTransformer.transformInvocation]] and [[generateInvocation]] combined.
      But, simpler since less can be done with setters."
     shared
     DartExpression
@@ -5815,9 +5813,11 @@ class BaseGenerator(CompilationContext ctx)
         - a synthetic field for mapped members, such as 'string', which will also need a
           'toString()' getter, or
 
+        - a synthetic field for a memoized member (late + specified), or
+
         - a field to hold the Callable for a non-shared callable parameter
 
-     For `default` `Value`s, a synthetic field name will be used."
+     For `default` `Value`s and memoized members, a synthetic field name will be used."
     shared
     DartFieldDeclaration generateFieldDeclaration(
             DScope scope,
@@ -5899,7 +5899,8 @@ class BaseGenerator(CompilationContext ctx)
                     =   dartTypes.identifierForSyntheticField(valueModel))
             [// Don't generate a getter bridge if this is a mapped member that will
              // already have a bridge.
-             !dartTypes.valueMappedToNonField(valueModel) then
+             !dartTypes.valueMappedToNonField(valueModel)
+             && !ctx.memoizedValues.contains(valueModel) then
              DartMethodDeclaration {
                 false; null;
                 generateFunctionReturnType(scope, valueModel);
@@ -5916,7 +5917,7 @@ class BaseGenerator(CompilationContext ctx)
                     syntheticFieldIdentifier;
                 };
             },
-            valueModel.variable then
+            valueModel.variable || valueModel.late then
             DartMethodDeclaration {
                 false; null;
                 returnType = null;
@@ -5942,7 +5943,16 @@ class BaseGenerator(CompilationContext ctx)
                                 DartAssignmentOperator.equal;
                                 DartSimpleIdentifier("$v");
                             };
-                        }];
+                        },
+                        // if 'late' + specified, mark as initialized
+                        // (for #39 we'll want to throw before the above assignment if not
+                        //  variable and already initialized)
+                        ctx.memoizedValues.contains(valueModel) then
+                        createAssignmentStatement {
+                            dartTypes.identifierForMemoizedFieldBoolean(valueModel);
+                            DartAssignmentOperator.equal;
+                            DartBooleanLiteral(true);
+                        }].coalesced.sequence();
                     };
                 };
             }].coalesced.sequence();

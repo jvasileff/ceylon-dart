@@ -214,8 +214,8 @@ import com.vasileff.ceylon.dart.compiler.nodeinfo {
 }
 
 shared
-class ExpressionTransformer(CompilationContext ctx)
-        extends BaseGenerator(ctx)
+object expressionTransformer
+        extends BaseGenerator()
         satisfies WideningTransformer<DartExpression> {
 
     """
@@ -1656,16 +1656,41 @@ class ExpressionTransformer(CompilationContext ctx)
             };
 
     shared actual
-    DartExpression transformInOperation(InOperation that)
-        =>  let (info = nodeInfo(that))
+    DartExpression transformInOperation(InOperation that) {
+        // The *right* operand is the receiver. So, evaluate left operand to temp,
+        // then call right.contains(temp)
+        value leftTempVar = DartSimpleIdentifier {
+            dartTypes.createTempNameCustom();
+        };
+        value leftInfo = expressionInfo(that.leftOperand);
+        return let (info = nodeInfo(that)) createExpressionEvaluationWithSetup {
+            [createVariableDeclaration {
+                dartTypes.dartTypeName {
+                    leftInfo;
+                    leftInfo.typeModel;
+                    // contains() is generic, so don't erase just to rebox later.
+                    eraseToNative = false;
+                    eraseToObject = false;
+                };
+                leftTempVar;
+                withLhsNonNative {
+                    leftInfo.typeModel;
+                    () => that.leftOperand.transform(expressionTransformer);
+                };
+            }];
             generateInvocationFromName {
                 info;
-                // Note: the *right* operand is the receiver
                 that.rightOperand;
                 "contains";
                 [];
-                [that.leftOperand];
+                [() => withBoxingNonNative {
+                    info;
+                    leftInfo.typeModel;
+                    leftTempVar;
+                }]; // withBoxing not *really* necessary
             };
+        };
+    }
 
     shared actual
     DartExpression transformComparisonOperation(ComparisonOperation that)
@@ -2887,7 +2912,7 @@ class ExpressionTransformer(CompilationContext ctx)
     }
 
     shared actual
-    see(`function StatementTransformer.transformIfElse`)
+    see(`function statementTransformer.transformIfElse`)
     DartExpression transformIfElseExpression(IfElseExpression that) {
         // Create a function expression for the IfElseExpression and invoke it.
         // No need for `withLhs` or `withBoxing`; our parent should have set the
@@ -3477,7 +3502,7 @@ class ExpressionTransformer(CompilationContext ctx)
         =>  let (info = packageDecInfo(that))
             generatePackageDec(info, info.model);
 
-    shared actual default
+    shared actual
     DartExpression transformNode(Node that) {
         if (that is DynamicBlock | DynamicInterfaceDefinition
                 | DynamicModifier | DynamicValue) {

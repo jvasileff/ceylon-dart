@@ -99,9 +99,6 @@ shared
         value trimmed = path.trim('/'.equals);
         value components = trimmed.split('/'.equals).sequence();
 
-        "nonempty paths will have at least one path segment."
-        assert (nonempty components);
-
         return ["/".join(components.exceptLast),
                 "/".join(components),
                 components.last];

@@ -50,6 +50,90 @@ shared native final class Integer
                   Binary<Integer> & 
                   Exponentiable<Integer,Integer> {
     
+    "The sum of all the integers in the given stream, or
+     `0` if the stream is empty."
+    since("1.3.2")
+    shared static Integer sum({Integer*} integers) {
+        variable value sum = 0;
+        for (int in integers) {
+            sum += int;
+        }
+        return sum;
+    }
+    
+    "The product of all the integers in the given stream, or
+     `1` if the stream is empty."
+    since("1.3.2")
+    shared static Integer product({Integer*} integers) {
+        variable value product = 1;
+        for (int in integers) {
+            product *= int;
+        }
+        return product;
+    }
+    
+    "The largest integer in the given stream, or `null` if 
+     the stream is empty."
+    since("1.3.2")
+    shared static Integer|Absent max<Absent>
+            (Iterable<Integer,Absent> integers)
+            given Absent satisfies Null {
+        variable value first = true;
+        variable value max = 0;
+        for (x in integers) {
+            if (first) {
+                first = false;
+                max = x;
+            }
+            else if (x > max) {
+                max = x;
+            }
+        }
+        if (first) {
+            assert (is Absent null);
+            return null;
+        }
+        else {
+            return max;
+        }
+    }
+    
+    "The smallest integer in the given stream, or `null` if 
+     the stream is empty."
+    since("1.3.2")
+    shared static Integer|Absent min<Absent>
+            (Iterable<Integer,Absent> integers)
+            given Absent satisfies Null {
+        variable value first = true;
+        variable value min = 0;
+        for (x in integers) {
+            if (first) {
+                first = false;
+                min = x;
+            }
+            else if (x < min) {
+                min = x;
+            }
+        }
+        if (first) {
+            assert (is Absent null);
+            return null;
+        }
+        else {
+            return min;
+        }
+    }
+    
+    "The smaller of the two given integers."
+    since("1.3.2")
+    shared static Integer smallest(Integer x, Integer y)
+            =>  if (x < y) then x else y;
+    
+    "The larger of the two given integers."
+    since("1.3.2")
+    shared static Integer largest(Integer x, Integer y)
+            =>  if (x > y) then x else y;
+    
     "The [[Integer]] value of the given 
      [[string representation|string]] of an integer value in 
      the base given by [[radix]], or `null` if the string 
@@ -112,11 +196,11 @@ shared native final class Integer
      
      For example:
      
-     - `formatInteger(-46)` is `\"-46\"`
-     - `formatInteger(9,2)` is `\"1001\"`
-     - `formatInteger(10,8)` is `\"12\"`
-     - `formatInteger(511,16)` is `\"1ff\"`
-     - `formatInteger(512,32)` is `\"g0\"`"
+     - `Integer.format(-46)` is `\"-46\"`
+     - `Integer.format(9,2)` is `\"1001\"`
+     - `Integer.format(10,8)` is `\"12\"`
+     - `Integer.format(511,16)` is `\"1ff\"`
+     - `Integer.format(512,32)` is `\"g0\"`"
     throws (`class AssertionError`, 
             "if [[radix]] is not between [[minRadix]] and 
              [[maxRadix]]")

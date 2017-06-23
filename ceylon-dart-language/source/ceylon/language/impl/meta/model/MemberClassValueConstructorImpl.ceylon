@@ -55,11 +55,11 @@ class MemberClassValueConstructorImpl<in Container, out Type>(modelReference)
     }
 
     shared actual
-    ValueConstructor<Type> bind(Object container) {
+    ValueConstructor<Type> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` metaType(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` metaType(container) ``");
         }
         return bindSafe(container);
     }

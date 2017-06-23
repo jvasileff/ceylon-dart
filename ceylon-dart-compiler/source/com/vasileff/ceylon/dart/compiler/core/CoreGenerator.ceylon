@@ -29,9 +29,11 @@ import com.vasileff.ceylon.dart.compiler.dartast {
 
    Shared code generation methods should be placed in [[BaseGenerator]].
 """
-abstract
-shared
-class CoreGenerator(CompilationContext ctx) {
+abstract shared
+class CoreGenerator {
+
+    shared
+    new () {}
 
     shared
     CeylonTypes ceylonTypes
@@ -40,26 +42,6 @@ class CoreGenerator(CompilationContext ctx) {
     shared
     DartTypes dartTypes
         =>  ctx.dartTypes;
-
-    shared
-    ClassMemberTransformer classMemberTransformer
-        =>  ctx.classMemberTransformer;
-
-    shared
-    ClassStatementTransformer classStatementTransformer
-        =>  ctx.classStatementTransformer;
-
-    shared
-    ExpressionTransformer expressionTransformer
-        =>  ctx.expressionTransformer;
-
-    shared
-    StatementTransformer statementTransformer
-        =>  ctx.statementTransformer;
-
-    shared
-    TopLevelVisitor topLevelVisitor
-        =>  ctx.topLevelVisitor;
 
     shared
     void error(Node that, Anything message)
@@ -112,7 +94,7 @@ class CoreGenerator(CompilationContext ctx) {
                      actualType
                         = dartTypes.typeConsideringElidedReplacements(rhsType,
                                 rhsDeclaration))
-                withBoxingForType {
+                withBoxingCustom {
                     scope;
                     actualType;
                     if (exists actualDeclaration)
@@ -176,20 +158,6 @@ class CoreGenerator(CompilationContext ctx) {
 
     shared
     DartExpression withBoxingCustom(
-            DScope scope,
-            TypeModel rhsType,
-            Boolean rhsErasedToNative,
-            Boolean rhsErasedToObject,
-            DartExpression dartExpression)
-        =>  withBoxingForType {
-                scope;
-                rhsType;
-                rhsErasedToNative;
-                rhsErasedToObject;
-                dartExpression;
-            };
-
-    DartExpression withBoxingForType(
             DScope scope,
             TypeModel rhsType,
             Boolean rhsErasedToNative,
@@ -315,7 +283,7 @@ class CoreGenerator(CompilationContext ctx) {
             TypeModel rhsType,
             DartExpression dartExpression)
         // TODO do callers always *know* that the rhs is rhsType, and not erasedToObject?
-        =>  withBoxingForType {
+        =>  withBoxingCustom {
                 scope;
                 rhsType;
                 false;

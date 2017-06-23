@@ -236,7 +236,8 @@ import ceylon.ast.core {
     LargerOperation,
     SpanFromSubscript,
     TypeArgument,
-    ImmediateNarrowingTransformer
+    ImmediateNarrowingTransformer,
+    ModuleSpecifier
 }
 
 NodeInfo wrapNode(Node node)
@@ -715,4 +716,7 @@ object nodeInfoTransformer satisfies ImmediateNarrowingTransformer<NodeInfo> {
     shared actual NodeInfo transformWhile(While that) => WhileInfo(that);
 
     shared actual NodeInfo transformWithinOperation(WithinOperation that) => WithinOperationInfo(that);
+
+    shared actual NodeInfo transformModuleSpecifier(ModuleSpecifier that) => DefaultNodeInfo(that);
+
 }

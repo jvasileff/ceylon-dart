@@ -7,9 +7,9 @@ import dart.core {
     DString = String
 }
 
-"""A string of characters. Each character in the string is a 
-   [[32-bit Unicode character|Character]]. The internal 
-   UTF-16 encoding is hidden from clients.
+"""A string of characters. Each character in the string 
+   is a [[32-bit Unicode character|Character]]. The 
+   internal UTF-16 encoding is hidden from clients.
    
    Literal strings may be written between double quotes:
    
@@ -18,13 +18,14 @@ import dart.core {
        "\{#03C0} \{#2248} 3.14159"
        "\{GREEK SMALL LETTER PI} \{ALMOST EQUAL TO} 3.14159"
    
-   Alternatively, a _verbatim string_ may be written between
-   tripled double quotes.
+   Alternatively, a _verbatim string_ may be written 
+   between tripled double quotes.
    
-   The _empty string_, `""`, is a string with no characters.
+   The _empty string_, `""`, is a string with no 
+   characters.
    
-   A string is a [[Category]] of its [[characters]], and of 
-   its substrings:
+   A string is a [[Category]] of its [[characters]], and 
+   of its substrings:
    
        'w' in greeting 
        "hello" in greeting
@@ -45,33 +46,48 @@ import dart.core {
    
        String who = "hello world"[6...];
    
-   Note that since `string[index]` evaluates to the optional 
-   type `Character?`, it is often more convenient to write 
-   `string[index..index]`, which evaluates to a `String` 
-   containing a single character, or to the empty string 
-   `""` if `index` refers to a position outside the string.
+   Note that since `string[index]` evaluates to the 
+   optional type `Character?`, it is often more 
+   convenient to write `string[index..index]`, which 
+   evaluates to a `String` containing a single character, 
+   or to the empty string `""` if `index` refers to a 
+   position outside the string.
    
    It is easy to use comprehensions to transform strings:
    
        String { for (s in "hello world") if (s.letter) s.uppercased }
    
    Since a `String` has an underlying UTF-16 encoding, 
-   certain operations are expensive, requiring iteration of 
-   the characters of the string. In particular, [[size]]
-   requires iteration of the whole string, and `get()`,
-   `span()`, and `measure()` require iteration from the 
-   beginning of the string to the given index."""
+   certain operations are expensive, requiring iteration 
+   of the characters of the string. In particular, 
+   [[size]] requires iteration of the whole string, and 
+   `get()`, `span()`, and `measure()` require iteration 
+   from the beginning of the string to the given index."""
 by ("Gavin")
 tagged("Basic types", "Strings")
-shared native final class String(characters)
-        extends Object()
+shared native final class String
+        extends Object
         satisfies SearchableList<Character> &
                   Comparable<String> &
                   Summable<String> & 
                   Ranged<Integer,Character,String> {
     
+    "The concatenation of the given [[strings]]."
+    see (`class StringBuilder`)
+    shared static String sum({String*} strings) {
+        value result = StringBuilder();
+        result.appendAll(strings);
+        return result.string;
+    }
+    
     "The characters that form this string."
     {Character*} characters;
+    
+    "A new string with the given [[characters]]."
+    shared native new ({Character*} characters) 
+            extends Object() {
+        this.characters = characters;
+    }
     
     "This string, with all characters in lowercase.
      
@@ -80,10 +96,11 @@ shared native final class String(characters)
      that produces incorrect results in certain locales
      (e.g. `tr-TR`).
      
-     The resulting string may not have the same number of
-     characters as this string, since the uppercase 
-     representation of certain characters comprises multiple
-     characters, for example the lowercase representation of 
+     The resulting string may not have the same number 
+     of characters as this string, since the uppercase 
+     representation of certain characters comprises 
+     multiple characters, for example the lowercase 
+     representation of 
      \{LATIN CAPITAL LETTER I WITH DOT ABOVE} is two 
      characters wide."
     shared native String lowercased;
@@ -95,22 +112,53 @@ shared native final class String(characters)
      that produces incorrect results in certain locales
      (e.g. `tr-TR`).
      
-     The resulting string may not have the same number of
-     characters as this string, since the uppercase 
-     representation of certain characters comprises multiple
-     characters, for example the uppercase representation of 
-     \{LATIN SMALL LETTER SHARP S} is SS."
+     The resulting string may not have the same number 
+     of characters as this string, since the uppercase 
+     representation of certain characters comprises 
+     multiple characters, for example the uppercase 
+     representation of \{LATIN SMALL LETTER SHARP S} is 
+     SS."
     shared native String uppercased;
     
     "Split the string into tokens, using the given 
      [[predicate function|splitting]] to determine which 
-     characters are separator characters.
+     characters are _separator characters_ delimiting 
+     token boundaries.
      
          value pathElements = path.split('/'.equals);
      
      The flags [[discardSeparators]] and [[groupSeparators]]
-     determine how separator characters should occur in the
-     resulting stream.
+     determine how separator characters occur in the
+     resulting stream. 
+     
+     - If `discardSeparators` is enabled, the stream 
+       contains only _regular tokens_ containing 
+       adjacent non-separator characters, and the 
+       separator characters are simply discarded.
+     - If `discardSeparators` is disabled, the string is 
+       broken into regular tokens and _separator tokens_
+       containing the separator characters. If 
+       `groupSeparators` is disabled, the separator 
+       tokens each contain a single character. If 
+       `groupSeparators` is enabled, adjacent separator 
+       characters are grouped into a single token.
+     
+     The [[limit]] determines the maximum number of 
+     regular (non-separator) tokens that are returned in 
+     the stream. If the limit is exceeded, the remainder 
+     of the string is returned as a single token at the 
+     end of the resulting stream. For example,
+     
+         \"foo bar baz fum\".split { limit = 2; }
+     
+     produces the stream `{ \"foo\", \"bar\", \"baz fum\" }`.
+     
+     If the first character of this string is a 
+     separator character, the stream begins with an 
+     empty token. Likewise, if the last character of 
+     this string is a separator character, and the 
+     `limit` is not reached, the stream ends with an 
+     empty token.
      
      Note that for the case of the empty string, `split()` 
      always produces a stream containing a single empty 
@@ -120,21 +168,37 @@ shared native final class String(characters)
      
      evaluates to the nonempty stream `{ \"\" }`."
     shared native {String+} split(
-            "A predicate that determines if a character is a
-             separator characters at which to split. Default 
-             to split at any 
-             [[whitespace|Character.whitespace]] character."
+            "A predicate that determines if a character 
+             is a separator characters at which to split. 
+             Default to split at any 
+             [[whitespace|Character.whitespace]] 
+             character."
             Boolean splitting(Character ch) => ch.whitespace,
-            "Specifies that the separator characters
-             occurring in the string should be discarded. If 
-             `false`, they will be included in the resulting 
-             iterator."
+            "Specifies that separator characters 
+             occurring in the string should be discarded.
+             If `false`, the resulting stream will have 
+             separator tokens containing the separator 
+             characters."
             Boolean discardSeparators = true,
-            "Specifies that the separator tokens should be 
-             grouped eagerly and not be treated as 
-             single-character tokens. If `false` each 
-             separator token will be of size `1`."
-            Boolean groupSeparators = true);
+            "Specifies that adjacent separator 
+             characters should be grouped into a single 
+             separator token. If `false` each separator 
+             token will contain a single character."
+            Boolean groupSeparators = true,
+            "Specifies the maximum number of regular 
+             tokens, with a `null` argument indicating 
+             no upper limit. If this string contains 
+             more regular tokens than the given limit, 
+             the remaining part of the string will be 
+             returned as a single token at the very end 
+             of the stream. If the limit is not strictly 
+             positive, a stream containing this string 
+             will be returned."
+            since("1.3.2")
+            Integer? limit = null)
+            => StringTokens(this, splitting, 
+                discardSeparators, groupSeparators, 
+                limit);
     
     "The first character in the string."
     shared actual native Character? first;
@@ -145,21 +209,12 @@ shared native final class String(characters)
     "The rest of the string, without its first character."
     shared actual native String rest;
     
-    //"Get the character at the specified index, or `null` if
-    // the index falls outside the bounds of this string."
-    //shared actual native Character? get(Integer index);
-    
-    "Get the character at the specified index, where the 
-     string is indexed from the _end_ of the string, or 
-     `null` if the index falls outside the bounds of this 
-     string."
-    shared actual native Character? getFromLast(Integer index);
-    
     "A sequence containing all indexes of this string."
     shared actual native Integer[] keys => 0:size;
     
-    "Join the [[string representations|Object.string]] of 
-     the given [[objects]], using this string as a separator."
+    "Join the [[string representations|Object.string]] 
+     of the given [[objects]], using this string as a 
+     separator."
     shared native String join({Object*} objects) {
         value result = StringBuilder();
         value strings = objects.map(Object.string);
@@ -168,19 +223,20 @@ shared native final class String(characters)
         return result.string;
     }
     
-    "Split the string into lines of text, discarding line
-     breaks. Recognized line break sequences are `\\n` and 
-     `\\r\\n`. The empty string is considered a single line 
-     of text."
+    "Split the string into lines of text, discarding 
+     line breaks. Recognized line break sequences are 
+     `\\n` and `\\r\\n`. The empty string is considered 
+     a single line of text."
     see (`value linesWithBreaks`)
     shared native {String+} lines 
             => split('\n'.equals, true, false)
                .spread(String.trimTrailing)('\r'.equals);
     
-    "Split the string into lines of text with line breaks.
-     Each line will be terminated by a line break sequence,
-     `\\n` or `\\r\\n`, except for the very last line. The 
-     empty string is considered a single line of text."
+    "Split the string into lines of text with line 
+     breaks. Each line will be terminated by a line 
+     break sequence, `\\n` or `\\r\\n`, except for the 
+     very last line. The empty string is considered a 
+     single line of text."
     see (`value lines`)
     since("1.1.0")
     shared native {String+} linesWithBreaks
@@ -199,21 +255,22 @@ shared native final class String(characters)
     
     "A string containing the characters of this string, 
      after discarding the characters matching the given 
-     [[predicate function|trimming]] from the beginning and 
-     end of the string.
+     [[predicate function|trimming]] from the beginning 
+     and end of the string.
      
          value trimmed = name.trim('_'.equals);
      
-     A character is removed from the string if it matches
-     the given predicate and if either:
+     A character is removed from the string if it 
+     matches the given predicate and if either:
      
-     - every character occurring earlier in the string also 
-       matches the predicate, or
-     - every character occurring later in the string also
-       matches the predicate."
+     - every character occurring earlier in the string 
+       also matches the predicate, or
+     - every character occurring later in the string 
+       also matches the predicate."
     shared actual native String trim(
-            "The predicate function that determines whether
-             a character should be trimmed"
+            "A predicate that determines whether a 
+             character occurring near the start or end 
+             of the string should be trimmed."
             Boolean trimming(Character element))
             => if (exists from
                     = firstIndexWhere(not(trimming)),
@@ -224,15 +281,17 @@ shared native final class String(characters)
     
     "A string containing the characters of this string, 
      after discarding the characters matching the given 
-     [[predicate function|trimming]] from the 
-     beginning of the string.
+     [[predicate function|trimming]] from the beginning 
+     of the string.
      
-     A character is removed from the string if it matches
-     the given predicate and every character occurring 
-     earlier in the string also matches the predicate."
+     A character is removed from the string if it 
+     matches the given predicate and every character 
+     occurring earlier in the string also matches the 
+     predicate."
     shared actual native String trimLeading(
-            "The predicate function that determines whether
-             a character should be trimmed"
+            "A predicate that determines whether a 
+             character occurring near the start of the 
+             string should be trimmed."
             Boolean trimming(Character element))
             => if (exists from
                     = firstIndexWhere(not(trimming))) 
@@ -244,21 +303,24 @@ shared native final class String(characters)
      [[predicate function|trimming]] from the end of the 
      string.
      
-     A character is removed from the string if it matches
-     the given predicate and every character occurring 
-     later in the string also matches the predicate."
+     A character is removed from the string if it 
+     matches the given predicate and every character 
+     occurring later in the string also matches the 
+     predicate."
     shared actual native String trimTrailing(
-            "The predicate function that determines whether
-             a character should be trimmed"
+            "The predicate that determines whether a 
+             character occurring near the end of the
+             string should be trimmed."
             Boolean trimming(Character element))
             => if (exists to
                     = lastIndexWhere(not(trimming))) 
             then this[...to]
             else "";
 
-    "A string containing the characters of this string after 
-     collapsing strings of [[whitespace|Character.whitespace]] 
-     into single space characters and discarding whitespace 
+    "A string containing the characters of this string 
+     after collapsing strings of adjacent 
+     [[whitespace|Character.whitespace]] characters into 
+     single space characters and discarding whitespace 
      from the beginning and end of the string."
     shared native String normalized {
         value result = StringBuilder();
@@ -276,8 +338,8 @@ shared native final class String(characters)
         return result.string.trimmed;
     }
     
-    "A string containing the characters of this string, with
-     the characters in reverse order."
+    "A string containing the characters of this string, 
+     with the characters in reverse order."
     shared native actual String reversed 
             => StringBuilder()
                 .append(this)
@@ -285,41 +347,45 @@ shared native final class String(characters)
                 .string;
     
     "Determine if this string contains only 
-     [[whitespace characters|Character.whitespace]]. Returns
-     `false` if the string contains at least one character
-     which is not a whitespace character."
+     [[whitespace characters|Character.whitespace]]. 
+     Returns `false` if the string contains at least one 
+     character which is not a whitespace character."
     shared native Boolean whitespace
             => every(Character.whitespace);
     
-    "Determines if this string contains a character at the
-     given [[index]], that is, if `0<=index<size`."
+    "Determines if this string contains a character at 
+     the given [[index]], that is, if `0<=index<size`."
     shared native actual Boolean defines(Integer index)
             => 0<=index<size;
     
     "A string containing the characters of this string 
-     between the given indexes. If the [[start index|from]] 
-     is the same as the [[end index|to]], return a string 
-     with a single character. If the start index is larger 
-     than the end index, return the characters in the 
-     reverse order from the order in which they appear in 
-     this string. If both the start index and the end index 
+     occurring between the given indexes. If the 
+     [[start index|from]] is the same as the 
+     [[end index|to]], return a string with a single 
+     character. If the start index is larger than the 
+     end index, return the characters in the reverse 
+     order from the order in which they occur in this 
+     string. If both the start index and the end index 
      are larger than the last index in the string, or if 
-     both the start index and the end index are smaller than
-     the first index in the string, return the empty string. 
-     Otherwise, if the last index is larger than the last 
-     index in the string, return all characters from the 
-     start index to last character of the string.
+     both the start index and the end index are smaller 
+     than the first index in the string, return the 
+     empty string. Otherwise, if the last index is 
+     larger than the last index in the string, return 
+     all characters from the start index to last 
+     character of the string.
      
      Using the [[span operator|Ranged.span]], 
      `string.span(to, from)` may be written as 
      `string[from..to]`."
-    shared actual native String span(Integer from, Integer to);
+    shared actual native String span(Integer from, 
+                                     Integer to);
     
-    "A string containing the characters of this string from 
-     the given [[start index|from]] inclusive to the end of 
-     the string. If the start index is larger than the last 
-     index of the string, return the empty string. If the
-     start index is negative, return this string.
+    "A string containing the characters of this string 
+     from the given [[start index|from]] inclusive to 
+     the end of the string. If the start index is larger
+     than the last index of the string, return the empty 
+     string. If the start index is negative, return this 
+     string.
      
      Using the [[span operator|Ranged.spanFrom]], 
      `string.spanFrom(from)` may be written as 
@@ -327,26 +393,29 @@ shared native final class String(characters)
     shared actual native String spanFrom(Integer from)
             => from<size then span(from, size) else "";
     
-    "A string containing the characters of this string from 
-     the start of the string up to and including the given 
-     [[end index|to]]. If the end index is negative, return 
-     the empty string. If the end index is larger than the
-     last index in this string, return this string.
+    "A string containing the characters of this string 
+     from the start of the string up to and including 
+     the given [[end index|to]]. If the end index is 
+     negative, return the empty string. If the end index 
+     is larger than the last index in this string, 
+     return this string.
      
      Using the [[span operator|Ranged.spanTo]], 
-     `string.spanTo(to)` may be written as `string[...to]`."
+     `string.spanTo(to)` may be written as 
+     `string[...to]`."
     shared actual native String spanTo(Integer to)
             => to>=0 then span(0, to) else "";
     
     "A string containing the characters of this string 
-     beginning at the given [[start index|from]], returning 
-     a string no longer than the given [[length]]. If the 
-     portion of this string starting at the given index is 
-     shorter than the given length, return the portion of 
-     this string from the given index until the end of this 
-     string. Otherwise, return a string of the given length. 
-     If the start index is larger than the last index of the 
-     string, return the empty string.
+     beginning at the given [[start index|from]], 
+     returning a string no longer than the given 
+     [[length]]. If the portion of this string starting 
+     at the given index is shorter than the given length, 
+     return the portion of this string from the given 
+     index until the end of this string. Otherwise, 
+     return a string of the given length. If the start 
+     index is larger than the last index of the string, 
+     return the empty string.
      
      Using the [[measure operator|Ranged.measure]], 
      `string.measure(from, length)` may be written as
@@ -354,31 +423,34 @@ shared native final class String(characters)
     shared native actual String measure(Integer from, 
                                         Integer length);
     
-    "Select the first characters of this string, returning a 
-     string no longer than the given [[length]]. If this 
-     string is shorter than the given length, return this 
-     string. Otherwise, return a string of the given length."
+    "Select the first characters of this string, 
+     returning a string no longer than the given 
+     [[length]]. If this string is shorter than the 
+     given length, return this string. Otherwise, return 
+     a string of the given length."
     shared native actual String initial(Integer length)
             => this[0:length];
     
-    "Select the last characters of the string, returning a 
-     string no longer than the given [[length]]. If this 
-     string is shorter than the given length, return this 
-     string. Otherwise, return a string of the given length."
+    "Select the last characters of the string, returning 
+     a string no longer than the given [[length]]. If 
+     this string is shorter than the given length, 
+     return this string. Otherwise, return a string of 
+     the given length."
     shared native actual String terminal(Integer length)
             => this[size-length:length];
     
-    "Return two strings, the first containing the characters
-     that occur before the given [[index]], the second with
-     the characters that occur after the given `index`. If 
-     the given `index` is outside the range of indices of 
-     this string, one of the returned strings will be empty."
+    "Return two strings, the first containing the 
+     characters that occur before the given [[index]], 
+     the second with the characters that occur after the 
+     given `index`. If the given `index` is outside the 
+     range of indices of this string, one of the 
+     returned strings will be empty."
     shared native actual String[2] slice(Integer index)
             => [this[...index-1], this[index...]];
     
-    "The length of the string (the number of characters it 
-     contains). In the case of the empty string, the string 
-     has length zero. Note that this operation is 
+    "The length of the string (the number of characters 
+     it contains). In the case of the empty string, the 
+     string has length zero. Note that this operation is 
      potentially costly for long strings, since the
      underlying representation of the characters uses a
      UTF-16 encoding. Use of [[longerThan]] or 
@@ -388,10 +460,11 @@ shared native final class String(characters)
     shared actual native Integer size;
     
     "The index of the last character in the string, or 
-     `null` if the string has no characters. Note that this 
-     operation is potentially costly for long strings, since 
-     the underlying representation of the characters uses a 
-     UTF-16 encoding. For any nonempty string:
+     `null` if the string has no characters. Note that 
+     this operation is potentially costly for long 
+     strings, since the underlying representation of the 
+     characters uses a UTF-16 encoding. For any nonempty 
+     string:
      
          string.lastIndex == string.size-1"
     shared actual Integer? lastIndex 
@@ -401,24 +474,43 @@ shared native final class String(characters)
     shared actual native Iterator<Character> iterator();
     
     "Returns the character at the given [[index]] in the 
-     string, or `null` if the index is before the start of 
-     the string or past the end of string. The first 
-     character in the string occurs at index zero. The last 
-     character in the string occurs at index 
+     string, or `null` if the index is before the start 
+     of the string or past the end of string. The first 
+     character in the string occurs at index zero. The 
+     last character in the string occurs at index 
      `string.size-1`.
      
      Using the [[item operator|Correspondence.get]],
      `string.getFromFirst(index)` may be written as
      `string[index]`."
-    shared actual native Character? getFromFirst(Integer index);
+    see (`function getFromLast`)
+    shared actual native Character? getFromFirst(
+        "An index from the start of the string, which 
+         identifies a character within the string only 
+         if it falls within the range `0:size`. The 
+         index `0` refers to the first character in the
+         string."
+        Integer index);
     
-    //shared actual native Boolean->Character? lookup(Integer index);
+    "Get the character at the specified index, where the 
+     string is indexed from the _end_ of the string, or 
+     `null` if the index falls outside the bounds of 
+     this string."
+    see (`function getFromFirst`)
+    shared actual native Character? getFromLast(
+        "An index from the end of the string, which 
+         identifies a character within this string only 
+         if it falls within the range `0:size`. The 
+         index `0` refers to the last character in the
+         string."
+        Integer index);
     
-    "Determines if the given object is a `String` and, if 
-     so, if it occurs as a substring of this string, or if 
-     the object is a `Character` that occurs in this string. 
-     That is to say, a string is considered a [[Category]] 
-     of its substrings and of its characters.
+    "Determines if the given object is a `String` and, 
+     if so, if it occurs as a substring of this string, 
+     or if the object is a `Character` that occurs in 
+     this string. That is to say, a string is considered 
+     a [[Category]] of its substrings and of its 
+     characters.
      
      Using the [[`in` operator|Category.contains]],
      `string.contains(element)` may be written as
@@ -429,21 +521,25 @@ shared native final class String(characters)
             case (is Character) occurs(element)
             else false;
     
-    "Determines if this string begins with the characters of
-     the given string or list. Returns `false` if the given
-     list contains an element that is not a [[Character]]."
+    "Determines if this string starts with the 
+     characters of the given string or list. Returns 
+     `false` if the given list contains an element that 
+     is not a [[Character]]."
     shared actual native Boolean startsWith(
-        "A sequence of [[Character]]s, usually a `String`."
+        "A sequence of [[Character]]s, usually a 
+         `String`."
         List<> substring)
             => if (is String substring) 
             then includesAt(0, substring)
             else super.startsWith(substring);
     
-    "Determines if this string ends with the characters of
-     the given string or list. Returns `false` if the given
-     list contains an element that is not a [[Character]]."
+    "Determines if this string ends with the characters 
+     of the given string or list. Returns `false` if the 
+     given list contains an element that is not a 
+     [[Character]]."
     shared actual native Boolean endsWith(
-        "A sequence of [[Character]]s, usually a `String`."
+        "A sequence of [[Character]]s, usually a 
+         `String`."
         List<> substring)
             => if (is String substring)
             then includesAt(size-substring.size, substring)
@@ -451,17 +547,17 @@ shared native final class String(characters)
     
     "Returns the concatenation of this string with the
      given string. The resulting string contains the 
-     characters of this string followed by the characters of
-     the given string.
+     characters of this string followed by the 
+     characters of the given string.
      
      Using the [[addition operator|Summable.plus]], 
      `string.plus(otherString)` may be written as
      `string + otherString`."
     shared actual native String plus(String other);
     
-    "Returns a string formed by repeating this string the 
-     given number of [[times]], or the empty string if
-     `times<=0`."
+    "Returns a string formed by repeating this string 
+     the given number of [[times]], or the empty string 
+     if `times<=0`."
     shared actual native String repeat(Integer times) {
         value result = StringBuilder();
         for (_ in 0:times) {
@@ -470,10 +566,10 @@ shared native final class String(characters)
         return result.string;
     }
     
-    "Returns a string formed by replacing every occurrence 
-     in this string of the given nonempty [[substring]] with 
-     the given [[replacement]] string, working from the 
-     start of this string to the end."
+    "Returns a string formed by replacing every 
+     occurrence in this string of the given nonempty 
+     [[substring]] with the given [[replacement]] string, 
+     working from the start of this string to the end."
     throws (`class AssertionError`,
             "if the given [[substring]] is empty")
     shared native String replace(String substring, 
@@ -508,8 +604,8 @@ shared native final class String(characters)
     
     "Returns a string formed by replacing the first 
      occurrence in this string of the given nonempty 
-     [[substring]], if any, with the given [[replacement]] 
-     string."
+     [[substring]], if any, with the given 
+     [[replacement]] string."
     throws (`class AssertionError`,
             "if the given [[substring]] is empty")
     since("1.1.0")
@@ -527,8 +623,8 @@ shared native final class String(characters)
     
     "Returns a string formed by replacing the last 
      occurrence in this string of the given nonempty 
-     [[substring]], if any, with the given [[replacement]] 
-     string."
+     [[substring]], if any, with the given 
+     [[replacement]] string."
     throws (`class AssertionError`,
             "if the given [[substring]] is empty")
     since("1.1.0")
@@ -556,8 +652,8 @@ shared native final class String(characters)
     
     "Returns a string formed by removing the given 
      [[postfix]] from the end of this string, if this 
-     string [[ends with|endsWith]] the given `postfix`, or 
-     this string otherwise."
+     string [[ends with|endsWith]] the given `postfix`, 
+     or this string otherwise."
     since("1.3.0")
     shared native String removeTerminal(String postfix) 
             => endsWith(postfix) 
@@ -570,14 +666,14 @@ shared native final class String(characters)
             || x.lowercased==y.lowercased;
     
     "Compare this string with the given string 
-     lexicographically, according to the Unicode code points
-     of the characters.
+     lexicographically, according to the Unicode code 
+     points of the characters.
      
      This defines a locale-independent collation that is
      incorrect in some locales.
      
-     For more specialized lexicographic comparisons between 
-     strings, use [[compareIgnoringCase]] or 
+     For more specialized lexicographic comparisons 
+     between strings, use [[compareIgnoringCase]] or 
      [[compareCorresponding]]."
     see (`function compareIgnoringCase`,
          `function compareCorresponding`)
@@ -586,9 +682,9 @@ shared native final class String(characters)
                 (Character x, Character y) => x<=>y);
     
     "Compare this string with the given string 
-     lexicographically, ignoring the case of the characters.
-     That is, by considering two characters `x` and `y` as
-     equal if:
+     lexicographically, ignoring the case of the 
+     characters. That is, by considering two characters 
+     `x` and `y` as equal if:
      
      - `x == y`,
      - `x.uppercased == y.uppercased`, or
@@ -597,8 +693,8 @@ shared native final class String(characters)
      This defines a locale-independent collation that is
      incorrect in some locales.
      
-     For more specialized lexicographic comparisons between 
-     strings, use [[compareCorresponding]]."
+     For more specialized lexicographic comparisons 
+     between strings, use [[compareCorresponding]]."
     see (`value Character.lowercased`, 
          `value Character.uppercased`,
          `function compareCorresponding`)
@@ -622,13 +718,13 @@ shared native final class String(characters)
     see (`value size`)
     shared actual native Boolean shorterThan(Integer length);
     
-    "Determines if the given object is a `String`, and if 
-     so, if this string has the same [[length|size]], and 
-     the same [[characters]], in the same order, as the 
-     given [[string|that]].
+    "Determines if the given object is a `String`, and 
+     if so, if this string has the same [[length|size]], 
+     and the same [[characters]], in the same order, as 
+     the given [[string|that]].
      
-     For more specialized character-wise comparisons between 
-     strings, use [[equalsIgnoringCase]] or 
+     For more specialized character-wise comparisons 
+     between strings, use [[equalsIgnoringCase]] or 
      [[corresponding]]."
     see (`function equalsIgnoringCase`,
          `function corresponding`)
@@ -638,16 +734,16 @@ shared native final class String(characters)
                     (Character x, Character y) => x==y)
             else false;
     
-    "Compare this string with the given string, ignoring the 
-     case of the characters. That is, by considering two 
-     characters `x` and `y` as equal if:
+    "Compare this string with the given string, ignoring 
+     the case of the characters. That is, by considering 
+     two characters `x` and `y` as equal if:
      
      - `x == y`,
      - `x.uppercased == y.uppercased`, or
      - `x.lowercased == y.lowercased`.
      
-     For more specialized character-wise comparisons between 
-     strings, use [[corresponding]]."
+     For more specialized character-wise comparisons 
+     between strings, use [[corresponding]]."
     see (`value Character.lowercased`, 
          `value Character.uppercased`,
          `function corresponding`)
@@ -656,15 +752,15 @@ shared native final class String(characters)
             => corresponding(this, that, 
                 charsEqualIgnoringCase);
     
-    "A hash code for this `String`, computed from its UTF-16 
-     code units."
+    "A hash code for this `String`, computed from its 
+     UTF-16 code units."
     shared actual native Integer hash;
     
     "This string."
     shared actual String string => this;
     
-    "Determines if this string has no characters, that is, 
-     if it has zero [[size]]. This is a _much_ more 
+    "Determines if this string has no characters, that 
+     is, if it has zero [[size]]. This is a _much_ more 
      efficient operation than `string.size==0`."
     see (`value size`)
     shared actual native Boolean empty;
@@ -675,13 +771,13 @@ shared native final class String(characters)
     "This string."
     shared actual String clone() => this;
     
-    "Pad this string with the given [[character]], producing 
-     a string of the given minimum [[size]], centering the
-     string. If this string is not smaller than the given 
-     `size`, return this string."
+    "Pad this string with the given [[character]], 
+     producing a string of the given minimum [[size]], 
+     centering the string. If this string is not smaller 
+     than the given `size`, return this string."
     since("1.1.0")
     shared native String pad(Integer size, 
-        "The padding character"
+        "The padding character."
         Character character=' ') {
         value length = this.size;
         if (size<=length) {
@@ -701,12 +797,12 @@ shared native final class String(characters)
     }
     
     "Left pad this string with the given [[character]], 
-     producing a string of the given minimum [[size]]. If 
-     this string is not smaller than the given `size`, 
+     producing a string of the given minimum [[size]]. 
+     If this string is not smaller than the given `size`, 
      return this string."
     since("1.1.0")
     shared native String padLeading(Integer size, 
-        "The padding character"
+        "The padding character."
         Character character=' ') {
         value length = this.size;
         if (size<=length) {
@@ -721,12 +817,12 @@ shared native final class String(characters)
     }
     
     "Right pad this string with the given [[character]], 
-     producing a string of the given minimum [[size]].  If 
-     this string is not smaller than the given `size`, 
+     producing a string of the given minimum [[size]].
+     If this string is not smaller than the given `size`, 
      return this string."
     since("1.1.0")
     shared native String padTrailing(Integer size, 
-        "The padding character"
+        "The padding character."
         Character character=' ') {
         value length = this.size;
         if (size<=length) {
@@ -741,14 +837,14 @@ shared native final class String(characters)
     }
     
     "Efficiently copy the characters in the segment
-     `sourcePosition:length` of this string to the segment 
-     `destinationPosition:length` of the given 
+     `sourcePosition:length` of this string to the 
+     segment `destinationPosition:length` of the given 
      [[character array|destination]].
      
      The given [[sourcePosition]] and [[destinationPosition]] 
      must be non-negative and, together with the given 
-     [[length]], must identify meaningful ranges within the 
-     two lists, satisfying:
+     [[length]], must identify meaningful ranges within 
+     the two lists, satisfying:
      
      - `size >= sourcePosition+length`, and 
      - `destination.size >= destinationPosition+length`.
@@ -756,8 +852,8 @@ shared native final class String(characters)
      If the given `length` is not strictly positive, no
      elements are copied."
     throws (`class AssertionError`, 
-        "if the arguments do not identify meaningful ranges 
-         within the two lists:
+        "if the arguments do not identify meaningful 
+         ranges within the two lists:
          
          - if the given [[sourcePosition]] or 
            [[destinationPosition]] is negative, 
@@ -771,8 +867,8 @@ shared native final class String(characters)
         "The index of the first element in this array to 
          copy."
         Integer sourcePosition = 0,
-        "The index in the given array into which to copy the 
-         first element."
+        "The index in the given array into which to copy 
+         the first element."
         Integer destinationPosition = 0,
         "The number of elements to copy."
         Integer length 
@@ -780,29 +876,31 @@ shared native final class String(characters)
                     destination.size - destinationPosition));
     
     "A string containing the characters of this string 
-     beginning at the given [[start index|from]], up to, but
-     not including, the given [[end index|end]]. If the 
-     given end index is greater than the last index of this
-     string, return the portion of the string from the given 
-     start index until the end of the string. If the start 
-     index is larger than the last index of the string, or 
-     if the end index is less than one or less than the 
-     start index, return the empty string.
+     beginning at the given [[start index|from]], up to, 
+     but not including, the given [[end index|end]]. If 
+     the given end index is greater than the last index 
+     of this string, return the portion of the string 
+     from the given start index until the end of the 
+     string. If the start index is larger than the last 
+     index of the string, or if the end index is less 
+     than one or less than the start index, return the 
+     empty string.
      
-     For every pair of indexes, `start`, and `end`, and for
-     any `string`:
+     For every pair of indexes, `start`, and `end`, and 
+     for any `string`:
      
          string.substring(start, end) == string[start:end-start]
      
-     _Note: this operation is provided to ease migration of
-     code written in other languages. It is more idiomatic 
-     to use [[measure]] or [[span]] where reasonable._"
+     _Note: this operation is provided to ease migration 
+     of code written in other languages. It is more 
+     idiomatic to use [[measure]] or [[span]] where 
+     reasonable._"
     see (`function measure`, `function span`)
     since("1.3.0")
     shared native String substring(
-        "The inclusive start index"
+        "The inclusive start index."
         Integer from = 0,
-        "The exclusive end index" 
+        "The exclusive end index." 
         Integer end = size)
             => this[from:end-from];
     
@@ -810,69 +908,71 @@ shared native final class String(characters)
      [[start index|from]] at which the given substring 
      occurs in this string, if any, or `-1` otherwise.
      
-     For any `string` and `substring`, and for every index 
-     `from`:
+     For any `string` and `substring`, and for every 
+     index `from`:
      
          string.indexOf(substring, from) 
             == string.firstInclusion(substring, from) 
                     else -1
          
-     _Note: this operation is provided to ease migration of
-     code written in other languages. It is more idiomatic 
-     to use [[firstInclusion]] where reasonable._"
+     _Note: this operation is provided to ease migration 
+     of code written in other languages. It is more 
+     idiomatic to use [[firstInclusion]] where 
+     reasonable._"
     see (`function firstInclusion`)
     since("1.3.0")
     shared native Integer indexOf(
-        "The substring to find within this string"
+        "The substring to find within this string."
         String string,
-        "The inclusive start index"
+        "The inclusive start index."
         Integer from = 0)
             => firstInclusion(string, from) else -1;
     
     "The last index smaller than or equal to the given 
-     [[end index|to]] at which the given substring occurs in 
-     this string, if any, or `-1` otherwise.
+     [[end index|to]] at which the given substring 
+     occurs in this string, if any, or `-1` otherwise.
      
-     For any `string` and `substring`, and for every index 
-     `from`:
+     For any `string` and `substring`, and for every 
+     index `from`:
      
          string.lastIndexOf(substring, from) 
             == string.lastInclusion(substring, string.size-from) 
                     else -1
          
-     _Note: this operation is provided to ease migration of
-     code written in other languages. It is more idiomatic 
-     to use [[lastInclusion]] where reasonable._"
+     _Note: this operation is provided to ease migration 
+     of code written in other languages. It is more 
+     idiomatic to use [[lastInclusion]] where 
+     reasonable._"
     see (`function lastInclusion`)
     since("1.3.0")
     shared native Integer lastIndexOf(
-        "The substring to find within this string"
+        "The substring to find within this string."
         String string,
-        "The inclusive start index"
+        "The inclusive start index."
         Integer to = size)
             => lastInclusion(string, size-to) else -1;
     
-    "Determines if this string occurs after the given string
-     in lexicographic order, returning `false` if the two
-     strings are equal."
+    "Determines if this string occurs after the given 
+     string in lexicographic order, returning `false` if 
+     the two strings are equal."
     shared actual native Boolean largerThan(String other)
             => super.largerThan(other);
     
-    "Determines if this string occurs before the given string
-     in lexicographic order, returning `false` if the two
-     strings are equal."
+    "Determines if this string occurs before the given 
+     string in lexicographic order, returning `false` if 
+     the two strings are equal."
     shared actual native Boolean smallerThan(String other)
             => super.smallerThan(other);
     
-    "Determines if this string occurs after the given string
-     in lexicographic order, returning `true` if the two
-     strings are equal."
+    "Determines if this string occurs after the given 
+     string in lexicographic order, returning `true` if 
+     the two strings are equal."
     shared actual native Boolean notSmallerThan(String other)
             => super.notSmallerThan(other);
     
-    "Determines if this string occurs before the given string
-     in lexicographic order, returning `true` if the two
-     strings are equal."
+    "Determines if this string occurs before the given 
+     string in lexicographic order, returning `true` if 
+     the two strings are equal."
     shared actual native Boolean notLargerThan(String other)
             => super.notLargerThan(other);
     

@@ -49,11 +49,11 @@ class MemberInterfaceImpl<in Container, out Type>(modelReference)
     }
 
     shared actual
-    Interface<Type> bind(Object container) {
+    Interface<Type> bind(Anything container) {
         if (!is Container container) {
             throw IncompatibleTypeException(
-                "Invalid container ``container``, expected type `` `Container` `` \
-                 but got `` type(container) ``");
+                "Invalid container ``container else "<null>"``, expected type \
+                 `` `Container` `` but got `` type(container) ``");
         }
         return bindSafe(container);
     }
