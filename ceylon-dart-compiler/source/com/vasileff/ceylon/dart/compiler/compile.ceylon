@@ -89,13 +89,13 @@ import com.vasileff.ceylon.dart.compiler.core {
     computeClassCaptures,
     isForDartBackend,
     moduleImportPrefix,
-    modelGenerator,
     generateMain,
     errorThrowingDScope,
     identifyMemoizedValues,
     topLevelVisitor,
     compilationContextual,
-    ctx
+    ctx,
+    generateRuntimeModel
 }
 import com.vasileff.ceylon.dart.compiler.dartast {
     DartCompilationUnitMember,
@@ -593,7 +593,7 @@ compileDartSP(
 
         try (compilationContextual.Using(CompilationContext(unit, []))) {
             // add model info
-            members.addAll(modelGenerator.generateRuntimeModel(mod, pkg));
+            members.addAll(generateRuntimeModel(mod, pkg));
 
             // add main function
             members.add(generateMain(errorThrowingDScope(pkg)));
