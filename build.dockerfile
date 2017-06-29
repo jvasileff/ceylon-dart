@@ -1,4 +1,7 @@
-FROM openjdk:8-jdk
+FROM openjdk:7-jdk-alpine
+
+# Make wget work on the openjdk:7-jdk-alpine image
+RUN apk --no-cache add openssl
 
 # Install Ceylon 1.3.2
 WORKDIR /ceylon
