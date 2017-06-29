@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Resolve links: $0 may be a link
+PRG="$0"
+# Need this for relative symlinks.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`" >/dev/null
+APP_HOME="`pwd -P`"
+cd "$SAVED" >/dev/null
+
+# optionally, the 'openjdk:8-jdk' image can be used for a 100% clean
+# build (no cached deps)
+
+# the following creates or refreshes an image with cached dependencies, then
+# uses it to execute ./gradlew with arguments from the commandline
+docker build \
+    --tag ceylon-dart-build \
+    -f "$APP_HOME"/build.dockerfile \
+    "$APP_HOME" \
+&& docker run --rm \
+    -v "$APP_HOME":/project \
+    -w /project \
+    ceylon-dart-build \
+    ./gradlew --no-daemon "$@"
+
