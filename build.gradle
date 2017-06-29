@@ -330,7 +330,12 @@ project('ceylon-dart-cli') {
 
 }
 
-wrapper {
-    jarFile 'buildSrc/wrapper/gradle-wrapper.jar'
+// TODO don't require install for tests to work
+//      need to pass repository
+//      project(":ceylon-dart-language").file("build/modules-dart/main")
+//      to testCompile(), testModuleCompile()
+project('ceylon-dart-compiler').ceylonTest {
+    dependsOn project(":ceylon-dart-language").install
+    //dependsOn project(":ceylon-dart-language").compileCeylonDart
 }
 
