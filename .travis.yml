@@ -24,15 +24,23 @@ addons:
     secret:
       secure: ohk2xkjMWCGQWdrRhfg+mHpOcypfTwBXbs+X8EC15CwPfOaCZyyjUju3dzLH2exw+R7CigjCimYc6eq99i1I1jfUi82VjR0hNGAv/iywDXFW1C7eEJxSj8906FWCseI6fuPT+MqVA7KfssvjQLgd6HcXwYa1fKU0Rvrrdqni1vXo8hS3Xdj1rZpHWg3eenJ1fU1o2SsgE8Fb1vw9jvMY+q4MRr7jCzbJzv5v7g8YAt2tYVL/R+nW77FpToI1roZ+7+TGg2yI+s5hCIgzCM0b8Vs1N93H6VFvhCX/Un72ltrLJfAJog8LytrwKwsOjZVn4irr2fAImn4UqGHgEF8UTWxWTbEouBWUCkbkEY1Qiou89pph9zu5jvFslq60KY0qR9J25DjU+wfHTbFPRfostlQO0v6k+p7tqqKh85f2u1lCugH13Lf+LBI1xX3R/Aaq+JqxREnEm/HRwNwtj8FaiYaFA/VcfUJEpmyhXnb+BsEaFd5MD326KHxc2xjl3V9P+mZcPfFLfw9zsddcqERx+YCbXy1PKAY/Y7bAM82v3INuC/MrSHvbbc6V8/2jEA+viDphLGu+DxvXNUi8ujdzNH1WP6MwMF2XikuxyRJDg6XyzLf7MA12cgiwhnmlusTl/rLA6lLX/L60RApHWUkx1v5MrDJccxX/gNBzkKZZrYU=
 install:
-  - wget --quiet --output-document=/tmp/ceylon.zip $CEYLON
-  - unzip -q /tmp/ceylon.zip
-  - export PATH=$PATH:$PWD/ceylon-1.3.2/bin/
-  - export CEYLON_HOME=$PWD/ceylon-1.3.2
+  - wget --quiet --output-document=/tmp/archive.zip "$CEYLON_DIST"
+  - unzip -q /tmp/archive.zip
+  - unzip -q $PWD/archive/ceylon/dist/ceylon-1.3.3-SNAPSHOT*.zip
+  - export PATH=$PATH:$PWD/ceylon-1.3.3-SNAPSHOT/bin/
+  - export CEYLON_HOME=$PWD/ceylon-1.3.3-SNAPSHOT
+  - wget --quiet --output-document=/tmp/sdk.zip "$CEYLON_SDK"
+  - unzip -q /tmp/sdk.zip
+  - mkdir -p $TRAVIS_BUILD_DIR/.ceylon
+  - echo -e "\n[repository \"sdk\"]\nurl=$PWD/archive/modules\n[repositories]\nremote=+sdk" >> $TRAVIS_BUILD_DIR/.ceylon/config
+  - echo -e '\n[repository "s3"]\nurl=https://ceylon.vasileff.com/modules\n[repositories]\nremote=+s3' >> $TRAVIS_BUILD_DIR/.ceylon/config
+  - ceylon --version
 script:
   - ./gradlew build
 env:
   global:
-    - CEYLON="http://ceylon-lang.org/download/dist/1_3_2"
+    - CEYLON_DIST="https://ci-ceylon.rhcloud.com/job/ceylon-distribution/lastSuccessfulBuild/artifact/*zip*/archive.zip"
+    - CEYLON_SDK="https://ci-ceylon.rhcloud.com/job/ceylon-sdk/lastSuccessfulBuild/artifact/*zip*/archive.zip"
     - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
     - JAVA_OPTS="-Xmx3g"
 
