@@ -74,7 +74,7 @@ class RegexDart(expression, global = false, ignoreCase = false, multiLine = fals
         return CeylonIterable(allParts).map(Object.string).sequence();
     }
 
-    shared actual String replace(String input, String replacement)
+    shared actual String replaceDollarSignPattern(String input, String replacement)
         =>  if (global)
             then dartString(input).replaceAll(ex, replacement)
             else dartString(input).replaceFirst(ex, replacement);

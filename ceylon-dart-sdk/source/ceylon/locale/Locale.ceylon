@@ -183,11 +183,11 @@ shared Locale? locale(String tag) {
  locale of the current system."
 see (`value system.locale`)
 shared Locale systemLocale {
-    "locale data for current locale must exist"
+    "locale data for current locale ``system.locale`` must exist"
     assert (exists systemLocaleCache);
     return systemLocaleCache;
 }
 
 Locale? systemLocaleCache = locale(system.locale);
 
-Module localeModule = `module ceylon.locale`;
+Module localeModule = `module`;

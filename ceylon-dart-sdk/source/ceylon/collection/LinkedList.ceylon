@@ -781,14 +781,12 @@ shared serializable class LinkedList<Element>
 
     shared actual 
     Integer hash {
-        variable Integer hash = 17;
+        variable value hash = 1;
         variable value iter = head;
         while (exists cell = iter) {
+            hash *= 31;
             if (exists car = cell.element) {
-                hash = hash * 31 + car.hash;
-            }
-            else {
-                hash = hash * 31;
+                hash += car.hash;
             }
             iter = cell.rest;
         }
@@ -797,40 +795,38 @@ shared serializable class LinkedList<Element>
 
     shared actual 
     Boolean equals(Object that) {
-        if (is List<Anything> that,
-            length == that.size) {
-            variable value iter = head;
-            variable value iter2 = that.iterator();
-            while (exists cell = iter) {
-                if (!is Finished thatElement 
-                        = iter2.next()) {
-                    value thisElement=cell.element;
-                    if (exists thatElement) {
-                        if (exists thisElement,
-                            thisElement==thatElement) {
-                            iter = cell.rest;
-                        }
-                        else {
-                            return false;
-                        }
+        if (is LinkedList<Anything> that) {
+            if (this===that) {
+                return true;
+            }
+            if (this.length!=that.length) {
+                return false;
+            }
+            variable value thisIter = this.head;
+            variable value thatIter = that.head;
+            while (exists thisCell = thisIter,
+                   exists thatCell = thatIter) {
+                value thisElement = thisCell.element;
+                value thatElement = thatCell.element;
+                if (exists thisElement) {
+                    if (!exists thatElement) {
+                        return false;
                     }
-                    else {
-                        if (exists thisElement) {
-                            return false;
-                        }
-                        else {
-                            iter = cell.rest;
-                        }
+                    else if (thisElement!=thatElement) {
+                        return false;
                     }
-
                 }
-                else {
+                else if (thatElement exists) {
                     return false;
                 }
+                thisIter = thisCell.rest;
+                thatIter = thatCell.rest;
             }
             return true;
         }
-        return false;
+        else {
+            return (super of List<>).equals(that);
+        }
     }
     
     shared actual 
@@ -897,10 +893,11 @@ shared serializable class LinkedList<Element>
     }
     
     shared actual 
-    Result[] collect<Result>(
+    [Result+]|[] collect<Result>(
             "The transformation applied to the elements."
             Result collecting(Element element))
-            => [for (element in this) collecting(element)];
+            => [for (element in this) collecting(element)]
+                    of [Result+]|[];
 
     first => head?.element;
 

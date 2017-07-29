@@ -553,10 +553,52 @@ shared serializable class ArrayList<Element>
     
     lastIndex => length >= 1 then length - 1;
 
-    equals(Object that) 
-            => (super of List<Element>).equals(that);
+    shared actual
+    Boolean equals(Object that) {
+        if (is ArrayList<Anything> that) {
+            if (this===that) {
+                return true;
+            }
+            if (this.length!=that.length) {
+                return false;
+            }
+            for (index in 0:length) {
+                value thisElement
+                        = this.array.getFromFirst(index);
+                value thatElement
+                        = that.array.getFromFirst(index);
+                if (exists thisElement) {
+                    if (!exists thatElement) {
+                        return false;
+                    }
+                    else if (thisElement!=thatElement) {
+                        return false;
+                    }
+                }
+                else if (thatElement exists) {
+                    return false;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return (super of List<>).equals(that);
+        }
+    }
 
-    hash => (super of List<Element>).hash;
+    shared actual
+    Integer hash {
+        variable value hash = 1;
+        for (index in 0:length) {
+            hash *= 31;
+            if (exists elem = array.getFromFirst(index)) {
+                hash += elem.hash;
+            }
+        }
+        return hash;
+    }
 
     push(Element element) => add(element);
 

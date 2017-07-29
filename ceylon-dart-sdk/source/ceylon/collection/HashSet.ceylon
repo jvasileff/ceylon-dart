@@ -340,8 +340,8 @@ shared serializable class HashSet<Element>
     }
     
     shared actual Integer hash {
-        variable Integer index = 0;
-        variable Integer hash = 0;
+        variable value index = 0;
+        variable value hash = 0;
         // walk every bucket
         while (index < store.size) {
             variable value bucket = store[index];
@@ -355,9 +355,12 @@ shared serializable class HashSet<Element>
     }
     
     shared actual Boolean equals(Object that) {
-        if (is Set<Object> that,
-            size == that.size) {
-            variable Integer index = 0;
+        if (is HashSet<Anything> that,
+            this===that) {
+            return true;
+        }
+        else if (is Set<> that, that.size==length) {
+            variable value index = 0;
             // walk every bucket
             while (index < store.size) {
                 variable value bucket = store[index];
@@ -371,7 +374,9 @@ shared serializable class HashSet<Element>
             }
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
     
     shared actual HashSet<Element> clone() => copy(this);

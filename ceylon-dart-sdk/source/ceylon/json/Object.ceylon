@@ -51,13 +51,10 @@ shared class Object({<String->Value>*} values = {})
     
     hash => contents.hash;
     
-    shared actual Boolean equals(LangObject that) {
-        if(is Object that){
-            return this === that || 
-                    contents == that.contents;
-        }
-        return false;
-    }
+    equals(LangObject that)
+            => if(is Object that)
+            then this === that || contents == that.contents
+            else contents == that;
     
     // auto-casting
     
@@ -80,13 +77,18 @@ shared class Object({<String->Value>*} values = {})
         "If the key dot not exist or points to a type that 
          is not [[Float]].")
     shared Float getFloat(String key){
-        value val = get(key);
-        if(is Float val){
+        switch (val = get(key))
+        case(is Float){
             return val;
         }
-        throw InvalidTypeException(
-            "Expecting a Float but got: `` 
-            val else "null" ``");
+        case (is Integer){
+            return val.nearestFloat;
+        }
+        else {
+            throw InvalidTypeException(
+                "Expecting a Float but got: ``
+                val else "null"``");
+        }
     }
 
     "Returns an [[Boolean]] value."
@@ -169,9 +171,15 @@ shared class Object({<String->Value>*} values = {})
         "If the key points to a type that is neither 
          [[Float]] nor [[Null]].")
     shared Float? getFloatOrNull(String key){
-        value val = get(key);
-        if(is Float? val){
+        switch (val = get(key))
+        case (null) {
+            return null;
+        }
+        case(is Float){
             return val;
+        }
+        case (is Integer){
+            return val.nearestFloat;
         }
         else {
             throw InvalidTypeException(
