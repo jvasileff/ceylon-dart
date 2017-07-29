@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OUTPUT_REPOSITORY="/tmp/modules"
-VERSION="1.3.2-DP4"
+VERSION="1.3.3-DP5"
 
 ceylon copy --verbose=files --all --scripts \
     --no-default-repositories \
