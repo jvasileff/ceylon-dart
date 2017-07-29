@@ -1,3 +1,6 @@
+// workaround https://github.com/ceylon/ceylon.ast/issues/134
+import ceylon.language { e=empty }
+
 "A sequence with no elements. The type `Empty` may be
  abbreviated `[]`, and an instance is produced by the 
  expression `[]`. That is, in the following expression,
@@ -9,7 +12,7 @@
  depends upon how it occurs grammatically.)"
 see (`interface Sequence`)
 tagged("Sequences")
-shared interface Empty of package.empty
+shared interface Empty of e // workaround https://github.com/ceylon/ceylon.ast/issues/134
            satisfies Nothing[] &
                      Ranged<Integer,Nothing,[]> {
     
