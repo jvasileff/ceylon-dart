@@ -893,14 +893,17 @@ shared interface Iterable<out Element=Anything,
      according to the natural order of its elements."
     see (`function increasing`, `function decreasing`,
          `function byIncreasing`, `function byDecreasing`,
-         `function package.comparing`)
+         `function package.comparing`, 
+         `function package.sort`)
     shared default 
-    Element[] sort(
+    [Element+] | []&Iterable<Element,Absent> sort(
         "The function comparing pairs of elements."
         Comparison comparing(Element x, Element y)) {
         value array = Array(this);
         if (array.empty) {
-            return [];
+            "nonempty stream has no elements"
+            assert (is Iterable<Element,Absent> empty = []);
+            return empty;
         }
         else {
             array.sortInPlace(comparing);
@@ -918,7 +921,7 @@ shared interface Iterable<out Element=Anything,
          it.collect(f) == [*it.map(f)]"
     see (`function map`)
     shared default 
-    Result[] collect<Result>(
+    [Result+] | []&Iterable<Result,Absent> collect<Result>(
         "The transformation applied to the elements."
         Result collecting(Element element)) 
             => map(collecting).sequence();
@@ -1418,7 +1421,43 @@ shared interface Iterable<out Element=Anything,
             => object 
             satisfies Iterable<Element|Other,
                                Absent&OtherAbsent> {
-        iterator() => ChainedIterator(outer, other);
+
+        empty => outer.empty && other.empty;
+
+        size => outer.size + other.size;
+        
+        any(Boolean selecting(Element|Other element))
+                => outer.any(selecting)
+                || other.any(selecting);
+
+        contains(Object element)
+                => outer.contains(element)
+                || other.contains(element);
+
+        count(Boolean selecting(Element|Other element))
+                => outer.count(selecting)
+                + other.count(selecting);
+
+        shared actual
+        void each(void step(Element|Other element)) {
+            outer.each(step);
+            other.each(step);
+        }
+
+        every(Boolean selecting(Element|Other element))
+                => outer.every(selecting)
+                && other.every(selecting);
+
+        find(Boolean selecting(<Element|Other>&Object element))
+                => outer.find(selecting)
+                else other.find(selecting);
+
+        findLast(Boolean selecting(<Element|Other>&Object element))
+                => other.findLast(selecting)
+                else outer.findLast(selecting);
+
+        iterator()
+                => ChainedIterator(outer, other);
     };
     
     "A stream of pairs of elements of this stream and the 

@@ -133,7 +133,12 @@ shared interface List<out Element=Anything>
     "The rest of the list, without the first element.
      
      This is a lazy operation returning a view of this list."
-    shared actual default List<Element> rest => Rest(1);
+    shared actual default List<Element> rest 
+            => size>1 then Sublist(1,size-1) else [];
+    
+    //TODO: refine type of List.exceptLast
+    //shared actual default List<Element> exceptLast 
+    //        => size>1 then Sublist(0, size-2) else [];
     
     "A list containing all indexes of this list.
      
@@ -190,32 +195,30 @@ shared interface List<out Element=Anything>
         if (is String that) {
             return false;
         }
-        if (is List<> that) {
-            if (that.size==size) {
-                for (index in 0:size) {
-                    value x = getFromFirst(index);
-                    value y = that.getFromFirst(index);
-                    if (exists x) {
-                        if (exists y) {
-                            if (x!=y) {
-                                return false;
-                            }
-                        }
-                        else {
-                            return false;
-                        }
+        else if (is List<> that) {
+            if (this.size != that.size) {
+                return false;
+            }
+            value thisIterator = this.iterator();
+            value thatIterator = that.iterator();
+            for (_ in 0:size) {
+                value thisElement = thisIterator.next();
+                value thatElement = thatIterator.next();
+                if (exists thisElement) {
+                    if (!exists thatElement) {
+                        return false;
                     }
-                    else if (exists y) {
+                    else if (thisElement != thatElement) {
                         return false;
                     }
                 }
-                else {
-                    return true;
+                else if (thatElement exists) {
+                    return false;
                 }
             }
             else {
-                return false;
-            }
+                return true;
+            } 
         }
         else {
             return false;
@@ -247,7 +250,11 @@ shared interface List<out Element=Anything>
      
      This is a lazy operation returning a view of this list."
     shared actual default 
-    List<Element> repeat(Integer times) => Repeat(times);
+    List<Element> repeat(Integer times)
+            => switch (times<=>1) 
+            case (smaller) []
+            case (equal) this
+            case (larger) Repeat(times);
     
     shared default actual 
     Element? find(
@@ -280,32 +287,40 @@ shared interface List<out Element=Anything>
      the given [[index|from]].
      
      This is a lazy operation, returning a view of this list."
-    see (`function skip`)
+    see (`function skip`, 
+         `function sublistTo`)
     since("1.1.0")
     shared default 
     List<Element> sublistFrom(Integer from) 
-            => from<=0 then this else Rest(from); 
+            => sublist(from, size-1);
     
     "A sublist of this list, ending at the element with the 
      given [[index|to]].
      
      This is a lazy operation, returning a view of this list."
     see (`function take`,
-        `function initial`)
+        `function initial`,
+        `function sublistFrom`)
     since("1.1.0")
     shared default 
     List<Element> sublistTo(Integer to) 
-            => to<0 then [] else Sublist(to);
+            => sublist(0, to);
     
     "A sublist of this list, starting at the element with
      index [[from]], ending at the element with the index 
      [[to]].
      
      This is a lazy operation, returning a view of this list."
+    see(`function sublistTo`, `function sublistFrom`)
     since("1.1.0")
     shared default 
-    List<Element> sublist(Integer from, Integer to) 
-            => sublistTo(to).sublistFrom(from);
+    List<Element> sublist(Integer from, Integer to)
+            => from<=to && from<size && to>=0
+            then Sublist {
+                from = Integer.largest(0, from); 
+                to = Integer.smallest(size-1, to);
+            }
+            else [];
     
     "Return a list formed by patching the given [[list]] 
      in place of a segment of this list identified by the
@@ -601,41 +616,23 @@ shared interface List<out Element=Anything>
     }
     
     shared actual default 
-    List<Element> spanFrom(Integer from) {
-        if (from<=0) {
-            return clone();
-        }
-        else if (from<size) {
-            return ArraySequence(Array(sublistFrom(from)));
-        }
-        else {
-            return [];
-        }
-    }
+    List<Element> spanFrom(Integer from)
+            => from<size then span(from, size-1) else [];
     
     shared actual default 
-    List<Element> spanTo(Integer to) {
-        if (to>=size-1) {
-            return clone();
-        }
-        else if (to>=0) {
-            return ArraySequence(Array(sublistTo(to)));
-        }
-        else {
-            return [];
-        }
-    }
+    List<Element> spanTo(Integer to) 
+            => to>=0 then span(0, to) else [];
 
     shared actual default
     List<Element> measure(Integer from, Integer length)
-        => if (length > 0)
-        then span(from, from + length - 1)
-        else [];
+            => length > 0 
+            then span(from, from+length-1) 
+            else [];
 
     "A sequence containing the results of applying the given 
      mapping to the elements of this list."
     shared default actual 
-    Result[] collect<Result>(
+    [Result+]|[] collect<Result>(
         "The transformation applied to the elements."
         Result collecting(Element element)) {
         if (empty) {
@@ -667,17 +664,8 @@ shared interface List<out Element=Anything>
         
         clone() => 0:size;
         
-        measure(Integer from, Integer length)
-                => clone()[from:length];
-        
         span(Integer from, Integer to)
                 => clone()[from..to];
-        
-        spanFrom(Integer from) 
-                => clone()[from...];
-        
-        spanTo(Integer to) 
-                => clone()[...to];
         
         string => if (exists endIndex=lastIndex)
             then "{ 0, ... , ``endIndex`` }"
@@ -692,108 +680,66 @@ shared interface List<out Element=Anything>
         
     }
     
-    class Rest(Integer from)
+    class Sublist(Integer from, Integer to) 
             extends Object()
             satisfies List<Element> {
         
-        assert (from>=0);
+        assert (from>=0, to>=0, from<=to);
         
-        sublistFrom(Integer from)
-                => if (from>0) 
-                then outer.Rest(from+this.from) 
-                else this;
+        first => outer[from];
+        last => outer[to];
         
-        getFromFirst(Integer index) 
-                => if (index<0)
-                then null 
-                else outer.getFromFirst(index+from);
+        size => to-from+1;
         
-        lastIndex 
-                => let (size = outer.size-from) 
-                    (size>0 then size-1);
+        lastIndex => to-from;
         
-        measure(Integer from, Integer length) 
-                => outer[from+this.from:length];
+        rest => size == 1 then [] 
+                else outer.Sublist(from+1, to);
         
-        span(Integer from, Integer to) 
-                => outer[from+this.from..to+this.from];
+        exceptLast => size == 1 then [] 
+                else outer.Sublist(from, to-1);
         
-        spanFrom(Integer from) 
-                => outer[from+this.from...];
-        
-        spanTo(Integer to) 
-                => outer[this.from..to+this.from];
-        
-        clone() => outer.clone().Rest(from);
+        getFromFirst(Integer index)
+                => if (0<=index<=to-from)
+                then outer.getFromFirst(index+from)
+                else null;
         
         iterator() 
                 => let (o = outer)
-            object satisfies Iterator<Element> {
-                variable value i=0;
-                next() => if (i < outer.size)
-                    then o.getElement(from + i++)
-                    else finished;
-                string => "``outer.string``.iterator()";
-            };
+                object satisfies Iterator<Element> {
+                    variable value i = from;
+                    next() => if (i <= to)
+                        then o.getElement(i++)
+                        else finished;
+                    string => "``outer.string``.iterator()";
+                };
+        
+        clone() => outer[from..to];
+        
+        sublist(Integer from, Integer to)
+                => outer.sublist {
+                    from = Integer.largest(from+this.from,this.from);
+                    to = Integer.smallest(to+this.from,this.to);
+                };
+                
+        span(Integer from, Integer to)
+                => from <= to 
+                then outer.span {
+                    from = Integer.largest(from+this.from,this.from);
+                    to = Integer.smallest(to+this.from,this.to);
+                }
+                else outer.span {
+                    from = Integer.smallest(from+this.from,this.to);
+                    to = Integer.largest(to+this.from,this.from);
+                };
         
     }
     
-    class Sublist(Integer to)
-            extends Object()
-            satisfies List<Element> {
-        
-        assert (to>=0);
-        
-        sublistTo(Integer to) 
-                => if (to<0) then [] 
-                else if (to<this.to) then outer.Sublist(to) 
-                else this;
-        
-        getFromFirst(Integer index)
-                => if (0<=index<=to)
-                then outer.getFromFirst(index)
-                else null;
-        
-        lastIndex 
-                => let (endIndex = outer.size-1) 
-                    (endIndex>=0 then
-                        (endIndex<to then endIndex else to));
-        
-        measure(Integer from, Integer length) 
-                => from+length-1>to 
-                    then outer[from:to] 
-                    else outer[from:length];
-        
-        span(Integer from, Integer to) 
-                => to>this.to
-                    then outer[from..this.to] 
-                    else outer[from..to];
-        
-        spanFrom(Integer from) 
-                => outer[from..to];
-        
-        spanTo(Integer to)
-                => to>this.to
-                    then outer[...this.to] 
-                    else outer[...to];
-        
-        clone() => outer.clone().Sublist(to);
-        
-        iterator() 
-                => let (iter = outer.iterator()) 
-            object satisfies Iterator<Element> {
-                variable value i=0;
-                next() => i++>to 
-                    then finished 
-                    else iter.next();
-                string => "``outer.string``.iterator()";
-            };
-        
-    }
-            
     class Repeat(Integer times)
             extends Object()
             satisfies List<Element> {
+        
+        assert (times>1);
         
         size => outer.size*times;
         
@@ -804,8 +750,8 @@ shared interface List<out Element=Anything>
         getFromFirst(Integer index) 
                 => let (size = outer.size) 
                     if (index<size*times) 
-                        then outer.getFromFirst(index%size)
-                        else null;
+                    then outer.getFromFirst(index%size)
+                    else null;
         
         clone() => outer.clone().Repeat(times);
         
@@ -872,38 +818,22 @@ shared interface List<out Element=Anything>
         
         reversed => outer;
         
+        function outerIndex(Integer index) => size-1-index;
+        
         getFromFirst(Integer index)
                 => if (size>0)
-                then outer.getFromFirst(size-1-index)
+                then outer.getFromFirst(outerIndex(index))
                 else null;
         
-        measure(Integer from, Integer length)
-                => if (size>0 && length>0)
-                then let (start = size-1-from) 
-                    outer[start..start-length+1]
-                else [];
-        
         span(Integer from, Integer to) 
-                => outer[to..from];
-        
-        spanFrom(Integer from) 
-                => let (endIndex = size-1) 
-                    if (endIndex>=0, from<=endIndex) 
-                        then outer[endIndex-from..0]
-                        else [];
-        
-        spanTo(Integer to)
-                => let (endIndex = size-1) 
-                    if (endIndex>=0 && to>=0)
-                        then outer[endIndex..endIndex-to]
-                        else [];
+                => outer[outerIndex(from)..outerIndex(to)];
         
         clone() => outer.clone().reversed;
         
         iterator() 
                 => let (outerList = outer) 
             object satisfies Iterator<Element> {
-                variable value index=outerList.size-1;
+                variable value index = outerIndex(0);
                 next() => index<0 
                     then finished 
                     else outerList.getElement(index--);

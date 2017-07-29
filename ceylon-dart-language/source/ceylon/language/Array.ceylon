@@ -291,7 +291,7 @@ class Array<Element>
      sequence. This operation has no side-effect, and does
      not modify the array."
     shared actual native 
-    Element[] sort(
+    [Element+]|[] sort(
         "A comparison function that compares pairs of
          elements of this array."
         Comparison comparing(Element x, Element y));
@@ -732,7 +732,7 @@ final serializable class Array<Element>
     }
 
     shared actual native("dart")
-    Sequential<Element> sort(Comparison comparing(Element x, Element y)) {
+    [Element+]|[] sort(Comparison comparing(Element x, Element y)) {
         value result = list.toList();
         result.sort(dartComparator(comparing));
         return ArraySequence<Element>(Array.withList(result));

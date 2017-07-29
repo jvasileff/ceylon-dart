@@ -103,6 +103,7 @@ shared native final class String
      representation of 
      \{LATIN CAPITAL LETTER I WITH DOT ABOVE} is two 
      characters wide."
+    see (`value String.uppercased`)
     shared native String lowercased;
     
     "This string, with all characters in uppercase.
@@ -118,6 +119,7 @@ shared native final class String
      multiple characters, for example the uppercase 
      representation of \{LATIN SMALL LETTER SHARP S} is 
      SS."
+    see (`value String.lowercased`)
     shared native String uppercased;
     
     "Split the string into tokens, using the given 
@@ -208,6 +210,10 @@ shared native final class String
     
     "The rest of the string, without its first character."
     shared actual native String rest;
+    
+    "This string, without its last character."
+    since("1.3.3")
+    shared actual native String exceptLast;
     
     "A sequence containing all indexes of this string."
     shared actual native Integer[] keys => 0:size;
@@ -421,7 +427,10 @@ shared native final class String
      `string.measure(from, length)` may be written as
      `string[from:length]`."
     shared native actual String measure(Integer from, 
-                                        Integer length);
+                                        Integer length)
+            => length > 0 
+            then span(from, from+length-1) 
+            else "";
     
     "Select the first characters of this string, 
      returning a string no longer than the given 
@@ -976,8 +985,12 @@ shared native final class String
     shared actual native Boolean notLargerThan(String other)
             => super.notLargerThan(other);
     
-    shared actual native List<Character> sublistFrom(Integer from);
-    shared actual native List<Character> sublistTo(Integer to);
+    shared actual native List<Character> sublist(Integer from, Integer to)
+            => super.sublist(from, to);
+    shared actual native List<Character> sublistFrom(Integer from)
+            => super.sublistFrom(from);
+    shared actual native List<Character> sublistTo(Integer to)
+            => super.sublistTo(to);
     
     shared actual native {Integer*} indexesWhere(Boolean selecting(Character element));
     shared actual native Integer? firstIndexWhere(Boolean selecting(Character element));

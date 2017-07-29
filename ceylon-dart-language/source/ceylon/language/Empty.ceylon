@@ -1,5 +1,3 @@
-import ceylon.language { e=empty }
-
 "A sequence with no elements. The type `Empty` may be
  abbreviated `[]`, and an instance is produced by the 
  expression `[]`. That is, in the following expression,
@@ -11,7 +9,7 @@ import ceylon.language { e=empty }
  depends upon how it occurs grammatically.)"
 see (`interface Sequence`)
 tagged("Sequences")
-shared interface Empty of e
+shared interface Empty of package.empty
            satisfies Nothing[] &
                      Ranged<Integer,Nothing,[]> {
     
@@ -48,6 +46,10 @@ shared interface Empty of e
     "Returns `[]`."
     shared actual [] sequence() => this;
     
+    "Returns `[]`."
+    since("1.3.3")
+    shared actual [] tuple() => this;
+    
     "Returns a string description of the empty sequence: 
      `[]`."
     shared actual String string => "[]";
@@ -63,6 +65,10 @@ shared interface Empty of e
     
     "Returns `[]`."
     shared actual [] rest => this;
+    
+    "Returns `[]`."
+    since("1.3.3")
+    shared actual [] exceptLast => this;
     
     "Returns `[]`."
     shared actual [] clone() => this;

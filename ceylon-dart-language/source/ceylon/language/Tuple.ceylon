@@ -94,38 +94,44 @@ class Tuple<out Element, out First, out Rest = []>
         if (length <= 0) {
             return [];
         }
-        Integer realFrom = from < 0 then 0 else from;
+        value realFrom = from < 0 then 0 else from;
         if (realFrom == 0) {
             return length == 1 
                     then [first]
-                    else rest[0 : length + realFrom - 1]
+                    else rest[0 : length+realFrom-1]
                             .withLeading(first);
         }
-        return rest[realFrom - 1 : length];
+        return rest[realFrom-1 : length];
     }
     
     shared actual native 
     Element[] span(Integer from, Integer end) {
-        if (from < 0 && end < 0) { return []; }
-        Integer realFrom = from < 0 then 0 else from;
-        Integer realEnd = end < 0 then 0 else end;
+        if (from < 0 && end < 0) {
+            return [];
+        }
+        value realFrom = from < 0 then 0 else from;
+        value realEnd = end < 0 then 0 else end;
         return realFrom <= realEnd 
-            then this[from : realEnd - realFrom + 1]
-            else this[realEnd : realFrom - realEnd + 1]
+            then this[from : realEnd-realFrom+1]
+            else this[realEnd : realFrom-realEnd+1]
                         .reversed.sequence();
     }
     
     shared actual native 
     Element[] spanTo(Integer to)
-            => to < 0 then [] else span(0, to);
+            => to<0 then [] else this[0..to];
     
     shared actual native 
     Element[] spanFrom(Integer from)
-            => span(from, size);
+            => from<size then this[from..lastIndex] else [];
     
     "This tuple."
     shared actual native 
     Tuple<Element,First,Rest> clone() => this;
+    
+    since("1.3.3")
+    shared actual native 
+    Tuple<Element,First,Rest> tuple() => this;
     
     shared actual native 
     Iterator<Element> iterator() 
@@ -319,4 +325,17 @@ class BaseTuple<out Element, out First, out Rest = []>
             =   tupleWithList(list, restSequence.append(elements)));
         return result;
     }
+}
+
+"Efficiently repackage the given array as a [[Tuple]]."
+throws (`class AssertionError`, 
+        "if the given array is empty")
+native [Element+] arrayToTuple<Element>(Array<Element> array) {
+    variable Element[] tuple = [];
+    for (element in array.reversed) {
+        tuple = [element, *tuple];
+    }
+    "array must not be empty"
+    assert (nonempty result = tuple);
+    return result;
 }

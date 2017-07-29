@@ -38,6 +38,27 @@ shared final sealed annotation class SharedAnnotation()
 shared annotation SharedAnnotation shared()
         => SharedAnnotation();
 
+"The annotation class for the [[restricted]] annotation."
+since("1.3.3")
+shared final sealed annotation class RestrictedAnnotation(
+    "The modules to which this declaration is visible."
+    Module* modules)
+        satisfies OptionalAnnotation<RestrictedAnnotation,
+                    FunctionOrValueDeclaration
+                  | ClassOrInterfaceDeclaration
+                  | ConstructorDeclaration
+                  | Package> {}
+
+"Annotation to restrict the visibility of a declaration or
+ package to a given list of [[modules]]. If no modules are 
+ specified, a `restricted` declaration is only visible 
+ within the package in which it is defined."
+since("1.3.3")
+shared annotation RestrictedAnnotation restricted(
+    "The modules to which this declaration is visible."
+    Module* modules)
+        => RestrictedAnnotation(*modules);
+
 "The annotation class for the [[variable]] annotation."
 shared final sealed annotation class VariableAnnotation()
         satisfies OptionalAnnotation<VariableAnnotation,
@@ -214,8 +235,8 @@ shared annotation LateAnnotation late()
 "The annotation class for the [[native]] annotation."
 shared final sealed annotation class NativeAnnotation(backends)
         satisfies OptionalAnnotation<NativeAnnotation> {
-    "The compiler backend that this native annotation applies 
-     to, or the empty string to declare the annotated element 
+    "The compiler backend(s) that this native annotation applies 
+     to, or the empty sequence to declare the annotated element 
      is a native header."
     since("1.2.0")
     shared String* backends;
@@ -458,7 +479,8 @@ shared annotation SuppressWarningsAnnotation suppressWarnings(
      `unusedImport`,
      `redundantImportAlias`,
      `ceylonNamespace`,
-     `javaNamespace,` 
+     `javaNamespace`, 
+     `packageName`,
      `hidesLanguageModifier`,
      `suppressedAlready`, 
      `suppressesNothing`, 

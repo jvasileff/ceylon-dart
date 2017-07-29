@@ -22,7 +22,7 @@ shared native object language {
     shared native String versionQualifier => "SNAPSHOT";
     
     "The Ceylon language release name."
-    shared native String versionName => "Contents May Differ";
+    shared native String versionName => "Contents May Differ REL"/*@CEYLON_VERSION_NAME@*/;
     
     "The major version of the code generated for the 
      underlying runtime."
@@ -46,9 +46,9 @@ shared native("jvm") object language {
 
 shared native("js") object language {
     
-    shared native("js") Integer majorVersionBinary => 9;
+    shared native("js") Integer majorVersionBinary => 10;
     
-    shared native("js") Integer minorVersionBinary => 1;
+    shared native("js") Integer minorVersionBinary => 0;
     
 }
 
@@ -58,7 +58,7 @@ shared native("dart") object language {
     shared native("dart") Integer minorVersion => 3;
     shared native("dart") Integer releaseVersion => 3;
     shared native("dart") String versionQualifier => "SNAPSHOT";
-    shared native("dart") String versionName => "Contents May Differ";
+    shared native("dart") String versionName => "Contents May Differ REL"/*@CEYLON_VERSION_NAME@*/;
     shared native("dart") Integer majorVersionBinary => 8;
     shared native("dart") Integer minorVersionBinary => 0;
     shared actual native("dart") String string => "language";

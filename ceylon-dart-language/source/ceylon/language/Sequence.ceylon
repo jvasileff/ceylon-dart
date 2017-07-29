@@ -69,8 +69,42 @@ shared sealed interface Sequence<out Element=Anything>
     "This nonempty sequence."
     shared actual default [Element+] sequence() => this;
     
+    since("1.3.3")
+    shared actual default [Element+] tuple() 
+            => arrayToTuple(Array(this));
+    
     "The rest of the sequence, without the first element."
-    shared actual formal Element[] rest;
+    shared actual default Element[] rest 
+            => size > 1 
+            then Subsequence(1, lastIndex) 
+            else [];
+    
+    "This sequence, without the last element."
+    since("1.3.3")
+    shared actual default Element[] exceptLast 
+            => size > 1 
+            then Subsequence(0, lastIndex-1) 
+            else [];
+    
+    since("1.3.3")
+    shared actual default 
+    Element[] sublist(Integer from, Integer to) 
+            => from<=to && from<=lastIndex && to>=0
+            then Subsequence {
+                from = Integer.largest(0, from);
+                to = Integer.smallest(lastIndex, to); 
+            }
+            else [];
+    
+    since("1.3.3")
+    shared actual default 
+    Element[] sublistTo(Integer to) 
+            => sublist(0, to);
+    
+    since("1.3.3")
+    shared actual default 
+    Element[] sublistFrom(Integer from)
+            => sublist(from, size-1);
     
     "A sequence containing the elements of this sequence in
      reverse order to the order in which they occur in this
@@ -81,7 +115,10 @@ shared sealed interface Sequence<out Element=Anything>
      this sequence the given [[number of times|times]], or
      the [[empty sequence|empty]] if `times<=0`."
     shared default actual Element[] repeat(Integer times) 
-            => times>0 then Repeat(times) else [];
+            => switch (times<=>1) 
+            case (smaller) []
+            case (equal) this
+            case (larger) Repeat(times);
     
     "This nonempty sequence."
     shared actual default [Element+] clone() => this;
@@ -182,12 +219,6 @@ shared sealed interface Sequence<out Element=Anything>
             => [this[...index-1], this[index...]];
     
     shared actual default 
-    Element[] measure(Integer from, Integer length) 
-            => if (length > 0)
-            then span(from, from + length - 1)
-            else [];
-    
-    shared actual default 
     Element[] span(Integer from, Integer to) {
         if (from <= to) {
             return
@@ -211,11 +242,17 @@ shared sealed interface Sequence<out Element=Anything>
     
     shared actual default 
     Element[] spanFrom(Integer from)
-            => span(from, size);
+            => from<size then span(from, size-1) else [];
     
     shared actual default 
     Element[] spanTo(Integer to)
-            => span(-1, to);
+            => to>=0 then span(0, to) else [];
+    
+    shared actual default 
+    Element[] measure(Integer from, Integer length) 
+            => length > 0
+            then span(from, from+length-1)
+            else [];
     
     shared actual default 
     String string => (super of Sequential<Element>).string;
@@ -237,38 +274,21 @@ shared sealed interface Sequence<out Element=Anything>
         size => outer.size;
         first => outer.last;
         last => outer.first;
-        rest => size==1 then [] else outer[size-2..0]; //TODO optimize!
         
         reversed => outer;
         
-        getFromFirst(Integer index) 
-                => outer.getFromFirst(size-1-index);
+        function outerIndex(Integer index) => size-1-index;
         
-        measure(Integer from, Integer length) 
-                => if (length>0)
-                    then let (start = size-1-from)
-                        outer[start..start-length+1]
-                    else [];
+        getFromFirst(Integer index) 
+                => outer.getFromFirst(outerIndex(index));
         
         span(Integer from, Integer to) 
-                => outer[to..from];
-        
-        spanFrom(Integer from) 
-                => let (endIndex = size-1)
-                    if (from<=endIndex)
-                        then outer[endIndex-from..0]
-                        else [];
-        
-        spanTo(Integer to)
-                => if (to>=0) 
-                    then let (endIndex = size-1) 
-                        outer[endIndex..endIndex-to]
-                    else [];
+                => outer[outerIndex(from)..outerIndex(to)];
         
         iterator() 
                 => let (outerList = outer) 
             object satisfies Iterator<Element> {
-                variable value index = outerList.size-1;
+                variable value index = outerIndex(0);
                 next() => index<0 
                     then finished 
                     else outerList.getElement(index--);
@@ -281,13 +301,13 @@ shared sealed interface Sequence<out Element=Anything>
             extends Object()
             satisfies [Element+] {
         
-        assert (times>0);
+        assert (times>1);
         
         last => outer.last;
-        
         first => outer.first;
         size => outer.size*times;
-        rest => sublistFrom(1).sequence(); //TODO!
+        
+        //rest => outer.rest.append(outer.repeat(times-1));
         
         getFromFirst(Integer index)
                 => let (size = outer.size)
@@ -296,6 +316,65 @@ shared sealed interface Sequence<out Element=Anything>
                         else null;
         
         iterator() => CycledIterator(outer,times);
+        
+    }
+    
+    class Subsequence(Integer from, Integer to)
+            extends Object()
+            satisfies [Element+] {
+        
+        assert (from>=0, to>=0, from<=to);
+        
+        shared actual Element first {
+            if (exists first = outer[from]) {
+                return first;
+            }
+            else {
+                assert (is Element null);
+                return null;
+            }
+        }
+        shared actual Element last {
+            if (exists last = outer[to]) {
+                return last;
+            }
+            else {
+                assert (is Element null);
+                return null;
+            }
+        }
+        
+        size => to-from+1;
+        
+        rest => size == 1 then [] 
+                else outer.Subsequence(from+1, to);
+        
+        exceptLast => size == 1 then [] 
+                else outer.Subsequence(from, to-1);
+        
+        getFromFirst(Integer index)
+                => if (0<=index<=to-from)
+                then outer.getFromFirst(index+from)
+                else null;
+        
+        iterator() => outer.take(to+1).skip(from).iterator();
+        
+        sublist(Integer from, Integer to)
+                => outer.sublist {
+                    from = Integer.largest(from+this.from,this.from);
+                    to = Integer.smallest(to+this.from,this.to);
+                };
+        
+        span(Integer from, Integer to)
+                => from<=to 
+                then outer.span {
+                    from = Integer.largest(from+this.from,this.from);
+                    to = Integer.smallest(to+this.from,this.to);
+                }
+                else outer.span {
+                    from = Integer.smallest(from+this.from,this.to);
+                    to = Integer.largest(to+this.from,this.from);
+                };
         
     }
     
@@ -336,7 +415,7 @@ class JoinedSequence<Element>
     first => firstSeq.first;
     last => secondSeq.last;
     
-    rest => firstSeq.rest.append(secondSeq);
+    //rest => firstSeq.rest.append(secondSeq);
     
     getFromFirst(Integer index)
             => let (cutover = firstSeq.size) 

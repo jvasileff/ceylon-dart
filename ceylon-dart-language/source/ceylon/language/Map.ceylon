@@ -195,12 +195,11 @@ shared interface Map<out Key=Object, out Item=Anything>
      equal iff they have same set of `keys`, and for every 
      key in the key set, the maps have equal items."
     shared actual default Boolean equals(Object that) {
-        if (is Map<Object,Anything> that,
-            that.size==size) {
+        if (is Map<> that, that.size==size) {
             for (key -> thisItem in this) {
                 value thatItem = that[key];
                 if (exists thisItem, exists thatItem) {
-                    if (thatItem!=thisItem) {
+                    if (thisItem!=thatItem) {
                         return false;
                     }
                 }
@@ -392,7 +391,8 @@ shared interface Map<out Key=Object, out Item=Anything>
         
         iterator()
                 => ChainedIterator(other,
-                        outer.filter(not(other.contains)));
+                        outer.filter((key -> _) 
+                            => !other.defines(key)));
         
     };
     

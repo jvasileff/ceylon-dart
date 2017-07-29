@@ -25,10 +25,31 @@ shared interface Sequential<out Element=Anything>
     shared actual default Integer[] keys => 0:size;
     
     "This sequence."
-    shared actual default [Element+]|[] sequence() => this of [Element+]|[];
+    shared actual default [Element+]|[] sequence() 
+            => this of [Element+]|[];
     
     "The rest of the sequence, without the first element."
     shared actual formal Element[] rest;
+    
+    "This sequence, without the last element."
+    since("1.3.3")
+    shared actual formal Element[] exceptLast;
+    
+    "A subsequence of this sequence, starting at the element 
+     with index [[from]], ending at the element with the 
+     index [[to]]."
+    since("1.3.3")
+    shared actual formal Element[] sublist(Integer from, Integer to);
+    
+    "A subsequence of this sequence, ending at the element 
+     with the given [[index|to]]."
+    since("1.3.3")
+    shared actual formal Element[] sublistTo(Integer to);
+    
+    "A subsequence of this sequence, starting at the element 
+     with the given [[index|from]]."
+    since("1.3.3")
+    shared actual formal Element[] sublistFrom(Integer from);
     
     "A sequence containing the elements of this sequence in
      reverse order to the order in which they occur in this
@@ -148,6 +169,20 @@ shared interface Sequential<out Element=Anything>
     since("1.1.0")
     shared formal 
     [Element|Other*] prepend<Other>(Other[] elements);
+    
+    "A [[Tuple]] with the same elements as this sequence.
+     
+     This operation makes it possible to narrow this 
+     sequence to a given static length, for example:
+     
+         assert (is String[3] bits 
+                    = string.split('/'.equals)
+                            .sequence()
+                            .tuple);
+         value [prefix, middle, postfix] = bits;"
+    since("1.3.3")
+    shared formal
+    Element[] tuple();
     
     "A string of form `\"[ x, y, z ]\"` where `x`, `y`, and 
      `z` are the `string` representations of the elements of 

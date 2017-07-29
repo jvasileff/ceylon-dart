@@ -1,13 +1,9 @@
-import ceylon.language {
-    seq=sequence
-}
 "A [[Sequence]] backed by an [[Array]]. 
  
  Since [[Array]]s are mutable, this class is private to the
  language module, where we can be sure the `Array` is not
  modified after the `ArraySequence` has been initialized."
 by ("Tom")
-see (`function seq`)
 shared sealed final
 serializable
 tagged("Collections", "Sequences")
@@ -49,11 +45,7 @@ class ArraySequence<out Element>(array)
         }
     }
     
-    rest => size == 1 
-        then [] 
-        else ArraySequence(array[1...]);
-    
-    clone() => ArraySequence(array.clone());
+    tuple() => arrayToTuple(array);
     
     each(void step(Element element)) => array.each(step);
     
@@ -76,9 +68,16 @@ class ArraySequence<out Element>(array)
     Result|Element reduce<Result>(
         Result accumulating(Result|Element partial, 
                             Element element)) {
-        assert (exists result 
-            = array.reduce(accumulating));
-        return result;
+        // cannot follow std pattern of narrowing null
+        // https://github.com/ceylon/ceylon/issues/7021
+        value result = array.reduce(accumulating);
+        if (exists result) {
+            return result;
+        }
+        else {
+            assert (is Result|Element result);
+            return result;
+        }
     }
 
     shared actual 

@@ -14,7 +14,7 @@ shared native abstract class Boolean
     tagged("Basic types")
     since("1.3.1")
     shared native static Boolean|ParseException parse(String string)
-            => package.parseBoolean(string) 
+            => parseBoolean(string) 
             else ParseException("illegal format for Boolean");
     
     shared native new () {}
@@ -39,7 +39,7 @@ shared native object false
 shared abstract native("dart")
 class Boolean of true | false {
     shared native("dart") static Boolean|ParseException parse(String string)
-            => package.parseBoolean(string)
+            => parseBoolean(string) 
             else ParseException("illegal format for Boolean");
 
     shared native("dart") new () {}

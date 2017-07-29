@@ -210,8 +210,7 @@ shared native final class Float
     tagged("Numbers", "Basic types")
     since("1.3.1")
     shared native static Float|ParseException parse(String string)
-            => package.parseFloat(string)
-            else ParseException("illegal format for Float");
+            => parseFloatInternal(string);
     
     "The string decimal representation of the given 
      [[floating point number|float]]. If the given number is 
@@ -609,8 +608,7 @@ class Float extends Object
             else if (x>y) then x else y;
 
     shared native("dart") static Float|ParseException parse(String string)
-            => package.parseFloat(string)
-            else ParseException("illegal format for Float");
+            => parseFloatInternal(string);
 
     shared native("dart") static String format(
         Float float,
