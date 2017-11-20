@@ -33,6 +33,6 @@ script:
 env:
   global:
     - CEYLON="http://ceylon-lang.org/download/dist/1_3_3"
-    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
+    - GRADLE_OPTS="-Xmx512m"
     - JAVA_OPTS="-Xmx3g"
 
