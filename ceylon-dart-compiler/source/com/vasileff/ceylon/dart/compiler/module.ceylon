@@ -7,9 +7,9 @@ module com.vasileff.ceylon.dart.compiler "1.3.3-DP5-SNAPSHOT" {
     shared import ceylon.json "1.3.3";
     shared import ceylon.file "1.3.3";
 
-    import ceylon.ast.create "1.3.3-SNAPSHOT";
-    import ceylon.ast.redhat "1.3.3-SNAPSHOT";
-    shared import ceylon.ast.core "1.3.3-SNAPSHOT";
+    import ceylon.ast.create "1.3.3";
+    import ceylon.ast.redhat "1.3.3";
+    shared import ceylon.ast.core "1.3.3";
 
     import com.vasileff.ceylon.structures "1.1.3";
 
