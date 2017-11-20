@@ -10,7 +10,7 @@ notifications:
     users:
       - secure: BzQ1Vpo+z/21vhRBYByFRLU89BpI3+HzhXfocDxZQRKyFkzpj6/iXGsZ9mzBVi7+Vrk2vVoy6NTB2uUqJH4Du/PdwhjiJSxdQ7xLkFt3uEIl0Iyi7zsIWhEsnwT9pK6y94DGZgZ8WzyqGEeBmH+RJL9XwajF2ZczzDWTPB8jnP2sUKXyCHhO52KSjADspKaL8LAE9lD7FRT3ThMeUOMIvO8NNkWFQb4DBjfZUzv/guyYZz05QoaDbSQkG2ZhVOA/LU34ckAw1TkkBNaii3tVA0b9F+7dVWRc9kBYw81J/kiurrLlL9f/07HJ2VkutIeQm4bKOiOC3PnibOVxblc8sDXFIvaeO3r/z/lwQx45GHcn3YkAuK7BoLxMHK7rlcLJ19BjWniSz1vlMWbutiYOSzwLIGbRXpoeu0ibm55DX1IeCbCoWEgato6ljxSU1gI2wfclPzg8+bJBDPhXidvUz4SYjp47SEEN9C+iXJm0AkXJFyPrRWyiLqRq492dL45YIthLmtuWPnHIjwwSxDUq8MqHXGMl53nvrDMBZurLz1LSmIIpTiu+Ncqc1yBYG9RTqJxwlc6Fapr0DWRhPtS0InIJYUFw33R5F9wXr0suDYK+D+qDn04ADrh+0yxCFX5MmputsURy8Pf/c9i/rFvz8MN/ENup25ya/8b4BwY1j6s=
 jdk:
-  - oraclejdk7
+  - openjdk7
 addons:
   artifacts:
     branch: master
