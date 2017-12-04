@@ -86,8 +86,7 @@ void test_nullsingleton() {
     check(singleton.defines(0), "nullsingleton defines");
     check(!singleton.defines(1), "nullsingleton defines");
     check(singleton.string=="[<null>]", "nullsingleton string");
-    // Because Singleton(null) != Singleton(null) since null hasn't equals() 
-    //check(singleton.reversed==singleton, "nullsingleton reversed");
+    check(singleton.reversed==singleton, "nullsingleton reversed");
     check(singleton nonempty, "nullsingleton nonempty");
     if (nonempty singleton) {
         check(!(singleton.first exists), "nullsingleton first");
@@ -209,6 +208,14 @@ void test_max_min() {
     check((mn4 else 10)==1, "min filtered seq");
 }
 
+
+void test_repeat() {
+    check((0..1).repeat(2).rest=={1, 0, 1}.sequence(),"Repeat + rest");
+    check((0..1).repeat(2).rest.rest=={0, 1}.sequence(),"Repeat + rest until remove original");
+    check((0..1).repeat(2).rest.rest.rest =={1}.sequence(),"Repeat + rest beyond remove original");
+    check({}.repeat(2).rest=={}.sequence(),"Repeat empty + rest");
+}
+
 shared void arraySequence() {
     value abc = sequence {"a", "b", "c"};
     check(3==abc.size, "abc.size");
@@ -230,10 +237,17 @@ shared void arraySequence() {
     check(abc[2] exists, "abc[2]");
     check(!(abc[3] exists), "abc[3]");
     
-    check(abc.reversed.string=="[c, b, a]", "abc.reverse ``abc.reversed``");
+    check(abc.reversed==["c", "b", "a"], "abc.reverse ``abc.reversed``");
     check(abc.reversed.reversed==abc, "abc.reverse.reverse");
     check(abc.reversed.string=="[c, b, a]", "abc.reversed ``abc.reversed``");
     check(abc.reversed.reversed.sequence()==abc, "abc.reversed.reversed");
+    
+    check(abc.reversed.span(1, 2)==["b", "a"], "abc.reverse.span ``abc.reversed.span(1, 2)``");
+    check(abc.reversed.span(0, 1)==["c", "b"], "abc.reverse.span ``abc.reversed.span(0, 1)``");
+    check(abc.reversed.span(2, 10)==["a"], "abc.reverse.span ``abc.reversed.span(2, 10)``");
+    check(abc.reversed.measure(1, 2)==["b", "a"], "abc.reverse.measure ``abc.reversed.measure(1, 2)``");
+    check(abc.reversed.measure(0, 1)==["c"], "abc.reverse.measure ``abc.reversed.measure(0, 1)``");
+    check(abc.reversed.measure(2, 10)==["a"], "abc.reverse.measure ``abc.reversed.measure(2, 10)``");
     
     check(abc.span(-1,-1)=={}, "abc.span(-1,-1)");
     check(abc.span(-1, 0)=={"a"}.sequence(), "abc.span(-1,0)");
@@ -312,6 +326,9 @@ shared void arraySequence() {
     check(abc.reversed==["c","b","a"], "abc.reversed");
     check(abc.reversed.first=="c", "abc.reversed.first");
     check(abc.reversed.last=="a", "abc.reversed.last");
+
+    check(abc.reduce((Anything a, Anything b) => null) is Null, "array seq reduce null #1");
+    check({null}.sequence().reduce((Anything a, Anything b) => "") is Null, "array seq reduce null #2");
 }
 
 @test
@@ -527,7 +544,8 @@ shared void sequences() {
     test_zip();
     test_exists_nonempty();
     test_max_min();
-    
+    test_repeat();
+
     check(emptyOrSingleton(1) nonempty, "emptyOrSingleton [1]");
     check(!emptyOrSingleton(null) nonempty, "emptyOrSingleton [2]");
     
@@ -553,4 +571,9 @@ shared void sequences() {
 
     check({1, 2, 3}.string == "{ 1, 2, 3 }", "iter string: ``{1,2,3}``");
     check([1, 2, 3].string == "[1, 2, 3]", "seq string: ``[1,2,3]``");
+    
+    value split = "foo:bar:baz:qux".split(':'.equals).sequence().tuple();
+    assert (is String[4] split);
+    check(split == ["foo", "bar", "baz", "qux"], "tuple()");
+    
 }

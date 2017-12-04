@@ -18,6 +18,11 @@ void compareIterables<T>(Iterable<T> aIterable, Iterable<T> bIterable, String me
     check(b == finished, "``message``: Iterator B not empty: extra '``b``'");
 }
 
+Boolean eq(Anything a, Anything b)
+    =>  if (exists a, exists b)
+        then a == b
+        else !a exists && !b exists;
+
 @test
 shared void strings() {
     value hello = "hello";
@@ -308,6 +313,11 @@ shared void strings() {
     check(builder.clear().append("oat").reverseInPlace().string == "tao", "StringBuilder.reverseInPlace");
     check(builder.replace(1,1,"omat").string == "tomato", "StringBuilder.replace expected 'tomato' got ``builder``");
     check(builder.size == 6, "StringBuilder.size expected 6 got ``builder.size``");
+
+    check(builder.clear().appendCharacter('\{#01D419}').size == 1, "StringBuilder unicode 1");
+    check(builder.clear().appendCharacter('x').size == 1, "StringBuilder unicode 2");
+    check(eq(builder.clear().appendCharacter('\{#01D419}').lastIndex, 0), "StringBuilder unicode 3");
+    check(eq(builder.clear().appendCharacter('x').lastIndex, 0), "StringBuilder unicode 4");
 
     check("hello world".initial(0)=="", "string initial 1");
     check("hello world".terminal(0)=="", "string terminal 1");
@@ -679,12 +689,32 @@ shared void strings() {
     check("VWXYZ".permutations.size==120, "string permutations");
     check("UVWXYZ".permutations.size==720, "string permutations");
     
-    check(if (exists first="abcd".sublistFrom(1).first) then first=='b' else false, "string sublist");
-    check(if (exists first="abcd".sublistFrom(2).first) then first=='c' else false, "string sublist");
-    check(if (exists first="abcd".sublistFrom(1).sublistFrom(1).first) then first=='c' else false, "string sublist");
-    check(if (exists first="abcd".sublistFrom(2).sublistFrom(1).first) then first=='d' else false, "string sublist");
-    check(!"abcd".sublistFrom(4).first exists, "string sublist");
-    check(!"abcd".sublistFrom(2).sublistFrom(2).first exists, "string sublist");
+    value tsub1="abcd".sublistFrom(1).first else '!';
+    check(tsub1=='b', "string sublist 1 expect b, got ``tsub1``");
+    value tsub2="abcd".sublistFrom(2).first else '!';
+    check(tsub2=='c', "string sublist 2 expect c, got ``tsub2``");
+    value tsub3="abcd".sublistFrom(1).sublistFrom(1).first else '!';
+    check(tsub3=='c', "string sublist 3 expect c, got ``tsub2``");
+    check(if (exists first="abcd".sublistFrom(2).sublistFrom(1).first) then first=='d' else false, "string sublist 4");
+    check(!"abcd".sublistFrom(4).first exists, "string sublist 5");
+    check(!"abcd".sublistFrom(2).sublistFrom(2).first exists, "string sublist 6");
+    check("hello world".sublist(2, 9).sublist(2, 4)=="o w".sequence(), "string sublist 7");
+    check("hello world".sublist(2, 9).sublistFrom(1)=="lo worl".sequence(), "string sublist 8");
+    check("abcd".sublist(-1, 100).sublist(1,100)=="bcd".sequence(), "string sublist 9");
+    check("abcd".sublist(2, runtime.maxIntegerValue)=="cd".sequence(), "string sublist 10");
+    check("abcd".sublist(1,10).sublist(1, runtime.maxIntegerValue)=="cd".sequence(), "string sublist 11");
+    check('2' in "111122".sublist(3,4), "string sublist c1");
+    check('1' in "111122".sublist(3,4), "string sublist c2");
+    check('2' in "111122".sublist(4,5), "string sublist c3");
+    check(!('1' in "111122".sublist(4,5)), "string sublist c4");
+    check('2' in "111122".sublist(4,6), "string sublist c5");
+    check(!('1' in "111122".sublist(4,6)), "string sublist c6");
+    check('2' in "111122".sublist(5,6), "string sublist c7");
+    check(!('1' in "111122".sublist(5,6)), "string sublist c8");
+    check("111122".sublist(3,4).size==2, "string sublist c9");
+    check("111122".sublist(4,5).size==2, "string sublist c10");
+    check("111122".sublist(4,6).size==2, "string sublist c11");
+    check("111122".sublist(5,6).size==1, "string sublist c12");
     
     check("".indexesWhere((c) => true).size == 0);
     check("12345".indexesWhere((c) => true).size == 5);
